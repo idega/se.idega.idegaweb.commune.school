@@ -5,7 +5,7 @@ import com.idega.block.process.data.Case;
 import com.idega.block.process.data.CaseStatus;
 import com.idega.builder.data.IBPage;
 import com.idega.business.IBOLookup;
-import com.idega.core.user.data.User;
+import com.idega.user.data.User;
 import com.idega.idegaweb.*;
 import com.idega.presentation.*;
 import com.idega.presentation.text.*;
@@ -40,7 +40,7 @@ public class UserCases extends CommuneBlock {
 	private int manager_page_id = -1;
 	private int viewpointPageId = -1;
 	
-	private boolean _showName = true;
+	private boolean _showName = false;
 
 	public final static String MYCASES_KEY = "usercases.myCases";
 	public final static String MYCASES_DEFAULT = "Mina ärenden";
@@ -97,7 +97,9 @@ public class UserCases extends CommuneBlock {
 		add(mainTable);
 
 		if (iwc.isLoggedOn()) {
-			Collection cases = getCommuneCaseBusiness(iwc).getAllCasesDefaultVisibleForUser(iwc.getCurrentUser());
+			User user = iwc.getCurrentUser();
+			final int userId = ((Integer) user.getPrimaryKey()).intValue();
+			Collection cases = getCommuneCaseBusiness(iwc).getAllCasesDefaultVisibleForUser(user);
 			if (cases != null & !cases.isEmpty()) {
 				Table table = new Table();
 				table.setCellpadding(getCellpadding());
@@ -130,7 +132,7 @@ public class UserCases extends CommuneBlock {
 					for (Iterator i = cases.iterator(); i.hasNext();) {
 						try {
 							final Case useCase = (Case) i.next();
-							addCaseToMessageList(iwc, useCase, table, row++);
+							addCaseToMessageList(iwc, useCase, userId, table, row++);
 						}
 						catch (Exception e) {
 							add(e);
@@ -147,7 +149,8 @@ public class UserCases extends CommuneBlock {
 
 			// 1. find my groups
 			final GroupBusiness groupBusiness = (GroupBusiness) IBOLookup.getServiceInstance(iwc, GroupBusiness.class);
-			final int userId = ((Integer) iwc.getCurrentUser().getPrimaryKey()).intValue();
+			// GJ removed userId, because aleady defined
+			//final int userId = ((Integer) iwc.getCurrentUser().getPrimaryKey()).intValue();
 			final Collection groups = groupBusiness.getAllGroupsNotDirectlyRelated(userId, iwc);
 
 			// 2. find unhandled viewpoints
@@ -185,7 +188,7 @@ public class UserCases extends CommuneBlock {
 		}
 	}
 
-	private void addCaseToMessageList(final IWContext iwc, final Case useCase, final Table messageList, int row) throws Exception {
+	private void addCaseToMessageList(final IWContext iwc, final Case useCase, final int userId,final Table messageList, int row) throws Exception {
 
 		DateFormat dateFormat = CustomDateFormat.getDateTimeInstance(iwc.getCurrentLocale());
 		Date caseDate = new Date(useCase.getCreated().getTime());
@@ -207,7 +210,9 @@ public class UserCases extends CommuneBlock {
 			final Group handler = useCase.getHandler();
 			if (handler != null) {
 				managerID = ((Integer) handler.getPrimaryKey()).intValue();
-				managerName = getUserBusiness(iwc).getNameOfGroupOrUser(handler);
+				if (managerID != userId) {
+					managerName = getUserBusiness(iwc).getNameOfGroupOrUser(handler);
+				}
 			}
 		}
 		catch (Exception e) {
