@@ -67,7 +67,7 @@ public class SchoolChoiceApprover extends CommuneBlock {
 	private boolean pupilList = false;
 
 	public void control(IWContext iwc) throws RemoteException {
-		//debugParameters(iwc);
+		debugParameters(iwc);
 		init(iwc);
 		parse(iwc);
 		String[] statusToSearch = { "UBEH", "PLAC", "PREL" };
@@ -113,6 +113,10 @@ public class SchoolChoiceApprover extends CommuneBlock {
 		msgBean = (MessageBusiness) IBOLookup.getServiceInstance(iwc,MessageBusiness.class);
 		if (iwc.isParameterSet(prmSchoolId)) {
 			schoolId = Integer.parseInt(iwc.getParameter(prmSchoolId));
+			iwc.setSessionAttribute(prmSchoolId,new Integer(schoolId));
+		}
+		else if(iwc.getSessionAttribute(prmSchoolId)!=null){
+			schoolId = ((Integer) iwc.getSessionAttribute(prmSchoolId)).intValue();
 		}
 		pupilList = iwc.isParameterSet(prmPupilView);
 	}
@@ -347,6 +351,16 @@ public class SchoolChoiceApprover extends CommuneBlock {
 		back.addParameter(prmSchoolId,this.schoolId);
 		T.add(back,1,row);
        
+		return T;
+	}
+	
+	private PresentationObject getSchoolInfo(School school){
+		Table T = new Table();
+		int row = 1,col = 1;
+		T.add(iwrb.getLocalizedString("school","School"),col,row);
+		T.add(iwrb.getLocalizedString("address","Address"),col,row);
+		T.add(iwrb.getLocalizedString("phone","Phone"),col,row);
+		
 		return T;
 	}
 	
