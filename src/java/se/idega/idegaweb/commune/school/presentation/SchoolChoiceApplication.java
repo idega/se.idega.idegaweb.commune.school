@@ -1450,11 +1450,13 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	public String getSchoolCheckScript() {
 		StringBuffer s = new StringBuffer();
 		s.append("\nfunction checkApplication(){\n\t");
+		
 		//s.append("\n\t\t alert('").append("checking choices").append("');");
 		//if (!this.hasPreviousSchool && !hasChosen)
 		//s.append("\n\t var currSchool =
 		// ").append("findObj('").append(prmPreSchool).append("');");
 		s.append("\n\t var dropOne = ").append("findObj('").append(prmFirstSchool).append("');");
+		
 		if (!schoolChange) {
 			s.append("\n\t var dropTwo = ").append("findObj('").append(prmSecondSchool).append("');");
 			s.append("\n\t var dropThree = ").append("findObj('").append(prmThirdSchool).append("');");
@@ -1462,6 +1464,13 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		//if (!this.hasPreviousSchool && !hasChosen)
 		//s.append("\n\t var gradeDrop =
 		// ").append("findObj('").append(prmPreGrade).append("');");
+		s.append("\n\t var dropNativeLang = ").append("findObj('").append(prmNativeLang).append("');");
+		s.append("\n\t var checkNativeLang = ").append("findObj('").append(prmNativeLangIsChecked).append("');");
+		
+		s.append("\n\n\t if (dropNativeLang.options[dropNativeLang.selectedIndex].value > 0 && checkNativeLang.checked == false){");
+		s.append("\n\t\t alert('" + localize("school.must_fill_native_language", "You must check the checkbox if you want native language ") + "');");
+		s.append("\n\t\t return false; \n}");
+		
 		if (hasLanguageSelection)
 			s.append("\n\t var languageDrop = ").append("findObj('").append(prmLanguage).append("');");
 
