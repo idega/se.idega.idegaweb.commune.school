@@ -1,5 +1,5 @@
 /*
- * $Id: ReportBusinessBean.java,v 1.14 2004/01/08 11:53:21 anders Exp $
+ * $Id: ReportBusinessBean.java,v 1.15 2004/01/12 10:28:24 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -29,21 +29,23 @@ import com.idega.block.school.data.SchoolStudyPathHome;
 /** 
  * Business logic for school reports.
  * <p>
- * Last modified: $Date: 2004/01/08 11:53:21 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/12 10:28:24 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.14 $
+ * @version $Revision: 1.15 $
  */
 public class ReportBusinessBean extends com.idega.business.IBOServiceBean implements ReportBusiness  {
 
 	private final static int SCHOOL_TYPE_ELEMENTARY_SCHOOL = 4;
 	private final static int SCHOOL_TYPE_COMPULSORY_SCHOOL = 28;
+	private final static int SCHOOL_TYPE_COMPULSORY_HIGH_SCHOOL = 27;
 	private final static String MANAGEMENT_TYPE_COMMUNE = "COMMUNE";
 	private final static int NACKA_COMMUNE_ID = 1;
 	
 	private SchoolSeason _currentSchoolSeason = null;
 	private int _schoolSeasonId = -1;
 	private int _schoolSeasonStartYear = -1;
+	private Collection _schools = null;
 	private Collection _schoolAreas = null;
 	private Map _schoolsByArea = null;
 	private Collection _studyPaths = null;
@@ -249,6 +251,19 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 		} else {
 			return new ArrayList();
 		}
+	}
+	
+	/**
+	 * Returns all compulsory high schools. 
+	 */
+	public Collection getCompulsoryHighSchools() {
+		if (_schools == null) {
+			try {
+				SchoolHome home = getSchoolBusiness().getSchoolHome();
+				_schools = home.findAllBySchoolType(SCHOOL_TYPE_COMPULSORY_HIGH_SCHOOL);
+			} catch (Exception e) {}
+		}
+		return _schools;
 	}
 	
 	/**

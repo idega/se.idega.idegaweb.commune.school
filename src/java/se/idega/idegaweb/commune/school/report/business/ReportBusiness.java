@@ -5,6 +5,7 @@ public interface ReportBusiness extends com.idega.business.IBOService
 {
  public se.idega.idegaweb.commune.school.report.business.ReportModel createReportModel(java.lang.Class p0) throws java.rmi.RemoteException;
  public java.util.Collection getAllStudyPaths() throws java.rmi.RemoteException;
+ public java.util.Collection getCompulsoryHighSchools() throws java.rmi.RemoteException;
  public java.util.Collection getCompulsorySchoolAreas() throws java.rmi.RemoteException;
  public java.util.Collection getCompulsorySchools(com.idega.block.school.data.SchoolArea p0) throws java.rmi.RemoteException;
  public com.idega.block.school.data.SchoolSeason getCurrentSchoolSeason() throws java.rmi.RemoteException;

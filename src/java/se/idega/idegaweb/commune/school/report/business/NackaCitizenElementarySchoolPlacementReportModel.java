@@ -1,5 +1,5 @@
 /*
- * $Id: NackaCitizenElementarySchoolPlacementReportModel.java,v 1.3 2003/12/19 14:57:03 anders Exp $
+ * $Id: NackaCitizenElementarySchoolPlacementReportModel.java,v 1.4 2004/01/12 10:28:24 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -14,10 +14,10 @@ import java.rmi.RemoteException;
 /** 
  * Report model for Nacka citizen placement for elementary schools.
  * <p>
- * Last modified: $Date: 2003/12/19 14:57:03 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/12 10:28:24 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class NackaCitizenElementarySchoolPlacementReportModel extends ReportModel {
 
@@ -96,7 +96,7 @@ public class NackaCitizenElementarySchoolPlacementReportModel extends ReportMode
 		Header h = new Header(KEY_SCHOOL_YEAR_F, Header.HEADERTYPE_COLUMN_NORMAL);
 		headers[0] = h;
 		
-		h = new Header(KEY_SCHOOL_YEAR, Header.HEADERTYPE_COLUMN_NORMAL, 3);
+		h = new Header(KEY_SCHOOL_YEAR, Header.HEADERTYPE_COLUMN_HEADER, 3);
 		Header child0 = new Header(KEY_SCHOOL_YEAR_1, Header.HEADERTYPE_COLUMN_NORMAL);
 		Header child1 = new Header(KEY_SCHOOL_YEAR_2, Header.HEADERTYPE_COLUMN_NORMAL);
 		Header child2 = new Header(KEY_SCHOOL_YEAR_3, Header.HEADERTYPE_COLUMN_NORMAL);

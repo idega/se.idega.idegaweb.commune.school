@@ -1,5 +1,5 @@
 /*
- * $Id: ReportQuery.java,v 1.15 2004/01/07 15:54:16 anders Exp $
+ * $Id: ReportQuery.java,v 1.16 2004/01/12 10:28:24 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -20,10 +20,10 @@ import com.idega.util.database.ConnectionBroker;
 /** 
  * Handles the SQL logic for school report calculations.
  * <p>
- * Last modified: $Date: 2004/01/07 15:54:16 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/12 10:28:24 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.15 $
+ * @version $Revision: 1.16 $
  */
 public class ReportQuery {
 
@@ -127,6 +127,24 @@ public class ReportQuery {
 				" and sc.school_id = s.sch_school_id and sc.sch_school_class_id = cm.sch_school_class_id" +
 				" and sc.sch_school_season_id = " + schoolSeasonId +
 				" and cm.study_path = sp.sch_study_path_id and sp.study_path_code like '" + studyPathPrefix +"%'";
+	}
+
+	/**
+	 * Sets the query to select number of placements for a school for 
+	 * citizens in communes outside Nacka for all school years.
+	 * @param schoolSeasonId the school season id for the placements to count
+	 * @param schoolId the school id
+	 */
+	public void setSelectCountOCCPlacementsForAllSchoolYears(int schoolSeasonId, int schoolId) {
+		sql = "select count(*) from ic_user u, ic_address a, ic_user_address ua, sch_class_member cm," +
+				" sch_school_class sc, sch_school s where" +
+				" cm.register_date <= '" + currentDate + 
+				"' and (cm. removed_date is null or cm.removed_date > '" + currentDate + "')" + 
+				" and sc.school_id = s.sch_school_id and sc.sch_school_class_id = cm.sch_school_class_id" +
+				" and sc.sch_school_season_id = " + schoolSeasonId +
+				" and s.sch_school_id = " + schoolId + 
+				" and ua.ic_user_id = u.ic_user_id and a.ic_address_id = ua.ic_address_id" +
+				" and a.ic_address_type_id = 1 and a.ic_commune_id <> 1 and cm.ic_user_id = u.ic_user_id";
 	}
 	
 	/**
