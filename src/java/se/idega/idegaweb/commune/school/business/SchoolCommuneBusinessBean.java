@@ -639,18 +639,22 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
      * and school type as given in parameter.
      *
      * @return SchoolClassMember objects that follows the method spec
-     * @param schoolTypeId only serac for schools of this type
+     * @param operationalField only search in schools of this type
      * @exception RemoteException when methods in data layer fails
      * @author <a href="http://www.staffannoteberg.com">Staffan Nöteberg</a>
      */
     public SchoolClassMember [] getCurrentMembersWithInvoiceInterval
-        (final int schoolTypeId) throws RemoteException {
+        (final String operationalField) throws RemoteException {
+        if (null == operationalField || 0 >= operationalField.length ()) {
+            return new SchoolClassMember [0];
+        }
+
         final SchoolBusiness business = getSchoolBusiness ();
         final SchoolClassMemberHome home = business.getSchoolClassMemberHome ();
         try {
             final Collection result = home
                     .findAllCurrentInvoiceCompensationBySchoolType
-                    (schoolTypeId);
+                    (operationalField);
             return (SchoolClassMember []) result.toArray (new SchoolClassMember
                                                           [result.size ()]);
         } catch (FinderException fe) {

@@ -56,8 +56,7 @@ public interface SchoolCommuneBusiness extends com.idega.business.IBOService,com
  public boolean hasMoveChoiceToOtherSchool(int userID, int schoolID, int seasonID);
  public boolean hasChoiceToThisSchool(int userID, int schoolID, int seasonID);
 
-    SchoolClassMember [] getCurrentMembersWithInvoiceInterval (int schoolTypeId)
-        throws RemoteException;
+    SchoolClassMember [] getCurrentMembersWithInvoiceInterval (String operationalField) throws RemoteException;
 
     SchoolClassMember getCurrentSchoolClassMembership (User user)
         throws RemoteException;
