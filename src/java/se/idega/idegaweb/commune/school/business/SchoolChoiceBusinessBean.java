@@ -2,22 +2,14 @@ package se.idega.idegaweb.commune.school.business;
 import is.idega.idegaweb.member.business.MemberFamilyLogic;
 import java.rmi.RemoteException;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Vector;
+import java.util.*;
 
 import javax.ejb.CreateException;
 import javax.ejb.FinderException;
 
 import se.idega.idegaweb.commune.business.CommuneUserBusiness;
 import se.idega.idegaweb.commune.message.business.MessageBusiness;
-import se.idega.idegaweb.commune.school.data.CurrentSchoolSeason;
-import se.idega.idegaweb.commune.school.data.CurrentSchoolSeasonHome;
-import se.idega.idegaweb.commune.school.data.SchoolChoice;
-import se.idega.idegaweb.commune.school.data.SchoolChoiceHome;
+import se.idega.idegaweb.commune.school.data.*;
 
 import com.idega.block.process.data.Case;
 import com.idega.block.process.data.CaseStatus;
@@ -650,4 +642,17 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 			return new Vector();
 		}
 	}
+
+    public void createSchoolChoiceReminder
+        (final String text, final Date eventDate, final Date reminderDate)
+        throws CreateException, RemoteException {
+
+        final SchoolChoiceReminderHome home = (SchoolChoiceReminderHome)
+                getIDOHome(SchoolChoiceReminder.class);
+        final SchoolChoiceReminder reminder = home.create ();
+        reminder.setText (text);
+        reminder.setEventDate (eventDate);
+        reminder.setReminderDate (reminderDate);
+        reminder.store ();
+    }
 }
