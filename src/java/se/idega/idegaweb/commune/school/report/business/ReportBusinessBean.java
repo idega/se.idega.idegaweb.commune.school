@@ -1,5 +1,5 @@
 /*
- * $Id: ReportBusinessBean.java,v 1.11 2003/12/18 12:44:39 anders Exp $
+ * $Id: ReportBusinessBean.java,v 1.12 2003/12/18 15:07:28 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -29,10 +29,10 @@ import com.idega.block.school.data.SchoolStudyPathHome;
 /** 
  * Business logic for school reports.
  * <p>
- * Last modified: $Date: 2003/12/18 12:44:39 $ by $Author: anders $
+ * Last modified: $Date: 2003/12/18 15:07:28 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.11 $
+ * @version $Revision: 1.12 $
  */
 public class ReportBusinessBean extends com.idega.business.IBOServiceBean implements ReportBusiness  {
 
@@ -409,7 +409,7 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 	 * in Nacka commune for the specified student age.
 	 * Only students in Nacka commune are counted. 
 	 */
-	public int getHighSchoolNackaCommunePlacementCount(int age, String studyPathPrefix, boolean isCompulsory) {
+	public int getHighSchoolNackaCommunePlacementCount(int age, String studyPathPrefix, boolean isCompulsory, boolean onlyNackaSchools) {
 		ReportQuery query = new ReportQuery();
 		query.setSelectCountStudyPathPlacements(getSchoolSeasonId(), studyPathPrefix);
 		query.setOnlyNackaCitizens();
@@ -417,6 +417,9 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 			query.setSchoolTypeCompulsoryHighSchool();
 		} else {
 			query.setSchoolTypeHighSchool();
+		}
+		if (onlyNackaSchools) {
+			query.setOnlyNackaSchools();
 		}
 		query.setStudentAge(getCurrentSchoolSeason(), getStudentAgeFrom(age), getStudentAgeTo(age));			
 		query.setNotPrivateSchools();
@@ -429,7 +432,7 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 	 * outside Nacka commune for the specified student age.
 	 * Only students in Nacka commune are counted. 
 	 */
-	public int getHighSchoolOtherCommunesPlacementCount(int age, String studyPathPrefix, boolean isCompulsory) {
+	public int getHighSchoolOtherCommunesPlacementCount(int age, String studyPathPrefix, boolean isCompulsory, boolean onlyNackaSchools) {
 		ReportQuery query = new ReportQuery();
 		query.setSelectCountStudyPathPlacements(getSchoolSeasonId(), studyPathPrefix);
 		query.setNotNackaCitizens();
@@ -437,6 +440,9 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 			query.setSchoolTypeCompulsoryHighSchool();
 		} else {
 			query.setSchoolTypeHighSchool();
+		}
+		if (onlyNackaSchools) {
+			query.setOnlyNackaSchools();
 		}
 		query.setStudentAge(getCurrentSchoolSeason(), getStudentAgeFrom(age), getStudentAgeTo(age));			
 		query.setNotPrivateSchools();
@@ -449,7 +455,7 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 	 * for the specified student age.
 	 * Only students in Nacka commune are counted. 
 	 */
-	public int getHighSchoolCountyCouncilPlacementCount(int age, String studyPathPrefix, boolean isCompulsory) {
+	public int getHighSchoolCountyCouncilPlacementCount(int age, String studyPathPrefix, boolean isCompulsory, boolean onlyNackaSchools) {
 		ReportQuery query = new ReportQuery();
 		query.setSelectCountStudyPathPlacements(getSchoolSeasonId(), studyPathPrefix);
 		query.setOnlyNackaCitizens();
@@ -457,6 +463,9 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 			query.setSchoolTypeCompulsoryHighSchool();
 		} else {
 			query.setSchoolTypeHighSchool();
+		}
+		if (onlyNackaSchools) {
+			query.setOnlyNackaSchools();
 		}
 		query.setStudentAge(getCurrentSchoolSeason(), getStudentAgeFrom(age), getStudentAgeTo(age));			
 		query.setOnlyCountyCouncilSchools();
@@ -468,7 +477,7 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 	 * in Nacka commune for the specified student age.
 	 * Only students in Nacka commune are counted. 
 	 */
-	public int getHighSchoolPrivatePlacementCount(int age, String studyPathPrefix, boolean isCompulsory) {
+	public int getHighSchoolPrivatePlacementCount(int age, String studyPathPrefix, boolean isCompulsory, boolean onlyNackaSchools) {
 		ReportQuery query = new ReportQuery();
 		query.setSelectCountStudyPathPlacements(getSchoolSeasonId(), studyPathPrefix);
 		query.setOnlyNackaCitizens();
@@ -476,6 +485,9 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 			query.setSchoolTypeCompulsoryHighSchool();
 		} else {
 			query.setSchoolTypeHighSchool();
+		}
+		if (onlyNackaSchools) {
+			query.setOnlyNackaSchools();
 		}
 		query.setStudentAge(getCurrentSchoolSeason(), getStudentAgeFrom(age), getStudentAgeTo(age));			
 		query.setOnlyPrivateSchools();

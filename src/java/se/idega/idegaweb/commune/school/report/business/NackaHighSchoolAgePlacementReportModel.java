@@ -1,5 +1,5 @@
 /*
- * $Id: NackaHighSchoolAgePlacementReportModel.java,v 1.1 2003/12/18 12:45:39 anders Exp $
+ * $Id: NackaHighSchoolAgePlacementReportModel.java,v 1.2 2003/12/18 15:07:28 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -18,10 +18,10 @@ import com.idega.block.school.data.SchoolStudyPath;
 /** 
  * Report model for high school placements per student age for students in Nacka.
  * <p>
- * Last modified: $Date: 2003/12/18 12:45:39 $ by $Author: anders $
+ * Last modified: $Date: 2003/12/18 15:07:28 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class NackaHighSchoolAgePlacementReportModel extends ReportModel {
 
@@ -351,7 +351,7 @@ public class NackaHighSchoolAgePlacementReportModel extends ReportModel {
 							value += getCell(row, 2).getFloatValue();
 							value += getCell(row, 3).getFloatValue();
 						} else {
-							value = reportBusiness.getHighSchoolNackaCommunePlacementCount(age, studyPathPrefix, isCompulsory);
+							value = reportBusiness.getHighSchoolNackaCommunePlacementCount(age, studyPathPrefix, isCompulsory, false);
 						}
 						break;
 					case COLUMN_METHOD_OTHER_COMMUNES:
@@ -361,7 +361,7 @@ public class NackaHighSchoolAgePlacementReportModel extends ReportModel {
 							value += getCell(row, 7).getFloatValue();
 							value += getCell(row, 8).getFloatValue();
 						} else {
-							value = reportBusiness.getHighSchoolOtherCommunesPlacementCount(age, studyPathPrefix, isCompulsory);
+							value = reportBusiness.getHighSchoolOtherCommunesPlacementCount(age, studyPathPrefix, isCompulsory, false);
 						}
 						break;
 					case COLUMN_METHOD_COUNTY_COUNCIL:
@@ -370,7 +370,7 @@ public class NackaHighSchoolAgePlacementReportModel extends ReportModel {
 							value += getCell(row, 11).getFloatValue();
 							value += getCell(row, 12).getFloatValue();
 						} else {
-							value = reportBusiness.getHighSchoolCountyCouncilPlacementCount(age, studyPathPrefix, isCompulsory);
+							value = reportBusiness.getHighSchoolCountyCouncilPlacementCount(age, studyPathPrefix, isCompulsory, false);
 						}
 						break;
 					case COLUMN_METHOD_FREE_STANDING:
@@ -380,7 +380,7 @@ public class NackaHighSchoolAgePlacementReportModel extends ReportModel {
 							value += getCell(row, 16).getFloatValue();
 							value += getCell(row, 17).getFloatValue();
 						} else {
-							value = reportBusiness.getHighSchoolPrivatePlacementCount(age, studyPathPrefix, isCompulsory);
+							value = reportBusiness.getHighSchoolPrivatePlacementCount(age, studyPathPrefix, isCompulsory, false);
 						}
 						break;
 					case COLUMN_METHOD_TOTAL:
