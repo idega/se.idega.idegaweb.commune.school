@@ -985,7 +985,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
             file.setName("reminder_" + reminderId + ".pdf");
             file.setFileSize(buffer.length());
             file.store();
-            return file.getID ();
+            return ((Integer)file.getPrimaryKey()).intValue();
         } catch (Exception e) {
             e.printStackTrace ();
             throw new RemoteException ("Couldn't generate reminder "
