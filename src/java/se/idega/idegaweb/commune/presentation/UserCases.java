@@ -15,11 +15,7 @@ import com.idega.presentation.ui.*;
 import com.idega.user.Converter;
 import com.idega.util.idegaTimestamp;
 /**
- * Title:
- * Description:
- * Copyright:    Copyright (c) 2002
- * Company:
- * @author Anders Lindman
+ * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
  * @version 1.0
  */
 public class UserCases extends CommuneBlock
@@ -112,7 +108,7 @@ public class UserCases extends CommuneBlock
 			if (cases != null & !cases.isEmpty())
 			{
 				Form f = new Form();
-				ColumnList messageList = new ColumnList(5);
+				ColumnList messageList = new ColumnList(6);
 				f.add(messageList);
 				messageList.setBackroundColor("#e0e0e0");
 				messageList.setHeader(localize("usercases.case_number", "Case number"), 1);
