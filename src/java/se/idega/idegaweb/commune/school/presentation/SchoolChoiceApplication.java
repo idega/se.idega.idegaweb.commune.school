@@ -770,7 +770,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		}
 		String initFunction;
 		if (hasChosen) {
-			if (school != null) {
+			if (school != null && schoolType != null && schoolArea != null) {
 				initFunction = getInitFilterCallerScript(prmPreType, prmPreArea, prmPreSchool, ((Integer) schoolType.getPrimaryKey()).intValue(), ((Integer) schoolArea.getPrimaryKey()).intValue(), ((Integer) school.getPrimaryKey()).intValue(), true);
 				script.addFunction("presch_init", initFunction);
 				if (schoolYear != null) {
