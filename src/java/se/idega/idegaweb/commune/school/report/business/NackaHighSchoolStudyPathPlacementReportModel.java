@@ -1,5 +1,5 @@
 /*
- * $Id: NackaHighSchoolStudyPathPlacementReportModel.java,v 1.11 2004/02/17 21:24:52 anders Exp $
+ * $Id: NackaHighSchoolStudyPathPlacementReportModel.java,v 1.12 2004/02/23 10:42:23 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -13,18 +13,16 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 import com.idega.block.school.data.SchoolStudyPath;
 
 /** 
  * Report model for high school placements for all study paths.
  * <p>
- * Last modified: $Date: 2004/02/17 21:24:52 $ by $Author: anders $
+ * Last modified: $Date: 2004/02/23 10:42:23 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.11 $
+ * @version $Revision: 1.12 $
  */
 public class NackaHighSchoolStudyPathPlacementReportModel extends ReportModel {
 
@@ -40,11 +38,12 @@ public class NackaHighSchoolStudyPathPlacementReportModel extends ReportModel {
 
 	private final static String QUERY_STUDY_PATH = "study_path";
 	private final static String QUERY_STUDY_PATH_YEAR = "study_path_year";
+	private final static String QUERY_STUDY_PATH_AMOUNT = "study_path_amount";
 	
 	private final static String KEY_REPORT_TITLE = KP + "title_nacka_high_school_study_path_placements";
 	
 	private Collection _studyPaths = null;
-	private Map _placements = null;
+	private int[] _subtractRow = null;
 	
 	/**
 	 * Constructs this report model.
@@ -52,7 +51,6 @@ public class NackaHighSchoolStudyPathPlacementReportModel extends ReportModel {
 	 */
 	public NackaHighSchoolStudyPathPlacementReportModel(ReportBusiness reportBusiness) {
 		super(reportBusiness);
-		_placements = new LinkedHashMap();
 	}
 	
 	/**
@@ -218,6 +216,7 @@ public class NackaHighSchoolStudyPathPlacementReportModel extends ReportModel {
 				switch (cell.getColumnMethod()) {
 					case COLUMN_METHOD_SCHOOL_YEAR:
 						value = getHighSchoolPlacementCount(studyPathCode, schoolYearName, false);
+						value -= subtractRows(row, column);
 						break;
 					case COLUMN_METHOD_COMPULSORY_SCHOOL_YEAR:
 						value = getHighSchoolPlacementCount(studyPathCode, schoolYearName, true);
@@ -241,6 +240,22 @@ public class NackaHighSchoolStudyPathPlacementReportModel extends ReportModel {
 		return value;
 	}
 
+	/*
+	 * Subtract sub study path rows. 
+	 */
+	private int subtractRows(int row, int column) {
+		int subtract = 0;
+		for (int i = 0; i < _subtractRow.length; i++) {
+			int subtractRow = _subtractRow[i];
+			if (row == subtractRow) {
+				Cell cell = getCell(row, column);
+				subtract += cell.getValue();
+			}
+			
+		}
+		return subtract;
+	}
+	
 	/**
 	 * @see se.idega.idegaweb.commune.school.report.business.ReportModel#getReportTitleLocalizationKey()
 	 */
@@ -305,17 +320,51 @@ public class NackaHighSchoolStudyPathPlacementReportModel extends ReportModel {
 			_studyPaths = new ArrayList();
 			ReportBusiness rb = getReportBusiness();
 			Collection c = rb.getAllStudyPathsIncludingDirections();
+			_subtractRow = new int[c.size()];
 			Iterator iter = c.iterator();
+			int studyPathAmount = 0;
+			int row = 0;
+			int studyPathRow = 0;
 			while (iter.hasNext()) {
 				SchoolStudyPath sp = (SchoolStudyPath) iter.next();
 				String code = sp.getCode();
 				int count = getHighSchoolPlacementCount(code);
 				if (count > 0) {
-					_studyPaths.add(sp);
-					_placements.put(code, new Integer(count));
+					if (code.length() == 2) {
+						studyPathAmount = getStudyPathAmount(code);
+						_studyPaths.add(sp);
+						studyPathRow = row;
+						row++;
+					} else {
+						int subStudyPathAmount = getStudyPathAmount(code);
+						String description = sp.getDescription();
+						if (studyPathAmount != subStudyPathAmount || description.matches("lokal inriktning")) {
+							_studyPaths.add(sp);
+							_subtractRow[row] = studyPathRow;
+							row++;
+						}
+					}
+//					_placements.put(code, new Integer(count));
 				}
 			}			
 		}
 		return _studyPaths;
+	}
+	
+	/**
+	 * Returns the amount for the specified study path code.
+	 */
+	protected int getStudyPathAmount(String studyPathCode) {
+		PreparedQuery query = null;
+		query = getQuery(QUERY_STUDY_PATH_AMOUNT);
+		if (query == null) {
+			query = new PreparedQuery(getConnection());
+			query.setSelectMaxStudyPathAmount();
+			query.setStudyPathAmount(); // parameter 1
+			query.prepare();
+			setQuery(QUERY_STUDY_PATH_AMOUNT, query);
+		}
+		query.setString(1, studyPathCode);
+		return query.execute();
 	}
 }
