@@ -30,6 +30,7 @@ import com.idega.core.location.data.Address;
 import com.idega.core.location.data.PostalCode;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWResourceBundle;
+import com.idega.user.business.NoEmailFoundException;
 import com.idega.user.data.User;
 import com.idega.util.IWTimestamp;
 import com.idega.util.PersonalIDFormatter;
@@ -168,9 +169,17 @@ public class SchoolReportBusinessBean extends IBOSessionBean implements SchoolRe
 				SchoolClassMember student = (SchoolClassMember) iter.next();
 				User user = student.getStudent();
 				Address homeAddress = getUserBusiness().getUsersMainAddress(user);
-				Email mail = getUserBusiness().getEmail(user);
 				Phone homePhone = getUserBusiness().getChildHomePhone(user);
 				User parent = getUserBusiness().getCustodianForChild(user);
+				Email mail = null;
+				if (parent != null) {
+					try {
+						getUserBusiness().getUsersMainEmail(parent);
+					}
+					catch (NoEmailFoundException e) {
+						mail = null;
+					}
+				}
 				
 				ReportableData data = new ReportableData();
 				if (displayColumn(FIELD_PERSONAL_ID)) {
@@ -192,7 +201,7 @@ public class SchoolReportBusinessBean extends IBOSessionBean implements SchoolRe
 						}
 
 						if (displayColumn(FIELD_AREA)) {
-							data.addData(area, code.getPostalAddress());
+							data.addData(area, code.getName());
 						}
 					}
 				}
@@ -352,9 +361,17 @@ public class SchoolReportBusinessBean extends IBOSessionBean implements SchoolRe
 				SchoolChoice choice = (SchoolChoice) iter.next();
 				User user = choice.getChild();
 				Address homeAddress = getUserBusiness().getUsersMainAddress(user);
-				Email mail = getUserBusiness().getEmail(user);
 				Phone homePhone = getUserBusiness().getChildHomePhone(user);
 				User parent = getUserBusiness().getCustodianForChild(user);
+				Email mail = null;
+				if (parent != null) {
+					try {
+						getUserBusiness().getUsersMainEmail(parent);
+					}
+					catch (NoEmailFoundException e) {
+						mail = null;
+					}
+				}
 				
 				ReportableData data = new ReportableData();
 				if (displayColumn(FIELD_PERSONAL_ID)) {
@@ -376,7 +393,7 @@ public class SchoolReportBusinessBean extends IBOSessionBean implements SchoolRe
 						}
 
 						if (displayColumn(FIELD_AREA)) {
-							data.addData(area, code.getPostalAddress());
+							data.addData(area, code.getName());
 						}
 					}
 				}
