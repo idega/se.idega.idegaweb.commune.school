@@ -246,7 +246,7 @@ public class SchoolClassWriter implements MediaWritable {
 			Cell cell;
 			
 			String[] headers = {iwrb.getLocalizedString("school.name","Name"), iwrb.getLocalizedString("school.personal_id","Personal ID"), iwrb.getLocalizedString("school.address","Address"), iwrb.getLocalizedString("school.postal_code","Postal code"), iwrb.getLocalizedString("school.phone","Phone")};
-			int[] sizes = { 28, 20, 25, 17, 10 };
+			int[] sizes = { 30, 14, 26, 18, 12 };
 
 			Table datatable = getTable(headers, sizes);
 			Iterator iter = students.iterator();
@@ -258,32 +258,32 @@ public class SchoolClassWriter implements MediaWritable {
 					postalCode = address.getPostalCode();
 				phone = userBusiness.getChildHomePhone(student);
 
-				cell = new Cell(new Phrase(student.getNameLastFirst(true), new Font(Font.HELVETICA, 10, Font.BOLD)));
+				cell = new Cell(new Phrase(student.getNameLastFirst(true), new Font(Font.HELVETICA, 9, Font.NORMAL)));
 				cell.setBorder(Rectangle.NO_BORDER);
 				datatable.addCell(cell);
 
-				cell = new Cell(new Phrase(PersonalIDFormatter.format(student.getPersonalID(), locale), new Font(Font.HELVETICA, 10, Font.BOLD)));
+				cell = new Cell(new Phrase(PersonalIDFormatter.format(student.getPersonalID(), locale), new Font(Font.HELVETICA, 9, Font.NORMAL)));
 				cell.setBorder(Rectangle.NO_BORDER);
 				datatable.addCell(cell);
 
 				String streetAddress = "";
 				if (address != null)
 					streetAddress = address.getStreetAddress();
-				cell = new Cell(new Phrase(streetAddress, new Font(Font.HELVETICA, 10, Font.BOLD)));
+				cell = new Cell(new Phrase(streetAddress, new Font(Font.HELVETICA, 9, Font.NORMAL)));
 				cell.setBorder(Rectangle.NO_BORDER);
 				datatable.addCell(cell);
 
 				String postalAddress = "";
 				if (address != null && postalCode != null)
 				postalAddress = postalCode.getPostalAddress();
-				cell = new Cell(new Phrase(postalAddress, new Font(Font.HELVETICA, 10, Font.BOLD)));
+				cell = new Cell(new Phrase(postalAddress, new Font(Font.HELVETICA, 9, Font.NORMAL)));
 				cell.setBorder(Rectangle.NO_BORDER);
 				datatable.addCell(cell);
 
 				String phoneNumber = "";
 				if (phone != null)
 					phoneNumber = phone.getNumber();
-				cell = new Cell(new Phrase(phoneNumber, new Font(Font.HELVETICA, 10, Font.BOLD)));
+				cell = new Cell(new Phrase(phoneNumber, new Font(Font.HELVETICA, 9, Font.NORMAL)));
 				cell.setBorder(Rectangle.NO_BORDER);
 				datatable.addCell(cell);
 
