@@ -1,5 +1,5 @@
 /*
- * $Id: NackaCCTotalPlacementReportModel.java,v 1.1 2004/01/27 09:48:40 anders Exp $
+ * $Id: NackaCCTotalPlacementReportModel.java,v 1.2 2004/01/27 12:57:00 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -12,10 +12,10 @@ package se.idega.idegaweb.commune.school.report.business;
 /** 
  * Report model for total number of child care placements in Nacka.
  * <p>
- * Last modified: $Date: 2004/01/27 09:48:40 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/27 12:57:00 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class NackaCCTotalPlacementReportModel extends ReportModel {
 
@@ -118,6 +118,7 @@ public class NackaCCTotalPlacementReportModel extends ReportModel {
 			query = new PreparedQuery(getConnection());
 			query.setSelectCount();
 			query.setChildCarePlacements();
+			query.setOnlyNackaSchools();
 			query.prepare();
 			setQuery(QUERY_TOTAL_PLACEMENTS, query);
 		}
