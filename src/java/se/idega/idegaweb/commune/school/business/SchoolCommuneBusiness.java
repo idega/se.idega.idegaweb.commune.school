@@ -1,5 +1,7 @@
 package se.idega.idegaweb.commune.school.business;
 
+import com.idega.block.school.data.SchoolClassMember;
+import java.rmi.RemoteException;
 
 public interface SchoolCommuneBusiness extends com.idega.business.IBOService,com.idega.block.process.business.CaseBusiness
 {
@@ -42,4 +44,15 @@ public interface SchoolCommuneBusiness extends com.idega.business.IBOService,com
  public boolean isOngoingSeason(int seasonID) throws java.rmi.RemoteException;
  public boolean hasMoveChoiceToOtherSchool(int userID, int schoolID, int seasonID);
  public boolean hasChoiceToThisSchool(int userID, int schoolID, int seasonID);
+
+    /**
+     * Retreive all school members in current season, where factoring interval
+     * is in { Månad, Kvartal, Termin, År }. The result should be sorted by
+     * ssn.
+     *
+     * @return SchoolClassMember objects that follows the method spec
+     * @author <a href="http://www.staffannoteberg.com">Staffan Nöteberg</a>
+     */
+    public SchoolClassMember [] getCurrentMembersWithFactoringInterval
+        () throws RemoteException;
 }

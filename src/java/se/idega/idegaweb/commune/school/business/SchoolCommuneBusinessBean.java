@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.Vector;
 
 import javax.ejb.CreateException;
@@ -23,6 +24,7 @@ import com.idega.block.school.business.SchoolBusiness;
 import com.idega.block.school.data.School;
 import com.idega.block.school.data.SchoolClass;
 import com.idega.block.school.data.SchoolClassMember;
+import com.idega.block.school.data.SchoolClassMemberHome;
 import com.idega.block.school.data.SchoolSeason;
 import com.idega.block.school.data.SchoolType;
 import com.idega.block.school.data.SchoolYear;
@@ -584,4 +586,32 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 		schoolClass.store();
 	}
 		
+    // The method getCurrentMembersWithFactoringInterval is specified in the
+    // interface SchoolCommuneBusiness.  /Staffan
+    public SchoolClassMember [] getCurrentMembersWithFactoringInterval
+        () throws RemoteException {
+        final Map result = new TreeMap ();
+        final String [] factoringIntervals = { "Månad", "Kvartal", "Termin",
+                                               "År" };
+        final SchoolBusiness business = getSchoolBusiness ();
+        final SchoolClassMemberHome home = business.getSchoolClassMemberHome ();
+        final int currentSeasonId = getCurrentSchoolSeasonID ();
+        for (int i = 0; i < factoringIntervals.length; i++) {
+            // retreive members for a factoring interval value
+            final Collection members = java.util.Collections.EMPTY_LIST;
+            // -- replace above with following when method is implemented --
+            //final Collection members = home.findBySeasonAndFactoringInterval
+            //        (currentSeasonId, factoringIntervals [i]);
+            for (Iterator m = members.iterator (); m.hasNext ();) {
+                // sort retreived members
+                final SchoolClassMember member = (SchoolClassMember) m.next ();
+                final User user = member.getStudent ();
+                result.put (user.getPersonalID (), member);
+            }
+        }
+        // convert the sorted members to an array return value
+        final Collection values = result.values ();
+        return (SchoolClassMember []) values.toArray (new SchoolClassMember
+                                                      [values.size ()]);
+    }
 }
