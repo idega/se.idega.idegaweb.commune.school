@@ -6,7 +6,6 @@ package se.idega.idegaweb.commune.school.business;
 
 
 import java.rmi.RemoteException;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -16,18 +15,7 @@ import javax.ejb.FinderException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-import com.idega.block.process.data.Case;
-import com.idega.business.IBOLookup;
-import com.idega.business.IBOLookupException;
-import com.idega.user.data.User;
-import com.idega.idegaweb.IWBundle;
-
-import com.lowagie.text.Document;
-import com.lowagie.text.ElementTags;
-
-import com.lowagie.text.xml.SAXmyHandler;
-import com.lowagie.text.xml.XmlPeer;
-
+import se.idega.idegaweb.commune.message.business.MessageBusiness;
 import se.idega.idegaweb.commune.message.business.MessagePdfHandler;
 import se.idega.idegaweb.commune.message.data.PrintMessage;
 import se.idega.idegaweb.commune.presentation.CommuneBlock;
@@ -37,12 +25,25 @@ import se.idega.idegaweb.commune.printing.business.DocumentBusiness;
 import se.idega.idegaweb.commune.printing.business.DocumentPrintContext;
 import se.idega.idegaweb.commune.school.data.SchoolChoice;
 
+import com.idega.block.process.data.Case;
+import com.idega.business.IBOLookup;
+import com.idega.business.IBOLookupException;
+import com.idega.core.component.business.BundleRegistrationListener;
+import com.idega.core.component.business.RegisterException;
+import com.idega.core.component.data.ICObject;
+import com.idega.idegaweb.IWBundle;
+import com.idega.user.data.User;
+import com.lowagie.text.Document;
+import com.lowagie.text.ElementTags;
+import com.lowagie.text.xml.SAXmyHandler;
+import com.lowagie.text.xml.XmlPeer;
+
 /**
  * SchoolChoiceMessagePdfHandler
  * @author aron 
  * @version 1.0
  */
-public class SchoolChoiceMessagePdfHandler implements MessagePdfHandler {
+public class SchoolChoiceMessagePdfHandler implements MessagePdfHandler,BundleRegistrationListener {
 	
 	public final static String CODE_OLD_SCHOOL_CHANGE ="OSCCHNG";
 	public final static String CODE_NEW_SCHOOL_CHANGE ="NSCCHNG";
@@ -82,23 +83,23 @@ public class SchoolChoiceMessagePdfHandler implements MessagePdfHandler {
 	
 	
 	private void createPreliminaryContent(DocumentPrintContext dpc,String code)throws ContentCreationException{
-		createContent( dpc, "MBSKOLV_"+code+"_letter.xml");
+		createContent( dpc, getHandlerCode()+"_"+code+"_letter.xml");
 	}
 	
 	private void createSeparateParentApplicationContent(DocumentPrintContext dpc,String code)throws ContentCreationException{
-		createContent( dpc, "MBSKOLV_"+code+"_letter.xml");
+		createContent( dpc, getHandlerCode()+"_"+code+"_letter.xml");
 	}
 	
 	private void createSeparateParentChangeContent(DocumentPrintContext dpc,String code)throws ContentCreationException{
-		createContent( dpc, "MBSKOLV_"+code+"_letter.xml");
+		createContent( dpc, getHandlerCode()+"_"+code+"_letter.xml");
 	}
 	
 	private void createOldHeadmasterContent(DocumentPrintContext dpc,String code)throws ContentCreationException{
-		createContent( dpc, "MBSKOLV_"+code+"_letter.xml");
+		createContent( dpc, getHandlerCode()+"_"+code+"_letter.xml");
 	}
 	
 	private void createNewHeadmasterContent(DocumentPrintContext dpc,String code)throws ContentCreationException{
-		createContent( dpc, "MBSKOLV_"+code+"_letter.xml");
+		createContent( dpc, getHandlerCode()+"_"+code+"_letter.xml");
 	}
 	
 	private void createDefaultContent(DocumentPrintContext dpc)throws ContentCreationException{
@@ -221,4 +222,28 @@ public class SchoolChoiceMessagePdfHandler implements MessagePdfHandler {
 		return  tagmap;
 		
 	}
+	/* (non-Javadoc)
+	 * @see se.idega.idegaweb.commune.message.business.MessagePdfHandler#getHandlerCode()
+	 */
+	public String getHandlerCode() {
+		return SchoolChoiceBusinessBean.SCHOOL_CHOICE_CASECODE;
+	}
+
+	
+
+	
+
+	/* (non-Javadoc)
+	 * @see com.idega.core.component.business.BundleRegistrationListener#registerInBundle(com.idega.idegaweb.IWBundle, com.idega.core.component.data.ICObject)
+	 */
+	public void registerInBundle(IWBundle bundle, ICObject ico) throws RegisterException {
+		try {
+			MessageBusiness msgBuiz =(MessageBusiness) IBOLookup.getServiceInstance(bundle.getApplication().getIWApplicationContext(),MessageBusiness.class);
+			msgBuiz.createMessageHandlerInfo(this,ico);
+		}
+		catch (Exception e) {
+			throw new RegisterException(e);
+		}
+	}
+
 }
