@@ -11,7 +11,6 @@ import java.util.Date;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Vector;
 
 import javax.ejb.FinderException;
 
@@ -19,7 +18,6 @@ import se.idega.idegaweb.commune.childcare.business.ChildCareSession;
 import se.idega.idegaweb.commune.childcare.check.business.CheckBusiness;
 import se.idega.idegaweb.commune.presentation.CitizenChildren;
 import se.idega.idegaweb.commune.presentation.CommuneBlock;
-import se.idega.idegaweb.commune.school.business.CentralPlacementBusiness;
 import se.idega.idegaweb.commune.school.business.SchoolChoiceBusiness;
 import se.idega.idegaweb.commune.school.business.SchoolCommuneBusiness;
 import se.idega.idegaweb.commune.school.data.SchoolChoice;
@@ -147,7 +145,6 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	private boolean showAgree = false;
 	protected boolean quickAdmin = false;
 	SchoolChoiceBusiness schBuiz;
-	CentralPlacementBusiness centralPlacementBiz;
 	SchoolClassMember schoolClassMember = null;
 	SchoolCommuneBusiness schCommBiz;
 	SchoolClass schoolClass = null;
@@ -188,7 +185,6 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		iwrb = getResourceBundle(iwc);
 		df = DateFormat.getDateInstance(df.SHORT, iwc.getCurrentLocale());
 		schBuiz = (SchoolChoiceBusiness) IBOLookup.getServiceInstance(iwc, SchoolChoiceBusiness.class);
-		centralPlacementBiz = (CentralPlacementBusiness) IBOLookup.getServiceInstance(iwc, CentralPlacementBusiness.class);
 		canApply = checkCanApply(iwc);
 		control(iwc);
 	}
@@ -409,11 +405,13 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		T.setHeight(row++, 12);
 		T.add(getChildInfo(iwc, child), 1, row++);
 		T.setHeight(row++, 12);
+//		T.add(getCurrentSchool(), 1, row++);
+//		T.setHeight(row++, 12);
 		T.add(getChoiceSchool(), 1, row++);
 		T.setHeight(row++, 12);
 		T.add(getMessagePart(), 1, row++);
 		T.setHeight(row++, 12);
-		T.add(getCurrentSchool(/*iwc, child*/), 1, row++);
+		T.add(getCurrentSchool(), 1, row++);
 		T.setHeight(row++, 12);
 
 		// Space table over submit button
@@ -435,8 +433,10 @@ public class SchoolChoiceApplication extends CommuneBlock {
 			Script S = p.getAssociatedScript();
 			Script F = new Script();
 			
+			/* *** Borgman addings *** */
 			S.addVariable("sportOrMusicSchools", "new Array('2', '3', '4')");
 			S.addFunction("getAlertIfSportsOrMusicSchool", getAlertIfSportsOrMusicSchool());					
+			/* *** */
 			
 			S.addFunction("initFilter", getInitFilterScript());
 			S.addFunction("setSelected", getSetSelectedScript());
@@ -566,44 +566,16 @@ public class SchoolChoiceApplication extends CommuneBlock {
 				previousSeason = season;
 			else
 				previousSeason = schCommBiz.getPreviousSchoolSeason(season);
-			
-			
 			schoolClassMember = schBuiz.getSchoolBusiness().getSchoolClassMemberHome().findByUserAndSeason(child, previousSeason);
-			
-			// Get current elementary school placement
-			/*schoolClassMember = schBuiz.getSchoolBusiness().getSchoolClassMemberHome().findLatestByUserAndSchCategory(
-																										child, 
-																										schBuiz.getSchoolBusiness().getCategoryElementarySchool());
-			*/
-			
-			// if no current elementary school placement, get one from child care
-			/*if (schoolClassMember == null) {
-				schoolClassMember = schBuiz.getSchoolBusiness().getSchoolClassMemberHome().findLatestByUserAndSchCategory(
-																										child, 
-																										schBuiz.getSchoolBusiness().getCategoryChildcare());
-				valPreGrade = 5; 
-			}
-			*/
-			
-			//schoolClass = schoolClassMember.getSchoolClass();
-			//school = schoolClass.getSchool();
-					
 			schoolClass = schBuiz.getSchoolBusiness().getSchoolClassHome().findByPrimaryKey(new Integer(schoolClassMember.getSchoolClassId()));
 			school = schBuiz.getSchool(schoolClass.getSchoolId());
 			if (school != null)
 				this.hasPreviousSchool = true;
-			
 			schoolArea = schBuiz.getSchoolBusiness().getSchoolAreaHome().findByPrimaryKey(new Integer(school.getSchoolAreaId()));
-			//schoolArea = school.getSchoolArea();
-			
 			Collection Stypes = school.findRelatedSchoolTypes();
 			if (!Stypes.isEmpty())
 				schoolType = (SchoolType) Stypes.iterator().next();
-			
-			//schoolType = schoolClassMember.getSchoolType();
-			
 			schoolYear = schBuiz.getSchoolBusiness().getSchoolYearHome().findByPrimaryKey(new Integer(schoolClassMember.getSchoolYearId()));
-			//schoolYear = schoolClassMember.getSchoolYear();
 		}
 		catch (Exception e) {
 			hasPreviousSchool = false;
@@ -692,7 +664,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		return table;
 	}
 
-	private PresentationObject getCurrentSchool(/*IWContext iwc, User child*/) throws java.rmi.RemoteException {
+	private PresentationObject getCurrentSchool() throws java.rmi.RemoteException {
 		/*if (age.getYears() <= 6) {
 			hasPreviousSchool = true;
 			PresentationObjectContainer container = new PresentationObjectContainer();
@@ -728,7 +700,6 @@ public class SchoolChoiceApplication extends CommuneBlock {
 				table.add(new HiddenInput(prmPreSchool, school.getPrimaryKey().toString()), 4, 4);
 			}
 			else {*/
-						
 				table.add(getSmallHeader(iwrb.getLocalizedString("school.school_type", "Type")+":"), 1, 2);
 				table.add(getSmallHeader(iwrb.getLocalizedString("school.school_area", "Area")+":"), 1, 3);
 				table.add(getSmallHeader(iwrb.getLocalizedString("school.school_name", "School name")+":"), 1, 4);
@@ -747,24 +718,15 @@ public class SchoolChoiceApplication extends CommuneBlock {
 				
 				DropdownMenu drpGrade = (DropdownMenu) getStyledInterface(new DropdownMenu(prmPreGrade));
 				drpGrade.addMenuElement("5", "");
-				drpSchools.addMenuElementFirst("-1", "");				
 				Collection coll = getSchoolYears();
 				if (coll != null) {
 					Iterator iter = coll.iterator();
 					while (iter.hasNext()) {
 						SchoolYear element = (SchoolYear) iter.next();
 						drpGrade.addMenuElement(element.getSchoolYearAge(), element.getName());
-						//Integer yearPK = (Integer) element.getPrimaryKey();
-						//drpGrade.addMenuElement(yearPK.toString(), element.getName());
 					}
 				}
-				//drpGrade.setSelectedElement(String.valueOf(valPreGrade));
-				/*if (schoolYear != null) {
-					Integer yearPK = (Integer) schoolYear.getPrimaryKey();
-					drpGrade.setSelectedElement(String.valueOf(yearPK));					
-				}
-				*/
-				drpGrade.setSelectedElement(valPreGrade);
+				drpGrade.setSelectedElement(String.valueOf(valPreGrade));
 
 				Script script = myForm.getAssociatedFormScript();
 				if (script == null) {
@@ -965,6 +927,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 			//table.add(getSmallHeader(Text.NON_BREAKING_SPACE + iwrb.getLocalizedString("school.child_care_requested", "Interested in after school child care")), 1, row);
 		}
 
+		// *** borgman added
 		// School choice message link
 		table.mergeCells(1, row, 5, row);
 		table.add(getHeader(iwrb.getLocalizedString("school.after_school_choice", "Choice of after school care")), 1, row);
@@ -1048,34 +1011,13 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		return null;
 	}
 
-	/*
-	 * Get school years for school types "Forskoleklass" and "Grundskola"
-	 */
 	private Collection getSchoolYears() {
-		Vector schYears = null;
 		try {
-			 schYears = new Vector();
-		
-			// Add school years for school type "Forskola"
-			Collection tmpVec = schCommBiz.getSchoolBusiness().findAllSchoolYearsBySchoolType(5);
-			for (Iterator iter = tmpVec.iterator(); iter.hasNext();) {
-				SchoolYear element = (SchoolYear) iter.next();
-				schYears.add(element);
-			}
-			
-			// Add school years for school type "Grundskola"
-			tmpVec = schCommBiz.getSchoolBusiness().findAllSchoolYearsBySchoolType(4);
-			for (Iterator iter = tmpVec.iterator(); iter.hasNext();) {
-				SchoolYear element = (SchoolYear) iter.next();
-				schYears.add(element);				
-			}
-			
-	
-			return schYears;
+			return schCommBiz.getSchoolBusiness().findAllSchoolYears();
 		}
-		catch (Exception e) {}
-		
-		return schYears;
+		catch (Exception e) {
+		}
+		return null;
 	}
 
 	/* Commented out since it is never used...
@@ -1432,16 +1374,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		
 		return sb.toString();
 	}
-	
-/*	private String getInitFromschool() {
-		StringBuffer sb = new StringBuffer();
-		sb.append("function initFromschool {\n")
-		.append("\t")
-		
-		return sb.toString();
-	}
-*/
-	
+
 	private boolean[] checkCanApply(IWContext iwc) throws RemoteException {
 		if (_useOngoingSeason) {
 			boolean[] canApply = {true, true, true};
@@ -1574,5 +1507,4 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	public void setForTesting(boolean isForTesting) {
 		this._isForTesting = isForTesting;
 	}
-	
 }
