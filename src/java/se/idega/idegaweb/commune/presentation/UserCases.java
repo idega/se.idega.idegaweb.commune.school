@@ -46,7 +46,7 @@ public class UserCases extends CommuneBlock {
 		return IW_BUNDLE_IDENTIFIER;
 	}
 	public void main(IWContext iwc) {
-		this.setResourceBundle(getResourceBundle(iwc));
+		//this.setResourceBundle(getResourceBundle(iwc));
 		try {
 			int action = parseAction(iwc);
 			switch (action) {
