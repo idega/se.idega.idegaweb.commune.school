@@ -46,7 +46,7 @@ import com.idega.util.IWTimestamp;
  * Copyright:    Copyright idega Software (c) 2002
  * Company:	idega Software
  * @author <a href="mailto:roar@idega.is">roar</a>
- * @version $Id: EventList.java,v 1.11 2004/01/13 15:05:29 jonas Exp $
+ * @version $Id: EventList.java,v 1.12 2004/01/13 16:42:42 jonas Exp $
  * @since 17.3.2003 
  */
 
@@ -240,83 +240,7 @@ public class EventList extends CommuneBlock {
 
 	private void viewMessages(String[] ids)
 		throws FinderException {
-		/*Table layout = new Table();
-		Collection selectedLetters = getPrintedLetter().findLetters(ids);
-
-		Iterator iter = selectedLetters.iterator();
-
-		//int bulkId;
-		int layoutRow = 1;
-		while (iter.hasNext()) {
-			int row = 1;
-
-			Table message = new Table(2, 8);
-			PrintedLetterMessage msg = (PrintedLetterMessage) iter.next();
-
-			addField(
-				message,
-				localize(LOCALE_MSGID, "Message Id"),
-				String.valueOf(msg.getNodeID()),
-				row++);
-			addField(
-				message,
-				localize(LOCALE_DATE_CREATED, "Message created"),
-				msg.getCreated().toString(),
-				row++);
-			//		addField(message, "From", msg.getSenderName(), row++);
-			addField(
-				message,
-				localize(LOCALE_RECEIVER, "Receiver"),
-				msg.getOwner().getName(),
-				row++);
-			addField(
-				message,
-				localize(LOCALE_SSN, "SSN"),
-				msg.getOwner().getPersonalID(),
-				row++);
-			//		addField(layout, "Type:", msg.getMessageType(), row++);
-			//		addField(layout, "Type:", msg.msg.getLetterType(), row++);
-			addField(
-				message,
-				localize(LOCALE_EVENT, "Event"),
-				msg.getSubject(),
-				row++);
-			message.add(new Text(""), 1, row++);
-			//Body
-			message.mergeCells(1, row, 2, row);
-			message.add(getSmallText(msg.getBody()), 1, row++);
-			
-			int fileID = createPrintableMessage(msg);
-			System.out.println("parent case for EventList message is " + msg.getParentCase());
-			if(fileID!=-1) {
-				System.out.println("adding link for pdf");
-				Link viewLink = new Link(msg.getSubject() + "  (" + msg.getOwner().getName() + ")");
-				viewLink.setFile(fileID);
-				message.add(viewLink, 1, row);
-				message.add("", 2, row++);
-			} else {
-				System.out.println("Could not create pdf, no link added");
-			}
-
-			layout.add(message, 1, layoutRow++);
-
-			if (iter.hasNext()) {
-				layout.add(new HorizontalRule(), 1, layoutRow);
-				layout.setHeight(layoutRow++, 1, "70");
-			}
-		}
-
-		Table toolbar = new Table();
-		toolbar.setAlignment(Table.HORIZONTAL_ALIGN_RIGHT);
-		toolbar.setCellpadding(2);
-		GenericButton printBtn = getButton(new PrintButton(localize("school.print","Print")));
-		GenericButton backBtn = getButton(new BackButton());
-
-		toolbar.add(backBtn, 1, 1);
-		toolbar.add(printBtn, 2, 1);
-
-		layout.add(toolbar, 1, layoutRow);
-		add(layout);*/
+		
 		Collection selectedLetters = getPrintedLetter().findLetters(ids);
 
 		Iterator iter = selectedLetters.iterator();
@@ -329,7 +253,6 @@ public class EventList extends CommuneBlock {
 			PrintedLetterMessage msg = (PrintedLetterMessage) iter.next();
 			
 			int fileID = createPrintableMessage(msg);
-			System.out.println("parent case for EventList message is " + msg.getParentCase());
 			if(fileID!=-1) {
 				System.out.println("adding link for pdf");
 				Link viewLink = new Link(msg.getSubject() + "  (" + msg.getOwner().getName() + ")");
@@ -346,7 +269,6 @@ public class EventList extends CommuneBlock {
 	/* creates the pdf file and returns the ICFile identifier */
 	private int createPrintableMessage(PrintMessage msg) {
 		try {
-			System.out.println("EventList message CaseCode is \"" + msg.getParentCase().getCaseCode().toString() + "\"");
 			DocumentBusiness docBiz = getDocumentBusiness();
 			String userName = _iwc.getCurrentUser().getName();
 			String fileName = "EventListLetter-" + msg.getNodeID() + "-" + _iwc.getCurrentLocaleId() + ".pdf";
