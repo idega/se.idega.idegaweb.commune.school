@@ -698,11 +698,10 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
     }
 
 	/**
-	 * @param children --
 	 * @return int id of document
 	 */
     public int generateReminderLetter
-        (final int reminderId, final Collection children)
+        (final int reminderId, final SchoolChoiceReminderReceiver [] receivers)
         throws RemoteException {
         try{
             MemoryFileBuffer buffer = new MemoryFileBuffer();
@@ -712,7 +711,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
             PdfWriter.getInstance(document, mos);
             document.open();
             document.add(new Paragraph("Hello World"));
-            document.add(new Paragraph(children.toString ()));
+            document.add(new Paragraph(receivers.toString ()));
             document.close();
             ICFileHome icFileHome = (ICFileHome) getIDOHome(ICFile.class);
             ICFile file = icFileHome.create();
@@ -730,25 +729,37 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
         }
     }
         
-	public Set findStudentIdsWhoChosedForCurrentSeason ()
+    public SchoolChoiceReminderReceiver []
+        findAllStudentsThatMustDoSchoolChoice ()
+        throws RemoteException, FinderException {
+        // this is a fake code - just to get some students - must be replaced!
+        final Set ids = findStudentIdsWhoChosedForCurrentSeason ();
+        final int idCount = ids.size ();
+        final SchoolChoiceReminderReceiver [] receivers
+                = new SchoolChoiceReminderReceiver [idCount];
+        final Iterator iter = ids.iterator ();
+        final MemberFamilyLogic familyLogic = getMemberFamilyLogic();
+        final UserBusiness userBusiness = getUserBusiness();
+        for (int i = 0; i < idCount; i++) {
+            final Integer id = (Integer) iter.next ();
+            receivers [i] = new SchoolChoiceReminderReceiver
+                    (familyLogic, userBusiness, id);
+        }
+
+        return receivers;
+    }
+
+	Set findStudentIdsWhoChosedForCurrentSeason ()
         throws RemoteException, FinderException {
         final Integer currentYearId
                 = (Integer) getCurrentSeason ().getPrimaryKey ();
         final Collection choices
                 = getSchoolChoiceHome().findBySeason(currentYearId.intValue ());
         final Set students = new HashSet ();
-        final MemberFamilyLogic familyLogic = getMemberFamilyLogic();
         for (Iterator i = choices.iterator (); i.hasNext ();) {
             final SchoolChoice choice = (SchoolChoice) i.next ();
             students.add (new Integer (choice.getChildId ()));
         }
         return students;
-
-        /*
-          final Collection parents
-          = familyLogic.getCustodiansFor(getUser(choice.getChildId ()));
-          System.err.println (parents.iterator ().next ().toString ()
-          + " är förälder till " + choice.getChildId ());
-        */
 	}
  }

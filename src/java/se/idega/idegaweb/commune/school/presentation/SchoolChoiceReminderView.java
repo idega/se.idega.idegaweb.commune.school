@@ -1,19 +1,16 @@
 package se.idega.idegaweb.commune.school.presentation;
 
 import com.idega.business.IBOLookup;
-import com.idega.core.data.Address;
 import com.idega.presentation.*;
 import com.idega.presentation.text.*;
 import com.idega.presentation.ui.*;
 import com.idega.user.business.UserBusiness;
 import com.idega.user.data.User;
-import is.idega.idegaweb.member.business.MemberFamilyLogic;
-import is.idega.idegaweb.member.business.NoCustodianFound;
 import java.rmi.RemoteException;
 import java.util.*;
 import javax.ejb.*;
 import se.idega.idegaweb.commune.presentation.CommuneBlock;
-import se.idega.idegaweb.commune.school.business.SchoolChoiceBusiness;
+import se.idega.idegaweb.commune.school.business.*;
 import se.idega.idegaweb.commune.school.data.SchoolChoiceReminder;
 
 /**
@@ -23,10 +20,10 @@ import se.idega.idegaweb.commune.school.data.SchoolChoiceReminder;
  * and entity ejb classes in {@link se.idega.idegaweb.commune.school.data}.
  * <p>
  * <p>
- * Last modified: $Date: 2002/12/23 12:11:31 $ by $Author: staffan $
+ * Last modified: $Date: 2002/12/27 09:42:51 $ by $Author: staffan $
  *
  * @author <a href="http://www.staffannoteberg.com">Staffan Nöteberg</a>
- * @version $Revision: 1.12 $
+ * @version $Revision: 1.13 $
  * @see javax.ejb
  */
 public class SchoolChoiceReminderView extends CommuneBlock {
@@ -278,30 +275,9 @@ public class SchoolChoiceReminderView extends CommuneBlock {
         add (form);
     }
 
-        /*
-		table.setHeight (row++, 24);
-        table.add (getStyledInterface(new SubmitButton("Generera dokument", ACTION_KEY, GENERATE_LETTER_KEY)), 1, row);
-        */
-        /*
-        logTime (table, row++);
-        table.add (c.toString (), 1, row++);
-        logTime (table, row++);
-        final int docId = business.generateReminderLetter (reminderId, c);
-        logTime (table, row++);
-        Link viewLink = new Link("BRA LÄNK");
-        viewLink.setFile(docId);
-        table.add (viewLink, 1, row++);
-        */
-
-
     private Table getStudentList (final IWContext iwc,
                                   final SchoolChoiceBusiness business,
                                   final int reminderId) throws RemoteException {
-        final UserBusiness userBusiness = (UserBusiness)
-                IBOLookup.getServiceInstance (iwc, UserBusiness.class);
-        final MemberFamilyLogic familyLogic = (MemberFamilyLogic)
-                IBOLookup.getServiceInstance (iwc, MemberFamilyLogic.class);
-        
         final Table studentList = new Table();
         studentList.setCellpadding(getCellpadding ());
         studentList.setCellspacing(getCellspacing ());
@@ -323,33 +299,28 @@ public class SchoolChoiceReminderView extends CommuneBlock {
                         row++);
         try {
             final SchoolChoiceReminder  reminder
-                    = business .findSchoolChoiceReminder (reminderId);
-            final Set ids
-                    = business.findStudentIdsWhoChosedForCurrentSeason ();
-            final int studentCount = ids.size ();
-            final Iterator iter = ids.iterator ();
-            final List students = new ArrayList ();
-            iwc.getSession ().setAttribute (STUDENT_LIST_KEY, students);
-            for (int i = 0; i < studentCount; i++) {
+                    = business.findSchoolChoiceReminder (reminderId);
+            final SchoolChoiceReminderReceiver [] receivers
+                    = business.findAllStudentsThatMustDoSchoolChoice ();
+            iwc.getSession ().setAttribute (STUDENT_LIST_KEY, receivers);
+            for (int i = 0; i < receivers.length; i++) {
                 try {
-                    final Integer id = (Integer) iter.next ();
                     final CheckBox checkBox
-                            = new CheckBox (CHILDREN_COUNT_KEY + i, "" + id);
+                            = new CheckBox (CHILDREN_COUNT_KEY + i, "" + i);
                     checkBox.setChecked (true);
-                    final ReminderReceiver receiver = new ReminderReceiver
-                            (familyLogic, userBusiness, id);
-                    students.add (i, receiver);
+
+                    final SchoolChoiceReminderReceiver receiver = receivers [i];
                     col = 1;
                     studentList.setRowColor(row, (i % 2 == 0)
                                             ? getZebraColor1()
                                             : getZebraColor2());
                     studentList.add (checkBox, col++, row);
-                    studentList.add (receiver.studentName, col++, row);
-                    studentList.add (receiver.ssn, col++, row);
-                    studentList.add (receiver.parentName, col++, row);
-                    studentList.add (receiver.addressLine1 + ", "
-                                     + receiver.addressLine2, col++, row);
-                    row++;
+                    studentList.add (receiver.getStudentName (), col++, row);
+                    studentList.add (receiver.getSsn (), col++, row);
+                    studentList.add (receiver.getParentName (), col++, row);
+                    studentList.add (receiver.getStreetAddress () + ", "
+                                     + receiver.getPostalAddress (), col++,
+                                     row++);
                 } catch (Exception e) {
                     e.printStackTrace ();
                 }
@@ -360,21 +331,35 @@ public class SchoolChoiceReminderView extends CommuneBlock {
         return studentList;
     }
 
-    private void generateLetter (final IWContext iwc) throws RemoteException {
-        final List students
-                = (List) iwc.getSession ().getAttribute (STUDENT_LIST_KEY);
-        if (students == null) {
+    private void generateLetter (final IWContext iwc) throws RemoteException,
+                                                             FinderException {
+        final SchoolChoiceReminderReceiver [] allReceivers
+                = (SchoolChoiceReminderReceiver [])
+                iwc.getSession ().getAttribute (STUDENT_LIST_KEY);
+        if (allReceivers == null) {
             add ("Lost session data - please try again.");
             showMainMenu (iwc);
             return;
         }
 
         iwc.getSession ().removeAttribute (STUDENT_LIST_KEY);
-        for (int i = 0; i < students.size (); i++) {
+		final SchoolChoiceBusiness business = getSchoolChoiceBusiness (iwc);
+        final int reminderId = Integer.parseInt (iwc.getParameter
+                                                 (CASE_ID_KEY));
+        final List checkedReceivers = new ArrayList ();
+        for (int i = 0; i < allReceivers.length; i++) {
             if (iwc.isParameterSet (CHILDREN_COUNT_KEY + i)) {
-                add (((ReminderReceiver) students.get (i)).studentName + " - ");
+                checkedReceivers.add (allReceivers [i]);
             }
         }
+        final SchoolChoiceReminderReceiver [] receiverArray
+                = (SchoolChoiceReminderReceiver []) checkedReceivers.toArray
+                (new SchoolChoiceReminderReceiver [checkedReceivers.size ()]);
+        final int docId = business.generateReminderLetter (reminderId,
+                                                           receiverArray);
+        final Link viewLink = new Link("BRA LÄNK");
+        viewLink.setFile (docId);
+        add (viewLink);
     }
 
     private static void logTime (final Table table, final int row) {
@@ -435,39 +420,4 @@ public class SchoolChoiceReminderView extends CommuneBlock {
 	private String getLocalizedString(final String key, final String value) {
 		return getResourceBundle().getLocalizedString(key, value);
 	}
-
-    private class ReminderReceiver {
-        final String studentName;
-        final String ssn;
-        final String parentName;
-        final String addressLine1;
-        final String addressLine2;
-
-        ReminderReceiver (final MemberFamilyLogic familyLogic,
-                          final UserBusiness userBusiness,
-                          final Integer userId) throws RemoteException,
-                                                       NoCustodianFound {
-            final User student = userBusiness.getUser (userId);
-            studentName = student.getName ();
-            ssn = student.getPersonalID();
-            final Collection parents = familyLogic.getCustodiansFor(student);
-            final User parent = (User) parents.iterator ().next ();
-            parentName = parent.getName ();
-            final int parentId
-                    = ((Integer) parent.getPrimaryKey ()).intValue ();
-            final Address address = userBusiness.getUserAddress1 (parentId);
-            addressLine1 = address.getStreetAddress();
-            addressLine2 = address.getPostalAddress();
-        }
-
-        ReminderReceiver (final String studentName, final String parentName,
-                          final String ssn, final String addressLine1,
-                          final String addressLine2) {
-            this.studentName = studentName;
-            this.parentName = parentName;
-            this.ssn = ssn;
-            this.addressLine1 = addressLine1;
-            this.addressLine2 = addressLine2;
-        }
-    }
 }
