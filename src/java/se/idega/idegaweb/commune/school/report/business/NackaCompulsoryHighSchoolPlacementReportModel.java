@@ -1,5 +1,5 @@
 /*
- * $Id: NackaCompulsoryHighSchoolPlacementReportModel.java,v 1.4 2004/01/12 17:22:15 anders Exp $
+ * $Id: NackaCompulsoryHighSchoolPlacementReportModel.java,v 1.5 2004/01/15 14:53:43 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -18,10 +18,10 @@ import com.idega.block.school.data.School;
 /** 
  * Report model for placements in Nacka compulsory high schools.
  * <p>
- * Last modified: $Date: 2004/01/12 17:22:15 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/15 14:53:43 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public class NackaCompulsoryHighSchoolPlacementReportModel extends ReportModel {
 
@@ -33,6 +33,9 @@ public class NackaCompulsoryHighSchoolPlacementReportModel extends ReportModel {
 	private final static int COLUMN_METHOD_SCHOOL_YEAR = 101;
 	private final static int COLUMN_METHOD_TOTAL_1_4 = 102;
 	private final static int COLUMN_METHOD_OTHER_COMMUNE_CITIZENS = 103;
+
+	private final static String QUERY_NACKA_COMMUNE = "nacka_commune";
+	private final static String QUERY_OTHER_COMMUNES = "other_communes";
 	
 	private final static String KEY_REPORT_TITLE = KP + "title_nacka_compulsory_high_school_placements";
 
@@ -216,10 +219,21 @@ public class NackaCompulsoryHighSchoolPlacementReportModel extends ReportModel {
 	 * Returns the number of student placements for the specified high school and school year.
 	 */
 	protected int getCompulsoryHighSchoolPlacementCount(int schoolId, String schoolYearName) throws RemoteException {
-		ReportQuery query = new ReportQuery();
-		query.setSelectCountPlacements(getReportBusiness().getSchoolSeasonId(), schoolId);
-		query.setSchoolTypeCompulsoryHighSchool();
-		query.setSchoolYear(schoolYearName);			
+		PreparedQuery query = null;
+		ReportBusiness rb = getReportBusiness();
+		query = getQuery(QUERY_NACKA_COMMUNE);
+		if (query == null) {
+			query = new PreparedQuery(getConnection());
+			query.setSelectCount();
+			query.setPlacements(rb.getSchoolSeasonId());
+			query.setSchoolTypeCompulsoryHighSchool();
+			query.setSchool(); // parameter 1
+			query.setSchoolYearName(); // parameter 2
+			query.prepare();
+			setQuery(QUERY_NACKA_COMMUNE, query);
+		}
+		query.setInt(1, schoolId);
+		query.setString(2, schoolYearName);
 		return query.execute();
 	}
 	
@@ -228,9 +242,20 @@ public class NackaCompulsoryHighSchoolPlacementReportModel extends ReportModel {
 	 * for citizens in other communes.
 	 */
 	protected int getCompulsoryHighSchoolOCCPlacementCount(int schoolId) throws RemoteException {
-		ReportQuery query = new ReportQuery();
-		query.setSelectCountOCCPlacementsForAllSchoolYears(getReportBusiness().getSchoolSeasonId(), schoolId);
-		query.setSchoolTypeCompulsoryHighSchool();
+		PreparedQuery query = null;
+		ReportBusiness rb = getReportBusiness();
+		query = getQuery(QUERY_OTHER_COMMUNES);
+		if (query == null) {
+			query = new PreparedQuery(getConnection());
+			query.setSelectCount();
+			query.setPlacements(rb.getSchoolSeasonId());
+			query.setNotNackaCitizens();
+			query.setSchoolTypeCompulsoryHighSchool();
+			query.setSchool(); // parameter 1
+			query.prepare();
+			setQuery(QUERY_OTHER_COMMUNES, query);
+		}
+		query.setInt(1, schoolId);
 		return query.execute();
 	}
 }

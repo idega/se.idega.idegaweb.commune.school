@@ -1,5 +1,5 @@
 /*
- * $Id: NackaPrivateHighSchoolPlacementReportModel.java,v 1.1 2004/01/14 12:32:53 anders Exp $
+ * $Id: NackaPrivateHighSchoolPlacementReportModel.java,v 1.2 2004/01/15 14:53:43 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -19,10 +19,10 @@ import com.idega.block.school.data.SchoolStudyPath;
 /** 
  * Report model for private high school placements in Nacka.
  * <p>
- * Last modified: $Date: 2004/01/14 12:32:53 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/15 14:53:43 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class NackaPrivateHighSchoolPlacementReportModel extends ReportModel {
 
@@ -37,7 +37,11 @@ public class NackaPrivateHighSchoolPlacementReportModel extends ReportModel {
 	private final static int COLUMN_METHOD_TOTAL = 104;
 	private final static int COLUMN_METHOD_OTHER_COMMUNE_CITIZENS = 105;
 	private final static int COLUMN_METHOD_NACKA_CITIZENS = 106;
-	
+
+	private final static String QUERY_ALL = "all";
+	private final static String QUERY_OTHER_COMMUNES = "other_communes";
+	private final static String QUERY_NACKA_COMMUNE = "nacka_commune";
+
 	private final static String KEY_REPORT_TITLE = KP + "title_nacka_private_high_school_placements";
 	
 	private School[] _schools = null;
@@ -331,11 +335,24 @@ public class NackaPrivateHighSchoolPlacementReportModel extends ReportModel {
 	 * Only students in Nacka commune are counted. 
 	 */
 	protected int getHighSchoolNackaCommunePlacementCount(School school, String schoolYearName, String studyPathPrefix) throws RemoteException {
-		ReportQuery query = new ReportQuery();
-		query.setSelectCountStudyPathPlacements(getReportBusiness().getSchoolSeasonId(), studyPathPrefix);
-		query.setSchoolTypeHighSchool();
-		query.setSchoolYear(schoolYearName);			
-		query.setSchool(((Integer) school.getPrimaryKey()).intValue());
+		PreparedQuery query = null;
+		ReportBusiness rb = getReportBusiness();
+		query = getQuery(QUERY_ALL);
+		if (query == null) {
+			query = new PreparedQuery(getConnection());
+			query.setSelectCount();
+			query.setPlacements(rb.getSchoolSeasonId());
+			query.setNotNackaCitizens();
+			query.setSchoolTypeHighSchool();
+			query.setSchool(); // parameter 1
+			query.setSchoolYearName(); // parameter 2
+			query.setStudyPathPrefix(); // parameter 3
+			query.prepare();
+			setQuery(QUERY_ALL, query);
+		}
+		query.setInt(1, ((Integer) school.getPrimaryKey()).intValue());
+		query.setString(2, schoolYearName);
+		query.setString(3, studyPathPrefix + "%");
 		return query.execute();
 	}
 	
@@ -345,11 +362,20 @@ public class NackaPrivateHighSchoolPlacementReportModel extends ReportModel {
 	 * Only citizens outside Nacka commune are counted. 
 	 */
 	protected int getHighSchoolOCCPlacementCount(String studyPathPrefix) throws RemoteException{
-		ReportQuery query = new ReportQuery();
-		query.setSelectCountStudyPathPlacementsForAllSchoolYears(getReportBusiness().getSchoolSeasonId(), studyPathPrefix);
-		query.setNotNackaCitizens();
-		query.setSchoolTypeHighSchool();
-		query.setSchools(getReportBusiness().getPrivateHighSchools());
+		PreparedQuery query = null;
+		ReportBusiness rb = getReportBusiness();
+		query = getQuery(QUERY_OTHER_COMMUNES);
+		if (query == null) {
+			query = new PreparedQuery(getConnection());
+			query.setSelectCount();
+			query.setPlacements(rb.getSchoolSeasonId());
+			query.setNotNackaCitizens();
+			query.setSchoolTypeHighSchool();
+			query.setStudyPathPrefix(); // parameter 1
+			query.prepare();
+			setQuery(QUERY_OTHER_COMMUNES, query);
+		}
+		query.setString(1, studyPathPrefix + "%");
 		return query.execute();
 	}	
 	
@@ -359,11 +385,20 @@ public class NackaPrivateHighSchoolPlacementReportModel extends ReportModel {
 	 * Only citizens in Nacka commune are counted. 
 	 */
 	protected int getHighSchoolNackaCitizenPlacementCount(String studyPathPrefix) throws RemoteException{
-		ReportQuery query = new ReportQuery();
-		query.setSelectCountStudyPathPlacementsForAllSchoolYears(getReportBusiness().getSchoolSeasonId(), studyPathPrefix);
-		query.setOnlyNackaCitizens();
-		query.setSchoolTypeHighSchool();
-		query.setSchools(getReportBusiness().getPrivateHighSchools());
+		PreparedQuery query = null;
+		ReportBusiness rb = getReportBusiness();
+		query = getQuery(QUERY_NACKA_COMMUNE);
+		if (query == null) {
+			query = new PreparedQuery(getConnection());
+			query.setSelectCount();
+			query.setPlacements(rb.getSchoolSeasonId());
+			query.setOnlyNackaCitizens();
+			query.setSchoolTypeHighSchool();
+			query.setStudyPathPrefix(); // parameter 1
+			query.prepare();
+			setQuery(QUERY_NACKA_COMMUNE, query);
+		}
+		query.setString(1, studyPathPrefix + "%");
 		return query.execute();
 	}	
 }

@@ -1,5 +1,5 @@
 /*
- * $Id: NackaCompulsorySchoolPlacementReportModel.java,v 1.4 2004/01/12 13:41:48 anders Exp $
+ * $Id: NackaCompulsorySchoolPlacementReportModel.java,v 1.5 2004/01/15 14:53:43 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -19,10 +19,10 @@ import com.idega.block.school.data.SchoolArea;
 /** 
  * Report model for placements in Nacka compulsory schools.
  * <p>
- * Last modified: $Date: 2004/01/12 13:41:48 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/15 14:53:43 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public class NackaCompulsorySchoolPlacementReportModel extends ReportModel {
 
@@ -37,6 +37,8 @@ public class NackaCompulsorySchoolPlacementReportModel extends ReportModel {
 	private final static int COLUMN_METHOD_SUM_4_6 = 103;
 	private final static int COLUMN_METHOD_SUM_7_10 = 104;
 	private final static int COLUMN_METHOD_TOTAL_1_10 = 105;
+
+	private final static String QUERY_COMPULSORY = "compulsory";
 	
 	private final static String KEY_REPORT_TITLE = KP + "title_nacka_compulsory_school_placements";
 
@@ -334,10 +336,21 @@ public class NackaCompulsorySchoolPlacementReportModel extends ReportModel {
 	 * Returns the number of student placements for the specified school and school year.
 	 */
 	protected int getCompulsorySchoolPlacementCount(int schoolId, String schoolYearName) throws RemoteException {
-		ReportQuery query = new ReportQuery();
-		query.setSelectCountPlacements(getReportBusiness().getSchoolSeasonId(), schoolId);
-		query.setSchoolTypeCompulsorySchool();
-		query.setSchoolYear(schoolYearName);			
+		PreparedQuery query = null;
+		ReportBusiness rb = getReportBusiness();
+		query = getQuery(QUERY_COMPULSORY);
+		if (query == null) {
+			query = new PreparedQuery(getConnection());
+			query.setSelectCount();
+			query.setPlacements(rb.getSchoolSeasonId());
+			query.setSchoolTypeCompulsorySchool();
+			query.setSchool(); // parameter 1
+			query.setSchoolYearName(); // parameter 2
+			query.prepare();
+			setQuery(QUERY_COMPULSORY, query);
+		}
+		query.setInt(1, schoolId);
+		query.setString(2, schoolYearName);
 		return query.execute();
 	}
 }
