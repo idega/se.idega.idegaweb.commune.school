@@ -1,5 +1,5 @@
 /*
- * $Id: NackaHighSchoolPlacementReportModel.java,v 1.4 2004/01/07 15:56:36 anders Exp $
+ * $Id: NackaHighSchoolPlacementReportModel.java,v 1.5 2004/01/09 10:21:00 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -18,10 +18,10 @@ import com.idega.block.school.data.SchoolStudyPath;
 /** 
  * Report model for high school placements per student age for students in Nacka and schools in Nacka.
  * <p>
- * Last modified: $Date: 2004/01/07 15:56:36 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/09 10:21:00 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public class NackaHighSchoolPlacementReportModel extends ReportModel {
 
@@ -364,29 +364,30 @@ public class NackaHighSchoolPlacementReportModel extends ReportModel {
 							value += getCell(row, 10).getFloatValue();
 							value += getCell(row, 11).getFloatValue();
 							value += getCell(row, 12).getFloatValue();
+							value += getCell(row, 13).getFloatValue();
 						} else {
 							value = getHighSchoolCountyCouncilPlacementCount(age, studyPathPrefix, isCompulsory);
 						}
 						break;
 					case COLUMN_METHOD_FREE_STANDING:
 						if (studentAge == null) {
-							value += getCell(row, 14).getFloatValue();
 							value += getCell(row, 15).getFloatValue();
 							value += getCell(row, 16).getFloatValue();
 							value += getCell(row, 17).getFloatValue();
+							value += getCell(row, 18).getFloatValue();
 						} else {
 							value = getHighSchoolPrivatePlacementCount(age, studyPathPrefix, isCompulsory);
 						}
 						break;
 					case COLUMN_METHOD_TOTAL:
 						if (studentAge == null) {
-							value += getCell(row, 19).getFloatValue();
 							value += getCell(row, 20).getFloatValue();
 							value += getCell(row, 21).getFloatValue();
 							value += getCell(row, 22).getFloatValue();
+							value += getCell(row, 23).getFloatValue();
 						} else {
-							for (int i = row - 1; i >= 0; i--) {
-								Cell c = getCell(i, column);
+							for (int i = column - 20; i < column; i += 4) {
+								Cell c = getCell(row, i);
 								value += c.getFloatValue();
 							}
 						}
@@ -404,49 +405,53 @@ public class NackaHighSchoolPlacementReportModel extends ReportModel {
 					case COLUMN_METHOD_NACKA_COMMUNE:
 						if (studentAge == null) {
 							float total = 0f;
-							total += getCell(row - 1, 0).getFloatValue();
-							total += getCell(row - 1, 5).getFloatValue();
-							total += getCell(row - 1, 10).getFloatValue();
+							total += getCell(row - 1, 4).getFloatValue();
+							total += getCell(row - 1, 9).getFloatValue();
 							total += getCell(row - 1, 14).getFloatValue();
+							total += getCell(row - 1, 19).getFloatValue();
 							if (total > 0) {
-								value = getCell(row - 1, 0).getFloatValue() / total;								
+								value = getCell(row - 1, 4).getFloatValue() / total;								
 							}
+							total *= 100;
 						}
 						break;
 					case COLUMN_METHOD_OTHER_COMMUNES:
 						if (studentAge == null) {
 							float total = 0f;
-							total += getCell(row - 1, 0).getFloatValue();
-							total += getCell(row - 1, 5).getFloatValue();
-							total += getCell(row - 1, 10).getFloatValue();
+							total += getCell(row - 1, 4).getFloatValue();
+							total += getCell(row - 1, 9).getFloatValue();
 							total += getCell(row - 1, 14).getFloatValue();
+							total += getCell(row - 1, 19).getFloatValue();
 							if (total > 0) {
-								value = getCell(row - 1, 5).getFloatValue() / total;								
+								value = getCell(row - 1, 9).getFloatValue() / total;								
 							}
+							total *= 100;
 						}
 						break;
 					case COLUMN_METHOD_COUNTY_COUNCIL:
 						if (studentAge == null) {
 							float total = 0f;
-							total += getCell(row - 1, 0).getFloatValue();
-							total += getCell(row - 1, 5).getFloatValue();
-							total += getCell(row - 1, 10).getFloatValue();
+							total += getCell(row - 1, 4).getFloatValue();
+							total += getCell(row - 1, 9).getFloatValue();
 							total += getCell(row - 1, 14).getFloatValue();
+							total += getCell(row - 1, 19).getFloatValue();
 							if (total > 0) {
-								value = getCell(row - 1, 10).getFloatValue() / total;								
+								value = getCell(row - 1, 14).getFloatValue() / total;								
 							}
+							total *= 100;
 						}
 						break;
 					case COLUMN_METHOD_FREE_STANDING:
 						if (studentAge == null) {
 							float total = 0f;
-							total += getCell(row - 1, 0).getFloatValue();
-							total += getCell(row - 1, 5).getFloatValue();
-							total += getCell(row - 1, 10).getFloatValue();
+							total += getCell(row - 1, 4).getFloatValue();
+							total += getCell(row - 1, 9).getFloatValue();
 							total += getCell(row - 1, 14).getFloatValue();
+							total += getCell(row - 1, 19).getFloatValue();
 							if (total > 0) {
-								value = getCell(row - 1, 14).getFloatValue() / total;								
+								value = getCell(row - 1, 19).getFloatValue() / total;								
 							}
+							total *= 100;
 						}
 						break;
 					case COLUMN_METHOD_TOTAL:

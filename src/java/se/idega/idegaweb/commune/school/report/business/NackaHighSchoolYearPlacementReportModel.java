@@ -1,5 +1,5 @@
 /*
- * $Id: NackaHighSchoolYearPlacementReportModel.java,v 1.10 2004/01/09 08:43:03 anders Exp $
+ * $Id: NackaHighSchoolYearPlacementReportModel.java,v 1.11 2004/01/09 10:21:00 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -18,10 +18,10 @@ import com.idega.block.school.data.SchoolStudyPath;
 /** 
  * Report model for high school placements per year for students in Nacka.
  * <p>
- * Last modified: $Date: 2004/01/09 08:43:03 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/09 10:21:00 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.10 $
+ * @version $Revision: 1.11 $
  */
 public class NackaHighSchoolYearPlacementReportModel extends ReportModel {
 
@@ -370,11 +370,11 @@ public class NackaHighSchoolYearPlacementReportModel extends ReportModel {
 							value += getCell(row, 20).getFloatValue();
 							value += getCell(row, 21).getFloatValue();
 							value += getCell(row, 22).getFloatValue();
-						} else {
-							for (int i = row - 1; i >= 0; i--) {
-								Cell c = getCell(i, column);
-								value += c.getFloatValue();
-							}
+						} else {							
+							value += getCell(row, column - 19).getFloatValue();
+							value += getCell(row, column - 14).getFloatValue();
+							value += getCell(row, column - 10).getFloatValue();
+							value += getCell(row, column - 5).getFloatValue();
 						}
 						break;
 				}
@@ -390,49 +390,53 @@ public class NackaHighSchoolYearPlacementReportModel extends ReportModel {
 					case COLUMN_METHOD_NACKA_COMMUNE:
 						if (schoolYearName == null) {
 							float total = 0f;
-							total += getCell(row - 1, 0).getFloatValue();
-							total += getCell(row - 1, 5).getFloatValue();
-							total += getCell(row - 1, 10).getFloatValue();
-							total += getCell(row - 1, 14).getFloatValue();
+							total += getCell(row - 1, 4).getFloatValue();
+							total += getCell(row - 1, 9).getFloatValue();
+							total += getCell(row - 1, 13).getFloatValue();
+							total += getCell(row - 1, 18).getFloatValue();
 							if (total > 0) {
-								value = getCell(row - 1, 0).getFloatValue() / total;								
+								value = getCell(row - 1, 4).getFloatValue() / total;								
 							}
+							value *= 100;
 						}
 						break;
 					case COLUMN_METHOD_OTHER_COMMUNES:
 						if (schoolYearName == null) {
 							float total = 0f;
-							total += getCell(row - 1, 0).getFloatValue();
-							total += getCell(row - 1, 5).getFloatValue();
-							total += getCell(row - 1, 10).getFloatValue();
-							total += getCell(row - 1, 14).getFloatValue();
+							total += getCell(row - 1, 4).getFloatValue();
+							total += getCell(row - 1, 9).getFloatValue();
+							total += getCell(row - 1, 13).getFloatValue();
+							total += getCell(row - 1, 18).getFloatValue();
 							if (total > 0) {
-								value = getCell(row - 1, 5).getFloatValue() / total;								
+								value = getCell(row - 1, 9).getFloatValue() / total;								
 							}
+							value *= 100;
 						}
 						break;
 					case COLUMN_METHOD_COUNTY_COUNCIL:
 						if (schoolYearName == null) {
 							float total = 0f;
-							total += getCell(row - 1, 0).getFloatValue();
-							total += getCell(row - 1, 5).getFloatValue();
-							total += getCell(row - 1, 10).getFloatValue();
-							total += getCell(row - 1, 14).getFloatValue();
+							total += getCell(row - 1, 4).getFloatValue();
+							total += getCell(row - 1, 9).getFloatValue();
+							total += getCell(row - 1, 13).getFloatValue();
+							total += getCell(row - 1, 18).getFloatValue();
 							if (total > 0) {
-								value = getCell(row - 1, 10).getFloatValue() / total;								
+								value = getCell(row - 1, 13).getFloatValue() / total;								
 							}
+							value *= 100;
 						}
 						break;
 					case COLUMN_METHOD_FREE_STANDING:
 						if (schoolYearName == null) {
 							float total = 0f;
-							total += getCell(row - 1, 0).getFloatValue();
-							total += getCell(row - 1, 5).getFloatValue();
-							total += getCell(row - 1, 10).getFloatValue();
-							total += getCell(row - 1, 14).getFloatValue();
+							total += getCell(row - 1, 4).getFloatValue();
+							total += getCell(row - 1, 9).getFloatValue();
+							total += getCell(row - 1, 13).getFloatValue();
+							total += getCell(row - 1, 18).getFloatValue();
 							if (total > 0) {
-								value = getCell(row - 1, 14).getFloatValue() / total;								
+								value = getCell(row - 1, 19).getFloatValue() / total;								
 							}
+							value *= 100;
 						}
 						break;
 					case COLUMN_METHOD_TOTAL:
