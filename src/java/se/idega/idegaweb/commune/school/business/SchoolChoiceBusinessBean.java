@@ -33,6 +33,7 @@ import com.idega.data.IDOStoreException;
 import com.idega.user.business.UserBusiness;
 import com.idega.user.data.Group;
 import com.idega.user.data.User;
+import com.idega.util.IWTimestamp;
 /**
  * Title:
  * Description:
@@ -144,6 +145,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		}
 
 		SchoolChoice choice = null;
+		boolean hasPrevious = false;
 
 		if (season != null) {
 			Collection choices = this.findByStudentAndSeason(childId, ((Integer)season.getPrimaryKey()).intValue());
@@ -153,6 +155,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 					SchoolChoice element = (SchoolChoice) iter.next();
 					if (element.getChoiceOrder() == choiceOrder) {
 						choice = element;
+						hasPrevious = true;
 						continue;	
 					}
 				}	
@@ -192,6 +195,8 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 			Integer seasonId = (Integer) season.getPrimaryKey();
 			choice.setSchoolSeasonId(seasonId.intValue());
 		}
+		if (hasPrevious)
+			choice.setCreated(new IWTimestamp().getTimestampRightNow());
 		choice.setCaseStatus(caseStatus);
 		if (caseStatus.getStatus().equalsIgnoreCase("PREL")) {
 			getMessageBusiness().createUserMessage(choice.getOwner(), getPreliminaryMessageSubject(), getPreliminaryMessageBody(choice));
