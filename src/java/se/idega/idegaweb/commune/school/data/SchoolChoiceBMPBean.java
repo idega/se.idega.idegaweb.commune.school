@@ -14,7 +14,6 @@ import com.idega.block.process.data.Case;
 import com.idega.block.process.data.CaseBMPBean;
 import com.idega.block.school.data.School;
 import com.idega.block.school.data.SchoolClassBMPBean;
-import com.idega.block.school.data.SchoolClassMemberBMPBean;
 import com.idega.block.school.data.SchoolSeason;
 import com.idega.block.school.data.SchoolType;
 import com.idega.block.school.data.SchoolYear;
@@ -44,7 +43,9 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 	public final static String SCHOOL_SEASON = "school_season_id";
 	public final static String SCHOOL_TYPE = "school_type_id";
 	public final static String CURRENT_SCHOOL = "curr_school_id";
-	public final static String GRADE = "grade";
+	public final static String CURRENT_SCHOOL_YEAR = "current_school_year_id";
+	//public final static String GRADE = "grade";
+	public final static String SCHOOL_YEAR = "school_year_id";
 	public final static String CHOSEN_SCHOOL = "school_id";
 	public final static String CHILD = "child_id";
 	public final static String PREFERRED_PLACEMENT_DATE = "placement_date";
@@ -112,14 +113,19 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 
 	public void initializeAttributes() {
 		addGeneralCaseRelation();
-		this.addAttribute(CHILD, "child_id", true, true, Integer.class, MANY_TO_ONE, User.class);
-		this.addAttribute(CURRENT_SCHOOL, "Current school", true, true, Integer.class, MANY_TO_ONE, School.class);
-		this.addAttribute(GRADE, "Grade", Integer.class);
-		this.addAttribute(CHOSEN_SCHOOL, "Chosen school", true, true, Integer.class, MANY_TO_ONE, School.class);
-		this.addAttribute(SCHOOL_SEASON, "School season", true, true, Integer.class, MANY_TO_ONE, SchoolSeason.class);
-		this.addAttribute(SCHOOL_TYPE, "School type", true, true, Integer.class, MANY_TO_ONE, SchoolType.class);
-		this.addAttribute(PREFERRED_PLACEMENT_DATE, "Preferred placement date", true, true, Date.class);
+		//this.addAttribute(CHILD, "child_id", true, true, Integer.class, MANY_TO_ONE, User.class);
+		//this.addAttribute(CURRENT_SCHOOL, "Current school", true, true, Integer.class, MANY_TO_ONE, School.class);
+		//this.addAttribute(GRADE, "Grade", Integer.class);
+		//this.addAttribute(CHOSEN_SCHOOL, "Chosen school", true, true, Integer.class, MANY_TO_ONE, School.class);
+		this.addManyToOneRelationship(CURRENT_SCHOOL,School.class);
+		this.addManyToOneRelationship(CURRENT_SCHOOL_YEAR,SchoolYear.class);
+		this.addManyToOneRelationship(CHOSEN_SCHOOL,School.class);
+		this.addManyToOneRelationship(CHILD,User.class);
+		this.addManyToOneRelationship(SCHOOL_SEASON,SchoolSeason.class);
+		this.addManyToOneRelationship(SCHOOL_TYPE,SchoolType.class);
+		this.addManyToOneRelationship(SCHOOL_YEAR,SchoolYear.class);
 
+		this.addAttribute(PREFERRED_PLACEMENT_DATE, "Preferred placement date", true, true, Date.class);
 		this.addAttribute(WORK_SITUATION_1, "Work situation one", Integer.class);
 		this.addAttribute(WORK_SITUATION_2, "Work situation two", Integer.class);
 		this.addAttribute(LANGUAGECHOICE, "Language choice", String.class);
@@ -140,10 +146,6 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 		
 		this.addAttribute(HAS_RECEIVED_PLACEMENT_MESSAGE, "Placement message", Boolean.class);
 		this.addAttribute(HAS_RECEIVED_CONFIRMATION_MESSAGE, "Confirmation message", Boolean.class);
-
-		//this.addManyToOneRelationship(CURRENT_SCHOOL,School.class);
-		//this.addManyToOneRelationship(CHOSEN_SCHOOL,School.class);
-		//this.addManyToOneRelationship(CHILD,User.class);
 
 	}
 	public String getEntityName() {
@@ -213,11 +215,23 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 	public void setChosenSchoolId(int id) {
 		setColumn(CHOSEN_SCHOOL, id);
 	}
-	public int getGrade() {
-		return getIntColumnValue(GRADE);
+	public SchoolYear getSchoolYear() {
+		return (SchoolYear) getColumnValue(SCHOOL_YEAR);
 	}
-	public void setGrade(int grade) {
-		setColumn(GRADE, grade);
+	public int getSchoolYearID() {
+		return getIntColumnValue(SCHOOL_YEAR);
+	}
+	public void setSchoolYear(int schoolYearID) {
+		setColumn(SCHOOL_YEAR, schoolYearID);
+	}
+	public SchoolYear getCurrentSchoolYear() {
+		return (SchoolYear) getColumnValue(CURRENT_SCHOOL_YEAR);
+	}
+	public int getCurrentSchoolYearID() {
+		return getIntColumnValue(CURRENT_SCHOOL_YEAR);
+	}
+	public void setCurrentSchoolYear(int schoolYearID) {
+		setColumn(CURRENT_SCHOOL_YEAR, schoolYearID);
 	}
 	public int getWorkSituation1() {
 		return getIntColumnValue(WORK_SITUATION_1);
@@ -465,7 +479,7 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 		return super.idoGetNumberOfRecords(sql.toString());
 	}
 
-	public int ejbHomeGetNumberOfApplications(String caseStatus, int schoolID, int schoolSeasonID, int grade) throws IDOException {
+	public int ejbHomeGetNumberOfApplications(String caseStatus, int schoolID, int schoolSeasonID, int schoolYearID) throws IDOException {
 		StringBuffer sql = new StringBuffer("select count(*) from ");
 		sql.append(getEntityName()).append(" s ");
 		sql.append(",").append(CaseBMPBean.TABLE_NAME).append(" c ");
@@ -474,7 +488,7 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 		if (schoolID != -1)
 			sql.append(" and s.SCHOOL_ID = ").append(schoolID);
 		sql.append(" and s.").append(SCHOOL_SEASON).append(" = ").append(schoolSeasonID);
-		sql.append(" and s.").append(GRADE).append(" = ").append(grade);
+		sql.append(" and s.").append(SCHOOL_YEAR).append(" = ").append(schoolYearID);
 		sql.append(" and c.CASE_STATUS = '").append(caseStatus).append("'");
 
 		return super.idoGetNumberOfRecords(sql.toString());
@@ -545,10 +559,10 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 		int seasonId = ((Integer)season.getPrimaryKey()).intValue();
 		sql.append(seasonId);
 		sql.append(" and ");
-		sql.append(GRADE);
+		sql.append(SCHOOL_YEAR);
 		sql.append(" = ");
-		int grade = year.getSchoolYearAge()-1;
-		sql.append(grade);
+		//int grade = year.getSchoolYearAge()-1;
+		sql.append(year);
 		sql.append(" order by ");
 		sql.append(CHOICEORDER);
 		return super.idoFindPKsBySQL(sql.toString());
@@ -700,12 +714,12 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 		
 	}
 	
-	public IDOQuery getIDOQuery(int schoolID, int seasonID, int gradeYear, int[] choiceOrder, String[] validStatuses, String searchStringForUser, boolean selectCount, boolean selectOnlyChildIDs, int orderBy, int placementType) {
+	public IDOQuery getIDOQuery(int schoolID, int seasonID, int schoolYear, int[] choiceOrder, String[] validStatuses, String searchStringForUser, boolean selectCount, boolean selectOnlyChildIDs, int orderBy, int placementType) {
 		boolean search = searchStringForUser != null && !searchStringForUser.equals("");
 		boolean statuses = validStatuses != null && validStatuses.length > 0;
 
 		IDOQuery query = idoQuery();
-		if (schoolID < 1 && seasonID < 1 && gradeYear < 1 && !search && !statuses) {
+		if (schoolID < 1 && seasonID < 1 && schoolYear < 1 && !search && !statuses) {
 			if (selectCount) {
 				query.appendSelectCountFrom(this);
 			}
@@ -773,11 +787,11 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 			needAnd = true;
 		}
 
-		if (gradeYear > 0) {
+		if (schoolYear > 0) {
 			if (needAnd) {
 				query.appendAnd();
 			}
-			query.append("csc.").append(GRADE).appendEqualSign().append(gradeYear);
+			query.append("csc.").append(SCHOOL_YEAR).appendEqualSign().append(schoolYear);
 			needAnd = true;
 		}
 
@@ -843,9 +857,9 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 		return query;
 	}
 
-	public Collection ejbFindBySchoolAndSeasonAndGrade(int schoolID, int seasonID, int gradeYear) throws FinderException {
+	public Collection ejbFindBySchoolAndSeasonAndGrade(int schoolID, int seasonID, int schoolYear) throws FinderException {
 		IDOQuery sql = idoQuery();
-		sql.appendSelectAllFrom(getEntityName()).appendWhere().append(CHOSEN_SCHOOL).appendEqualSign().append(schoolID).appendAnd().append(SCHOOL_SEASON).appendEqualSign().append(seasonID).appendAnd().append(GRADE).appendEqualSign().append(gradeYear);
+		sql.appendSelectAllFrom(getEntityName()).appendWhere().append(CHOSEN_SCHOOL).appendEqualSign().append(schoolID).appendAnd().append(SCHOOL_SEASON).appendEqualSign().append(seasonID).appendAnd().append(SCHOOL_YEAR).appendEqualSign().append(schoolYear);
 
 		return super.idoFindPKsBySQL(sql.toString());
 	}
