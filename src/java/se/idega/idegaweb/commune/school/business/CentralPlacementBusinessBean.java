@@ -138,8 +138,8 @@ public class CentralPlacementBusinessBean extends IBOServiceBean
 		
 		// registerDate
 		if (iwc.isParameterSet(CentralPlacementEditor.PARAM_PLACEMENT_DATE)) {
-			IWTimestamp today = IWTimestamp.RightNow();
-			today.setAsDate();    
+			//IWTimestamp today = IWTimestamp.RightNow();
+			//today.setAsDate();    
 			IWTimestamp placeStamp;
 			String placeDateStr = iwc.getParameter(CentralPlacementEditor.PARAM_PLACEMENT_DATE);
 			if (!placeDateStr.equals("")) {
@@ -152,18 +152,26 @@ public class CentralPlacementBusinessBean extends IBOServiceBean
 				dayBeforeRegStamp = dayBeforeStamp.getTimestamp();
 				dayBeforeRegDate = dayBeforeStamp.getDate();
 				
-				if (placeStamp.isEarlierThan(today)) {
+				// Below *** Removed check if earlier than today ***
+				/*if (placeStamp.isEarlierThan(today)) {
 					throw new CentralPlacementException(KEY_ERROR_PLACEMENT_DATE, 
 														"Placement date must be set and cannot be earlier than today");
 				} else {
-					registerDate = placeStamp.getTimestamp();
-				}
+				*/
+				
+				registerDate = placeStamp.getTimestamp();
+				
+				//}
 			} else {
 				throw new CentralPlacementException(KEY_ERROR_PLACEMENT_DATE, 
-														"Placement date must be set and cannot be earlier than today");
+														"Placement date must be set");
 			}
 			placementDateStr = placeDateStr;
+		}  else {
+			throw new CentralPlacementException(KEY_ERROR_PLACEMENT_DATE, 
+												"Placement date must be set");
 		}
+	
 		
 		// registrator
 		int currentUser = iwc.getCurrentUserId();
