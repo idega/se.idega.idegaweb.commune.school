@@ -854,7 +854,6 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		s.append("var areaSelect = area;").append(" \n\t");
 		s.append("var schoolSelect = school;").append(" \n\t");
 		s.append("var selectedType = typeSelect.options[typeSelect.selectedIndex].value;").append(" \n\t");
-		s.append("var selectedArea = areaSelect.options[areaSelect.selectedIndex].value;").append(" \n\t");
 		s.append("var selected = 0;").append(" \n\t");
 		s.append("if(index == 1){").append(" \n\t\t");
 		s.append("selected = typeSelect.options[typeSelect.selectedIndex].value;").append("\n\t\t");
