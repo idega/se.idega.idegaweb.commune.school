@@ -40,7 +40,7 @@ public class UserCases extends CommuneBlock {
 	private final static String PARAM_MANAGER_ID = ManagerView.PARAM_MANAGER_ID;
 	private Table mainTable = null;
 	private int manager_page_id = -1;
-    private int viewpointPageId = -1;    
+    private int viewpointPageId = -1;
 
     public final static String MYCASES_KEY = "usercases.myCases";
     public final static String MYCASES_DEFAULT = "Mina ärenden";
@@ -70,7 +70,7 @@ public class UserCases extends CommuneBlock {
 	public String getBundleIdentifier() {
 		return IW_BUNDLE_IDENTIFIER;
 	}
-    
+
 	public void main(IWContext iwc) {
 		//this.setResourceBundle(getResourceBundle(iwc));
 		try {
@@ -85,7 +85,7 @@ public class UserCases extends CommuneBlock {
 			super.add(new ExceptionWrapper(e, this));
 		}
 	}
-    
+
 	public void add(PresentationObject po) {
 		if (mainTable == null) {
 			mainTable = new Table();
@@ -96,12 +96,12 @@ public class UserCases extends CommuneBlock {
 		}
 		mainTable.add(po);
 	}
-    
+
 	private int parseAction(IWContext iwc) {
 		int action = ACTION_VIEW_CASE_LIST;
 		return action;
 	}
-    
+
 	private void viewCaseList (IWContext iwc) throws Exception {
 		add(new Break(2));
 		add(getLocalizedHeader(MYCASES_KEY, MYCASES_DEFAULT));
@@ -120,11 +120,10 @@ public class UserCases extends CommuneBlock {
                                                CONCERNING_DEFAULT), 2);
 				messageList.setHeader(localize(NAME_KEY, NAME_DEFAULT), 3);
 				messageList.setHeader(localize(DATE_KEY, DATE_DEFAULT), 4);
-				messageList.setHeader(localize(MANAGER_KEY, MANAGER_DEFAULT),
-                                      5);
+				messageList.setHeader(localize(MANAGER_KEY, MANAGER_DEFAULT),5);
+
 				messageList.setHeader(localize(STATUS_KEY, STATUS_DEFAULT), 6);
-				Collection messages = getCaseBusiness(iwc).getAllCasesForUser
-                        (Converter.convertToNewUser(iwc.getUser()));
+				Collection messages = getCaseBusiness(iwc).getAllCasesForUser(iwc.getCurrentUser());
 				boolean isRead = false;
 				if (cases != null) {
 					for (Iterator i = cases.iterator(); i.hasNext();) {
@@ -143,7 +142,7 @@ public class UserCases extends CommuneBlock {
 				add(getSmallText(localize(NOONGOINGCASES_KEY,
                                           NOONGOINGCASES_DEFAULT)));
             }
-        
+
             // 1. find my groups
             final GroupBusiness groupBusiness =
                     (GroupBusiness) IBOLookup.getServiceInstance
@@ -154,7 +153,7 @@ public class UserCases extends CommuneBlock {
             final Collection groups
                     = groupBusiness.getAllGroupsNotDirectlyRelated
                     (userId, iwc);
-            
+
             // 2. find unhandled viewpoints
             ViewpointBusiness viewpointBusiness
                     = (ViewpointBusiness) IBOLookup.getServiceInstance
@@ -162,7 +161,7 @@ public class UserCases extends CommuneBlock {
             final Viewpoint [] viewpoints
                     = viewpointBusiness.findUnhandledViewpointsInGroups
                     ((Group []) groups.toArray (new Group [0]));
-            
+
             // 3. display unhandled viewpoints
             if (viewpoints != null && viewpoints.length > 0) {
                 add(new Break(2));
@@ -189,16 +188,16 @@ public class UserCases extends CommuneBlock {
                 for (int i = 0; i < viewpoints.length; i++) {
                     addViewpointToMessageList (iwc, viewpoints [i],
                                                messageList);
-                }                
+                }
 				add(f);
             }
 		}
 	}
-    
+
     private void addCaseToMessageList
         (final IWContext iwc, final Case useCase, final ColumnList messageList)
         throws Exception {
-        
+
         DateFormat dateFormat = CustomDateFormat.getDateTimeInstance
                 (iwc.getCurrentLocale());
         Date caseDate
@@ -262,11 +261,11 @@ public class UserCases extends CommuneBlock {
         messageList.add(manager);
         messageList.add(status);
     }
-    
+
     private void addViewpointToMessageList
         (final IWContext iwc, final Viewpoint viewpoint,
          final ColumnList messageList) throws Exception {
-        
+
         DateFormat dateFormat = CustomDateFormat.getDateTimeInstance
                 (iwc.getCurrentLocale());
         Date caseDate
@@ -302,29 +301,29 @@ public class UserCases extends CommuneBlock {
         messageList.add(date);
         messageList.add(group);
     }
-    
+
 	private CaseBusiness getCaseBusiness(IWContext iwc) throws Exception {
 		return (CaseBusiness) IBOLookup.getServiceInstance(iwc,
                                                            CaseBusiness.class);
 	}
-    
+
 	private CommuneCaseBusiness getCommuneCaseBusiness(IWContext iwc)
         throws Exception {
 		return (CommuneCaseBusiness) IBOLookup.getServiceInstance
                 (iwc, CommuneCaseBusiness.class);
 	}
-    
+
 	private UserBusiness getUserBusiness(IWContext iwc) throws Exception {
 		return (UserBusiness) IBOLookup.getServiceInstance(iwc,
                                                            UserBusiness.class);
-	}	
-	
+	}
+
 	private Case getCase(String id, IWContext iwc) throws Exception {
 		int msgId = Integer.parseInt(id);
 		Case msg = getCaseBusiness(iwc).getCase(msgId);
 		return msg;
 	}
-    
+
     public void setViewpointPage (final IBPage page) {
         viewpointPageId = page.getID();
     }
@@ -336,11 +335,11 @@ public class UserCases extends CommuneBlock {
 	public void setManagerPage(IBPage page) {
 		manager_page_id = page.getID();
 	}
-    
+
 	public void setManagerPage(int ib_page_id) {
 		manager_page_id = ib_page_id;
 	}
-    
+
 	public int getManagerPage() {
 		return manager_page_id;
 	}
