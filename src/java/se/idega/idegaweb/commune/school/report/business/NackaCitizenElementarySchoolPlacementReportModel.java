@@ -1,5 +1,5 @@
 /*
- * $Id: NackaCitizenElementarySchoolPlacementReportModel.java,v 1.1 2003/12/08 16:24:24 anders Exp $
+ * $Id: NackaCitizenElementarySchoolPlacementReportModel.java,v 1.2 2003/12/10 16:33:01 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -14,10 +14,10 @@ import java.rmi.RemoteException;
 /** 
  * Report model for Nacka citizen placement for elementary schools.
  * <p>
- * Last modified: $Date: 2003/12/08 16:24:24 $ by $Author: anders $
+ * Last modified: $Date: 2003/12/10 16:33:01 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class NackaCitizenElementarySchoolPlacementReportModel extends ReportModel {
 
@@ -40,7 +40,6 @@ public class NackaCitizenElementarySchoolPlacementReportModel extends ReportMode
 	private final static int COLUMN_METHOD_SUM_4_6 = 103;
 	private final static int COLUMN_METHOD_SUM_7_10 = 104;
 	private final static int COLUMN_METHOD_TOTAL_1_10 = 105;
-	private final static int COLUMN_METHOD_TOTAL_F_10 = 106;
 	
 	private final static String KEY_REPORT_TITLE = KP + "title_nacka_citizen_elementary_school_placements";
 
@@ -146,9 +145,7 @@ public class NackaCitizenElementarySchoolPlacementReportModel extends ReportMode
 		h.setChild(0, child0);
 		headers[7] = h;
 		
-		h = new Header(KEY_TOTAL, Header.HEADERTYPE_COLUMN_HEADER, 1);
-		child0 = new Header(KEY_TOTAL_F_10, Header.HEADERTYPE_COLUMN_NORMAL);
-		h.setChild(0, child0);
+		h = new Header(KEY_SIX_YEARS_STUDENTS, Header.HEADERTYPE_COLUMN_NORMAL);
 		headers[8] = h;
 				
 		return headers;
@@ -224,8 +221,8 @@ public class NackaCitizenElementarySchoolPlacementReportModel extends ReportMode
 					columnParameter = null;
 					break;
 				case 15:
-					columnMethod = COLUMN_METHOD_TOTAL_F_10;
-					columnParameter = null;
+					columnMethod = COLUMN_METHOD_SCHOOL_YEAR;
+					columnParameter = "0";
 					break;
 			}
 			Cell cell = new Cell(this, row, column, ROW_METHOD_ELEMENTARY_NACKA_COMMUNE,
@@ -343,10 +340,6 @@ public class NackaCitizenElementarySchoolPlacementReportModel extends ReportMode
 					value = getCell(cell.getRow(), 4).getFloatValue() +
 							getCell(cell.getRow(), 8).getFloatValue() +
 							getCell(cell.getRow(), 13).getFloatValue();
-					break;
-				case COLUMN_METHOD_TOTAL_F_10:
-					value = getCell(cell.getRow(), 14).getFloatValue() +
-							getCell(cell.getRow(), 0).getFloatValue();
 					break;
 			}
 		}

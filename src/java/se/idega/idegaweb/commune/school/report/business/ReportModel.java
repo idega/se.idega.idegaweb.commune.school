@@ -1,5 +1,5 @@
 /*
- * $Id: ReportModel.java,v 1.1 2003/12/08 16:24:24 anders Exp $
+ * $Id: ReportModel.java,v 1.2 2003/12/10 16:33:01 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -15,10 +15,10 @@ import java.rmi.RemoteException;
  * This abstract class holds cell and header values for school statistics reports.
  * Subclasses implements methods for generating report data and cell value calculations.
  * <p>
- * Last modified: $Date: 2003/12/08 16:24:24 $ by $Author: anders $
+ * Last modified: $Date: 2003/12/10 16:33:01 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public abstract class ReportModel {
 
@@ -58,6 +58,7 @@ public abstract class ReportModel {
 	protected final static String KEY_PRIVATE_SCHOOLS = KP + "private_schools";
 	protected final static String KEY_FOREIGN_SCHOOLS = KP + "foreign_schools";
 	protected final static String KEY_COMPULSORY_SCHOOLS = KP + "compulsory_schools";
+	protected final static String KEY_SIX_YEARS_STUDENTS = KP + "six_years_students";
 
 	/**
 	 * Constructs a report model with the specified size and report business logic. 

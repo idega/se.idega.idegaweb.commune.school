@@ -1,5 +1,5 @@
 /*
- * $Id: ReportBusinessBean.java,v 1.2 2003/12/09 14:16:45 anders Exp $
+ * $Id: ReportBusinessBean.java,v 1.3 2003/12/10 16:33:01 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -10,20 +10,24 @@
 package se.idega.idegaweb.commune.school.report.business;
 
 import java.lang.reflect.Constructor;
+import java.rmi.RemoteException;
 
 import com.idega.block.school.business.SchoolBusiness;
+import com.idega.block.school.data.SchoolSeason;
 
 /** 
  * Business logic for school reports.
  * <p>
- * Last modified: $Date: 2003/12/09 14:16:45 $ by $Author: anders $
+ * Last modified: $Date: 2003/12/10 16:33:01 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class ReportBusinessBean extends com.idega.business.IBOServiceBean implements ReportBusiness  {
 
+	private SchoolSeason _currentSchoolSeason = null;
 	private int _schoolSeasonId = -1;
+	private int _schoolSeasonStartYear = -1;
 	
 	/**
 	 * Factory method for creating a report model with the specified class.
@@ -61,7 +65,12 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 		} else {
 			query.setSchoolTypeElementarySchool();
 		}
-		query.setSchoolYear(schoolYearName);
+		if (schoolYearName.equals("0")) {
+			query.setOnlyStudentsBorn(getSchoolSeasonStartYear() - 6);
+			query.setSchoolYear("1");
+		} else {
+			query.setSchoolYear(schoolYearName);			
+		}
 		query.setNotPrivateSchools();
 		query.setNotForieignSchools();
 		return query.execute();
@@ -82,7 +91,12 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 		} else {
 			query.setSchoolTypeElementarySchool();
 		}
-		query.setSchoolYear(schoolYearName);
+		if (schoolYearName.equals("0")) {
+			query.setOnlyStudentsBorn(getSchoolSeasonStartYear() - 6);
+			query.setSchoolYear("1");
+		} else {
+			query.setSchoolYear(schoolYearName);			
+		}
 		query.setNotPrivateSchools();
 		query.setNotForieignSchools();
 		return query.execute();
@@ -102,7 +116,12 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 		} else {
 			query.setSchoolTypeElementarySchool();
 		}
-		query.setSchoolYear(schoolYearName);
+		if (schoolYearName.equals("0")) {
+			query.setOnlyStudentsBorn(getSchoolSeasonStartYear() - 6);
+			query.setSchoolYear("1");
+		} else {
+			query.setSchoolYear(schoolYearName);			
+		}
 		query.setOnlyPrivateSchools();
 		query.setNotForieignSchools();
 		return query.execute();
@@ -122,7 +141,12 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 		} else {
 			query.setSchoolTypeElementarySchool();
 		}
-		query.setSchoolYear(schoolYearName);
+		if (schoolYearName.equals("0")) {
+			query.setOnlyStudentsBorn(getSchoolSeasonStartYear() - 6);
+			query.setSchoolYear("1");
+		} else {
+			query.setSchoolYear(schoolYearName);			
+		}
 		query.setOnlyForieignSchools();
 		return query.execute();
 	}
@@ -142,7 +166,12 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 		} else {
 			query.setSchoolTypeCompulsorySchool();
 		}
-		query.setSchoolYear(schoolYearName);
+		if (schoolYearName.equals("0")) {
+			query.setOnlyStudentsBorn(getSchoolSeasonStartYear() - 6);
+			query.setSchoolYear("S1");
+		} else {
+			query.setSchoolYear(schoolYearName);			
+		}
 		query.setNotPrivateSchools();
 		query.setNotForieignSchools();
 		return query.execute();
@@ -163,7 +192,12 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 		} else {
 			query.setSchoolTypeCompulsorySchool();
 		}
-		query.setSchoolYear(schoolYearName);
+		if (schoolYearName.equals("0")) {
+			query.setOnlyStudentsBorn(getSchoolSeasonStartYear() - 6);
+			query.setSchoolYear("S1");
+		} else {
+			query.setSchoolYear(schoolYearName);			
+		}
 		query.setNotPrivateSchools();
 		query.setNotForieignSchools();
 		return query.execute();
@@ -183,10 +217,28 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 		} else {
 			query.setSchoolTypeElementarySchool();
 		}
-		query.setSchoolYear(schoolYearName);
+		if (schoolYearName.equals("0")) {
+			query.setOnlyStudentsBorn(getSchoolSeasonStartYear() - 6);
+			query.setSchoolYear("S1");
+		} else {
+			query.setSchoolYear(schoolYearName);			
+		}
 		query.setOnlyPrivateSchools();
 		query.setNotForieignSchools();
 		return query.execute();
+	}
+	
+	/**
+	 * Returns the current school season.
+	 */
+	public SchoolSeason getCurrentSchoolSeason() {
+		if (_currentSchoolSeason == null) {
+			try {
+				SchoolBusiness sb = getSchoolBusiness();
+				_currentSchoolSeason = sb.getCurrentSchoolSeason();
+			} catch (Exception e) {}
+		}
+		return _currentSchoolSeason;
 	}
 	
 	/**
@@ -195,13 +247,31 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 	public int getSchoolSeasonId() {
 		if (_schoolSeasonId == -1) {
 			try {
-				SchoolBusiness sb = (SchoolBusiness) this.getServiceInstance(SchoolBusiness.class);
-				_schoolSeasonId = ((Integer) sb.getCurrentSchoolSeason().getPrimaryKey()).intValue();
+				_schoolSeasonId = ((Integer) getCurrentSchoolSeason().getPrimaryKey()).intValue();
 			} catch (Exception e) {}
 		}
 		return _schoolSeasonId;
 	}
 
+	private int getSchoolSeasonStartYear() {
+		if (_schoolSeasonStartYear == -1) {
+			SchoolSeason ss = getCurrentSchoolSeason();
+			try {
+				String s = ss.getSchoolSeasonStart().toString();
+				_schoolSeasonStartYear = Integer.parseInt(s.substring(0, 4));
+			} catch (Exception e) {}
+		}
+		return _schoolSeasonStartYear;
+	}
+	
+	/**
+	 * Returns a school business instance.
+	 */
+	SchoolBusiness getSchoolBusiness() throws RemoteException {
+		return (SchoolBusiness) getServiceInstance(SchoolBusiness.class);
+	}
+	
+	
 	/**
 	 * @see com.idega.business.IBOServiceBean#log()
 	 */
