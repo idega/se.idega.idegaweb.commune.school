@@ -1,5 +1,5 @@
 /*
- * $Id: SchoolReports.java,v 1.28 2004/03/01 13:49:46 anders Exp $
+ * $Id: SchoolReports.java,v 1.29 2004/03/02 09:42:45 laddi Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -56,10 +56,10 @@ import com.idega.presentation.ui.SubmitButton;
 /** 
  * This block handles selecting and presenting school reports.
  * <p>
- * Last modified: $Date: 2004/03/01 13:49:46 $ by $Author: anders $
+ * Last modified: $Date: 2004/03/02 09:42:45 $ by $Author: laddi $
  *
  * @author Anders Lindman
- * @version $Revision: 1.28 $
+ * @version $Revision: 1.29 $
  */
 public class SchoolReports extends CommuneBlock {
 
@@ -260,7 +260,7 @@ public class SchoolReports extends CommuneBlock {
 				reportModel = getReportBusiness(iwc).createReportModel(reportModelClass);
 			}
 			ReportPDFWriter pdfWriter = new ReportPDFWriter(reportModel, getResourceBundle());
-			ICFile file = (ICFile) pdfWriter.createFile();
+			ICFile file = pdfWriter.createFile();
 			Link iconLink = new Link(getBundle().getImage("shared/pdf.gif"));
 			iconLink.setFile(file);
 			table.add(iconLink, 1, 1);
@@ -309,7 +309,7 @@ public class SchoolReports extends CommuneBlock {
 			String reportTitle = localize(key, key);
 			String filename = reportModel.getReportTitleLocalizationKey() + ".xls";
 			ReportXLSWriter xlsWriter = new ReportXLSWriter(t, filename, reportTitle);
-			ICFile file = (ICFile) xlsWriter.createFile();
+			ICFile file = xlsWriter.createFile();
 			Link iconLink = new Link(getBundle().getImage("shared/xls.gif"));
 			iconLink.setFile(file);
 			table.add(iconLink, 1, 1);
