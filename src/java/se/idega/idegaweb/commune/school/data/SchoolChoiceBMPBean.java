@@ -3,6 +3,7 @@ package se.idega.idegaweb.commune.school.data;
 import com.idega.block.process.data.*;
 import com.idega.block.school.data.School;
 import com.idega.block.school.data.SchoolSeason;
+import com.idega.block.school.data.SchoolType;
 import com.idega.data.EntityControl;
 import com.idega.data.IDOException;
 import com.idega.data.IDOQuery;
@@ -32,6 +33,7 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
   final static public String CASECODE =SchoolChoiceBusinessBean.SCHOOL_CHOICE_CASECODE;
 
   public final static String SCHOOL_SEASON = "school_season_id";
+  public final static String SCHOOL_TYPE = "school_type_id";
   public final static String CURRENT_SCHOOL = "curr_school_id";
   public final static String GRADE = "grade";
   public final static String CHOSEN_SCHOOL = "school_id";
@@ -82,6 +84,7 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
     this.addAttribute(GRADE,"Grade",Integer.class);
     this.addAttribute(CHOSEN_SCHOOL,"Chosen school",true,true,Integer.class,MANY_TO_ONE,School.class);
 	this.addAttribute(SCHOOL_SEASON,"School season",true,true,Integer.class,MANY_TO_ONE,SchoolSeason.class);
+    this.addAttribute(SCHOOL_TYPE,"School type",true,true,Integer.class,MANY_TO_ONE,SchoolType.class);
 
     this.addAttribute(WORK_SITUATION_1,"Work situation one",Integer.class);
     this.addAttribute(WORK_SITUATION_2,"Work situation two",Integer.class);
@@ -142,6 +145,12 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
   }
   public void setSchoolSeasonId(int id){
     setColumn(SCHOOL_SEASON,id);
+  }
+   public int getSchoolTypeId(){
+    return getIntColumnValue(SCHOOL_TYPE);
+  }
+  public void setSchoolTypeId(int id){
+    setColumn(SCHOOL_TYPE,id);
   }
   public int getChosenSchoolId(){
     return getIntColumnValue(CHOSEN_SCHOOL);
