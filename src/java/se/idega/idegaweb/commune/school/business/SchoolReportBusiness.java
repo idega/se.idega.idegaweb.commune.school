@@ -14,6 +14,8 @@ import com.idega.business.IBOSession;
  */
 public interface SchoolReportBusiness extends IBOSession {
 
+	public static final String PROPERTY_RESOURCE_IDS_SECOND_LANGUAGE = "second_language_resource_ids";
+	public static final String PROPERTY_RESOURCE_IDS_NATIVE_LANGUAGE = "native_language_resource_ids";
 	public final static String PREFIX = "school_report.";
 	
 	public static final String FIELD_PERSONAL_ID = "personal_id";
@@ -34,8 +36,9 @@ public interface SchoolReportBusiness extends IBOSession {
 	public static final String FIELD_LANGUAGE_CHOICE = "language_choice";
 	public static final String FIELD_TERMINATION_DATE = "termination_date";
 	public static final String FIELD_SWEDISH_AS_SECOND_LANGUAGE = "swedish_second_language";
+	public static final String FIELD_NATIVE_LANGUAGE = "native_language";
 	
-	public ReportableCollection getGroupReport(Collection schoolGroups, Collection columnNames, String freeText) throws RemoteException;
+	public ReportableCollection getGroupReport(Collection schoolGroups, Collection columnNames, String freeText, Boolean showNativeLanguage, Boolean showSecondLanguage) throws RemoteException;
 	public ReportableCollection getChoicesReport(Collection columnNames) throws RemoteException;
 	
 }

@@ -11,6 +11,7 @@ import java.util.Locale;
 
 import javax.ejb.FinderException;
 
+import se.idega.idegaweb.commune.accounting.resource.business.ResourceBusiness;
 import se.idega.idegaweb.commune.business.CommuneUserBusiness;
 import se.idega.idegaweb.commune.school.data.SchoolChoice;
 import se.idega.util.PIDChecker;
@@ -76,18 +77,14 @@ public class SchoolReportBusinessBean extends IBOSessionBean implements SchoolRe
 		return false;
 	}
 	
-	public ReportableCollection getGroupReport(Collection schoolGroups, Collection columnNames, String freeText) {
+	public ReportableCollection getGroupReport(Collection schoolGroups, Collection columnNames, String freeText, Boolean showNativeLanguage, Boolean showSecondLanguage) {
 		fillColumns(columnNames);
 		initializeBundlesIfNeeded();
 		Locale currentLocale = this.getUserContext().getCurrentLocale();
+		String nativeLanguageIDs = _iwb.getProperty(this.PROPERTY_RESOURCE_IDS_NATIVE_LANGUAGE, "");
+		String secondLanguageIDs = _iwb.getProperty(this.PROPERTY_RESOURCE_IDS_SECOND_LANGUAGE, "");
 		
 		ReportableCollection reportCollection = new ReportableCollection();
-		
-		/*reportCollection.addExtraHeaderParameterAtBeginning(
-				"school_group_report",
-				getLocalizedString("extra_information", "Extra information"),
-				"label",
-				freeText);*/
 		
 		ReportableField personalID = new ReportableField(FIELD_PERSONAL_ID, String.class);
 		personalID.setLocalizedName(getLocalizedString(FIELD_PERSONAL_ID, "Personal ID"), currentLocale);
@@ -143,6 +140,12 @@ public class SchoolReportBusinessBean extends IBOSessionBean implements SchoolRe
 			reportCollection.addField(language);
 		}
 		
+		ReportableField nativeLanguage = new ReportableField(FIELD_NATIVE_LANGUAGE, String.class);
+		nativeLanguage.setLocalizedName(getLocalizedString(FIELD_NATIVE_LANGUAGE, "Native language"), currentLocale);
+		if (displayColumn(FIELD_NATIVE_LANGUAGE)) {
+			reportCollection.addField(nativeLanguage);
+		}
+		
 		ReportableField swedishLanguage = new ReportableField(FIELD_SWEDISH_AS_SECOND_LANGUAGE, String.class);
 		language.setLocalizedName(getLocalizedString(FIELD_SWEDISH_AS_SECOND_LANGUAGE, "Swedish as second language"), currentLocale);
 		if (displayColumn(FIELD_SWEDISH_AS_SECOND_LANGUAGE)) {
@@ -181,6 +184,19 @@ public class SchoolReportBusinessBean extends IBOSessionBean implements SchoolRe
 			Iterator iter = students.iterator();
 			while (iter.hasNext()) {
 				SchoolClassMember student = (SchoolClassMember) iter.next();
+				boolean hasNativeLanguage = getResourceBusiness().hasResources(((Integer)student.getPrimaryKey()).intValue(), nativeLanguageIDs);
+				if (showNativeLanguage != null) {
+					if (showNativeLanguage.booleanValue() != hasNativeLanguage) {
+						continue;
+					}
+				}
+				boolean hasSecondLanguage = getResourceBusiness().hasResources(((Integer)student.getPrimaryKey()).intValue(), secondLanguageIDs);
+				if (showSecondLanguage != null) {
+					if (showSecondLanguage.booleanValue() != hasSecondLanguage) {
+						continue;
+					}
+				}
+				
 				User user = student.getStudent();
 				Address homeAddress = getUserBusiness().getUsersMainAddress(user);
 				Phone homePhone = getUserBusiness().getChildHomePhone(user);
@@ -240,9 +256,12 @@ public class SchoolReportBusinessBean extends IBOSessionBean implements SchoolRe
 					}
 				}
 				
+				if (displayColumn(FIELD_NATIVE_LANGUAGE)) {
+					data.addData(nativeLanguage, _iwrb.getLocalizedString(String.valueOf(hasNativeLanguage), String.valueOf(hasNativeLanguage)));
+				}
+				
 				if (displayColumn(FIELD_SWEDISH_AS_SECOND_LANGUAGE)) {
-					//Do something clever
-					data.addData(swedishLanguage, "N");
+					data.addData(swedishLanguage, _iwrb.getLocalizedString(String.valueOf(hasSecondLanguage), String.valueOf(hasSecondLanguage)));
 				}
 				
 				if (displayColumn(FIELD_TERMINATION_DATE)) {
@@ -535,6 +554,15 @@ public class SchoolReportBusinessBean extends IBOSessionBean implements SchoolRe
 	private CommuneUserBusiness getUserBusiness() {
 		try {
 			return (CommuneUserBusiness) IBOLookup.getServiceInstance(this.getIWApplicationContext(), CommuneUserBusiness.class);
+		}
+		catch (RemoteException e) {
+			throw new IBORuntimeException(e);
+		}
+	}
+
+	private ResourceBusiness getResourceBusiness() {
+		try {
+			return (ResourceBusiness) IBOLookup.getServiceInstance(this.getIWApplicationContext(), ResourceBusiness.class);
 		}
 		catch (RemoteException e) {
 			throw new IBORuntimeException(e);

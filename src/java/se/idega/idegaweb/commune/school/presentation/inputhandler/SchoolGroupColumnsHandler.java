@@ -48,6 +48,7 @@ public class SchoolGroupColumnsHandler extends SelectionBox implements InputHand
 		addMenuElement(SchoolReportBusiness.FIELD_EMAIL, getLocalizedString(iwrb, SchoolReportBusiness.FIELD_EMAIL, "E-mail"));
 		addMenuElement(SchoolReportBusiness.FIELD_PHONE, getLocalizedString(iwrb, SchoolReportBusiness.FIELD_PHONE, "Phone"));
 		addMenuElement(SchoolReportBusiness.FIELD_GENDER, getLocalizedString(iwrb, SchoolReportBusiness.FIELD_GENDER, "Gender"));
+		addMenuElement(SchoolReportBusiness.FIELD_NATIVE_LANGUAGE, getLocalizedString(iwrb, SchoolReportBusiness.FIELD_NATIVE_LANGUAGE, "Language"));
 		addMenuElement(SchoolReportBusiness.FIELD_LANGUAGE, getLocalizedString(iwrb, SchoolReportBusiness.FIELD_LANGUAGE, "Language"));
 		addMenuElement(SchoolReportBusiness.FIELD_SWEDISH_AS_SECOND_LANGUAGE, getLocalizedString(iwrb, SchoolReportBusiness.FIELD_SWEDISH_AS_SECOND_LANGUAGE, "Swedish as second language"));
 		addMenuElement(SchoolReportBusiness.FIELD_TERMINATION_DATE, getLocalizedString(iwrb, SchoolReportBusiness.FIELD_TERMINATION_DATE, "Termination date"));
