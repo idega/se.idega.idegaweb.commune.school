@@ -1,5 +1,5 @@
 /*
- * $Id: NackaProviderSummaryReportModel.java,v 1.1 2004/01/30 13:41:04 anders Exp $
+ * $Id: NackaProviderSummaryReportModel.java,v 1.2 2004/01/30 15:29:26 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -14,10 +14,10 @@ import java.rmi.RemoteException;
 /** 
  * Report model that shows a summary of Nacka providers (child care and schools).
  * <p>
- * Last modified: $Date: 2004/01/30 13:41:04 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/30 15:29:26 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class NackaProviderSummaryReportModel extends ReportModel {
 
@@ -205,6 +205,7 @@ public class NackaProviderSummaryReportModel extends ReportModel {
 					setCell(row, 2, cell);					
 					break;
 				case 5:
+					rowParameter = new Integer(SCHOOL_TYPE_ELEMENTARY_SCHOOL);
 					
 					cell = new Cell(this, row, 0, rowMethod, COLUMN_METHOD_PROVIDER_COUNT,
 							rowParameter, columnParameter, Cell.CELLTYPE_NORMAL);
@@ -217,7 +218,6 @@ public class NackaProviderSummaryReportModel extends ReportModel {
 					cell = new Cell(this, row, 2, rowMethod, COLUMN_METHOD_PLACEMENTS_OTHER_COMMUNES,
 							" ", columnParameter, Cell.CELLTYPE_ROW_HEADER);
 					setCell(row, 2, cell);
-					rowParameter = new Integer(SCHOOL_TYPE_ELEMENTARY_SCHOOL);
 					break;
 				case 6:
 					rowParameter = new Integer(SCHOOL_TYPE_ELEMENTARY_SCHOOL_ONLY);
@@ -405,7 +405,7 @@ public class NackaProviderSummaryReportModel extends ReportModel {
 			query = new PreparedQuery(getConnection());
 			query.setSelectCount();
 			query.setOnlyNackaSchools();
-			query.setFourSchoolTypesForProvidersWithoutPlacements(); // parameter 1-4
+			query.setFourSchoolTypesForProvidersIn(); // parameter 1-4
 			query.setFourManagementTypes(); // parameter 5-8
 			query.prepare();
 			setQuery(QUERY_PROVIDER_COUNT, query);
