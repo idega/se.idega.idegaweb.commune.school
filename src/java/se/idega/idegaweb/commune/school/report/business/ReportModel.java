@@ -1,5 +1,5 @@
 /*
- * $Id: ReportModel.java,v 1.25 2004/01/28 09:42:13 anders Exp $
+ * $Id: ReportModel.java,v 1.26 2004/01/30 13:41:30 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -21,10 +21,10 @@ import com.idega.util.database.ConnectionBroker;
  * This abstract class holds cell and header values for school statistics reports.
  * Subclasses implements methods for generating report data and cell value calculations.
  * <p>
- * Last modified: $Date: 2004/01/28 09:42:13 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/30 13:41:30 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.25 $
+ * @version $Revision: 1.26 $
  */
 public abstract class ReportModel {
 
@@ -127,6 +127,20 @@ public abstract class ReportModel {
 	protected final static String KEY_GENERAL_PRE_SCHOOL = KP + "general_pre_school";
 	protected final static String KEY_SUM_CHILD_CARE_HOURS = KP + "sum_child_care_hours";
 	protected final static String KEY_CHILD_CARE_HOURS = KP + "child_care_hours";
+
+	protected final static String KEY_COMMUNE_PROVIDERS = KP + "commune_providers";
+	protected final static String KEY_PRE_SCHOOLS = KP + "pre_schools";
+	protected final static String KEY_FAMILY_DAYCARE_CENTERS = KP + "key_family_daycare_centers";
+	protected final static String KEY_WITHIN_PRE_SCHOOL_OPERATION = KP + "within_pre_school_operation";
+	protected final static String KEY_WITHIN_AFTER_SCHOOL_OPERATION = KP + "within_after_school_operation";
+	protected final static String KEY_AFTER_SCHOOL_CENTERS_6_9 = KP + "after_school_centers_6_9";
+	protected final static String KEY_ELEMENTARY_SCHOOLS = KP + "elementary_schools";
+	protected final static String KEY_WITHIN_ELEMENTARY_SCHOOL = KP + "within_elementary_school";
+	protected final static String KEY_WITHIN_PRE_SCHOOL_CLASS = KP + "within_pre_school_class";
+	protected final static String KEY_HIGH_SCHOOLS = KP + "high_schools";
+	protected final static String KEY_PRIVATE_FREESTANDING_PROVIDERS = KP + "private_freestanding_providers";
+	protected final static String KEY_CHILDREN_STUDENTS = KP + "children_students";
+	protected final static String KEY_OF_WHICH_FROM_OTHER_COMMUNES = KP + "of_which_from_other_communes";
 	
 	/**
 	 * Constructs a report model with the specified report business logic. 
