@@ -137,6 +137,8 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	private int childId = -1;
 	private int valCaseOwner = -1;
 	private int valMethod = 1; // Citizen:1; Quick: 2; Automatic: 3
+	private boolean valNativeLangIsChecked = false;
+	private int valNativeLang = -1;
 	private boolean showAgree = false;
 	protected boolean quickAdmin = false;
 	SchoolChoiceBusiness schBuiz;
@@ -324,7 +326,8 @@ public class SchoolChoiceApplication extends CommuneBlock {
 
 	private boolean saveSchoolChoice() {
 		try {
-			schBuiz.createSchoolChoices(valCaseOwner, childId, valType, valPreSchool, valFirstSchool, valSecondSchool, valThirdSchool, valPreGrade, valMethod, -1, -1, valLanguage, valMessage, schoolChange, valSixyearCare, valAutoAssign, valCustodiansAgree, valSendCatalogue, valPlacementDate, season);
+//			schBuiz.createSchoolChoices(valCaseOwner, childId, valType, valPreSchool, valFirstSchool, valSecondSchool, valThirdSchool, valPreGrade, valMethod, -1, -1, valLanguage, valMessage, schoolChange, valSixyearCare, valAutoAssign, valCustodiansAgree, valSendCatalogue, valPlacementDate, season);
+			schBuiz.createSchoolChoices(valCaseOwner, childId, valType, valPreSchool, valFirstSchool, valSecondSchool, valThirdSchool, valPreGrade, valMethod, -1, -1, valLanguage, valMessage, schoolChange, valSixyearCare, valAutoAssign, valCustodiansAgree, valSendCatalogue, valPlacementDate, season, valNativeLangIsChecked, valNativeLang);
 			return true;
 		}
 		catch (Exception ex) {
@@ -358,6 +361,8 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		valPreSchool = iwc.isParameterSet(prmPreSchool) ? Integer.parseInt(iwc.getParameter(prmPreSchool)) : -1;
 		valType = iwc.isParameterSet(prmType) ? Integer.parseInt(iwc.getParameter(prmType)) : -1;
 		valCaseOwner = iwc.isParameterSet(prmParentId) ? Integer.parseInt(iwc.getParameter(prmParentId)) : -1;
+		valNativeLangIsChecked = iwc.isParameterSet(prmNativeLangIsChecked) ? true : false;
+		valNativeLang = iwc.isParameterSet(prmNativeLang) ? Integer.parseInt(iwc.getParameter(prmNativeLang)) : -1;
 		if (!quickAdmin) {
 			valCaseOwner = iwc.getUserId();
 		}
