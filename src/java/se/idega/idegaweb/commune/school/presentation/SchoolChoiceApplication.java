@@ -37,6 +37,7 @@ import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Page;
 import com.idega.presentation.PresentationObject;
+import com.idega.presentation.PresentationObjectContainer;
 import com.idega.presentation.Script;
 import com.idega.presentation.Table;
 import com.idega.presentation.text.Break;
@@ -483,7 +484,11 @@ public class SchoolChoiceApplication extends CommuneBlock {
 
 	private PresentationObject getCurrentSchool(IWContext iwc, User child) throws java.rmi.RemoteException {
 		if (age.getYears() <= 6) {
-			return new HiddenInput(prmPreGrade, String.valueOf(5));
+			hasPreviousSchool = true;
+			PresentationObjectContainer container = new PresentationObjectContainer();
+			container.add(new HiddenInput(prmPreGrade, String.valueOf(5)));
+			container.add(new HiddenInput(prmPreSchool, "-1"));
+			return container;
 		}
 		else {
 			Table table = new Table();
