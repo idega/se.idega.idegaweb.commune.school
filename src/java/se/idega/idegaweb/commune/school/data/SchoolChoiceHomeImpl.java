@@ -27,6 +27,13 @@ public java.util.Collection findByChildAndSchoolAndSeason(int p0,int p1,int p2)t
 	return this.getEntityCollectionForPrimaryKeys(ids);
 }
 
+public java.util.Collection findBySeason(int seasonId)throws javax.ejb.FinderException{
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	java.util.Collection ids = ((SchoolChoiceBMPBean)entity).ejbFindBySeason(seasonId);
+	this.idoCheckInPooledEntity(entity);
+	return this.getEntityCollectionForPrimaryKeys(ids);
+}
+
 public java.util.Collection findByChildAndSeason(int p0,int p1)throws javax.ejb.FinderException{
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	java.util.Collection ids = ((SchoolChoiceBMPBean)entity).ejbFindByChildAndSeason(p0,p1);

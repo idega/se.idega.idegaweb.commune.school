@@ -363,6 +363,19 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
     sql.append(CHOICEORDER);
     return super.idoFindPKsBySQL(sql.toString());
   }
+
+    public Collection ejbFindBySeason (final int seasonId)
+        throws javax.ejb.FinderException{
+        StringBuffer sql = new StringBuffer("select * from ");
+        sql.append(SCHOOLCHOICE);
+        sql.append(" where ");
+        sql.append(SCHOOL_SEASON);
+        sql.append(" = ");
+        sql.append(seasonId);
+        sql.append(" order by ");
+        sql.append(CHOICEORDER);
+        return super.idoFindPKsBySQL(sql.toString());
+    }
   
   public Collection ejbFindByChildAndSchoolAndSeason(int childID, int schoolID, int seasonID)throws javax.ejb.FinderException{
     StringBuffer sql = new StringBuffer("select * from ");

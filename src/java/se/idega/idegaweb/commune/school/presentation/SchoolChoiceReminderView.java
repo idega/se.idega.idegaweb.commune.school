@@ -20,10 +20,10 @@ import se.idega.idegaweb.commune.school.data.SchoolChoiceReminder;
  * and entity ejb classes in {@link se.idega.idegaweb.commune.school.data}.
  * <p>
  * <p>
- * Last modified: $Date: 2002/12/19 12:29:02 $ by $Author: staffan $
+ * Last modified: $Date: 2002/12/19 15:50:50 $ by $Author: staffan $
  *
  * @author <a href="http://www.staffannoteberg.com">Staffan Nöteberg</a>
- * @version $Revision: 1.8 $
+ * @version $Revision: 1.9 $
  * @see javax.ejb
  */
 public class SchoolChoiceReminderView extends CommuneBlock {
@@ -245,6 +245,7 @@ public class SchoolChoiceReminderView extends CommuneBlock {
         table.add ("[Radera] [Skriv ut nu] [Avbryt]", 1, row++);
 		table.setHeight (row++, 12);
         table.add ("Lista med checkboxar och alla som ska få påminnelse", 1, row++);
+        table.add (business.findAllChildSsnsInCurrentSeason ().toString (), 1, row++);
     }
 
 	private TextInput getSingleInput (IWContext iwc, final String paramId, final int maxLength) {

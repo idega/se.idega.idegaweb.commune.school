@@ -519,6 +519,23 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		return MessageFormat.format(desc, arguments);
 	}
 	
+	public Set findAllChildSsnsInCurrentSeason() throws RemoteException,
+                                                        FinderException {
+        final Integer currentYearId
+                = (Integer) getCurrentSeason ().getPrimaryKey ();
+        final Collection choices
+                = getSchoolChoiceHome().findBySeason(currentYearId.intValue ());
+        final Set childSsns = new HashSet ();
+        for (Iterator i = choices.iterator (); i.hasNext ();) {
+            final SchoolChoice choice = (SchoolChoice) i.next ();
+            final int childId = choice.getChildId();
+            final User child = getUserBusiness().getUser(childId);
+            final String childSsn = child.getPersonalID();
+            childSsns.add (childSsn);
+        }
+        return childSsns;
+	}
+	
 	public SchoolChoice findByStudentAndSchoolAndSeason(int studentID, int schoolID, int seasonID) throws RemoteException {
 		try {
 			Collection coll = getSchoolChoiceHome().findByChildAndSchoolAndSeason(studentID, schoolID, seasonID);
