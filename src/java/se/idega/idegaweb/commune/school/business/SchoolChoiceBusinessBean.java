@@ -464,6 +464,19 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 			fe.printStackTrace();
 		}
 	}
+	
+	public void changeSchoolYearForChoice(int userID, int schoolSeasonID, int schoolYearID) throws RemoteException {
+		Collection choices = findByStudentAndSeason(userID, schoolSeasonID);
+		SchoolYear year = getCommuneSchoolBusiness().getSchoolBusiness().getSchoolYear(new Integer(schoolYearID));
+		if (!choices.isEmpty() && year != null) {
+			Iterator iter = choices.iterator();
+			while (iter.hasNext()) {
+				SchoolChoice element = (SchoolChoice) iter.next();
+				element.setGrade(year.getSchoolYearAge()-1);
+				element.store();
+			}
+		}
+	}
 
 	public boolean groupPlaceAction(Integer pk, User performer) {
 		try {
