@@ -619,9 +619,15 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 		schoolClass.store();
 	}
 		
-    // The method getCurrentMembersWithInvoiceInterval is specified in the
-    // interface SchoolCommuneBusiness.  /Staffan
-
+    /**
+     * Retreive all school members in current season, where invoice interval
+     * is in { Månad, Kvartal, Termin, År }. The result should be sorted by
+     * ssn.
+     *
+     * @return SchoolClassMember objects that follows the method spec
+     * @exception RemoteException when methods in data layer fails
+     * @author <a href="http://www.staffannoteberg.com">Staffan Nöteberg</a>
+     */
     public SchoolClassMember [] getCurrentMembersWithInvoiceInterval ()
         throws RemoteException {
         final Map result = new TreeMap ();
@@ -656,8 +662,15 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
     }
 
 
-    // The method getCurrentSchoolClassMembership is specified in the
-    // interface SchoolCommuneBusiness.  /Staffan
+    /**
+     * Retreive info about membership in a school class for this particular user
+     * in current season.
+     *
+     * @param user user to search for
+     * @return SchoolClassMember or null if not found
+     * @exception RemoteException when methods in data layer fails
+     * @author <a href="http://www.staffannoteberg.com">Staffan Nöteberg</a>
+     */
     public SchoolClassMember getCurrentSchoolClassMembership (final User user)
         throws RemoteException {
         try {
@@ -672,8 +685,17 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
         }
     }
 
-    // The method getCurrentSchoolClassMembership is specified in the
-    // interface SchoolCommuneBusiness.  /Staffan
+
+    /**
+     * Retreive info about membership in a school class for this particular user
+     * and school in current season.
+     *
+     * @param user user to search for
+     * @param schoolId only accept answers from this school
+     * @return SchoolClassMember or null if not found
+     * @exception RemoteException when methods in data layer fails
+     * @author <a href="http://www.staffannoteberg.com">Staffan Nöteberg</a>
+     */
     public SchoolClassMember getCurrentSchoolClassMembership
         (final User user, final int schoolId)
         throws RemoteException {
@@ -694,8 +716,12 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
         }
     }
     
-    // The method getStudyPath is specified in the interface
-    // SchoolCommuneBusiness.  /Staffan
+    /**
+     * Retreive school study path for this student or null if no path exists
+     *
+     * @return SchoolStudyPath or null if not found
+     * @author <a href="http://www.staffannoteberg.com">Staffan Nöteberg</a>
+     */
     public SchoolStudyPath getStudyPath (final SchoolClassMember student) {
         try {
             final SchoolStudyPathHome home = (SchoolStudyPathHome)

@@ -56,49 +56,15 @@ public interface SchoolCommuneBusiness extends com.idega.business.IBOService,com
  public boolean hasMoveChoiceToOtherSchool(int userID, int schoolID, int seasonID);
  public boolean hasChoiceToThisSchool(int userID, int schoolID, int seasonID);
 
-    /**
-     * Retreive all school members in current season, where invoice interval
-     * is in { Månad, Kvartal, Termin, År }. The result should be sorted by
-     * ssn.
-     *
-     * @return SchoolClassMember objects that follows the method spec
-     * @exception RemoteException when methods in data layer fails
-     * @author <a href="http://www.staffannoteberg.com">Staffan Nöteberg</a>
-     */
     SchoolClassMember [] getCurrentMembersWithInvoiceInterval ()
         throws RemoteException;
 
-    /**
-     * Retreive info about membership in a school class for this particular user
-     * in current season.
-     *
-     * @param user user to search for
-     * @return SchoolClassMember or null if not found
-     * @exception RemoteException when methods in data layer fails
-     * @author <a href="http://www.staffannoteberg.com">Staffan Nöteberg</a>
-     */
     SchoolClassMember getCurrentSchoolClassMembership (User user)
         throws RemoteException;
 
-    /**
-     * Retreive info about membership in a school class for this particular user
-     * and school in current season.
-     *
-     * @param user user to search for
-     * @param schoolId only accept answers from this school
-     * @return SchoolClassMember or null if not found
-     * @exception RemoteException when methods in data layer fails
-     * @author <a href="http://www.staffannoteberg.com">Staffan Nöteberg</a>
-     */
     SchoolClassMember getCurrentSchoolClassMembership (User user, int schoolId)
         throws RemoteException;
 
-    /**
-     * Retreive school study path for this student or null if no path exists
-     *
-     * @return SchoolStudyPath or null if not found
-     * @author <a href="http://www.staffannoteberg.com">Staffan Nöteberg</a>
-     */
     SchoolStudyPath getStudyPath (SchoolClassMember student);
         
     SchoolStudyPath [] getAllStudyPaths ();
