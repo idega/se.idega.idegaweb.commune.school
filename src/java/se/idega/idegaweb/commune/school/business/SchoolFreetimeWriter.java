@@ -30,12 +30,12 @@ import com.idega.business.IBOLookup;
 import com.idega.core.contact.data.Phone;
 import com.idega.core.location.data.Address;
 import com.idega.idegaweb.IWApplicationContext;
-import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.io.MediaWritable;
 import com.idega.io.MemoryFileBuffer;
 import com.idega.io.MemoryInputStream;
 import com.idega.io.MemoryOutputStream;
+import com.idega.presentation.IWContext;
 import com.idega.user.data.User;
 import com.idega.util.PersonalIDFormatter;
 import com.lowagie.text.BadElementException;
@@ -78,12 +78,12 @@ public class SchoolFreetimeWriter implements MediaWritable {
 	public SchoolFreetimeWriter() {
 	}
 	
-	public void init(HttpServletRequest req, IWMainApplication iwma) {
+	public void init(HttpServletRequest req, IWContext iwc) {
 		try {
-			locale = iwma.getIWApplicationContext().getApplicationSettings().getApplicationLocale();
-			business = getSchoolCommuneBusiness(iwma.getIWApplicationContext());
+			locale = iwc.getApplicationSettings().getApplicationLocale();
+			business = getSchoolCommuneBusiness(iwc);
 			//userBusiness = getCommuneUserBusiness(iwma.getIWApplicationContext());
-			iwrb = iwma.getBundle(CommuneBlock.IW_BUNDLE_IDENTIFIER).getResourceBundle(locale);
+			iwrb = iwc.getIWMainApplication().getBundle(CommuneBlock.IW_BUNDLE_IDENTIFIER).getResourceBundle(locale);
 			
 			if (req.getParameter(prmSchoolId) != null && req.getParameter(prmSchoolSeasonID) != null) {
 				school = business.getSchoolBusiness().getSchool(new Integer(req.getParameter(prmSchoolId)));

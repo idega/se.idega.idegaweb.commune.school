@@ -30,12 +30,12 @@ import com.idega.core.contact.data.Phone;
 import com.idega.core.location.data.Address;
 import com.idega.core.location.data.PostalCode;
 import com.idega.idegaweb.IWApplicationContext;
-import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.io.MediaWritable;
 import com.idega.io.MemoryFileBuffer;
 import com.idega.io.MemoryInputStream;
 import com.idega.io.MemoryOutputStream;
+import com.idega.presentation.IWContext;
 import com.idega.user.data.User;
 import com.idega.util.PersonalIDFormatter;
 import com.lowagie.text.BadElementException;
@@ -80,12 +80,12 @@ public class SchoolClassWriter implements MediaWritable {
 	public SchoolClassWriter() {
 	}
 	
-	public void init(HttpServletRequest req, IWMainApplication iwma) {
+	public void init(HttpServletRequest req, IWContext iwc) {
 		try {
-			locale = iwma.getIWApplicationContext().getApplicationSettings().getApplicationLocale();
-			business = getSchoolCommuneBusiness(iwma.getIWApplicationContext());
-			userBusiness = getCommuneUserBusiness(iwma.getIWApplicationContext());
-			iwrb = iwma.getBundle(CommuneBlock.IW_BUNDLE_IDENTIFIER).getResourceBundle(locale);
+			locale = iwc.getApplicationSettings().getApplicationLocale();
+			business = getSchoolCommuneBusiness(iwc);
+			userBusiness = getCommuneUserBusiness(iwc);
+			iwrb = iwc.getIWMainApplication().getBundle(CommuneBlock.IW_BUNDLE_IDENTIFIER).getResourceBundle(locale);
 			
 			if (req.getParameter(prmClassId) != null && req.getParameter(prmYearId) != null) {
 				schoolClass = business.getSchoolBusiness().findSchoolClass(new Integer(req.getParameter(prmClassId)));
