@@ -26,16 +26,14 @@ import com.idega.user.data.User;
 import com.idega.util.IWTimestamp;
 
 
-import com.idega.io.MemoryFileBuffer;
-import com.idega.io.MemoryInputStream;
-import com.idega.io.MemoryOutputStream;
-import com.idega.core.data.ICFile;
-import com.idega.core.data.ICFileHome;
+import com.idega.io.*;
+import com.idega.core.data.*;
+import com.lowagie.text.PageSize;
 import com.lowagie.text.Document;
+import com.lowagie.text.Phrase;
 import com.lowagie.text.Paragraph;
-import com.lowagie.text.pdf.PdfWriter;
-import java.io.OutputStream;
-import java.io.InputStream;
+import com.lowagie.text.pdf.*;
+import java.io.*;
 /**
  * Title:
  * Description:
@@ -704,23 +702,49 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
         (final int reminderId, final SchoolChoiceReminderReceiver [] receivers)
         throws RemoteException {
         try{
-            MemoryFileBuffer buffer = new MemoryFileBuffer();
-            OutputStream mos = new MemoryOutputStream(buffer);
-            InputStream mis = new MemoryInputStream(buffer);
-            Document document = new Document();
-            PdfWriter.getInstance(document, mos);
+            final MemoryFileBuffer buffer = new MemoryFileBuffer ();
+            final OutputStream outStream = new MemoryOutputStream (buffer);
+            final Document document = new Document (PageSize.A4, 30*72/25.4f,
+                                                    30*72/25.4f, 9*72/25.4f,
+                                                    9*72/25.4f);
+            PdfWriter.getInstance(document, outStream);
             document.open();
-            document.add(new Paragraph("Hello World"));
-            document.add(new Paragraph(receivers.toString ()));
+            final SchoolChoiceReminder reminder
+                    = findSchoolChoiceReminder (reminderId);
+            final PdfPTable headerTable = new PdfPTable (3);
+            headerTable.setWidths (new float [] {1,1,1});
+            headerTable.getDefaultCell ().setBorder (0);
+            headerTable.getDefaultCell ().setFixedHeight (36*72/25.4f);
+            headerTable.getDefaultCell ().setPadding (0);
+            headerTable.getDefaultCell ().setNoWrap (true);
+            headerTable.setWidthPercentage (100f);
+            final PdfPCell leftHeaderMargin = new PdfPCell (new Phrase (""));
+            leftHeaderMargin.setBorder (0);
+            leftHeaderMargin.setNoWrap (true);
+            final SchoolChoiceReminderReceiver receiver = receivers [0];
+            final PdfPCell addressCell = new PdfPCell
+                    (new Phrase (receiver.getParentName () + "\n"
+                                 + receiver.getStreetAddress () + "\n"
+                                 + receiver.getPostalAddress () + "\n"
+                                 + "\nVårdnadshavare för:\n"
+                                 + receiver.getSsn () + " "
+                                 + receiver.getStudentName ()));
+            addressCell.setBorder (0);
+            addressCell.setNoWrap (true);					
+            headerTable.addCell (leftHeaderMargin);
+            headerTable.addCell (addressCell);
+            headerTable.addCell (leftHeaderMargin);
+            document.add (headerTable);
+            document.add(new Paragraph (reminder.getText ()));
             document.close();
-            ICFileHome icFileHome = (ICFileHome) getIDOHome(ICFile.class);
-            ICFile file = icFileHome.create();
-            file.setFileValue(mis);
+            final ICFileHome icFileHome = (ICFileHome) getIDOHome(ICFile.class);
+            final ICFile file = icFileHome.create();
+            final InputStream inStream = new MemoryInputStream (buffer);
+            file.setFileValue(inStream);
             file.setMimeType("application/x-pdf");
             file.setName("reminder_" + reminderId + ".pdf");
             file.setFileSize(buffer.length());
             file.store();
-            System.err.println ("docid=" + file.getID ());
             return file.getID ();
         } catch (Exception e) {
             e.printStackTrace ();
@@ -728,7 +752,32 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
                                        + reminderId, e);
         }
     }
-        
+    /*
+Document document = new Document(PageSize.A4, 50, 50, 50, 50);
+ try {
+    // creation of the different writers
+    HtmlWriter.getInstance(document, System.out);
+    PdfWriter.getInstance(document, new FileOutputStream("text.pdf"));
+
+    // we add some meta information to the document
+    document.addAuthor("Bruno Lowagie");
+    document.addSubject("This is the result of a Test.");
+
+    // we define a header and a footer
+    HeaderFooter header = new HeaderFooter(new Phrase("This is a header."), false);
+    HeaderFooter footer = new HeaderFooter(new Phrase("This is page "), new Phrase("."));
+    footer.setAlignment(Element.ALIGN_CENTER);
+    document.setHeader(header);
+	  document.setFooter(footer);
+    // we open the document for writing
+    document.open();
+    document.add(new Paragraph("Hello world"));
+ }
+ catch(DocumentException de) {
+    System.err.println(de.getMessage());
+ }
+ document.close();
+    */        
     public SchoolChoiceReminderReceiver []
         findAllStudentsThatMustDoSchoolChoice ()
         throws RemoteException, FinderException {
