@@ -9,6 +9,7 @@ import javax.ejb.FinderException;
 
 import se.idega.idegaweb.commune.presentation.CommuneBlock;
 import se.idega.idegaweb.commune.school.business.SchoolChoiceBusiness;
+import se.idega.idegaweb.commune.school.business.SchoolCommuneSession;
 import se.idega.idegaweb.commune.school.data.SchoolChoice;
 import se.idega.idegaweb.commune.message.business.MessageBusiness;
 import is.idega.idegaweb.member.business.MemberFamilyLogic;
@@ -69,7 +70,8 @@ public class SchoolChoiceApprover extends CommuneBlock {
 	private School school;
 
 	public void control(IWContext iwc) throws RemoteException {
-		debugParameters(iwc);
+		if ( iwc.getApplicationSettings().getIfDebug() )
+			debugParameters(iwc);
 		init(iwc);
 		parse(iwc);
 		String[] statusToSearch = { "UBEH", "PLAC", "PREL" };
@@ -120,33 +122,12 @@ public class SchoolChoiceApprover extends CommuneBlock {
 	}
 
 	public void init(IWContext iwc) throws RemoteException {
-		
 		userBean = (UserBusiness) IBOLookup.getServiceInstance(iwc, UserBusiness.class);
 		schoolBean = (SchoolBusiness) IBOLookup.getServiceInstance(iwc, SchoolBusiness.class);
 		choiceBean = (SchoolChoiceBusiness) IBOLookup.getServiceInstance(iwc, SchoolChoiceBusiness.class);
 		msgBean = (MessageBusiness) IBOLookup.getServiceInstance(iwc,MessageBusiness.class);
-		if (iwc.isParameterSet(prmSchoolId)) {
-			schoolId = Integer.parseInt(iwc.getParameter(prmSchoolId));
-			iwc.setSessionAttribute(prmSchoolId,new Integer(schoolId));
-		}
-		else if(iwc.getSessionAttribute(prmSchoolId)!=null){
-			schoolId = ((Integer) iwc.getSessionAttribute(prmSchoolId)).intValue();
-		}
-		else{
-			com.idega.core.user.data.User user = iwc.getUser();
-			if(user!=null){
-				User newUser = com.idega.user.Converter.convertToNewUser(user);
-				try{
-					School school = choiceBean.getFirstManagingSchoolForUser(newUser);
-					if(school!=null){
-						schoolId = ((Integer)school.getPrimaryKey()).intValue();
-						iwc.setSessionAttribute(prmSchoolId,new Integer(schoolId));
-					}
-				}
-				catch(FinderException fe){
-				}
-			}
-		}
+		
+		schoolId = getSchoolCommuneSession(iwc).getSchoolID();
 		pupilList = iwc.isParameterSet(prmPupilView);
 	}
 	
@@ -426,8 +407,10 @@ public class SchoolChoiceApprover extends CommuneBlock {
 		return IW_BUNDLE_IDENTIFIER;
 	}
 	
+	private SchoolCommuneSession getSchoolCommuneSession(IWContext iwc) throws RemoteException {
+		return (SchoolCommuneSession) IBOLookup.getSessionInstance(iwc, SchoolCommuneSession.class);	
+	}
 	
-
 	public void main(IWContext iwc) throws RemoteException{
 		iwb = getBundle(iwc);
 		iwrb = getResourceBundle(iwc);

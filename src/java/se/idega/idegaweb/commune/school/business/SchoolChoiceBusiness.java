@@ -42,14 +42,6 @@ public interface SchoolChoiceBusiness extends com.idega.business.IBOService,com.
  public com.idega.block.school.business.SchoolBusiness getSchoolBusiness()throws java.rmi.RemoteException, java.rmi.RemoteException;
  public java.lang.String getPreliminaryMessageSubject() throws java.rmi.RemoteException;
  public boolean noRoomAction(java.lang.Integer p0) throws java.rmi.RemoteException;
- /**
-	 * Method getFirstManagingSchoolForUser.
-	 * If there is no school that the user manages then the method throws a FinderException.
-	 * @param user a user
-	 * @return School that is the first school that the user is a manager for.
-	 * @throws javax.ejb.FinderException if ther is no school that the user manages.
-	 */
- public com.idega.block.school.data.School getFirstManagingSchoolForUser(com.idega.user.data.User p0)throws java.rmi.RemoteException,javax.ejb.FinderException, java.rmi.RemoteException;
  public java.lang.String getGroupedMessageSubject() throws java.rmi.RemoteException;
  public se.idega.idegaweb.commune.school.data.SchoolChoiceHome getSchoolChoiceHome()throws java.rmi.RemoteException, java.rmi.RemoteException;
  public com.idega.block.school.data.SchoolSeasonHome getSchoolSeasonHome()throws java.rmi.RemoteException, java.rmi.RemoteException;

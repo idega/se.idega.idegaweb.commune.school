@@ -297,37 +297,6 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	}
 
 	/**
-	 * Method getFirstManagingSchoolForUser.
-	 * If there is no school that the user manages then the method throws a FinderException.
-	 * @param user a user
-	 * @return School that is the first school that the user is a manager for.
-	 * @throws javax.ejb.FinderException if ther is no school that the user manages.
-	 */
-	public School getFirstManagingSchoolForUser(User user) throws FinderException, RemoteException {
-		CommuneUserBusiness commBuiz = getCommuneUserBusiness();
-
-		try {
-			Group rootGroup = commBuiz.getRootSchoolAdministratorGroup();
-			// if user is a SchoolAdministrator
-			if (user.hasRelationTo(rootGroup)) {
-				Collection schools = getSchoolHome().findAllBySchoolGroup(user);
-				if (!schools.isEmpty()) {
-					Iterator iter = schools.iterator();
-					while (iter.hasNext()) {
-						School school = (School) iter.next();
-						return school;
-					}
-				}
-			}
-		}
-		catch (CreateException e) {
-			e.printStackTrace();
-		}
-
-		throw new FinderException("No school found that " + user.getName() + " manages");
-	}
-
-	/**
 	 * Method getFirstProviderForUser.
 	 * If there is no school that the user then the method throws a FinderException.
 	 * @param user a user
