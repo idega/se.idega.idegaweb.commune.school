@@ -672,7 +672,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 			Iterator children = choice.getChildrenIterator();
 			if (children.hasNext()) {
 				Case child = (Case) children.next();
-				super.changeCaseStatus(child, getCaseStatusPreliminary().getStatus(), performer);
+				super.changeCaseStatus(child, getCaseStatusPreliminary().getStatus(), performer, null);
 				child.store();
 			}
 			trans.commit();
