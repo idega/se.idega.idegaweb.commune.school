@@ -1,8 +1,11 @@
 package se.idega.idegaweb.commune.school.business;
 
+import com.idega.block.process.data.Case;
+import com.idega.user.data.User;
 import com.idega.util.IWTimestamp;
 import java.rmi.RemoteException;
 import javax.ejb.FinderException;
+import se.idega.idegaweb.commune.accounting.childcare.data.ChildCareApplication;
 
 public interface SchoolChoiceBusiness extends com.idega.business.IBOService,com.idega.block.process.business.CaseBusiness
 {
@@ -24,7 +27,6 @@ public interface SchoolChoiceBusiness extends com.idega.business.IBOService,com.
 	public se.idega.idegaweb.commune.school.data.SchoolChoiceReminder findSchoolChoiceReminder(int p0)throws java.rmi.RemoteException,javax.ejb.FinderException, java.rmi.RemoteException;
 	public se.idega.idegaweb.commune.school.data.SchoolChoiceReminder[] findUnhandledSchoolChoiceReminders(com.idega.user.data.Group[] p0)throws java.rmi.RemoteException,javax.ejb.FinderException, java.rmi.RemoteException;
 	public int generateReminderLetter(int p0,se.idega.idegaweb.commune.school.business.SchoolChoiceReminderReceiver[] p1)throws java.rmi.RemoteException, java.rmi.RemoteException;
-	public se.idega.idegaweb.commune.childcare.business.AfterSchoolBusiness getAfterSchoolBusiness() throws java.rmi.RemoteException;
 	public java.util.Collection getApplicantsForSchool(int p0,int p1,int p2,java.lang.String[] p3,java.lang.String p4,int p5,int p6,int p7)throws java.rmi.RemoteException, java.rmi.RemoteException;
 	public java.util.Collection getApplicantsForSchool(int p0,int p1,int p2,int[] p3,java.lang.String[] p4,java.lang.String p5,int p6,int p7,int p8)throws java.rmi.RemoteException, java.rmi.RemoteException;
 	public java.util.Collection getApplicantsForSchool(int p0,int p1,int p2,java.lang.String[] p3,java.lang.String p4,int p5,int p6,int p7,int p8)throws java.rmi.RemoteException, java.rmi.RemoteException;
@@ -83,4 +85,28 @@ public interface SchoolChoiceBusiness extends com.idega.business.IBOService,com.
 	IWTimestamp getSchoolChoiceStartDate () throws RemoteException,	FinderException;
 	IWTimestamp getSchoolChoiceEndDate () throws RemoteException, FinderException;
 	IWTimestamp getSchoolChoiceCriticalDate () throws RemoteException, FinderException;
+	
+	public se.idega.idegaweb.commune.school.data.AfterSchoolChoice findChoicesByChildAndProviderAndSeason(int p0,int p1,int p2)throws javax.ejb.FinderException, java.rmi.RemoteException;
+
+    public boolean rejectApplication(ChildCareApplication application,
+            String subject, String message, User user)
+            throws java.rmi.RemoteException;
+
+    public boolean rejectApplication(int applicationId, String subject,
+            String body, User user) throws java.rmi.RemoteException;
+    
+    public void sendMessageToParents(ChildCareApplication application,
+            String subject, String body) throws java.rmi.RemoteException;
+    
+	public void sendMessageToParents(ChildCareApplication application, String subject, String body, boolean alwaysSendLetter) throws java.rmi.RemoteException;
+	
+	public void sendMessageToParents(ChildCareApplication application, String subject, String body, String letterBody, boolean alwaysSendLetter)  throws java.rmi.RemoteException;
+
+    public boolean isAfterSchoolApplication(Case application)
+            throws java.rmi.RemoteException;
+
+    public ChildCareApplication getApplication(int applicationID)
+            throws java.rmi.RemoteException;
+
+
 }

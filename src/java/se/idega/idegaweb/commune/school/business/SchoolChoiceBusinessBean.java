@@ -2,7 +2,6 @@ package se.idega.idegaweb.commune.school.business;
 
 import is.idega.block.family.business.FamilyLogic;
 import is.idega.block.family.business.NoCustodianFound;
-
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.rmi.RemoteException;
@@ -20,26 +19,29 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.Vector;
-
 import javax.ejb.CreateException;
 import javax.ejb.FinderException;
-
+import javax.transaction.SystemException;
+import javax.transaction.UserTransaction;
 import se.cubecon.bun24.viewpoint.business.ViewpointBusiness;
 import se.cubecon.bun24.viewpoint.data.SubCategory;
+import se.idega.idegaweb.commune.accounting.childcare.data.ChildCareApplication;
+import se.idega.idegaweb.commune.accounting.childcare.data.ChildCareApplicationHome;
 import se.idega.idegaweb.commune.accounting.extra.business.ResourceBusiness;
 import se.idega.idegaweb.commune.accounting.extra.data.ResourceClassMember;
 import se.idega.idegaweb.commune.business.CommuneUserBusiness;
-import se.idega.idegaweb.commune.childcare.business.AfterSchoolBusiness;
 import se.idega.idegaweb.commune.message.business.MessageBusiness;
+import se.idega.idegaweb.commune.message.data.Message;
 import se.idega.idegaweb.commune.printing.business.DocumentBusiness;
 import se.idega.idegaweb.commune.school.data.AfterSchoolChoice;
+import se.idega.idegaweb.commune.school.data.AfterSchoolChoiceHome;
 import se.idega.idegaweb.commune.school.data.CurrentSchoolSeason;
 import se.idega.idegaweb.commune.school.data.CurrentSchoolSeasonHome;
 import se.idega.idegaweb.commune.school.data.SchoolChoice;
 import se.idega.idegaweb.commune.school.data.SchoolChoiceHome;
 import se.idega.idegaweb.commune.school.data.SchoolChoiceReminder;
 import se.idega.idegaweb.commune.school.data.SchoolChoiceReminderHome;
-
+import com.idega.block.process.business.CaseBusiness;
 import com.idega.block.process.data.Case;
 import com.idega.block.process.data.CaseStatus;
 import com.idega.block.school.business.SchoolBusiness;
@@ -62,6 +64,7 @@ import com.idega.core.file.data.ICFileHome;
 import com.idega.data.IDOCreateException;
 import com.idega.data.IDOException;
 import com.idega.data.IDOLookup;
+import com.idega.data.IDOLookupException;
 import com.idega.data.IDOStoreException;
 import com.idega.idegaweb.IWPropertyList;
 import com.idega.io.MemoryFileBuffer;
@@ -159,14 +162,8 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 			throw new IBORuntimeException(ile);
 		}
 	}
-	public AfterSchoolBusiness getAfterSchoolBusiness() {
-		try {
-			return (AfterSchoolBusiness) this.getServiceInstance(AfterSchoolBusiness.class);
-		}
-		catch (RemoteException re) {
-			throw new IBORuntimeException(re);
-		}
-	}
+
+	
 	public SchoolHome getSchoolHome() throws java.rmi.RemoteException {
 		return getSchoolBusiness().getSchoolHome();
 	}
@@ -886,16 +883,13 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	
 	private boolean rejectAfterSchoolApplication(int childID, int providerID, int seasonID, User user) {
 		try {
-			AfterSchoolChoice choice = getAfterSchoolBusiness().findChoicesByChildAndProviderAndSeason(childID, providerID, seasonID);
+			AfterSchoolChoice choice = findChoicesByChildAndProviderAndSeason(childID, providerID, seasonID);
 			if (choice != null) {
 				String subject = this.getLocalizedString("after_school.application_rejected_subject", "After school application rejected");
 				String message = this.getLocalizedString("after_school.application_rejected_body", "Your after school application for {0}, {2}, to provider {1} has been rejected. Your next selected will be made active.");
-				getAfterSchoolBusiness().rejectApplication(choice, subject, message, user);
+				rejectApplication(choice, subject, message, user);
 			}
 			return true;
-		}
-		catch (RemoteException e) {
-			throw new IBORuntimeException(e);
 		}
 		catch (FinderException e) {
 			return false;
@@ -2042,4 +2036,145 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 			fe.printStackTrace();
 		}
 	}
+
+// -----------------------------------------------------
+	public AfterSchoolChoice findChoicesByChildAndProviderAndSeason(int childID, int providerID, int seasonID) throws FinderException {
+		String[] caseStatus = { getCaseStatusPreliminary().getStatus() };
+		return getAfterSchoolChoiceHome().findByChildAndProviderAndSeason(childID, providerID, seasonID, caseStatus);
+	}
+	
+	private AfterSchoolChoiceHome getAfterSchoolChoiceHome() {
+		try {
+			return (AfterSchoolChoiceHome) IDOLookup.getHome(AfterSchoolChoice.class);
+		}
+		catch (IDOLookupException e) {
+			throw new IBORuntimeException(e.getMessage());
+		}
+	}
+	
+	public boolean rejectApplication(ChildCareApplication application, String subject, String message, User user) {
+		UserTransaction t = getSessionContext().getUserTransaction();
+		try {
+			t.begin();
+			CaseBusiness caseBiz = (CaseBusiness) getServiceInstance(CaseBusiness.class);
+			IWTimestamp now = new IWTimestamp();
+			application.setRejectionDate(now.getDate());
+			application.setApplicationStatus(SchoolConstants.STATUS_DENIED);
+			caseBiz.changeCaseStatus(application, getCaseStatusDenied().getStatus(), user);
+			sendMessageToParents(application, subject, message);
+
+			if (isAfterSchoolApplication(application)) {
+				Iterator iter = application.getChildrenIterator();
+				if (iter != null) {
+					while (iter.hasNext()) {
+						Case element = (Case) iter.next();
+						if (isAfterSchoolApplication(element) && element.getCaseStatus().equals(getCaseStatusInactive())) {
+							application = getApplication(((Integer) element.getPrimaryKey()).intValue());
+							application.setApplicationStatus(SchoolConstants.STATUS_SENT_IN);
+							caseBiz.changeCaseStatus(application, getCaseStatusPreliminary().getStatus(), user);
+
+							subject = this.getLocalizedString("after_school.application_received_subject", "After school care application received.");
+							message = this.getLocalizedString("after_school.application_received_body", "We have received you application for {0}, {2}, to {1}.");
+							sendMessageToParents(application, subject, message);
+						}
+					}
+				}
+			}
+
+			t.commit();
+
+			return true;
+		}
+		catch (Exception e) {
+			try {
+				t.rollback();
+			}
+			catch (SystemException ex) {
+				ex.printStackTrace();
+			}
+			e.printStackTrace();
+		}
+
+		return false;
+	}
+
+	public boolean rejectApplication(int applicationId, String subject, String body, User user) {
+		try {
+			ChildCareApplicationHome home = (ChildCareApplicationHome) IDOLookup.getHome(ChildCareApplication.class);
+			ChildCareApplication appl = home.findByPrimaryKey(new Integer(applicationId));
+			return rejectApplication(appl, subject, body, user);
+		}
+		catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		catch (FinderException e) {
+			e.printStackTrace();
+		}
+
+		return false;
+	}
+	
+	public void sendMessageToParents(ChildCareApplication application, String subject, String body) {
+		sendMessageToParents(application, subject, body, false);
+	}
+
+	public void sendMessageToParents(ChildCareApplication application, String subject, String body, boolean alwaysSendLetter) {
+		sendMessageToParents(application, subject, body, body, alwaysSendLetter);
+	}
+
+	public void sendMessageToParents(ChildCareApplication application, String subject, String body, String letterBody, boolean alwaysSendLetter) {
+		try {
+			User child = application.getChild();
+			//Object[] arguments = { child.getNameLastFirst(true), application.getProvider().getSchoolName(), PersonalIDFormatter.format(child.getPersonalID(), getIWApplicationContext().getApplicationSettings().getDefaultLocale()), application.getLastReplyDate() != null ? new IWTimestamp(application.getLastReplyDate()).getLocaleDate(getIWApplicationContext().getApplicationSettings().getDefaultLocale(), IWTimestamp.SHORT) : "xxx", application.getOfferValidUntil() != null ? new IWTimestamp(application.getOfferValidUntil()).getLocaleDate(getIWApplicationContext().getApplicationSettings().getDefaultLocale(), IWTimestamp.SHORT) : ""};
+			Object[] arguments = { child.getName(), application.getProvider().getSchoolName(), PersonalIDFormatter.format(child.getPersonalID(), getIWApplicationContext().getApplicationSettings().getDefaultLocale()), application.getLastReplyDate() != null ? new IWTimestamp(application.getLastReplyDate()).getLocaleDate(getIWApplicationContext().getApplicationSettings().getDefaultLocale(), IWTimestamp.SHORT) : "xxx", application.getOfferValidUntil() != null ? new IWTimestamp(application.getOfferValidUntil()).getLocaleDate(getIWApplicationContext().getApplicationSettings().getDefaultLocale(), IWTimestamp.SHORT) : ""};
+
+			User appParent = application.getOwner();
+			if (getUserBusiness().getMemberFamilyLogic().isChildInCustodyOf(child, appParent)) {
+				Message message = getMessageBusiness().createUserMessage(application, appParent, subject, MessageFormat.format(body, arguments), MessageFormat.format(letterBody, arguments), true, alwaysSendLetter);
+				message.setParentCase(application);
+				message.store();
+			}
+
+			try {
+				Collection parents = getUserBusiness().getMemberFamilyLogic().getCustodiansFor(child);
+				Iterator iter = parents.iterator();
+				while (iter.hasNext()) {
+					User parent = (User) iter.next();
+					if (!getUserBusiness().haveSameAddress(parent, appParent)) {
+						getMessageBusiness().createUserMessage(application, parent, subject, MessageFormat.format(body, arguments), MessageFormat.format(letterBody, arguments), true, alwaysSendLetter);
+					}
+				}
+			}
+			catch (NoCustodianFound ncf) {
+				ncf.printStackTrace();
+			}
+		}
+		catch (RemoteException re) {
+			re.printStackTrace();
+		}
+	}
+
+	public boolean isAfterSchoolApplication(Case application) {
+		if (application.getCode().equals(SchoolConstants.AFTER_SCHOOL_CASE_CODE_KEY)) return true;
+		return false;
+	}
+
+	public ChildCareApplication getApplication(int applicationID) {
+		try {
+			return getChildCareApplicationHome().findByPrimaryKey(new Integer(applicationID));
+		}
+		catch (FinderException e) {
+			return null;
+		}
+	}
+	
+	private ChildCareApplicationHome getChildCareApplicationHome() {
+		try {
+			return (ChildCareApplicationHome) IDOLookup.getHome(ChildCareApplication.class);
+		}
+		catch (IDOLookupException ile) {
+			throw new IBORuntimeException(ile);
+		}
+	}
+
 }
