@@ -1126,8 +1126,8 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 				final Image logo = Image.getInstance(logoPath);
 				logo.scaleToFit(mmToPoints(30), mmToPoints(15));
 				logoCell = new PdfPCell(logo);
-				logoCell.setVerticalAlignment(logoCell.ALIGN_MIDDLE);
-				logoCell.setHorizontalAlignment(logoCell.ALIGN_LEFT);
+				logoCell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+				logoCell.setHorizontalAlignment(Element.ALIGN_LEFT);
 			}
 			catch (Exception e) {
 				logoCell = new PdfPCell(new Phrase("The file '" + logoPath + "' is missing. Please contact the system" + " administartor."));

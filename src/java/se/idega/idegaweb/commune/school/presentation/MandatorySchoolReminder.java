@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.rmi.RemoteException;
 import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
@@ -109,7 +108,7 @@ public class MandatorySchoolReminder extends CommuneBlock {
 	public void lineUpSeasonSelection(IWContext iwc, IWResourceBundle iwrb){
 //		IWMainApplication iwma = iwc.getApplicationContext().getApplication();		
 //		IWBundle coreBundle = iwma.getBundle(this.IW_CORE_BUNDLE_IDENTIFIER);
-		DateFormat df = SimpleDateFormat.getDateInstance(SimpleDateFormat.SHORT,iwc.getCurrentLocale()); 
+		DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT,iwc.getCurrentLocale()); 
 		Date date = IWTimestamp.getTimestampRightNow();
 		
 		_fieldTable = new Table(2,2);
@@ -149,7 +148,7 @@ public class MandatorySchoolReminder extends CommuneBlock {
 				form.add(_fieldTable);
 				this.add(form);
 			} else if(_action.equals(ACTION_SELECT_SCHOOL_SEASON)){
-				DateFormat df = SimpleDateFormat.getDateInstance(SimpleDateFormat.SHORT,iwc.getCurrentLocale()); 
+				DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT,iwc.getCurrentLocale()); 
 				
 				this.add(getFieldLabel(iwrb.getLocalizedString("MandatorySchoolReminder.date", "Date:")));		
 				this.add(getText(df.format(_selectedDate)));
@@ -221,7 +220,7 @@ public class MandatorySchoolReminder extends CommuneBlock {
 
 		String date = iwc.getParameter(PRM_DATE);
 		if(date != null){
-			DateFormat df = SimpleDateFormat.getDateInstance(SimpleDateFormat.SHORT,iwc.getCurrentLocale()); 
+			DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT,iwc.getCurrentLocale()); 
 			_selectedDate = df.parse(date);
 		}
 		
@@ -291,7 +290,7 @@ public class MandatorySchoolReminder extends CommuneBlock {
 		SchoolBusiness sBusiness =  (SchoolBusiness)IBOLookup.getServiceInstance(iwc,SchoolBusiness.class);
 		SchoolChoiceBusiness scBusiness = (SchoolChoiceBusiness)IBOLookup.getServiceInstance(iwc,SchoolChoiceBusiness.class);
 		JasperReportBusiness jasperBusiness =  (JasperReportBusiness)IBOLookup.getServiceInstance(iwc,JasperReportBusiness.class);
-		DateFormat df = SimpleDateFormat.getDateInstance(SimpleDateFormat.SHORT,iwc.getCurrentLocale()); 
+		DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT,iwc.getCurrentLocale()); 
 		
 		
 		SchoolSeason currentSeason;

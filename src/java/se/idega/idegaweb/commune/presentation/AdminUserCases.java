@@ -8,7 +8,6 @@ package se.idega.idegaweb.commune.presentation;
 
 import java.rmi.RemoteException;
 import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -196,7 +195,7 @@ public class AdminUserCases extends UserCases {
 
 	private void addViewpointToMessageList(final IWContext iwc, final Viewpoint viewpoint, final Table messageList, int row) throws Exception {
 
-		final DateFormat dateFormat = SimpleDateFormat.getDateInstance(SimpleDateFormat.SHORT, iwc.getCurrentLocale());
+		final DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.SHORT, iwc.getCurrentLocale());
 		final Text caseDate = getSmallText(dateFormat.format(new Date(viewpoint.getCreated().getTime())));
 		Text caseNumber = getSmallText(viewpoint.getPrimaryKey().toString());
 		final Text category = getSmallText(viewpoint.getCategory());
@@ -230,7 +229,7 @@ public class AdminUserCases extends UserCases {
 
 	private void addReminderToMessageList(final IWContext iwc, final SchoolChoiceReminder reminder, final Table messageList, int row) throws Exception {
 
-		final DateFormat dateFormat = SimpleDateFormat.getDateInstance(SimpleDateFormat.SHORT, iwc.getCurrentLocale());
+		final DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.SHORT, iwc.getCurrentLocale());
 		final Text caseDate = getSmallText(dateFormat.format(new Date(reminder.getCreated().getTime())));
 		Text caseNumber = getSmallText(reminder.getPrimaryKey().toString());
 		Text caseType = getSmallText(getCaseBusiness(iwc).getCaseBusiness(reminder.getCaseCode()).getLocalizedCaseDescription(reminder, iwc.getCurrentLocale()));

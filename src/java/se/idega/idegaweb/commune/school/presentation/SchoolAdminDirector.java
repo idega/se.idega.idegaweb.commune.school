@@ -39,7 +39,7 @@ public class SchoolAdminDirector extends CommuneBlock {
 	
 	
 	public String getBundleIdentifier(){
-		return this.IW_BUNDLE_IDENTIFIER;
+		return CommuneBlock.IW_BUNDLE_IDENTIFIER;
 	}
 	
 

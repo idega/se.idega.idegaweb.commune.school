@@ -7,7 +7,6 @@ import java.rmi.RemoteException;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.MessageFormat;
-import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -821,7 +820,7 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 		IDOEntityDefinition userDef = IDOLookup.getEntityDefinitionForClass(User.class);
 		IDOEntityDefinition grRelDef = IDOLookup.getEntityDefinitionForClass(GroupRelation.class);
 		IDOEntityDefinition addrDef = IDOLookup.getEntityDefinitionForClass(Address.class);
-		DateFormat dateFormat = SimpleDateFormat.getDateInstance(DateFormat.DEFAULT,currentLocale);
+		DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.DEFAULT,currentLocale);
 		
 		
 		//Child - Fields
@@ -1056,7 +1055,7 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 			
 		}
 		
-		DateFormat dateTimeFormat = SimpleDateFormat.getDateTimeInstance(DateFormat.DEFAULT,DateFormat.DEFAULT,currentLocale);
+		DateFormat dateTimeFormat = DateFormat.getDateTimeInstance(DateFormat.DEFAULT,DateFormat.DEFAULT,currentLocale);
 
 		reportData.addExtraHeaderParameter("label_current_date",_iwrb.getLocalizedString("CommuneReportBusiness.label_current_date","Current date"),"current_date",dateTimeFormat.format(IWTimestamp.getTimestampRightNow()));
 

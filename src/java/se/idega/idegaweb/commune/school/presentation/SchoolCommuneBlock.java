@@ -30,6 +30,7 @@ import com.idega.data.IDOLookup;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.UnavailableIWContext;
+import com.idega.io.MediaWritable;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
 import com.idega.presentation.Table;
@@ -359,7 +360,7 @@ public abstract class SchoolCommuneBlock extends CommuneBlock {
 		Link link = new Link(image);
 		link.setWindow(getFileWindow());
 		link.addParameter(SchoolClassWriter.prmPrintType, SchoolClassWriter.PDF);
-		link.addParameter(SchoolClassWriter.PRM_WRITABLE_CLASS, IWMainApplication.getEncryptedClassName(classToUse));
+		link.addParameter(MediaWritable.PRM_WRITABLE_CLASS, IWMainApplication.getEncryptedClassName(classToUse));
 		return link;
 	}
 
@@ -367,7 +368,7 @@ public abstract class SchoolCommuneBlock extends CommuneBlock {
 		Link link = new Link(image);
 		link.setWindow(getFileWindow());
 		link.addParameter(SchoolClassWriter.prmPrintType, SchoolClassWriter.XLS);
-		link.addParameter(SchoolClassWriter.PRM_WRITABLE_CLASS, IWMainApplication.getEncryptedClassName(classToUse));
+		link.addParameter(MediaWritable.PRM_WRITABLE_CLASS, IWMainApplication.getEncryptedClassName(classToUse));
 		return link;
 	}
 

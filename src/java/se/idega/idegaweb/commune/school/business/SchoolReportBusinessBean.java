@@ -84,8 +84,8 @@ public class SchoolReportBusinessBean extends IBOSessionBean implements SchoolRe
 		fillColumns(columnNames);
 		initializeBundlesIfNeeded();
 		Locale currentLocale = this.getUserContext().getCurrentLocale();
-		String nativeLanguageIDs = _iwb.getProperty(this.PROPERTY_RESOURCE_IDS_NATIVE_LANGUAGE, "");
-		String secondLanguageIDs = _iwb.getProperty(this.PROPERTY_RESOURCE_IDS_SECOND_LANGUAGE, "");
+		String nativeLanguageIDs = _iwb.getProperty(SchoolReportBusiness.PROPERTY_RESOURCE_IDS_NATIVE_LANGUAGE, "");
+		String secondLanguageIDs = _iwb.getProperty(SchoolReportBusiness.PROPERTY_RESOURCE_IDS_SECOND_LANGUAGE, "");
 		
 		ReportableCollection reportCollection = new ReportableCollection();
 		

@@ -2,7 +2,6 @@ package se.idega.idegaweb.commune.presentation;
 
 import java.rmi.RemoteException;
 import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -209,7 +208,7 @@ public class UserCases extends CommuneBlock {
 
 	protected void addCaseToMessageList(final IWContext iwc, final int userId, final Case useCase, final Table messageList, int row) throws Exception {
 
-		DateFormat dateFormat = SimpleDateFormat.getDateInstance(SimpleDateFormat.SHORT, iwc.getCurrentLocale());
+		DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.SHORT, iwc.getCurrentLocale());
 		Date caseDate = new Date(useCase.getCreated().getTime());
 		Text caseNumber = getSmallText(useCase.getPrimaryKey().toString());
 		CaseBusiness caseBusiness = getCaseBusiness(iwc).getCaseBusiness(useCase.getCaseCode());
