@@ -20,7 +20,9 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import se.idega.idegaweb.commune.business.CommuneUserBusiness;
 import se.idega.idegaweb.commune.care.business.CareBusiness;
 import se.idega.idegaweb.commune.presentation.CommuneBlock;
+import se.idega.util.SchoolClassMemberComparatorForSweden;
 import com.idega.block.school.business.SchoolBusiness;
+import com.idega.block.school.business.SchoolClassMemberComparator;
 import com.idega.block.school.data.SchoolClass;
 import com.idega.block.school.data.SchoolClassMember;
 import com.idega.business.IBOLookup;
@@ -135,7 +137,7 @@ public class SchoolClassWriter implements MediaWritable {
 
 		if (!students.isEmpty()) {
 			Map studentMap = careBusiness.getStudentList(students);
-			Collections.sort(students, new SchoolClassMemberComparator(SchoolClassMemberComparator.NAME_SORT, locale, userBusiness, studentMap));
+			Collections.sort(students, SchoolClassMemberComparatorForSweden.getComparatorSortByName( locale, userBusiness, studentMap));
 			
 	    HSSFWorkbook wb = new HSSFWorkbook();
 	    HSSFSheet sheet = wb.createSheet(schoolClass.getName());
@@ -226,7 +228,7 @@ public class SchoolClassWriter implements MediaWritable {
 
 		if (!students.isEmpty()) {
 			Map studentMap = careBusiness.getStudentList(students);
-			Collections.sort(students, new SchoolClassMemberComparator(SchoolClassMemberComparator.NAME_SORT, locale, userBusiness, studentMap));
+			Collections.sort(students, SchoolClassMemberComparatorForSweden.getComparatorSortByName(locale, userBusiness, studentMap));
 			
 			Document document = new Document(PageSize.A4, 50, 50, 50, 50);
 			PdfWriter writer = PdfWriter.getInstance(document, mos);
