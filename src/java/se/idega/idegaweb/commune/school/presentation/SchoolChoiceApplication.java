@@ -49,6 +49,7 @@ import com.idega.presentation.ui.DateInput;
 import com.idega.presentation.ui.DropdownMenu;
 import com.idega.presentation.ui.Form;
 import com.idega.presentation.ui.HiddenInput;
+import com.idega.presentation.ui.RadioButton;
 import com.idega.presentation.ui.SubmitButton;
 import com.idega.presentation.ui.TextArea;
 import com.idega.user.business.UserBusiness;
@@ -97,6 +98,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	//private String prmSchoolChange = prefix + "scl_chg";
 	private String prmSixYearCare = prefix + "six_car";
 	private String prmLanguage = prefix + "cho_lng";
+	private String prmAfterschool = prefix + "aft_schl";
 	private String prmAction = prefix + "snd_frm";
 	private String prmChildId = CitizenChildren.getChildIDParameterName();
 	private String prmParentId = CitizenChildren.getParentIDParameterName();
@@ -106,6 +108,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	private boolean valSendCatalogue = false;
 	private boolean valSixyearCare = false;
 	private boolean valAutoAssign = false;
+	private boolean valWantsAfterSchool = false;
 	//private boolean valSchoolChange = false;
 	private boolean valCustodiansAgree = false;
 	private String valMessage = "";
@@ -143,7 +146,9 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	private Age age;
 	private Form myForm;
 	
-	private IBPage childcarePage;
+	private IBPage childcarePage = null;
+	private Integer afterSchoolPageID = null;
+	private Integer checkPageID = null;
 	
 	private boolean isOwner = true;
 	private User owner;
@@ -258,14 +263,34 @@ public class SchoolChoiceApplication extends CommuneBlock {
 							valType = 5;
 					}
 						
+
+					// Application has been saved
+
 					schoolTypes = getSchoolTypes(schBuiz.getSchoolBusiness().getElementarySchoolSchoolCategory());
+
 					if (saved) {
+						/*
 						if (valSixyearCare && childcarePage != null) {
 							iwc.setSessionAttribute(CitizenChildren.getChildIDParameterName(), new Integer(childId));
 							iwc.forwardToIBPage(getParentPage(), childcarePage);
 						}
 						else
 							add(getSchoolChoiceAnswer(iwc, child));
+						*/
+						// User wants to choose
+						if(valWantsAfterSchool){
+							boolean hasApprovedCheck = false;
+							//TODO search for approved check
+							// forward to afterschool page
+							if(hasApprovedCheck && afterSchoolPageID!=null){
+								iwc.forwardToIBPage(getParentPage(),afterSchoolPageID.intValue());
+							}
+							// forward to check application page
+							else if(checkPageID!=null){
+								iwc.forwardToIBPage(getParentPage(),checkPageID.intValue());
+							}
+							add(getSchoolChoiceAnswer(iwc, child));
+						}
 					}
 					else if (hasChoosed) {
 						add(getAlreadyChosenAnswer(child));
@@ -287,6 +312,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 			add(getLocalizedHeader("school_choice.last_date_expired", "Time limits to apply expired"));
 	}
 
+
 	private boolean saveSchoolChoice() {
 		try {
 			schBuiz.createSchoolChoices(valCaseOwner, childId, valType, valPreSchool, valFirstSchool, valSecondSchool, valThirdSchool, valPreGrade, valMethod, -1, -1, valLanguage, valMessage, schoolChange, valSixyearCare, valAutoAssign, valCustodiansAgree, valSendCatalogue, valPlacementDate, season);
@@ -301,6 +327,10 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	private void parse(IWContext iwc) {
 		valSendCatalogue = iwc.isParameterSet(prmSendCatalogue);
 		valSixyearCare = iwc.isParameterSet(prmSixYearCare);
+		if(iwc.isParameterSet(prmAfterschool)){
+			valWantsAfterSchool = iwc.getParameter(prmAfterschool).equalsIgnoreCase(Boolean.TRUE.toString());
+		}
+		
 		valAutoAssign = true;
 		//valSchoolChange = iwc.isParameterSet(prmSchoolChange);
 		valCustodiansAgree = iwc.isParameterSet(prmFirstSchool) ? Boolean.valueOf(iwc.getParameter(prmCustodiansAgree)).booleanValue() : false;
@@ -813,8 +843,14 @@ public class SchoolChoiceApplication extends CommuneBlock {
 			table.setHeight(row++, 5);
 			table.mergeCells(1, row, 5, row);
 			table.setWidth(1, row, Table.HUNDRED_PERCENT);
-			table.add(chkChildCare, 1, row);
-			table.add(getSmallHeader(Text.NON_BREAKING_SPACE + iwrb.getLocalizedString("school.child_care_requested", "Interested in after school child care")), 1, row);
+			RadioButton rbWantsAfterSchool = new RadioButton(prmAfterschool,Boolean.TRUE.toString());
+			RadioButton rbNotAfterSchool = new RadioButton(prmAfterschool,Boolean.FALSE.toString());
+			table.add(rbWantsAfterSchool,1,row);
+			table.add(getSmallHeader(Text.getNonBrakingSpace()+iwrb.getLocalizedString("school.want_after_school_care","I want afterschool care")),1,row++);
+			table.add(rbNotAfterSchool,1,row);
+			table.add(getSmallHeader(Text.getNonBrakingSpace()+iwrb.getLocalizedString("school.not_want_after_school_care","I do not want afterschool care")),1,row++);
+			//table.add(chkChildCare, 1, row);
+			//table.add(getSmallHeader(Text.NON_BREAKING_SPACE + iwrb.getLocalizedString("school.child_care_requested", "Interested in after school child care")), 1, row);
 		}
 		
 		table.add(new HiddenInput(prmCustodiansAgree,String.valueOf(showAgree)), 1, row);
@@ -1285,6 +1321,22 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	public void setChildcarePage(IBPage childcarePage) {
 		this.childcarePage = childcarePage;
 	}
+	
+	/**
+	 * Sets the childcarePage.
+	 * @param childcarePage The childcarePage to set
+	 */
+	public void setAfterschoolPage(Integer afterschoolPageID) {
+		this.afterSchoolPageID = afterschoolPageID;
+	 }
+	 
+	 /**
+	  * Sets the childcarePage ID.
+	  * @param childcarePageID The childcarePage to set
+	  */
+	 public void setCheckPage(Integer checkPageID) {
+		 this.checkPageID = checkPageID;
+	  }
 
 	private Link getUserHomePageLink (final IWContext iwc)
         throws RemoteException {
