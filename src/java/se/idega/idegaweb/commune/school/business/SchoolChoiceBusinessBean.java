@@ -742,8 +742,8 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	}
 
 	protected String getPreliminaryMessageBody(SchoolChoice theCase) throws RemoteException, FinderException {
-		
-		Object[] arguments = {theCase.getChosenSchool().getName(), theCase.getOwner().getNameLastFirst(true), theCase.getChild().getNameLastFirst(true), String.valueOf(theCase.getGrade() + 1) };
+		SchoolYear year = getCommuneSchoolBusiness().getSchoolYear(theCase.getGrade() + 1);
+		Object[] arguments = {theCase.getChosenSchool().getName(), theCase.getOwner().getNameLastFirst(true), theCase.getChild().getNameLastFirst(true), year != null ? year.getSchoolYearName() : "" };
 		String body = MessageFormat.format(getLocalizedString("school_choice.prelim_mesg_body", "Dear mr./ms./mrs. {1}\n Your child, {2} has been preliminary accepted in: {0} for year {3}"), arguments);
 
 		/*
