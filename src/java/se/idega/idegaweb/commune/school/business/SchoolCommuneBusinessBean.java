@@ -630,35 +630,17 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
      */
     public SchoolClassMember [] getCurrentMembersWithInvoiceInterval ()
         throws RemoteException {
-        final Map result = new TreeMap ();
-        final String [] invoiceIntervals = { "Månad", "Kvartal", "Termin",
-                                               "År" };
         final SchoolBusiness business = getSchoolBusiness ();
         final SchoolClassMemberHome home = business.getSchoolClassMemberHome ();
         final int currentSeasonId = getCurrentSchoolSeasonID ();
-        for (int i = 0; i < invoiceIntervals.length; i++) {
-            // retreive members for a invoice interval value
-            Collection members;
-            try {
-                members = home.findAllBySeasonAndInvoiceInterval
-                        (currentSeasonId, invoiceIntervals [i]);
-            } catch (final FinderException e) {
-                members = java.util.Collections.EMPTY_LIST;
-            }
-       for (Iterator m = members.iterator (); m.hasNext ();) {
-                // sort retreived members
-                //final SchoolClassMember member = (SchoolClassMember) m.next ();
-           /*   if (member.getHasCompensationByInvoice ()) {    
-                    final User user = member.getStudent ();
-                    result.put (user.getPersonalID (), member);
-                }*/
-            }
+        try {
+            final Collection result = home
+                    .findAllBySeasonAndInvoiceCompensation (currentSeasonId);
+            return (SchoolClassMember []) result.toArray (new SchoolClassMember
+                                                          [result.size ()]);
+        } catch (FinderException fe) {
+            return new SchoolClassMember [0];
         }
-
-        // convert the sorted members to an array return value
-        final Collection values = result.values ();
-        return (SchoolClassMember []) values.toArray (new SchoolClassMember
-                                                      [values.size ()]);
     }
 
 
