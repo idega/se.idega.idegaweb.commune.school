@@ -8,20 +8,21 @@ import se.idega.idegaweb.commune.message.business.*;
 import com.idega.block.process.business.CaseBusiness;
 import com.idega.block.process.data.Case;
 import com.idega.block.process.data.CaseStatus;
+import com.idega.builder.data.IBPage;
 import com.idega.core.user.data.User;
 import com.idega.idegaweb.*;
 import com.idega.presentation.*;
 import com.idega.presentation.text.*;
 import com.idega.presentation.ui.*;
 import com.idega.user.Converter;
+import com.idega.user.business.UserBusiness;
 import com.idega.user.data.Group;
 import com.idega.util.IWTimestamp;
 /**
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
  * @version 1.0
  */
-public class UserCases extends CommuneBlock
-{
+public class UserCases extends CommuneBlock {
 	private final static String IW_BUNDLE_IDENTIFIER = "se.idega.idegaweb.commune";
 	private final static int ACTION_VIEW_CASE_LIST = 1;
 	/*
@@ -36,21 +37,19 @@ public class UserCases extends CommuneBlock
 	private final static String PARAM_DELETE_MESSAGE = "msg_delete_message";
 	*/
 	private final static String PARAM_CASE_ID = "USC_CASE_ID";
+	private final static String PARAM_MANAGER_ID = ManagerView.PARAM_MANAGER_ID;
 	private Table mainTable = null;
-	public UserCases()
-	{}
-	public String getBundleIdentifier()
-	{
+	private int manager_page_id = -1;
+	public UserCases() {
+	}
+	public String getBundleIdentifier() {
 		return IW_BUNDLE_IDENTIFIER;
 	}
-	public void main(IWContext iwc)
-	{
+	public void main(IWContext iwc) {
 		this.setResourceBundle(getResourceBundle(iwc));
-		try
-		{
+		try {
 			int action = parseAction(iwc);
-			switch (action)
-			{
+			switch (action) {
 				case ACTION_VIEW_CASE_LIST :
 					viewCaseList(iwc);
 					/*   break;
@@ -68,16 +67,12 @@ public class UserCases extends CommuneBlock
 					break;
 			}
 			super.add(mainTable);
-		}
-		catch (Exception e)
-		{
+		} catch (Exception e) {
 			super.add(new ExceptionWrapper(e, this));
 		}
 	}
-	public void add(PresentationObject po)
-	{
-		if (mainTable == null)
-		{
+	public void add(PresentationObject po) {
+		if (mainTable == null) {
 			mainTable = new Table();
 			mainTable.setCellpadding(14);
 			mainTable.setCellspacing(0);
@@ -86,8 +81,7 @@ public class UserCases extends CommuneBlock
 		}
 		mainTable.add(po);
 	}
-	private int parseAction(IWContext iwc)
-	{
+	private int parseAction(IWContext iwc) {
 		int action = ACTION_VIEW_CASE_LIST;
 		/*if(iwc.isParameterSet(PARAM_VIEW_MESSAGE)){
 		  action = ACTION_VIEW_MESSAGE;
@@ -100,15 +94,12 @@ public class UserCases extends CommuneBlock
 		}*/
 		return action;
 	}
-	private void viewCaseList(IWContext iwc) throws Exception
-	{
+	private void viewCaseList(IWContext iwc) throws Exception {
 		add(getLocalizedHeader("usercases.my_cases", "My cases"));
 		add(new Break(2));
-		if (iwc.isLoggedOn())
-		{
+		if (iwc.isLoggedOn()) {
 			Collection cases = getCommuneCaseBusiness(iwc).getAllCasesDefaultVisibleForUser(Converter.convertToNewUser(iwc.getUser()));
-			if (cases != null & !cases.isEmpty())
-			{
+			if (cases != null & !cases.isEmpty()) {
 				Form f = new Form();
 				ColumnList messageList = new ColumnList(6);
 				f.add(messageList);
@@ -119,8 +110,7 @@ public class UserCases extends CommuneBlock
 				messageList.setHeader(localize("usercases.date", "Date"), 4);
 				messageList.setHeader(localize("usercases.manager", "Manager"), 5);
 				messageList.setHeader(localize("usercases.status", "Status"), 6);
-				Collection messages =
-					getCaseBusiness(iwc).getAllCasesForUser(Converter.convertToNewUser(iwc.getUser()));
+				Collection messages = getCaseBusiness(iwc).getAllCasesForUser(Converter.convertToNewUser(iwc.getUser()));
 				Text caseNumber = null;
 				Text caseType = null;
 				Text caseOwnerName = null;
@@ -130,16 +120,13 @@ public class UserCases extends CommuneBlock
 				//CheckBox deleteCheck = null;
 				boolean isRead = false;
 				DateFormat dateFormat = com.idega.util.CustomDateFormat.getDateTimeInstance(iwc.getCurrentLocale());
-				if (cases != null)
-				{
+				if (cases != null) {
 					Collection casesVector = cases;
 					//Collection casesVector = new Vector(cases);
 					//Collections.sort(messageVector,new MessageComparator());
 					Iterator iter = casesVector.iterator();
-					while (iter.hasNext())
-					{
-						try
-						{
+					while (iter.hasNext()) {
+						try {
 							Case theCase = (Case) iter.next();
 							Date caseDate = new Date(theCase.getCreated().getTime());
 							//isRead = getCaseBusiness(iwc).isMessageRead(msg);
@@ -158,12 +145,25 @@ public class UserCases extends CommuneBlock
 								date.setBold();
 							*/
 							date = this.getSmallText(dateFormat.format(caseDate));
-							try{
+							String managerName = null;
+							int managerID = -1;
+							try {
 								Group handler = theCase.getHandler();
-								manager = this.getSmallText(handler.getName());
+								managerID = ((Integer)handler.getPrimaryKey()).intValue();
+								managerName = getUserBusiness(iwc).getNameOfGroupOrUser(handler);
+							} catch (Exception e) {
+								//manager = this.getSmallText("-");
 							}
-							catch(Exception e){
+							if (managerName == null) {
 								manager = this.getSmallText("-");
+							} else {
+								manager = this.getSmallText(managerName);
+								if (getManagerPage() != -1) {
+									Link managerLink = new Link(manager);
+									managerLink.setPage(getManagerPage());
+									managerLink.addParameter(PARAM_MANAGER_ID, managerID);
+									manager = managerLink;
+								}
 							}
 							//deleteCheck = new CheckBox(PARAM_CASE_ID,msg.getPrimaryKey().toString());
 							caseOwnerName = getSmallText(theCase.getOwner().getFirstName());
@@ -178,9 +178,7 @@ public class UserCases extends CommuneBlock
 							messageList.add(date);
 							messageList.add(manager);
 							messageList.add(status);
-						}
-						catch (Exception e)
-						{
+						} catch (Exception e) {
 							add(e);
 							e.printStackTrace();
 						}
@@ -194,9 +192,7 @@ public class UserCases extends CommuneBlock
 				//bottomRow[2] = deleteButton;
 				//messageList.addBottomRow(bottomRow);
 				add(f);
-			}
-			else
-			{
+			} else {
 				add(getSmallText(localize("usercases.no_ongoing_cases", "No ongoing cases")));
 			}
 		}
@@ -291,21 +287,28 @@ public class UserCases extends CommuneBlock
 	      getMessageBusiness(iwc).deleteUserMessage(Integer.parseInt(ids[i]));
 	    }
 	  }*/
-	private CaseBusiness getCaseBusiness(IWContext iwc) throws Exception
-	{
+	private CaseBusiness getCaseBusiness(IWContext iwc) throws Exception {
 		return (CaseBusiness) com.idega.business.IBOLookup.getServiceInstance(iwc, CaseBusiness.class);
 	}
-
-	private CommuneCaseBusiness getCommuneCaseBusiness(IWContext iwc) throws Exception
-	{
+	private CommuneCaseBusiness getCommuneCaseBusiness(IWContext iwc) throws Exception {
 		return (CommuneCaseBusiness) com.idega.business.IBOLookup.getServiceInstance(iwc, CommuneCaseBusiness.class);
 	}
-
-
-	private Case getCase(String id, IWContext iwc) throws Exception
-	{
+	private UserBusiness getUserBusiness(IWContext iwc) throws Exception {
+		return (UserBusiness) com.idega.business.IBOLookup.getServiceInstance(iwc, UserBusiness.class);
+	}	
+	
+	private Case getCase(String id, IWContext iwc) throws Exception {
 		int msgId = Integer.parseInt(id);
 		Case msg = getCaseBusiness(iwc).getCase(msgId);
 		return msg;
+	}
+	public void setManagerPage(IBPage page) {
+		manager_page_id = page.getID();
+	}
+	public void setManagerPage(int ib_page_id) {
+		manager_page_id = ib_page_id;
+	}
+	public int getManagerPage() {
+		return manager_page_id;
 	}
 }
