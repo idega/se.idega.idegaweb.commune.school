@@ -1,5 +1,5 @@
 /*
- * $Id: NackaCCProviderReportModel.java,v 1.6 2004/01/30 18:24:32 anders Exp $
+ * $Id: NackaCCProviderReportModel.java,v 1.7 2004/02/23 13:34:02 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -14,14 +14,14 @@ import java.rmi.RemoteException;
 /** 
  * Report model for child care commune and private providers.
  * <p>
- * Last modified: $Date: 2004/01/30 18:24:32 $ by $Author: anders $
+ * Last modified: $Date: 2004/02/23 13:34:02 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  */
 public class NackaCCProviderReportModel extends ReportModel {
 
-	private final static int ROW_SIZE = 7;
+	private final static int ROW_SIZE = 6;
 	private final static int COLUMN_SIZE = 2;
 	
 	private final static int ROW_METHOD_COMMUNE_PRE_SCHOOLS = 1;
@@ -66,19 +66,22 @@ public class NackaCCProviderReportModel extends ReportModel {
 	 */
 	protected Header[] buildRowHeaders() {
 		
-		Header[] headers = new Header[7];
+		Header[] headers = new Header[8];
 
-		headers[0] = new Header(KEY_COMMUNE_PRE_SCHOOL_PROVIDERS, Header.HEADERTYPE_ROW_HEADER);
-		headers[1] = new Header(KEY_COMMUNE_AFTER_SCHOOL_PROVIDERS, Header.HEADERTYPE_ROW_HEADER);
-		headers[2] = new Header(KEY_COMMUNE_FAMILY_DAYCARE_PROVIDERS, Header.HEADERTYPE_ROW_HEADER);
-		headers[3] = new Header(KEY_PRIVATE_PRE_SCHOOL_PROVIDERS, Header.HEADERTYPE_ROW_HEADER);
-		headers[4] = new Header(KEY_PRIVATE_AFTER_SCHOOL_PROVIDERS, Header.HEADERTYPE_ROW_HEADER);
-		headers[5] = new Header(KEY_PRIVATE_FAMILY_DAYCARE_PROVIDERS, Header.HEADERTYPE_ROW_HEADER);
+		headers[0] = new Header(KEY_PRE_SCHOOL, Header.HEADERTYPE_ROW_LABEL);
+		headers[1] = new Header(KEY_COMMUNE_PRE_SCHOOL_PROVIDERS, Header.HEADERTYPE_ROW_HEADER);
+		headers[2] = new Header(KEY_PRIVATE_PRE_SCHOOL_PROVIDERS, Header.HEADERTYPE_ROW_HEADER);
+		headers[3] = new Header(KEY_COMMUNE_FAMILY_DAYCARE_PROVIDERS, Header.HEADERTYPE_ROW_HEADER);
+		headers[4] = new Header(KEY_PRIVATE_FAMILY_DAYCARE_PROVIDERS, Header.HEADERTYPE_ROW_HEADER);		
 		
-		Header h = new Header(KEY_TOTAL, Header.HEADERTYPE_ROW_HEADER, 1);
-		Header child0 = new Header(KEY_PROVIDER_TOTAL, Header.HEADERTYPE_ROW_NORMAL);
-		h.setChild(0, child0);
-		headers[6] = h;
+		headers[5] = new Header(KEY_SCHOOL_CHILDREN_CARE, Header.HEADERTYPE_ROW_LABEL);
+		headers[6] = new Header(KEY_COMMUNE_AFTER_SCHOOL_PROVIDERS, Header.HEADERTYPE_ROW_HEADER);
+		headers[7] = new Header(KEY_PRIVATE_AFTER_SCHOOL_PROVIDERS, Header.HEADERTYPE_ROW_HEADER);
+		
+//		Header h = new Header(KEY_TOTAL, Header.HEADERTYPE_ROW_HEADER, 1);
+//		Header child0 = new Header(KEY_PROVIDER_TOTAL, Header.HEADERTYPE_ROW_NORMAL);
+//		h.setChild(0, child0);
+//		headers[6] = h;
 		
 		return headers;
 	}
@@ -123,7 +126,7 @@ public class NackaCCProviderReportModel extends ReportModel {
 					columnMethod, rowParameter, columnParameter, cellType);
 			setCell(row++, column, cell);
 			
-			cell = new Cell(this, row, column, ROW_METHOD_COMMUNE_AFTER_SCHOOLS,
+			cell = new Cell(this, row, column, ROW_METHOD_PRIVATE_PRE_SCHOOLS,
 					columnMethod, rowParameter, columnParameter, cellType);
 			setCell(row++, column, cell);
 
@@ -131,7 +134,11 @@ public class NackaCCProviderReportModel extends ReportModel {
 					columnMethod, rowParameter, columnParameter, cellType);
 			setCell(row++, column, cell);
 
-			cell = new Cell(this, row, column, ROW_METHOD_PRIVATE_PRE_SCHOOLS,
+			cell = new Cell(this, row, column, ROW_METHOD_PRIVATE_FAMILY_DAYCARE,
+					columnMethod, rowParameter, columnParameter, cellType);
+			setCell(row++, column, cell);
+
+			cell = new Cell(this, row, column, ROW_METHOD_COMMUNE_AFTER_SCHOOLS,
 					columnMethod, rowParameter, columnParameter, cellType);
 			setCell(row++, column, cell);
 
@@ -139,13 +146,9 @@ public class NackaCCProviderReportModel extends ReportModel {
 					columnMethod, rowParameter, columnParameter, cellType);
 			setCell(row++, column, cell);
 
-			cell = new Cell(this, row, column, ROW_METHOD_PRIVATE_FAMILY_DAYCARE,
-					columnMethod, rowParameter, columnParameter, cellType);
-			setCell(row++, column, cell);
-
-			cell = new Cell(this, row, column, ROW_METHOD_TOTAL,
-					columnMethod, rowParameter, columnParameter, cellType);
-			setCell(row++, column, cell);
+//			cell = new Cell(this, row, column, ROW_METHOD_TOTAL,
+//					columnMethod, rowParameter, columnParameter, cellType);
+//			setCell(row++, column, cell);
 		}
 	}
 	
@@ -189,7 +192,7 @@ public class NackaCCProviderReportModel extends ReportModel {
 				switch (cell.getRowMethod()) {
 					case ROW_METHOD_COMMUNE_PRE_SCHOOLS:
 						float total = 0;
-						for (int i = 0; i < 6; i++) {
+						for (int i = 0; i < 4; i++) {
 							total += getCell(i, 0).getFloatValue();
 						}
 						if (total > 0) {
@@ -198,7 +201,7 @@ public class NackaCCProviderReportModel extends ReportModel {
 						break;
 					case ROW_METHOD_COMMUNE_AFTER_SCHOOLS:
 						total = 0;
-						for (int i = 0; i < 6; i++) {
+						for (int i = 4; i < 6; i++) {
 							total += getCell(i, 0).getFloatValue();
 						}
 						if (total > 0) {
@@ -207,7 +210,7 @@ public class NackaCCProviderReportModel extends ReportModel {
 						break;
 					case ROW_METHOD_COMMUNE_FAMILY_DAYCARE:
 						total = 0;
-						for (int i = 0; i < 6; i++) {
+						for (int i = 0; i < 4; i++) {
 							total += getCell(i, 0).getFloatValue();
 						}
 						if (total > 0) {
@@ -216,7 +219,7 @@ public class NackaCCProviderReportModel extends ReportModel {
 						break;
 					case ROW_METHOD_PRIVATE_PRE_SCHOOLS:
 						total = 0;
-						for (int i = 0; i < 6; i++) {
+						for (int i = 0; i < 4; i++) {
 							total += getCell(i, 0).getFloatValue();
 						}
 						if (total > 0) {
@@ -225,7 +228,7 @@ public class NackaCCProviderReportModel extends ReportModel {
 						break;
 					case ROW_METHOD_PRIVATE_AFTER_SCHOOLS:
 						total = 0;
-						for (int i = 0; i < 6; i++) {
+						for (int i = 4; i < 6; i++) {
 							total += getCell(i, 0).getFloatValue();
 						}
 						if (total > 0) {
@@ -234,7 +237,7 @@ public class NackaCCProviderReportModel extends ReportModel {
 						break;
 					case ROW_METHOD_PRIVATE_FAMILY_DAYCARE:
 						total = 0;
-						for (int i = 0; i < 6; i++) {
+						for (int i = 0; i < 4; i++) {
 							total += getCell(i, 0).getFloatValue();
 						}
 						if (total > 0) {
