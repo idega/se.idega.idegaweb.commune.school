@@ -67,6 +67,13 @@ public class StudentFinder extends CommuneUserFinder {
 		return localize("school.show_placings","Show placings");
 	}
 
+	/**
+	 * @see se.idega.idegaweb.commune.presentation.CommuneUserFinder#getSearchSubmitDisplay()
+	 */
+	public String getSearchSubmitDisplay() {
+		return localize("school.find_student","Find student");
+	}
+
 	/* (non-Javadoc)
 	 * @see se.idega.idegaweb.commune.presentation.CommuneUserFinder#getNoUserFoundString()
 	 */
