@@ -44,6 +44,7 @@ import com.idega.block.school.data.SchoolYear;
 import com.idega.business.IBOLookup;
 import com.idega.core.contact.data.Phone;
 import com.idega.core.location.data.Address;
+import com.idega.core.location.data.PostalCode;
 import com.idega.data.IDOEntityDefinition;
 import com.idega.data.IDOException;
 import com.idega.data.IDOLookup;
@@ -900,10 +901,8 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 			reportData.add(data);
 			
 			Address childAddressEntiy = _communeUserService.getUsersMainAddress(child);
-			if(childAddressEntiy!=null){
-				String stName = childAddressEntiy.getStreetName();
-				String number = childAddressEntiy.getStreetNumber();
-				String childAddressString = stName+((number==null)?"":(" "+number));
+			String childAddressString = this.getAddressString(childAddressEntiy,_iwrb);
+			if(childAddressString != null){
 				data.addData(childAddress,childAddressString);
 			}
 			
@@ -971,12 +970,11 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 						reportData.add(pData);
 					
 						Address parent1AddressEntiy = _communeUserService.getUsersMainAddress(child);
-						if(parent1AddressEntiy!=null) {
-							String stName = parent1AddressEntiy.getStreetName();
-							String number = parent1AddressEntiy.getStreetNumber();
-							String parent1AddressString = stName+((number==null)?"":(" "+number));
+						String parent1AddressString = this.getAddressString(parent1AddressEntiy,_iwrb);
+						if(parent1AddressString!=null) {
 							data.addData(parent1Address,parent1AddressString);
-						}			
+						}
+								
 						Collection pColl = gRelationHome.findGroupsRelationshipsContainingGroupsAndStatus(communeGroup,parent,GroupRelation.STATUS_ACTIVE);
 						Iterator pIterator = pColl.iterator();
 						while(pIterator.hasNext()){
@@ -1001,10 +999,8 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 						reportData.add(pData);
 					
 						Address parent2AddressEntiy = _communeUserService.getUsersMainAddress(child);
-						if(parent2AddressEntiy!=null){
-							String stName = parent2AddressEntiy.getStreetName();
-							String number = parent2AddressEntiy.getStreetNumber();
-							String parent2AddressString = stName+((number==null)?"":(" "+number));
+						String parent2AddressString = this.getAddressString(parent2AddressEntiy,_iwrb);
+						if(parent2AddressString!=null) {
 							data.addData(parent2Address,parent2AddressString);
 						}
 									
@@ -1066,5 +1062,27 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 			}
 		}
 
+
+
+		private String getAddressString(Address addressEntiy, IWResourceBundle iwrb ){
+			if(addressEntiy!=null){
+				String stName = addressEntiy.getStreetName();
+				String number = addressEntiy.getStreetNumber();
+				String postalCode = iwrb.getLocalizedString("CommuneReportBusiness.not_available","N/A");
+				PostalCode pCodeObj = addressEntiy.getPostalCode();
+				String city = addressEntiy.getCity();
+				if(pCodeObj!=null){
+					postalCode = pCodeObj.getPostalCode();
+				} else if(city == null){
+					String childAddressString = stName+((number==null)?"":(" "+number));
+					return childAddressString;	
+				}
+			
+				String childAddressString = stName+((number==null)?"":(" "+number));
+				return childAddressString+", "+postalCode+" "+city;	
+									
+			}
+			return "";
+		}
     
 }
