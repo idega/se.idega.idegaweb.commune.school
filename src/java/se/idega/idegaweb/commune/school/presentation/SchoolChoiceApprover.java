@@ -32,7 +32,7 @@ import com.idega.presentation.ui.TextInput;
 import com.idega.user.business.UserBusiness;
 import com.idega.user.data.User;
 import com.idega.util.PersonalIDFormatter;
-import com.idega.util.text.TextFormat;
+import com.idega.presentation.util.TextFormat;
 
 /**
  * <p>Title: </p>
