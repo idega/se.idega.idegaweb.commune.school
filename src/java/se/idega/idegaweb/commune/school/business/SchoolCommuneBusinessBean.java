@@ -14,6 +14,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.Vector;
 
 import javax.ejb.CreateException;
@@ -32,6 +34,7 @@ import com.idega.block.datareport.util.ReportableField;
 import com.idega.block.process.business.CaseBusiness;
 import com.idega.block.process.business.CaseBusinessBean;
 import com.idega.block.school.business.SchoolBusiness;
+import com.idega.block.school.business.SchoolYearComparator;
 import com.idega.block.school.data.School;
 import com.idega.block.school.data.SchoolClass;
 import com.idega.block.school.data.SchoolClassMember;
@@ -95,6 +98,38 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 	private Collection getSchoolSeasons() throws RemoteException {
 		return getSchoolBusiness().findAllSchoolSeasons();	
 	}*/
+	
+	public Map getYearClassMap(Collection schoolYears, int schoolID, int seasonID, String emptyString) throws RemoteException {
+		try {
+			SortedMap yearMap = new TreeMap(new SchoolYearComparator());
+			if (schoolYears != null) {
+				Iterator iter = schoolYears.iterator();
+				while (iter.hasNext()) {
+					SortedMap groupMap = new TreeMap();
+					if (emptyString != null) {
+						groupMap.put("-1", emptyString);
+					}
+					
+					SchoolYear year = (SchoolYear) iter.next();
+					SchoolBusiness sb = getSchoolBusiness();
+					Collection providers = sb.findSchoolClassesBySchoolAndSeasonAndYear(schoolID, seasonID, ((Integer)year.getPrimaryKey()).intValue());
+					if (providers != null) {
+						Iterator iterator = providers.iterator();
+						while (iterator.hasNext()) {
+							SchoolClass group = (SchoolClass) iterator.next();
+							groupMap.put(group, group);
+						}
+					}
+					yearMap.put(year, groupMap);
+				}
+			}
+			return yearMap;
+		}
+		catch (Exception e) {
+			e.printStackTrace(System.err);
+			return null;
+		}
+	}
 	
 	public SchoolBusiness getSchoolBusiness() throws RemoteException {
 		return (SchoolBusiness) IBOLookup.getServiceInstance(getIWApplicationContext(), SchoolBusiness.class);	
