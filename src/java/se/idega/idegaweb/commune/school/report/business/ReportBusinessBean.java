@@ -1,5 +1,5 @@
 /*
- * $Id: ReportBusinessBean.java,v 1.10 2003/12/17 11:07:45 anders Exp $
+ * $Id: ReportBusinessBean.java,v 1.11 2003/12/18 12:44:39 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -29,10 +29,10 @@ import com.idega.block.school.data.SchoolStudyPathHome;
 /** 
  * Business logic for school reports.
  * <p>
- * Last modified: $Date: 2003/12/17 11:07:45 $ by $Author: anders $
+ * Last modified: $Date: 2003/12/18 12:44:39 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.10 $
+ * @version $Revision: 1.11 $
  */
 public class ReportBusinessBean extends com.idega.business.IBOServiceBean implements ReportBusiness  {
 
@@ -367,6 +367,117 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 			query.setSchoolTypeHighSchool();
 		}
 		query.setSchoolYear(schoolYearName);			
+		query.setOnlyPrivateSchools();
+		return query.execute();
+	}
+
+	//--------------------
+	private int getStudentAgeFrom(int age) {
+		int ageFrom = -1;
+		switch (age) {
+			case 17:
+				ageFrom = age;
+				break;
+			case 18:
+				ageFrom = age;
+				break;
+			case 19:
+				ageFrom = age;
+				break;
+		}
+		return ageFrom;
+	}
+
+	private int getStudentAgeTo(int age) {
+		int ageTo = -1;
+		switch (age) {
+			case 16:
+				ageTo = age;
+				break;
+			case 17:
+				ageTo = age;
+				break;
+			case 18:
+				ageTo = age;
+				break;
+		}
+		return ageTo;
+	}
+	
+	/**
+	 * Returns the number of student placements for high schools
+	 * in Nacka commune for the specified student age.
+	 * Only students in Nacka commune are counted. 
+	 */
+	public int getHighSchoolNackaCommunePlacementCount(int age, String studyPathPrefix, boolean isCompulsory) {
+		ReportQuery query = new ReportQuery();
+		query.setSelectCountStudyPathPlacements(getSchoolSeasonId(), studyPathPrefix);
+		query.setOnlyNackaCitizens();
+		if (isCompulsory) {
+			query.setSchoolTypeCompulsoryHighSchool();
+		} else {
+			query.setSchoolTypeHighSchool();
+		}
+		query.setStudentAge(getCurrentSchoolSeason(), getStudentAgeFrom(age), getStudentAgeTo(age));			
+		query.setNotPrivateSchools();
+		query.setNotCountyCouncilSchools();
+		return query.execute();
+	}
+	
+	/**
+	 * Returns the number of student placements for high schools
+	 * outside Nacka commune for the specified student age.
+	 * Only students in Nacka commune are counted. 
+	 */
+	public int getHighSchoolOtherCommunesPlacementCount(int age, String studyPathPrefix, boolean isCompulsory) {
+		ReportQuery query = new ReportQuery();
+		query.setSelectCountStudyPathPlacements(getSchoolSeasonId(), studyPathPrefix);
+		query.setNotNackaCitizens();
+		if (isCompulsory) {
+			query.setSchoolTypeCompulsoryHighSchool();
+		} else {
+			query.setSchoolTypeHighSchool();
+		}
+		query.setStudentAge(getCurrentSchoolSeason(), getStudentAgeFrom(age), getStudentAgeTo(age));			
+		query.setNotPrivateSchools();
+		query.setNotCountyCouncilSchools();
+		return query.execute();
+	}
+	
+	/**
+	 * Returns the number of student placements for county council high schools.
+	 * for the specified student age.
+	 * Only students in Nacka commune are counted. 
+	 */
+	public int getHighSchoolCountyCouncilPlacementCount(int age, String studyPathPrefix, boolean isCompulsory) {
+		ReportQuery query = new ReportQuery();
+		query.setSelectCountStudyPathPlacements(getSchoolSeasonId(), studyPathPrefix);
+		query.setOnlyNackaCitizens();
+		if (isCompulsory) {
+			query.setSchoolTypeCompulsoryHighSchool();
+		} else {
+			query.setSchoolTypeHighSchool();
+		}
+		query.setStudentAge(getCurrentSchoolSeason(), getStudentAgeFrom(age), getStudentAgeTo(age));			
+		query.setOnlyCountyCouncilSchools();
+		return query.execute();
+	}
+	
+	/**
+	 * Returns the number of student placements for private high schools
+	 * in Nacka commune for the specified student age.
+	 * Only students in Nacka commune are counted. 
+	 */
+	public int getHighSchoolPrivatePlacementCount(int age, String studyPathPrefix, boolean isCompulsory) {
+		ReportQuery query = new ReportQuery();
+		query.setSelectCountStudyPathPlacements(getSchoolSeasonId(), studyPathPrefix);
+		query.setOnlyNackaCitizens();
+		if (isCompulsory) {
+			query.setSchoolTypeCompulsoryHighSchool();
+		} else {
+			query.setSchoolTypeHighSchool();
+		}
+		query.setStudentAge(getCurrentSchoolSeason(), getStudentAgeFrom(age), getStudentAgeTo(age));			
 		query.setOnlyPrivateSchools();
 		return query.execute();
 	}

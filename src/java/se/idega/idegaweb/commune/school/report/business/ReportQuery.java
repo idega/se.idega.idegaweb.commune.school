@@ -1,5 +1,5 @@
 /*
- * $Id: ReportQuery.java,v 1.12 2003/12/17 12:35:36 anders Exp $
+ * $Id: ReportQuery.java,v 1.13 2003/12/18 12:44:39 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -14,15 +14,16 @@ import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
+import com.idega.block.school.data.SchoolSeason;
 import com.idega.util.database.ConnectionBroker;
 
 /** 
  * Handles the SQL logic for school report calculations.
  * <p>
- * Last modified: $Date: 2003/12/17 12:35:36 $ by $Author: anders $
+ * Last modified: $Date: 2003/12/18 12:44:39 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.12 $
+ * @version $Revision: 1.13 $
  */
 public class ReportQuery {
 
@@ -229,7 +230,7 @@ public class ReportQuery {
 	 * Set select only other than county council schools.
 	 */
 	public void setNotCountyCouncilSchools() {
-		sql += " and s.management_type = 'COUNTY COUNCIL'";
+		sql += " and s.management_type <> 'COUNTY COUNCIL'";
 	}
 	
 	/**
@@ -237,6 +238,24 @@ public class ReportQuery {
 	 */
 	public void setOnlyStudentsBorn(int year) {
 		sql += " and u.date_of_birth >= '" + year + "-01-01' and u.date_of_birth <= '" + year + "-12-31'";
+	}
+	
+	/**
+	 * Set select only students in the specified age interval.
+	 */
+	public void setStudentAge(SchoolSeason season, int ageFrom, int ageTo) {
+		String seasonDate = season.getSchoolSeasonStart().toString();
+		String dateFrom = null;
+		String dateTo = null;
+		int seasonYear = Integer.parseInt(seasonDate.substring(0, 4));
+		if (ageFrom > 0) {
+			dateFrom = "" + (seasonYear - ageFrom) + seasonDate.substring(4);
+			sql += " and u.date_of_birth <= '" + dateFrom + "'";
+		}
+		if (ageTo > 0) {
+			dateTo = "" + (seasonYear - ageTo - 1) + seasonDate.substring(4);
+			sql += " and u.date_of_birth > '" + dateTo + "'";
+		}
 	}
 	
 	/**
