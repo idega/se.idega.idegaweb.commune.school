@@ -1,5 +1,5 @@
 /*
- * $Id: NackaCCProviderReportModel.java,v 1.1 2004/01/22 08:37:53 anders Exp $
+ * $Id: NackaCCProviderReportModel.java,v 1.2 2004/01/22 08:49:49 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -14,10 +14,10 @@ import java.rmi.RemoteException;
 /** 
  * Report model for child care commune and private providers.
  * <p>
- * Last modified: $Date: 2004/01/22 08:37:53 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/22 08:49:49 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class NackaCCProviderReportModel extends ReportModel {
 
@@ -249,19 +249,19 @@ public class NackaCCProviderReportModel extends ReportModel {
 			case PRE_SCHOOL:
 				schoolType1 = rb.getPreSchoolTypeId(); 
 				schoolType2 = rb.getGeneralPreSchoolTypeId();
-				schoolType3 = schoolType1;
+				schoolType3 = schoolType2;
 				schoolType4 = schoolType2;
 				break;
 			case AFTER_SCHOOL:
 				schoolType1 = rb.getAfterSchool6TypeId();
 				schoolType2 = rb.getFamilyAfterSchool6TypeId();
-				schoolType3 = schoolType1;
-				schoolType4 = schoolType2;
+				schoolType3 = rb.getAfterSchool7_9TypeId();
+				schoolType4 = rb.getFamilyAfterSchool7_9TypeId();
 				break;
 			case FAMILY_DAYCARE:
-				schoolType1 = rb.getAfterSchool7_9TypeId();
-				schoolType2 = rb.getFamilyAfterSchool7_9TypeId();
-				schoolType3 = schoolType1;
+				schoolType1 = rb.getFamilyDayCareSchoolTypeId();
+				schoolType2 = rb.getGeneralFamilyDaycareSchoolTypeId();
+				schoolType3 = schoolType2;
 				schoolType4 = schoolType2;
 				break;
 		}

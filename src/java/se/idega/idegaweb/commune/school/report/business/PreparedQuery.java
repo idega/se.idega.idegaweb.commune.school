@@ -1,5 +1,5 @@
 /*
- * $Id: PreparedQuery.java,v 1.9 2004/01/21 16:24:29 anders Exp $
+ * $Id: PreparedQuery.java,v 1.10 2004/01/22 08:45:55 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -27,10 +27,10 @@ import com.idega.block.school.data.SchoolSeason;
 /** 
  * Handles the SQL logic for school report calculations.
  * <p>
- * Last modified: $Date: 2004/01/21 16:24:29 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/22 08:45:55 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.9 $
+ * @version $Revision: 1.10 $
  */
 public class PreparedQuery {
 
@@ -44,6 +44,7 @@ public class PreparedQuery {
 	private final static String TABLE_U = "ic_user";
 	private final static String TABLE_CA = "comm_childcare_archive";
 	private final static String TABLE_C = "comm_childcare";
+	private final static String TABLE_ST = "sch_school_sch_school_type";
 	
 	private final static String CM = "cm";
 	private final static String SC = "sc";
@@ -55,6 +56,7 @@ public class PreparedQuery {
 	private final static String U = "u";	
 	private final static String CA = "ca";	
 	private final static String C = "c";	
+	private final static String ST = "st";	
 	
 	private String _sqlSelect = null;
 	private Map _sqlFrom = null;
@@ -217,6 +219,22 @@ public class PreparedQuery {
 		_sqlWhere.add(sql);
 		
 		_sqlFrom.put(CM, TABLE_CM);
+		
+		int index = _parameterIndex;
+		_parameterIndex += 4;
+		return index;
+	}
+	
+	/**
+	 * Set select only the specified four school types.
+	 * @return the index for the first school type id
+	 */
+	public int setFourSchoolTypesForProviders() {
+		String sql = "and s.sch_school_id = st.sch_shool_id and (st.sch_school_type_id = ? or st.sch_school_type_id = ? or st.sch_school_type_id = ? or st.sch_school_type_id = ?)";
+		_sqlWhere.add(sql);
+		
+		_sqlFrom.put(S, TABLE_S);
+		_sqlFrom.put(ST, TABLE_ST);
 		
 		int index = _parameterIndex;
 		_parameterIndex += 4;
