@@ -1,5 +1,5 @@
 /*
- * $Id: ReportModel.java,v 1.2 2003/12/10 16:33:01 anders Exp $
+ * $Id: ReportModel.java,v 1.3 2003/12/12 10:00:03 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -15,10 +15,10 @@ import java.rmi.RemoteException;
  * This abstract class holds cell and header values for school statistics reports.
  * Subclasses implements methods for generating report data and cell value calculations.
  * <p>
- * Last modified: $Date: 2003/12/10 16:33:01 $ by $Author: anders $
+ * Last modified: $Date: 2003/12/12 10:00:03 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public abstract class ReportModel {
 
@@ -50,6 +50,9 @@ public abstract class ReportModel {
 	protected final static String KEY_SUM_7_10 = KP + "sum_7_10";
 	protected final static String KEY_TOTAL_1_10 = KP + "total_1_10";
 	protected final static String KEY_TOTAL_F_10 = KP + "total_f_10";
+	protected final static String KEY_SUM_7_9 = KP + "sum_7_9";
+	protected final static String KEY_TOTAL_1_9 = KP + "total_1_9";
+	protected final static String KEY_TOTAL_F_9 = KP + "total_f_9";
 	protected final static String KEY_SUM = KP + "sum";
 	protected final static String KEY_TOTAL = KP + "total";
 	protected final static String KEY_ELEMENTARY_SCHOOL = KP + "elementary_school";
@@ -61,17 +64,31 @@ public abstract class ReportModel {
 	protected final static String KEY_SIX_YEARS_STUDENTS = KP + "six_years_students";
 
 	/**
+	 * Constructs a report model with the specified report business logic. 
+	 */	
+	public ReportModel(ReportBusiness reportBusiness) {
+		_reportBusiness = reportBusiness;
+	}
+
+	/**
 	 * Constructs a report model with the specified size and report business logic. 
 	 */	
 	public ReportModel(int rowSize, int columnSize, ReportBusiness reportBusiness) {
+		this(reportBusiness);
+		setReportSize(rowSize, columnSize);
+	}
+	
+	/**
+	 * Sets the size of this report. 
+	 */
+	protected void setReportSize(int rowSize, int columnSize) {
 		_rowSize = rowSize;
 		_columnSize = columnSize;
-		_reportBusiness = reportBusiness;
 		_cells = new Cell[_rowSize][_columnSize];
 		_rowHeaders = buildRowHeaders();
 		_columnHeaders = buildColumnHeaders();
-		buildCells();		
-	}	
+		buildCells();				
+	}
 	
 	/**
 	 * Returns the number of rows in this report model. 

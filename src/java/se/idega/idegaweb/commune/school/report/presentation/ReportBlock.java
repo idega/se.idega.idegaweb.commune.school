@@ -1,5 +1,5 @@
 /*
- * $Id: ReportBlock.java,v 1.6 2003/12/10 16:33:46 anders Exp $
+ * $Id: ReportBlock.java,v 1.7 2003/12/12 10:01:02 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -27,10 +27,10 @@ import com.idega.presentation.ui.PrintButton;
 /** 
  * This is the base class for school report blocks.
  * <p>
- * Last modified: $Date: 2003/12/10 16:33:46 $ by $Author: anders $
+ * Last modified: $Date: 2003/12/12 10:01:02 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  */
 public class ReportBlock extends CommuneBlock {
 
@@ -214,11 +214,16 @@ public class ReportBlock extends CommuneBlock {
 	protected void buildRowHeaders(Table table) {
 		Header[] headers = _reportModel.getRowHeaders();
 		int row = 3;
+		String s = null;
 		for (int i = 0; i < headers.length; i++) {
 			Header header = headers[i];
 			Header[] children = header.getChildren();
 			if (children == null) {
-				String s = localize(header.getLocalizationKey(), header.getLocalizationKey());
+				if (header.getHeaderType() == Header.HEADERTYPE_ROW_NONLOCALIZED_HEADER) {
+					s = header.getLocalizationKey();
+				} else {
+					s = localize(header.getLocalizationKey(), header.getLocalizationKey());					
+				}
 				table.add(getSmallHeader(s), 1, row);
 				table.setNoWrap(1, row);
 				row++;
@@ -226,12 +231,20 @@ public class ReportBlock extends CommuneBlock {
 				table.mergeCells(1, row, _reportModel.getColumnSize() + 1, row);
 				table.setHeight(1, row, "26");
 				table.setVerticalAlignment(1, row, Table.VERTICAL_ALIGN_BOTTOM);
-				String s = localize(header.getLocalizationKey(), header.getLocalizationKey());
+				if (header.getHeaderType() == Header.HEADERTYPE_ROW_NONLOCALIZED_HEADER) {
+					s = header.getLocalizationKey();
+				} else {
+					s = localize(header.getLocalizationKey(), header.getLocalizationKey());					
+				}
 				table.add(getSmallText(s), 1, row);
 				row++;
 				for (int j = 0; j < children.length; j++) {
 					Header child = children[j];
-					s = localize(child.getLocalizationKey(), child.getLocalizationKey());
+					if (child.getHeaderType() == Header.HEADERTYPE_ROW_NONLOCALIZED_NORMAL) {
+						s = child.getLocalizationKey();
+					} else {
+						s = localize(child.getLocalizationKey(), child.getLocalizationKey());					
+					}
 					table.add(getSmallHeader(s), 1, row);
 					table.setNoWrap(1, row);
 					row++;

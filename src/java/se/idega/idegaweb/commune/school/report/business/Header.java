@@ -1,5 +1,5 @@
 /*
- * $Id: Header.java,v 1.1 2003/12/08 16:24:24 anders Exp $
+ * $Id: Header.java,v 1.2 2003/12/12 10:00:03 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -13,10 +13,10 @@ package se.idega.idegaweb.commune.school.report.business;
  * Holds report header localization keys. Headers can be organized in
  * a hierarchical way.
  * <p>
- * Last modified: $Date: 2003/12/08 16:24:24 $ by $Author: anders $
+ * Last modified: $Date: 2003/12/12 10:00:03 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class Header {
 	
@@ -24,6 +24,8 @@ public class Header {
 	public final static int HEADERTYPE_ROW_HEADER = 2;
 	public final static int HEADERTYPE_ROW_SUM = 2;
 	public final static int HEADERTYPE_ROW_TOTAL = 3;
+	public final static int HEADERTYPE_ROW_NONLOCALIZED_NORMAL = 4;
+	public final static int HEADERTYPE_ROW_NONLOCALIZED_HEADER = 5;
 	
 	public final static int HEADERTYPE_COLUMN_NORMAL = 100;
 	public final static int HEADERTYPE_COLUMN_HEADER = 101;

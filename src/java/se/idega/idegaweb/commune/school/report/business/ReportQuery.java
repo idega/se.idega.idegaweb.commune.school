@@ -1,5 +1,5 @@
 /*
- * $Id: ReportQuery.java,v 1.6 2003/12/10 16:33:01 anders Exp $
+ * $Id: ReportQuery.java,v 1.7 2003/12/12 10:00:03 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -19,10 +19,10 @@ import com.idega.util.database.ConnectionBroker;
 /** 
  * Handles the SQL logic for school report calculations.
  * <p>
- * Last modified: $Date: 2003/12/10 16:33:01 $ by $Author: anders $
+ * Last modified: $Date: 2003/12/12 10:00:03 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  */
 public class ReportQuery {
 
@@ -46,6 +46,21 @@ public class ReportQuery {
 				"' and (cm. removed_date is null or cm.removed_date > '" + currentDate + "')" + 
 				" and sc.school_id = s.sch_school_id and sc.sch_school_class_id = cm.sch_school_class_id" +
 				" and sc.sch_school_season_id = " + schoolSeasonId;
+	}
+	
+	/**
+	 * Sets the query to select number of placements for a school.
+	 * @param schoolSeasonId the school season id for the placements to count
+	 * @param schoolId the school id
+	 */
+	public void setSelectCountPlacements(int schoolSeasonId, int schoolId) {
+		sql = "select count(*) from sch_class_member cm," +
+				" sch_school_class sc, sch_school s, sch_school_year sy where" +
+				" cm.register_date <= '" + currentDate + 
+				"' and (cm. removed_date is null or cm.removed_date > '" + currentDate + "')" + 
+				" and sc.school_id = s.sch_school_id and sc.sch_school_class_id = cm.sch_school_class_id" +
+				" and sc.sch_school_season_id = " + schoolSeasonId +
+				" and s.sch_school_id = " + schoolId;
 	}
 	
 	/**

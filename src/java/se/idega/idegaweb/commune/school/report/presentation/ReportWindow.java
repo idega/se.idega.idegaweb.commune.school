@@ -1,5 +1,5 @@
 /*
- * $Id: ReportWindow.java,v 1.1 2003/12/10 12:48:11 anders Exp $
+ * $Id: ReportWindow.java,v 1.2 2003/12/12 10:01:02 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -17,10 +17,10 @@ import com.idega.presentation.ui.Window;
 /** 
  * Window for viewing a printer-friendly school report.
  * <p>
- * Last modified: $Date: 2003/12/10 12:48:11 $ by $Author: anders $
+ * Last modified: $Date: 2003/12/12 10:01:02 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class ReportWindow extends Window {
 
@@ -29,8 +29,8 @@ public class ReportWindow extends Window {
 	 * @param sessionTimeoutMessage the message to display if the user session has timed out
 	 */
 	public ReportWindow() {
-		this.setWidth(500);
-		this.setHeight(350);
+		this.setWidth(600);
+		this.setHeight(400);
 		this.setScrollbar(true);
 		this.setResizable(true);	
 		this.setAllMargins(20);

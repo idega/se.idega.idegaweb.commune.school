@@ -1,5 +1,5 @@
 /*
- * $Id: SchoolReports.java,v 1.2 2003/12/10 12:48:11 anders Exp $
+ * $Id: SchoolReports.java,v 1.3 2003/12/12 10:01:02 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -13,6 +13,7 @@ import java.rmi.RemoteException;
 
 import se.idega.idegaweb.commune.presentation.CommuneBlock;
 import se.idega.idegaweb.commune.school.report.business.NackaCitizenElementarySchoolPlacementReportModel;
+import se.idega.idegaweb.commune.school.report.business.NackaElementarySchoolPlacementReportModel;
 import se.idega.idegaweb.commune.school.report.business.ReportBusiness;
 import se.idega.idegaweb.commune.school.report.business.ReportModel;
 
@@ -28,10 +29,10 @@ import com.idega.presentation.ui.SubmitButton;
 /** 
  * This block handles selecting and presenting school reports.
  * <p>
- * Last modified: $Date: 2003/12/10 12:48:11 $ by $Author: anders $
+ * Last modified: $Date: 2003/12/12 10:01:02 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class SchoolReports extends CommuneBlock {
 
@@ -53,7 +54,8 @@ public class SchoolReports extends CommuneBlock {
 	private final static int ACTION_CREATE_REPORT = 2;
 
 	private Class[] _reportModelClasses = {
-			NackaCitizenElementarySchoolPlacementReportModel.class
+				NackaCitizenElementarySchoolPlacementReportModel.class,
+				NackaElementarySchoolPlacementReportModel.class
 	};
 	
 	private ReportModel[] _reportModels = null;

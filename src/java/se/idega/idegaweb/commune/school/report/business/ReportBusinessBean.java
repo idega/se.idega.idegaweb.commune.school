@@ -1,5 +1,5 @@
 /*
- * $Id: ReportBusinessBean.java,v 1.3 2003/12/10 16:33:01 anders Exp $
+ * $Id: ReportBusinessBean.java,v 1.4 2003/12/12 10:00:03 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -11,27 +11,41 @@ package se.idega.idegaweb.commune.school.report.business;
 
 import java.lang.reflect.Constructor;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.TreeMap;
 
 import com.idega.block.school.business.SchoolBusiness;
+import com.idega.block.school.data.School;
+import com.idega.block.school.data.SchoolArea;
+import com.idega.block.school.data.SchoolHome;
 import com.idega.block.school.data.SchoolSeason;
 
 /** 
  * Business logic for school reports.
  * <p>
- * Last modified: $Date: 2003/12/10 16:33:01 $ by $Author: anders $
+ * Last modified: $Date: 2003/12/12 10:00:03 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class ReportBusinessBean extends com.idega.business.IBOServiceBean implements ReportBusiness  {
 
+	private final static int SCHOOL_TYPE_ELEMENTARY_SCHOOL = 4;
+	private final static String MANAGEMENT_TYPE_COMMUNE = "COMMUNE";
+	private final static int NACKA_COMMUNE_ID = 1;
+	
 	private SchoolSeason _currentSchoolSeason = null;
 	private int _schoolSeasonId = -1;
 	private int _schoolSeasonStartYear = -1;
+	private Collection _schoolAreas = null;
+	private Map _schoolsByArea = null;
 	
 	/**
-	 * Factory method for creating a report model with the specified class.
-	 * @param reportModelClass the report model class to instantiate 
+	 * Factory method for creating a report model with the specified Class.
+	 * @param reportModelClass the report model Class to instantiate 
 	 */
 	public ReportModel createReportModel(Class reportModelClass) {
 		ReportModel reportModel = null;		
@@ -41,9 +55,9 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 			Constructor classConstructor = reportModelClass.getConstructor(constructorArgumentTypes);
 			reportModel = (ReportModel) classConstructor.newInstance(constructorArgs);
 		} catch (ClassCastException e) {
-			log("createReportModel(): The specified class must be of type " + ReportModel.class.getName());
+			log("createReportModel(): The specified Class must be of type " + ReportModel.class.getName());
 		} catch (Exception e) {
-			log("createReportModel(): The specified class must have a constructor " +
+			log("createReportModel(): The specified Class must have a constructor " +
 					"with the following parameter type: " + ReportBusiness.class.getName());
 		}
 		
@@ -229,6 +243,22 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 	}
 	
 	/**
+	 * Returns the number of student placements for the specified school and school year.
+	 */
+	public int getElementarySchoolPlacementCount(int schoolId, String schoolYearName) {
+		ReportQuery query = new ReportQuery();
+		query.setSelectCountPlacements(getSchoolSeasonId(), schoolId);
+		query.setSchoolTypeElementarySchool();
+		if (schoolYearName.equals("0")) {
+			query.setOnlyStudentsBorn(getSchoolSeasonStartYear() - 6);
+			query.setSchoolYear("1");
+		} else {
+			query.setSchoolYear(schoolYearName);			
+		}
+		return query.execute();
+	}
+	
+	/**
 	 * Returns the current school season.
 	 */
 	public SchoolSeason getCurrentSchoolSeason() {
@@ -252,7 +282,10 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 		}
 		return _schoolSeasonId;
 	}
-
+	
+	/*
+	 * Returns the year for the current school season start. 
+	 */
 	private int getSchoolSeasonStartYear() {
 		if (_schoolSeasonStartYear == -1) {
 			SchoolSeason ss = getCurrentSchoolSeason();
@@ -265,12 +298,68 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 	}
 	
 	/**
+	 * Returns all school areas for elemtary schools. 
+	 */
+	public Collection getElementarySchoolAreas() {
+		if (_schoolAreas == null) {
+			try {
+				_schoolAreas = getSchoolBusiness().findAllSchoolAreasByType(SCHOOL_TYPE_ELEMENTARY_SCHOOL);
+				Iterator iter = _schoolAreas.iterator();
+				while (iter.hasNext()) {
+					SchoolArea area = (SchoolArea) iter.next();
+					if (!area.getSchoolAreaCity().equals("Nacka")) {
+						_schoolAreas.remove(area);
+					}
+				}
+			} catch (Exception e) {}
+		}
+		return _schoolAreas;
+	}
+
+	/**
+	 * Returns all elementary for the specified area. 
+	 */
+	public Collection getElementarySchools(SchoolArea schoolArea) {
+		if (_schoolsByArea == null) {
+			try {
+				_schoolsByArea = new TreeMap();
+				SchoolHome schoolHome = getSchoolHome();
+				Collection areas = getElementarySchoolAreas();
+				Iterator areaIter = areas.iterator();
+				while (areaIter.hasNext()) {
+					SchoolArea area = (SchoolArea) areaIter.next();
+					int schoolAreaId = ((Integer) area.getPrimaryKey()).intValue();
+					Collection schools = schoolHome.findAllByAreaTypeManagementCommune(
+							schoolAreaId,
+							SCHOOL_TYPE_ELEMENTARY_SCHOOL,
+							MANAGEMENT_TYPE_COMMUNE,
+							NACKA_COMMUNE_ID);
+					_schoolsByArea.put(area.getName(), schools);
+				}
+			} catch (Exception e) {
+				log(e);
+			}
+		}
+		if (_schoolsByArea != null) {
+			return (Collection) _schoolsByArea.get(schoolArea.getName());
+		} else {
+			return new ArrayList();
+		}
+	}
+	
+	/**
 	 * Returns a school business instance.
 	 */
 	SchoolBusiness getSchoolBusiness() throws RemoteException {
 		return (SchoolBusiness) getServiceInstance(SchoolBusiness.class);
 	}
 	
+	/**
+	 * Returns a school home instance. 
+	 */	
+	protected SchoolHome getSchoolHome() throws RemoteException {
+		return (SchoolHome) com.idega.data.IDOLookup.getHome(School.class);
+	}	
 	
 	/**
 	 * @see com.idega.business.IBOServiceBean#log()
