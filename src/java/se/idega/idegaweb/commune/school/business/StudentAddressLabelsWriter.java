@@ -1,5 +1,5 @@
 /*
- * $Id: StudentAddressLabelsWriter.java,v 1.1 2004/03/17 13:02:38 anders Exp $
+ * $Id: StudentAddressLabelsWriter.java,v 1.2 2004/03/18 13:40:39 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -45,10 +45,10 @@ import com.lowagie.text.pdf.PdfWriter;
 /** 
  * This MediaWritable class generates a PDF stream with student address labels.
  * <p>
- * Last modified: $Date: 2004/03/17 13:02:38 $ by $Author: anders $
+ * Last modified: $Date: 2004/03/18 13:40:39 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  * @see com.idega.io.MediaWritable
  */
 public class StudentAddressLabelsWriter {
@@ -56,11 +56,11 @@ public class StudentAddressLabelsWriter {
 	private final static String REPORT_FOLDER_NAME = "Export Files";
 
 	private final static int NR_OF_COLUMNS = 3;
-	private final static int NR_OF_ROWS = 10;
+	private final static int NR_OF_ROWS = 8;
 	private final static int NR_OF_ADDRESSES_PER_PAGE = NR_OF_COLUMNS * NR_OF_ROWS;	
-	private final static int ADDRESS_TABLE_WIDTH = 170;
-	private final static int ADDRESS_TABLE_HEIGHT = 80;
-	private final static int LEFT_MARGIN = 80;
+	private final static int ADDRESS_TABLE_WIDTH = 195;
+	private final static int ADDRESS_TABLE_HEIGHT = 100;
+	private final static int LEFT_MARGIN = 25;
 	private final static int TOP_START = 800;
 
 	private SchoolCommuneBusiness business;
@@ -136,12 +136,13 @@ public class StudentAddressLabelsWriter {
 
 		Document document = new Document(PageSize.A4, 50, 50, 50, 50);
 		PdfWriter writer = PdfWriter.getInstance(document, mos);
+
 		document.addTitle("Student address labels");
 		document.addAuthor("Idega Reports");
 		document.addSubject("Student address labels");
 		document.open();
 		
-		font = new Font(Font.HELVETICA, 10, Font.BOLD);
+		font = new Font(Font.HELVETICA, 9, Font.BOLD);
 		
 		int studentCount = 0;
 
