@@ -12,6 +12,7 @@ import com.idega.block.school.data.SchoolClassMember;
 import com.idega.core.location.data.Address;
 import com.idega.user.business.UserBusiness;
 import com.idega.user.data.User;
+import com.idega.util.LocaleUtil;
 
 /**
  * @author laddi
@@ -56,7 +57,12 @@ public class SchoolClassMemberComparator implements Comparator {
     try {
     	switch (sortBy) {
 				case NAME_SORT :
-					result = lastNameSort(o1,o2);
+					if (locale.equals(LocaleUtil.getIcelandicLocale())) {
+						result = firstNameSort(o1,o2);
+					}
+					else {
+						result = lastNameSort(o1,o2);
+					}
 					break;
 				case GENDER_SORT :
 					result = genderSort(o1,o2);
@@ -100,6 +106,30 @@ public class SchoolClassMemberComparator implements Comparator {
 		  result = collator.compare(one,two);
 		}
 		
+		return result;
+	}	
+
+	public int firstNameSort(Object o1, Object o2) {
+		User p1 = (User) students.get(new Integer(((SchoolClassMember)o1).getClassMemberId()));
+		User p2 = (User) students.get(new Integer(((SchoolClassMember)o2).getClassMemberId()));
+		
+		String one = p1.getFirstName()!=null?p1.getFirstName():"";
+		String two = p2.getFirstName()!=null?p2.getFirstName():"";
+		int result = collator.compare(one,two);
+		
+		if (result == 0){
+		  //result = p1.getMiddleName().compareTo(p2.getMiddleName());
+		  one = p1.getMiddleName()!=null?p1.getMiddleName():"";
+		  two = p2.getMiddleName()!=null?p2.getMiddleName():"";
+		  result = collator.compare(one,two);
+		}
+		
+		if (result == 0){
+		  one = p1.getLastName()!=null?p1.getLastName():"";
+		  two = p2.getLastName()!=null?p2.getLastName():"";
+		  result = collator.compare(one,two);
+		}
+
 		return result;
 	}	
 
