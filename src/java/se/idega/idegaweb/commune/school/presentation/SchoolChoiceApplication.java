@@ -579,16 +579,27 @@ public class SchoolChoiceApplication extends CommuneBlock {
 				previousSeason = season;
 			else
 				previousSeason = schCommBiz.getPreviousSchoolSeason(season);
-			schoolClassMember = schBuiz.getSchoolBusiness().getSchoolClassMemberHome().findByUserAndSeason(child, previousSeason);
+			
+			//schoolClassMember = schBuiz.getSchoolBusiness().getSchoolClassMemberHome().findByUserAndSeason(child, previousSeason);
+			schoolClassMember = schBuiz.getSchoolBusiness().getSchoolClassMemberHome().findLatestByUserAndSchCategoryAndSeason(child, schBuiz.getSchoolBusiness().getCategoryElementarySchool(), season);
+			
 			schoolClass = schBuiz.getSchoolBusiness().getSchoolClassHome().findByPrimaryKey(new Integer(schoolClassMember.getSchoolClassId()));
 			school = schBuiz.getSchool(schoolClass.getSchoolId());
 			if (school != null)
 				this.hasPreviousSchool = true;
-			schoolArea = schBuiz.getSchoolBusiness().getSchoolAreaHome().findByPrimaryKey(new Integer(school.getSchoolAreaId()));
-			Collection Stypes = school.findRelatedSchoolTypes();
+			
+			//schoolArea = schBuiz.getSchoolBusiness().getSchoolAreaHome().findByPrimaryKey(new Integer(school.getSchoolAreaId()));
+			if (school != null)
+				schoolArea = school.getSchoolArea();
+			
+			/*Collection Stypes = school.findRelatedSchoolTypes();
 			if (!Stypes.isEmpty())
 				schoolType = (SchoolType) Stypes.iterator().next();
-			schoolYear = schBuiz.getSchoolBusiness().getSchoolYearHome().findByPrimaryKey(new Integer(schoolClassMember.getSchoolYearId()));
+			*/
+			schoolType = schoolClassMember.getSchoolType();
+
+			//schoolYear = schBuiz.getSchoolBusiness().getSchoolYearHome().findByPrimaryKey(new Integer(schoolClassMember.getSchoolYearId()));
+			schoolYear = schoolClassMember.getSchoolYear();
 		}
 		catch (Exception e) {
 			hasPreviousSchool = false;
