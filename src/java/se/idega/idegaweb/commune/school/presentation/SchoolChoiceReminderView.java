@@ -21,10 +21,10 @@ import se.idega.idegaweb.commune.school.data.SchoolChoiceReminder;
  * and entity ejb classes in {@link se.idega.idegaweb.commune.school.data}.
  * <p>
  * <p>
- * Last modified: $Date: 2003/01/21 15:42:58 $ by $Author: staffan $
+ * Last modified: $Date: 2003/01/22 11:12:06 $ by $Author: staffan $
  *
  * @author <a href="http://www.staffannoteberg.com">Staffan Nöteberg</a>
- * @version $Revision: 1.25 $
+ * @version $Revision: 1.26 $
  * @see javax.ejb
  */
 public class SchoolChoiceReminderView extends CommuneBlock {
@@ -236,9 +236,13 @@ public class SchoolChoiceReminderView extends CommuneBlock {
         table.add (getHeader(localize (ACTIVE_REMINDERS_KEY,
                                        ACTIVE_REMINDERS_DEFAULT)), 1, row++);
         table.setHeight (row++, 12);
-        table.add (localize ("scr_click below", "Om du klickar på id-numret nedan så räknar systemet ut vilka som ska få påminnelse. Observera att detta kan ta upp till 3 minuter."), 1, row++);
-        table.setHeight (row++, 12);
-        table.add(form, 1, row++);
+        if (reminders.length > 0) {
+            table.add (localize ("scr_click_below", "Om du klickar på id-numret nedan så räknar systemet ut vilka som ska få påminnelse. Observera att detta kan ta 3 minuter eller längre."), 1, row++);
+            table.setHeight (row++, 12);
+            table.add(form, 1, row++);
+        } else {
+            table.add (localize ("scr_no_active", "Det finns inga aktiva påminnelser just nu."), 1, row++);
+        }
 		add(table);
     }
 

@@ -345,12 +345,6 @@ public class UserCases extends CommuneBlock {
 		if (getReminderPage() != -1) {
 			Link reminderLink = getSmallLink(reminder.getPrimaryKey().toString());
 			reminderLink.setPage(getReminderPage());
-			reminderLink.addParameter
-                    (SchoolChoiceReminderView.ACTION_KEY,
-                     SchoolChoiceReminderView.SHOW_DETAILS_KEY);
-			reminderLink.addParameter
-                    (SchoolChoiceReminderView.CASE_ID_KEY,
-                     reminder.getPrimaryKey().toString());
 			caseNumber = reminderLink;
 		}
 
