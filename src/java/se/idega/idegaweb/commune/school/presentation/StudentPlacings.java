@@ -40,26 +40,30 @@ public class StudentPlacings extends SchoolCommuneBlock {
 	 * @see se.idega.idegaweb.commune.school.presentation.SchoolCommuneBlock#init(com.idega.presentation.IWContext)
 	 */
 	public void init(IWContext iwc) throws Exception {
-		Table table = new Table(1,7);
+		Table table = new Table();
 		table.setCellpadding(0);
 		table.setCellspacing(0);
 		table.setWidth(getWidth());
-		table.setHeight(2, 12);
-		table.setHeight(4, 12);
 		
+		int row = 1;
 		GenericButton back = (GenericButton) getStyledInterface(new GenericButton("back",localize("back","Back")));
 		if (getResponsePage() != null)
 			back.setPageToOpen(getResponsePage());
 
 		if (getSession().getStudentID() != -1) {
-			table.add(getInformationTable(iwc), 1, 1);
-			table.add(getPlacingsTable(iwc), 1, 3);
+			table.add(getInformationTable(iwc), 1, row++);
+			table.setRowHeight(row++, "16");
+			table.add(getSmallHeader(localize("school.placements", "Placements")), 1, row++);
+			table.setRowHeight(row++, "3");
+			table.add(getPlacingsTable(iwc), 1, row++);
 			if (showChoicesTable) {
-				table.add(getChoicesTable(iwc), 1, 5);
-				table.add(back, 1, 7);
-			} else {
-				table.add(back, 1, 5);
+				table.setRowHeight(row++, "16");
+				table.add(getSmallHeader(localize("school.choices", "Choices")), 1, row++);
+				table.setRowHeight(row++, "3");
+				table.add(getChoicesTable(iwc), 1, row++);
 			}
+			table.setRowHeight(row++, "16");
+			table.add(back, 1, row++);
 		}
 		else {
 			table.add(getLocalizedHeader("school.no_student_found","No student found."), 1, 1);
@@ -125,7 +129,7 @@ public class StudentPlacings extends SchoolCommuneBlock {
 		table.setWidth(getWidth());
 		table.setCellpadding(getCellpadding());
 		table.setCellspacing(getCellspacing());
-		table.setColumns(4);
+		table.setColumns(6);
 		table.setRowColor(1, getHeaderColor());
 		int column = 1;
 		int row = 1;
@@ -154,7 +158,7 @@ public class StudentPlacings extends SchoolCommuneBlock {
 			++row;
 			column = 1;
 			choice = (SchoolChoice) iter.next();
-			status = caseBusiness.getLocalizedCaseDescription(choice, currentLocale);
+			status = caseBusiness.getLocalizedCaseStatusDescription(choice.getCaseStatus(), currentLocale);
 			created = choice.getCreated();
 			if (created != null) {
 				iwCreated = new IWTimestamp(created);
