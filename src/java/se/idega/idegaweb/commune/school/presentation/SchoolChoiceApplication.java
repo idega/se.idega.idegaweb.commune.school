@@ -832,13 +832,6 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		table.setWidthAndHeightToHundredPercent();
 		table.add(getHeader(iwrb.getLocalizedString("school.choice_for_schoolyear", "Choice for the schoolyear")), 1, 1);
 		
-		// School choice message link
-		Link msgLink = new Link(localize("school_choice.form_message_link_text", "School choice message"));
-		msgLink.setWindowToOpen(SchoolChoiceFormMessageWindow.class);
-		table.add(msgLink, 5, 1);
-		table.setWidth(5, 1, "200");
-
-
 		DropdownMenu typeDrop = getTypeDrop(prmType, true, false);
 		typeDrop.setOnChange(getFilterCallerScript(prmType, prmFirstArea, prmFirstSchool, 1, false));
 
@@ -912,6 +905,13 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		if (age.getYears() <= 10) {
 			table.setHeight(row++, 5);
 			table.mergeCells(1, row, 5, row);
+			table.add(getHeader(iwrb.getLocalizedString("school.after_school_choice", "Choice of after school care")), 1, row);
+			table.add(Text.getNonBrakingSpace(), 1, row);
+			Link infoLink = new Link(this.getInformationIcon(iwrb.getLocalizedString("school.after_school_choice_information", "Information about the after school choice.")));
+			infoLink.setToOpenAlert(iwrb.getLocalizedString("school.after_school_choice_message", "Information about the after school choice..."));
+			table.add(infoLink, 1, row++);
+			
+			table.mergeCells(1, row, 5, row);
 			//table.setWidth(1, row, Table.HUNDRED_PERCENT);
 			RadioButton rbWantsAfterSchool = new RadioButton(prmAfterschool,Boolean.TRUE.toString());
 			RadioButton rbNotAfterSchool = new RadioButton(prmAfterschool,Boolean.FALSE.toString());
@@ -922,11 +922,21 @@ public class SchoolChoiceApplication extends CommuneBlock {
 			table.add(rbNotAfterSchool,1,row);
 			table.mergeCells(1, row, 5, row);
 			table.add(getSmallHeader(Text.getNonBrakingSpace()+iwrb.getLocalizedString("school.not_want_after_school_care","I do not want afterschool care")),1,row++);
+			table.setHeight(row++, 5);
 			//table.add(chkChildCare, 1, row);
 			//table.add(getSmallHeader(Text.NON_BREAKING_SPACE + iwrb.getLocalizedString("school.child_care_requested", "Interested in after school child care")), 1, row);
 		}
 
 		// *** borgman added
+		// School choice message link
+		table.mergeCells(1, row, 5, row);
+		table.add(getHeader(iwrb.getLocalizedString("school.after_school_choice", "Choice of after school care")), 1, row);
+		table.add(Text.getNonBrakingSpace(), 1, row);
+		Link msgLink = new Link(this.getInformationIcon(localize("school_choice.form_message_link_text", "School choice message")));
+		//msgLink.setWindowToOpen(SchoolChoiceFormMessageWindow.class);
+		msgLink.setToOpenAlert(localize("school_choice_form_message.message", "Localized School choice message ... "));
+		table.add(msgLink, 1, row++);
+
 		CheckBox langChecked = new CheckBox(prmNativeLangIsChecked);
 		table.add(langChecked, 1, row);
 		table.add(getSmallHeader(Text.getNonBrakingSpace()+iwrb.getLocalizedString("school.native_lang_prefix","I would like")),1,row);
