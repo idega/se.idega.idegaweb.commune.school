@@ -31,9 +31,9 @@ import com.idega.block.school.data.SchoolClassMember;
 import com.idega.block.school.data.SchoolSeason;
 import com.idega.block.school.data.SchoolType;
 import com.idega.block.school.data.SchoolYear;
-import com.idega.core.builder.data.ICPage;
 import com.idega.business.IBOLookup;
 import com.idega.business.IBORuntimeException;
+import com.idega.core.builder.data.ICPage;
 import com.idega.core.location.data.Address;
 import com.idega.data.IDOEntity;
 import com.idega.idegaweb.IWApplicationContext;
@@ -45,7 +45,6 @@ import com.idega.presentation.Page;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.Script;
 import com.idega.presentation.Table;
-import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.CheckBox;
 import com.idega.presentation.ui.DataTable;
@@ -150,7 +149,6 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	private Age age;
 	private Form myForm;
 	
-	private ICPage childcarePage = null;
 	private Integer afterSchoolPageID = null;
 	private Integer checkPageID = null;
 	
@@ -292,7 +290,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 							else if(checkPageID!=null){
 								iwc.forwardToIBPage(getParentPage(),checkPageID.intValue());
 							}
-							add(getSchoolChoiceAnswer(iwc, child));
+							add(getSchoolChoiceAnswer(child));
 						}
 					}
 					else if (hasChoosed) {
@@ -438,7 +436,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		return myForm;
 	}
 
-	public PresentationObject getSchoolChoiceAnswer(IWContext iwc, User child) throws java.rmi.RemoteException {
+	public PresentationObject getSchoolChoiceAnswer(User child) throws java.rmi.RemoteException {
 		Table T = new Table();
 		T.setCellpadding(getCellpadding());
 		T.setCellspacing(0);
@@ -454,7 +452,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		T.add(getText(text3), 1, row++);
 		T.add(getText(text4), 1, row++);
 		T.setHeight (row++, 12);
-		T.add (getUserHomePageLink (iwc), 1, row++);
+		T.add (getUserHomePageLink (), 1, row++);
 
 		return T;
 	}
@@ -1323,7 +1321,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	 * @param childcarePage The childcarePage to set
 	 */
 	public void setChildcarePage(ICPage childcarePage) {
-		this.childcarePage = childcarePage;
+		afterSchoolPageID = (Integer) childcarePage.getPrimaryKey();
 	}
 	
 	/**
@@ -1342,7 +1340,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		 this.checkPageID = (Integer) checkPage.getPrimaryKey();
 	  }
 
-	private UserHomeLink getUserHomePageLink (final IWContext iwc)
+	private UserHomeLink getUserHomePageLink ()
         throws RemoteException {
 		return new UserHomeLink();
 	}
