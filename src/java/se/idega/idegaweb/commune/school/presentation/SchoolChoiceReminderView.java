@@ -50,74 +50,77 @@ import com.idega.user.data.User;
  * and entity ejb classes in {@link se.idega.idegaweb.commune.school.data}.
  * <p>
  * <p>
- * Last modified: $Date: 2004/01/12 09:59:56 $ by $Author: laddi $
+ * Last modified: $Date: 2004/01/26 20:06:57 $ by $Author: staffan $
  *
  * @author <a href="http://www.staffannoteberg.com">Staffan Nöteberg</a>
- * @version $Revision: 1.37 $
+ * @version $Revision: 1.38 $
  * @see javax.ejb
  */
 public class SchoolChoiceReminderView extends CommuneBlock {
 
-	private static final String SCHOOL_YEAR_KEY="sch_school_year";
-	private static final String SCHOOL_SEASON_KEY="sch_school_season";
-	private static final String PREFIX = "scr_";   
-    private String PARAM_SCHOOL_SEASON_ID=PREFIX+"sch_season_id";
-	private String PARAM_SCHOOL_YEAR_ID=PREFIX+"sch_year_id";
+	private final static String PREFIX = "scr_";   
 	
-    public static final String ACTION_KEY = PREFIX + "action";
+	private final static String ACTIVE_REMINDERS_DEFAULT = "Aktiva påminnelser";
+	private final static String ACTIVE_REMINDERS_KEY = PREFIX + "active_reminders";
+	private final static String ADDRESS_DEFAULT = "Adress";
+	private final static String ADDRESS_KEY = PREFIX + "address";
+	private final static String CANCEL_DEFAULT = "Avbryt";
+	private final static String CANCEL_KEY = PREFIX + "cancel";
+	private final static String CASE_ID_DEFAULT = "Nr.";
+	private final static String CHILDREN_COUNT_KEY = PREFIX + "children_count";
+	private final static String CONFIRM_DELETE_DEFAULT = "Påminnelsen är nu avaktiverad";
+	private final static String CONFIRM_DELETE_KEY = PREFIX + "confirm_delete_reminder";
 	private final static String CONFIRM_ENTER_DEFAULT = "Din påminnelse är nu registrerad";
+	private final static String CONFIRM_ENTER_KEY = PREFIX + "confirm_enter_reminder";
+	private final static String CONTINUE_DEFAULT = "Fortsätt";
+	private final static String CONTINUE_KEY = PREFIX + "continue";
+	private final static String CREATE_DEFAULT = "Registrera en påminnelse";
+	private final static String CREATE_KEY = PREFIX + "create";
+	private final static String CUSTOM_TEXT_DEFAULT = "Egen påminnelsetext";
+	private final static String CUSTOM_TEXT_KEY = PREFIX + "custom_text";
+	private final static String DELETE_DEFAULT = "Ta bort";
+	private final static String DELETE_KEY = PREFIX + "delete";
+	private final static String ERROR_FIELD_CAN_NOT_BE_EMPTY_DEFAULT = "Fältet måste fyllas i";
+	private final static String ERROR_FIELD_CAN_NOT_BE_EMPTY_KEY = PREFIX + "error_field_can_not_be_empty";
+	private final static String EVENT_DATE_DEFAULT = "Utskicksdatum";
+	private final static String EVENT_DATE_KEY = PREFIX + "event_date";
+	private final static String GENERATE_LETTER_KEY = PREFIX + "generate_letter";
 	private final static String GOBACKTOMYPAGE_DEFAULT = "Tillbaka till Min sida";
-    private final static String CASE_ID_DEFAULT = "Nr.";
-    public final static String CASE_ID_KEY = PREFIX + "case_id";
-    private final static String CONFIRM_ENTER_KEY = PREFIX + "confirm_enter_reminder";
-    private final static String CONFIRM_DELETE_KEY = PREFIX + "confirm_delete_reminder";
-    private final static String CONFIRM_DELETE_DEFAULT = "Påminnelsen är nu avaktiverad";
-    private final static String GOBACKTOMYPAGE_KEY = PREFIX + "goBackToMyPage";
-    private static final String ADDRESS_DEFAULT = "Adress";
-    private static final String ADDRESS_KEY = PREFIX + "address";
-    private static final String CHILDREN_COUNT_KEY = PREFIX + "children_count";
-    private static final String CONTINUE_DEFAULT = "Fortsätt";
-    private static final String CONTINUE_KEY = PREFIX + "continue";
-    private static final String CREATE_DEFAULT = "Registrera en påminnelse";
-    private static final String CREATE_KEY = PREFIX + "create";
-    private static final String CUSTOM_TEXT_DEFAULT = "Egen påminnelsetext";
-    private static final String CUSTOM_TEXT_KEY = PREFIX + "custom_text";
-    private static final String ERROR_FIELD_CAN_NOT_BE_EMPTY_DEFAULT = "Fältet måste fyllas i";
-    private static final String ERROR_FIELD_CAN_NOT_BE_EMPTY_KEY = PREFIX + "error_field_can_not_be_empty";
-    private static final String EVENT_DATE_DEFAULT = "Utskicksdatum";
-    private static final String EVENT_DATE_KEY = PREFIX + "event_date";
-    private static final String GENERATE_LETTER_KEY = PREFIX + "generate_letter";
-    private static final String PARENT_NAME_DEFAULT = "Vårdnadshavare";
-    private static final String PARENT_NAME_KEY = PREFIX + "parent_name";
-    private static final String REMINDER_DATE_DEFAULT = "Visa som ärende";
-    private static final String REMINDER_DATE_KEY = PREFIX + "reminder_date";
-    private static final String REMINDER_DAYS_BEFORE_DEFAULT = "Antal dagar innan utskick som påminnelse ska visas som ärende";
-    private static final String REMINDER_DAYS_BEFORE_KEY = PREFIX + "reminder_days_before";
-    private static final String REMINDER_TEXT_1_DEFAULT = "Påminnelse - skolvalsperioden är snart slut!\n\nSkolvalsperioden är 13-31 januari. Vi har noterat att du ännu inte gjort ditt skolval.\n\nAll information om skolvalet finns på www.nacka24.nacka.se där du också ansöker om ditt personliga medborgarkonto.\n\nOm du har frågor angående skolvalet kontakta Kundvalsgruppen på telefon\n08-718 80 00 eller e-post kundvalsgruppen@nacka.se\n\n\nMed vänlig hälsning\n\nKundvalsgruppen";
-    private static final String REMINDER_TEXT_1_KEY = PREFIX + "remindertext_1";
-    private static final String REMINDER_TEXT_2_DEFAULT = "Påminnelse - sista möjligheten att välja skola!\n\nSkolvalsperioden är nu slut och skolorna påbörjar inom kort arbetet med att placera de barn som har valt skola. Utnyttja möjligheten att själv göra ett aktivt val för ditt barn!\n\nDitt val måste vara gjort på www.nacka24.nacka.se senast fredagen den 7 februari kl. 24.00.\n\nOm du ej själv gör ett aktivt skolval för ditt barn får barnet en skolplacering på närmaste skola som har ledig plats.\n\nOm du har frågor angående skolvalet kontakta Kundvalsgruppen på telefon\n08-718 80 00 eller e-post kundvalsgruppen@nacka.se\n\n\nMed vänlig hälsning\n\nKundvalsgruppen";
-    private static final String REMINDER_TEXT_2_KEY = PREFIX + "remindertext_2";
-    private static final String REMINDER_TEXT_DEFAULT = "Påminnelsetext";
-    private static final String REMINDER_TEXT_KEY = PREFIX + "reminder_text";
-    private static final String SCHOOLCHOICEREMINDER_DEFAULT = "Påminnelse om skolval";
-    private static final String SCHOOLCHOICEREMINDER_KEY = PREFIX + "schoolchoicereminder";
-    public static final String SHOW_DETAILS_KEY = PREFIX + "show_details";
-    private static final String SSN_DEFAULT = "Personnummer";
-    private static final String SSN_KEY = PREFIX + "ssn";
-    private static final String STUDENT_LIST_KEY = PREFIX + "student_list";
-    private static final String STUDENT_NAME_DEFAULT = "Elev";
-    private static final String STUDENT_NAME_KEY = PREFIX + "student_name";
-    private static final String DELETE_DEFAULT = "Ta bort";
-    private static final String DELETE_KEY = PREFIX + "delete";
-    private static final String CANCEL_DEFAULT = "Avbryt";
-    private static final String CANCEL_KEY = PREFIX + "cancel";
-    private static final String ACTIVE_REMINDERS_DEFAULT = "Aktiva påminnelser";
-    private static final String ACTIVE_REMINDERS_KEY = PREFIX + "active_reminders";
-    private static final String NEW_REMINDER_DEFAULT = "Skapa ny påminnelse";
-    private static final String NEW_REMINDER_KEY = PREFIX + "new_reminder";
+	private final static String GOBACKTOMYPAGE_KEY = PREFIX + "goBackToMyPage";
+	private final static String NEW_REMINDER_DEFAULT = "Skapa ny påminnelse";
+	private final static String NEW_REMINDER_KEY = PREFIX + "new_reminder";
+	private final static String ONLY_CHILDREN_LIVING_IN_COMMUNE_KEY = PREFIX + "only_children_living_in_commune";
+	private final static String PARENT_NAME_DEFAULT = "Vårdnadshavare";
+	private final static String PARENT_NAME_KEY = PREFIX + "parent_name";
+	private final static String REMINDER_DATE_DEFAULT = "Visa som ärende";
+	private final static String REMINDER_DATE_KEY = PREFIX + "reminder_date";
+	private final static String REMINDER_DAYS_BEFORE_DEFAULT = "Antal dagar innan utskick som påminnelse ska visas som ärende";
+	private final static String REMINDER_DAYS_BEFORE_KEY = PREFIX + "reminder_days_before";
+	private final static String REMINDER_TEXT_1_DEFAULT = "Påminnelse - skolvalsperioden är snart slut!\n\nSkolvalsperioden är 13-31 januari. Vi har noterat att du ännu inte gjort ditt skolval.\n\nAll information om skolvalet finns på www.nacka24.nacka.se där du också ansöker om ditt personliga medborgarkonto.\n\nOm du har frågor angående skolvalet kontakta Kundvalsgruppen på telefon\n08-718 80 00 eller e-post kundvalsgruppen@nacka.se\n\n\nMed vänlig hälsning\n\nKundvalsgruppen";
+	private final static String REMINDER_TEXT_1_KEY = PREFIX + "remindertext_1";
+	private final static String REMINDER_TEXT_2_KEY = PREFIX + "remindertext_2";
+	private final static String REMINDER_TEXT_DEFAULT = "Påminnelsetext";
+	private final static String REMINDER_TEXT_KEY = PREFIX + "reminder_text";
+	private final static String SCHOOLCHOICEREMINDER_DEFAULT = "Påminnelse om skolval";
+	private final static String SCHOOLCHOICEREMINDER_KEY = PREFIX + "schoolchoicereminder";
+	private final static String SCHOOL_SEASON_KEY="sch_school_season";
+	private final static String SCHOOL_YEAR_KEY="sch_school_year";
+	private final static String SSN_DEFAULT = "Personnummer";
+	private final static String SSN_KEY = PREFIX + "ssn";
+	private final static String STUDENT_LIST_KEY = PREFIX + "student_list";
+	private final static String STUDENT_NAME_DEFAULT = "Elev";
+	private final static String STUDENT_NAME_KEY = PREFIX + "student_name";
+	public final static String ACTION_KEY = PREFIX + "action";
+	public final static String CASE_ID_KEY = PREFIX + "case_id";
+	public final static String SHOW_DETAILS_KEY = PREFIX + "show_details";
+    private final static String REMINDER_TEXT_2_DEFAULT = "Påminnelse - sista möjligheten att välja skola!\n\nSkolvalsperioden är nu slut och skolorna påbörjar inom kort arbetet med att placera de barn som har valt skola. Utnyttja möjligheten att själv göra ett aktivt val för ditt barn!\n\nDitt val måste vara gjort på www.nacka24.nacka.se senast fredagen den 7 februari kl. 24.00.\n\nOm du ej själv gör ett aktivt skolval för ditt barn får barnet en skolplacering på närmaste skola som har ledig plats.\n\nOm du har frågor angående skolvalet kontakta Kundvalsgruppen på telefon\n08-718 80 00 eller e-post kundvalsgruppen@nacka.se\n\n\nMed vänlig hälsning\n\nKundvalsgruppen";
 
-    private static final SimpleDateFormat dateFormatter
-        = new SimpleDateFormat ("yyyy-MM-dd");
+	private final static String PARAM_IS_ONLY_IN_DEFAULT_COMMUNE=PREFIX+"is_only_in_default_commune";
+	private final static String PARAM_SCHOOL_SEASON_ID=PREFIX+"sch_season_id";
+	private final static String PARAM_SCHOOL_YEAR_ID=PREFIX+"sch_year_id";
+
+	private final static SimpleDateFormat dateFormatter
+		= new SimpleDateFormat ("yyyy-MM-dd");
 
 
 	/**
@@ -139,7 +142,7 @@ public class SchoolChoiceReminderView extends CommuneBlock {
         } else if (action != null && action.equals (DELETE_KEY)) {
             deleteReminder (iwc);
 		} else if (action != null && action.equals (SCHOOL_SEASON_KEY)) {
-			selectSeason ();
+			selectSeasonAndIsOnlyDefaultCommune ();
 		} else if (action != null && action.equals (SCHOOL_YEAR_KEY)) {
 			selectSchoolYear (iwc);
         } else {
@@ -164,6 +167,7 @@ public class SchoolChoiceReminderView extends CommuneBlock {
 		
 		t.add(yearSelectorCont,1,1);
 		form.maintainParameter(this.PARAM_SCHOOL_SEASON_ID);
+		form.maintainParameter(PARAM_IS_ONLY_IN_DEFAULT_COMMUNE);
 		form.maintainParameter(CASE_ID_KEY);
 		t.add(this.getSubmitButton2(ACTION_KEY,SHOW_DETAILS_KEY),1,2);
 		
@@ -172,22 +176,26 @@ public class SchoolChoiceReminderView extends CommuneBlock {
 	/**
 	 * @param iwc
 	 */
-	private void selectSeason()
+	private void selectSeasonAndIsOnlyDefaultCommune()
 	{
 		Form form = new Form();
 		add(form);
 		
 		Table t = new Table();
 		form.add(t);
-		
-
-	
 		DropdownMenu dropSeasons = getSchoolSeasonsInput();
 		InputContainer dropSeasonsCont = this.getInputContainer(SCHOOL_SEASON_KEY,"Select season:",dropSeasons);
 		form.maintainParameter(CASE_ID_KEY);
-		t.add(dropSeasonsCont,1,1);
-		t.add(this.getSubmitButton2(ACTION_KEY,SCHOOL_YEAR_KEY),1,2);
-		
+		int row = 1;
+		t.add(dropSeasonsCont, 1, row++);
+		final CheckBox checkBox = new CheckBox (PARAM_IS_ONLY_IN_DEFAULT_COMMUNE);
+		checkBox.setChecked (true);
+		t.add (checkBox, 1, row);
+		t.add (Text.getNonBrakingSpace (), 1, row);
+		t.add (getSmallText (localize (ONLY_CHILDREN_LIVING_IN_COMMUNE_KEY, ONLY_CHILDREN_LIVING_IN_COMMUNE_KEY)), 1, row++);
+
+		t.setHeight(row++, 12);
+		t.add(this.getSubmitButton2(ACTION_KEY,SCHOOL_YEAR_KEY), 1, row++);		
 	}
 
 	/**
@@ -229,10 +237,9 @@ public class SchoolChoiceReminderView extends CommuneBlock {
 			{
 				SchoolYear year = (SchoolYear) iterator.next();
 				SchoolSeason season = this.getSchoolSeason(iwc);
-				
 				String yearPK = year.getPrimaryKey().toString();
 				String yearName = year.getSchoolYearName();
-				int numberOfNotDoneSchoolChoices = this.getSchoolChoiceBusiness(iwc).getNumberOfStudentsThatMustDoSchoolChoiceButHaveNot(season,year);
+				int numberOfNotDoneSchoolChoices = this.getSchoolChoiceBusiness(iwc).getNumberOfStudentsThatMustDoSchoolChoiceButHaveNot(season,year,isOnlyInCommune (iwc));
 				String yearString = yearName+" ("+numberOfNotDoneSchoolChoices+")";
 				group.addOption(yearPK,yearString);
 			}
@@ -242,6 +249,10 @@ public class SchoolChoiceReminderView extends CommuneBlock {
 			e.printStackTrace();
 		}
 		return group;
+	}
+
+	private boolean isOnlyInCommune (IWContext context) {
+		return context.isParameterSet (PARAM_IS_ONLY_IN_DEFAULT_COMMUNE);
 	}
 
 	private void showMainMenu () {
@@ -259,8 +270,6 @@ public class SchoolChoiceReminderView extends CommuneBlock {
                    (SCHOOLCHOICEREMINDER_KEY, SCHOOLCHOICEREMINDER_DEFAULT), 1,
                    row++);
 		table.add (dropdown, 1, row++);
-		table.setHeight (row++, 12);
-
 		table.add (submit, 1, row++);
 		form.add (table);
 		add (form);        
@@ -513,7 +522,7 @@ public class SchoolChoiceReminderView extends CommuneBlock {
 				SchoolSeason season = getSchoolSeason(iwc);
 				  //final SchoolChoiceReminder reminder = business.findSchoolChoiceReminder (reminderId);
 				  final SchoolChoiceReminderReceiver [] receivers
-				          = business.findAllStudentsThatMustDoSchoolChoiceButHaveNot(season,years);
+							= business.findAllStudentsThatMustDoSchoolChoiceButHaveNot(season,years,isOnlyInCommune (iwc));
 				  iwc.getSession ().setAttribute (STUDENT_LIST_KEY, receivers);
 				  for (int i = 0; i < receivers.length; i++) {
 				      try {

@@ -1276,11 +1276,11 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		}
 	}
 
-	public SchoolChoiceReminderReceiver[] findAllStudentsThatMustDoSchoolChoiceButHaveNot(SchoolSeason season, SchoolYear[] years) {
+	public SchoolChoiceReminderReceiver[] findAllStudentsThatMustDoSchoolChoiceButHaveNot(SchoolSeason season, SchoolYear[] years, boolean isOnlyInCommune) {
 		Collection coll = new ArrayList();
 		for (int i = 0; i < years.length; i++) {
 			SchoolYear year = years[i];
-			SchoolChoiceReminderReceiver[] receivers = findAllStudentsThatMustDoSchoolChoiceButHaveNot(season, year);
+			SchoolChoiceReminderReceiver[] receivers = findAllStudentsThatMustDoSchoolChoiceButHaveNot(season, year,isOnlyInCommune);
 			for (int j = 0; j < receivers.length; j++) {
 				SchoolChoiceReminderReceiver receiver = receivers[j];
 				coll.add(receiver);
@@ -1293,8 +1293,8 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	/**
 	 * Gets The number of students who should make a schoolchoice for the SchoolYear year and SchoolSeason season
 	 */
-	public int getNumberOfStudentsThatMustDoSchoolChoiceButHaveNot(SchoolSeason season, SchoolYear year) {
-		SchoolChoiceReminderReceiver[] students = findAllStudentsThatMustDoSchoolChoiceButHaveNot(season, year);
+	public int getNumberOfStudentsThatMustDoSchoolChoiceButHaveNot(SchoolSeason season, SchoolYear year,boolean isOnlyInCommune) {
+		SchoolChoiceReminderReceiver[] students = findAllStudentsThatMustDoSchoolChoiceButHaveNot(season, year,isOnlyInCommune);
 		if (students != null) {
 			return students.length;
 		}
@@ -1306,7 +1306,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	/**
 	 * Gets an array of SchoolChoiceReminderReceiver for all students who should make a schoolchoice for the SchoolYear year and SchoolSeason season
 	 */
-	public SchoolChoiceReminderReceiver[] findAllStudentsThatMustDoSchoolChoiceButHaveNot(SchoolSeason season, SchoolYear year) {
+	public SchoolChoiceReminderReceiver[] findAllStudentsThatMustDoSchoolChoiceButHaveNot(SchoolSeason season, SchoolYear year,boolean isOnlyInCommune) {
 		try {
 			com.idega.util.Timer timer = new com.idega.util.Timer();
 			timer.start();
@@ -1331,8 +1331,14 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 			final UserBusiness userBusiness = getUserBusiness();
 			for (int i = 0; i < idCount; i++) {
 				final Integer id = (Integer) iter.next();
-				final SchoolChoiceReminderReceiver receiver = new SchoolChoiceReminderReceiver(familyLogic, userBusiness, id);
-				receivers.put(receiver.getSsn(), receiver);
+				try {
+					final SchoolChoiceReminderReceiver receiver = new SchoolChoiceReminderReceiver(familyLogic, userBusiness, id);
+					if (!isOnlyInCommune || receiver.isInDefaultCommune ()) {
+						receivers.put(receiver.getSsn(), receiver);
+					}
+				} catch (Exception e) {
+					e.printStackTrace ();
+				}
 			}
 			timer.stop();
 			System.err.println("Found parents and addresses in " + timer.getTime() + " msec");
