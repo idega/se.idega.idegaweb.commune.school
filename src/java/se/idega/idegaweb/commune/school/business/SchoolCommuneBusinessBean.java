@@ -2,6 +2,7 @@ package se.idega.idegaweb.commune.school.business;
 
 import is.idega.block.family.business.FamilyLogic;
 import is.idega.block.family.business.NoCustodianFound;
+
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
 import java.text.DateFormat;
@@ -16,10 +17,12 @@ import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.Vector;
+
 import javax.ejb.CreateException;
 import javax.ejb.EJBException;
 import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
+
 import se.idega.idegaweb.commune.business.CommuneUserBusiness;
 import se.idega.idegaweb.commune.care.business.CareBusiness;
 import se.idega.idegaweb.commune.care.data.ProviderAccountingProperties;
@@ -28,6 +31,7 @@ import se.idega.idegaweb.commune.message.business.MessageBusiness;
 import se.idega.idegaweb.commune.school.data.SchoolChoice;
 import se.idega.idegaweb.commune.user.data.Citizen;
 import se.idega.idegaweb.commune.user.data.CitizenHome;
+
 import com.idega.block.datareport.util.ReportableCollection;
 import com.idega.block.datareport.util.ReportableData;
 import com.idega.block.datareport.util.ReportableField;
@@ -45,7 +49,6 @@ import com.idega.block.school.data.SchoolStudyPath;
 import com.idega.block.school.data.SchoolStudyPathHome;
 import com.idega.block.school.data.SchoolType;
 import com.idega.block.school.data.SchoolYear;
-import com.idega.business.IBOLookup;
 import com.idega.business.IBOLookupException;
 import com.idega.business.IBORuntimeException;
 import com.idega.core.contact.data.Phone;
@@ -147,12 +150,12 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 	}
 	
 	public SchoolBusiness getSchoolBusiness() throws RemoteException {
-		return (SchoolBusiness) IBOLookup.getServiceInstance(getIWApplicationContext(), SchoolBusiness.class);
+		return (SchoolBusiness)getServiceInstance( SchoolBusiness.class);
 	}
 
 	public SchoolChoiceBusiness getSchoolChoiceBusiness() {
 		try {
-			return (SchoolChoiceBusiness) IBOLookup.getServiceInstance(getIWApplicationContext(), SchoolChoiceBusiness.class);
+			return (SchoolChoiceBusiness) getServiceInstance( SchoolChoiceBusiness.class);
 		}
 		catch (IBOLookupException ile) {
 			throw new IBORuntimeException(ile);
@@ -660,11 +663,11 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 	}
 
 	private MessageBusiness getMessageBusiness() throws RemoteException {
-		return (MessageBusiness) com.idega.business.IBOLookup.getServiceInstance(getIWApplicationContext(), MessageBusiness.class);
+		return (MessageBusiness) getServiceInstance( MessageBusiness.class);
 	}
 
 	private CommuneUserBusiness getCommuneUserBusiness() throws RemoteException {
-		return (CommuneUserBusiness) com.idega.business.IBOLookup.getServiceInstance(getIWApplicationContext(), CommuneUserBusiness.class);
+		return (CommuneUserBusiness) getServiceInstance( CommuneUserBusiness.class);
 	}
 	
 	public CommuneUserBusiness getUserBusiness() throws RemoteException {
@@ -841,13 +844,13 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 
 	public ReportableCollection getReportOfUsersNotRegisteredInAnyClass(Locale currentLocale, Date selectedDate, SchoolSeason currentSeason) throws IDOException, RemoteException, CreateException, FinderException {
 		initializeBundlesIfNeeded(currentLocale);
-		CommuneUserBusiness _communeUserService = (CommuneUserBusiness) IBOLookup.getServiceInstance(this.getIWApplicationContext(), CommuneUserBusiness.class);
-		FamilyLogic _familyLogic = (FamilyLogic) IBOLookup.getServiceInstance(this.getIWApplicationContext(), FamilyLogic.class);
+		CommuneUserBusiness _communeUserService = (CommuneUserBusiness)getServiceInstance( CommuneUserBusiness.class);
+		FamilyLogic _familyLogic = (FamilyLogic) getServiceInstance(FamilyLogic.class);
 		Group communeGroup = _communeUserService.getRootCitizenGroup();
 
 		ReportableCollection reportData = new ReportableCollection();
 
-		SchoolBusiness sBusiness = (SchoolBusiness) IBOLookup.getServiceInstance(this.getIWApplicationContext(), SchoolBusiness.class);
+		SchoolBusiness sBusiness = (SchoolBusiness) getServiceInstance( SchoolBusiness.class);
 
 		SchoolClassMemberHome scmHome = sBusiness.getSchoolClassMemberHome();
 
