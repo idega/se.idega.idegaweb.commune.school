@@ -8,6 +8,7 @@ import se.idega.idegaweb.commune.school.business.SchoolCommuneBusiness;
 import se.idega.idegaweb.commune.school.business.SchoolCommuneSession;
 
 import com.idega.block.school.data.SchoolClass;
+import com.idega.block.school.data.SchoolYear;
 import com.idega.business.IBOLookup;
 import com.idega.event.IWPageEventListener;
 import com.idega.idegaweb.IWException;
@@ -69,7 +70,8 @@ public class SchoolEventListener implements IWPageEventListener {
 
 	private void validateSchoolClass(IWContext iwc) throws RemoteException {
 		SchoolClass schoolClass = getSchoolCommuneBusiness(iwc).getSchoolBusiness().findSchoolClass(new Integer(_schoolClassID));
-		if ( schoolClass.getSchoolYearId() != _schoolYearID ) {
+		SchoolYear schoolYear = getSchoolCommuneBusiness(iwc).getSchoolBusiness().getSchoolYear(new Integer(_schoolYearID));
+		if ( schoolYear != null || !schoolClass.hasRelationToSchoolYear(schoolYear) ) {
 			Collection schoolClasses = getSchoolCommuneBusiness(iwc).getSchoolBusiness().findSchoolClassesBySchoolAndSeasonAndYear(_schoolID, _schoolSeasonID, _schoolYearID);
 			if ( !schoolClasses.isEmpty() ) {
 				Iterator iter = schoolClasses.iterator();

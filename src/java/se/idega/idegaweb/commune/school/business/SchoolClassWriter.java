@@ -72,6 +72,7 @@ public class SchoolClassWriter implements MediaWritable {
 	private String groupName;
 
 	public final static String prmClassId = "group_id";
+	public final static String prmYearId = "year_id";
 	public final static String prmPrintType = "print_type";
 	public final static String XLS = "xls";
 	public final static String PDF = "pdf";
@@ -86,11 +87,11 @@ public class SchoolClassWriter implements MediaWritable {
 			userBusiness = getCommuneUserBusiness(iwma.getIWApplicationContext());
 			iwrb = iwma.getBundle(CommuneBlock.IW_BUNDLE_IDENTIFIER).getResourceBundle(locale);
 			
-			if (req.getParameter(prmClassId) != null) {
+			if (req.getParameter(prmClassId) != null && req.getParameter(prmYearId) != null) {
 				schoolClass = business.getSchoolBusiness().findSchoolClass(new Integer(req.getParameter(prmClassId)));
 				schoolName = business.getSchoolBusiness().getSchool(new Integer(schoolClass.getSchoolId())).getSchoolName();
 				seasonName = business.getSchoolBusiness().getSchoolSeason(new Integer(schoolClass.getSchoolSeasonId())).getSchoolSeasonName();
-				yearName = business.getSchoolBusiness().getSchoolYear(new Integer(schoolClass.getSchoolYearId())).getSchoolYearName();
+				yearName = business.getSchoolBusiness().getSchoolYear(new Integer(req.getParameter(prmYearId))).getSchoolYearName();
 				groupName = schoolClass.getSchoolClassName();
 				
 				String type = req.getParameter(prmPrintType);

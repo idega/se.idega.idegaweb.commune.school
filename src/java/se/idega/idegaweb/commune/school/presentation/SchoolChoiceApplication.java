@@ -552,7 +552,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 			Collection Stypes = school.findRelatedSchoolTypes();
 			if (!Stypes.isEmpty())
 				schoolType = (SchoolType) Stypes.iterator().next();
-			schoolYear = schBuiz.getSchoolBusiness().getSchoolYearHome().findByPrimaryKey(new Integer(schoolClass.getSchoolYearId()));
+			schoolYear = schBuiz.getSchoolBusiness().getSchoolYearHome().findByPrimaryKey(new Integer(schoolClassMember.getSchoolYearId()));
 		}
 		catch (Exception e) {
 			hasPreviousSchool = false;
