@@ -14,6 +14,7 @@ import java.util.List;
 
 import javax.ejb.FinderException;
 
+import se.idega.idegaweb.commune.childcare.business.ChildCareSession;
 import se.idega.idegaweb.commune.childcare.check.business.CheckBusiness;
 import se.idega.idegaweb.commune.presentation.CitizenChildren;
 import se.idega.idegaweb.commune.presentation.CommuneBlock;
@@ -32,6 +33,7 @@ import com.idega.block.school.data.SchoolSeason;
 import com.idega.block.school.data.SchoolType;
 import com.idega.block.school.data.SchoolYear;
 import com.idega.business.IBOLookup;
+import com.idega.business.IBOLookupException;
 import com.idega.business.IBORuntimeException;
 import com.idega.core.builder.data.ICPage;
 import com.idega.core.location.data.Address;
@@ -282,6 +284,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 						// User wants to choose
 						if(valWantsAfterSchool){
 							boolean hasApprovedCheck = getCheckBusiness(iwc).hasGrantedCheck(child);
+							getChildCareSession(iwc).setChildID(((Integer)child.getPrimaryKey()).intValue());
 							// forward to afterschool page
 							if(hasApprovedCheck && afterSchoolPageID!=null){
 								iwc.forwardToIBPage(getParentPage(),afterSchoolPageID.intValue());
@@ -1352,5 +1355,14 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		catch (RemoteException e) {
 			throw new IBORuntimeException(e.getMessage());
 		}
+	}
+
+	private ChildCareSession getChildCareSession(IWContext iwc) {
+		try {
+			return (ChildCareSession) IBOLookup.getSessionInstance(iwc, ChildCareSession.class);
+		}
+		catch (IBOLookupException e) {
+			throw new IBORuntimeException(e.getMessage());
+		}	
 	}
 }
