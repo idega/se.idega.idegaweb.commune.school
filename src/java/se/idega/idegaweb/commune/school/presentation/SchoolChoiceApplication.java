@@ -337,7 +337,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		T.setHeight(row++, 12);
 
 		SubmitButton button = (SubmitButton) getButton(new SubmitButton("submit",localize("school_choice.ready", "Ready")));
-		button.setToDisableOnClick(button, true);
+		//button.setToDisableOnClick(button, true);
 		
 		T.add(button, 1, row++);
 		T.add(new HiddenInput(prmAction, "true"));
