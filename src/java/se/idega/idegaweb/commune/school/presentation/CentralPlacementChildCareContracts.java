@@ -1,7 +1,6 @@
 package se.idega.idegaweb.commune.school.presentation;
 
-import se.idega.idegaweb.commune.childcare.presentation.ChildCareChildContracts;
-
+import se.idega.idegaweb.commune.accounting.userinfo.presentation.ChildContracts;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
@@ -12,6 +11,7 @@ import com.idega.presentation.ui.Form;
 import com.idega.presentation.ui.HiddenInput;
 import com.idega.presentation.ui.SubmitButton;
 import com.idega.presentation.ui.Window;
+import com.idega.repository.data.ImplementorRepository;
 
 /**
  * @author borgman
@@ -192,7 +192,11 @@ public class CentralPlacementChildCareContracts extends Window {
 		} else {
 			mainTable = getMainTable();
 			innerTable = getInnerTable();
-			setInnerTableContent(new ChildCareChildContracts());
+			ChildContracts childContracts = (ChildContracts) ImplementorRepository.getInstance().newInstanceOrNull(ChildContracts.class, this.getClass());
+			if (childContracts != null) {
+				PresentationObject childContractsPresentation = childContracts.getPresentation();
+				setInnerTableContent(childContractsPresentation);
+			}
 			setMainTableContent(innerTable);
 			add(mainTable);
 		}

@@ -20,7 +20,7 @@ import java.util.Vector;
 import javax.ejb.FinderException;
 
 import se.idega.idegaweb.commune.accounting.childcare.check.business.CheckBusiness;
-import se.idega.idegaweb.commune.childcare.business.ChildCareSession;
+import se.idega.idegaweb.commune.accounting.userinfo.presentation.ChildContracts;
 import se.idega.idegaweb.commune.presentation.CitizenChildren;
 import se.idega.idegaweb.commune.presentation.CommuneBlock;
 import se.idega.idegaweb.commune.school.business.SchoolChoiceBusiness;
@@ -70,6 +70,7 @@ import com.idega.presentation.ui.RadioButton;
 import com.idega.presentation.ui.SubmitButton;
 import com.idega.presentation.ui.TextArea;
 import com.idega.presentation.ui.TextInput;
+import com.idega.repository.data.ImplementorRepository;
 import com.idega.user.business.UserBusiness;
 import com.idega.user.data.User;
 import com.idega.user.presentation.UserSearcher;
@@ -389,7 +390,10 @@ public class SchoolChoiceApplication extends CommuneBlock {
 						// User wants to choose
 						if (valWantsAfterSchool) {
 							boolean hasApprovedCheck = getCheckBusiness(iwc).hasGrantedCheck(child);
-							getChildCareSession(iwc).setChildID(((Integer) child.getPrimaryKey()).intValue());
+							ChildContracts childContracts = (ChildContracts) ImplementorRepository.getInstance().newInstanceOrNull(ChildContracts.class, this.getClass());
+							if (childContracts != null) {
+								childContracts.storeChildInSession(((Integer) child.getPrimaryKey()).intValue(), iwc);
+							}
 							if (!_forwardToCheckPage) {
 								hasApprovedCheck = true;
 							}
@@ -1750,15 +1754,6 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		return (ICLanguageHome) IDOLookup.getHome(ICLanguage.class);
 	}
 
-	private ChildCareSession getChildCareSession(IWContext iwc) {
-		try {
-			return (ChildCareSession) IBOLookup.getSessionInstance(iwc, ChildCareSession.class);
-		}
-		catch (IBOLookupException e) {
-			throw new IBORuntimeException(e.getMessage());
-		}
-	}
-	
 	private UserSearcher createSearcher () {
 		final UserSearcher searcher = new UserSearcher ();
 		searcher.setOwnFormContainer (false);
