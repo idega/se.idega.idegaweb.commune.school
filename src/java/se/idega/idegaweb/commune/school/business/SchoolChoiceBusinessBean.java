@@ -510,7 +510,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 			arguments[3] = "";
 		}
 		
-		String body = MessageFormat.format(getLocalizedString("school_choice.sep_parent_appl_mesg_body1", "Dear mr./ms./mrs. "), arguments);
+		String body = MessageFormat.format(getLocalizedString("school_choice.sep_parent_appl_mesg_body", "Dear mr./ms./mrs. "), arguments);
 		/*StringBuffer body = new StringBuffer(this.getLocalizedString("school_choice.sep_parent_appl_mesg_body1", "Dear mr./ms./mrs. "));
 		body.append(parent.getNameLastFirst()).append("\n");
 		body.append(this.getLocalizedString("school_choice.separate_parent_appl_mesg_body2", "School application for your child has been received \n The schools are: "));
