@@ -1,5 +1,5 @@
 /*
- * $Id: PreparedQuery.java,v 1.32 2004/02/23 13:17:42 anders Exp $
+ * $Id: PreparedQuery.java,v 1.33 2004/04/13 08:50:51 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -27,10 +27,10 @@ import com.idega.block.school.data.SchoolSeason;
 /** 
  * Handles the SQL logic for school report calculations.
  * <p>
- * Last modified: $Date: 2004/02/23 13:17:42 $ by $Author: anders $
+ * Last modified: $Date: 2004/04/13 08:50:51 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.32 $
+ * @version $Revision: 1.33 $
  */
 public class PreparedQuery {
 
@@ -436,6 +436,17 @@ public class PreparedQuery {
 		int index = _parameterIndex;
 		_parameterIndex++;
 		return index;
+	}
+	
+	/**
+	 * Set select not a specific school year name.
+	 */
+	public void setNotSchoolYearName(String schoolYearName) {
+		String sql = "cm.sch_school_year_id = sy.sch_school_year_id and sy.year_name <> '" + schoolYearName + "'";
+		_sqlWhere.add(sql);
+		
+		_sqlFrom.put(CM, TABLE_CM);
+		_sqlFrom.put(SY, TABLE_SY);
 	}
 	
 	/**
