@@ -86,7 +86,7 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 			Iterator iter = users.iterator();
 			while (iter.hasNext()) {
 				user = (User) iter.next();
-				coll.put((Integer)user.getPrimaryKey(), user);
+				coll.put(user.getPrimaryKey(), user);
 			}
 		}
 		
@@ -123,7 +123,7 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 			Iterator iterator = students.iterator();
 			while (iterator.hasNext()) {
 				user = (User) iterator.next();
-				coll.put((Integer)user.getPrimaryKey(), user);
+				coll.put(user.getPrimaryKey(), user);
 			}
 		}
 		
@@ -139,7 +139,7 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 			Iterator iterator = students.iterator();
 			while (iterator.hasNext()) {
 				user = (User) iterator.next();
-				coll.put((Integer)user.getPrimaryKey(), user);
+				coll.put(user.getPrimaryKey(), user);
 			}
 		}
 		
@@ -156,7 +156,7 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 				Iterator iterator = students.iterator();
 				while (iterator.hasNext()) {
 					address = (Address) iterator.next();
-					coll.put((Integer)address.getPrimaryKey(), address);
+					coll.put(address.getPrimaryKey(), address);
 				}
 			}
 		}
@@ -173,7 +173,7 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 			Iterator iterator = students.iterator();
 			while (iterator.hasNext()) {
 				address = (Address) iterator.next();
-				coll.put((Integer)address.getPrimaryKey(), address);
+				coll.put(address.getPrimaryKey(), address);
 			}
 		}
 		

@@ -1059,7 +1059,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 							t.append("areaSelect.options[areaSelect.options.length] = new Option(\"");
 							t.append(area.getSchoolAreaName()).append("\",\"");
 							t.append(area.getPrimaryKey().toString()).append("\");").append("\n\t\t");
-							;
+							
 	
 						}
 						t.append("}\n\t");

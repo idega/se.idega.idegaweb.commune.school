@@ -357,7 +357,7 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 		/*}
 		catch(java.rmi.RemoteException ex){}*/
 		//System.err.println(" \n "+sql.toString()+" \n");
-		return (Collection) super.idoFindPKsBySQL(sql.toString());
+		return idoFindPKsBySQL(sql.toString());
 
 	}
 
@@ -537,7 +537,7 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 			query.append("(").append("u.").append(UserBMPBean.getColumnNameFirstName()).append(" like '%").append(searchStringForUser).append("%'").appendOr().append("u.").append(UserBMPBean.getColumnNameLastName()).append(" like '%").append(searchStringForUser).append("%'").appendOr().append("u.").append(UserBMPBean.getColumnNameMiddleName()).append(" like '%").append(searchStringForUser).append("%'").appendOr().append("u.").append(UserBMPBean.getColumnNamePersonalID()).append(" like '%").append(searchStringForUser).append("%'");
 			query.append(")");
 			needAnd = true;
-			;
+			
 		}
 
 		if (seasonID > 0) {

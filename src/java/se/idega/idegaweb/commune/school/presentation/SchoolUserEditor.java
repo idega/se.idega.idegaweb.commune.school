@@ -8,7 +8,6 @@ import javax.ejb.FinderException;
 
 import se.idega.idegaweb.commune.presentation.CommuneBlock;
 
-import com.idega.block.school.business.SchoolBusiness;
 import com.idega.block.school.business.SchoolUserBusinessBean;
 import com.idega.block.school.data.School;
 import com.idega.block.school.data.SchoolType;
@@ -30,7 +29,6 @@ public class SchoolUserEditor extends com.idega.block.school.presentation.School
 	private final String CHILDCARE_ADMINISTATION_GROUP_PARAMETER_NAME = "school.anordnar_barnomsorg_group_id";
 
 	private GroupBusiness groupBusiness = null;
-	private SchoolBusiness schoolBusiness = null;
 	
 	private static String CATEGORY_SCHOOL = "SCHOOL";
 	private static String CATEGORY_CHILDCARE = "CHILDCARE";
@@ -109,7 +107,6 @@ public class SchoolUserEditor extends com.idega.block.school.presentation.School
 	
 	public void main(IWContext iwc) throws RemoteException {
 		groupBusiness = (GroupBusiness) IBOLookup.getServiceInstance(iwc, GroupBusiness.class);
-		schoolBusiness = (SchoolBusiness) IBOLookup.getServiceInstance(iwc, SchoolBusiness.class);
 		
 		CATEGORY_SCHOOL = getSchoolUserBusiness(iwc).getSchoolBusiness().getElementarySchoolSchoolCategory();
 		CATEGORY_CHILDCARE = getSchoolUserBusiness(iwc).getSchoolBusiness().getChildCareSchoolCategory();
