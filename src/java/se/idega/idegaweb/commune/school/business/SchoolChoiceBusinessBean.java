@@ -183,7 +183,8 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		choice.setChildId(childId);
 		if (current_school > 0)
 			choice.setCurrentSchoolId(current_school);
-		choice.setChosenSchoolId(chosen_school);
+		if (chosen_school != -1)
+			choice.setChosenSchoolId(chosen_school);
 		choice.setGrade(grade);
 		choice.setChoiceOrder(choiceOrder);
 		choice.setMethod(method);

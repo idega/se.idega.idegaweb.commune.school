@@ -159,8 +159,8 @@ public class SchoolClassWriter implements MediaWritable {
 				row = sheet.createRow((short)cellRow);
 				studentMember = (SchoolClassMember) iter.next();
 				student = (User) studentMap.get(new Integer(studentMember.getClassMemberId()));
-				address = userBusiness.getUserAddress1(((Integer) student.getPrimaryKey()).intValue());
-				phone = userBusiness.getUserPhone(((Integer) student.getPrimaryKey()).intValue(), PhoneType.HOME_PHONE_ID);
+				address = userBusiness.getUsersMainAddress(student);
+				phone = userBusiness.getChildHomePhone(student);
 
 		    row.createCell((short)0).setCellValue(student.getNameLastFirst(true));
 		    row.createCell((short)1).setCellValue(PersonalIDFormatter.format(student.getPersonalID(), locale));
@@ -207,8 +207,8 @@ public class SchoolClassWriter implements MediaWritable {
 			while (iter.hasNext()) {
 				studentMember = (SchoolClassMember) iter.next();
 				student = (User) studentMap.get(new Integer(studentMember.getClassMemberId()));
-				address = userBusiness.getUserAddress1(((Integer) student.getPrimaryKey()).intValue());
-				phone = userBusiness.getUserPhone(((Integer) student.getPrimaryKey()).intValue(), PhoneType.HOME_PHONE_ID);
+				address = userBusiness.getUsersMainAddress(student);
+				phone = userBusiness.getChildHomePhone(student);
 
 				cell = new Cell(new Phrase(student.getNameLastFirst(true), new Font(Font.HELVETICA, 10, Font.BOLD)));
 				cell.setBorder(Rectangle.NO_BORDER);

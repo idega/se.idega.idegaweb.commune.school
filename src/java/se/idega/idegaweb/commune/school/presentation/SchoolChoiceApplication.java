@@ -138,7 +138,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 
 	private boolean hasPreviousSchool = false;
 	private boolean schoolChange = false;
-	private boolean[] canApply = {false,false};
+	private boolean[] canApply = {false,false,false};
 	private boolean hasChosen = false;
 	private Age age;
 	
@@ -354,6 +354,11 @@ public class SchoolChoiceApplication extends CommuneBlock {
 				initScript.addFunction("sch_init", initFunction);
 				myForm.add(initScript);
 			}
+		}
+		
+		if (this.schoolChange) {
+			if (!canApply[2])
+				return getSmallHeader(localize("school_choice.not_possible_to_change_school","It is not possible to change school until after the 22nd of February."));
 		}
 		return myForm;
 	}
@@ -1048,7 +1053,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	}
 
 	private boolean[] checkCanApply(IWContext iwc) throws RemoteException {
-		boolean[] checkCanApply = {true,true};
+		boolean[] checkCanApply = {true,true,true};
 		try {
 			SchoolSeason season = schBuiz.getCurrentSeason();
 			if (season != null) {
@@ -1056,6 +1061,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 				String choiceStart = properties.getProperty("choice_start_date");
 				String choiceEnd = properties.getProperty("choice_end_date");
 				String choiceRed = properties.getProperty("choice_critical_date");
+				String changeStart = properties.getProperty("school_change_start");
 				
 				IWTimestamp seasonStart = new IWTimestamp(season.getSchoolSeasonStart());
 				IWTimestamp dateNow = new IWTimestamp();
@@ -1085,6 +1091,16 @@ public class SchoolChoiceApplication extends CommuneBlock {
 						checkCanApply[0] = true;
 						checkCanApply[1] = false;
 					}
+				}
+				if (changeStart != null) {
+					IWTimestamp change = new IWTimestamp(seasonStart);
+					change.setDay(Integer.parseInt(changeStart.substring(0, 2)));
+					change.setMonth(Integer.parseInt(changeStart.substring(3)));
+					if (dateNow.isLaterThan(change))
+						checkCanApply[2] = true;
+						
+					if (dateNow.getYear() <= 2002)
+						checkCanApply[2] = true;
 				}
 			}
 			return checkCanApply;
