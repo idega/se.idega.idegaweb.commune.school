@@ -27,6 +27,8 @@ import javax.ejb.FinderException;
 import se.cubecon.bun24.viewpoint.business.ViewpointBusiness;
 import se.cubecon.bun24.viewpoint.data.SubCategory;
 import se.idega.idegaweb.commune.business.CommuneUserBusiness;
+import se.idega.idegaweb.commune.childcare.business.AfterSchoolBusiness;
+import se.idega.idegaweb.commune.childcare.data.AfterSchoolChoice;
 import se.idega.idegaweb.commune.message.business.MessageBusiness;
 import se.idega.idegaweb.commune.school.data.CurrentSchoolSeason;
 import se.idega.idegaweb.commune.school.data.CurrentSchoolSeasonHome;
@@ -108,6 +110,14 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	}
 	public CommuneUserBusiness getUserBusiness() throws RemoteException {
 		return (CommuneUserBusiness) this.getServiceInstance(CommuneUserBusiness.class);
+	}
+	public AfterSchoolBusiness getAfterSchoolBusiness() {
+		try {
+			return (AfterSchoolBusiness) this.getServiceInstance(AfterSchoolBusiness.class);
+		}
+		catch (RemoteException re) {
+			throw new IBORuntimeException(re);
+		}
 	}
 	public SchoolHome getSchoolHome() throws java.rmi.RemoteException {
 		return getSchoolBusiness().getSchoolHome();
@@ -602,6 +612,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 			}
 
 			sendMessageToParents(choice, messageSubject, messageBody);
+			rejectAfterSchoolApplication(choice.getChildId(), choice.getChosenSchoolId(), seasonID, performer);
 
 			if (choice.getChoiceOrder() == 3) {
 				ViewpointBusiness vpb = (ViewpointBusiness) getServiceInstance(ViewpointBusiness.class);
@@ -624,6 +635,24 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 			}
 		}
 		catch (FinderException fe) {
+		}
+	}
+	
+	private boolean rejectAfterSchoolApplication(int childID, int providerID, int seasonID, User user) {
+		try {
+			AfterSchoolChoice choice = getAfterSchoolBusiness().findChoicesByChildAndProviderAndSeason(childID, providerID, seasonID);
+			if (choice != null) {
+				String subject = this.getLocalizedString("after_school.application_rejected_subject", "After school application rejected");
+				String message = this.getLocalizedString("after_school.application_rejected_body", "Your after school application for {0}, {2}, to provider {1} has been rejected. Your next selected will be made active.");
+				getAfterSchoolBusiness().rejectApplication(choice, subject, message, user);
+			}
+			return true;
+		}
+		catch (RemoteException e) {
+			throw new IBORuntimeException(e);
+		}
+		catch (FinderException e) {
+			return false;
 		}
 	}
 
