@@ -1224,8 +1224,8 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 			PdfPCell logoCell;
 			try {
 				final Image logo = Image.getInstance(logoPath);
-				//logo.scaleToFit(mmToPoints(48), mmToPoints(16));
-				logo.scaleToFit(mmToPoints(30), mmToPoints(15));
+				logo.scaleToFit(mmToPoints(48), mmToPoints(16));
+				//logo.scaleToFit(mmToPoints(30), mmToPoints(15));
 				logoCell = new PdfPCell(logo);
 				logoCell.setVerticalAlignment(Element.ALIGN_MIDDLE);
 				logoCell.setHorizontalAlignment(Element.ALIGN_LEFT);
