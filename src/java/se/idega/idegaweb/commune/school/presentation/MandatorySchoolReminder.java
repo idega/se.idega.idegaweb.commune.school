@@ -176,7 +176,16 @@ public class MandatorySchoolReminder extends CommuneBlock {
 				form.add(_fieldTable);
 				this.add(form);
 			}
-		}  catch (MandatorySchoolReminderException e) {
+		}  catch (OutOfMemoryError e){
+		add(iwrb.getLocalizedString("MandatorySchoolReminder.out_of_memory", "The server was not able to finish your request. Too many children are not assigned to class."));
+		add(Text.getBreak());
+		add(Text.getBreak());
+		BackButton back = new BackButton();
+		setStyle(back);
+		add(back);
+		e.printStackTrace();
+
+		}	catch (MandatorySchoolReminderException e) {
 			add(e.getLocalizedMessage());
 			add(Text.getBreak());
 			add(Text.getBreak());
