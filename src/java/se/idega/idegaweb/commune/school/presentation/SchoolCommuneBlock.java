@@ -467,6 +467,10 @@ public abstract class SchoolCommuneBlock extends CommuneBlock {
 	}
 	
 	protected Table getLegendTable(boolean showWithMoveToSchool) {
+		return getLegendTable(showWithMoveToSchool, false);
+	}
+	
+	protected Table getLegendTable(boolean showWithMoveToSchool, boolean showWithMovedToCommune) {
 		Table table = new Table(8,1);
 		table.setHeight(1, 12);
 		table.setWidth(1, "12");
@@ -478,11 +482,15 @@ public abstract class SchoolCommuneBlock extends CommuneBlock {
 		if (showWithMoveToSchool) {
 			table.add(getColorTable(HAS_MOVE_CHOICE_COLOR_THIS_SCHOOL), 1, 1);
 			table.add(getColorTable(HAS_REJECTED_FIRST_CHOICE_COLOR), 4, 1);
-			table.add(getColorTable(HAS_MOVED_TO_COMMUNE_COLOR), 7, 1);
+			if (showWithMovedToCommune) {
+				table.add(getColorTable(HAS_MOVED_TO_COMMUNE_COLOR), 7, 1);
+			}
 
 			table.add(getSmallHeader(localize("school.student_has_move_choice_to_this_school","Student has move choice to this school")), 2, 1);
 			table.add(getSmallHeader(localize("school.student_has_rejected_first_choice","Student has rejected first choice")), 5, 1);
-			table.add(getSmallHeader(localize("school.student_has_moved_to_commune","Student has moved to commune")), 8, 1);
+			if (showWithMovedToCommune) {
+				table.add(getSmallHeader(localize("school.student_has_moved_to_commune","Student has moved to commune")), 8, 1);
+			}
 		}
 		else {
 			table.add(getColorTable(HAS_MOVE_CHOICE_COLOR), 1, 1);
