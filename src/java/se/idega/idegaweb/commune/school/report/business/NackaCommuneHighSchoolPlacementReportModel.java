@@ -1,5 +1,5 @@
 /*
- * $Id: NackaCommuneHighSchoolPlacementReportModel.java,v 1.3 2004/01/19 12:40:30 anders Exp $
+ * $Id: NackaCommuneHighSchoolPlacementReportModel.java,v 1.4 2004/01/19 14:43:39 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -19,10 +19,10 @@ import com.idega.block.school.data.SchoolStudyPath;
 /** 
  * Report model for Nacka high school student placements.
  * <p>
- * Last modified: $Date: 2004/01/19 12:40:30 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/19 14:43:39 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class NackaCommuneHighSchoolPlacementReportModel extends ReportModel {
 
@@ -39,6 +39,7 @@ public class NackaCommuneHighSchoolPlacementReportModel extends ReportModel {
 	private final static int COLUMN_METHOD_NACKA_CITIZENS = 106;
 
 	private final static String QUERY_ALL = "all";
+	private final static String QUERY_NACKA_GYMNASIUM = "nacka_gymnasium";
 	private final static String QUERY_OTHER_COMMUNES = "other_communes";
 	private final static String QUERY_NACKA_COMMUNE = "nacka_commune";
 
@@ -369,7 +370,7 @@ public class NackaCommuneHighSchoolPlacementReportModel extends ReportModel {
 	protected int getNackaGymnasiumPlacementCount(String schoolYearName, String studyPathPrefix) throws RemoteException {
 		PreparedQuery query = null;
 		ReportBusiness rb = getReportBusiness();
-		query = getQuery(QUERY_ALL);
+		query = getQuery(QUERY_NACKA_GYMNASIUM);
 		if (query == null) {
 			query = new PreparedQuery(getConnection());
 			query.setSelectCount();
@@ -379,7 +380,7 @@ public class NackaCommuneHighSchoolPlacementReportModel extends ReportModel {
 			query.setSchoolYearName(); // parameter 1
 			query.setStudyPathPrefix(); // parameter 2
 			query.prepare();
-			setQuery(QUERY_ALL, query);
+			setQuery(QUERY_NACKA_GYMNASIUM, query);
 		}
 		query.setString(1, schoolYearName);
 		query.setString(2, studyPathPrefix + "%");
