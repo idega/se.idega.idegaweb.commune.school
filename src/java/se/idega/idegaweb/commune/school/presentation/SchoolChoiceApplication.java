@@ -460,11 +460,13 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		spaceT.setHeight(1, 10);
 		T.add(spaceT, 1, row++);
 
-		SubmitButton button = (SubmitButton) getButton(new SubmitButton("submit", localize("school_choice.ready", "Ready")));
+		/*SubmitButton button = (SubmitButton) getButton(new SubmitButton("submit", localize("school_choice.ready", "Ready")));
+		//T.setAlignment(1, row, Table.HORIZONTAL_ALIGN_RIGHT);
 		T.add(button, 1, row++);
+		
 		button.setOnSubmitFunction("checkApplication", getSchoolCheckScript());
 		myForm.setToDisableOnSubmit(button, true);
-
+*/
 		T.add(new HiddenInput(prmAction, "true"), 1, 1);
 		T.add(new HiddenInput(prmChildId, child.getPrimaryKey().toString()), 1, 1);
 
@@ -925,7 +927,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		table.setWidthAndHeightToHundredPercent();
 		table.setWidth(5, 1, "100%");
 		table.add(getHeader(iwrb.getLocalizedString("school.choice_for_schoolyear", "Choice for the schoolyear")), 1, 1);
-
+		
 		DropdownMenu typeDrop = getTypeDrop(prmType, true, false);
 		typeDrop.setOnChange(getFilterCallerScript(prmType, prmFirstArea, prmFirstSchool, 1, false));
 
@@ -1137,10 +1139,20 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	}
 
 	private PresentationObject getMessagePart() {
-		Table table = new Table(1, 2);
+		Table table = new Table(1, 3);
+		table.setWidth(300);
 		table.setCellpadding(2);
 		table.setCellspacing(0);
-
+		table.setBorder(0);
+		SubmitButton button = (SubmitButton) getButton(new SubmitButton("submit", localize("school_choice.ready", "Ready")));
+		table.setHeight(1, 3, 60);
+		table.setVerticalAlignment(1, 3, Table.VERTICAL_ALIGN_BOTTOM);
+		table.setAlignment(1, 3, Table.HORIZONTAL_ALIGN_RIGHT);
+		
+		button.setOnSubmitFunction("checkApplication", getSchoolCheckScript());
+		myForm.setToDisableOnSubmit(button, true);
+		
+		
 		TextArea message = (TextArea) getStyledInterface(new TextArea(prmMessage));
 		message.setRows(6);
 		message.setColumns(65);
@@ -1152,7 +1164,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		else
 			table.add(getSmallHeader(localize("school.application_extra_info", "Extra info")), 1, 1);
 		table.add(message, 1, 2);
-
+		table.add(button, 1, 3);
 		return table;
 	}
 
