@@ -381,10 +381,10 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 			choice.setHandler(getBunGroup());
 		}
 
-		if (caseStatus.getStatus().equalsIgnoreCase(getCaseStatusPreliminary().getStatus())) {
+		/*if (caseStatus.getStatus().equalsIgnoreCase(getCaseStatusPreliminary().getStatus())) {
 			sendMessageToParentOrChild(choice, choice.getOwner(), choice.getChild(), getPreliminaryMessageSubject(), getPreliminaryMessageBody(choice),SchoolChoiceMessagePdfHandler.CODE_PRELIMINARY);
 			//			getMessageBusiness().createUserMessage(choice.getOwner(), getPreliminaryMessageSubject(), getPreliminaryMessageBody(choice));
-		}
+		}*/
 		if (parentCase != null)
 			choice.setParentCase(parentCase);
 		try {
