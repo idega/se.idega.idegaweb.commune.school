@@ -328,10 +328,9 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	}
 
 	public PresentationObject getSchoolChoiceAnswer(IWContext iwc, User child) throws java.rmi.RemoteException {
-		DataTable T = new DataTable();
-		T.setUseBottom(false);
-		T.setUseTop(false);
-		T.setUseTitles(false);
+		Table T = new Table();
+		T.setCellpadding(getCellpadding());
+		T.setCellspacing(0);
 		String text1 = iwrb.getLocalizedString("school_choice.receipt_1", "The school choice for ");
 		String text2 = iwrb.getLocalizedString("school_choice.receipt_2", "has been received. ");
 		String text3 = iwrb.getLocalizedString("school_choice.receipt_3", "The application will be processed by each school you applied for .");
