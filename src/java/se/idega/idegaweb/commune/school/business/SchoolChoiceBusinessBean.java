@@ -121,7 +121,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	public SchoolChoice createSchoolChangeChoice(int userId, int childId, int school_type_id, int current_school, int chosen_school, int grade, int method, int workSituation1, int workSituation2, String language, String message, boolean keepChildrenCare, boolean autoAssign, boolean custodiansAgree, boolean schoolCatalogue)throws IDOCreateException{
 		try {
 			java.sql.Timestamp time = new java.sql.Timestamp(System.currentTimeMillis());
-			CaseStatus unHandledStatus = getCaseStatus(super.getCaseStatusInactive().getStatus());
+			CaseStatus unHandledStatus = getCaseStatus("FLYT");
 			SchoolChoice choice = createSchoolChoice(userId, childId, school_type_id, current_school,chosen_school, grade, 1, method, workSituation1, workSituation2, language, message, time, true, keepChildrenCare, autoAssign, custodiansAgree, schoolCatalogue, unHandledStatus, null);
 			ArrayList choices = new ArrayList(1);
 			choices.add(choice);
@@ -256,11 +256,16 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	}
 	
 	private void handleSchoolChangeHeadMasters(User child,int oldSchoolID,int newSchoolID)throws RemoteException{
-		try{
-		getMessageBusiness().createUserMessage(getSchoolBusiness().getHeadmaster(oldSchoolID),getOldHeadmasterSubject(),getOldHeadmasterBody(child));
-		getMessageBusiness().createUserMessage(getSchoolBusiness().getHeadmaster(newSchoolID),getNewHeadMasterSubject(),getNewHeadmasterBody(child));
+		try {
+			getMessageBusiness().createUserMessage(getSchoolBusiness().getHeadmaster(oldSchoolID),getOldHeadmasterSubject(),getOldHeadmasterBody(child));
 		}
-		catch(Exception ex){throw new RemoteException(ex.getMessage());}
+		catch(Exception ex){
+		}
+		try{
+			getMessageBusiness().createUserMessage(getSchoolBusiness().getHeadmaster(newSchoolID),getNewHeadMasterSubject(),getNewHeadmasterBody(child));
+		}
+		catch(Exception ex){
+		}
 	}
 	
 	private void handleSeparatedParentApplication(int childID,int applicationParentID,List choices,boolean isSchoolChangeApplication)throws RemoteException{

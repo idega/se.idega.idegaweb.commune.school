@@ -155,7 +155,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		iwrb = getResourceBundle(iwc);
 		df = DateFormat.getDateInstance(df.SHORT, iwc.getCurrentLocale());
 		schBuiz = (SchoolChoiceBusiness) IBOLookup.getServiceInstance(iwc, SchoolChoiceBusiness.class);
-		canApply[0] = checkCanApply(iwc)[0];
+		canApply = checkCanApply(iwc);
 		control(iwc);
 	}
 
@@ -268,7 +268,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 
 	private boolean saveSchoolChoice(IWContext iwc) {
 		try {
-			schBuiz.createSchoolChoices(valCaseOwner, childId, valType, valPreSchool, valFirstSchool, valSecondSchool, valThirdSchool, valPreGrade, valMethod, -1, -1, valLanguage, valMessage, valSchoolChange, valSixyearCare, valAutoAssign, valCustodiansAgree, valSendCatalogue);
+			schBuiz.createSchoolChoices(valCaseOwner, childId, valType, valPreSchool, valFirstSchool, valSecondSchool, valThirdSchool, valPreGrade, valMethod, -1, -1, valLanguage, valMessage, schoolChange, valSixyearCare, valAutoAssign, valCustodiansAgree, valSendCatalogue);
 			return true;
 		}
 		catch (Exception ex) {
@@ -359,10 +359,12 @@ public class SchoolChoiceApplication extends CommuneBlock {
 			if (valType > 0) {
 				if (valFirstArea > 0 || valFirstSchool > 0)
 					p.setOnLoad(getInitFilterCallerScript(iwc, prmType, prmFirstArea, prmFirstSchool, valType, valFirstArea, valFirstSchool,false));
-				if (valSecondArea > 0 || valSecondSchool > 0)
-					p.setOnLoad(getInitFilterCallerScript(iwc, prmType, prmSecondArea, prmSecondSchool, valType, valSecondArea, valSecondSchool,false));
-				if (valThirdArea > 0 || valThirdSchool > 0)
-					p.setOnLoad(getInitFilterCallerScript(iwc, prmType, prmThirdArea, prmThirdSchool, valType, valThirdArea, valThirdSchool,false));
+				if (!schoolChange) {
+					if (valSecondArea > 0 || valSecondSchool > 0)
+						p.setOnLoad(getInitFilterCallerScript(iwc, prmType, prmSecondArea, prmSecondSchool, valType, valSecondArea, valSecondSchool,false));
+					if (valThirdArea > 0 || valThirdSchool > 0)
+						p.setOnLoad(getInitFilterCallerScript(iwc, prmType, prmThirdArea, prmThirdSchool, valType, valThirdArea, valThirdSchool,false));
+				}
 			}
 			T.add(F, 1, T.getColumns());
 			if (hasChosen) {
@@ -447,7 +449,6 @@ public class SchoolChoiceApplication extends CommuneBlock {
 			Text t = getHeader(message + " " + date);
 			if (canApply[1])
 				t.setFontColor("FF0000");
-			T.add(t, 1, 1);
 
 		}
 		return T;
@@ -1146,9 +1147,14 @@ public class SchoolChoiceApplication extends CommuneBlock {
 			s.append("\n\t }");
 		}
 		else{
-			s.append("\n\t var reason =  findObj('").append(prmMessage).append("';");
+			s.append("\n\t if (one <= 0) {");
+			String msg = iwrb.getLocalizedString("school_school.must_fill_out", "Please fill out all choices");
+			s.append("\n\t\t alert('").append(msg).append("');");
+			s.append("\n\t\t return false;");
+			s.append("\n\t }");
+			s.append("\n\t var reason =  findObj('").append(prmMessage).append("');");
 			s.append("\n\t if(reason.value.length<=10){");
-			String msg = iwrb.getLocalizedString("school_school.change_must_give_reason", "You must give a reason for  the change !");
+			msg = iwrb.getLocalizedString("school_school.change_must_give_reason", "You must give a reason for  the change !");
 			s.append("\n\t\t alert('").append(msg).append("');");
 			s.append("\n\t\t return false;");
 			s.append("\n\t }");
@@ -1160,7 +1166,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	}
 
 	private boolean[] checkCanApply(IWContext iwc) throws RemoteException {
-		boolean[] checkCanApply = {true,true,true};
+		boolean[] checkCanApply = {false,false,false};
 		try {
 			SchoolSeason season = schBuiz.getCurrentSeason();
 			if (season != null) {
@@ -1203,11 +1209,15 @@ public class SchoolChoiceApplication extends CommuneBlock {
 					IWTimestamp change = new IWTimestamp(seasonStart);
 					change.setDay(Integer.parseInt(changeStart.substring(0, 2)));
 					change.setMonth(Integer.parseInt(changeStart.substring(3)));
-					if (dateNow.isLaterThan(change))
+					if (dateNow.isLaterThan(change)) {
 						checkCanApply[2] = true;
+					}
 						
 					if (dateNow.getYear() <= 2002)
 						checkCanApply[2] = true;
+						
+					if (schoolChange)
+						checkCanApply[0] = true;
 				}
 			}
 			return checkCanApply;
