@@ -598,15 +598,20 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
         final int currentSeasonId = getCurrentSchoolSeasonID ();
         for (int i = 0; i < invoiceIntervals.length; i++) {
             // retreive members for a invoice interval value
-            final Collection members = java.util.Collections.EMPTY_LIST;
-            // -- replace above with following when method is implemented --
-            //final Collection members = home.findAllBySeasonAndInvoiceInterval
-            //        (currentSeasonId, invoiceIntervals [i]);
+            Collection members;
+            try {
+                members = home.findAllBySeasonAndInvoiceInterval
+                        (currentSeasonId, invoiceIntervals [i]);
+            } catch (final FinderException e) {
+                members = java.util.Collections.EMPTY_LIST;
+            }
             for (Iterator m = members.iterator (); m.hasNext ();) {
                 // sort retreived members
                 final SchoolClassMember member = (SchoolClassMember) m.next ();
-                final User user = member.getStudent ();
-                result.put (user.getPersonalID (), member);
+                if (member.getHasCompensationByInvoice ()) {    
+                    final User user = member.getStudent ();
+                    result.put (user.getPersonalID (), member);
+                }
             }
         }
         // convert the sorted members to an array return value
