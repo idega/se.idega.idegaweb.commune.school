@@ -46,21 +46,25 @@ import com.idega.util.IWTimestamp;
  */
 public class SchoolCommuneBusinessBean extends CaseBusinessBean implements SchoolCommuneBusiness,CaseBusiness {
 	
+	/* Commented out since it is never used...
 	private Collection getSchoolClasses(int schoolID,int schoolSeasonID) throws RemoteException {
 		return getSchoolBusiness().findSchoolClassesBySchoolAndSeason(schoolID, schoolSeasonID);
-	}
+	}*/
 	
+	/* Commented out since it is never used...
 	private Collection getSchoolClassMember(int schoolClassID) throws RemoteException {
 		return getSchoolBusiness().findStudentsInClass(schoolClassID);
-	}
+	}*/
 	
+	/* Commented out since it is never used...
 	private Collection getSchoolYears() throws RemoteException {
 		return getSchoolBusiness().findAllSchoolYears();	
-	}
+	}*/
 	
+	/* Commented out since it is never used...
 	private Collection getSchoolSeasons() throws RemoteException {
 		return getSchoolBusiness().findAllSchoolSeasons();	
-	}
+	}*/
 	
 	public SchoolBusiness getSchoolBusiness() throws RemoteException {
 		return (SchoolBusiness) IBOLookup.getServiceInstance(getIWApplicationContext(), SchoolBusiness.class);	
@@ -232,6 +236,7 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 		return null;
 	}
 	
+	/* Commented out since it is never used...
 	private String[] getUserIDsFromStudents(Collection choices) throws RemoteException {
 		if (choices != null) {
 			String[] userIDs = new String[choices.size()];
@@ -247,7 +252,7 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 			return userIDs;
 		}
 		return null;
-	}
+	}*/
 	
 	public Map getStudentChoices(Collection students, int seasonID) throws RemoteException {
 		HashMap coll = new HashMap();

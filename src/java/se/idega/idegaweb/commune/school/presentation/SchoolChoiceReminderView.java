@@ -21,10 +21,10 @@ import se.idega.idegaweb.commune.school.data.SchoolChoiceReminder;
  * and entity ejb classes in {@link se.idega.idegaweb.commune.school.data}.
  * <p>
  * <p>
- * Last modified: $Date: 2003/04/02 16:12:22 $ by $Author: laddi $
+ * Last modified: $Date: 2003/04/02 16:45:53 $ by $Author: laddi $
  *
  * @author <a href="http://www.staffannoteberg.com">Staffan Nöteberg</a>
- * @version $Revision: 1.28 $
+ * @version $Revision: 1.29 $
  * @see javax.ejb
  */
 public class SchoolChoiceReminderView extends CommuneBlock {
@@ -545,9 +545,10 @@ public class SchoolChoiceReminderView extends CommuneBlock {
         return event;
     }
 
+	/* Commented out since it is never used...
 	private Text getHeader(final String paramId, final String defaultText) {
 		return getSmallHeader(localize(paramId, defaultText));
-	}
+	}*/
 
     private SubmitButton getSubmitButton (final String key,
                                           final String defaultName) {

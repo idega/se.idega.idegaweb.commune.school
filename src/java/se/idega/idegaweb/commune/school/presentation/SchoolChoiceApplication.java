@@ -91,7 +91,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	private String prmType = prefix + "cho_typ";
 	private String prmPreGrade = prefix + "pre_grd";
 	private String prmMessage = prefix + "msg";
-	private String prmAutoAssign = prefix + "aut_ass";
+	//private String prmAutoAssign = prefix + "aut_ass";
 	private String prmSchoolChange = prefix + "scl_chg";
 	private String prmSixYearCare = prefix + "six_car";
 	private String prmLanguage = prefix + "cho_lng";
@@ -832,6 +832,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		return null;
 	}
 
+	/* Commented out since it is never used...
 	private Collection getSchools(IWContext iwc, int area, int type) {
 		try {
 			SchoolBusiness sBuiz = (SchoolBusiness) IBOLookup.getServiceInstance(iwc, SchoolBusiness.class);
@@ -842,7 +843,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 			ex.printStackTrace();
 			return new java.util.Vector();
 		}
-	}
+	}*/
 
 	private Collection getSchoolAreasWithType(IWContext iwc, int type) {
 		try {

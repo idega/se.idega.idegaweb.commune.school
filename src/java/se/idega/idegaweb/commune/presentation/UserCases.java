@@ -40,7 +40,7 @@ import com.idega.user.data.User;
 public class UserCases extends CommuneBlock {
 	private final static String IW_BUNDLE_IDENTIFIER = "se.idega.idegaweb.commune";
 	private final static int ACTION_VIEW_CASE_LIST = 1;
-	private final static String PARAM_CASE_ID = "USC_CASE_ID";
+	//private final static String PARAM_CASE_ID = "USC_CASE_ID";
 	private final static String PARAM_MANAGER_ID = ManagerView.PARAM_MANAGER_ID;
 	private int manager_page_id = -1;
 	private int viewpointPageId = -1;
@@ -407,11 +407,12 @@ public class UserCases extends CommuneBlock {
 		return (UserBusiness) IBOLookup.getServiceInstance(iwc, UserBusiness.class);
 	}
 
+	/* Commented out since it is never used...
 	private Case getCase(String id, IWContext iwc) throws Exception {
 		int msgId = Integer.parseInt(id);
 		Case msg = getCaseBusiness(iwc).getCase(msgId);
 		return msg;
-	}
+	}*/
 
 	public void setViewpointPage(final IBPage page) {
 		viewpointPageId = page.getID();

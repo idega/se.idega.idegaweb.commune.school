@@ -57,7 +57,6 @@ import com.lowagie.text.pdf.PdfWriter;
  */
 public class SchoolFreetimeWriter implements MediaWritable {
 
-	private String mimeType;
 	private MemoryFileBuffer buffer = null;
 	private SchoolCommuneBusiness business;
 	private CommuneUserBusiness userBusiness;

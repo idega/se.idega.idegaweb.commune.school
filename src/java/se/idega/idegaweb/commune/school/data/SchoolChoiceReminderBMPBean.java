@@ -8,10 +8,10 @@ import java.util.*;
 import javax.ejb.FinderException;
 
 /**
- * Last modified: $Date: 2003/03/30 19:26:02 $ by $Author: laddi $
+ * Last modified: $Date: 2003/04/02 16:45:53 $ by $Author: laddi $
  *
  * @author <a href="http://www.staffannoteberg.com">Staffan Nöteberg</a>
- * @version $Revision: 1.10 $
+ * @version $Revision: 1.11 $
  */
 public class SchoolChoiceReminderBMPBean extends AbstractCaseBMPBean implements SchoolChoiceReminder {
     private static final String ENTITY_NAME = "sch_reminder";
@@ -20,7 +20,7 @@ public class SchoolChoiceReminderBMPBean extends AbstractCaseBMPBean implements 
 	private static final String [] CASE_STATUS_DESCRIPTIONS = { };
 	private static final String [] CASE_STATUS_KEYS = { };
 
-    private static final String COLUMN_ID = ENTITY_NAME + "_id";
+    //private static final String COLUMN_ID = ENTITY_NAME + "_id";
 	private static final String COLUMN_USER_ID = "USER_ID";
 	private static final String COLUMN_TEXT = "REMINDER_TEXT";
 	private static final String COLUMN_EVENT_DATE = "EVENT_DATE";
