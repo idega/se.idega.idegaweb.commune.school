@@ -1,5 +1,5 @@
 /*
- * $Id: NackaElementarySchoolPlacementReportModel.java,v 1.2 2003/12/12 10:29:33 anders Exp $
+ * $Id: NackaElementarySchoolPlacementReportModel.java,v 1.3 2003/12/12 12:01:36 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -19,10 +19,10 @@ import com.idega.block.school.data.SchoolArea;
 /** 
  * Report model for placements in Nacka elementary schools.
  * <p>
- * Last modified: $Date: 2003/12/12 10:29:33 $ by $Author: anders $
+ * Last modified: $Date: 2003/12/12 12:01:36 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class NackaElementarySchoolPlacementReportModel extends ReportModel {
 
@@ -295,7 +295,9 @@ public class NackaElementarySchoolPlacementReportModel extends ReportModel {
 					while (rowIndex >= 0 && c.getCellType() == Cell.CELLTYPE_NORMAL) {						
 						value += c.getFloatValue();
 						rowIndex--;
-						c = getCell(rowIndex, cell.getColumn()); 
+						if (rowIndex >= 0) {
+							c = getCell(rowIndex, cell.getColumn());
+						}
 					}
 					break;
 				case ROW_METHOD_TOTAL:
