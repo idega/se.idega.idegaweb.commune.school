@@ -258,7 +258,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 							valType = 5;
 					}
 						
-					schoolTypes = getSchoolTypes("SCHOOL");
+					schoolTypes = getSchoolTypes(schBuiz.getSchoolBusiness().getElementarySchoolSchoolCategory());
 					if (saved) {
 						if (valSixyearCare && childcarePage != null) {
 							iwc.setSessionAttribute(CitizenChildren.getChildIDParameterName(), new Integer(childId));
