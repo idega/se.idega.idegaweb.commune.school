@@ -40,7 +40,7 @@ import com.idega.util.IWTimestamp;
  * Business object with helper methods for CentralPlacingEditor
  */
 public class CentralPlacementBusinessBean extends IBOServiceBean 
-																			implements CentralPlacementBusiness {
+																						implements CentralPlacementBusiness {
 																							
 	//  Keys for error messages
 	private static final String KP = "central_placement_business.";
@@ -73,7 +73,7 @@ public class CentralPlacementBusinessBean extends IBOServiceBean
 		User pupil = (User) iwc.getSession().getAttribute(CentralPlacementEditor.SESSION_KEY_CHILD);
 		if (pupil != null) {
 			//currentPlacement = getCurrentSchoolClassMembership(pupil, iwc);
-			latestPlacement = getLatestPlacement(iwc, pupil);			
+			latestPlacement = getLatestPlacement(pupil);			
 		}
 		/*Integer currID = null;
 		if (currentPlacement != null)
@@ -276,24 +276,19 @@ public class CentralPlacementBusinessBean extends IBOServiceBean
 		}
 	}
 	
-	public SchoolClassMember getLatestPlacement(IWContext iwc, User pupil) 
-																											throws RemoteException {
-		String schCategoryStr = iwc.getParameter(CentralPlacementEditor.PARAM_SCHOOL_CATEGORY);
-		SchoolCategory schCat = null;
+	public SchoolClassMember getLatestPlacement(User pupil) throws RemoteException {
 		SchoolClassMember mbr = null;
 		try {
-			if (schCategoryStr != null) {
-				schCat = getSchoolCategoryHome().findByPrimaryKey(schCategoryStr);			
-			}
-			if (schCat != null && pupil != null) {
+			if (pupil != null) {
 				// Find latest with removed_date == null
-				mbr = getSchoolClassMemberHome().findLatestByUserSchCatNoRemovedDate(pupil, schCat);						
+				mbr = getSchoolClassMemberHome()
+													.findLatestFromElemAndHighSchoolByUserNoRemovedDate(pupil);						
 			}
 		} catch (FinderException fe1) {
 			try {
 				// Find latest with removed_date set, by register_date
-				if (schCat != null && pupil != null) {
-					mbr = getSchoolClassMemberHome().findLatestByUserAndSchCategory(pupil, schCat);
+				if (pupil != null) {
+					mbr = getSchoolClassMemberHome().findLatestFromElemAndHighSchoolByUser(pupil);
 				}											
 			} catch (FinderException fe2) {
 				return null;
