@@ -29,6 +29,7 @@ import com.idega.business.IBORuntimeException;
 import com.idega.business.IBOSessionBean;
 import com.idega.core.contact.data.Email;
 import com.idega.core.contact.data.Phone;
+import com.idega.core.localisation.data.ICLanguage;
 import com.idega.core.location.data.Address;
 import com.idega.core.location.data.PostalCode;
 import com.idega.idegaweb.IWBundle;
@@ -284,7 +285,12 @@ public class SchoolReportBusinessBean extends IBOSessionBean implements SchoolRe
 				}
 				
 				if (displayColumn(FIELD_NATIVE_LANGUAGE)) {
-					data.addData(nativeLanguage, user.getNativeLanguage().getName());
+					ICLanguage icl = user.getNativeLanguage();
+					String nativeLanguageName = "";
+					if (icl != null) {
+						nativeLanguageName = icl.getName();
+					}
+					data.addData(nativeLanguage, nativeLanguageName);
 				}
 				
 				if (displayColumn(FIELD_SWEDISH_AS_SECOND_LANGUAGE)) {
