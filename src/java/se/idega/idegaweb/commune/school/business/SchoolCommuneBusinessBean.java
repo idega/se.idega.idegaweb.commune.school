@@ -457,22 +457,29 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 			choice.store();
 			
 			User parent = choice.getOwner();
-			getMessageBusiness().createUserMessage(parent, subject, body);
-
-			try {
-				Collection parents = getMemberFamilyLogic().getCustodiansFor(student);
-				if (!parents.isEmpty()) {
-					Iterator iterator = parents.iterator();
-					while (iterator.hasNext()) {
-						User otherParent = (User) iterator.next();
-						if (!getUserBusiness().haveSameAddress(parent, otherParent)) {
-							getMessageBusiness().createUserMessage(otherParent, subject, body);
-						}
-					}	
+			User child = choice.getChild();	
+					
+			if (getSchoolChoiceBusiness().getReceiver(parent, child) == child){
+				getMessageBusiness().createUserMessage(child, subject, body);	
+							
+			} else {
+				getMessageBusiness().createUserMessage(parent, subject, body);
+	
+				try {
+					Collection parents = getMemberFamilyLogic().getCustodiansFor(student);
+					if (!parents.isEmpty()) {
+						Iterator iterator = parents.iterator();
+						while (iterator.hasNext()) {
+							User otherParent = (User) iterator.next();
+							if (!getUserBusiness().haveSameAddress(parent, otherParent)) {
+								getMessageBusiness().createUserMessage(otherParent, subject, body);
+							}
+						}	
+					}
 				}
-			}
-			catch (NoCustodianFound ncd) {
-				ncd.printStackTrace();
+				catch (NoCustodianFound ncd) {
+					ncd.printStackTrace();
+				}
 			}
 		}
 	}
