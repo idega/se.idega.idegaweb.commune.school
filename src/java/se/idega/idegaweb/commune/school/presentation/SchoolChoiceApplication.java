@@ -472,12 +472,12 @@ public class SchoolChoiceApplication extends CommuneBlock {
 				p.setOnLoad(getInitFilterCallerScript(prmPreType, prmPreArea, prmPreSchool, valPreType, valPreArea, valPreSchool, false));
 			}
 			if (valType > 0) {
-				if (valFirstArea > 0 || valFirstSchool > 0)
+				//if (valFirstArea > 0 || valFirstSchool > 0)
 					p.setOnLoad(getInitFilterCallerScript(prmType, prmFirstArea, prmFirstSchool, valType, valFirstArea, valFirstSchool, false));
 				if (!schoolChange) {
-					if (valSecondArea > 0 || valSecondSchool > 0)
+					//if (valSecondArea > 0 || valSecondSchool > 0)
 						p.setOnLoad(getInitFilterCallerScript(prmType, prmSecondArea, prmSecondSchool, valType, valSecondArea, valSecondSchool, false));
-					if (valThirdArea > 0 || valThirdSchool > 0)
+					//if (valThirdArea > 0 || valThirdSchool > 0)
 						p.setOnLoad(getInitFilterCallerScript(prmType, prmThirdArea, prmThirdSchool, valType, valThirdArea, valThirdSchool, false));
 				}
 			}
