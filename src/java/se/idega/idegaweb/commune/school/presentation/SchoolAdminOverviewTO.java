@@ -17,13 +17,12 @@ public class SchoolAdminOverviewTO {
   private int classMemberID = -1;
   private int seasonID = -1;
   private int schMemberID = -1;
-  private String schChoiceStatus = "-1";
 
 	/**
 	 * @return
 	 */
-	public String getSchChoiceStatus() {
-		return schChoiceStatus;
+	public int getClassMemberID() {
+		return classMemberID;
 	}
 
 	/**
@@ -48,10 +47,10 @@ public class SchoolAdminOverviewTO {
 	}
 
 	/**
-	 * @param string
+	 * @param i
 	 */
-	public void setSchChoiceStatus(String string) {
-		schChoiceStatus = string;
+	public void setClassMemberID(int i) {
+		classMemberID = i;
 	}
 
 	/**
@@ -73,20 +72,6 @@ public class SchoolAdminOverviewTO {
 	 */
 	public void setStudentID(int i) {
 		studentID = i;
-	}
-
-	/**
-	 * @return
-	 */
-	public int getClassMemberID() {
-		return classMemberID;
-	}
-
-	/**
-	 * @param i
-	 */
-	public void setClassMemberID(int i) {
-		classMemberID = i;
 	}
 
 }
