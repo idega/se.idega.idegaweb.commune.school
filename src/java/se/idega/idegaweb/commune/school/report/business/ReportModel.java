@@ -1,5 +1,5 @@
 /*
- * $Id: ReportModel.java,v 1.18 2004/01/21 14:51:28 anders Exp $
+ * $Id: ReportModel.java,v 1.19 2004/01/21 16:01:13 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -21,10 +21,10 @@ import com.idega.util.database.ConnectionBroker;
  * This abstract class holds cell and header values for school statistics reports.
  * Subclasses implements methods for generating report data and cell value calculations.
  * <p>
- * Last modified: $Date: 2004/01/21 14:51:28 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/21 16:01:13 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.18 $
+ * @version $Revision: 1.19 $
  */
 public abstract class ReportModel {
 
@@ -108,6 +108,14 @@ public abstract class ReportModel {
 	protected final static String KEY_NUMBER_OF_CHILDREN = KP + "number_of_children";
 	protected final static String KEY_SHARE_IN_PERCENT = KP + "share_in_percent";
 	protected final static String KEY_CHILDREN_TOTAL = KP + "children_total";
+	protected final static String KEY_COMMUNE_PRE_SCHOOL_PROVIDERS = KP + "commune_pre_school_providers";
+	protected final static String KEY_COMMUNE_AFTER_SCHOOL_PROVIDERS = KP + "commune_after_school_providers";
+	protected final static String KEY_COMMUNE_FAMILY_DAYCARE_PROVIDERS = KP + "commune_family_daycare_providers";
+	protected final static String KEY_PRIVATE_PRE_SCHOOL_PROVIDERS = KP + "private_pre_school_providers";
+	protected final static String KEY_PRIVATE_AFTER_SCHOOL_PROVIDERS = KP + "private_after_school_providers";
+	protected final static String KEY_PRIVATE_FAMILY_DAYCARE_PROVIDERS = KP + "private_family_daycare_providers";
+	protected final static String KEY_PROVIDER_TOTAL = KP + "provider_total";
+	protected final static String KEY_NUMBER_OF_PROVIDERS = KP + "number_of_providers";
 
 	/**
 	 * Constructs a report model with the specified report business logic. 
