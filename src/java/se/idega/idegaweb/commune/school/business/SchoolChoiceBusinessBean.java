@@ -351,6 +351,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 			int[] schoolIds = {chosen_school_1, chosen_school_2, chosen_school_3};
 			SchoolChoice choice = null;
 			IWTimestamp stamp = new IWTimestamp();
+			
 			for (int i = 0; i < caseCount; i++) {
 				choice = createSchoolChoice(stamp, userId, childId, school_type_id, current_school, schoolIds[i], schoolYearID, currentYearID, i + 1, method, workSituation1, workSituation2, language, message, time, changeOfSchool, keepChildrenCare, autoAssign, custodiansAgree, schoolCatalogue, i == 0 ? first : other, choice, placementDate, season, extraMessages[i]);
 				returnList.add(choice);
@@ -1049,7 +1050,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		return getSeparateParentMessageBodyAppl( getLocalizedString("school_choice.applying_sep_parent_appl_mesg_body", "Dear mr./ms./mrs. "),choices,  parent);
 	}
 	protected String getNonApplyingSeparateParentMessageBodyAppl(List choices, User parent) throws RemoteException {
-		return getSeparateParentMessageBodyAppl( getLocalizedString("school_choice.sep_parent_appl_mesg_body_admin", "Dear mr./ms./mrs. "),choices,  parent);
+		return getSeparateParentMessageBodyAppl( getLocalizedString("school_choice.sep_parent_appl_mesg_body", "Dear mr./ms./mrs. "),choices,  parent);
 	}
 	protected String getNonApplyingSeparateParentMessageBodyApplAdmin(List choices) throws RemoteException {
 		return getSeparateParentMessageBodyApplAdmin( getLocalizedString("school_choice.sep_parent_appl_mesg_body_admin", "Dear mr./ms./mrs. "),choices);
