@@ -16,11 +16,11 @@ import javax.ejb.FinderException;
 import javax.transaction.SystemException;
 import javax.transaction.UserTransaction;
 
+import se.idega.idegaweb.commune.accounting.extra.business.ResourceBusiness;
+import se.idega.idegaweb.commune.accounting.extra.data.ResourceClassMember;
+import se.idega.idegaweb.commune.accounting.extra.data.ResourceClassMemberHome;
 import se.idega.idegaweb.commune.accounting.invoice.business.RegularPaymentBusiness;
 import se.idega.idegaweb.commune.accounting.invoice.data.RegularPaymentEntry;
-import se.idega.idegaweb.commune.accounting.resource.business.ResourceBusiness;
-import se.idega.idegaweb.commune.accounting.resource.data.ResourceClassMember;
-import se.idega.idegaweb.commune.accounting.resource.data.ResourceClassMemberHome;
 import se.idega.idegaweb.commune.business.CommuneUserBusiness;
 import se.idega.idegaweb.commune.school.presentation.CentralPlacementEditor;
 

@@ -26,8 +26,8 @@ import javax.ejb.FinderException;
 
 import se.cubecon.bun24.viewpoint.business.ViewpointBusiness;
 import se.cubecon.bun24.viewpoint.data.SubCategory;
-import se.idega.idegaweb.commune.accounting.resource.business.ResourceBusiness;
-import se.idega.idegaweb.commune.accounting.resource.data.ResourceClassMember;
+import se.idega.idegaweb.commune.accounting.extra.business.ResourceBusiness;
+import se.idega.idegaweb.commune.accounting.extra.data.ResourceClassMember;
 import se.idega.idegaweb.commune.business.CommuneUserBusiness;
 import se.idega.idegaweb.commune.childcare.business.AfterSchoolBusiness;
 import se.idega.idegaweb.commune.childcare.data.AfterSchoolChoice;
