@@ -21,7 +21,6 @@ import com.idega.presentation.IWContext;
 import com.idega.presentation.Table;
 import com.idega.presentation.text.Link;
 import com.idega.user.business.NoPhoneFoundException;
-import com.idega.user.business.UserBusiness;
 import com.idega.user.data.User;
 import com.idega.util.PersonalIDFormatter;
 
@@ -226,8 +225,5 @@ public class RejectedStudentsList extends SchoolCommuneBlock {
 		return (SchoolChoiceBusiness) IBOLookup.getServiceInstance(iwac, SchoolChoiceBusiness.class);
 	}
 	
-	private UserBusiness getUserBusiness(IWContext iwc) throws RemoteException {
-		return (UserBusiness) IBOLookup.getServiceInstance(iwc, UserBusiness.class);
-	}
 	
 }

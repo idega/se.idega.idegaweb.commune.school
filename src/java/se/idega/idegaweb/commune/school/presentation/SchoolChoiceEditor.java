@@ -838,11 +838,6 @@ public class SchoolChoiceEditor extends SchoolCommuneBlock {
 	}
 
 
-	private CommuneUserBusiness getUserBusiness(IWContext iwc) throws RemoteException {
-		return (CommuneUserBusiness) 
-		IBOLookup.getServiceInstance(iwc, CommuneUserBusiness.class);
-	}
-
 	/*private SchoolBusiness getSchoolBusiness(IWContext iwc) throws RemoteException {
 		return (SchoolBusiness) IBOLookup.getServiceInstance(iwc, SchoolBusiness.class);
 	}*/

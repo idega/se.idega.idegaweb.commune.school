@@ -435,9 +435,6 @@ public class UserCases extends CommuneBlock {
 		return (CommuneCaseBusiness) IBOLookup.getServiceInstance(iwc, CommuneCaseBusiness.class);
 	}
 
-	private UserBusiness getUserBusiness(IWContext iwc) throws Exception {
-		return (UserBusiness) IBOLookup.getServiceInstance(iwc, UserBusiness.class);
-	}
 
 	public void setViewpointPage(final ICPage page) {
 		viewpointPageId = ((Integer)page.getPrimaryKey()).intValue();
