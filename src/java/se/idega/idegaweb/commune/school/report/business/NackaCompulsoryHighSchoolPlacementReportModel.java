@@ -1,5 +1,5 @@
 /*
- * $Id: NackaCompulsoryHighSchoolPlacementReportModel.java,v 1.6 2004/01/22 11:39:54 anders Exp $
+ * $Id: NackaCompulsoryHighSchoolPlacementReportModel.java,v 1.7 2004/02/17 21:24:52 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -18,10 +18,10 @@ import com.idega.block.school.data.School;
 /** 
  * Report model for placements in Nacka compulsory high schools.
  * <p>
- * Last modified: $Date: 2004/01/22 11:39:54 $ by $Author: anders $
+ * Last modified: $Date: 2004/02/17 21:24:52 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  */
 public class NackaCompulsoryHighSchoolPlacementReportModel extends ReportModel {
 
@@ -230,7 +230,7 @@ public class NackaCompulsoryHighSchoolPlacementReportModel extends ReportModel {
 		query = getQuery(QUERY_NACKA_COMMUNE);
 		if (query == null) {
 			query = new PreparedQuery(getConnection());
-			query.setSelectCount();
+			query.setSelectCountDistinctUsers();
 			query.setPlacements(rb.getSchoolSeasonId());
 			query.setSchoolTypeCompulsoryHighSchool();
 			query.setSchool(); // parameter 1
@@ -253,7 +253,7 @@ public class NackaCompulsoryHighSchoolPlacementReportModel extends ReportModel {
 		query = getQuery(QUERY_OTHER_COMMUNES);
 		if (query == null) {
 			query = new PreparedQuery(getConnection());
-			query.setSelectCount();
+			query.setSelectCountDistinctUsers();
 			query.setPlacements(rb.getSchoolSeasonId());
 			query.setNotNackaCitizens();
 			query.setSchoolTypeCompulsoryHighSchool();

@@ -1,5 +1,5 @@
 /*
- * $Id: NackaCommuneHighSchoolPlacementReportModel.java,v 1.13 2004/02/12 18:14:49 anders Exp $
+ * $Id: NackaCommuneHighSchoolPlacementReportModel.java,v 1.14 2004/02/17 21:24:52 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -20,10 +20,10 @@ import com.idega.block.school.data.SchoolStudyPath;
 /** 
  * Report model for Nacka high school student placements.
  * <p>
- * Last modified: $Date: 2004/02/12 18:14:49 $ by $Author: anders $
+ * Last modified: $Date: 2004/02/17 21:24:52 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.13 $
+ * @version $Revision: 1.14 $
  */
 public class NackaCommuneHighSchoolPlacementReportModel extends ReportModel {
 
@@ -374,7 +374,7 @@ public class NackaCommuneHighSchoolPlacementReportModel extends ReportModel {
 		query = getQuery(QUERY_ALL);
 		if (query == null) {
 			query = new PreparedQuery(getConnection());
-			query.setSelectCount();
+			query.setSelectCountDistinctUsers();
 			query.setPlacements(rb.getSchoolSeasonId());
 			query.setSchoolTypeHighSchool();
 			query.setSchool(); // parameter 1
@@ -398,7 +398,7 @@ public class NackaCommuneHighSchoolPlacementReportModel extends ReportModel {
 		query = getQuery(QUERY_NACKA_GYMNASIUM);
 		if (query == null) {
 			query = new PreparedQuery(getConnection());
-			query.setSelectCount();
+			query.setSelectCountDistinctUsers();
 			query.setPlacements(rb.getSchoolSeasonId());
 			query.setSchoolTypeHighSchool();
 			query.setSchools(_nackaGymnasium);
@@ -422,7 +422,7 @@ public class NackaCommuneHighSchoolPlacementReportModel extends ReportModel {
 		query = getQuery(QUERY_OTHER_COMMUNES);
 		if (query == null) {
 			query = new PreparedQuery(getConnection());
-			query.setSelectCount();
+			query.setSelectCountDistinctUsers();
 			query.setPlacements(rb.getSchoolSeasonId());
 			query.setNotNackaCitizens();
 			query.setSchoolTypeHighSchool();
@@ -445,7 +445,7 @@ public class NackaCommuneHighSchoolPlacementReportModel extends ReportModel {
 		query = getQuery(QUERY_NACKA_COMMUNE);
 		if (query == null) {
 			query = new PreparedQuery(getConnection());
-			query.setSelectCount();
+			query.setSelectCountDistinctUsers();
 			query.setPlacements(rb.getSchoolSeasonId());
 			query.setOnlyNackaCitizens();
 			query.setSchoolTypeHighSchool();
@@ -467,7 +467,7 @@ public class NackaCommuneHighSchoolPlacementReportModel extends ReportModel {
 		query = getQuery(QUERY_STUDY_PATH);
 		if (query == null) {
 			query = new PreparedQuery(getConnection());
-			query.setSelectCount();
+			query.setSelectCountDistinctUsers();
 			query.setPlacements(rb.getSchoolSeasonId());
 			query.setSchools(schools);
 			query.setSchoolTypeHighSchool();

@@ -1,5 +1,5 @@
 /*
- * $Id: NackaHighSchoolYearPlacementReportModel.java,v 1.21 2004/02/12 18:14:49 anders Exp $
+ * $Id: NackaHighSchoolYearPlacementReportModel.java,v 1.22 2004/02/17 21:24:52 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -18,10 +18,10 @@ import com.idega.block.school.data.SchoolStudyPath;
 /** 
  * Report model for high school placements per year for students in Nacka.
  * <p>
- * Last modified: $Date: 2004/02/12 18:14:49 $ by $Author: anders $
+ * Last modified: $Date: 2004/02/17 21:24:52 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.21 $
+ * @version $Revision: 1.22 $
  */
 public class NackaHighSchoolYearPlacementReportModel extends ReportModel {
 
@@ -525,7 +525,7 @@ public class NackaHighSchoolYearPlacementReportModel extends ReportModel {
 		query = getQuery(QUERY_NACKA_COMMUNE);
 		if (query == null) {
 			query = new PreparedQuery(getConnection());
-			query.setSelectCount();
+			query.setSelectCountDistinctUsers();
 			query.setPlacements(rb.getSchoolSeasonId());
 			query.setOnlyNackaCitizens();
 			query.setOnlyNackaSchools();
@@ -557,7 +557,7 @@ public class NackaHighSchoolYearPlacementReportModel extends ReportModel {
 		query = getQuery(QUERY_OTHER_COMMUNES);
 		if (query == null) {
 			query = new PreparedQuery(getConnection());
-			query.setSelectCount();
+			query.setSelectCountDistinctUsers();
 			query.setPlacements(rb.getSchoolSeasonId());
 			query.setOnlyNackaCitizens();
 			query.setOnlySchoolsInOtherCommunes();
@@ -589,7 +589,7 @@ public class NackaHighSchoolYearPlacementReportModel extends ReportModel {
 		query = getQuery(QUERY_COUNTY_COUNCIL);
 		if (query == null) {
 			query = new PreparedQuery(getConnection());
-			query.setSelectCount();
+			query.setSelectCountDistinctUsers();
 			query.setPlacements(rb.getSchoolSeasonId());
 			query.setOnlyNackaCitizens();
 			query.setOnlyCountyCouncilSchools();
@@ -619,7 +619,7 @@ public class NackaHighSchoolYearPlacementReportModel extends ReportModel {
 		query = getQuery(QUERY_PRIVATE);
 		if (query == null) {
 			query = new PreparedQuery(getConnection());
-			query.setSelectCount();
+			query.setSelectCountDistinctUsers();
 			query.setPlacements(rb.getSchoolSeasonId());
 			query.setOnlyNackaCitizens();
 			query.setOnlyPrivateSchools();

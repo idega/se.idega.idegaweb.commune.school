@@ -1,5 +1,5 @@
 /*
- * $Id: NackaProviderSummaryReportModel.java,v 1.5 2004/02/12 11:40:45 anders Exp $
+ * $Id: NackaProviderSummaryReportModel.java,v 1.6 2004/02/17 21:24:52 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -14,10 +14,10 @@ import java.rmi.RemoteException;
 /** 
  * Report model that shows a summary of Nacka providers (child care and schools).
  * <p>
- * Last modified: $Date: 2004/02/12 11:40:45 $ by $Author: anders $
+ * Last modified: $Date: 2004/02/17 21:24:52 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
 public class NackaProviderSummaryReportModel extends ReportModel {
 
@@ -545,7 +545,7 @@ public class NackaProviderSummaryReportModel extends ReportModel {
 			query = getQuery(QUERY_SCHOOL_PLACEMENT_COUNT);
 			if (query == null) {
 				query = new PreparedQuery(getConnection());
-				query.setSelectCount();
+				query.setSelectCountDistinctUsers();
 				query.setPlacements(rb.getSchoolSeasonId());
 				query.setOnlyNackaSchools();
 				query.setFourSchoolTypesForProviders(); // parameter 1-4
@@ -557,7 +557,7 @@ public class NackaProviderSummaryReportModel extends ReportModel {
 			query = getQuery(QUERY_SCHOOL_PLACEMENT_COUNT_OTHER_COMMUNES);
 			if (query == null) {
 				query = new PreparedQuery(getConnection());
-				query.setSelectCount();
+				query.setSelectCountDistinctUsers();
 				query.setPlacements(rb.getSchoolSeasonId());
 				query.setOnlyNackaSchools();
 				query.setNotNackaCitizens();
@@ -570,7 +570,7 @@ public class NackaProviderSummaryReportModel extends ReportModel {
 			query = getQuery(QUERY_CHILD_CARE_PLACEMENT_COUNT);
 			if (query == null) {
 				query = new PreparedQuery(getConnection());
-				query.setSelectCount();
+				query.setSelectCountDistinctUsers();
 				query.setChildCarePlacements();
 				query.setOnlyNackaSchools();
 				query.setFourSchoolTypesForProviders(); // parameter 1-4
@@ -582,7 +582,7 @@ public class NackaProviderSummaryReportModel extends ReportModel {
 			query = getQuery(QUERY_CHILD_CARE_PLACEMENT_COUNT_OTHER_COMMUNES);
 			if (query == null) {
 				query = new PreparedQuery(getConnection());
-				query.setSelectCount();
+				query.setSelectCountDistinctUsers();
 				query.setChildCarePlacements();
 				query.setOnlyNackaSchools();
 				query.setNotNackaCitizens();

@@ -1,5 +1,5 @@
 /*
- * $Id: NackaHighSchoolStudyPathPlacementReportModel.java,v 1.10 2004/01/23 12:31:57 anders Exp $
+ * $Id: NackaHighSchoolStudyPathPlacementReportModel.java,v 1.11 2004/02/17 21:24:52 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -21,10 +21,10 @@ import com.idega.block.school.data.SchoolStudyPath;
 /** 
  * Report model for high school placements for all study paths.
  * <p>
- * Last modified: $Date: 2004/01/23 12:31:57 $ by $Author: anders $
+ * Last modified: $Date: 2004/02/17 21:24:52 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.10 $
+ * @version $Revision: 1.11 $
  */
 public class NackaHighSchoolStudyPathPlacementReportModel extends ReportModel {
 
@@ -258,7 +258,7 @@ public class NackaHighSchoolStudyPathPlacementReportModel extends ReportModel {
 		query = getQuery(QUERY_STUDY_PATH_YEAR);
 		if (query == null) {
 			query = new PreparedQuery(getConnection());
-			query.setSelectCount();
+			query.setSelectCountDistinctUsers();
 			query.setPlacements(rb.getSchoolSeasonId());
 			query.setOnlyNackaCitizens();
 			query.setStudyPathPrefix(); // parameter 1
@@ -286,7 +286,7 @@ public class NackaHighSchoolStudyPathPlacementReportModel extends ReportModel {
 		query = getQuery(QUERY_STUDY_PATH);
 		if (query == null) {
 			query = new PreparedQuery(getConnection());
-			query.setSelectCount();
+			query.setSelectCountDistinctUsers();
 			query.setPlacements(rb.getSchoolSeasonId());
 			query.setOnlyNackaCitizens();
 			query.setStudyPathPrefix(); // parameter 1

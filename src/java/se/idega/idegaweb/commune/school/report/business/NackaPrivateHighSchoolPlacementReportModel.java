@@ -1,5 +1,5 @@
 /*
- * $Id: NackaPrivateHighSchoolPlacementReportModel.java,v 1.15 2004/02/12 18:14:49 anders Exp $
+ * $Id: NackaPrivateHighSchoolPlacementReportModel.java,v 1.16 2004/02/17 21:24:52 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -20,10 +20,10 @@ import com.idega.block.school.data.SchoolStudyPath;
 /** 
  * Report model for private high school placements in Nacka.
  * <p>
- * Last modified: $Date: 2004/02/12 18:14:49 $ by $Author: anders $
+ * Last modified: $Date: 2004/02/17 21:24:52 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.15 $
+ * @version $Revision: 1.16 $
  */
 public class NackaPrivateHighSchoolPlacementReportModel extends ReportModel {
 
@@ -346,7 +346,7 @@ public class NackaPrivateHighSchoolPlacementReportModel extends ReportModel {
 		query = getQuery(QUERY_ALL);
 		if (query == null) {
 			query = new PreparedQuery(getConnection());
-			query.setSelectCount();
+			query.setSelectCountDistinctUsers();
 			query.setPlacements(rb.getSchoolSeasonId());
 			query.setSchoolTypeHighSchool();
 			query.setSchool(); // parameter 1
@@ -370,7 +370,7 @@ public class NackaPrivateHighSchoolPlacementReportModel extends ReportModel {
 		query = getQuery(QUERY_OTHER_COMMUNES);
 		if (query == null) {
 			query = new PreparedQuery(getConnection());
-			query.setSelectCount();
+			query.setSelectCountDistinctUsers();
 			query.setPlacements(rb.getSchoolSeasonId());
 			query.setNotNackaCitizens();
 			query.setSchoolTypeHighSchool();
@@ -393,7 +393,7 @@ public class NackaPrivateHighSchoolPlacementReportModel extends ReportModel {
 		query = getQuery(QUERY_NACKA_COMMUNE);
 		if (query == null) {
 			query = new PreparedQuery(getConnection());
-			query.setSelectCount();
+			query.setSelectCountDistinctUsers();
 			query.setPlacements(rb.getSchoolSeasonId());
 			query.setOnlyNackaCitizens();
 			query.setSchoolTypeHighSchool();
@@ -416,7 +416,7 @@ public class NackaPrivateHighSchoolPlacementReportModel extends ReportModel {
 			query = getQuery(QUERY_COUNT);
 			if (query == null) {
 				query = new PreparedQuery(getConnection());
-				query.setSelectCount();
+				query.setSelectCountDistinctUsers();
 				query.setPlacements(rb.getSchoolSeasonId());
 				query.setSchoolTypeHighSchool();
 				query.setSchools(rb.getPrivateHighSchools());

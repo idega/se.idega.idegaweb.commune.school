@@ -1,5 +1,5 @@
 /*
- * $Id: NackaCompulsorySchoolPlacementReportModel.java,v 1.6 2004/01/22 11:39:53 anders Exp $
+ * $Id: NackaCompulsorySchoolPlacementReportModel.java,v 1.7 2004/02/17 21:24:52 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -19,10 +19,10 @@ import com.idega.block.school.data.SchoolArea;
 /** 
  * Report model for placements in Nacka compulsory schools.
  * <p>
- * Last modified: $Date: 2004/01/22 11:39:53 $ by $Author: anders $
+ * Last modified: $Date: 2004/02/17 21:24:52 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  */
 public class NackaCompulsorySchoolPlacementReportModel extends ReportModel {
 
@@ -347,7 +347,7 @@ public class NackaCompulsorySchoolPlacementReportModel extends ReportModel {
 		query = getQuery(QUERY_COMPULSORY);
 		if (query == null) {
 			query = new PreparedQuery(getConnection());
-			query.setSelectCount();
+			query.setSelectCountDistinctUsers();
 			query.setPlacements(rb.getSchoolSeasonId());
 			query.setSchoolTypeCompulsorySchool();
 			query.setSchool(); // parameter 1
