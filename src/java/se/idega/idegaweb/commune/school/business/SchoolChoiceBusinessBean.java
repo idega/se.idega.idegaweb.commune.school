@@ -289,8 +289,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		//If school is administrated by BUN, set the case handler so that BUN will see it in the UserCase list.
 		School provider = getSchoolBusiness().getSchool(new Integer(chosen_school));
 		if (provider.getCentralizedAdministration()){
-			Group bunAdmin = getUserBusiness().getGroupBusiness().getGroupByGroupName("Administrator");
-			choice.setHandler(bunAdmin);
+			choice.setHandler(getBunGroup());
 		}
 		
 		if (caseStatus.getStatus().equalsIgnoreCase("PREL")) {
@@ -489,10 +488,8 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 			School school = getSchool(schoolID);
 			
 			//If school is centralized administrated (by BUN), the message shall be marked as such, so that it will show in BUN's messagebox.
-			boolean bunAdmin = school.getCentralizedAdministration();
-			//TODO is this the right way to find the BUN group?
-			Group bunGroup = bunAdmin ? getUserBusiness().getGroupBusiness().getGroupByGroupName("administrator") : null;
-			
+			Group bunGroup = school.getCentralizedAdministration() ? getBunGroup() : null;
+
 			Collection coll = getSchoolBusiness().getSchoolUserBusiness().getSchoolUserHome().findBySchool(school);
 			if (!coll.isEmpty()) {
 				Iterator iter = coll.iterator();
@@ -507,6 +504,20 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		}
 	}
 
+	private Group getBunGroup() throws RemoteException{
+		Group bunGroup = null;		
+		try {
+			bunGroup = getCommuneUserBusiness().getRootCustomerChoiceGroup();
+		} catch(CreateException ex){
+			System.err.println("Could not create group");
+			ex.printStackTrace(System.err);
+		} catch (FinderException fe) {
+			throw new RemoteException(fe.getMessage());
+		}		
+		return bunGroup;
+	}
+	
+	
 	public void rejectApplication(int applicationID, int seasonID, User performer, String messageSubject, String messageBody) throws RemoteException {
 		try {
 			SchoolChoice choice = this.getSchoolChoiceHome().findByPrimaryKey(new Integer(applicationID));
