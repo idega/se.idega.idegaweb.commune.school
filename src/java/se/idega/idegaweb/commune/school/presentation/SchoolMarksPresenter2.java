@@ -19,7 +19,7 @@ import se.idega.idegaweb.commune.presentation.CommuneBlock;
 /**
  * Presents school marks statistics in a formatted table (approved by Nacka)
  * <p>
- * $Id: SchoolMarksPresenter2.java,v 1.4 2003/10/06 13:30:34 laddi Exp $
+ * $Id: SchoolMarksPresenter2.java,v 1.5 2003/10/06 19:03:29 kjell Exp $
  *
  * This block presents School Marks Statistics according to the specifications made my 
  * Jill Salander
@@ -161,25 +161,11 @@ public class SchoolMarksPresenter2  extends CommuneBlock {
 				table.mergeCells(6, row, 7, row);
 				table.mergeCells(8, row, 9, row);
 				table.mergeCells(10, row, 11, row);
-				
-				table.setColumnAlignment(2, Table.HORIZONTAL_ALIGN_RIGHT);
-				table.setColumnAlignment(3, Table.HORIZONTAL_ALIGN_RIGHT);
-				table.setColumnAlignment(4, Table.HORIZONTAL_ALIGN_RIGHT);
-				table.setColumnAlignment(5, Table.HORIZONTAL_ALIGN_RIGHT);
-				table.setColumnAlignment(6, Table.HORIZONTAL_ALIGN_RIGHT);
-				table.setColumnAlignment(7, Table.HORIZONTAL_ALIGN_RIGHT);
-				table.setColumnAlignment(8, Table.HORIZONTAL_ALIGN_RIGHT);
-				table.setColumnAlignment(9, Table.HORIZONTAL_ALIGN_RIGHT);
-				table.setColumnAlignment(10, Table.HORIZONTAL_ALIGN_RIGHT);
-				table.setColumnAlignment(11, Table.HORIZONTAL_ALIGN_RIGHT);
 
-				table.setAlignment(2, row, Table.HORIZONTAL_ALIGN_CENTER);
-				table.setAlignment(4, row, Table.HORIZONTAL_ALIGN_CENTER);
-				table.setAlignment(6, row, Table.HORIZONTAL_ALIGN_CENTER);
-				table.setAlignment(8, row, Table.HORIZONTAL_ALIGN_CENTER);
-				table.setAlignment(10, row, Table.HORIZONTAL_ALIGN_CENTER);
-
+				table.setRowAlignment(row, Table.HORIZONTAL_ALIGN_CENTER);
 				row++;
+				table.setRowAlignment(row, Table.HORIZONTAL_ALIGN_CENTER);
+				table.setAlignment(1, row, Table.HORIZONTAL_ALIGN_LEFT);
 				
 				table.add(getHeader(stat.getSchoolName()), 1, row);
 				table.add(getSmallText(iwrb.getLocalizedString("school_marks_stats.number", "Antal")), 2, row);			
@@ -194,6 +180,8 @@ public class SchoolMarksPresenter2  extends CommuneBlock {
 				table.add(getSmallText(iwrb.getLocalizedString("school_marks_stats.mean", "Medel")), 11, row);			
 
 				row++;
+				table.setRowAlignment(row, Table.HORIZONTAL_ALIGN_RIGHT);
+				table.setAlignment(1, row, Table.HORIZONTAL_ALIGN_LEFT);
 				sumSchoolTally(stat.getEnglishMarks(), "English");
 				table.add(getSmallText(iwrb.getLocalizedString("school_marks_stats.english", "Engelska")), 1, row);
 				table.add(getSmallText(stat.getEnglishMarks().eg.number), 2, row);
@@ -208,6 +196,8 @@ public class SchoolMarksPresenter2  extends CommuneBlock {
 				table.add(getSmallText(formatPct(stat.getEnglishMarks().tot.percent)), 11, row);
 
 				row++;
+				table.setRowAlignment(row, Table.HORIZONTAL_ALIGN_RIGHT);
+				table.setAlignment(1, row, Table.HORIZONTAL_ALIGN_LEFT);
 				sumSchoolTally(stat.getMathsMarks(), "Maths");
 				table.add(getSmallText(iwrb.getLocalizedString("school_marks_stats.maths", "Matematik")), 1, row);
 				table.add(getSmallText(stat.getMathsMarks().eg.number), 2, row);
@@ -222,6 +212,8 @@ public class SchoolMarksPresenter2  extends CommuneBlock {
 				table.add(getSmallText(formatPct(stat.getMathsMarks().tot.percent)), 11, row);
 
 				row++;
+				table.setRowAlignment(row, Table.HORIZONTAL_ALIGN_RIGHT);
+				table.setAlignment(1, row, Table.HORIZONTAL_ALIGN_LEFT);
 				sumSchoolTally(stat.getSwedishMarks(), "Swedish");
 				table.add(getSmallText(iwrb.getLocalizedString("school_marks_stats.swedish", "Svenska")), 1, row);
 				table.add(getSmallText(stat.getSwedishMarks().eg.number), 2, row);
@@ -236,6 +228,8 @@ public class SchoolMarksPresenter2  extends CommuneBlock {
 				table.add(getSmallText(formatPct(stat.getSwedishMarks().tot.percent)), 11, row);
 
 				row++;
+				table.setRowAlignment(row, Table.HORIZONTAL_ALIGN_RIGHT);
+				table.setAlignment(1, row, Table.HORIZONTAL_ALIGN_LEFT);
 				if (containsValues(stat.getSwedish2Marks())) {
 					sumSchoolTally(stat.getSwedish2Marks(), "Swedish2");
 					table.add(getSmallText(iwrb.getLocalizedString("school_marks_stats.swedish2", "Svenska som andraspråk")), 1, row);
@@ -250,6 +244,8 @@ public class SchoolMarksPresenter2  extends CommuneBlock {
 					table.add(getSmallText(stat.getSwedish2Marks().tot.number), 10, row);
 					table.add(getSmallText(formatPct(stat.getSwedish2Marks().tot.percent)), 11, row);
 					row++;
+					table.setRowAlignment(row, Table.HORIZONTAL_ALIGN_RIGHT);
+					table.setAlignment(1, row, Table.HORIZONTAL_ALIGN_LEFT);
 				}
 
 				sumSchoolTally(stat.getSumAuthMarks(), "Auth");
@@ -266,6 +262,8 @@ public class SchoolMarksPresenter2  extends CommuneBlock {
 				table.add(getHeader(formatPct(stat.getSumAuthMarks().tot.percent)), 11, row);
 
 				row++;
+				table.setRowAlignment(row, Table.HORIZONTAL_ALIGN_RIGHT);
+				table.setAlignment(1, row, Table.HORIZONTAL_ALIGN_LEFT);
 				sumSchoolTally(stat.getTotalMarks(), "Total");
 				table.add(getHeader(iwrb.getLocalizedString("school_marks_stats.total", "Totalt denna skola")), 1, row);
 				table.add(getHeader(stat.getTotalMarks().eg.number), 2, row);
@@ -288,7 +286,7 @@ public class SchoolMarksPresenter2  extends CommuneBlock {
 			table = insertTotals(iwrb.getLocalizedString("school_marks_stats.header2", "Totalt Nacka skolor"), table, row);
 		} catch (RemoteException e) {
 			e.printStackTrace();		
-		} catch (Exception e) {
+			} catch (Exception e) {
 			e.printStackTrace();		
 		}
 		mainForm.add(table);
@@ -305,11 +303,6 @@ public class SchoolMarksPresenter2  extends CommuneBlock {
 		table.setColor(4, row, "#aaaaaa");			
 		table.setColor(6, row, "#aaaaaa");			
 		table.setColor(8, row, "#aaaaaa");			
-		table.setAlignment(2, row, Table.HORIZONTAL_ALIGN_CENTER);
-		table.setAlignment(4, row, Table.HORIZONTAL_ALIGN_CENTER);
-		table.setAlignment(6, row, Table.HORIZONTAL_ALIGN_CENTER);
-		table.setAlignment(8, row, Table.HORIZONTAL_ALIGN_CENTER);
-		table.setAlignment(10, row, Table.HORIZONTAL_ALIGN_CENTER);
 		table.setColor(10, row, "#aaaaaa");			
 		table.mergeCells(2, row, 3, row);
 		table.mergeCells(4, row, 5, row);
@@ -317,8 +310,12 @@ public class SchoolMarksPresenter2  extends CommuneBlock {
 		table.mergeCells(8, row, 9, row);
 		table.mergeCells(10, row, 11, row);
 
+		table.setRowAlignment(row, Table.HORIZONTAL_ALIGN_CENTER);
+
 		row++;
 		table.setRowColor(row, "#e0e0e0");
+		table.setRowAlignment(row, Table.HORIZONTAL_ALIGN_CENTER);
+		table.setAlignment(1, row, Table.HORIZONTAL_ALIGN_LEFT);
 		
 		table.add(getHeader(header), 1, row);			
 		table.add(getSmallText(iwrb.getLocalizedString("school_marks_stats.number", "Antal")), 2, row);			
@@ -334,6 +331,8 @@ public class SchoolMarksPresenter2  extends CommuneBlock {
 
 		row++;
 		table.setRowColor(row, "#e0e0e0");
+		table.setRowAlignment(row, Table.HORIZONTAL_ALIGN_RIGHT);
+		table.setAlignment(1, row, Table.HORIZONTAL_ALIGN_LEFT);
 
 		table.add(getSmallText(iwrb.getLocalizedString("school_marks_stats.english", "Engelska")), 1, row);
 		table.add(getSmallText(_tallyEnglish.eg.number), 2, row);
@@ -348,6 +347,8 @@ public class SchoolMarksPresenter2  extends CommuneBlock {
 		table.add(getSmallText(formatPct(tallyMean(_tallyEnglish.tot.percent, _tallyEnglish.ctot))), 11, row);
 
 		row++;
+		table.setRowAlignment(row, Table.HORIZONTAL_ALIGN_RIGHT);
+		table.setAlignment(1, row, Table.HORIZONTAL_ALIGN_LEFT);
 		table.setRowColor(row, "#e0e0e0");
 
 		table.add(getSmallText(iwrb.getLocalizedString("school_marks_stats.maths", "Matematik")), 1, row);
@@ -363,6 +364,8 @@ public class SchoolMarksPresenter2  extends CommuneBlock {
 		table.add(getSmallText(formatPct(tallyMean(_tallyMaths.tot.percent, _tallyMaths.ctot))), 11, row);
 
 		row++;
+		table.setRowAlignment(row, Table.HORIZONTAL_ALIGN_RIGHT);
+		table.setAlignment(1, row, Table.HORIZONTAL_ALIGN_LEFT);
 		table.setRowColor(row, "#e0e0e0");
 
 		table.add(getSmallText(iwrb.getLocalizedString("school_marks_stats.swedish", "Svenska")), 1, row);
@@ -378,6 +381,8 @@ public class SchoolMarksPresenter2  extends CommuneBlock {
 		table.add(getSmallText(formatPct(tallyMean(_tallySwedish.tot.percent, _tallySwedish.ctot))), 11, row);
 
 		row++;
+		table.setRowAlignment(row, Table.HORIZONTAL_ALIGN_RIGHT);
+		table.setAlignment(1, row, Table.HORIZONTAL_ALIGN_LEFT);
 		table.setRowColor(row, "#e0e0e0");
 
 		if (containsValues(_tallySwedish2)) {
@@ -393,6 +398,8 @@ public class SchoolMarksPresenter2  extends CommuneBlock {
 			table.add(getSmallText(_tallySwedish2.tot.number), 10, row);
 			table.add(getSmallText(formatPct(tallyMean(_tallySwedish2.tot.percent, _tallySwedish2.ctot))), 11, row);
 			row++;
+			table.setRowAlignment(row, Table.HORIZONTAL_ALIGN_RIGHT);
+			table.setAlignment(1, row, Table.HORIZONTAL_ALIGN_LEFT);
 			table.setRowColor(row, "#e0e0e0");
 		}
 
@@ -409,6 +416,8 @@ public class SchoolMarksPresenter2  extends CommuneBlock {
 		table.add(getHeader(formatPct(tallyMean(_tallyAuth.tot.percent, _tallyAuth.ctot))), 11, row);
 
 		row++;
+		table.setRowAlignment(row, Table.HORIZONTAL_ALIGN_RIGHT);
+		table.setAlignment(1, row, Table.HORIZONTAL_ALIGN_LEFT);
 		table.setRowColor(row, "#e0e0e0");
 
 		table.add(getHeader(header), 1, row);
