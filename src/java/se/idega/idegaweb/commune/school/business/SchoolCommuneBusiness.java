@@ -32,5 +32,5 @@ public interface SchoolCommuneBusiness extends com.idega.business.IBOService,com
  public void setNeedsSpecialAttention(com.idega.block.school.data.SchoolClassMember p0,com.idega.block.school.data.SchoolSeason p1,boolean p2)throws java.rmi.RemoteException, java.rmi.RemoteException;
  public void setStudentAsSpeciallyPlaced(com.idega.block.school.data.SchoolClassMember p0)throws java.rmi.RemoteException, java.rmi.RemoteException;
  public boolean[] hasSchoolChoices(int userID, int seasonID) throws java.rmi.RemoteException;
- public String getLocalizedSchoolType(com.idega.block.school.data.SchoolType type);
+ public String getLocalizedSchoolTypeKey(com.idega.block.school.data.SchoolType type);
 }

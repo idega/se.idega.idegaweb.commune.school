@@ -625,7 +625,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 				canChoose = false;
 				
 			if (canChoose)
-				drp.addMenuElement(type.getPrimaryKey().toString(), schCommBiz.getLocalizedSchoolType(type));
+				drp.addMenuElement(type.getPrimaryKey().toString(), localize(schCommBiz.getLocalizedSchoolTypeKey(type),type.getSchoolTypeName()));
 		}
 		
 		return drp;

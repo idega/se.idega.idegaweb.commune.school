@@ -9,6 +9,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Vector;
 
@@ -444,11 +445,11 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 		return (UserBusiness) this.getServiceInstance(UserBusiness.class);
 	}
 	
-	public String getLocalizedSchoolType(SchoolType type) {
+	public String getLocalizedSchoolTypeKey(SchoolType type) {
 		String key = type.getLocalizationKey();
 		if (key == null || key.length() == 0)
 			key = "school.school_type_" + type.getSchoolTypeName();
-		return getLocalizedString(key, type.getSchoolTypeName());
+		return key;
 	}
 		
 }
