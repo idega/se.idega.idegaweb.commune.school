@@ -1,5 +1,5 @@
 /*
- * $Id: ReportBlock.java,v 1.4 2003/12/09 13:58:59 anders Exp $
+ * $Id: ReportBlock.java,v 1.5 2003/12/10 12:48:11 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -20,26 +20,56 @@ import se.idega.idegaweb.commune.school.report.business.ReportModel;
 import com.idega.presentation.ExceptionWrapper;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Table;
+import com.idega.presentation.text.Break;
 import com.idega.presentation.text.Text;
+import com.idega.presentation.ui.PrintButton;
 
 /** 
  * This is the base class for school report blocks.
  * <p>
- * Last modified: $Date: 2003/12/09 13:58:59 $ by $Author: anders $
+ * Last modified: $Date: 2003/12/10 12:48:11 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public class ReportBlock extends CommuneBlock {
 
 	public final static String IW_BUNDLE_IDENTIFIER = "se.idega.idegaweb.commune.school";
 
 	private final static int ACTION_DEFAULT = 1;
+	
+	protected final static String PP = "school_report."; // Parameter prefix
+	
+	protected final static String PARAMETER_REPORT_MODEL = PP + "report_model";
 
+	private final static String KP = "school_report."; // Localization key prefix
+
+	private final static String KEY_SESSION_TIMEOUT = KP + "session_timeout";
+	private final static String KEY_PRINT = KP + "print";
+	
 	private Class _reportModelClass = null;
 	private ReportModel _reportModel = null;
+	
+	private boolean _showPrintButton = false;
 
+	/**
+	 * Default constructor.
+	 */
 	public ReportBlock() {
+	}
+	
+	/**
+	 * Constructs a report block with the specified report model class.
+	 */
+	public ReportBlock(Class reportModelClass) {
+		_reportModelClass = reportModelClass;
+	}
+
+	/**
+	 * Constructs a report block with the specified report model.
+	 */
+	public ReportBlock(ReportModel reportModel) {
+		setReportModel(reportModel);
 	}
 	
 	/**
@@ -48,9 +78,19 @@ public class ReportBlock extends CommuneBlock {
 	public String getBundleIdentifier() {
 		return IW_BUNDLE_IDENTIFIER;
 	}
-
-	public ReportBlock(Class reportModelClass) {
-		_reportModelClass = reportModelClass;
+	
+	/**
+	 * Return property indicating if a print button is visible. 
+	 */
+	public boolean getShowPrintButton() {
+		return _showPrintButton;
+	}
+	
+	/**
+	 * Sets property indicating if a print button is visible. 
+	 */
+	public void setShowPrintButton(boolean showPrintButton) {
+		_showPrintButton = showPrintButton;
 	}
 	
 	/**
@@ -84,10 +124,16 @@ public class ReportBlock extends CommuneBlock {
 	 * Handles the default action for this block.
 	 */	
 	private void handleDefaultAction(IWContext iwc) {
-		try {
-			setReportModel(getReportBusiness(iwc).createReportModel(getReportModelClass()));
-		} catch (RemoteException e) {
-			log(e);
+		if (getReportModel() == null) {
+			try {
+				setReportModel(getReportBusiness(iwc).createReportModel(getReportModelClass()));
+			} catch (RemoteException e) {
+				log(e);
+			}
+		}
+		if (getReportModel() == null) {
+			add(getErrorText(localize(KEY_SESSION_TIMEOUT, "You session has timed out. Please login again.")));
+			return;
 		}
 		Table table = new Table();
 		table.setCellspacing(0);
@@ -96,6 +142,15 @@ public class ReportBlock extends CommuneBlock {
 		table.setBorderColor("#999999");
 		buildReportTable(table);
 		add(table);
+		
+		if (_showPrintButton) {
+			add(new Break());
+			PrintButton pb = new PrintButton(localize(KEY_PRINT, "Print"));
+			pb = (PrintButton) getButton(pb);
+			add(pb);
+		}
+
+		iwc.getSession().setAttribute(PARAMETER_REPORT_MODEL, getReportModel());
 	}
 
 	/*

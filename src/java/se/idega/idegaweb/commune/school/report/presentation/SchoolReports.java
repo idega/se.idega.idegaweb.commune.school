@@ -1,5 +1,5 @@
 /*
- * $Id: SchoolReports.java,v 1.1 2003/12/08 16:24:24 anders Exp $
+ * $Id: SchoolReports.java,v 1.2 2003/12/10 12:48:11 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -22,15 +22,16 @@ import com.idega.presentation.Table;
 import com.idega.presentation.text.Break;
 import com.idega.presentation.ui.DropdownMenu;
 import com.idega.presentation.ui.Form;
+import com.idega.presentation.ui.GenericButton;
 import com.idega.presentation.ui.SubmitButton;
 
 /** 
  * This block handles selecting and presenting school reports.
  * <p>
- * Last modified: $Date: 2003/12/08 16:24:24 $ by $Author: anders $
+ * Last modified: $Date: 2003/12/10 12:48:11 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class SchoolReports extends CommuneBlock {
 
@@ -46,6 +47,7 @@ public class SchoolReports extends CommuneBlock {
 	private final static String KEY_REPORT_SELECTOR_TITLE = KP + "select_report";
 	private final static String KEY_CREATE_REPORT = KP + "create_report";
 	private final static String KEY_NO_REPORT_SELECTED = KP + "no_report_selected";
+	private final static String KEY_FOR_PRINTING = KP + "for_printing";	
 	
 	private final static int ACTION_DEFAULT = 1;
 	private final static int ACTION_CREATE_REPORT = 2;
@@ -119,6 +121,15 @@ public class SchoolReports extends CommuneBlock {
 			return;
 		}
 		table.add(new ReportBlock(_reportModelClasses[Integer.parseInt(reportIndex)]), 1, 1);
+		add(table);
+		add(new Break());
+		GenericButton button = new GenericButton("", localize(KEY_FOR_PRINTING, "For printing"));
+		button = getButton(button);
+		button.setWindowToOpen(ReportWindow.class);
+		table = new Table();
+		table.setCellpadding(getCellpadding());
+		table.setCellspacing(getCellspacing());
+		table.add(button, 1, 1);
 		add(table);
 	}
 	
