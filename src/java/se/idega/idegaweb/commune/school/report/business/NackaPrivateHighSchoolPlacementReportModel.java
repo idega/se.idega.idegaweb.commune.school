@@ -1,5 +1,5 @@
 /*
- * $Id: NackaPrivateHighSchoolPlacementReportModel.java,v 1.5 2004/01/19 12:32:49 anders Exp $
+ * $Id: NackaPrivateHighSchoolPlacementReportModel.java,v 1.6 2004/01/20 16:34:11 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -19,10 +19,10 @@ import com.idega.block.school.data.SchoolStudyPath;
 /** 
  * Report model for private high school placements in Nacka.
  * <p>
- * Last modified: $Date: 2004/01/19 12:32:49 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/20 16:34:11 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
 public class NackaPrivateHighSchoolPlacementReportModel extends ReportModel {
 
@@ -55,7 +55,7 @@ public class NackaPrivateHighSchoolPlacementReportModel extends ReportModel {
 		try {
 			Collection studyPaths = reportBusiness.getAllStudyPaths();
 			int rowSize = 0;
-			rowSize += studyPaths.size() + 1; 
+			rowSize += studyPaths.size() + 2; 
 			setReportSize(rowSize, COLUMN_SIZE);
 		} catch (RemoteException e) {
 			log(e.getMessage());
@@ -71,7 +71,7 @@ public class NackaPrivateHighSchoolPlacementReportModel extends ReportModel {
 		try {
 			ReportBusiness rb = getReportBusiness();
 			Collection studyPaths = rb.getAllStudyPaths();
-			headers = new Header[studyPaths.size() + 1];
+			headers = new Header[studyPaths.size() + 2];
 			Iterator iter = studyPaths.iterator();
 			int headerIndex = 0;
 			while (iter.hasNext()) {
@@ -80,6 +80,12 @@ public class NackaPrivateHighSchoolPlacementReportModel extends ReportModel {
 				Header child = new Header(studyPath.getCode(), Header.HEADERTYPE_ROW_NONLOCALIZED_NORMAL);
 				headers[headerIndex].setChild(0, child);
 				headerIndex++;
+				if (studyPath.getCode().equals("IB")) {
+					headers[headerIndex] = new Header(KEY_PROVISIONS_PROGRAM, Header.HEADERTYPE_ROW_NONLOCALIZED_HEADER, 1);
+					child = new Header("LP", Header.HEADERTYPE_ROW_NONLOCALIZED_NORMAL);
+					headers[headerIndex].setChild(0, child);
+					headerIndex++;
+				}
 			}
 			
 			Header header = new Header(KEY_TOTAL, Header.HEADERTYPE_ROW_TOTAL);
@@ -236,6 +242,12 @@ public class NackaPrivateHighSchoolPlacementReportModel extends ReportModel {
 							columnMethod, rowParameter, columnParameter, Cell.CELLTYPE_NORMAL);
 					setCell(row, column, cell);
 					row++;
+					if (studyPath.getCode().equals("IB")) {
+						cell = new Cell(this, row, column, ROW_METHOD_STUDY_PATH,
+								columnMethod, "LP", columnParameter, Cell.CELLTYPE_NORMAL);
+						setCell(row, column, cell);
+						row++;
+					}					
 				}
 				Cell cell = new Cell(this, row, column, ROW_METHOD_TOTAL,
 						columnMethod, null, columnParameter, Cell.CELLTYPE_TOTAL);

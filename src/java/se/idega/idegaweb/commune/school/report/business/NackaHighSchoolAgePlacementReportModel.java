@@ -1,5 +1,5 @@
 /*
- * $Id: NackaHighSchoolAgePlacementReportModel.java,v 1.10 2004/01/15 13:53:22 anders Exp $
+ * $Id: NackaHighSchoolAgePlacementReportModel.java,v 1.11 2004/01/20 16:34:11 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -18,10 +18,10 @@ import com.idega.block.school.data.SchoolStudyPath;
 /** 
  * Report model for high school placements per student age for students in Nacka.
  * <p>
- * Last modified: $Date: 2004/01/15 13:53:22 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/20 16:34:11 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.10 $
+ * @version $Revision: 1.11 $
  */
 public class NackaHighSchoolAgePlacementReportModel extends ReportModel {
 
@@ -55,7 +55,7 @@ public class NackaHighSchoolAgePlacementReportModel extends ReportModel {
 		try {
 			Collection studyPaths = reportBusiness.getAllStudyPaths();
 			int rowSize = 0;
-			rowSize += studyPaths.size() + 3; 
+			rowSize += studyPaths.size() + 4; 
 			setReportSize(rowSize, COLUMN_SIZE);
 		} catch (RemoteException e) {
 			log(e.getMessage());
@@ -71,7 +71,7 @@ public class NackaHighSchoolAgePlacementReportModel extends ReportModel {
 		try {
 			ReportBusiness rb = getReportBusiness();
 			Collection studyPaths = rb.getAllStudyPaths();
-			headers = new Header[studyPaths.size() + 3];
+			headers = new Header[studyPaths.size() + 4];
 			Iterator iter = studyPaths.iterator();
 			int headerIndex = 0;
 			while (iter.hasNext()) {
@@ -80,6 +80,12 @@ public class NackaHighSchoolAgePlacementReportModel extends ReportModel {
 				Header child = new Header(studyPath.getCode(), Header.HEADERTYPE_ROW_NONLOCALIZED_NORMAL);
 				headers[headerIndex].setChild(0, child);
 				headerIndex++;
+				if (studyPath.getCode().equals("IB")) {
+					headers[headerIndex] = new Header(KEY_PROVISIONS_PROGRAM, Header.HEADERTYPE_ROW_NONLOCALIZED_HEADER, 1);
+					child = new Header("LP", Header.HEADERTYPE_ROW_NONLOCALIZED_NORMAL);
+					headers[headerIndex].setChild(0, child);
+					headerIndex++;
+				}
 			}
 			Header header = new Header(KEY_COMPULSORY_HIGH_SCHOOLS, Header.HEADERTYPE_ROW_HEADER, 1);
 			Header child = new Header(KEY_STUDY_PATH_CODE_COMPULSORY_HIGH_SCHOOL, Header.HEADERTYPE_ROW_NORMAL);
@@ -296,6 +302,12 @@ public class NackaHighSchoolAgePlacementReportModel extends ReportModel {
 							columnMethod, rowParameter, columnParameter, Cell.CELLTYPE_NORMAL);
 					setCell(row, column, cell);
 					row++;
+					if (studyPath.getCode().equals("IB")) {
+						cell = new Cell(this, row, column, ROW_METHOD_STUDY_PATH,
+								columnMethod, "LP", columnParameter, Cell.CELLTYPE_NORMAL);
+						setCell(row, column, cell);
+						row++;
+					}					
 				}
 				Integer compulsoryAge = null;
 				if (columnParameter != null) {
