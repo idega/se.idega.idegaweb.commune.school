@@ -30,7 +30,6 @@ import com.idega.block.school.data.SchoolCategory;
 import com.idega.block.school.data.SchoolCategoryHome;
 import com.idega.block.school.data.SchoolClassMember;
 import com.idega.block.school.data.SchoolClassMemberHome;
-import com.idega.block.school.data.SchoolSeason;
 import com.idega.business.IBOLookup;
 import com.idega.business.IBOServiceBean;
 import com.idega.data.IDOLookup;
@@ -81,9 +80,8 @@ public class CentralPlacementBusinessBean extends IBOServiceBean implements Cent
 		SchoolClassMember newPlacement = null;
 		//SchoolClassMember currentPlacement = null;
 		SchoolClassMember latestPlacement = null;
-		SchoolSeason chosenSeason = null;
+		//SchoolSeason chosenSeason = null;
 		int newPlacementID = -1;
-		int registratorID = -1;
 		
 	// *** START - Check in params ***
 		// pupil
@@ -95,11 +93,11 @@ public class CentralPlacementBusinessBean extends IBOServiceBean implements Cent
 			if (student == null) 
 				throw new CentralPlacementException(KEY_ERROR_CHILD_ID, "No valid pupil found");
 			
-			try {
+		/*	try {
 				chosenSeason = getSchoolChoiceBusiness().getSchoolSeasonHome().
 								findByPrimaryKey(new Integer(getSchoolCommuneSession(iwc).getSchoolSeasonID()));
 			} catch (FinderException e1) {}
-			
+		*/	
 			latestPlacement = getLatestPlacementLatestFromElemAndHighSchool(student);
 		}
 		
