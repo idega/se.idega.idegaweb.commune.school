@@ -1,5 +1,5 @@
 /*
- * $Id: NackaHighSchoolAgePlacementReportModel.java,v 1.16 2004/02/17 21:24:52 anders Exp $
+ * $Id: NackaHighSchoolAgePlacementReportModel.java,v 1.17 2004/04/27 13:54:04 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -18,10 +18,10 @@ import com.idega.block.school.data.SchoolStudyPath;
 /** 
  * Report model for high school placements per student age for students in Nacka.
  * <p>
- * Last modified: $Date: 2004/02/17 21:24:52 $ by $Author: anders $
+ * Last modified: $Date: 2004/04/27 13:54:04 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.16 $
+ * @version $Revision: 1.17 $
  */
 public class NackaHighSchoolAgePlacementReportModel extends ReportModel {
 
@@ -538,7 +538,7 @@ public class NackaHighSchoolAgePlacementReportModel extends ReportModel {
 			query.setOnlyNackaSchools();
 			query.setNotPrivateSchools();
 			query.setNotCountyCouncilSchools();
-			query.setStudentAge(rb.getCurrentSchoolSeason(), rb.getHighSchoolStudentAgeFrom(age), rb.getHighSchoolStudentAgeTo(age));			
+			query.setStudentAge(rb.getHighSchoolStudentAgeFrom(age), rb.getHighSchoolStudentAgeTo(age));			
 			query.setSchoolType(); // parameter 1
 			query.setStudyPathPrefix(); // parameter 2
 			query.prepare();
