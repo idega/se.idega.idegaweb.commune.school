@@ -19,9 +19,14 @@ import com.idega.user.business.UserBusiness;
 import com.idega.user.data.Group;
 import com.idega.util.IWTimestamp;
 /**
+ * Title: UserCases
+ * Description: A class to view Cases for a User in the idegaWeb Commune application
+ * Copyright:    Copyright idega Software (c) 2002
+ * Company:	idega Software
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
  * @version 1.0
  */
+
 public class UserCases extends CommuneBlock {
 	private final static String IW_BUNDLE_IDENTIFIER = "se.idega.idegaweb.commune";
 	private final static int ACTION_VIEW_CASE_LIST = 1;
