@@ -1,5 +1,5 @@
 /*
- * $Id: ReportQuery.java,v 1.13 2003/12/18 12:44:39 anders Exp $
+ * $Id: ReportQuery.java,v 1.14 2004/01/07 15:44:17 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -20,10 +20,10 @@ import com.idega.util.database.ConnectionBroker;
 /** 
  * Handles the SQL logic for school report calculations.
  * <p>
- * Last modified: $Date: 2003/12/18 12:44:39 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/07 15:44:17 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.13 $
+ * @version $Revision: 1.14 $
  */
 public class ReportQuery {
 
@@ -101,6 +101,7 @@ public class ReportQuery {
 	/**
 	 * Sets the query to select number of placements for the specified study path prefix (2 chars).
 	 * @param schoolSeasonId the school season id for the placements to count
+	 * @param studyPathPrefix the two letter study path prefix
 	 */
 	public void setSelectCountStudyPathPlacements(int schoolSeasonId, String studyPathPrefix) {
 		sql = "select count(*) from ic_user u, ic_address a, ic_user_address ua, sch_class_member cm," +
