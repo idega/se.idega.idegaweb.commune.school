@@ -14,6 +14,8 @@ import com.idega.business.IBOSession;
  */
 public interface SchoolReportBusiness extends IBOSession {
 
+	public final static String PREFIX = "school_report.";
+	
 	public static final String FIELD_PERSONAL_ID = "personal_id";
 	public static final String FIELD_NAME = "name";
 	public static final String FIELD_ADDRESS = "address";
@@ -31,7 +33,7 @@ public interface SchoolReportBusiness extends IBOSession {
 	public static final String FIELD_MESSAGE = "message";
 	public static final String FIELD_LANGUAGE_CHOICE = "language_choice";
 	
-	public ReportableCollection getGroupReport(Collection schoolGroups, Collection columnNames) throws RemoteException;
+	public ReportableCollection getGroupReport(Collection schoolGroups, Collection columnNames, String freeText) throws RemoteException;
 	public ReportableCollection getChoicesReport(Collection columnNames) throws RemoteException;
 	
 }
