@@ -1,5 +1,5 @@
 /*
- * $Id: NackaCCPlacementReportModel.java,v 1.1 2004/01/20 13:40:13 anders Exp $
+ * $Id: NackaCCPlacementReportModel.java,v 1.2 2004/01/20 15:11:18 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -16,10 +16,10 @@ import com.idega.util.IWTimestamp;
 /** 
  * Report model for child care placements in Nacka.
  * <p>
- * Last modified: $Date: 2004/01/20 13:40:13 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/20 15:11:18 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class NackaCCPlacementReportModel extends ReportModel {
 
@@ -294,7 +294,7 @@ public class NackaCCPlacementReportModel extends ReportModel {
 		int row = cell.getRow();
 		int column = cell.getColumn();
 
-		switch (cell.getColumnMethod()) {
+		switch (cell.getRowMethod()) {
 			case ROW_METHOD_PRE_SCHOOL_MANAGEMENT_PRE_SCHOOL:
 				value = getCell(1, column).getFloatValue() + getCell(2, column).getFloatValue();
 				break;

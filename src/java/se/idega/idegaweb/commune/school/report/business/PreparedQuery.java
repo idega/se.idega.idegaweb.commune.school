@@ -1,5 +1,5 @@
 /*
- * $Id: PreparedQuery.java,v 1.6 2004/01/20 13:19:16 anders Exp $
+ * $Id: PreparedQuery.java,v 1.7 2004/01/20 15:10:52 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -27,10 +27,10 @@ import com.idega.block.school.data.SchoolSeason;
 /** 
  * Handles the SQL logic for school report calculations.
  * <p>
- * Last modified: $Date: 2004/01/20 13:19:16 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/20 15:10:52 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  */
 public class PreparedQuery {
 
@@ -111,7 +111,7 @@ public class PreparedQuery {
 	 * @param schoolSeasonId the school season id for the placements to count
 	 */
 	public void setChildCarePlacements() {
-		String sql = "ca.sch_class_member_id = m.sch_class_member_id and ca.application_id = c.comm_childcare_id" +
+		String sql = "ca.sch_class_member_id = cm.sch_class_member_id and ca.application_id = c.comm_childcare_id" +
 				" and c.provider_id = s.sch_school_id" +
 				" and (ca.terminated_date is null or ca.terminated_date >= '" + _currentDate + "')" +
 				" and c.application_status in ('F', 'V') AND ca.VALID_FROM_DATE < '" + _currentDate + "'";
