@@ -8,10 +8,10 @@ import java.util.*;
 import javax.ejb.FinderException;
 
 /**
- * Last modified: $Date: 2003/01/16 12:48:11 $ by $Author: staffan $
+ * Last modified: $Date: 2003/01/16 13:48:23 $ by $Author: staffan $
  *
  * @author <a href="http://www.staffannoteberg.com">Staffan Nöteberg</a>
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.8 $
  */
 public class SchoolChoiceReminderBMPBean extends AbstractCaseBMPBean implements SchoolChoiceReminder {
     private static final String ENTITY_NAME = "sch_reminder";
@@ -22,7 +22,7 @@ public class SchoolChoiceReminderBMPBean extends AbstractCaseBMPBean implements 
 
     private static final String COLUMN_ID = ENTITY_NAME + "_id";
 	private static final String COLUMN_USER_ID = "USER_ID";
-	private static final String COLUMN_TEXT = "TEXT";
+	private static final String COLUMN_TEXT = "REMINDER_TEXT";
 	private static final String COLUMN_EVENT_DATE = "EVENT_DATE";
 	private static final String COLUMN_REMINDER_DATE = "REMINDER_DATE";
 
@@ -56,7 +56,7 @@ public class SchoolChoiceReminderBMPBean extends AbstractCaseBMPBean implements 
 		addGeneralCaseRelation();
        	addAttribute (COLUMN_USER_ID, "User", true, true, Integer.class,
                       "many-to-one", User.class);
-		addAttribute (COLUMN_TEXT, "Text", true, true, String.class, 2048);
+		addAttribute (COLUMN_TEXT, "Text", true, true, String.class, 4096);
         addAttribute (COLUMN_EVENT_DATE, "Event Date", java.sql.Date.class);
         addAttribute (COLUMN_REMINDER_DATE, "Reminder Date",
                       java.sql.Date.class);
