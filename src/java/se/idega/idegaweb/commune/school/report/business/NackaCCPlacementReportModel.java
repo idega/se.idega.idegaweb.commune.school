@@ -1,5 +1,5 @@
 /*
- * $Id: NackaCCPlacementReportModel.java,v 1.2 2004/01/20 15:11:18 anders Exp $
+ * $Id: NackaCCPlacementReportModel.java,v 1.3 2004/01/21 14:02:32 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -16,14 +16,14 @@ import com.idega.util.IWTimestamp;
 /** 
  * Report model for child care placements in Nacka.
  * <p>
- * Last modified: $Date: 2004/01/20 15:11:18 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/21 14:02:32 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class NackaCCPlacementReportModel extends ReportModel {
 
-	private final static int ROW_SIZE = 25;
+	private final static int ROW_SIZE = 22;
 	private final static int COLUMN_SIZE = 1;
 	
 	private final static int ROW_METHOD_PRE_SCHOOL_MANAGEMENT_PRE_SCHOOL = 1;
@@ -32,7 +32,6 @@ public class NackaCCPlacementReportModel extends ReportModel {
 	private final static int ROW_METHOD_PRE_SCHOOL_MANAGEMENT_FAMILY_AFTER_SCHOOL = 4;
 	private final static int ROW_METHOD_PRE_SCHOOL_MANAGEMENT_FAMILY_AFTER_SCHOOL_COMMUNE = 5;
 	private final static int ROW_METHOD_PRE_SCHOOL_MANAGEMENT_FAMILY_AFTER_SCHOOL_PRIVATE = 6;
-	private final static int ROW_METHOD_PRE_SCHOOL_MANAGEMENT_COOPERATIVE = 7;
 	
 	private final static int ROW_METHOD_SCHOOL_CHILDREN_CARE_6_AFTER_SCHOOL = 8;
 	private final static int ROW_METHOD_SCHOOL_CHILDREN_CARE_6_AFTER_SCHOOL_COMMUNE = 9;
@@ -40,7 +39,6 @@ public class NackaCCPlacementReportModel extends ReportModel {
 	private final static int ROW_METHOD_SCHOOL_CHILDREN_CARE_6_FAMILY_DAYCARE = 11;
 	private final static int ROW_METHOD_SCHOOL_CHILDREN_CARE_6_FAMILY_DAYCARE_COMMUNE = 12;
 	private final static int ROW_METHOD_SCHOOL_CHILDREN_CARE_6_FAMILY_DAYCARE_PRIVATE = 13;
-	private final static int ROW_METHOD_SCHOOL_CHILDREN_CARE_6_COOPERATIVE = 14;
 	
 	private final static int ROW_METHOD_SCHOOL_CHILDREN_CARE_7_9_AFTER_SCHOOL = 15;
 	private final static int ROW_METHOD_SCHOOL_CHILDREN_CARE_7_9_AFTER_SCHOOL_COMMUNE = 16;
@@ -48,7 +46,6 @@ public class NackaCCPlacementReportModel extends ReportModel {
 	private final static int ROW_METHOD_SCHOOL_CHILDREN_CARE_7_9_FAMILY_AFTER_SCHOOL = 18;
 	private final static int ROW_METHOD_SCHOOL_CHILDREN_CARE_7_9_FAMILY_AFTER_SCHOOL_COMMUNE = 19;
 	private final static int ROW_METHOD_SCHOOL_CHILDREN_CARE_7_9_FAMILY_AFTER_SCHOOL_PRIVATE = 20;
-	private final static int ROW_METHOD_SCHOOL_CHILDREN_CARE_7_9_COOPERATIVE = 21;
 	
 	private final static int ROW_METHOD_SUM = 22;
 	private final static int ROW_METHOD_TOTAL =23;
@@ -69,7 +66,6 @@ public class NackaCCPlacementReportModel extends ReportModel {
 
 	private final static int COMMUNE = 1;
 	private final static int PRIVATE = 2;
-	private final static int COOPERATIVE = 3;
 	
 	private final static String KEY_REPORT_TITLE = KP + "title_nacka_child_care_placements";
 
@@ -95,8 +91,7 @@ public class NackaCCPlacementReportModel extends ReportModel {
 		Header child3 = new Header(KEY_FAMILY_DAYCARE, Header.HEADERTYPE_ROW_NORMAL);
 		Header child4 = new Header(KEY_OF_WHICH_COMMUNE_MANAGEMENT, Header.HEADERTYPE_ROW_NORMAL);
 		Header child5 = new Header(KEY_OF_WHICH_PRIVATE_MANAGEMENT, Header.HEADERTYPE_ROW_NORMAL);
-		Header child6 = new Header(KEY_COOPERATIVE, Header.HEADERTYPE_ROW_NORMAL);
-		Header child7 = new Header(KEY_SUM, Header.HEADERTYPE_ROW_SUM);
+		Header child6 = new Header(KEY_SUM, Header.HEADERTYPE_ROW_SUM);
 		h.setChild(0, child0);
 		h.setChild(1, child1);
 		h.setChild(2, child2);
@@ -104,7 +99,6 @@ public class NackaCCPlacementReportModel extends ReportModel {
 		h.setChild(4, child4);
 		h.setChild(5, child5);
 		h.setChild(6, child6);
-		h.setChild(7, child7);
 		headers[0] = h;
 		
 		h = new Header(KEY_SCHOOL_CHILDREN_CARE_6_YEAR, Header.HEADERTYPE_ROW_HEADER, 8);
@@ -114,8 +108,7 @@ public class NackaCCPlacementReportModel extends ReportModel {
 		child3 = new Header(KEY_FAMILY_DAYCARE, Header.HEADERTYPE_ROW_NORMAL);
 		child4 = new Header(KEY_OF_WHICH_COMMUNE_MANAGEMENT, Header.HEADERTYPE_ROW_NORMAL);
 		child5 = new Header(KEY_OF_WHICH_PRIVATE_MANAGEMENT, Header.HEADERTYPE_ROW_NORMAL);
-		child6 = new Header(KEY_COOPERATIVE, Header.HEADERTYPE_ROW_NORMAL);
-		child7 = new Header(KEY_SUM, Header.HEADERTYPE_ROW_SUM);
+		child6 = new Header(KEY_SUM, Header.HEADERTYPE_ROW_SUM);
 		h.setChild(0, child0);
 		h.setChild(1, child1);
 		h.setChild(2, child2);
@@ -123,7 +116,6 @@ public class NackaCCPlacementReportModel extends ReportModel {
 		h.setChild(4, child4);
 		h.setChild(5, child5);
 		h.setChild(6, child6);
-		h.setChild(7, child7);
 		headers[1] = h;
 		
 		h = new Header(KEY_SCHOOL_CHILDREN_CARE_7_9_YEAR, Header.HEADERTYPE_ROW_HEADER, 8);
@@ -133,8 +125,7 @@ public class NackaCCPlacementReportModel extends ReportModel {
 		child3 = new Header(KEY_FAMILY_AFTER_SCHOOL_CENTRE, Header.HEADERTYPE_ROW_NORMAL);
 		child4 = new Header(KEY_OF_WHICH_COMMUNE_MANAGEMENT, Header.HEADERTYPE_ROW_NORMAL);
 		child5 = new Header(KEY_OF_WHICH_PRIVATE_MANAGEMENT, Header.HEADERTYPE_ROW_NORMAL);
-		child6 = new Header(KEY_COOPERATIVE, Header.HEADERTYPE_ROW_NORMAL);
-		child7 = new Header(KEY_SUM, Header.HEADERTYPE_ROW_SUM);
+		child6 = new Header(KEY_SUM, Header.HEADERTYPE_ROW_SUM);
 		h.setChild(0, child0);
 		h.setChild(1, child1);
 		h.setChild(2, child2);
@@ -142,7 +133,6 @@ public class NackaCCPlacementReportModel extends ReportModel {
 		h.setChild(4, child4);
 		h.setChild(5, child5);
 		h.setChild(6, child6);
-		h.setChild(7, child7);
 		headers[2] = h;
 
 		h = new Header(KEY_TOTAL, Header.HEADERTYPE_ROW_HEADER, 1);
@@ -208,10 +198,6 @@ public class NackaCCPlacementReportModel extends ReportModel {
 					columnMethod, rowParameter, columnParameter, Cell.CELLTYPE_NORMAL);
 			setCell(row++, column, cell);
 
-			cell = new Cell(this, row, column, ROW_METHOD_PRE_SCHOOL_MANAGEMENT_COOPERATIVE,
-					columnMethod, rowParameter, columnParameter, Cell.CELLTYPE_NORMAL);
-			setCell(row++, column, cell);
-
 			cell = new Cell(this, row, column, ROW_METHOD_SUM,
 					columnMethod, rowParameter, columnParameter, Cell.CELLTYPE_NORMAL);
 			setCell(row++, column, cell);
@@ -240,10 +226,6 @@ public class NackaCCPlacementReportModel extends ReportModel {
 					columnMethod, rowParameter, columnParameter, Cell.CELLTYPE_NORMAL);
 			setCell(row++, column, cell);
 
-			cell = new Cell(this, row, column, ROW_METHOD_SCHOOL_CHILDREN_CARE_6_COOPERATIVE,
-					columnMethod, rowParameter, columnParameter, Cell.CELLTYPE_NORMAL);
-			setCell(row++, column, cell);
-
 			cell = new Cell(this, row, column, ROW_METHOD_SUM,
 					columnMethod, rowParameter, columnParameter, Cell.CELLTYPE_NORMAL);
 			setCell(row++, column, cell);
@@ -269,10 +251,6 @@ public class NackaCCPlacementReportModel extends ReportModel {
 			setCell(row++, column, cell);
 
 			cell = new Cell(this, row, column, ROW_METHOD_SCHOOL_CHILDREN_CARE_7_9_FAMILY_AFTER_SCHOOL_PRIVATE,
-					columnMethod, rowParameter, columnParameter, Cell.CELLTYPE_NORMAL);
-			setCell(row++, column, cell);
-
-			cell = new Cell(this, row, column, ROW_METHOD_SCHOOL_CHILDREN_CARE_7_9_COOPERATIVE,
 					columnMethod, rowParameter, columnParameter, Cell.CELLTYPE_NORMAL);
 			setCell(row++, column, cell);
 
@@ -313,9 +291,6 @@ public class NackaCCPlacementReportModel extends ReportModel {
 			case ROW_METHOD_PRE_SCHOOL_MANAGEMENT_FAMILY_AFTER_SCHOOL_PRIVATE:
 				value = getChildCarePlacementCount(FAMILY_DAYCARE, PRIVATE);
 				break;
-			case ROW_METHOD_PRE_SCHOOL_MANAGEMENT_COOPERATIVE:
-				value = getChildCarePlacementCount(PRE_SCHOOL_MANAGEMENT, COOPERATIVE);
-				break;
 			case ROW_METHOD_SCHOOL_CHILDREN_CARE_6_AFTER_SCHOOL:
 				value = getCell(9, column).getFloatValue() + getCell(10, column).getFloatValue();
 				break;
@@ -333,9 +308,6 @@ public class NackaCCPlacementReportModel extends ReportModel {
 				break;
 			case ROW_METHOD_SCHOOL_CHILDREN_CARE_6_FAMILY_DAYCARE_PRIVATE:
 				value = getChildCarePlacementCount(FAMILY_DAYCARE_6, PRIVATE);
-				break;
-			case ROW_METHOD_SCHOOL_CHILDREN_CARE_6_COOPERATIVE:
-				value = getChildCarePlacementCount(SCHOOL_CHILDREN_CARE_6, COOPERATIVE);
 				break;
 			case ROW_METHOD_SCHOOL_CHILDREN_CARE_7_9_AFTER_SCHOOL:
 				value = getCell(17, column).getFloatValue() + getCell(18, column).getFloatValue();
@@ -355,18 +327,15 @@ public class NackaCCPlacementReportModel extends ReportModel {
 			case ROW_METHOD_SCHOOL_CHILDREN_CARE_7_9_FAMILY_AFTER_SCHOOL_PRIVATE:
 				value = getChildCarePlacementCount(FAMILY_AFTER_SCHOOL_7_9, PRIVATE);
 				break;
-			case ROW_METHOD_SCHOOL_CHILDREN_CARE_7_9_COOPERATIVE:
-				value = getChildCarePlacementCount(SCHOOL_CHILDREN_CARE_7_9, COOPERATIVE);
-				break;
 			case ROW_METHOD_SUM:
-				for (int i = row - 7; i < row; i++) {
+				for (int i = row - 6; i < row; i++) {
 					value += getCell(i, column).getFloatValue();
 				}
 				break;
 			case ROW_METHOD_TOTAL:
 				value = getCell(7, column).getFloatValue() + 
-						getCell(15, column).getFloatValue() +
-						getCell(23, column).getFloatValue();
+						getCell(13, column).getFloatValue() +
+						getCell(20, column).getFloatValue();
 				break;
 		}
 		
@@ -451,22 +420,20 @@ public class NackaCCPlacementReportModel extends ReportModel {
 		String managementType1 = null;
 		String managementType2 = null;
 		String managementType3 = null;
+		String managementType4 = null;
 		
 		switch (managementType) {
 			case COMMUNE:
 				managementType1 = "COMMUNE";
 				managementType2 = managementType1;
 				managementType3 = managementType1;
+				managementType4 = managementType1;
 				break;
 			case PRIVATE:
 				managementType1 = "COMPANY";
 				managementType2 = "FOUNDATION";
 				managementType3 = "OTHER";
-				break;
-			case COOPERATIVE:
-				managementType1 = "COOPERATIVE_COMMUNE_LIABILITY";
-				managementType2 = managementType1;
-				managementType3 = managementType1;
+				managementType4 = "COOPERATIVE_COMMUNE_LIABILITY";
 				break;
 		}
 		
@@ -477,7 +444,7 @@ public class NackaCCPlacementReportModel extends ReportModel {
 			query.setSelectCount();
 			query.setChildCarePlacements();
 			query.setFourSchoolTypes(); // parameter 1-4
-			query.setThreeManagementTypes(); // parameter 5-7
+			query.setFourManagementTypes(); // parameter 5-8
 			query.prepare();
 			setQuery(QUERY_CHILD_CARE, query);
 		}
@@ -489,6 +456,7 @@ public class NackaCCPlacementReportModel extends ReportModel {
 		query.setString(5, managementType1);
 		query.setString(6, managementType2);
 		query.setString(7, managementType3);
+		query.setString(8, managementType4);
 		
 		return query.execute();
 	}
