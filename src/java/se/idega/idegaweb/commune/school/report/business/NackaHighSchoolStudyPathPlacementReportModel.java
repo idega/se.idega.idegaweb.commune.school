@@ -1,5 +1,5 @@
 /*
- * $Id: NackaHighSchoolStudyPathPlacementReportModel.java,v 1.6 2004/01/23 08:37:35 anders Exp $
+ * $Id: NackaHighSchoolStudyPathPlacementReportModel.java,v 1.7 2004/01/23 09:27:06 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -21,10 +21,10 @@ import com.idega.block.school.data.SchoolStudyPath;
 /** 
  * Report model for high school placements for all study paths.
  * <p>
- * Last modified: $Date: 2004/01/23 08:37:35 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/23 09:27:06 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  */
 public class NackaHighSchoolStudyPathPlacementReportModel extends ReportModel {
 
@@ -39,6 +39,7 @@ public class NackaHighSchoolStudyPathPlacementReportModel extends ReportModel {
 	private final static int COLUMN_METHOD_SUM_1_4 = 104;
 
 	private final static String QUERY_STUDY_PATH = "study_path";
+	private final static String QUERY_STUDY_PATH_YEAR = "study_path_year";
 	
 	private final static String KEY_REPORT_TITLE = KP + "title_nacka_high_school_study_path_placements";
 	
@@ -251,7 +252,7 @@ public class NackaHighSchoolStudyPathPlacementReportModel extends ReportModel {
 			throws RemoteException {
 		PreparedQuery query = null;
 		ReportBusiness rb = getReportBusiness();
-		query = getQuery(QUERY_STUDY_PATH);
+		query = getQuery(QUERY_STUDY_PATH_YEAR);
 		if (query == null) {
 			query = new PreparedQuery(getConnection());
 			query.setSelectCount();
@@ -261,7 +262,7 @@ public class NackaHighSchoolStudyPathPlacementReportModel extends ReportModel {
 			query.setSchoolYearName(); // parameter 2
 			query.setSchoolType(); // parameter 3
 			query.prepare();
-			setQuery(QUERY_STUDY_PATH, query);
+			setQuery(QUERY_STUDY_PATH_YEAR, query);
 		}
 		query.setString(1, studyPathCode);
 		query.setString(2, schoolYearName);
