@@ -502,7 +502,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 			T.setHeight(row++, 12);
 		}
 
-		T.add(getCurrentSchoolSeasonInfo(iwc), 1, row++);
+		T.add(getCurrentSchoolSeasonInfo(), 1, row++);
 		//T.setHeight(row++, 12);
 		T.add(getChildInfo(iwc, child), 1, row);
 		T.mergeCells(1, row, 3, row);
@@ -634,7 +634,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		return T;
 	}
 
-	public PresentationObject getCurrentSchoolSeasonInfo(IWContext iwc) throws RemoteException {
+	public PresentationObject getCurrentSchoolSeasonInfo() {
 		SchoolSeason season = null;
 		try {
 			season = careBuiz.getCurrentSeason();
