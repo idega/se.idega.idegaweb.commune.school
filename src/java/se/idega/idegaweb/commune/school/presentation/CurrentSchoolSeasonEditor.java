@@ -2,8 +2,10 @@ package se.idega.idegaweb.commune.school.presentation;
 
 import java.text.DateFormat;
 import java.util.Collection;
+
 import se.idega.idegaweb.commune.care.business.CareBusiness;
 import se.idega.idegaweb.commune.school.business.SchoolChoiceBusiness;
+
 import com.idega.block.school.business.SchoolBusiness;
 import com.idega.block.school.data.SchoolSeason;
 import com.idega.business.IBOLookup;
@@ -14,7 +16,6 @@ import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.Table;
 import com.idega.presentation.ui.Form;
-import com.idega.presentation.ui.HiddenInput;
 import com.idega.presentation.ui.RadioButton;
 import com.idega.presentation.ui.SubmitButton;
 import com.idega.presentation.util.TextFormat;
@@ -75,11 +76,8 @@ public class CurrentSchoolSeasonEditor extends Block {
   private void saveArea(IWContext iwc)throws java.rmi.RemoteException{
     if(iwc.isParameterSet("sch_current_season")){
       Integer New = new Integer(iwc.getParameter("new_current"));
-      Integer old  = New;
-      if(iwc.isParameterSet("old_current"))
-        old = new Integer(iwc.getParameter("old_current"));
       if(iwc.getParameter("sch_current_season").equals("true")){
-        socBean.createCurrentSchoolSeason(New,old);
+        socBean.setCurrentSchoolSeason(New);
       }
     }
   }
@@ -93,8 +91,6 @@ public class CurrentSchoolSeasonEditor extends Block {
     try{
       SchoolSeasons = sabBean.findAllSchoolSeasons();
       current = careBean.getCurrentSeason();
-      T.add(new HiddenInput("old_current",current.getPrimaryKey().toString()));
-
     }
     catch(java.rmi.RemoteException rex){
 
