@@ -1,5 +1,5 @@
 /*
- * $Id: ReportBusinessBean.java,v 1.24 2004/01/20 10:22:06 anders Exp $
+ * $Id: ReportBusinessBean.java,v 1.25 2004/01/20 11:09:17 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -29,10 +29,10 @@ import com.idega.block.school.data.SchoolStudyPathHome;
 /** 
  * Business logic for school reports.
  * <p>
- * Last modified: $Date: 2004/01/20 10:22:06 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/20 11:09:17 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.24 $
+ * @version $Revision: 1.25 $
  */
 public class ReportBusinessBean extends com.idega.business.IBOServiceBean implements ReportBusiness  {
 
@@ -40,7 +40,16 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 	private final static int SCHOOL_TYPE_PRE_SCHOOL_CLASS = 5;
 	private final static int SCHOOL_TYPE_COMPULSORY_SCHOOL = 28;
 	private final static int SCHOOL_TYPE_HIGH_SCHOOL = 26;
-	private final static int SCHOOL_TYPE_COMPULSORY_HIGH_SCHOOL = 27;	
+	private final static int SCHOOL_TYPE_COMPULSORY_HIGH_SCHOOL = 27;
+	private final static int SCHOOL_TYPE_PRE_SCHOOL = 1;
+	private final static int SCHOOL_TYPE_FAMILY_DAYCARE = 2;
+	private final static int SCHOOL_TYPE_GENERAL_PRE_SCHOOL = 33;
+	private final static int SCHOOL_TYPE_GENERAL_FAMILY_DAYCARE = 34;
+	private final static int SCHOOL_TYPE_AFTER_SCHOOL_6 = 29;
+	private final static int SCHOOL_TYPE_FAMILY_AFTER_SCHOOL_6 = 46;
+	private final static int SCHOOL_TYPE_AFTER_SCHOOL_7_9 = 30;
+	private final static int SCHOOL_TYPE_FAMILY_AFTER_SCHOOL_7_9 = 47;
+	
 	private final static String MANAGEMENT_TYPE_COMMUNE = "COMMUNE";
 	private final static int NACKA_COMMUNE_ID = 1;
 	
@@ -455,6 +464,62 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 	 */
 	public int getCompulsoryHighSchoolTypeId() {
 		return SCHOOL_TYPE_COMPULSORY_HIGH_SCHOOL;
+	}
+
+	/**
+	 * Returns the id for school type pre school.
+	 */
+	public int getPreSchoolTypeId() {
+		return SCHOOL_TYPE_PRE_SCHOOL;
+	}
+
+	/**
+	 * Returns the id for school type family daycare.
+	 */
+	public int getFamilyDayCareSchoolTypeId() {
+		return SCHOOL_TYPE_FAMILY_DAYCARE;
+	}
+	
+	/**
+	 * Returns the id for school type general pre school.
+	 */
+	public int getGeneralPreSchoolTypeId() {
+		return SCHOOL_TYPE_GENERAL_PRE_SCHOOL;
+	}
+
+	/**
+	 * Returns the id for school type family daycare.
+	 */
+	public int getGeneralFamilyDaycareSchoolTypeId() {
+		return SCHOOL_TYPE_GENERAL_FAMILY_DAYCARE;
+	}
+	
+	/**
+	 * Returns the id for school type after school 6 years children.
+	 */
+	public int getAfterSchool6TypeId() {
+		return SCHOOL_TYPE_AFTER_SCHOOL_6;
+	}
+
+	/**
+	 * Returns the id for school type family after school 6 years children.
+	 */
+	public int getFamilyAfterSchool6TypeId() {
+		return SCHOOL_TYPE_FAMILY_AFTER_SCHOOL_6;
+	}
+	
+	/**
+	 * Returns the id for school type after school 7-9 years children.
+	 */
+	public int getAfterSchool7_9TypeId() {
+		return SCHOOL_TYPE_AFTER_SCHOOL_7_9;
+	}
+
+	/**
+	 * Returns the id for school type family after school 7-9 years children.
+	 */
+	public int getFamilyAfterSchool7_9TypeId() {
+		return SCHOOL_TYPE_FAMILY_AFTER_SCHOOL_7_9;
 	}
 	
 	/**
