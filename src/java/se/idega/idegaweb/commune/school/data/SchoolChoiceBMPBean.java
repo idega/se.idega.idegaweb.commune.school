@@ -74,6 +74,7 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 	public final static String CASE_STATUS_PLACED = "PLAC";
 	public final static String CASE_STATUS_GROUPED = "GROU";
 	public final static String CASE_STATUS_MOVED = "FLYT";
+	public final static String CASE_STATUS_CANCELLED = "UPPS";
 
 	public static final int NAME_SORT = 1;
 	public static final int GENDER_SORT = 2;
