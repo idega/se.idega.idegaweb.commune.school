@@ -1128,7 +1128,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 			// Add school years for school type "Grundskola"			
 			SchoolType elemSch = schCommBiz.getSchoolBusiness().getSchoolTypeHome()
 																	.findByTypeKey("sch_type.school_type_grundskola");
-			int elemID = ((Integer) elemSch.getPrimaryKey()).intValue();;
+			int elemID = ((Integer) elemSch.getPrimaryKey()).intValue();
 			tmpVec = schCommBiz.getSchoolBusiness().findAllSchoolYearsBySchoolType(elemID);
 			for (Iterator iter = tmpVec.iterator(); iter.hasNext();) {
 				SchoolYear element = (SchoolYear) iter.next();
