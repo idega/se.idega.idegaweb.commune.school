@@ -15,6 +15,8 @@ import se.cubecon.bun24.viewpoint.business.ViewpointBusiness;
 import se.cubecon.bun24.viewpoint.data.Viewpoint;
 import se.cubecon.bun24.viewpoint.presentation.ViewpointForm;
 import se.idega.idegaweb.commune.business.CommuneCaseBusiness;
+import se.idega.idegaweb.commune.childcare.data.AfterSchoolChoice;
+import se.idega.idegaweb.commune.childcare.data.AfterSchoolChoiceBMPBean;
 
 import com.idega.block.process.business.CaseBusiness;
 import com.idega.block.process.data.Case;
@@ -49,6 +51,7 @@ public class UserCases extends CommuneBlock {
 	private int reminderPageId = -1;
 
 	private boolean _showName = false;
+	private boolean _showStatusAfterschoolCare = true;
 
 	private int _startCase = -1;
 	private int _numberOfCases = 10;
@@ -213,6 +216,8 @@ public class UserCases extends CommuneBlock {
 		Text caseNumber = getSmallText(useCase.getPrimaryKey().toString());
 		CaseBusiness caseBusiness = getCaseBusiness(iwc).getCaseBusiness(useCase.getCaseCode());
 		
+		
+		
 		String localizedCaseDescription = null;
 		try{
 			localizedCaseDescription = caseBusiness.getLocalizedCaseDescription(useCase, iwc.getCurrentLocale());
@@ -251,9 +256,20 @@ public class UserCases extends CommuneBlock {
 			}
 		}
 		
+		String caseCode = useCase.getCode(); //Malin
 		
-		final Text status = getSmallText(getCaseBusiness(iwc).getLocalizedCaseStatusDescription(useCase.getCaseStatus(), iwc.getCurrentLocale()));
-
+		String caseCodeAS = new AfterSchoolChoiceBMPBean().getCaseCodeKey();
+		final Text status;
+		
+			if (caseCode.equals(caseCodeAS) && !getShowStatusAfterSchoolCare()) {
+				status = getSmallText("-");
+			}
+			else {
+				status = getSmallText(getCaseBusiness(iwc).getLocalizedCaseStatusDescription(useCase.getCaseStatus(), iwc.getCurrentLocale()));
+			}
+		
+		
+			
 		if (useCase.getCode().equalsIgnoreCase(Viewpoint.CASE_CODE_KEY)) {
 			final ViewpointBusiness viewpointBusiness = (ViewpointBusiness) IBOLookup.getServiceInstance(iwc, ViewpointBusiness.class);
 			final Viewpoint viewpoint = viewpointBusiness.findViewpoint(Integer.parseInt(useCase.getPrimaryKey().toString()));
@@ -443,4 +459,17 @@ public class UserCases extends CommuneBlock {
 	public void setDateWidth(int width) {
 		setDateWidth(String.valueOf(width));
 	}
+	
+	public void setShowStatusAfterSchoolCare(boolean showStatusAfterschoolCare) {
+		_showStatusAfterschoolCare = showStatusAfterschoolCare;
+	}
+
+	/**
+	 * Returns the showStatusAfterschoolCare.
+	 * @return boolean
+	 */
+	public boolean getShowStatusAfterSchoolCare() {
+		return _showStatusAfterschoolCare;
+	}
+	
 }
