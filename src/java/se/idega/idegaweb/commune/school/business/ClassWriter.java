@@ -14,6 +14,9 @@ import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -122,12 +125,28 @@ public class ClassWriter implements MediaWritable {
 			
 	    HSSFWorkbook wb = new HSSFWorkbook();
 	    HSSFSheet sheet = wb.createSheet(schoolClass.getName());
-	
+	    sheet.setColumnWidth((short)0, (short) (30 * 256));
+	    sheet.setColumnWidth((short)1, (short) (14 * 256));
+	    sheet.setColumnWidth((short)2, (short) (30 * 256));
+	    sheet.setColumnWidth((short)3, (short) (14 * 256));
+	    HSSFFont font = wb.createFont();
+	    font.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
+	    HSSFCellStyle style = wb.createCellStyle();
+	    style.setFont(font);
+
 	    HSSFRow row = sheet.createRow((short)0);
-	    row.createCell((short)0).setCellValue("Name");
-	    row.createCell((short)1).setCellValue("PersonalID");
-	    row.createCell((short)2).setCellValue("Address");
-	    row.createCell((short)3).setCellValue("Phone");
+	    HSSFCell cell = row.createCell((short)0);
+	    cell.setCellValue("Name");
+	    cell.setCellStyle(style);
+	    cell = row.createCell((short)1);
+	    cell.setCellValue("PersonalID");
+	    cell.setCellStyle(style);
+	    cell = row.createCell((short)2);
+	    cell.setCellValue("Address");
+	    cell.setCellStyle(style);
+	    cell = row.createCell((short)3);
+	    cell.setCellValue("Phone");
+	    cell.setCellStyle(style);
 
 			User student;
 			Address address;
