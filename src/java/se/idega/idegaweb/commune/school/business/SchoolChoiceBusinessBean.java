@@ -786,7 +786,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
             final PdfPCell reminderCell = new PdfPCell (reminderPhrase);
             reminderCell.setBorder (0);
             reminderCell.setVerticalAlignment (Element.ALIGN_MIDDLE);
-            reminderCell.setMinimumHeight (mmToPoints (150));
+            reminderCell.setMinimumHeight (mmToPoints (125));
             final PdfPTable reminderText = new PdfPTable (1);
             reminderText.setWidthPercentage (100f);
             reminderText.addCell (reminderCell);
@@ -822,23 +822,20 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
                                      + " administartor."));
             }
             logoCell.setBorder (0);
+            final PdfPTable header = new PdfPTable (new float [] {1, 1});
+            header.setWidthPercentage (100f);
+            final PdfPCell defaultCell = header.getDefaultCell ();
+            defaultCell.setBorder (0);
+            defaultCell.setFixedHeight (mmToPoints (30));
+            defaultCell.setPadding (0);
+            defaultCell.setNoWrap (true);
+            defaultCell.setVerticalAlignment (Element.ALIGN_MIDDLE);
+            header.addCell (logoCell);
+            header.addCell (new Phrase (getDateChunk ()));
             for (int i = 0; i < receivers.length; i++) {
                 if (i != 0) { document.newPage (); }
-                final PdfPTable header
-                        = new PdfPTable (new float [] {1, 1});
-                header.setWidthPercentage (100f);
-                final PdfPCell defaultCell = header.getDefaultCell ();
-                defaultCell.setBorder (0);
-                defaultCell.setFixedHeight (mmToPoints (30));
-                defaultCell.setPadding (0);
-                defaultCell.setNoWrap (true);
-                defaultCell.setVerticalAlignment (Element.ALIGN_MIDDLE);
-                header.addCell (logoCell);
-                header.addCell (new Phrase (getDateChunk ()));
-                header.addCell (emptyCell);
-                header.addCell (new Phrase (getReceiverChunk (receivers [i])));
-                header.addCell (emptyCell);
                 document.add (header);
+                document.add (getAddressTable (receivers [i]));
                 document.add (reminderText);
                 document.add (spaceTable);
                 final PdfContentByte cb = writer.getDirectContent();
@@ -998,6 +995,21 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
         return ids;        
     }
 
+    private static PdfPTable getAddressTable
+        (final SchoolChoiceReminderReceiver receiver) {
+        final PdfPTable address = new PdfPTable (new float [] {1, 1});
+        address.setWidthPercentage (100f);
+        final PdfPCell defaultCell = address.getDefaultCell ();
+        defaultCell.setBorder (0);
+        defaultCell.setFixedHeight (mmToPoints (55));
+        defaultCell.setPadding (0);
+        defaultCell.setNoWrap (true);
+        defaultCell.setVerticalAlignment (Element.ALIGN_MIDDLE);
+        address.addCell (new Phrase (""));
+        address.addCell (new Phrase (getReceiverChunk (receiver)));
+        return address;
+    }
+
     private static Chunk getSubjectChunk (final String rawString) {
         final int newlineIndex = rawString.indexOf ('\n');
         final Font font = FontFactory.getFont (FontFactory.HELVETICA_BOLD,
@@ -1021,7 +1033,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
         final String address = receiver.getParentName () + "\n"
                 + receiver.getStreetAddress () + "\n"
                 + receiver.getPostalAddress () + "\n"
-                + "\nVårdnadshavare för:\n" + ssn + " "
+                + "\n\n\n\n\n\n\nVårdnadshavare för:\n" + ssn + " "
                 + receiver.getStudentName ();
         return new Chunk (address, SERIF_FONT);
     }
