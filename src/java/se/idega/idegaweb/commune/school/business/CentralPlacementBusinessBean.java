@@ -171,8 +171,7 @@ public class CentralPlacementBusinessBean extends IBOServiceBean implements Cent
 					dayBeforeStamp.setAsDate();
 					if (dayBeforeStamp.isEarlierThan(latestRegDate)) {
 						throw new CentralPlacementException(KEY_ERROR_LATEST_REMOVED_DATE,
-								"End date of latest placement, cannot be earlier than its start date. " 
-								+ "Delete the latest placement or change its end date");
+								"End date of latest placement, cannot be earlier than its start date");
 					}
 				}
 				
