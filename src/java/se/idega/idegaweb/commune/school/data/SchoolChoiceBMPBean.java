@@ -171,7 +171,7 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 	public int getCurrentSchoolId() {
 		return getIntColumnValue(CURRENT_SCHOOL);
 	}
-	public School setCurrentSchool() {
+	public School getCurrentSchool() {
 		return (School) getColumnValue(CURRENT_SCHOOL);
 	}
 	public void setCurrentSchoolId(int id) {

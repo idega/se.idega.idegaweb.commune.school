@@ -46,7 +46,7 @@ public interface SchoolChoice extends com.idega.data.IDOEntity,com.idega.block.p
  public void setChildId(int p0);
  public void setChoiceOrder(int p0);
  public void setChosenSchoolId(int p0);
- public com.idega.block.school.data.School setCurrentSchool();
+ public com.idega.block.school.data.School getCurrentSchool();
  public void setCurrentSchoolId(int p0);
  public void setCustodiansAgree(boolean p0);
  public void setFreetimeInThisSchool(boolean p0);
