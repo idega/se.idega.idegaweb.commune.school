@@ -103,7 +103,7 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 		return getSchoolBusiness().findAllSchoolSeasons();	
 	}*/
 	
-	public Map getYearClassMap(Collection schoolYears, int schoolID, int seasonID, String emptyString) {
+	public Map getYearClassMap(Collection schoolYears, int schoolID, int seasonID, String emptyString, boolean showSubGroups) {
 		try {
 			SortedMap yearMap = new TreeMap(new SchoolYearComparator());
 			if (schoolYears != null) {
@@ -116,7 +116,7 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 					
 					SchoolYear year = (SchoolYear) iter.next();
 					SchoolBusiness sb = getSchoolBusiness();
-					Collection providers = sb.findSchoolClassesBySchoolAndSeasonAndYear(schoolID, seasonID, ((Integer)year.getPrimaryKey()).intValue());
+					Collection providers = sb.findSchoolClassesBySchoolAndSeasonAndYear(schoolID, seasonID, ((Integer)year.getPrimaryKey()).intValue(), showSubGroups);
 					if (providers != null) {
 						Iterator iterator = providers.iterator();
 						while (iterator.hasNext()) {
