@@ -1105,28 +1105,41 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		return null;
 		*/
 		
-		Vector schYears = null;
-		try {
-			schYears = new Vector();
-			
+		Collection tmpVec;
+		Vector schYears = null;		
+		schYears = new Vector();
+		try {	
 			// Add school years for school type "Forskola"
-			Collection tmpVec = schCommBiz.getSchoolBusiness().findAllSchoolYearsBySchoolType(5);
+			SchoolType preSch = schCommBiz.getSchoolBusiness().getSchoolTypeHome()
+																	.findByTypeKey("sch_type.school_type_forskoleklass");
+			int preID = ((Integer) preSch.getPrimaryKey()).intValue();
+			tmpVec = schCommBiz.getSchoolBusiness().findAllSchoolYearsBySchoolType(preID);
+
 			for (Iterator iter = tmpVec.iterator(); iter.hasNext();) {
 				SchoolYear element = (SchoolYear) iter.next();
 				schYears.add(element);
-			}
-			
-			// Add school years for school type "Grundskola"
-			tmpVec = schCommBiz.getSchoolBusiness().findAllSchoolYearsBySchoolType(4);
+			}			
+		} catch (Exception e) {
+			logWarning("Error loading school years for school type pre school class");
+			log(e);
+		}
+		
+		try {
+			// Add school years for school type "Grundskola"			
+			SchoolType elemSch = schCommBiz.getSchoolBusiness().getSchoolTypeHome()
+																	.findByTypeKey("sch_type.school_type_grundskola");
+			int elemID = ((Integer) elemSch.getPrimaryKey()).intValue();;
+			tmpVec = schCommBiz.getSchoolBusiness().findAllSchoolYearsBySchoolType(elemID);
 			for (Iterator iter = tmpVec.iterator(); iter.hasNext();) {
 				SchoolYear element = (SchoolYear) iter.next();
 				schYears.add(element);				
 			}
-			
-			
-			return schYears;
 		}
-		catch (Exception e) {}
+		catch (Exception e) {
+			logWarning("Error loading school years for school type elementary school");
+			log(e);
+			
+		}
 		
 		return schYears;
 	}
