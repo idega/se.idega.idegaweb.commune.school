@@ -727,8 +727,9 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
         try {
             final SchoolStudyPathHome home = (SchoolStudyPathHome)
                     IDOLookup.getHome(SchoolStudyPath.class);
-            final Integer studyPathId = new Integer (student.getStudyPathId ());
-            return home.findByPrimaryKey (studyPathId);
+            final int studyPathId = student.getStudyPathId ();
+            return 0 < studyPathId
+                    ? home.findByPrimaryKey (new Integer (studyPathId)) : null;
         } catch (FinderException e) {
             return null;
         } catch (IDOLookupException e) {
