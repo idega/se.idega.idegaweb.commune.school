@@ -486,7 +486,7 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 	public int ejbHomeGetNumberOfUnHandledMoves(int seasonID) throws IDOException {
 		StringBuffer sql = new StringBuffer("select count(*) from " +			"proc_case p, proc_case_log l, comm_sch_choice c " +			"where " +			"p.proc_case_id = l.case_id and " +			"p.proc_case_id = c.comm_sch_choice_id and " +			"l.case_status_before = 'FLYT' and " +			"c.school_season_id =" + seasonID);			return super.idoGetNumberOfRecords(sql.toString());
 	}
-
+	
 	public Collection ejbFindByChildAndSeason(int childID, int seasonID, String[] notInStatuses) throws javax.ejb.FinderException {
 		IDOQuery sql = idoQuery();
 		sql.appendSelectAllFrom(this).append(" sc, ").append("PROC_CASE pc ");
@@ -665,6 +665,13 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 
 	public int ejbHomeGetCount(int schoolID, int seasonID, int gradeYear, int[] choiceOrder, String[] validStatuses, String searchStringForUser) throws IDOException {
 		IDOQuery query = getIDOQuery(schoolID, seasonID, gradeYear, choiceOrder, validStatuses, searchStringForUser, true, false, -1);
+		return this.idoGetNumberOfRecords(query);
+	}
+	
+	public int ejbHomeGetCountOutsideInterval(int schoolID, int seasonID, int gradeYear, int[] choiceOrder, String[] validStatuses, String searchStringForUser, Date from, Date to) throws IDOException {
+		IDOQuery query = getIDOQuery(schoolID, seasonID, gradeYear, choiceOrder, validStatuses, searchStringForUser, true, false, -1);
+		query.appendAnd().appendLeftParenthesis().append(SCHOOLCHOICEDATE).appendLessThanSign().appendWithinSingleQuotes(from)
+		.appendOr().append(SCHOOLCHOICEDATE).appendGreaterThanSign().appendWithinSingleQuotes(to).appendRightParenthesis();
 		return this.idoGetNumberOfRecords(query);
 	}
 
