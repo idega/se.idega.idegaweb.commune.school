@@ -1,5 +1,5 @@
 /*
- * $Id: SchoolReports.java,v 1.36 2004/05/10 14:37:59 anders Exp $
+ * $Id: SchoolReports.java,v 1.37 2004/09/08 09:17:54 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -48,17 +48,16 @@ import com.idega.presentation.text.Break;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.ui.DropdownMenu;
 import com.idega.presentation.ui.Form;
-import com.idega.presentation.ui.GenericButton;
 import com.idega.presentation.ui.HiddenInput;
 import com.idega.presentation.ui.SubmitButton;
 
 /** 
  * This block handles selecting and presenting school reports.
  * <p>
- * Last modified: $Date: 2004/05/10 14:37:59 $ by $Author: anders $
+ * Last modified: $Date: 2004/09/08 09:17:54 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.36 $
+ * @version $Revision: 1.37 $
  */
 public class SchoolReports extends CommuneBlock {
 
@@ -77,7 +76,7 @@ public class SchoolReports extends CommuneBlock {
 	private final static String KEY_REPORT_SELECTOR_TITLE = KP + "select_report";
 	private final static String KEY_CREATE_REPORT = KP + "create_report";
 	private final static String KEY_NO_REPORT_SELECTED = KP + "no_report_selected";
-	private final static String KEY_FOR_PRINTING = KP + "for_printing";	
+//	private final static String KEY_FOR_PRINTING = KP + "for_printing";	
 	private final static String KEY_PDF = KP + "pdf";	
 	private final static String KEY_EXCEL = KP + "excel";	
 	private final static String KEY_BACK = KP + "back";	
@@ -260,18 +259,18 @@ public class SchoolReports extends CommuneBlock {
 		}
 		Class reportModelClass = reportModelClasses[Integer.parseInt(reportIndex)];
 
-		GenericButton button = new GenericButton("", localize(KEY_FOR_PRINTING, "For printing"));
-		button = getButton(button);
-		button.setWindowToOpen(ReportWindow.class);
-		table.add(button, 1, 1);
+//		GenericButton button = new GenericButton("", localize(KEY_FOR_PRINTING, "For printing"));
+//		button = getButton(button);
+//		button.setWindowToOpen(ReportWindow.class);
+//		table.add(button, 1, 1);
 		
 		Form form = new Form();
 		SubmitButton pdfButton = new SubmitButton(PARAMETER_CREATE_PDF, localize(KEY_PDF, "PDF"));
 		pdfButton = (SubmitButton) getButton(pdfButton);
-		table.add(pdfButton, 2, 1);
+		table.add(pdfButton, 1, 1);
 		SubmitButton xlsButton = new SubmitButton(PARAMETER_CREATE_EXCEL, localize(KEY_EXCEL, "Excel"));
 		xlsButton = (SubmitButton) getButton(xlsButton);
-		table.add(xlsButton, 3, 1);
+		table.add(xlsButton, 2, 1);
 		form.add(table);
 		HiddenInput reportClassName = new HiddenInput(PARAMETER_REPORT_CLASS_NAME, reportModelClass.getName());
 		form.add(reportClassName);		
