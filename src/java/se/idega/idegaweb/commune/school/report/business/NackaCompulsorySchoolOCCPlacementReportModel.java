@@ -1,5 +1,5 @@
 /*
- * $Id: NackaCompulsorySchoolOCCPlacementReportModel.java,v 1.1 2004/01/09 08:59:39 anders Exp $
+ * $Id: NackaCompulsorySchoolOCCPlacementReportModel.java,v 1.2 2004/01/12 13:43:59 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -19,10 +19,10 @@ import com.idega.block.school.data.SchoolArea;
 /** 
  * Report model for placements in Nacka compulsory schools for students in other communes.
  * <p>
- * Last modified: $Date: 2004/01/09 08:59:39 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/12 13:43:59 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class NackaCompulsorySchoolOCCPlacementReportModel extends ReportModel {
 
@@ -314,7 +314,7 @@ public class NackaCompulsorySchoolOCCPlacementReportModel extends ReportModel {
 					break;
 				case COLUMN_METHOD_TOTAL_1_10:
 					value = getCell(cell.getRow(), 3).getFloatValue() +
-							getCell(cell.getRow(), 4).getFloatValue() +
+							getCell(cell.getRow(), 7).getFloatValue() +
 							getCell(cell.getRow(), 12).getFloatValue();
 					break;
 			}
