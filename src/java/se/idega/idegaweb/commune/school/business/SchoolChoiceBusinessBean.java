@@ -6,11 +6,11 @@ import is.idega.idegaweb.member.business.NoCustodianFound;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.rmi.RemoteException;
+import java.sql.Date;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
-import java.sql.Date;
 import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -49,10 +49,11 @@ import com.idega.block.school.data.SchoolUser;
 import com.idega.block.school.data.SchoolYear;
 import com.idega.block.school.data.SchoolYearHome;
 import com.idega.business.IBORuntimeException;
+import com.idega.core.contact.data.Phone;
 import com.idega.core.file.data.ICFile;
 import com.idega.core.file.data.ICFileHome;
-import com.idega.core.contact.data.Phone;
 import com.idega.data.IDOCreateException;
+import com.idega.data.IDOEntity;
 import com.idega.data.IDOException;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOStoreException;
@@ -521,6 +522,8 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 						User parent = (User) iter.next();
 						if (!getUserBusiness().haveSameAddress(parent, appParent)) {
 							getMessageBusiness().createUserMessage(application, parent, subject, MessageFormat.format(body, arguments), true);
+						} else if (!parent.equals((IDOEntity)appParent)){
+							getMessageBusiness().createUserMessage(application, parent, subject, MessageFormat.format(body, arguments), false);
 						}
 					}
 				}

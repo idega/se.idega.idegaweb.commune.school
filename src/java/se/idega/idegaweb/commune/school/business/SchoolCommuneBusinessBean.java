@@ -45,6 +45,7 @@ import com.idega.business.IBOLookup;
 import com.idega.core.contact.data.Phone;
 import com.idega.core.location.data.Address;
 import com.idega.core.location.data.PostalCode;
+import com.idega.data.IDOEntity;
 import com.idega.data.IDOEntityDefinition;
 import com.idega.data.IDOException;
 import com.idega.data.IDOLookup;
@@ -1043,6 +1044,8 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 						User parent = (User) iter.next();
 						if (!getUserBusiness().haveSameAddress(parent, appParent)) {
 							getMessageBusiness().createUserMessage(choice, parent, subject, MessageFormat.format(body, arguments), true);
+						} else if (!parent.equals((IDOEntity)appParent)) {
+							getMessageBusiness().createUserMessage(choice, parent, subject, MessageFormat.format(body, arguments), false);
 						}
 					}
 				}
