@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Vector;
 
 import se.idega.idegaweb.commune.presentation.CommuneBlock;
+import se.idega.idegaweb.commune.school.business.SchoolClassWriter;
 import se.idega.idegaweb.commune.school.business.SchoolCommuneBusiness;
 import se.idega.idegaweb.commune.school.business.SchoolCommuneSession;
 
@@ -18,10 +19,14 @@ import com.idega.block.school.data.SchoolSeason;
 import com.idega.block.school.data.SchoolYear;
 import com.idega.business.IBOLookup;
 import com.idega.idegaweb.IWApplicationContext;
+import com.idega.idegaweb.IWMainApplication;
 import com.idega.presentation.IWContext;
+import com.idega.presentation.Image;
 import com.idega.presentation.Table;
+import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.DropdownMenu;
+import com.idega.presentation.ui.Window;
 /**
  * @author Laddi
  *
@@ -216,6 +221,31 @@ public abstract class SchoolCommuneBlock extends CommuneBlock {
 		return (DropdownMenu) getStyledInterface(menu);	
 	}
 		
+	public Link getPDFLink(Class classToUse,Image image) throws RemoteException {
+		Link link = new Link(image);
+		link.setWindow(getFileWindow());
+		link.addParameter(SchoolClassWriter.prmPrintType, SchoolClassWriter.PDF);
+		link.addParameter(SchoolClassWriter.PRM_WRITABLE_CLASS, IWMainApplication.getEncryptedClassName(classToUse));
+		return link;
+	}
+
+	public Link getXLSLink(Class classToUse,Image image) throws RemoteException {
+		Link link = new Link(image);
+		link.setWindow(getFileWindow());
+		link.addParameter(SchoolClassWriter.prmPrintType, SchoolClassWriter.XLS);
+		link.addParameter(SchoolClassWriter.PRM_WRITABLE_CLASS, IWMainApplication.getEncryptedClassName(classToUse));
+		return link;
+	}
+
+	public Window getFileWindow() {
+		Window w = new Window(localize("school.class", "School class"), getIWApplicationContext().getApplication().getMediaServletURI());
+		w.setResizable(true);
+		w.setMenubar(true);
+		w.setHeight(400);
+		w.setWidth(500);
+		return w;
+	}
+
 	private SchoolCommuneBusiness getSchoolCommuneBusiness(IWContext iwc) throws RemoteException {
 		return (SchoolCommuneBusiness) IBOLookup.getServiceInstance(iwc, SchoolCommuneBusiness.class);	
 	}

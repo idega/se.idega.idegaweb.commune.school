@@ -13,6 +13,7 @@ import com.idega.block.school.data.SchoolClassMember;
 import com.idega.core.data.Address;
 import com.idega.user.business.UserBusiness;
 import com.idega.user.data.User;
+import com.idega.util.LocaleUtil;
 
 /**
  * @author laddi
@@ -51,7 +52,10 @@ public class SchoolChoiceComparator implements Comparator {
 	 * @see java.util.Comparator#compare(Object, Object)
 	 */
 	public int compare(Object o1, Object o2) {
-		collator = Collator.getInstance(locale);
+		if (locale != null)
+			collator = Collator.getInstance(locale);
+		else
+			collator = Collator.getInstance(LocaleUtil.getSwedishLocale());
 		int result = 0;
 		
     try {
