@@ -65,7 +65,7 @@ public class SchoolChoiceMessagePdfHandler implements MessagePdfHandler,BundleRe
 		
 		if(CODE_PRELIMINARY.equals(code)){
 			createPreliminaryContent(dpc,code);
-		}
+		}/*
 		else if(CODE_APPLYING_SINGLEPARENT_APPLICATION_NEW.equals(code)){
 			createApplyingSeparateParentApplicationContent(dpc,code);
 		}
@@ -89,7 +89,7 @@ public class SchoolChoiceMessagePdfHandler implements MessagePdfHandler,BundleRe
 		}
 		else if(CODE_NEW_SCHOOL_CHANGE.equals(code)){
 			createNewHeadmasterContent(dpc,code);
-		}
+		}*/
 		else{
 			createDefaultContent(dpc);
 		}
@@ -100,7 +100,7 @@ public class SchoolChoiceMessagePdfHandler implements MessagePdfHandler,BundleRe
 		createContent( dpc, getHandlerCode()+"_"+code+"_letter.xml");
 	}
 	
-	private void createApplyingSeparateParentApplicationContent(DocumentPrintContext dpc,String code)throws ContentCreationException{
+	/*private void createApplyingSeparateParentApplicationContent(DocumentPrintContext dpc,String code)throws ContentCreationException{
 		createContent( dpc, getHandlerCode()+"_"+code+"_letter.xml");
 	}
 	
@@ -130,7 +130,7 @@ public class SchoolChoiceMessagePdfHandler implements MessagePdfHandler,BundleRe
 	
 	private void createChildSelfChangeContent(DocumentPrintContext dpc,String code)throws ContentCreationException{
 		createContent( dpc, getHandlerCode()+"_"+code+"_letter.xml");
-	}
+	}*/
 	
 	private void createDefaultContent(DocumentPrintContext dpc)throws ContentCreationException{
 		createContent(dpc,"default_letter.xml");
