@@ -50,10 +50,10 @@ import com.idega.user.data.User;
  * and entity ejb classes in {@link se.idega.idegaweb.commune.school.data}.
  * <p>
  * <p>
- * Last modified: $Date: 2003/09/22 02:12:03 $ by $Author: tryggvil $
+ * Last modified: $Date: 2003/09/22 13:52:23 $ by $Author: laddi $
  *
  * @author <a href="http://www.staffannoteberg.com">Staffan Nöteberg</a>
- * @version $Revision: 1.32 $
+ * @version $Revision: 1.33 $
  * @see javax.ejb
  */
 public class SchoolChoiceReminderView extends CommuneBlock {
@@ -139,7 +139,7 @@ public class SchoolChoiceReminderView extends CommuneBlock {
         } else if (action != null && action.equals (DELETE_KEY)) {
             deleteReminder (iwc);
 		} else if (action != null && action.equals (SCHOOL_SEASON_KEY)) {
-			selectSeason (iwc);
+			selectSeason ();
 		} else if (action != null && action.equals (SCHOOL_YEAR_KEY)) {
 			selectSchoolYear (iwc);
         } else {
@@ -172,7 +172,7 @@ public class SchoolChoiceReminderView extends CommuneBlock {
 	/**
 	 * @param iwc
 	 */
-	private void selectSeason(IWContext iwc)
+	private void selectSeason()
 	{
 		Form form = new Form();
 		add(form);
@@ -182,7 +182,7 @@ public class SchoolChoiceReminderView extends CommuneBlock {
 		
 
 	
-		DropdownMenu dropSeasons = getSchoolSeasonsInput(iwc);
+		DropdownMenu dropSeasons = getSchoolSeasonsInput();
 		InputContainer dropSeasonsCont = this.getInputContainer(this.SCHOOL_SEASON_KEY,"Select season:",dropSeasons);
 		form.maintainParameter(CASE_ID_KEY);
 		t.add(dropSeasonsCont,1,1);
@@ -194,7 +194,7 @@ public class SchoolChoiceReminderView extends CommuneBlock {
 	 * @param iwc
 	 * @return
 	 */
-	private DropdownMenu getSchoolSeasonsInput(IWContext iwc)
+	private DropdownMenu getSchoolSeasonsInput()
 	{
 		DropdownMenu drop = new DropdownMenu(this.PARAM_SCHOOL_SEASON_ID);
 		try{
@@ -505,7 +505,7 @@ public class SchoolChoiceReminderView extends CommuneBlock {
                         row++);
         try {
         	SchoolYear[] years = getSchoolYears(iwc);
-        	SchoolSeason season = getSchoolSeason(iwc);;
+        	SchoolSeason season = getSchoolSeason(iwc);
             //final SchoolChoiceReminder reminder = business.findSchoolChoiceReminder (reminderId);
             final SchoolChoiceReminderReceiver [] receivers
                     = business.findAllStudentsThatMustDoSchoolChoiceButHaveNot(season,years);
