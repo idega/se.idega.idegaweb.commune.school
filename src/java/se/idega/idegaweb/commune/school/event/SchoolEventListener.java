@@ -50,9 +50,6 @@ public class SchoolEventListener implements IWEventListener {
 			if (iwc.isParameterSet(session.getParameterSchoolClassID()))
 				_schoolClassID = Integer.parseInt(iwc.getParameter(session.getParameterSchoolClassID()));
 			
-			if ( _schoolSeasonID == -1 )
-				_schoolSeasonID = getSchoolCommuneBusiness(iwc).getCurrentSchoolSeasonID();
-			
 			if ( _schoolClassID != -1 && _schoolYearID != -1 )
 				validateSchoolClass(iwc);
 				
