@@ -20,10 +20,10 @@ import se.idega.idegaweb.commune.school.data.SchoolChoiceReminder;
  * and entity ejb classes in {@link se.idega.idegaweb.commune.school.data}.
  * <p>
  * <p>
- * Last modified: $Date: 2003/01/09 13:06:13 $ by $Author: staffan $
+ * Last modified: $Date: 2003/01/16 12:48:11 $ by $Author: staffan $
  *
  * @author <a href="http://www.staffannoteberg.com">Staffan Nöteberg</a>
- * @version $Revision: 1.20 $
+ * @version $Revision: 1.21 $
  * @see javax.ejb
  */
 public class SchoolChoiceReminderView extends CommuneBlock {
@@ -57,10 +57,10 @@ public class SchoolChoiceReminderView extends CommuneBlock {
     private static final String REMINDER_DATE_KEY = PREFIX + "reminder_date";
     private static final String REMINDER_DAYS_BEFORE_DEFAULT = "Antal dagar innan utskick som påminnelse ska visas som ärende";
     private static final String REMINDER_DAYS_BEFORE_KEY = PREFIX + "reminder_days_before";
-    private static final String REMINDER_TEXT1_DEFAULT = "Text 1 som kommer från Kristina Lundin.";
-    private static final String REMINDER_TEXT1_KEY = PREFIX + "reminder_text1";
-    private static final String REMINDER_TEXT2_DEFAULT = "Text 2 som kommer från Kristina Lundin.";
-    private static final String REMINDER_TEXT2_KEY = PREFIX + "reminder_text2";
+    private static final String REMINDER_TEXT_1_DEFAULT = "Påminnelse - skolvalsperioden är snart slut!\n\n\nSkolvalsperioden är 13-31 januari. Vi har noterat att du ännu inte gjort ditt skolval.\n\nAll information om skolvalet finns på www.nacka24.nacka.se där du också ansöker om ditt personliga medborgarkonto.\n\nOm du har frågor angående skolvalet kontakta Kundvalsgruppen på telefon 718 80 00 eller e-post kundvalsgruppen@nacka.se";
+    private static final String REMINDER_TEXT_1_KEY = PREFIX + "reminder_text_1";
+    private static final String REMINDER_TEXT_2_DEFAULT = "Påminnelse - sista möjligheten att välja skola!\n\n\nSkolvalsperioden är nu slut och skolorna påbörjar inom kort arbetet med att placera de barn som valt skola. Utnyttja möjligheten att själv göra ett aktivt val för ditt barn!\n\nDitt val måste vara gjort på www.nacka24.nacka.se senast fredagen den 7 februari kl. 24.00.\n\nOm du ej själv gör ett aktivt skolval för ditt barn får barnet en skolplacering på närmaste skola som har ledig plats.\n\nOm du har frågor angående skolvalet kontakta Kundvalsgruppen på telefon 718 80 00 eller e-post kundvalsgruppen@nacka.se";
+    private static final String REMINDER_TEXT_2_KEY = PREFIX + "reminder_text_2";
     private static final String REMINDER_TEXT_DEFAULT = "Påminnelsetext";
     private static final String REMINDER_TEXT_KEY = PREFIX + "reminder_text";
     private static final String SCHOOLCHOICEREMINDER_DEFAULT = "Påminnelse om skolval";
@@ -149,10 +149,10 @@ public class SchoolChoiceReminderView extends CommuneBlock {
         table.setHeight (row++, 4);
 		table.add(getSmallHeader (localize(REMINDER_TEXT_KEY, REMINDER_TEXT_DEFAULT)), 1, row);
 		final RadioGroup radioGroup = new RadioGroup (REMINDER_TEXT_KEY);
-        radioGroup.addRadioButton (localize (REMINDER_TEXT1_KEY, REMINDER_TEXT1_DEFAULT));
-        radioGroup.addRadioButton (localize (REMINDER_TEXT2_KEY, REMINDER_TEXT2_DEFAULT));
+        radioGroup.addRadioButton (localize (REMINDER_TEXT_1_KEY, REMINDER_TEXT_1_DEFAULT));
+        radioGroup.addRadioButton (localize (REMINDER_TEXT_2_KEY, REMINDER_TEXT_2_DEFAULT));
         radioGroup.addRadioButton (localize (CUSTOM_TEXT_KEY, CUSTOM_TEXT_DEFAULT));
-        radioGroup.setSelected (localize (REMINDER_TEXT1_KEY, REMINDER_TEXT1_DEFAULT));
+        radioGroup.setSelected (localize (REMINDER_TEXT_1_KEY, REMINDER_TEXT_1_DEFAULT));
 		table.add (radioGroup, 1, row++);
 		final TextArea textArea = new TextArea (CUSTOM_TEXT_KEY);
 		textArea.setColumns (40);

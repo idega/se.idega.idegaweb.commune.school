@@ -8,10 +8,10 @@ import java.util.*;
 import javax.ejb.FinderException;
 
 /**
- * Last modified: $Date: 2003/01/09 13:06:13 $ by $Author: staffan $
+ * Last modified: $Date: 2003/01/16 12:48:11 $ by $Author: staffan $
  *
  * @author <a href="http://www.staffannoteberg.com">Staffan Nöteberg</a>
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  */
 public class SchoolChoiceReminderBMPBean extends AbstractCaseBMPBean implements SchoolChoiceReminder {
     private static final String ENTITY_NAME = "sch_reminder";
@@ -56,40 +56,49 @@ public class SchoolChoiceReminderBMPBean extends AbstractCaseBMPBean implements 
 		addGeneralCaseRelation();
        	addAttribute (COLUMN_USER_ID, "User", true, true, Integer.class,
                       "many-to-one", User.class);
-		addAttribute (COLUMN_TEXT, "Text", String.class);
+		addAttribute (COLUMN_TEXT, "Text", true, true, String.class, 2048);
         addAttribute (COLUMN_EVENT_DATE, "Event Date", java.sql.Date.class);
         addAttribute (COLUMN_REMINDER_DATE, "Reminder Date",
                       java.sql.Date.class);
     }
 
     public String getText () {
-        return getStringColumnValue (COLUMN_TEXT);
+        final String text = getStringColumnValue (COLUMN_TEXT);
+        return text != null ? text : "";
     }
 
     public java.util.Date getEventDate () {
-        return (java.util.Date) getColumnValue (COLUMN_EVENT_DATE);
+        final java.util.Date eventDate
+                = (java.util.Date) getColumnValue (COLUMN_EVENT_DATE);
+        return eventDate != null ? eventDate : new java.util.Date ();
     }
 
     public java.util.Date getReminderDate () {
-        return (java.util.Date) getColumnValue (COLUMN_REMINDER_DATE);
+        final java.util.Date reminderDate
+                = (java.util.Date) getColumnValue (COLUMN_REMINDER_DATE);
+        return reminderDate != null ? reminderDate : new java.util.Date ();
     }
 
     public int getUserId () {
-        return getIntegerColumnValue (COLUMN_USER_ID). intValue ();
+        final Integer userId = getIntegerColumnValue (COLUMN_USER_ID);
+        return userId != null ? userId.intValue () : -1;
     }
 
 
     public void setText (final String text) {
-        setColumn (COLUMN_TEXT, text);
+        setColumn (COLUMN_TEXT, text != null ? text : "");
     }
 
     public void setEventDate (final java.util.Date eventDate) {
-        setColumn (COLUMN_EVENT_DATE, new java.sql.Date (eventDate.getTime ()));
+        setColumn (COLUMN_EVENT_DATE, new java.sql.Date
+                   (eventDate != null ? eventDate.getTime ()
+                    : new java.util.Date ().getTime ()));
     }
     
     public void setReminderDate (final java.util.Date reminderDate) {
-        setColumn (COLUMN_REMINDER_DATE,
-                   new java.sql.Date (reminderDate.getTime ()));
+        setColumn (COLUMN_REMINDER_DATE, new java.sql.Date
+                   (reminderDate != null ? reminderDate.getTime ()
+                    : new java.util.Date ().getTime ()));
     }
 
     public void setUser (final User user) throws RemoteException {
