@@ -30,6 +30,7 @@ import se.idega.idegaweb.commune.business.CommuneUserBusiness;
 import se.idega.idegaweb.commune.childcare.business.AfterSchoolBusiness;
 import se.idega.idegaweb.commune.childcare.data.AfterSchoolChoice;
 import se.idega.idegaweb.commune.message.business.MessageBusiness;
+import se.idega.idegaweb.commune.presentation.CommuneBlock;
 import se.idega.idegaweb.commune.school.data.CurrentSchoolSeason;
 import se.idega.idegaweb.commune.school.data.CurrentSchoolSeasonHome;
 import se.idega.idegaweb.commune.school.data.SchoolChoice;
@@ -58,6 +59,7 @@ import com.idega.data.IDOCreateException;
 import com.idega.data.IDOException;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOStoreException;
+import com.idega.idegaweb.IWBundle;
 import com.idega.io.MemoryFileBuffer;
 import com.idega.io.MemoryInputStream;
 import com.idega.io.MemoryOutputStream;
@@ -95,6 +97,37 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	private final static int REMINDER_FONTSIZE = 12;
 	private final static Font SERIF_FONT = FontFactory.getFont(FontFactory.TIMES, REMINDER_FONTSIZE);
 	private final static Font SANSSERIF_FONT = FontFactory.getFont(FontFactory.HELVETICA, REMINDER_FONTSIZE - 1);
+
+	private Font defaultParagraphFont;
+	private Font defaultTextFont;
+
+	
+		/**
+		 * Method getDefaultTextFont.
+		 * @return Font
+		 */
+		private Font getDefaultTextFont() {
+			if (defaultTextFont == null) {
+				defaultTextFont = new Font(Font.HELVETICA);
+				defaultTextFont.setSize(12);
+			}
+			return defaultTextFont;
+		}
+	
+		/**
+		 * Method getDefaultParagraphFont.
+		 * @return Font
+		 */
+		private Font getDefaultParagraphFont() {
+			if (defaultParagraphFont == null) {
+				defaultParagraphFont = new Font(Font.HELVETICA, 12, Font.BOLD);
+			}
+			return defaultParagraphFont;
+		}
+
+		private Font getTextFont() {
+			return getDefaultTextFont();
+		}
 
 	public String getBundleIdentifier() {
 		return se.idega.idegaweb.commune.presentation.CommuneBlock.IW_BUNDLE_IDENTIFIER;
@@ -1117,6 +1150,10 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	 */
 	public int generateReminderLetter(final int reminderId, final SchoolChoiceReminderReceiver[] receivers) throws RemoteException {
 		try {
+			Font nameFont = getDefaultParagraphFont();
+			nameFont.setSize(9);
+			Font textFont = getDefaultTextFont();
+			textFont.setSize(9);
 			final MemoryFileBuffer buffer = new MemoryFileBuffer();
 			final OutputStream outStream = new MemoryOutputStream(buffer);
 			final Document document = new Document(PageSize.A4, mmToPoints(30), mmToPoints(30), mmToPoints(0), mmToPoints(0));
@@ -1150,11 +1187,40 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 			final PdfPTable footer = new PdfPTable(new float[]{1, 1, 1.5f, 1});
 			footer.getDefaultCell().setBorder(0);
 			footer.setWidthPercentage(100f);
-			footer.addCell(new Phrase(new Chunk("Postadress:\nNacka kommun\n131 81 Nacka", SANSSERIF_FONT)));
+			////////////////////// början
+			/*footer.addCell(new Phrase(new Chunk("Postadress:\nNacka kommun\n131 81 Nacka", SANSSERIF_FONT)));
 			footer.addCell(new Phrase(new Chunk("Besöksadress:\nStadshuset\nGranitvägen 15\nNacka", SANSSERIF_FONT)));
 			footer.addCell(new Phrase(new Chunk("Tel växel:\n08-718 80 00\n" + "Hemsida:\nwww.nacka24.nacka.se", SANSSERIF_FONT)));
 			footer.addCell(new Phrase(new Chunk("Organisationsnr:\n212000-0167", SANSSERIF_FONT)));
 			final String logoPath = getIWApplicationContext().getApplication().getBundle("se.idega.idegaweb.commune").getResourcesRealPath() + "/shared/nacka_logo.jpg";
+			*////////////Slut
+			
+			///////////NYBÖRJAN
+			IWBundle iwb = getIWApplicationContext().getApplication().getBundle(CommuneBlock.IW_BUNDLE_IDENTIFIER);
+		
+			footer.addCell(new Phrase(iwb.getProperty("commune.name_mailaddr","Mail address"),nameFont));
+			footer.addCell(new Phrase(iwb.getProperty("commune.name_visitaddr","Visit address"),nameFont));
+			footer.addCell(new Phrase(iwb.getProperty("commune.name_contact","Contact"),nameFont));
+			footer.addCell(new Phrase(iwb.getProperty("commune.name_org_nr","Organizationsnr"),nameFont));
+	
+			footer.addCell(new Phrase(iwb.getProperty("commune.mail_name","Mail name"),textFont));
+			footer.addCell(new Phrase(iwb.getProperty("commune.visit_name","Visit name"),textFont));
+			footer.addCell(new Phrase(iwb.getProperty("commune.name_phone","Name phone")+"   "+iwb.getProperty("commune.office_phone","Office phone"),textFont));
+			footer.addCell(new Phrase(iwb.getProperty("commune.org_number","XXXXXX-XXXX"),textFont));
+		
+			footer.addCell(new Phrase(iwb.getProperty("commune.mail_zip","Zip code and area"),textFont));
+			footer.addCell(new Phrase(iwb.getProperty("commune.visit_streetaddr","Street and number"),textFont));
+			footer.addCell(new Phrase(iwb.getProperty("commune.website","www.some-place.com"),textFont));
+			footer.addCell(new Phrase(" ",textFont));
+		
+			footer.addCell(new Phrase(" ",textFont));
+			footer.addCell(new Phrase(iwb.getProperty("commune.visit_zip","Visist zip"),textFont));	
+			footer.addCell(new Phrase(" ",textFont));
+			footer.addCell(new Phrase(" ",textFont));
+			
+			//Image image =Image.getInstance(iwb.getResourcesRealPath()+ "/shared/commune_logo.png");
+			final String logoPath = iwb.getResourcesRealPath()+ "/shared/commune_logo.png";		
+			///////////NYSLUT
 			PdfPCell logoCell;
 			try {
 				final Image logo = Image.getInstance(logoPath);
