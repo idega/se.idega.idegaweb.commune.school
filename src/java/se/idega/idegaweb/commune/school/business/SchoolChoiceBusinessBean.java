@@ -722,8 +722,14 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
             final OutputStream outStream = new MemoryOutputStream (buffer);
             final Document document = new Document
                     (PageSize.A4, mmToPoints (30), mmToPoints (30),
-                     mmToPoints (0), mmToPoints (10));
-            PdfWriter.getInstance(document, outStream);
+                     mmToPoints (0), mmToPoints (0));
+            final PdfWriter writer = PdfWriter.getInstance(document, outStream);
+            writer.setViewerPreferences
+                    (PdfWriter.PageModeUseThumbs | PdfWriter.HideMenubar
+                     | PdfWriter.PageLayoutOneColumn |PdfWriter.FitWindow
+                     |PdfWriter.CenterWindow);
+            document.addTitle("Påminnelse " + reminderId);
+            document.addCreationDate();
             document.open();
             final SchoolChoiceReminder reminder
                     = findSchoolChoiceReminder (reminderId);
@@ -732,8 +738,32 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
             emptyCell.setNoWrap (true);
             final Calendar today = Calendar.getInstance ();
             final String date = today.get (Calendar.YEAR)
-                    + "-" + today.get (Calendar.MONTH)
+                    + "-" + (today.get (Calendar.MONTH) + 1)
                     + "-" + today.get (Calendar.DATE);
+            final Phrase reminderPhrase = new Phrase (mmToPoints (20),
+                                                      reminder.getText ());
+            final PdfPCell reminderCell = new PdfPCell (reminderPhrase);
+            reminderCell.setBorder (0);
+            reminderCell.setMinimumHeight (mmToPoints (205));
+            final PdfPTable reminderText = new PdfPTable (1);
+            reminderText.setWidthPercentage (100f);
+            reminderText.addCell (reminderCell);
+            final PdfPTable footer
+                    = new PdfPTable (new float [] {1, 1, 1.5f, 1});
+            footer.getDefaultCell ().setBorder (0);
+            footer.setWidthPercentage (100f);
+            final PdfPCell footerLine = new PdfPCell (new Phrase (""));
+            footerLine.setFixedHeight (mmToPoints (0.5f));
+            footerLine.setMinimumHeight (mmToPoints (0.5f));
+            footerLine.setColspan (4);
+            footerLine.setBorder (0);
+            footerLine.setBackgroundColor (java.awt.Color.black);
+            footer.addCell (footerLine);
+            footer.addCell ("Postadress:\nNacka Kommun\n131 81 Nacka");
+            footer.addCell ("Besöksadress:\nStadshuset\nGranitvägen 15\nNacka");
+            footer.addCell ("Tel växel:\n718 80 00\n"
+                            + "Hemsida:\nwww.nacka24.nacka.se");
+            footer.addCell ("Organisationsnr\n212000-0167");
             for (int i = 0; i < receivers.length; i++) {
                 if (i != 0) { document.newPage (); }
                 final SchoolChoiceReminderReceiver receiver = receivers [i];
@@ -743,24 +773,25 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
                 final String address = receiver.getParentName () + "\n"
                         + receiver.getStreetAddress () + "\n"
                         + receiver.getPostalAddress () + "\n"
-                        + "\nVårdnadshavare till:\n" + ssn + " "
+                        + "\nVårdnadshavare för:\n" + ssn + " "
                         + receiver.getStudentName ();
-                final PdfPTable headerTable
+                final PdfPTable header
                         = new PdfPTable (new float [] {1, 1});
-                headerTable.setWidthPercentage (100f);
-                final PdfPCell defaultCell = headerTable.getDefaultCell ();
+                header.setWidthPercentage (100f);
+                final PdfPCell defaultCell = header.getDefaultCell ();
                 defaultCell.setBorder (0);
                 defaultCell.setFixedHeight (mmToPoints (30));
                 defaultCell.setPadding (0);
                 defaultCell.setNoWrap (true);
                 defaultCell.setVerticalAlignment (Element.ALIGN_MIDDLE);
-                headerTable.addCell ("Nackalogga");
-                headerTable.addCell (date);
-                headerTable.addCell (emptyCell);
-                headerTable.addCell (address);
-                headerTable.addCell (emptyCell);
-                document.add (headerTable);
-                document.add(new Paragraph (reminder.getText ()));
+                header.addCell ("Nackalogga");
+                header.addCell (date);
+                header.addCell (emptyCell);
+                header.addCell (address);
+                header.addCell (emptyCell);
+                document.add (header);
+                document.add(reminderText);
+                document.add(footer);
             }
             document.close();
             final ICFileHome icFileHome
