@@ -453,8 +453,8 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		table.setAlignment(1, 3, Table.HORIZONTAL_ALIGN_RIGHT);
 
 		SubmitButton button = (SubmitButton) getButton(new SubmitButton("submit", localize("school_choice.ready", "Ready"))); 
-		button.setOnSubmitFunction("checkApplication", getSchoolCheckScript());
 		table.add(button, 1, 3);
+		button.setOnSubmitFunction("checkApplication", getSchoolCheckScript());
 		myForm.setToDisableOnSubmit(button, true);
 			
 		////
@@ -465,7 +465,6 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		Page p = this.getParentPage();
 		if (p != null) {
 			Script S = p.getAssociatedScript();
-			Script F = new Script();
 
 			S.addVariable("sportOrMusicSchools", "new Array('2', '3', '4')");
 			S.addFunction("getAlertIfSportsOrMusicSchool", getAlertIfSportsOrMusicSchool());
@@ -476,7 +475,6 @@ public class SchoolChoiceApplication extends CommuneBlock {
 			S.addFunction("changeFilter", getFilterScript());
 			S.addFunction("changeFilter2", getFilterScript2(iwc));
 
-			T.add(F, 1, T.getColumns());
 			if (valType > 0) {
 				Script initScript = myForm.getAssociatedFormScript();
 				if (initScript == null) {
