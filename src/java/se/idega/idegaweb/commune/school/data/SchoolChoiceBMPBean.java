@@ -630,7 +630,6 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 		sql.append(startDate);
 		sql.appendAnd ().append (SCHOOLCHOICEDATE).appendLessThanSign();
 		sql.append (new Date (dayAfterEndDate.getTimeInMillis ()));
-		System.err.println ("### sql=\n" + sql);
 		return idoGetNumberOfRecords(sql);
 	}
 
