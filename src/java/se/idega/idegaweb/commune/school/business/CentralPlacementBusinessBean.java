@@ -26,7 +26,7 @@ import com.idega.block.school.data.SchoolCategoryHome;
 import com.idega.block.school.data.SchoolClassMember;
 import com.idega.block.school.data.SchoolClassMemberHome;
 import com.idega.block.school.data.SchoolSeason;
-import com.idega.block.school.data.SchoolType;
+//import com.idega.block.school.data.SchoolType;
 import com.idega.business.IBOLookup;
 import com.idega.business.IBOServiceBean;
 import com.idega.data.IDOLookup;
@@ -63,22 +63,22 @@ public class CentralPlacementBusinessBean extends IBOServiceBean
 		Timestamp dayBeforeRegDate = null;
 		String notes = null;
 		SchoolClassMember newPlacement = null;
-		SchoolClassMember currentPlacement = null;
+		//SchoolClassMember currentPlacement = null;
 		SchoolClassMember latestPlacement = null;
 		int newPlacementID = -1;
 		
 		// Get current placement from user http session. Put there from CentralPlacementEditor
 		User pupil = (User) iwc.getSession().getAttribute(CentralPlacementEditor.SESSION_KEY_CHILD);
 		if (pupil != null) {
-			currentPlacement = getCurrentSchoolClassMembership(pupil, iwc);
+			//currentPlacement = getCurrentSchoolClassMembership(pupil, iwc);
 			latestPlacement = getLatestPlacement(iwc, pupil);			
 		}
-		Integer currID = null;
+		/*Integer currID = null;
 		if (currentPlacement != null)
 			currID = (Integer) currentPlacement.getPrimaryKey(); // test
 		Integer latestId = null;
 		if (latestPlacement != null)
-			latestId = (Integer) latestPlacement.getPrimaryKey(); // test
+			latestId = (Integer) latestPlacement.getPrimaryKey();*/ // test
 
 				
 	// *** START - Check in params ***
@@ -201,10 +201,10 @@ public class CentralPlacementBusinessBean extends IBOServiceBean
 					String [] arr = iwc.getParameterValues(CentralPlacementEditor.PARAM_RESOURCES);
 					for (int i = 0; i < arr.length; i++) {
 						int rscPK = Integer.parseInt(arr[i]);
-						ResourceClassMember rscPlace = getResourceBusiness(iwc)
+						/*ResourceClassMember rscPlace =*/ getResourceBusiness(iwc)
 											.createResourcePlacement(rscPK, newPlacementID, placementDateStr);						
-						Integer rscPlPK = (Integer) rscPlace.getPrimaryKey();
-						int intPK = rscPlPK.intValue();
+						//Integer rscPlPK = (Integer) rscPlace.getPrimaryKey();
+						//int intPK = rscPlPK.intValue();
 					}					
 				}
 				// Store newPlacement
@@ -257,7 +257,7 @@ public class CentralPlacementBusinessBean extends IBOServiceBean
 
 			final SchoolClassMember placement = getSchoolBusiness(iwc).getSchoolClassMemberHome()
 																							.findByUserAndSeason(user, season);
-			Integer PK = (Integer) placement.getPrimaryKey();
+			//Integer PK = (Integer) placement.getPrimaryKey();
 			Date removedDate = placement.getRemovedDate();
 			if (placement == null || removedDate != null)
 				return null;
