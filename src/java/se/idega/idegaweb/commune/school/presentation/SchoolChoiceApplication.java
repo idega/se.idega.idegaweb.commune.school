@@ -45,6 +45,7 @@ import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.CheckBox;
 import com.idega.presentation.ui.DataTable;
+import com.idega.presentation.ui.DateInput;
 import com.idega.presentation.ui.DropdownMenu;
 import com.idega.presentation.ui.Form;
 import com.idega.presentation.ui.HiddenInput;
@@ -133,6 +134,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	SchoolYear schoolYear = null;
 	SchoolArea schoolArea = null;
 	SchoolType schoolType = null;
+	SchoolSeason season = null;
 
 	private boolean hasPreviousSchool = false;
 	private boolean schoolChange = false;
@@ -147,6 +149,16 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	private User owner;
 	private Date choiceDate;
 	private boolean hasLanguageSelection = false;
+	private boolean _useOngoingSeason = false;
+	private String prmPlacementDate = "prm_placement_date";
+	private java.sql.Date valPlacementDate = null;
+
+	/**
+	 * @param ongoingSeason
+	 */
+	public void setUseOngoingSeason(boolean ongoingSeason) {
+		_useOngoingSeason = ongoingSeason;
+	}
 
 	public void main(IWContext iwc) throws Exception {
 		iwb = getBundle(iwc);
@@ -167,6 +179,17 @@ public class SchoolChoiceApplication extends CommuneBlock {
 				schCommBiz = (SchoolCommuneBusiness) IBOLookup.getServiceInstance(iwc, SchoolCommuneBusiness.class);
 				boolean custodiansAgree = true;
 
+				if (_useOngoingSeason) {
+					try {
+						season = schBuiz.getSchoolSeasonHome().findSeasonByDate(new IWTimestamp().getDate());
+						}
+					catch (FinderException e) {
+						season = schBuiz.getCurrentSeason();
+					}
+				}
+				else
+					season = schBuiz.getCurrentSeason();
+
 				User child = userbuiz.getUser(childId);
 				if (child != null) {
 					initSchoolChild(child);
@@ -178,8 +201,8 @@ public class SchoolChoiceApplication extends CommuneBlock {
 						saved = saveSchoolChoice();
 					}
 					else {
-						int CurrentSeasonID = ((Integer) schBuiz.getCurrentSeason().getPrimaryKey()).intValue();
-						currentChildChoices = schBuiz.getSchoolChoiceHome().findByChildAndSeason(childId, CurrentSeasonID);
+						int seasonID = ((Integer) season.getPrimaryKey()).intValue();
+						currentChildChoices = schBuiz.getSchoolChoiceHome().findByChildAndSeason(childId, seasonID);
 						if (!currentChildChoices.isEmpty()) {
 							hasChosen = true;
 							Iterator iter = currentChildChoices.iterator();
@@ -266,7 +289,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 
 	private boolean saveSchoolChoice() {
 		try {
-			schBuiz.createSchoolChoices(valCaseOwner, childId, valType, valPreSchool, valFirstSchool, valSecondSchool, valThirdSchool, valPreGrade, valMethod, -1, -1, valLanguage, valMessage, schoolChange, valSixyearCare, valAutoAssign, valCustodiansAgree, valSendCatalogue);
+			schBuiz.createSchoolChoices(valCaseOwner, childId, valType, valPreSchool, valFirstSchool, valSecondSchool, valThirdSchool, valPreGrade, valMethod, -1, -1, valLanguage, valMessage, schoolChange, valSixyearCare, valAutoAssign, valCustodiansAgree, valSendCatalogue, valPlacementDate, season);
 			return true;
 		}
 		catch (Exception ex) {
@@ -283,6 +306,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		valCustodiansAgree = iwc.isParameterSet(prmFirstSchool) ? Boolean.valueOf(iwc.getParameter(prmCustodiansAgree)).booleanValue() : false;
 		valMessage = iwc.getParameter(prmMessage);
 		valLanguage = iwc.getParameter(prmLanguage);
+		valPlacementDate = iwc.isParameterSet(prmPlacementDate) ? new IWTimestamp(iwc.getParameter(prmPlacementDate)).getDate() : null;
 		valFirstSchool = iwc.isParameterSet(prmFirstSchool) ? Integer.parseInt(iwc.getParameter(prmFirstSchool)) : -1;
 		valSecondSchool = iwc.isParameterSet(prmSecondSchool) ? Integer.parseInt(iwc.getParameter(prmSecondSchool)) : -1;
 		valThirdSchool = iwc.isParameterSet(prmThirdSchool) ? Integer.parseInt(iwc.getParameter(prmThirdSchool)) : -1;
@@ -469,7 +493,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		}
 
 		try {
-			SchoolSeason previousSeason = schCommBiz.getPreviousSchoolSeason(schBuiz.getCurrentSeason());
+			SchoolSeason previousSeason = schCommBiz.getPreviousSchoolSeason(season);
 			schoolClassMember = schBuiz.getSchoolBusiness().getSchoolClassMemberHome().findByUserAndSeason(child, previousSeason);
 			schoolClass = schBuiz.getSchoolBusiness().getSchoolClassHome().findByPrimaryKey(new Integer(schoolClassMember.getSchoolClassId()));
 			school = schBuiz.getSchool(schoolClass.getSchoolId());
@@ -768,6 +792,17 @@ public class SchoolChoiceApplication extends CommuneBlock {
 			table.add(txtLangChoice, 3, row);
 			table.mergeCells(3, row, 5, row++);
 			hasLanguageSelection = true;
+		}
+		
+		if (_useOngoingSeason) {
+			IWTimestamp stamp = new IWTimestamp();
+			DateInput date = new DateInput(prmPlacementDate);
+			date.setDate(stamp.getDate());
+			date.setEarliestPossibleDate(stamp.getDate(), iwrb.getLocalizedString("school.dates_back_in_time_not_allowed", "You can not choose a date back in time."));
+			table.setHeight(row++, 5);
+			table.add(getSmallHeader(iwrb.getLocalizedString("school.placement_date", "Placement date")+":"), 1, row);
+			table.add(date, 3, row);
+			table.mergeCells(3, row, 5, row++);
 		}
 		
 		if (age.getYears() <= 10) {
@@ -1165,6 +1200,11 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	}
 
 	private boolean[] checkCanApply(IWContext iwc) throws RemoteException {
+		if (_useOngoingSeason) {
+			boolean[] canApply = {true, true, true};
+			return canApply;
+		}
+			
 		boolean[] checkCanApply = {false,false,false};
 		try {
 			SchoolSeason season = schBuiz.getCurrentSeason();

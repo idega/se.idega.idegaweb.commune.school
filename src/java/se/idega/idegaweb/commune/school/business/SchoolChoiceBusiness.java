@@ -1,5 +1,6 @@
 package se.idega.idegaweb.commune.school.business;
 
+import com.idega.block.school.data.SchoolSeason;
 import com.idega.user.data.*;
 import java.rmi.RemoteException;
 import java.util.*;
@@ -10,9 +11,9 @@ import se.idega.idegaweb.commune.school.data.SchoolChoiceReminder;
 public interface SchoolChoiceBusiness extends com.idega.business.IBOService,com.idega.block.process.business.CaseBusiness
 {
  public void createCurrentSchoolSeason(java.lang.Integer p0,java.lang.Integer p1)throws java.rmi.RemoteException, java.rmi.RemoteException;
- public se.idega.idegaweb.commune.school.data.SchoolChoice createSchoolChangeChoice(int p0,int p1,int p2,int p3,int p4,int p5,int p6,int p7,int p8,java.lang.String p9,java.lang.String p10,boolean p11,boolean p12,boolean p13,boolean p14)throws com.idega.data.IDOCreateException, java.rmi.RemoteException;
- public se.idega.idegaweb.commune.school.data.SchoolChoice createSchoolChoice(int p0,int p1,int p2,int p3,int p4,int p5,int p6,int p7,int p8,int p9,java.lang.String p10,java.lang.String p11,java.sql.Timestamp p12,boolean p13,boolean p14,boolean p15,boolean p16,boolean p17,com.idega.block.process.data.CaseStatus p18,com.idega.block.process.data.Case p19)throws javax.ejb.CreateException,java.rmi.RemoteException,javax.ejb.FinderException, java.rmi.RemoteException;
- public java.util.List createSchoolChoices(int p0,int p1,int p2,int p3,int p4,int p5,int p6,int p7,int p8,int p9,int p10,java.lang.String p11,java.lang.String p12,boolean p13,boolean p14,boolean p15,boolean p16,boolean p17)throws com.idega.data.IDOCreateException, java.rmi.RemoteException;
+ public se.idega.idegaweb.commune.school.data.SchoolChoice createSchoolChangeChoice(int p0,int p1,int p2,int p3,int p4,int p5,int p6,int p7,int p8,java.lang.String p9,java.lang.String p10,boolean p11,boolean p12,boolean p13,boolean p14, SchoolSeason season)throws com.idega.data.IDOCreateException, java.rmi.RemoteException;
+ public se.idega.idegaweb.commune.school.data.SchoolChoice createSchoolChoice(int p0,int p1,int p2,int p3,int p4,int p5,int p6,int p7,int p8,int p9,java.lang.String p10,java.lang.String p11,java.sql.Timestamp p12,boolean p13,boolean p14,boolean p15,boolean p16,boolean p17,com.idega.block.process.data.CaseStatus p18,com.idega.block.process.data.Case p19, java.sql.Date p20, SchoolSeason season)throws javax.ejb.CreateException,java.rmi.RemoteException,javax.ejb.FinderException, java.rmi.RemoteException;
+ public java.util.List createSchoolChoices(int p0,int p1,int p2,int p3,int p4,int p5,int p6,int p7,int p8,int p9,int p10,java.lang.String p11,java.lang.String p12,boolean p13,boolean p14,boolean p15,boolean p16,boolean p17, java.sql.Date p18, SchoolSeason season)throws com.idega.data.IDOCreateException, java.rmi.RemoteException;
  public void createTestFamily() throws java.rmi.RemoteException;
  public se.idega.idegaweb.commune.school.data.SchoolChoice findByStudentAndSchoolAndSeason(int p0,int p1,int p2)throws java.rmi.RemoteException, java.rmi.RemoteException;
  public java.util.Collection findByStudentAndSeason(int p0,int p1)throws java.rmi.RemoteException, java.rmi.RemoteException;
@@ -43,7 +44,7 @@ public interface SchoolChoiceBusiness extends com.idega.business.IBOService,com.
  public java.lang.String getSeparateParentSubjectAppl() throws java.rmi.RemoteException;
  public java.lang.String getSeparateParentSubjectChange() throws java.rmi.RemoteException;
  public CommuneUserBusiness getUserBusiness()throws java.rmi.RemoteException, java.rmi.RemoteException;
- public boolean groupPlaceAction(java.lang.Integer p0,com.idega.user.data.User p1) throws java.rmi.RemoteException;
+ public se.idega.idegaweb.commune.school.data.SchoolChoice groupPlaceAction(java.lang.Integer p0,com.idega.user.data.User p1) throws java.rmi.RemoteException;
  public boolean noRoomAction(java.lang.Integer p0,com.idega.user.data.User p1) throws java.rmi.RemoteException;
  public boolean preliminaryAction(java.lang.Integer p0,com.idega.user.data.User p1) throws java.rmi.RemoteException;
  public void rejectApplication(int p0,int p1,com.idega.user.data.User p2,java.lang.String p3,java.lang.String p4)throws java.rmi.RemoteException, java.rmi.RemoteException;

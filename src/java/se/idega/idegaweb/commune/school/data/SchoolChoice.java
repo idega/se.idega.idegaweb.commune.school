@@ -33,6 +33,7 @@ public interface SchoolChoice extends com.idega.data.IDOEntity,com.idega.block.p
  public java.lang.String getLanguageChoice();
  public java.lang.String getMessage();
  public int getMethod();
+ public java.sql.Date getPlacementDate();
  public boolean getSchoolCatalogue();
  public java.sql.Timestamp getSchoolChoiceDate();
  public int getSchoolSeasonId();
@@ -58,6 +59,7 @@ public interface SchoolChoice extends com.idega.data.IDOEntity,com.idega.block.p
  public void setLanguageChoice(java.lang.String p0);
  public void setMessage(java.lang.String p0);
  public void setMethod(int p0);
+ public void setPlacementDate(java.sql.Date p0);
  public void setSchoolCatalogue(boolean p0);
  public void setSchoolChoiceDate(java.sql.Timestamp p0);
  public void setSchoolSeasonId(int p0);
