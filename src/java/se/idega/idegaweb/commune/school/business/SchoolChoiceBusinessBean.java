@@ -23,6 +23,8 @@ import java.util.Vector;
 
 import javax.ejb.CreateException;
 import javax.ejb.FinderException;
+import javax.transaction.SystemException;
+import javax.transaction.UserTransaction;
 
 import se.cubecon.bun24.viewpoint.business.ViewpointBusiness;
 import se.cubecon.bun24.viewpoint.data.SubCategory;
@@ -1500,5 +1502,35 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		}
 		return years;
 
+	}
+	
+	public void deleteSchoolChoice(int choiceID) throws SchoolException {
+		UserTransaction trans = getSessionContext().getUserTransaction();
+		try {
+			// Start transaction
+			trans.begin();
+			
+			SchoolChoice choice = getSchoolChoice(choiceID);
+			Case theCase = getCase(choiceID);
+			choice.remove();
+			theCase.remove();
+			
+			// Commit transaction
+			trans.commit();
+		} catch (Exception e) {
+			try {
+				// Rollback transaction
+				trans.rollback();
+			} catch (IllegalStateException e1) {
+				e1.printStackTrace();
+			} catch (SecurityException e1) {
+				e1.printStackTrace();
+			} catch (SystemException e1) {
+				e1.printStackTrace();
+			}
+			
+			throw new SchoolException("school.delete_school_choice.rollback_msg",
+									"Error deleting school choice, rollback performed on transaction");
+		}
 	}
 }
