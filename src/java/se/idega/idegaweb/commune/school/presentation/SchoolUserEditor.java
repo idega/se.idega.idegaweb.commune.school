@@ -53,26 +53,21 @@ public class SchoolUserEditor extends com.idega.block.school.presentation.School
 			
 			if (coll != null && !coll.isEmpty()) {
 				SchoolType schoolType;
-				SchoolTypeHome stHome = (SchoolTypeHome) IDOLookup.getHome(SchoolType.class);
 				String category;
 				
 				Iterator iter = coll.iterator();
 				while (iter.hasNext()) {
-					try {
-						schoolType = (SchoolType) iter.next();
-						category = schoolType.getSchoolCategory();
-						groupId = -1;
-						if (category != null && category.equals(CATEGORY_SCHOOL)) {
-							groupId = getSchoolAdminGroupId();
-						}else if (category != null && category.equals(CATEGORY_CHILDCARE)) {
-							groupId = getChildCareAdminGroupId();	
-						}
-						if (userType != SchoolUserBusinessBean.USER_TYPE_TEACHER && groupId > 0) {
-							groupBusiness.addUser(groupId, user);
-						} 
-					} catch (FinderException e) {
-						e.printStackTrace(System.err);
+					schoolType = (SchoolType) iter.next();
+					category = schoolType.getSchoolCategory();
+					groupId = -1;
+					if (category != null && category.equals(CATEGORY_SCHOOL)) {
+						groupId = getSchoolAdminGroupId();
+					}else if (category != null && category.equals(CATEGORY_CHILDCARE)) {
+						groupId = getChildCareAdminGroupId();	
 					}
+					if (userType != SchoolUserBusinessBean.USER_TYPE_TEACHER && groupId > 0) {
+						groupBusiness.addUser(groupId, user);
+					} 
 				}
 			} 
 		} catch (IDORelationshipException e) {
