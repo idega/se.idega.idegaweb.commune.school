@@ -55,7 +55,7 @@ public class AdminMessageBox extends MessageBox {
 	 */
 	void addTableHeader(Table messageTable, int row) {
 		super.addTableHeader(messageTable, row);
-		messageTable.add(getSmallHeader(localize("message.provider", "Provider")), 3, row);
+		messageTable.add(getSmallHeader(localize("message.provider", "Provider")), getDateColumn() + 1, row);
 	}	
 	
 	/**
@@ -72,7 +72,7 @@ public class AdminMessageBox extends MessageBox {
 		
 		if (sc != null){
 			School provider = sc.getChosenSchool();
-			messageTable.add(provider.getName(), 3, row);
+			messageTable.add(provider.getName(), getDateColumn() + 1, row);
 		}
 	}
 	
