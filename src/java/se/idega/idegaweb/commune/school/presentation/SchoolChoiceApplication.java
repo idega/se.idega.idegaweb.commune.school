@@ -174,13 +174,17 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	
 	SchoolChoiceBusiness schBuiz;
 	SchoolClassMember schoolClassMember = null;
+	SchoolClassMember schoolClassMemberNew = null;
 	SchoolCommuneBusiness schCommBiz;
 	SchoolClass schoolClass = null;
+	SchoolClass schoolClassNew = null;
 	School school = null;
+	School schoolNew = null;
 	SchoolYear schoolYear = null;
 	SchoolArea schoolArea = null;
 	SchoolType schoolType = null;
 	SchoolSeason season = null;
+	SchoolSeason seasonNew = null;
 
 	
 	Map schoolsByType = null;
@@ -295,6 +299,24 @@ public class SchoolChoiceApplication extends CommuneBlock {
 					boolean saved = false;
 					if (iwc.isParameterSet(prmAction) && iwc.getParameter(prmAction).equals("true") && 
 							iwc.isParameterSet(prmRealSubmit) && iwc.getParameter(prmRealSubmit).equals("-1")) {
+
+						///if a change of school is made when there is no placement that is ongoing, only placement for coming season
+						if (schoolChange && valPreSchool == -1) {							
+							try {
+								SchoolChoiceBusiness choiceBean = (SchoolChoiceBusiness) IBOLookup.getServiceInstance(iwc, SchoolChoiceBusiness.class);
+								SchoolSeason season = null;
+								seasonNew = choiceBean.getCurrentSeason();
+								
+								schoolClassMemberNew = schBuiz.getSchoolBusiness().getSchoolClassMemberHome().findLatestByUserAndSchCategoryAndSeason(child, schBuiz.getSchoolBusiness().getCategoryElementarySchool(), seasonNew);
+								schoolClassNew = schoolClassMemberNew.getSchoolClass();
+								//schoolNew = schoolClassNew.getSchool();
+								valPreSchool = schoolClassNew.getSchoolId();
+							}
+							catch (FinderException e) {
+								log(e);
+							}
+						}
+						
 						saved = saveSchoolChoice();
 					}
 					else {
@@ -412,9 +434,9 @@ public class SchoolChoiceApplication extends CommuneBlock {
 			// valPreGrade, valMethod, -1, -1, valLanguage, valMessage,
 			// schoolChange, valSixyearCare, valAutoAssign, valCustodiansAgree,
 			// valSendCatalogue, valPlacementDate, season);
-					
-				schBuiz.createSchoolChoices(valCaseOwner, childId, valType, valPreSchool, valFirstSchool, valSecondSchool, valThirdSchool, valYear, valPreYear, valMethod, -1, -1, valLanguage, valMessage, schoolChange, valSixyearCare, valAutoAssign, valCustodiansAgree, valSendCatalogue, valPlacementDate, season, valNativeLangIsChecked, valNativeLang, valExtraChoiceMessages, _useAsAdmin);
-				return true;
+						
+			schBuiz.createSchoolChoices(valCaseOwner, childId, valType, valPreSchool, valFirstSchool, valSecondSchool, valThirdSchool, valYear, valPreYear, valMethod, -1, -1, valLanguage, valMessage, schoolChange, valSixyearCare, valAutoAssign, valCustodiansAgree, valSendCatalogue, valPlacementDate, season, valNativeLangIsChecked, valNativeLang, valExtraChoiceMessages, _useAsAdmin);
+			return true;
 			
 		}
 		catch (Exception ex) {
@@ -1296,7 +1318,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		s.append("hiddenSchGrade.value = selectedGrade;").append(" \n\t");
 		s.append("realSubmit.value = 0;").append(" \n\t");
 		s.append("document.forms[1].submit();").append(" \n\t");
-			
+		
 		s.append("}").append("\n\t\t\t");
 		
 		return s.toString();
@@ -1489,7 +1511,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		//s.append("\n\t var currSchool =
 		// ").append("findObj('").append(prmPreSchool).append("');");
 		//s.append("\n\t\t alert(document.forms[1].elements['sch_app_real_submit'].value)");
-	
+		
 		s.append("\n\t var gradeDrop = ").append("findObj('").append(prmYear).append("');");
 		s.append("\n\t var dropOne = ").append("findObj('").append(prmFirstSchool).append("');");
 
