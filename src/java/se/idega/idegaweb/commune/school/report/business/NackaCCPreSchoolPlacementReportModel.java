@@ -1,5 +1,5 @@
 /*
- * $Id: NackaCCPreSchoolPlacementReportModel.java,v 1.7 2004/01/26 08:44:50 anders Exp $
+ * $Id: NackaCCPreSchoolPlacementReportModel.java,v 1.8 2004/01/26 08:52:38 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -22,10 +22,10 @@ import com.idega.block.school.data.SchoolArea;
 /** 
  * Report model for child care pre school placements in Nacka.
  * <p>
- * Last modified: $Date: 2004/01/26 08:44:50 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/26 08:52:38 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.8 $
  */
 public class NackaCCPreSchoolPlacementReportModel extends ReportModel {
 
@@ -389,7 +389,13 @@ public class NackaCCPreSchoolPlacementReportModel extends ReportModel {
 	/**
 	 * Returns the number of child placements for the specified school.
 	 */
-	protected int getProviderPlacementCount(int schoolId) {
+	protected int getProviderPlacementCount(int schoolId) throws RemoteException {
+		ReportBusiness rb = getReportBusiness();
+		int schoolType1 = rb.getFamilyDayCareSchoolTypeId();
+		int schoolType2 = rb.getGeneralFamilyDaycareSchoolTypeId();
+		int schoolType3 = schoolType2;
+		int schoolType4 = schoolType2;
+
 		PreparedQuery query = null;
 		query = getQuery(QUERY_PROVIDER_PLACEMENTS);
 		if (query == null) {
@@ -397,10 +403,15 @@ public class NackaCCPreSchoolPlacementReportModel extends ReportModel {
 			query.setSelectCount();
 			query.setChildCarePlacements();
 			query.setSchool(); // parameter 1
+			query.setFourSchoolTypes(); // parameter 2-5
 			query.prepare();
 			setQuery(QUERY_PROVIDER_PLACEMENTS, query);
 		}
 		query.setInt(1, schoolId);
+		query.setInt(2, schoolType1);
+		query.setInt(3, schoolType2);
+		query.setInt(4, schoolType3);
+		query.setInt(5, schoolType4);
 		
 		return query.execute();
 	}
