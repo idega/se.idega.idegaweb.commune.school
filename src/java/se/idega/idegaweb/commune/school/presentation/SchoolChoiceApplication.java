@@ -588,10 +588,10 @@ public class SchoolChoiceApplication extends CommuneBlock {
 				getParentPage().setOnLoad(initFunction);
 				
 				if (!schoolChange) {
-					initScript.addFunction("sch_init3", initFunction3);
+					initScript.addFunction("sch_init3_a", initFunction3);
 				}
 				else {
-					initScript.addFunction("sch_init", initFunction);
+					initScript.addFunction("sch_init_a", initFunction);
 				}
 			}
 		}
