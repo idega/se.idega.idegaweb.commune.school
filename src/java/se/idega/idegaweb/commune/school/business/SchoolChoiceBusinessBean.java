@@ -30,6 +30,7 @@ import se.idega.idegaweb.commune.accounting.childcare.data.ChildCareApplicationH
 import se.idega.idegaweb.commune.accounting.extra.business.ResourceBusiness;
 import se.idega.idegaweb.commune.accounting.extra.data.ResourceClassMember;
 import se.idega.idegaweb.commune.business.CommuneUserBusiness;
+import se.idega.idegaweb.commune.care.business.CareBusiness;
 import se.idega.idegaweb.commune.message.business.MessageBusiness;
 import se.idega.idegaweb.commune.message.data.Message;
 import se.idega.idegaweb.commune.printing.business.DocumentBusiness;
@@ -1346,6 +1347,11 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	private SchoolCommuneBusiness getCommuneSchoolBusiness() throws RemoteException {
 		return (SchoolCommuneBusiness) getServiceInstance(SchoolCommuneBusiness.class);
 	}
+	
+	private CareBusiness getCareBusiness() throws RemoteException {
+		return (CareBusiness) getServiceInstance(CareBusiness.class);
+	}
+
 
 	/**
 	 * Method getFirstProviderForUser. If there is no school that the user then the method throws a FinderException.
@@ -1357,10 +1363,10 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	 *           if ther is no school that the user manages.
 	 */
 	public School getFirstProviderForUser(User user) throws FinderException, RemoteException {
-		CommuneUserBusiness commBuiz = getCommuneUserBusiness();
+		CareBusiness careBusiness = getCareBusiness();
 
 		try {
-			Group rootGroup = commBuiz.getRootProviderAdministratorGroup();
+			Group rootGroup = careBusiness.getRootProviderAdministratorGroup();
 			// if user is a SchoolAdministrator
 			if (user.hasRelationTo(rootGroup)) {
 				Collection schools = getSchoolHome().findAllBySchoolGroup(user);

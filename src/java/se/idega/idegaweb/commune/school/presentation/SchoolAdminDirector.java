@@ -3,10 +3,8 @@ package se.idega.idegaweb.commune.school.presentation;
 import java.rmi.RemoteException;
 import java.util.Collection;
 import java.util.Iterator;
-
-import se.idega.idegaweb.commune.business.CommuneUserBusiness;
+import se.idega.idegaweb.commune.care.business.CareBusiness;
 import se.idega.idegaweb.commune.presentation.CommuneBlock;
-
 import com.idega.block.school.business.SchoolBusiness;
 import com.idega.block.school.data.School;
 import com.idega.business.IBOLookup;
@@ -32,7 +30,7 @@ public class SchoolAdminDirector extends CommuneBlock {
 	
 	GroupBusiness grpBuiz;
 	UserBusiness usrBuiz;
-	CommuneUserBusiness commBuiz;
+	CareBusiness careBuiz;
 	SchoolBusiness schoolBuiz;
 	Integer schoolChoiceApproverPageId = null;
 	IWResourceBundle iwrb;
@@ -46,8 +44,9 @@ public class SchoolAdminDirector extends CommuneBlock {
 	private void init(IWContext iwc) throws RemoteException{
 		usrBuiz =(UserBusiness) IBOLookup.getServiceInstance(iwc,UserBusiness.class);
 		grpBuiz = (GroupBusiness) IBOLookup.getServiceInstance(iwc,GroupBusiness.class);
-		commBuiz = (CommuneUserBusiness) IBOLookup.getServiceInstance(iwc,CommuneUserBusiness.class);
+		careBuiz = (CareBusiness) IBOLookup.getServiceInstance(iwc,CareBusiness.class);
 		schoolBuiz = (SchoolBusiness) IBOLookup.getServiceInstance(iwc,SchoolBusiness.class);
+		
 	}
 
 	public void main(IWContext iwc) throws Exception{
@@ -57,7 +56,7 @@ public class SchoolAdminDirector extends CommuneBlock {
 			init(iwc);
 			int userId = iwc.getUserId();
 			User user = usrBuiz.getUser(userId);
-			Group rootGroup = commBuiz.getRootSchoolAdministratorGroup();
+			Group rootGroup = careBuiz.getRootSchoolAdministratorGroup();
 			// if user is a SchoolAdministrator
 			if(user.hasRelationTo(rootGroup)){
 				Collection schools = schoolBuiz.getSchoolHome().findAllBySchoolGroup(user);
