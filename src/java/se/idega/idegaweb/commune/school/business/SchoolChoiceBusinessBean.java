@@ -202,7 +202,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 			choice.setSchoolSeasonId(seasonId.intValue());
 		}
 		IWTimestamp stamp = new IWTimestamp();
-		stamp.addMinutes((1 - choiceOrder));
+		stamp.addSeconds((10 - (choiceOrder * 10)));
 		choice.setCreated(stamp.getTimestamp());
 		choice.setCaseStatus(caseStatus);
 		if (caseStatus.getStatus().equalsIgnoreCase("PREL")) {
