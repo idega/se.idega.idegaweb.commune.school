@@ -729,7 +729,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 							getMessageBusiness().createUserMessage(application, parent,null,null, nonApplyingSubject, MessageFormat.format(nonApplyingBody, arguments), true,nonApplyingCode);
 						}
 						else if (sendToAllParents && !parent.equals(appParent)){
-							getMessageBusiness().createUserMessage(application, parent,null,null, nonApplyingSubject, MessageFormat.format(nonApplyingBody, arguments), true,nonApplyingCode);
+							getMessageBusiness().createUserMessage(application, parent,null,null, applyingSubject, MessageFormat.format(applyingBody, arguments), true,applyingCode);
 						}
 					}
 				}
