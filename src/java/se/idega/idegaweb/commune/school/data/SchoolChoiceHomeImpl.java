@@ -20,13 +20,6 @@ public java.util.Collection findBySeason(int p0)throws javax.ejb.FinderException
 	return this.getEntityCollectionForPrimaryKeys(ids);
 }
 
-public java.util.Collection findByCodeAndStatus(java.lang.String p0,java.lang.String[] p1,int p2,int p3)throws javax.ejb.FinderException{
-	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-	java.util.Collection ids = ((SchoolChoiceBMPBean)entity).ejbFindByCodeAndStatus(p0,p1,p2,p3);
-	this.idoCheckInPooledEntity(entity);
-	return this.getEntityCollectionForPrimaryKeys(ids);
-}
-
 public java.util.Collection findByChosenSchoolId(int p0,int p1)throws javax.ejb.FinderException{
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	java.util.Collection ids = ((SchoolChoiceBMPBean)entity).ejbFindByChosenSchoolId(p0,p1);
@@ -48,6 +41,13 @@ public java.util.Collection findByCodeAndStatus(java.lang.String p0,java.lang.St
 	return this.getEntityCollectionForPrimaryKeys(ids);
 }
 
+public java.util.Collection findByCodeAndStatus(java.lang.String p0,java.lang.String[] p1,int p2,int p3)throws javax.ejb.FinderException{
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	java.util.Collection ids = ((SchoolChoiceBMPBean)entity).ejbFindByCodeAndStatus(p0,p1,p2,p3);
+	this.idoCheckInPooledEntity(entity);
+	return this.getEntityCollectionForPrimaryKeys(ids);
+}
+
 public java.util.Collection findBySchoolAndFreeTime(int p0,int p1,boolean p2)throws javax.ejb.FinderException{
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	java.util.Collection ids = ((SchoolChoiceBMPBean)entity).ejbFindBySchoolAndFreeTime(p0,p1,p2);
@@ -65,13 +65,6 @@ public java.util.Collection findByChildAndSchoolAndSeason(int p0,int p1,int p2)t
 public java.util.Collection findBySchoolAndSeasonAndGrade(int p0,int p1,int p2)throws javax.ejb.FinderException{
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	java.util.Collection ids = ((SchoolChoiceBMPBean)entity).ejbFindBySchoolAndSeasonAndGrade(p0,p1,p2);
-	this.idoCheckInPooledEntity(entity);
-	return this.getEntityCollectionForPrimaryKeys(ids);
-}
-
-public java.util.Collection findChoices(int p0,int p1,int p2,java.lang.String[] p3,java.lang.String p4)throws javax.ejb.FinderException,java.rmi.RemoteException{
-	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-	java.util.Collection ids = ((SchoolChoiceBMPBean)entity).ejbFindChoices(p0,p1,p2,p3,p4);
 	this.idoCheckInPooledEntity(entity);
 	return this.getEntityCollectionForPrimaryKeys(ids);
 }
@@ -104,21 +97,35 @@ public java.util.Collection findChoices(int p0,int p1,int p2,int[] p3,java.lang.
 	return this.getEntityCollectionForPrimaryKeys(ids);
 }
 
+public java.util.Collection findChoices(int p0,int p1,int p2,java.lang.String[] p3,java.lang.String p4)throws javax.ejb.FinderException,java.rmi.RemoteException{
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	java.util.Collection ids = ((SchoolChoiceBMPBean)entity).ejbFindChoices(p0,p1,p2,p3,p4);
+	this.idoCheckInPooledEntity(entity);
+	return this.getEntityCollectionForPrimaryKeys(ids);
+}
+
  public SchoolChoice findByPrimaryKey(Object pk) throws javax.ejb.FinderException{
   return (SchoolChoice) super.findByPrimaryKeyIDO(pk);
  }
 
 
-public int getNumberOfApplications(java.lang.String p0,int p1,int p2)throws javax.ejb.FinderException,com.idega.data.IDOException{
+public int getNumberOfApplications(java.lang.String p0,int p1,int p2,int p3)throws javax.ejb.FinderException,com.idega.data.IDOException{
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-	int theReturn = ((SchoolChoiceBMPBean)entity).ejbHomeGetNumberOfApplications(p0,p1,p2);
+	int theReturn = ((SchoolChoiceBMPBean)entity).ejbHomeGetNumberOfApplications(p0,p1,p2,p3);
 	this.idoCheckInPooledEntity(entity);
 	return theReturn;
 }
 
-public int getNumberOfApplications(java.lang.String p0,int p1,int p2,int p3)throws javax.ejb.FinderException,com.idega.data.IDOException{
+public int getCount(java.lang.String[] p0)throws com.idega.data.IDOException{
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-	int theReturn = ((SchoolChoiceBMPBean)entity).ejbHomeGetNumberOfApplications(p0,p1,p2,p3);
+	int theReturn = ((SchoolChoiceBMPBean)entity).ejbHomeGetCount(p0);
+	this.idoCheckInPooledEntity(entity);
+	return theReturn;
+}
+
+public int getNumberOfApplications(java.lang.String p0,int p1,int p2)throws javax.ejb.FinderException,com.idega.data.IDOException{
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	int theReturn = ((SchoolChoiceBMPBean)entity).ejbHomeGetNumberOfApplications(p0,p1,p2);
 	this.idoCheckInPooledEntity(entity);
 	return theReturn;
 }

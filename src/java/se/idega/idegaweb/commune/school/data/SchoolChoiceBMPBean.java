@@ -425,6 +425,24 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 		return ejbFindChoices(schoolID, seasonID, gradeYear, validStatuses, searchStringForUser);
   }
   
+  public int  ejbHomeGetCount(String[] validStatuses) throws IDOException{
+		IDOQuery query = new IDOQuery();
+			query.appendSelectCountFrom(this);
+		
+  	if (validStatuses != null && validStatuses.length > 0) {
+			query.append("csc, ").append(CaseBMPBean.TABLE_NAME).append(" pc");
+			query.append(" where ");
+			query.append("csc.").append(getIDColumnName())
+			.appendEqualSign().append("pc.").append(CaseBMPBean.TABLE_NAME+"_ID")
+			.appendAnd().append("pc.").append(CaseBMPBean.COLUMN_CASE_STATUS).appendIn();
+			query.appendWithinParentheses(idoQuery().appendCommaDelimitedWithinSingleQuotes(validStatuses));
+			query.appendAnd().append("pc.").append(CaseBMPBean.COLUMN_CASE_CODE).appendEqualSign().appendWithinSingleQuotes(this.CASECODE);
+
+  	}
+  	
+		return this.idoGetNumberOfRecords(query);
+  }
+  
   public Collection ejbFindChoices(int schoolID, int seasonID, int gradeYear, int[] choiceOrder ,String[] validStatuses, String searchStringForUser) throws FinderException, RemoteException {
   	boolean search = searchStringForUser != null && !searchStringForUser.equals("");
   	boolean statuses = validStatuses != null && validStatuses.length > 0;
