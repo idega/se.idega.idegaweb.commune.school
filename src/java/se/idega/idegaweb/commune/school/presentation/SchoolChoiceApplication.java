@@ -63,6 +63,7 @@ import com.idega.presentation.ui.HiddenInput;
 import com.idega.presentation.ui.RadioButton;
 import com.idega.presentation.ui.SubmitButton;
 import com.idega.presentation.ui.TextArea;
+import com.idega.presentation.ui.TextInput;
 import com.idega.user.business.UserBusiness;
 import com.idega.user.data.User;
 import com.idega.util.Age;
@@ -117,7 +118,8 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	//private String prmCaseOwner = prefix+"cse_own";
 	private String prmNativeLangIsChecked= prefix + "native_lang_is_checked";
 	private String prmNativeLang = prefix+"native_lang";
-
+	private String prmExtraChoiceMessage = prefix+"choice_message";
+	
 	private boolean valSendCatalogue = false;
 	private boolean valSixyearCare = false;
 	private boolean valAutoAssign = false;
@@ -142,6 +144,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	private int valMethod = 1; // Citizen:1; Quick: 2; Automatic: 3
 	private boolean valNativeLangIsChecked = false;
 	private int valNativeLang = -1;
+	private String[] valExtraChoiceMessages = new String[3];
 	private boolean showAgree = false;
 	protected boolean quickAdmin = false;
 	SchoolChoiceBusiness schBuiz;
@@ -172,6 +175,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	private String prmPlacementDate = "prm_placement_date";
 	private java.sql.Date valPlacementDate = null;
 	private boolean _isForTesting = false;
+	private boolean _showChoiceMessage = false;
 
 	/**
 	 * @param ongoingSeason
@@ -232,6 +236,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 								School school = element.getChosenSchool();
 								int schoolID = ((Integer)school.getPrimaryKey()).intValue();
 								int areaID = school.getSchoolAreaId();
+								valExtraChoiceMessages[count-1] = element.getExtraChoiceMessage();
 								
 								if (count == 1) {
 									valFirstSchool = schoolID;
@@ -336,7 +341,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	private boolean saveSchoolChoice() {
 		try {
 //			schBuiz.createSchoolChoices(valCaseOwner, childId, valType, valPreSchool, valFirstSchool, valSecondSchool, valThirdSchool, valPreGrade, valMethod, -1, -1, valLanguage, valMessage, schoolChange, valSixyearCare, valAutoAssign, valCustodiansAgree, valSendCatalogue, valPlacementDate, season);
-			schBuiz.createSchoolChoices(valCaseOwner, childId, valType, valPreSchool, valFirstSchool, valSecondSchool, valThirdSchool, valPreGrade, valMethod, -1, -1, valLanguage, valMessage, schoolChange, valSixyearCare, valAutoAssign, valCustodiansAgree, valSendCatalogue, valPlacementDate, season, valNativeLangIsChecked, valNativeLang);
+			schBuiz.createSchoolChoices(valCaseOwner, childId, valType, valPreSchool, valFirstSchool, valSecondSchool, valThirdSchool, valPreGrade, valMethod, -1, -1, valLanguage, valMessage, schoolChange, valSixyearCare, valAutoAssign, valCustodiansAgree, valSendCatalogue, valPlacementDate, season, valNativeLangIsChecked, valNativeLang, valExtraChoiceMessages);
 			return true;
 		}
 		catch (Exception ex) {
@@ -372,6 +377,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		valCaseOwner = iwc.isParameterSet(prmParentId) ? Integer.parseInt(iwc.getParameter(prmParentId)) : -1;
 		valNativeLangIsChecked = iwc.isParameterSet(prmNativeLangIsChecked) ? true : false;
 		valNativeLang = iwc.isParameterSet(prmNativeLang) ? Integer.parseInt(iwc.getParameter(prmNativeLang)) : -1;
+		valExtraChoiceMessages = iwc.getParameterValues(prmExtraChoiceMessage) != null ? iwc.getParameterValues(prmExtraChoiceMessage) : new String[3];
 		if (!quickAdmin) {
 			valCaseOwner = iwc.getUserId();
 		}
@@ -859,6 +865,16 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		table.add(getSmallHeader(iwrb.getLocalizedString("school.first_choice", "First choice")+":"), 1, row);
 		table.add(drpFirstArea, 3, row);
 		table.add(drpFirstSchool, 5, row++);
+		
+		if (this._showChoiceMessage) {
+			TextInput choiceMessage = (TextInput) getStyledInterface(new TextInput(prmExtraChoiceMessage));
+			if (valExtraChoiceMessages[0] != null) {
+				choiceMessage.setContent(valExtraChoiceMessages[0]);
+			}
+			table.add(getSmallHeader(iwrb.getLocalizedString("school.extra_message", "Extra message")+":"), 1, row);
+			table.add(choiceMessage, 3, row++);
+			table.setHeight(row++, 6);
+		}
 
 		if (!this.schoolChange) {
 			typeDrop.setOnChange(getFilterCallerScript(prmType, prmSecondArea, prmSecondSchool, 1, false));
@@ -878,9 +894,29 @@ public class SchoolChoiceApplication extends CommuneBlock {
 			table.add(drpSecondArea, 3, row);
 			table.add(drpSecondSchool, 5, row++);
 	
+			if (this._showChoiceMessage) {
+				TextInput choiceMessage = (TextInput) getStyledInterface(new TextInput(prmExtraChoiceMessage));
+				if (valExtraChoiceMessages[1] != null) {
+					choiceMessage.setContent(valExtraChoiceMessages[1]);
+				}
+				table.add(getSmallHeader(iwrb.getLocalizedString("school.extra_message", "Extra message")+":"), 1, row);
+				table.add(choiceMessage, 3, row++);
+				table.setHeight(row++, 6);
+			}
+
 			table.add(getSmallHeader(iwrb.getLocalizedString("school.third_choice", "Third choice")+":"), 1, row);
 			table.add(drpThirdArea, 3, row);
 			table.add(drpThirdSchool, 5, row++);
+			
+			if (this._showChoiceMessage) {
+				TextInput choiceMessage = (TextInput) getStyledInterface(new TextInput(prmExtraChoiceMessage));
+				if (valExtraChoiceMessages[2] != null) {
+					choiceMessage.setContent(valExtraChoiceMessages[2]);
+				}
+				table.add(getSmallHeader(iwrb.getLocalizedString("school.extra_message", "Extra message")+":"), 1, row);
+				table.add(choiceMessage, 3, row++);
+				table.setHeight(row++, 6);
+			}
 		}
 		
 		if ((schoolYear != null && schoolYear.getSchoolYearAge() >= 12) || age.getYears() >= 11) {
@@ -1506,5 +1542,12 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	 */
 	public void setForTesting(boolean isForTesting) {
 		this._isForTesting = isForTesting;
+	}
+	
+	/**
+	 * @param showChoiceMessage The showChoiceMessage to set.
+	 */
+	public void setShowExtraChoiceMessage(boolean showChoiceMessage) {
+		this._showChoiceMessage = showChoiceMessage;
 	}
 }

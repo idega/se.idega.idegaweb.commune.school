@@ -53,7 +53,8 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 	public final static String SCHOOLCATALOGUE = "school_catalogue";
 	public final static String FREETIMETHISSCHOOL = "child_care_this_school";
 	public final static String FREETIMEOTHER = "child_care_other";
-
+	public final static String EXTRA_MESSAGE = "extra_message";
+	
 	public final static String LANGUAGECHOICE = "language_choice";
 	public final static String SCHOOLCHOICEDATE = "school_choice_date";
 	public final static String MESSAGE = "message_body";
@@ -128,7 +129,8 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 		this.addAttribute(SCHOOLCATALOGUE, "School catalogue", Boolean.class);
 		this.addAttribute(FREETIMETHISSCHOOL, "School catalogue", Boolean.class);
 		this.addAttribute(FREETIMEOTHER, "School catalogue", String.class, 255);
-
+		this.addAttribute(EXTRA_MESSAGE, "Extra choice message", String.class, 255);
+		
 		this.addAttribute(HAS_RECEIVED_PLACEMENT_MESSAGE, "Placement message", Boolean.class);
 		this.addAttribute(HAS_RECEIVED_CONFIRMATION_MESSAGE, "Confirmation message", Boolean.class);
 
@@ -320,6 +322,14 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 		return getBooleanColumnValue(HAS_RECEIVED_CONFIRMATION_MESSAGE, false);
 	}
 	
+	public String getExtraChoiceMessage() {
+		return getStringColumnValue(EXTRA_MESSAGE);
+	}
+
+	public void setExtraChoiceMessage(String extraMessage) {
+		setColumn(EXTRA_MESSAGE, extraMessage);
+	}
+
 	public int ejbHomeCountBySchoolIDAndSeasonIDAndStatus(int schoolId, int seasonId, String[] statuses) throws IDOException {
 		try {
 			IDOQuery query = getIDOQueryFromSchoolIdSeasonIdAndStatus(schoolId, seasonId, statuses);
