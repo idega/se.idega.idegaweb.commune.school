@@ -17,10 +17,10 @@ import com.idega.user.data.Group;
 import com.idega.user.data.User;
 
 /**
- * Last modified: $Date: 2003/10/05 20:07:06 $ by $Author: laddi $
+ * Last modified: $Date: 2005/02/10 12:00:15 $ by $Author: laddi $
  *
  * @author <a href="http://www.staffannoteberg.com">Staffan Nöteberg</a>
- * @version $Revision: 1.13 $
+ * @version $Revision: 1.14 $
  */
 public class SchoolChoiceReminderBMPBean extends AbstractCaseBMPBean implements SchoolChoiceReminder, Case {
 	private static final String ENTITY_NAME = "sch_reminder";
@@ -58,12 +58,10 @@ public class SchoolChoiceReminderBMPBean extends AbstractCaseBMPBean implements 
 	}
 
 	public void insertStartData() {
-		super.insertStartData();
 		insertCaseCode();
 	}
 
 	public void initializeAttributes() {
-		insertCaseCode();
 		addGeneralCaseRelation();
 		addAttribute(COLUMN_USER_ID, "User", true, true, Integer.class, "many-to-one", User.class);
 		addAttribute(COLUMN_TEXT, "Text", true, true, String.class, 4096);
