@@ -1,5 +1,5 @@
 /*
- * $Id: ReportBusinessBean.java,v 1.26 2004/01/20 13:31:36 anders Exp $
+ * $Id: ReportBusinessBean.java,v 1.27 2004/01/20 15:02:34 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -29,10 +29,10 @@ import com.idega.block.school.data.SchoolStudyPathHome;
 /** 
  * Business logic for school reports.
  * <p>
- * Last modified: $Date: 2004/01/20 13:31:36 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/20 15:02:34 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.26 $
+ * @version $Revision: 1.27 $
  */
 public class ReportBusinessBean extends com.idega.business.IBOServiceBean implements ReportBusiness  {
 
@@ -355,7 +355,7 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 				Iterator iter = c.iterator();
 				while (iter.hasNext()) {
 					School school = (School) iter.next();
-					if (school.getCommuneId() == NACKA_COMMUNE_ID) {
+					if ((school.getCommuneId() == NACKA_COMMUNE_ID) && !school.getName().equals("Utlandselever")) {
 						l.add(school);
 					}
 				}
