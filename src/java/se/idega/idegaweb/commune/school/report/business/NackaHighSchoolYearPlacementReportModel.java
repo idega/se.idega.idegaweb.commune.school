@@ -1,5 +1,5 @@
 /*
- * $Id: NackaHighSchoolYearPlacementReportModel.java,v 1.7 2003/12/19 15:36:54 anders Exp $
+ * $Id: NackaHighSchoolYearPlacementReportModel.java,v 1.8 2004/01/07 15:16:19 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -18,10 +18,10 @@ import com.idega.block.school.data.SchoolStudyPath;
 /** 
  * Report model for high school placements per year for students in Nacka.
  * <p>
- * Last modified: $Date: 2003/12/19 15:36:54 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/07 15:16:19 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.8 $
  */
 public class NackaHighSchoolYearPlacementReportModel extends ReportModel {
 
@@ -36,10 +36,6 @@ public class NackaHighSchoolYearPlacementReportModel extends ReportModel {
 	private final static int COLUMN_METHOD_COUNTY_COUNCIL = 103;
 	private final static int COLUMN_METHOD_FREE_STANDING = 104;
 	private final static int COLUMN_METHOD_TOTAL = 105;
-	private final static int COLUMN_METHOD_NACKA_COMMUNE_SUM = 106;
-	private final static int COLUMN_METHOD_OTHER_COMMUNES_SUM = 107;
-	private final static int COLUMN_METHOD_COUNTY_COUNCIL_SUM = 108;
-	private final static int COLUMN_METHOD_FREE_STANDING_SUM = 109;
 	
 	private final static String KEY_REPORT_TITLE = KP + "title_nacka_high_school_year_placements";
 
@@ -195,7 +191,7 @@ public class NackaHighSchoolYearPlacementReportModel extends ReportModel {
 					columnParameter = "4";
 					break;
 				case 4:
-					columnMethod = COLUMN_METHOD_NACKA_COMMUNE_SUM;
+					columnMethod = COLUMN_METHOD_NACKA_COMMUNE;
 					columnParameter = null;
 					break;
 				case 5:
@@ -215,7 +211,7 @@ public class NackaHighSchoolYearPlacementReportModel extends ReportModel {
 					columnParameter = "4";
 					break;
 				case 9:
-					columnMethod = COLUMN_METHOD_OTHER_COMMUNES_SUM;
+					columnMethod = COLUMN_METHOD_OTHER_COMMUNES;
 					columnParameter = null;
 					break;
 				case 10:
@@ -231,7 +227,7 @@ public class NackaHighSchoolYearPlacementReportModel extends ReportModel {
 					columnParameter = "3";
 					break;
 				case 13:
-					columnMethod = COLUMN_METHOD_COUNTY_COUNCIL_SUM;
+					columnMethod = COLUMN_METHOD_COUNTY_COUNCIL;
 					columnParameter = null;
 					break;
 				case 14:
@@ -251,7 +247,7 @@ public class NackaHighSchoolYearPlacementReportModel extends ReportModel {
 					columnParameter = "4";
 					break;
 				case 18:
-					columnMethod = COLUMN_METHOD_FREE_STANDING_SUM;
+					columnMethod = COLUMN_METHOD_FREE_STANDING;
 					columnParameter = null;
 					break;
 				case 19:
