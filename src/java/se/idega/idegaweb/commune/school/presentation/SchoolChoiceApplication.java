@@ -161,6 +161,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	private int valPreYear = -1;
 	private int valPreSchool = -1;
 	private int valType = -1;
+	private int valTypeFirstTime = -1;
 	private int childId = -1;
 	private int valCaseOwner = -1;
 	private int valMethod = 1; // Citizen:1; Quick: 2; Automatic: 3
@@ -327,6 +328,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 									isOwner = ((IDOEntity) iwc.getCurrentUser()).equals(owner);
 									custodiansAgree = element.getCustodiansAgree();
 									valType = element.getSchoolTypeId();
+									valTypeFirstTime = element.getSchoolTypeId();
 									valYear = element.getSchoolYearID();
 								}
 								else if (count == 2) {
@@ -444,6 +446,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		valPreYear = iwc.isParameterSet(prmPreYear) ? Integer.parseInt(iwc.getParameter(prmPreYear)) : -1;
 		valPreSchool = iwc.isParameterSet(prmPreSchool) ? Integer.parseInt(iwc.getParameter(prmPreSchool)) : -1;
 		valType = iwc.isParameterSet(prmType) ? Integer.parseInt(iwc.getParameter(prmType)) : -1;
+		valTypeFirstTime = valType;
 		valCaseOwner = iwc.isParameterSet(prmParentId) ? Integer.parseInt(iwc.getParameter(prmParentId)) : -1;
 		valNativeLangIsChecked = iwc.isParameterSet(prmNativeLangIsChecked) ? true : false;
 		valNativeLang = iwc.isParameterSet(prmNativeLang) ? Integer.parseInt(iwc.getParameter(prmNativeLang)) : -1;
@@ -548,7 +551,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 					initScript.addFunction("sch_init2", initFunction2);
 					getParentPage().setOnLoad(initFunction2);
 				}
-
+				
 				String initFunction = getInitFilterCallerScript(prmType, prmFirstArea, prmFirstSchool, valType, valFirstArea, valFirstSchool, false, 1);
 				initScript.addFunction("sch_init", initFunction);
 				getParentPage().setOnLoad(initFunction);
@@ -1456,7 +1459,9 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		StringBuffer s = new StringBuffer();
 		s.append("function initFilter(type,area,school,type_sel,area_sel,school_sel,showAll){ \n  ");
 		s.append("changeFilter2(1,type,area,school,type_sel,showAll); \n  ");
-		s.append("setSelected(type,type_sel); \n  ");
+		if (valTypeFirstTime > 0){
+			s.append("setSelected(type,type_sel); \n  ");	
+		}		
 		s.append("changeFilter2(2,type,area,school,area_sel,showAll); \n  ");
 		s.append("setSelected(area,area_sel); \n  ");
 		s.append("changeFilter2(3,type,area,school,school_sel,showAll); \n  ");
@@ -1501,7 +1506,10 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		s.append("\n\n\t if (dropNativeLang.options[dropNativeLang.selectedIndex].value > 0 && checkNativeLang.checked == false){");
 		s.append("\n\t\t alert('" + localize("school.must_fill_native_language", "You must check the checkbox if you want native language ") + "');");
 		s.append("\n\t\t return false; \n}");
-
+		s.append("\n\n\t else if (dropNativeLang.options[dropNativeLang.selectedIndex].value < 0 && checkNativeLang.checked == true){");
+		s.append("\n\t\t alert('" + localize("school.must_fill_native_language_drp", "Select a native language in the dropdown ") + "');");
+		s.append("\n\t\t return false; \n}");
+		
 		if (hasLanguageSelection) s.append("\n\t var languageDrop = ").append("findObj('").append(prmLanguage).append("');");
 
 		s.append("\n\t var one = 0;");
