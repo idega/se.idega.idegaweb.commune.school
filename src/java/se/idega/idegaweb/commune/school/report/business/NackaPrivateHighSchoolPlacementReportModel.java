@@ -1,5 +1,5 @@
 /*
- * $Id: NackaPrivateHighSchoolPlacementReportModel.java,v 1.4 2004/01/19 11:43:02 anders Exp $
+ * $Id: NackaPrivateHighSchoolPlacementReportModel.java,v 1.5 2004/01/19 12:32:49 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -19,10 +19,10 @@ import com.idega.block.school.data.SchoolStudyPath;
 /** 
  * Report model for private high school placements in Nacka.
  * <p>
- * Last modified: $Date: 2004/01/19 11:43:02 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/19 12:32:49 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public class NackaPrivateHighSchoolPlacementReportModel extends ReportModel {
 
@@ -55,7 +55,7 @@ public class NackaPrivateHighSchoolPlacementReportModel extends ReportModel {
 		try {
 			Collection studyPaths = reportBusiness.getAllStudyPaths();
 			int rowSize = 0;
-			rowSize += studyPaths.size() + 2; 
+			rowSize += studyPaths.size() + 1; 
 			setReportSize(rowSize, COLUMN_SIZE);
 		} catch (RemoteException e) {
 			log(e.getMessage());
@@ -71,7 +71,7 @@ public class NackaPrivateHighSchoolPlacementReportModel extends ReportModel {
 		try {
 			ReportBusiness rb = getReportBusiness();
 			Collection studyPaths = rb.getAllStudyPaths();
-			headers = new Header[studyPaths.size() + 2];
+			headers = new Header[studyPaths.size() + 1];
 			Iterator iter = studyPaths.iterator();
 			int headerIndex = 0;
 			while (iter.hasNext()) {
@@ -81,13 +81,8 @@ public class NackaPrivateHighSchoolPlacementReportModel extends ReportModel {
 				headers[headerIndex].setChild(0, child);
 				headerIndex++;
 			}
-			Header header = new Header(KEY_COMPULSORY_HIGH_SCHOOLS, Header.HEADERTYPE_ROW_HEADER, 1);
-			Header child = new Header(KEY_STUDY_PATH_CODE_COMPULSORY_HIGH_SCHOOL, Header.HEADERTYPE_ROW_NORMAL);
-			header.setChild(0, child);
-			headers[headerIndex] = header;
-			headerIndex++;
 			
-			header = new Header(KEY_TOTAL, Header.HEADERTYPE_ROW_TOTAL);
+			Header header = new Header(KEY_TOTAL, Header.HEADERTYPE_ROW_TOTAL);
 			headers[headerIndex] = header;
 			headerIndex++;
 		} catch (RemoteException e) {
