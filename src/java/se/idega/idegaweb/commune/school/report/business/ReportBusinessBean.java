@@ -1,5 +1,5 @@
 /*
- * $Id: ReportBusinessBean.java,v 1.4 2003/12/12 10:00:03 anders Exp $
+ * $Id: ReportBusinessBean.java,v 1.5 2003/12/12 10:29:33 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -26,10 +26,10 @@ import com.idega.block.school.data.SchoolSeason;
 /** 
  * Business logic for school reports.
  * <p>
- * Last modified: $Date: 2003/12/12 10:00:03 $ by $Author: anders $
+ * Last modified: $Date: 2003/12/12 10:29:33 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public class ReportBusinessBean extends com.idega.business.IBOServiceBean implements ReportBusiness  {
 
@@ -247,9 +247,18 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 	 */
 	public int getElementarySchoolPlacementCount(int schoolId, String schoolYearName) {
 		ReportQuery query = new ReportQuery();
-		query.setSelectCountPlacements(getSchoolSeasonId(), schoolId);
-		query.setSchoolTypeElementarySchool();
-		if (schoolYearName.equals("0")) {
+		boolean sixYearsOld = schoolYearName.equals("0");
+		if (sixYearsOld) {
+			query.setSelectCountPlacementsSixYearsOld(getSchoolSeasonId(), schoolId);
+		} else {
+			query.setSelectCountPlacements(getSchoolSeasonId(), schoolId);
+		}
+		if (schoolYearName.equals("F")) {
+			query.setSchoolTypePreSchoolClass();
+		} else {
+			query.setSchoolTypeElementarySchool();
+		}
+		if (sixYearsOld) {
 			query.setOnlyStudentsBorn(getSchoolSeasonStartYear() - 6);
 			query.setSchoolYear("1");
 		} else {

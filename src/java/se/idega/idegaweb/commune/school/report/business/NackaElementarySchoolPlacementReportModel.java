@@ -1,5 +1,5 @@
 /*
- * $Id: NackaElementarySchoolPlacementReportModel.java,v 1.1 2003/12/12 10:00:46 anders Exp $
+ * $Id: NackaElementarySchoolPlacementReportModel.java,v 1.2 2003/12/12 10:29:33 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -19,10 +19,10 @@ import com.idega.block.school.data.SchoolArea;
 /** 
  * Report model for placements in Nacka elementary schools.
  * <p>
- * Last modified: $Date: 2003/12/12 10:00:46 $ by $Author: anders $
+ * Last modified: $Date: 2003/12/12 10:29:33 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class NackaElementarySchoolPlacementReportModel extends ReportModel {
 
@@ -291,15 +291,17 @@ public class NackaElementarySchoolPlacementReportModel extends ReportModel {
 					break;
 				case ROW_METHOD_SUM:
 					int rowIndex = cell.getRow() - 1;
-					while (rowIndex >= 0 && cell.getCellType() == Cell.CELLTYPE_NORMAL) {
-						value += getCell(rowIndex, cell.getColumn()).getFloatValue();
+					Cell c = getCell(rowIndex, cell.getColumn()); 
+					while (rowIndex >= 0 && c.getCellType() == Cell.CELLTYPE_NORMAL) {						
+						value += c.getFloatValue();
 						rowIndex--;
+						c = getCell(rowIndex, cell.getColumn()); 
 					}
 					break;
 				case ROW_METHOD_TOTAL:
 					rowIndex = cell.getRow() - 1;
 					while (rowIndex >= 0) {
-						Cell c = getCell(rowIndex, cell.getColumn());
+						c = getCell(rowIndex, cell.getColumn());
 						if (c.getCellType() == Cell.CELLTYPE_NORMAL) {
 							value += c.getFloatValue();
 						}
