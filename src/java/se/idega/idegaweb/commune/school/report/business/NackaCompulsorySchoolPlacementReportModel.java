@@ -1,5 +1,5 @@
 /*
- * $Id: NackaCompulsorySchoolPlacementReportModel.java,v 1.1 2004/01/08 11:52:57 anders Exp $
+ * $Id: NackaCompulsorySchoolPlacementReportModel.java,v 1.2 2004/01/08 13:39:57 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -19,10 +19,10 @@ import com.idega.block.school.data.SchoolArea;
 /** 
  * Report model for placements in Nacka compulsory schools.
  * <p>
- * Last modified: $Date: 2004/01/08 11:52:57 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/08 13:39:57 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class NackaCompulsorySchoolPlacementReportModel extends ReportModel {
 
@@ -53,9 +53,9 @@ public class NackaCompulsorySchoolPlacementReportModel extends ReportModel {
 			while (iter.hasNext()) {
 				SchoolArea area = (SchoolArea) iter.next();
 				Collection schools = reportBusiness.getCompulsorySchools(area);
-				rowSize += schools.size() + 1; // Sum rows + total row
+				rowSize += schools.size() + 1; // Sum row
 			}
-			rowSize += areas.size(); 
+			rowSize += 1; // Total row
 			setReportSize(rowSize, COLUMN_SIZE);
 		} catch (RemoteException e) {
 			log(e.getMessage());
