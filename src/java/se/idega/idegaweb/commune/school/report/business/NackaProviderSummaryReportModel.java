@@ -1,5 +1,5 @@
 /*
- * $Id: NackaProviderSummaryReportModel.java,v 1.7 2004/02/23 10:56:19 anders Exp $
+ * $Id: NackaProviderSummaryReportModel.java,v 1.8 2004/02/23 13:19:45 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -14,10 +14,10 @@ import java.rmi.RemoteException;
 /** 
  * Report model that shows a summary of Nacka providers (child care and schools).
  * <p>
- * Last modified: $Date: 2004/02/23 10:56:19 $ by $Author: anders $
+ * Last modified: $Date: 2004/02/23 13:19:45 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.8 $
  */
 public class NackaProviderSummaryReportModel extends ReportModel {
 
@@ -314,9 +314,7 @@ public class NackaProviderSummaryReportModel extends ReportModel {
 	/**
 	 * Returns the number of providers for the specified management and school type.
 	 */
-	protected int getProviderCount(int managementType, int schoolType) throws RemoteException {
-		if (0==0) return 0;
-		
+	protected int getProviderCount(int managementType, int schoolType) throws RemoteException {		
 		ReportBusiness rb = getReportBusiness();
 		
 		String managementType1 = null;

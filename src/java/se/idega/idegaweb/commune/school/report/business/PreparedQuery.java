@@ -1,5 +1,5 @@
 /*
- * $Id: PreparedQuery.java,v 1.31 2004/02/23 10:42:55 anders Exp $
+ * $Id: PreparedQuery.java,v 1.32 2004/02/23 13:17:42 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -27,10 +27,10 @@ import com.idega.block.school.data.SchoolSeason;
 /** 
  * Handles the SQL logic for school report calculations.
  * <p>
- * Last modified: $Date: 2004/02/23 10:42:55 $ by $Author: anders $
+ * Last modified: $Date: 2004/02/23 13:17:42 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.31 $
+ * @version $Revision: 1.32 $
  */
 public class PreparedQuery {
 
@@ -176,13 +176,15 @@ public class PreparedQuery {
 		String sql = "ca.sch_class_member_id = cm.sch_class_member_id and ca.application_id = c.comm_childcare_id" +
 				" and c.provider_id = s.sch_school_id" +
 				" and (ca.terminated_date is null or ca.terminated_date >= '" + _currentDate + "')" +
-				" and c.application_status in ('F', 'V') AND ca.VALID_FROM_DATE < '" + _currentDate + "'";
+				" and c.application_status in ('F', 'V') AND ca.VALID_FROM_DATE < '" + _currentDate + "'" +
+				" and cm.ic_user_id = u.ic_user_id";
 		_sqlWhere.add(sql);
 		
 		_sqlFrom.put(CA, TABLE_CA);
 		_sqlFrom.put(C, TABLE_C);
 		_sqlFrom.put(CM, TABLE_CM);
 		_sqlFrom.put(S, TABLE_S);
+		_sqlFrom.put(U, TABLE_U);
 	}
 	
 	/**
