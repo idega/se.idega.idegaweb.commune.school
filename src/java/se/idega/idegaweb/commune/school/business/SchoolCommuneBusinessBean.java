@@ -37,6 +37,7 @@ import com.idega.block.school.data.SchoolClassMember;
 import com.idega.block.school.data.SchoolClassMemberHome;
 import com.idega.block.school.data.SchoolSeason;
 import com.idega.block.school.data.SchoolStudyPath;
+import com.idega.block.school.data.SchoolStudyPathHome;
 import com.idega.block.school.data.SchoolType;
 import com.idega.block.school.data.SchoolYear;
 import com.idega.business.IBOLookup;
@@ -45,6 +46,7 @@ import com.idega.core.data.Phone;
 import com.idega.data.IDOEntityDefinition;
 import com.idega.data.IDOException;
 import com.idega.data.IDOLookup;
+import com.idega.data.IDOLookupException;
 import com.idega.data.IDOQuery;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWPropertyList;
@@ -668,32 +670,22 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
     // The method getStudyPath is specified in the interface
     // SchoolCommuneBusiness.  /Staffan
     public SchoolStudyPath getStudyPath (final SchoolClassMember student) {
-        SchoolStudyPath result = null;
         try {
-            final SchoolClass schoolClass = student.getSchoolClass ();
-            final Integer schoolTypeId
-                    = new Integer (schoolClass.getSchoolTypeId ());
-            final School school = schoolClass.getSchool ();
-            final SchoolBusiness business = getSchoolBusiness ();
-            final Map studyPathMap
-                    = business.getSchoolAndSchoolTypeRelatedSchoolCourses
-                    (school, schoolTypeId);
-            final Collection studyPaths = studyPathMap.values ();
-            for (Iterator i = studyPaths.iterator ();
-                 i.hasNext () && null == result;) {
-                final SchoolStudyPath studyPath = (SchoolStudyPath) i.next ();
-                final Collection students = studyPath.getSchoolClassMembers ();
-                /// ...are students PK or SchoolClassMember?
-                /// ...Collection.contains (SchoolClassMember) etc.
-            }
-            /// not fully implemented 2003-09-26 //Staffan
-            throw new UnsupportedOperationException
-                    ("not implemented yet //Staffan");
-        } catch (Exception e) {
+            final SchoolStudyPathHome home = (SchoolStudyPathHome)
+                    IDOLookup.getHome(SchoolStudyPath.class);
+            final Integer id = (Integer) student.getPrimaryKey ();
+            final Collection keys
+                    = home.findAllStudyPathsByMemberId (id.intValue ());
+            final Integer studyPathId = keys.isEmpty () ? null
+                    : (Integer) keys.iterator ().next ();
+            return null == studyPathId ? null
+                    : home.findByPrimaryKey (studyPathId);
+        } catch (FinderException e) {
+            return null;
+        } catch (IDOLookupException e) {
             e.printStackTrace ();
             return null;
         }
-        //return result;
     }    
 
 	private void initializeBundlesIfNeeded(Locale currentLocale){

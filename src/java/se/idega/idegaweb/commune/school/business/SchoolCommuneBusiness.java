@@ -80,7 +80,7 @@ public interface SchoolCommuneBusiness extends com.idega.business.IBOService,com
         throws RemoteException;
 
     /**
-     * Retreive school study path for this student or nul if no path exists
+     * Retreive school study path for this student or null if no path exists
      *
      * @return SchoolStudyPath or null if not found
      * @author <a href="http://www.staffannoteberg.com">Staffan Nöteberg</a>
