@@ -1,0 +1,98 @@
+/*
+ * Created on 17.12.2003
+ *
+ * To change the template for this generated file go to
+ * Window - Preferences - Java - Code Generation - Code and Comments
+ */
+package se.idega.idegaweb.commune.school.presentation.inputhandler;
+
+import java.util.ArrayList;
+import java.util.Collection;
+
+import se.idega.idegaweb.commune.school.business.SchoolReportBusiness;
+
+import com.idega.business.InputHandler;
+import com.idega.idegaweb.IWResourceBundle;
+import com.idega.presentation.IWContext;
+import com.idega.presentation.PresentationObject;
+import com.idega.presentation.ui.SelectionBox;
+
+/**
+ * @author laddi
+ *
+ * To change the template for this generated type comment go to
+ * Window - Preferences - Java - Code Generation - Code and Comments
+ */
+public class SchoolGroupColumnsHandler extends SelectionBox implements InputHandler {
+
+	private final static String IW_BUNDLE_IDENTIFIER = "se.idega.idegaweb.commune";
+	private static final String PREFIX = SchoolReportBusiness.PREFIX;
+
+	public SchoolGroupColumnsHandler() {
+		super();
+	}
+
+	public SchoolGroupColumnsHandler(String name) {
+		super(name);
+	}
+	
+	public void main(IWContext iwc) {
+		IWResourceBundle iwrb = this.getResourceBundle(iwc);
+
+		addMenuElement(SchoolReportBusiness.FIELD_PERSONAL_ID, getLocalizedString(iwrb, SchoolReportBusiness.FIELD_PERSONAL_ID, "Personal ID"));
+		addMenuElement(SchoolReportBusiness.FIELD_NAME, getLocalizedString(iwrb, SchoolReportBusiness.FIELD_NAME, "Name"));
+		addMenuElement(SchoolReportBusiness.FIELD_ADDRESS, getLocalizedString(iwrb, SchoolReportBusiness.FIELD_ADDRESS, "Address"));
+		addMenuElement(SchoolReportBusiness.FIELD_ZIP_CODE, getLocalizedString(iwrb, SchoolReportBusiness.FIELD_ZIP_CODE, "Zip code"));
+		addMenuElement(SchoolReportBusiness.FIELD_AREA, getLocalizedString(iwrb, SchoolReportBusiness.FIELD_AREA, "Area"));
+		addMenuElement(SchoolReportBusiness.FIELD_EMAIL, getLocalizedString(iwrb, SchoolReportBusiness.FIELD_EMAIL, "E-mail"));
+		addMenuElement(SchoolReportBusiness.FIELD_PHONE, getLocalizedString(iwrb, SchoolReportBusiness.FIELD_PHONE, "Phone"));
+		addMenuElement(SchoolReportBusiness.FIELD_GENDER, getLocalizedString(iwrb, SchoolReportBusiness.FIELD_GENDER, "Gender"));
+		addMenuElement(SchoolReportBusiness.FIELD_LANGUAGE, getLocalizedString(iwrb, SchoolReportBusiness.FIELD_LANGUAGE, "Language"));
+		addMenuElement(SchoolReportBusiness.FIELD_CUSTODIAN, getLocalizedString(iwrb, SchoolReportBusiness.FIELD_CUSTODIAN, "Custodian"));
+		addMenuElement(SchoolReportBusiness.FIELD_ALTERNATE_ADDRESS, getLocalizedString(iwrb, SchoolReportBusiness.FIELD_ALTERNATE_ADDRESS, "Alternate address"));
+		addMenuElement(SchoolReportBusiness.FIELD_YEARS_WITH_LANGUAGE, getLocalizedString(iwrb, SchoolReportBusiness.FIELD_YEARS_WITH_LANGUAGE, "Years with language"));
+	}
+	
+	/* (non-Javadoc)
+	 * @see com.idega.business.InputHandler#getHandlerObject(java.lang.String, java.lang.String, com.idega.presentation.IWContext)
+	 */
+	public PresentationObject getHandlerObject(String name, String stringValue, IWContext iwc) {
+		this.setName(name);
+		if (stringValue != null) {
+			this.setContent(stringValue);
+		}
+		return this;
+	}
+
+	/* (non-Javadoc)
+	 * @see com.idega.business.InputHandler#getResultingObject(java.lang.String[], com.idega.presentation.IWContext)
+	 */
+	public Object getResultingObject(String[] values, IWContext iwc) throws Exception {
+		Collection names = null;
+		int count = values.length;
+		if (values != null && count > 0) {
+			names = new ArrayList();
+			
+			for(int i=0; i<values.length; i++) {
+				names.add(values[i]);
+			}
+		}
+
+		return names;
+	}
+
+	/* (non-Javadoc)
+	 * @see com.idega.business.InputHandler#getDisplayNameOfValue(java.lang.Object, com.idega.presentation.IWContext)
+	 */
+	public String getDisplayNameOfValue(Object value, IWContext iwc) {
+		return "";
+	}
+	
+	public String getLocalizedString(IWResourceBundle iwrb, String key, String defaultValue) {
+		return iwrb.getLocalizedString(PREFIX + key, defaultValue);
+	}
+
+	public String getBundleIdentifier() {
+		return IW_BUNDLE_IDENTIFIER;
+	}
+}
