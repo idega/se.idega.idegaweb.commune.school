@@ -21,7 +21,7 @@ import se.idega.idegaweb.commune.presentation.CommuneBlock;
  * Presents school marks statistics in a formatted table (first version)
  * not approved by Nacka :-(
  * <p>
- * $Id: SchoolMarksPresenter.java,v 1.1 2003/09/25 07:59:39 kjell Exp $
+ * $Id: SchoolMarksPresenter.java,v 1.2 2003/10/06 13:04:53 kjell Exp $
  *
  * @author <a href="mailto:kjell@lindman.com">Kjell Lindman</a>
  * @version $version$
@@ -34,7 +34,6 @@ public class SchoolMarksPresenter  extends CommuneBlock {
 	private IWResourceBundle iwrb = null;
 	private String blockWidth = "100%";
 	private String headerColor = "#003366";
-	private int currPage = 0;
 	
 	private String headerStyle 	= "font-face:verdana; font-size:10px; font-weight: bold; color:#000000;";
 	private String linkStyle 	= "font-face:verdana; font-size:10px; font-weight: bold; color:#000080;";

@@ -27,7 +27,7 @@ import se.idega.idegaweb.commune.school.business.SchoolMarkValues;
 /**
  * School marks business
  * <p>
- * $Id: SchoolMarksBusinessBean.java,v 1.3 2003/10/06 12:05:59 kjell Exp $
+ * $Id: SchoolMarksBusinessBean.java,v 1.4 2003/10/06 13:05:28 kjell Exp $
  *
  * I will add some comments on the school marks calculation technique here later.
  * However I am waiting for Nacka to present me that specification.
@@ -53,7 +53,6 @@ public class SchoolMarksBusinessBean extends com.idega.business.IBOServiceBean i
 	private String MARK_VG = "VG";
 	private String MARK_MVG = "MVG";
 	private String MARK_IG1 = "1";
-	private String MARK_IG2 = "2";
 	
 	private static int sumTotalMerit = 0;
 	private static int numberOfSchools = 0;
@@ -1149,12 +1148,6 @@ public class SchoolMarksBusinessBean extends com.idega.business.IBOServiceBean i
 		return ssd;	
 	}
 
-	/*
-	 * Get the school business 
-	 */
-	private SchoolBusiness getSchoolBusiness(IWContext iwc) throws RemoteException {
-		return (SchoolBusiness) com.idega.business.IBOLookup.getServiceInstance(iwc, SchoolBusiness.class);
-	}
 
 	/*
 	 * Get the Statistics data home 
