@@ -710,7 +710,7 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 	}
 	
 	public Collection ejbFindChoices(int schoolID, int seasonID, int gradeYear, int[] choiceOrder, String[] validStatuses, String searchStringForUser, int orderBy, int numberOfEntries, int startingEntry, int placementType) throws FinderException {
-		IDOQuery query = getIDOQuery(schoolID, seasonID, gradeYear, choiceOrder, validStatuses, searchStringForUser, false, false, orderBy, placementType);
+		IDOQuery query = getIDOQuery(schoolID, seasonID, gradeYear, choiceOrder, validStatuses, searchStringForUser, false, false, false, orderBy, placementType);
 		return this.idoFindPKsByQuery(query, numberOfEntries, startingEntry);
 	}
 
@@ -720,6 +720,10 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 	}
 	
 	public IDOQuery getIDOQuery(int schoolID, int seasonID, int schoolYear, int[] choiceOrder, String[] validStatuses, String searchStringForUser, boolean selectCount, boolean selectOnlyChildIDs, int orderBy, int placementType) {
+		return getIDOQuery(schoolID, seasonID, schoolYear, choiceOrder, validStatuses, searchStringForUser, false, false, true, orderBy, placementType);
+	}
+	
+	public IDOQuery getIDOQuery(int schoolID, int seasonID, int schoolYear, int[] choiceOrder, String[] validStatuses, String searchStringForUser, boolean selectCount, boolean selectOnlyChildIDs, boolean searchOnAddr, int orderBy, int placementType) {
 		boolean search = searchStringForUser != null && !searchStringForUser.equals("");
 		boolean statuses = validStatuses != null && validStatuses.length > 0;
 
@@ -752,17 +756,23 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 		query.append(getEntityName()).append(" csc");
 		query.append(", ").append(UserBMPBean.TABLE_NAME).append(" u");
 		query.append(", ").append(CaseBMPBean.TABLE_NAME).append(" pc");
-		query.append(", ic_address a, ic_user_address ua");
+		if(searchOnAddr){
+			query.append(", ic_address a, ic_user_address ua");
+		}
 		
-		
-
 		query.appendWhere();
 		query.append("u.").append(UserBMPBean.getColumnNameUserID()).appendEqualSign().append("csc.").append(CHILD);
 		query.appendAnd().append("csc.").append(getIDColumnName()).appendEqualSign().append("pc.").append(CaseBMPBean.TABLE_NAME + "_ID");
-		query.appendAnd().append("csc.").append(CHILD).appendEqualSign().append("ua.").append(UserBMPBean.getColumnNameUserID());
-		query.appendAnd().append("ua.ic_address_id").appendEqualSign().append("a.ic_address_id");
+		if(searchOnAddr){
+			query.appendAnd().append("csc.").append(CHILD).appendEqualSign().append("ua.").append(UserBMPBean.getColumnNameUserID());
+			query.appendAnd().append("ua.ic_address_id").appendEqualSign().append("a.ic_address_id");
+			needAnd = true;
+		}
 
 		if (statuses) {
+			if (needAnd) {
+				query.appendAnd();
+			}
 			query.appendAnd().append("pc.").append(CaseBMPBean.COLUMN_CASE_STATUS).appendIn();
 			query.appendWithinParentheses(idoQuery().appendCommaDelimitedWithinSingleQuotes(validStatuses));
 			query.appendAnd().append("pc.").append(CaseBMPBean.COLUMN_CASE_CODE).appendEqualSign().appendWithinSingleQuotes(CASECODE);
@@ -776,7 +786,6 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 			query.append("(").append("u.").append(UserBMPBean.getColumnNameFirstName()).append(" like '%").append(searchStringForUser).append("%'").appendOr().append("u.").append(UserBMPBean.getColumnNameLastName()).append(" like '%").append(searchStringForUser).append("%'").appendOr().append("u.").append(UserBMPBean.getColumnNameMiddleName()).append(" like '%").append(searchStringForUser).append("%'").appendOr().append("u.").append(UserBMPBean.getColumnNamePersonalID()).append(" like '%").append(searchStringForUser).append("%'");
 			query.append(")");
 			needAnd = true;
-			
 		}
 
 		if (seasonID > 0) {
@@ -863,7 +872,7 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 				query.appendOrderBy("pc.created desc,u.last_name,u.first_name,u.middle_name");
 		}
 
-		//System.out.println(query.toString());
+		System.out.println(query.toString());
 		return query;
 	}
 
