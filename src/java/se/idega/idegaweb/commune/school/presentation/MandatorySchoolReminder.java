@@ -312,6 +312,7 @@ public class MandatorySchoolReminder extends CommuneBlock {
 
 		SchoolBusiness sBusiness =  (SchoolBusiness)IBOLookup.getServiceInstance(iwc,SchoolBusiness.class);
 		SchoolChoiceBusiness scBusiness = (SchoolChoiceBusiness)IBOLookup.getServiceInstance(iwc,SchoolChoiceBusiness.class);
+		System.out.println("Jasper reports Bus");
 		JasperReportBusiness jasperBusiness =  (JasperReportBusiness)IBOLookup.getServiceInstance(iwc,JasperReportBusiness.class);
 		DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT,iwc.getCurrentLocale()); 
 		
@@ -326,12 +327,15 @@ public class MandatorySchoolReminder extends CommuneBlock {
 //			IWTimestamp seasonStartDate = new IWTimestamp(currentSeason.getSchoolSeasonStart());
 //			int currentYear = seasonStartDate.getYear();
 		
+		System.out.println("Getting coll of schools");
 		Collection classes = sBusiness.getSchoolClassHome().findBySeason(currentSeason);
 
 		System.out.println("Date is "+_selectedDate);
 		JRDataSource dataSource = getDataSource(iwc,currentSeason,classes);
+		System.out.println("Getting map");
 		Map parameterMap = getParameterMap(iwrb,df,dataSource,iwc.getCurrentLocale());
 		JasperDesign design = getReportDesign(jasperBusiness,dataSource);
+		System.out.println("Generate report");
 		String reportPath = generateReport(jasperBusiness,dataSource,parameterMap,design);
 		
 		this.add(getReportLink(iwrb.getLocalizedString("MandatorySchoolReminder.report_name","Mandatory school reminder report"),reportPath));
