@@ -4,7 +4,7 @@ import com.idega.core.location.data.Address;
 import com.idega.user.business.UserBusiness;
 import com.idega.user.data.User;
 import is.idega.block.family.business.FamilyLogic;
-import is.idega.idegaweb.member.business.NoCustodianFound;
+import is.idega.block.family.business.NoCustodianFound;
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.Collection;
