@@ -1,5 +1,5 @@
 /*
- * $Id: ReportBlock.java,v 1.33 2004/04/24 10:43:50 anders Exp $
+ * $Id: ReportBlock.java,v 1.34 2004/09/08 07:13:19 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -24,15 +24,14 @@ import com.idega.presentation.IWContext;
 import com.idega.presentation.Table;
 import com.idega.presentation.text.Break;
 import com.idega.presentation.text.Text;
-import com.idega.presentation.ui.PrintButton;
 
 /** 
  * This is the base class for school report blocks.
  * <p>
- * Last modified: $Date: 2004/04/24 10:43:50 $ by $Author: anders $
+ * Last modified: $Date: 2004/09/08 07:13:19 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.33 $
+ * @version $Revision: 1.34 $
  */
 public class ReportBlock extends CommuneBlock {
 
@@ -47,7 +46,7 @@ public class ReportBlock extends CommuneBlock {
 	private final static String KP = "school_report."; // Localization key prefix
 
 	private final static String KEY_SESSION_TIMEOUT = KP + "session_timeout";
-	private final static String KEY_PRINT = KP + "print";
+//	private final static String KEY_PRINT = KP + "print";
 	
 	private Class _reportModelClass = null;
 	private ReportModel _reportModel = null;
@@ -168,11 +167,11 @@ public class ReportBlock extends CommuneBlock {
 			return;
 		}
 		if (_showPrintButton) {
-			PrintButton pb = new PrintButton(localize(KEY_PRINT, "Print"));
-			pb = (PrintButton) getButton(pb);
-			add(pb);
-			add(new Break());
-			add(new Break());
+//			PrintButton pb = new PrintButton(localize(KEY_PRINT, "Print"));
+//			pb = (PrintButton) getButton(pb);
+//			add(pb);
+//			add(new Break());
+//			add(new Break());
 		}
 		if (getShowTitle() || getShowDate()) {
 			Table table = new Table();
