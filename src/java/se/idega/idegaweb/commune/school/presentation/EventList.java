@@ -46,7 +46,7 @@ import com.idega.util.IWTimestamp;
  * Copyright:    Copyright idega Software (c) 2002
  * Company:	idega Software
  * @author <a href="mailto:roar@idega.is">roar</a>
- * @version $Id: EventList.java,v 1.14 2004/01/13 17:25:17 jonas Exp $
+ * @version $Id: EventList.java,v 1.15 2004/01/13 17:39:43 jonas Exp $
  * @since 17.3.2003 
  */
 
@@ -244,24 +244,20 @@ public class EventList extends CommuneBlock {
 		Collection selectedLetters = getPrintedLetter().findLetters(ids);
 
 		Iterator iter = selectedLetters.iterator();
-		int count = selectedLetters.size();
-		Table messages = new Table(1, count);
 		
 		while (iter.hasNext()) {
 			PrintedLetterMessage msg = (PrintedLetterMessage) iter.next();
-			
 			int fileID = createPrintableMessage(msg);
 			if(fileID!=-1) {
 				System.out.println("adding link for pdf");
 				Link viewLink = new Link(msg.getSubject() + "  (" + msg.getOwner().getName() + ")");
 				viewLink.setFile(fileID);
-				messages.add(viewLink);
+				add(viewLink);
+				addBreak();
 			} else {
 				System.out.println("Could not create pdf, no link added");
 			}
 		}
-		
-		add(messages);
 	}
 	
 	/* creates the pdf file and returns the ICFile identifier */
