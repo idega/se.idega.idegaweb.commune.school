@@ -1,5 +1,5 @@
 /*
- * $Id: ReportBlock.java,v 1.15 2004/01/23 08:36:46 anders Exp $
+ * $Id: ReportBlock.java,v 1.16 2004/01/23 09:23:56 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -29,10 +29,10 @@ import com.idega.presentation.ui.PrintButton;
 /** 
  * This is the base class for school report blocks.
  * <p>
- * Last modified: $Date: 2004/01/23 08:36:46 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/23 09:23:56 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.15 $
+ * @version $Revision: 1.16 $
  */
 public class ReportBlock extends CommuneBlock {
 
@@ -279,10 +279,16 @@ public class ReportBlock extends CommuneBlock {
 			Header header = headers[i];
 			Header[] children = header.getChildren();
 			if (children == null) {
-				if (header.getHeaderType() == Header.HEADERTYPE_ROW_NONLOCALIZED_HEADER) {
+				int headerType = header.getHeaderType();
+				if (headerType == Header.HEADERTYPE_ROW_SPACER) {
+					s = "";
+				} else if (headerType == Header.HEADERTYPE_ROW_NONLOCALIZED_HEADER) {
 					s = header.getLocalizationKey();
 				} else {
 					s = localize(header.getLocalizationKey(), header.getLocalizationKey());					
+				}
+				if (headerType == Header.HEADERTYPE_ROW_LABEL || headerType == Header.HEADERTYPE_ROW_SPACER) {
+					table.mergeCells(1, row, _reportModel.getColumnSize() + 1, row);
 				}
 				table.add(getSmallHeader(s), 1, row);
 				table.setNoWrap(1, row);
@@ -300,10 +306,16 @@ public class ReportBlock extends CommuneBlock {
 				row++;
 				for (int j = 0; j < children.length; j++) {
 					Header child = children[j];
-					if (child.getHeaderType() == Header.HEADERTYPE_ROW_NONLOCALIZED_NORMAL) {
-						s = child.getLocalizationKey();
+					int headerType = child.getHeaderType();
+					if (headerType == Header.HEADERTYPE_ROW_SPACER) {
+						s = "";
+					} else if (headerType == Header.HEADERTYPE_ROW_NONLOCALIZED_HEADER) {
+						s = header.getLocalizationKey();
 					} else {
-						s = localize(child.getLocalizationKey(), child.getLocalizationKey());					
+						s = localize(header.getLocalizationKey(), header.getLocalizationKey());					
+					}
+					if (headerType == Header.HEADERTYPE_ROW_LABEL || headerType == Header.HEADERTYPE_ROW_SPACER) {
+						table.mergeCells(1, row, _reportModel.getColumnSize() + 1, row);
 					}
 					table.add(getSmallHeader(s), 1, row);
 					table.setNoWrap(1, row);
@@ -326,13 +338,23 @@ public class ReportBlock extends CommuneBlock {
 			int rowCount = 0;
 			Header header = rowHeaders[i];
 			Header[] children = header.getChildren();
+			boolean hasChildren = false;
 			if (children != null) {
+				hasChildren = true;
 				tableRow++;
 				rowCount = children.length;
 			} else {
 				rowCount = 1;
 			}
 			for (int j = 0; j < rowCount; j++) {
+				if (hasChildren) {
+					Header child = children[j];
+					int headerType = child.getHeaderType();
+					if (headerType == Header.HEADERTYPE_ROW_LABEL || 
+							headerType == Header.HEADERTYPE_ROW_SPACER) {
+						continue;
+					}
+				}
 				for (int cellColumn = 0; cellColumn < _reportModel.getColumnSize(); cellColumn++) {
 					Cell cell = _reportModel.getCell(cellRow, cellColumn);
 					Text text = null;
