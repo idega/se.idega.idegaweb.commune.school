@@ -162,15 +162,15 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
   public void setLanguageChoice(String language){
     setColumn(LANGUAGECHOICE,language);
   }
-  
+
   public String getGroupPlace(){
   	return getStringColumnValue(GROUP_PLACE);
   }
-  
+
   public void setGroupPlace(String place){
   	setColumn(GROUP_PLACE,place);
   }
-  
+
   public Timestamp getSchoolChoiceDate(){
     return (Timestamp) getColumnValue(SCHOOLCHOICEDATE);
   }
@@ -227,17 +227,17 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
   }
 
   public Collection ejbFindByChosenSchoolId(int chosenSchoolId,int schoolSeasonId)throws javax.ejb.FinderException{
-    return idoFindIDsBySQL("select * from "+getEntityName()+" where "+CHOSEN_SCHOOL+" = "+chosenSchoolId+" and "+SCHOOL_SEASON+" = "+schoolSeasonId);
+    return idoFindPKsBySQL("select * from "+getEntityName()+" where "+CHOSEN_SCHOOL+" = "+chosenSchoolId+" and "+SCHOOL_SEASON+" = "+schoolSeasonId);
   }
-  
+
   public Collection ejbFindByChildId(int childId)throws javax.ejb.FinderException{
-    return idoFindIDsBySQL("select * from "+getEntityName()+" where "+CHILD+" = "+childId);
+    return idoFindPKsBySQL("select * from "+getEntityName()+" where "+CHILD+" = "+childId);
   }
 
   public Collection ejbFindByChildId(int childId,int schoolSeasonId)throws javax.ejb.FinderException{
-    return idoFindIDsBySQL("select * from "+getEntityName()+" where "+CHILD+" = "+childId+" and "+SCHOOL_SEASON+" = "+schoolSeasonId);
+    return idoFindPKsBySQL("select * from "+getEntityName()+" where "+CHILD+" = "+childId+" and "+SCHOOL_SEASON+" = "+schoolSeasonId);
   }
-  
+
   public Collection ejbFindByCodeAndStatus(String caseCode,String[] caseStatus, int schoolId,int schoolSeasonId)throws javax.ejb.FinderException{
   	return ejbFindByCodeAndStatus(caseCode,caseStatus,schoolId,schoolSeasonId,null);
   }
@@ -270,6 +270,20 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
     //System.err.println(" \n "+sql.toString()+" \n");
     return (Collection)super.idoFindPKsBySQL(sql.toString());
 
+  }
+
+  public Collection ejbFindByChildAndSeason(int childID, int seasonID)throws javax.ejb.FinderException{
+    StringBuffer sql = new StringBuffer("select * from ");
+    sql.append(SCHOOLCHOICE);
+    sql.append(" where ");
+    sql.append(CHILD);
+    sql.append(" = ");
+    sql.append(childID);
+    sql.append(" and ");
+    sql.append(SCHOOL_SEASON);
+    sql.append(" = ");
+    sql.append(seasonID);
+    return super.idoFindPKsBySQL(sql.toString());
   }
 
 }

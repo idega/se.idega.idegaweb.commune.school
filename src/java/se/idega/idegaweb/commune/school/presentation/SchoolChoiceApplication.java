@@ -91,7 +91,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
   private String prmAction = prefix+"snd_frm";
   private String prmChildId = CitizenChildren.getChildIDParameterName();
   private String prmForm = prefix+"the_frm";
-
+  private String prmCaseOwner = prefix+"cse_own";
 
   private boolean valSendCatalogue = false;
   private boolean valSixyearCare = false ;
@@ -112,7 +112,11 @@ public class SchoolChoiceApplication extends CommuneBlock {
   private int valPreSchool = -1;
   private int valType = -1;
   private int childId = -1;
+  private int valCaseOwner = -1;
+  private int valMethod = 1; // Citizen:1; Quick: 2; Automatic: 3
   private boolean showAgree = false;
+  protected boolean quickAdmin = false;
+  SchoolChoiceBusiness schBuiz;
 
 
   public void control(IWContext iwc) throws Exception{
@@ -125,17 +129,29 @@ public class SchoolChoiceApplication extends CommuneBlock {
 
 				User child = userbuiz.getUser(childId);
 				if(child!=null){
+          boolean hasChoosed = false;
+          Collection currentChildChoices = null;
 					parse(iwc);
 					boolean saved = false;
 					if(iwc.isParameterSet(prmAction) && iwc.getParameter(prmAction).equals("true")){
 						saved = saveSchoolChoice(iwc);
-
 					}
+          else{
+            int CurrentSeasonID = ((Integer)schBuiz.getCurrentSeason().getPrimaryKey()).intValue();
+            currentChildChoices = schBuiz.getSchoolChoiceHome().findByChildAndSeason(childId,CurrentSeasonID);
+            if(!currentChildChoices.isEmpty())
+              hasChoosed = true;
+          }
+
 					schoolTypes = getSchoolTypes(iwc,"SCHOOL");
-					if(!saved)
-						add(getSchoolChoiceForm(iwc,child));
-					else{
+					if(saved){
 						add(getSchoolChoiceAnswer (iwc,child) );
+          }
+          else if(hasChoosed){
+            add(getAlreadyChosenAnswer(iwc,child,currentChildChoices));
+          }
+					else{
+            add(getSchoolChoiceForm(iwc,child));
 					}
 				}
 			}
@@ -153,9 +169,8 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		if(valFirstSchool == valSecondSchool || valSecondSchool == valThirdSchool ||valThirdSchool == valFirstSchool)
 			return false;
     try{
-      SchoolChoiceBusiness schBuiz = (SchoolChoiceBusiness) IBOLookup.getServiceInstance(iwc,SchoolChoiceBusiness.class);
-      schBuiz.createSchoolChoices(iwc.getUserId(),childId,valPreSchool,
-          valFirstSchool,valSecondSchool,valThirdSchool,valPreGrade,1,-1,-1,
+      schBuiz.createSchoolChoices(valCaseOwner,childId,valPreSchool,
+          valFirstSchool,valSecondSchool,valThirdSchool,valPreGrade,valMethod,-1,-1,
           valLanguage,valMessage,valSchoolChange,valSixyearCare,valAutoAssign,
           valCustodiansAgree,valSendCatalogue);
       return true;
@@ -185,6 +200,13 @@ public class SchoolChoiceApplication extends CommuneBlock {
     valPreArea = iwc.isParameterSet(prmPreArea)?Integer.parseInt(iwc.getParameter(prmPreArea)):-1;
     valPreSchool = iwc.isParameterSet(prmPreSchool)?Integer.parseInt(iwc.getParameter(prmPreSchool)):-1;
     valType = iwc.isParameterSet(prmType)?Integer.parseInt(iwc.getParameter(prmType)):-1;
+    valCaseOwner = iwc.isParameterSet(prmCaseOwner)?Integer.parseInt(iwc.getParameter(prmCaseOwner)):-1;
+    if(!quickAdmin){
+      valCaseOwner = iwc.getUserId();
+    }
+    else{
+      valMethod = 2;
+    }
 
   }
 
@@ -233,7 +255,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
     }
     return myForm;
   }
-  
+
    public PresentationObject getSchoolChoiceAnswer(IWContext iwc,User child)throws java.rmi.RemoteException{
    		DataTable T = new DataTable();
    		T.setUseBottom(false);
@@ -243,7 +265,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
    		String text2= iwrb.getLocalizedString("school_choice.receipt_2","has been received. ");
    		String text3= iwrb.getLocalizedString("school_choice.receipt_3","The application will be processed by each school you applied for .");
    		String text4= iwrb.getLocalizedString("school_choice.receipt_4","Thank you");
-   		
+
    		int row = 1;
    		T.add(getText( text1),1,row);
    		T.add(getHeader(child.getName()),1,row);
@@ -252,10 +274,26 @@ public class SchoolChoiceApplication extends CommuneBlock {
    		T.add(getText(text3),1,row);
    		row++;
    		T.add(getText(text4),1,row);
-   		
+
    		return T;
    }
-   
+
+   public PresentationObject getAlreadyChosenAnswer(IWContext iwc,User child,Collection choices)throws java.rmi.RemoteException{
+   		DataTable T = new DataTable();
+   		T.setUseBottom(false);
+   		T.setUseTop(false);
+   		T.setUseTitles(false);
+   		String text1 = iwrb.getLocalizedString("school_choice.already_1","The school choice for ");
+   		String text2= iwrb.getLocalizedString("school_choice.already_2","has already been received. ");
+
+   		int row = 1;
+   		T.add(getText( text1),1,row);
+   		T.add(getHeader(child.getName()),1,row);
+   		T.add(getText(text2),1,row);
+   		row++;
+   		return T;
+   }
+
   public PresentationObject getCurrentSchoolSeasonInfo(IWContext iwc) throws RemoteException {
   	SchoolChoiceBusiness choiceBean  = (SchoolChoiceBusiness) IBOLookup.getServiceInstance(iwc,SchoolChoiceBusiness.class);
   	SchoolSeason season = null;
@@ -273,16 +311,17 @@ public class SchoolChoiceApplication extends CommuneBlock {
   		Text t = getHeader(message+" "+date);
   		t.setFontColor("FF0000");
   		T.add(t,1,1);
-  		
+
   	}
   	return T;
-  
+
   }
 
   public void main(IWContext iwc)throws Exception{
     iwb = getBundle(iwc);
     iwrb = getResourceBundle(iwc);
     df = DateFormat.getDateInstance(df.SHORT,iwc.getCurrentLocale());
+    schBuiz = (SchoolChoiceBusiness) IBOLookup.getServiceInstance(iwc,SchoolChoiceBusiness.class);
     control(iwc);
   }
 
@@ -385,7 +424,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
     DropdownMenu drpFirstSchool = new DropdownMenu(prmFirstSchool);
     DropdownMenu drpSecondSchool = new DropdownMenu(prmSecondSchool);
     DropdownMenu drpThirdSchool = new DropdownMenu(prmThirdSchool);
-    
+
     	drpFirstArea.addMenuElementFirst("-1",iwrb.getLocalizedString("school.area_first",        "School Area...................."));
 		drpSecondArea.addMenuElementFirst("-1",iwrb.getLocalizedString("school.area_second",      "School Area ..................."));
 		drpThirdArea.addMenuElementFirst("-1",iwrb.getLocalizedString("school.area_third",        "School Area...................."));
@@ -437,16 +476,20 @@ public class SchoolChoiceApplication extends CommuneBlock {
       Collection parents = mlogic.getCustodiansFor(child);
       Iterator iter = parents.iterator();
       String address = "";
+      boolean caseOwning = false;
       while(iter.hasNext()){
 				User parent = (User) iter.next();
 				String addr = userbuiz.getUsersMainAddress(parent).getStreetAddress();
 				T.add(getSmallText(parent.getNameLastFirst()),1,row);
 				T.add(getSmallText(addr),3,row);
 				row++;
-				
+
 				// checkiing for same parent address
 				showAgree = address.equalsIgnoreCase(addr);
 				address = addr;
+        if(quickAdmin && caseOwning){
+          T.add(new HiddenInput(prmCaseOwner,parent.getPrimaryKey().toString()));
+        }
       }
     }
     catch(NoCustodianFound ex){
@@ -458,8 +501,8 @@ public class SchoolChoiceApplication extends CommuneBlock {
 
   private PresentationObject getMessagePart(IWContext iwc)throws java.rmi.RemoteException{
     Table T = new Table();
-	
-    
+
+
     CheckBox chkSendCatalogue = new CheckBox(prmSendCatalogue,"true");
     chkSendCatalogue.setChecked(valSendCatalogue);
     TextArea taMessage = new TextArea(prmMessage,65,6);
@@ -597,16 +640,16 @@ public class SchoolChoiceApplication extends CommuneBlock {
       // iterate through schooltypes
       while(iter.hasNext()){
         type = (SchoolType) iter.next();
-        
+
         Integer tPK = (Integer) type.getPrimaryKey();
         //System.err.println("checking type "+tPK.toString());
         areas = getSchoolAreasWithType(iwc,tPK.intValue());
         if(areas!=null && !areas.isEmpty()){
           Iterator iter2 = areas.iterator();
           t.append("if(selected == \"").append(tPK.toString()).append("\"){").append("\n\t\t");
-          
+
            Hashtable aHash = new Hashtable();
-           
+
           // iterate through areas whithin types
           while(iter2.hasNext()) {
             area = (SchoolArea) iter2.next();
@@ -630,7 +673,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		                a.append(pk).append("\");\n\t\t");
 		                hash.put(pk,pk);
 	                }
-	
+
 	              }
 	              a.append("}\n\t\t");
 	        	}
@@ -679,7 +722,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
     s.append("school.selectedIndex = school_sel; \n}");
     return s.toString();
   }
-  
+
 	public String getSchoolCheckScript(){
 	  StringBuffer s = new StringBuffer();
 		s.append("\nfunction checkApplication(){\n\t");
@@ -694,21 +737,21 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		s.append("\n\t var  three = ").append("dropThree.options[dropThree.selectedIndex].value;");
 		s.append("\n\t var  year = ").append("gradeDrop.options[gradeDrop.selectedIndex].value;");
 		s.append("\n\t var  school = ").append("currSchool.options[currSchool.selectedIndex].value;");
-		
+
 		// current school check
 		s.append("\n\t if(school <= 0){");
 		String msg1 = iwrb.getLocalizedString("school_choice.must_set_current_school","You must provide current shool");
 		s.append("\n\t\t\t alert('").append(msg1).append("');");
 		s.append("\n\t\t ");
 		s.append("\n\t }");
-		
+
 		// year check
 		s.append("\n\t else if(year <= 0 && school > 0){");
 		String msg2 = iwrb.getLocalizedString("school_choice.must_set_grade","You must provide current shool year");
 		s.append("\n\t\t\t alert('").append(msg2).append("');");
 		s.append("\n\t\t ");
 		s.append("\n\t }");
-		
+
 		// schoolchoices checked
 		s.append("\n\t else if(one && two && three){");
 		s.append("\n\t if(one == two || two == three || three == one){");
@@ -726,7 +769,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		s.append("\n}\n");
 		return s.toString();
 	}
-	
+
 	private String getMySubmitScript(){
 		StringBuffer s = new StringBuffer();
 		s.append("\n function MySubmit(){");
@@ -739,17 +782,21 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		//s.append("\n\t }");
 		s.append("\n}\n");
 		return s.toString();
-		
+
 		/*
 		if(checkApplication()){
 			document.
 		}
 		else{
-			
+
 		}
 		*/
 	}
 
+  public void setAsAdminQuickChoice(boolean quick){
+    this.quickAdmin = quick;
+  }
+
 
 }
-	
+
