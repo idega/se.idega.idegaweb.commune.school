@@ -70,8 +70,7 @@ public class SchoolGroupHandler extends SelectionBox implements InputHandler {
 	 */
 	public Object getResultingObject(String[] values, IWContext iwc) throws Exception {
 		Collection groups = null;
-		int count = values.length;
-		if (values != null && count > 0) {
+		if (values != null && values.length > 0) {
 			groups = new ArrayList();
 			
 			for(int i=0; i<values.length; i++) {
