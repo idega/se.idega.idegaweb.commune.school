@@ -171,7 +171,8 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 	
 	public boolean isAlreadyInSchool(int userID, int schoolID, int seasonID) throws RemoteException {
 		try {
-			SchoolClassMember member = getSchoolBusiness().getSchoolClassMemberHome().findByUserAndSchoolAndSeason(userID, schoolID, seasonID);
+			Collection types = getSchoolBusiness().getSchoolTypeHome().findAllByCategory(getSchoolBusiness().getCategoryElementarySchool().getCategory(), false);
+			SchoolClassMember member = getSchoolBusiness().getSchoolClassMemberHome().findByUserAndSchoolAndSeason(userID, schoolID, seasonID, types);
 			if (member != null)
 				return true;
 			return false;
