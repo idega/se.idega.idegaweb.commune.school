@@ -52,12 +52,14 @@ import com.idega.business.IBOLookup;
 import com.idega.core.contact.data.Phone;
 import com.idega.core.location.data.Address;
 import com.idega.core.location.data.PostalCode;
+import com.idega.data.IDOAddRelationshipException;
 import com.idega.data.IDOEntity;
 import com.idega.data.IDOEntityDefinition;
 import com.idega.data.IDOException;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
 import com.idega.data.IDOQuery;
+import com.idega.data.IDORemoveRelationshipException;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWPropertyList;
 import com.idega.idegaweb.IWResourceBundle;
@@ -629,10 +631,30 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 	}
 	
 	public void moveToGroup(int studentID, int schoolClassID, int oldSchoolClassID, int schoolYearID) throws RemoteException {
-		SchoolClassMember classMember = getSchoolBusiness().findClassMemberInClass(studentID, oldSchoolClassID);
-		classMember.setSchoolClassId(schoolClassID);
-		classMember.setSchoolYear(schoolYearID);
-		classMember.store();
+		SchoolClass group = getSchoolBusiness().findSchoolClass(new Integer(oldSchoolClassID));
+		if (group.getIsSubGroup()) {
+			try {
+				SchoolClass newGroup = getSchoolBusiness().findSchoolClass(new Integer(schoolClassID));
+				SchoolClassMember member = getSchoolBusiness().getSchoolClassMemberHome().findByUserAndSchoolAndSeason(studentID, group.getSchoolId(), group.getSchoolSeasonId());
+				member.removeFromGroup(group);
+				member.addToGroup(newGroup);
+			}
+			catch (FinderException fe) {
+				fe.printStackTrace();
+			}
+			catch (IDORemoveRelationshipException irre) {
+				irre.printStackTrace();
+			}
+			catch (IDOAddRelationshipException iare) {
+				iare.printStackTrace();
+			}
+		}
+		else {
+			SchoolClassMember classMember = getSchoolBusiness().findClassMemberInClass(studentID, oldSchoolClassID);
+			classMember.setSchoolClassId(schoolClassID);
+			classMember.setSchoolYear(schoolYearID);
+			classMember.store();
+		}
 	}
 
 	private MessageBusiness getMessageBusiness() throws RemoteException {

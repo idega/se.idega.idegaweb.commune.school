@@ -1,5 +1,6 @@
 package se.idega.idegaweb.commune.school.presentation;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
@@ -16,6 +17,7 @@ import se.idega.idegaweb.commune.school.business.SchoolCommuneBusiness;
 import se.idega.idegaweb.commune.school.business.SchoolCommuneSession;
 
 import com.idega.block.school.business.SchoolBusiness;
+import com.idega.block.school.business.SchoolClassComparator;
 import com.idega.block.school.business.SchoolYearComparator;
 import com.idega.block.school.data.School;
 import com.idega.block.school.data.SchoolCategory;
@@ -333,15 +335,23 @@ public abstract class SchoolCommuneBlock extends CommuneBlock {
 		menu.setToSubmit();
 		
 		if ( _schoolID != -1 && _schoolSeasonID != -1 && _schoolYearID != -1 ) {
-			Collection classes = business.getSchoolBusiness().findSchoolClassesBySchoolAndSeasonAndYear(_schoolID, _schoolSeasonID, _schoolYearID);
+			List classes = new ArrayList(business.getSchoolBusiness().findSchoolClassesBySchoolAndSeasonAndYear(_schoolID, _schoolSeasonID, _schoolYearID));
 			if ( !classes.isEmpty() ) {
+	      Collections.sort(classes,new SchoolClassComparator());
 				Iterator iter = classes.iterator();
+				int row = 1;
+				boolean separator = false;
 				while (iter.hasNext()) {
 					SchoolClass element = (SchoolClass) iter.next();
+					if (row > 1 && element.getIsSubGroup() && !separator) {
+						menu.addSeparator();
+						separator = true;
+					}
 					menu.addMenuElement(element.getPrimaryKey().toString(), element.getName());
 					//if ( _schoolClassID == -1 )
 						// Gimmi 13.11.2002
 						//_schoolClassID = ((Integer)element.getPrimaryKey()).intValue();
+					row++;
 				}
 			}
 			else {
