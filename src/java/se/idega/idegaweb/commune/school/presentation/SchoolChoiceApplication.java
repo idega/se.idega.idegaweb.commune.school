@@ -90,8 +90,9 @@ public class SchoolChoiceApplication extends CommuneBlock {
   private String prmLanguage = prefix+"cho_lng";
   private String prmAction = prefix+"snd_frm";
   private String prmChildId = CitizenChildren.getChildIDParameterName();
+  private String prmParentId = CitizenChildren.getParentIDParameterName();
   private String prmForm = prefix+"the_frm";
-  private String prmCaseOwner = prefix+"cse_own";
+  //private String prmCaseOwner = prefix+"cse_own";
 
   private boolean valSendCatalogue = false;
   private boolean valSixyearCare = false ;
@@ -200,7 +201,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
     valPreArea = iwc.isParameterSet(prmPreArea)?Integer.parseInt(iwc.getParameter(prmPreArea)):-1;
     valPreSchool = iwc.isParameterSet(prmPreSchool)?Integer.parseInt(iwc.getParameter(prmPreSchool)):-1;
     valType = iwc.isParameterSet(prmType)?Integer.parseInt(iwc.getParameter(prmType)):-1;
-    valCaseOwner = iwc.isParameterSet(prmCaseOwner)?Integer.parseInt(iwc.getParameter(prmCaseOwner)):-1;
+    valCaseOwner = iwc.isParameterSet(prmParentId)?Integer.parseInt(iwc.getParameter(prmParentId)):-1;
     if(!quickAdmin){
       valCaseOwner = iwc.getUserId();
     }
@@ -476,7 +477,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
       Collection parents = mlogic.getCustodiansFor(child);
       Iterator iter = parents.iterator();
       String address = "";
-      boolean caseOwning = false;
+      boolean caseOwning = true;
       while(iter.hasNext()){
 				User parent = (User) iter.next();
 				String addr = userbuiz.getUsersMainAddress(parent).getStreetAddress();
@@ -487,10 +488,13 @@ public class SchoolChoiceApplication extends CommuneBlock {
 				// checkiing for same parent address
 				showAgree = address.equalsIgnoreCase(addr);
 				address = addr;
-        if(quickAdmin && caseOwning){
-          T.add(new HiddenInput(prmCaseOwner,parent.getPrimaryKey().toString()));
+        if(quickAdmin && caseOwning && valCaseOwner == -1){
+          valCaseOwner = ((Integer) parent.getPrimaryKey()).intValue();
+          caseOwning = false;
         }
       }
+      if(valCaseOwner !=-1)
+        T.add(new HiddenInput(prmParentId,String.valueOf(valCaseOwner)));
     }
     catch(NoCustodianFound ex){
 		ex.printStackTrace();
