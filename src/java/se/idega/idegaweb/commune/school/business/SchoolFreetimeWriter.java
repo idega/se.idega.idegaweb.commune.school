@@ -146,7 +146,7 @@ public class SchoolFreetimeWriter implements MediaWritable {
 	    HSSFCellStyle style = wb.createCellStyle();
 	    style.setFont(font);
 
-	    HSSFRow row = sheet.createRow((short)0);
+	    HSSFRow row = sheet.createRow(0);
 	    HSSFCell cell = row.createCell((short)0);
 	    cell.setCellValue(iwrb.getLocalizedString("school.name","Name"));
 	    cell.setCellStyle(style);
@@ -168,7 +168,7 @@ public class SchoolFreetimeWriter implements MediaWritable {
 			int cellRow = 1;
 			Iterator iter = list.iterator();
 			while (iter.hasNext()) {
-				row = sheet.createRow((short)cellRow);
+				row = sheet.createRow(cellRow);
 				studentMember = (SchoolChoice) iter.next();
 				student = (User) students.get(new Integer(studentMember.getChildId()));
 				address = (Address) addresses.get(new Integer(studentMember.getChildId()));
