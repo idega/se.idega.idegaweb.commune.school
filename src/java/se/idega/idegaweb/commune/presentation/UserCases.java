@@ -15,6 +15,7 @@ import com.idega.user.business.*;
 import com.idega.user.data.Group;
 import com.idega.util.*;
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import javax.ejb.EJBException;
 import se.cubecon.bun24.viewpoint.business.ViewpointBusiness;
@@ -39,9 +40,9 @@ public class UserCases extends CommuneBlock {
 	private final static String PARAM_MANAGER_ID = ManagerView.PARAM_MANAGER_ID;
 	private int manager_page_id = -1;
 	private int viewpointPageId = -1;
-	
+
 	private boolean _showName = false;
-	
+
 	private int _startCase = -1;
 	private int _endCase = -1;
 
@@ -67,7 +68,7 @@ public class UserCases extends CommuneBlock {
 	public final static String SUBJECT_DEFAULT = "Rubrik";
 	public final static String HANDLERGROUP_KEY = "usercases.handlerGroup";
 	public final static String HANDLERGROUP_DEFAULT = "Handläggargrupp";
-	
+
 	public final static String PARAMETER_START_CASE = "case_start_nr";
 	public final static String PARAMETER_END_CASE = "case_end_nr";
 
@@ -95,7 +96,7 @@ public class UserCases extends CommuneBlock {
 			_startCase = Integer.parseInt(iwc.getParameter(PARAMETER_START_CASE));
 		else
 			_startCase = 1;
-		
+
 		if (iwc.isParameterSet(PARAMETER_END_CASE))
 			_endCase = Integer.parseInt(iwc.getParameter(PARAMETER_END_CASE));
 		else
@@ -129,7 +130,7 @@ public class UserCases extends CommuneBlock {
 					table.setColumns(6);
 				else
 					table.setColumns(5);
-				
+
 				int row = 1;
 				int column = 1;
 
@@ -152,7 +153,7 @@ public class UserCases extends CommuneBlock {
 
 				if (_endCase > casesSize)
 					_endCase = casesSize;
-				
+
 				for (int a = _startCase - 1; a < _endCase; a++) {
 					try {
 						final Case useCase = (Case) cases.get(a);
@@ -163,14 +164,13 @@ public class UserCases extends CommuneBlock {
 						e.printStackTrace();
 					}
 				}
-				
+
 				mainTable.add(form, 1, 1);
 			}
 			else {
 				mainTable.add(getSmallHeader(localize(NOONGOINGCASES_KEY, NOONGOINGCASES_DEFAULT)), 1, 1);
 			}
 
-			
 			// 1. find my groups
 			final UserBusiness userBusiness = (UserBusiness) IBOLookup.getServiceInstance(iwc, UserBusiness.class);
 			final Collection groups = userBusiness.getUserGroups(userId);
@@ -184,17 +184,17 @@ public class UserCases extends CommuneBlock {
 				mainTable.setHeight(2, 12);
 				mainTable.add(getLocalizedSmallHeader(UNHANDLEDCASESINMYGROUPS_KEY, UNHANDLEDCASESINMYGROUPS_DEFAULT), 1, 3);
 				mainTable.setHeight(4, 6);
-				
+
 				Table messageList = new Table();
 				messageList.setColumns(5);
 				messageList.setCellpadding(getCellpadding());
 				messageList.setCellspacing(getCellspacing());
 				messageList.setWidth(Table.HUNDRED_PERCENT);
 				int row = 1;
-				
+
 				Form form = new Form();
 				form.add(messageList);
-				
+
 				messageList.setRowColor(row, getHeaderColor());
 				messageList.add(getSmallHeader(localize(CASENUMBER_KEY, CASENUMBER_DEFAULT)), 1, row);
 				messageList.add(getSmallHeader(localize(CONCERNING_KEY, CONCERNING_DEFAULT)), 2, row);
@@ -212,7 +212,7 @@ public class UserCases extends CommuneBlock {
 
 	private void addCaseToMessageList(final IWContext iwc, final int userId, final Case useCase, final Table messageList, int row) throws Exception {
 
-		DateFormat dateFormat = CustomDateFormat.getDateTimeInstance(iwc.getCurrentLocale());
+		DateFormat dateFormat = SimpleDateFormat.getDateInstance(SimpleDateFormat.SHORT, iwc.getCurrentLocale());
 		Date caseDate = new Date(useCase.getCreated().getTime());
 		Text caseNumber = getSmallText(useCase.getPrimaryKey().toString());
 		Text caseType = getSmallText(getCaseBusiness(iwc).getCaseBusiness(useCase.getCaseCode()).getLocalizedCaseDescription(useCase, iwc.getCurrentLocale()));
@@ -247,35 +247,27 @@ public class UserCases extends CommuneBlock {
 		}
 		final Text caseOwnerName = getSmallText(useCase.getOwner().getFirstName());
 		final Text status = getSmallText(getCaseBusiness(iwc).getLocalizedCaseStatusDescription(useCase.getCaseStatus(), iwc.getCurrentLocale()));
-		
+
 		if (useCase.getCode().equalsIgnoreCase(Viewpoint.CASE_CODE_KEY)) {
-			final ViewpointBusiness viewpointBusiness
-                    = (ViewpointBusiness) IBOLookup.getServiceInstance
-                    (iwc, ViewpointBusiness.class);
-            final Viewpoint viewpoint
-                    = viewpointBusiness.findViewpoint
-                    (Integer.parseInt (useCase.getPrimaryKey().toString ()));
-            caseType = getSmallText (viewpoint.getCategory ());
-            if (getViewpointPage() != -1) {
-                final Link viewpointLink
-                        = getSmallLink(useCase.getPrimaryKey().toString());
-                viewpointLink.setPage(getViewpointPage());
-                viewpointLink.addParameter (ViewpointForm.PARAM_ACTION,
-                                            ViewpointForm.SHOWVIEWPOINT_ACTION
-                                            + "");
-                viewpointLink.addParameter(ViewpointForm.PARAM_VIEWPOINT_ID,
-                                           useCase.getPrimaryKey().toString());
-                caseNumber = viewpointLink;
-            }
+			final ViewpointBusiness viewpointBusiness = (ViewpointBusiness) IBOLookup.getServiceInstance(iwc, ViewpointBusiness.class);
+			final Viewpoint viewpoint = viewpointBusiness.findViewpoint(Integer.parseInt(useCase.getPrimaryKey().toString()));
+			caseType = getSmallText(viewpoint.getCategory());
+			if (getViewpointPage() != -1) {
+				final Link viewpointLink = getSmallLink(useCase.getPrimaryKey().toString());
+				viewpointLink.setPage(getViewpointPage());
+				viewpointLink.addParameter(ViewpointForm.PARAM_ACTION, ViewpointForm.SHOWVIEWPOINT_ACTION + "");
+				viewpointLink.addParameter(ViewpointForm.PARAM_VIEWPOINT_ID, useCase.getPrimaryKey().toString());
+				caseNumber = viewpointLink;
+			}
 		}
-        
+
 		if (row % 2 == 0)
 			messageList.setRowColor(row, getZebraColor1());
 		else
 			messageList.setRowColor(row, getZebraColor2());
-		
+
 		int column = 1;
-		
+
 		messageList.add(caseNumber, column++, row);
 		messageList.add(caseType, column++, row);
 		if (isShowName())
@@ -308,44 +300,44 @@ public class UserCases extends CommuneBlock {
 			messageList.setRowColor(row, getZebraColor1());
 		else
 			messageList.setRowColor(row, getZebraColor2());
-		
+
 		messageList.add(caseNumber, 1, row);
 		messageList.add(category, 2, row);
 		messageList.add(subject, 3, row);
 		messageList.add(date, 4, row);
 		messageList.add(group, 5, row);
 	}
-	
+
 	private Table getNavigationTable(int caseSize) {
-		Table navigationTable = new Table(2,1);
+		Table navigationTable = new Table(2, 1);
 		navigationTable.setCellpadding(0);
 		navigationTable.setCellspacing(0);
 		navigationTable.setWidth(Table.HUNDRED_PERCENT);
 		navigationTable.setAlignment(2, 1, Table.HORIZONTAL_ALIGN_RIGHT);
-		
+
 		if (_startCase > 1) {
-			Link previous = getSmallLink(localize("usercases.previous","<< previous"));
-			previous.addParameter(PARAMETER_START_CASE,(_startCase - 10));
-			previous.addParameter(PARAMETER_END_CASE,(_endCase - 10));
+			Link previous = getSmallLink(localize("usercases.previous", "<< previous"));
+			previous.addParameter(PARAMETER_START_CASE, (_startCase - 10));
+			previous.addParameter(PARAMETER_END_CASE, (_endCase - 10));
 			navigationTable.add(previous, 1, 1);
 		}
 		else {
-			Text previous = getSmallText(localize("usercases.previous","<< previous"));
+			Text previous = getSmallText(localize("usercases.previous", "<< previous"));
 			navigationTable.add(previous, 1, 1);
 		}
-		
+
 		if (_endCase < caseSize) {
-			Link next = getSmallLink(localize("usercases.next","next >>"));
-			next.addParameter(PARAMETER_START_CASE,(_startCase + 10));
-			next.addParameter(PARAMETER_END_CASE,(_endCase + 10));
+			Link next = getSmallLink(localize("usercases.next", "next >>"));
+			next.addParameter(PARAMETER_START_CASE, (_startCase + 10));
+			next.addParameter(PARAMETER_END_CASE, (_endCase + 10));
 			navigationTable.add(next, 2, 1);
 		}
 		else {
-			Text next = getSmallText(localize("usercases.next","next >>"));
+			Text next = getSmallText(localize("usercases.next", "next >>"));
 			navigationTable.add(next, 2, 1);
 		}
 
-		return navigationTable;	
+		return navigationTable;
 	}
 
 	private CaseBusiness getCaseBusiness(IWContext iwc) throws Exception {
