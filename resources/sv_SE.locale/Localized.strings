@@ -2,7 +2,7 @@ iw.component.se.idega.idegaweb.commune.school.report.presentation.SchoolReports.
 report.after_school_centers_6_9=Fritidshem 6-9 \u00E5r
 report.after_school_centre=Fritidshem
 report.child_care_hours=Omsorgstimmar
-report.children_in_family_daycare=Antal barn per anordnare av f\u00F6rskoleverksamhet
+report.children_in_family_daycare=Barn i familjedaghem
 report.children_students=Barn/elever
 report.children_total=Summa barn
 report.commun_school_children_care_6=Kommunal skolbarnsomsorg f\u00F6rskoleklassbarn 6 \u00E5r
@@ -32,7 +32,7 @@ report.mean_week_hours=Medelantal veckotimmar
 report.nacka_commune=Nacka kommun
 report.nacka_students=Nacka-elever
 report.number_of_children=Antal barn
-report.number_of_providers=Antal
+report.number_of_providers=Antal anordnare
 report.number_of_students=Antal elever
 report.of_which_commune_management=- varav kommunal regi
 report.of_which_from_other_communes=Varav fr\u00E5n andra kommuner
