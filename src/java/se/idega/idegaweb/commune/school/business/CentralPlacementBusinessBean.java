@@ -8,19 +8,28 @@ package se.idega.idegaweb.commune.school.business;
 
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Iterator;
 
 import javax.ejb.FinderException;
 import javax.transaction.SystemException;
 import javax.transaction.UserTransaction;
 
 import se.idega.idegaweb.commune.accounting.resource.business.ResourceBusiness;
+import se.idega.idegaweb.commune.accounting.resource.data.ResourceClassMember;
 import se.idega.idegaweb.commune.school.presentation.CentralPlacementEditor;
 
 import com.idega.block.school.business.SchoolBusiness;
+import com.idega.block.school.data.SchoolCategory;
+import com.idega.block.school.data.SchoolCategoryHome;
 import com.idega.block.school.data.SchoolClassMember;
+import com.idega.block.school.data.SchoolClassMemberHome;
 import com.idega.block.school.data.SchoolSeason;
+import com.idega.block.school.data.SchoolType;
 import com.idega.business.IBOLookup;
 import com.idega.business.IBOServiceBean;
+import com.idega.data.IDOLookup;
 import com.idega.presentation.IWContext;
 import com.idega.user.data.User;
 import com.idega.util.IWTimestamp;
@@ -31,7 +40,7 @@ import com.idega.util.IWTimestamp;
  * Business object with helper methods for CentralPlacingEditor
  */
 public class CentralPlacementBusinessBean extends IBOServiceBean 
-																						implements CentralPlacementBusiness {
+																					implements CentralPlacementBusiness {
 																							
 	//  Keys for error messages
 	private static final String KP = "central_placement_business.";
@@ -53,13 +62,25 @@ public class CentralPlacementBusinessBean extends IBOServiceBean
 		Timestamp registerDate = null;
 		Timestamp dayBeforeRegDate = null;
 		String notes = null;
-		SchoolClassMember placement = null;
+		SchoolClassMember newPlacement = null;
 		SchoolClassMember currentPlacement = null;
+		SchoolClassMember latestPlacement = null;
+		int newPlacementID = -1;
 		
 		// Get current placement from user http session. Put there from CentralPlacementEditor
 		User pupil = (User) iwc.getSession().getAttribute(CentralPlacementEditor.SESSION_KEY_CHILD);
-		currentPlacement = getCurrentSchoolClassMembership(pupil, iwc);
-		
+		if (pupil != null) {
+			currentPlacement = getCurrentSchoolClassMembership(pupil, iwc);
+			latestPlacement = getLatestPlacement(iwc, pupil);			
+		}
+		Integer currID = null;
+		if (currentPlacement != null)
+			currID = (Integer) currentPlacement.getPrimaryKey(); // test
+		Integer latestId = null;
+		if (latestPlacement != null)
+			latestId = (Integer) latestPlacement.getPrimaryKey(); // test
+
+				
 	// *** START - Check in params ***
 		// pupil
 		if (childID == -1) {
@@ -78,8 +99,8 @@ public class CentralPlacementBusinessBean extends IBOServiceBean
 
 		// school year
 		if (iwc.isParameterSet(CentralPlacementEditor.PARAM_SCHOOL_YEAR)) {
-			String providerID = iwc.getParameter(CentralPlacementEditor.PARAM_SCHOOL_YEAR);
-			if (providerID.equals("-1")) {
+			String yearID = iwc.getParameter(CentralPlacementEditor.PARAM_SCHOOL_YEAR);
+			if (yearID.equals("-1")) {
 				throw new CentralPlacementException(KEY_ERROR_SCHOOL_YEAR, 
 																				"You must chose a school year");
 			}
@@ -87,12 +108,12 @@ public class CentralPlacementBusinessBean extends IBOServiceBean
 		
 		// school group
 		if (iwc.isParameterSet(CentralPlacementEditor.PARAM_SCHOOL_GROUP)) {
-			String providerID = iwc.getParameter(CentralPlacementEditor.PARAM_SCHOOL_GROUP);
-			if (providerID.equals("-1")) {
+			String groupID = iwc.getParameter(CentralPlacementEditor.PARAM_SCHOOL_GROUP);
+			if (groupID.equals("-1")) {
 				throw new CentralPlacementException(KEY_ERROR_SCHOOL_GROUP, 
 																				"You must chose a school group");
 			} else {
-				schoolClassID = Integer.parseInt(providerID);
+				schoolClassID = Integer.parseInt(groupID);
 			}
 		}
 		
@@ -138,11 +159,12 @@ public class CentralPlacementBusinessBean extends IBOServiceBean
 			// Start transaction
 			trans.begin();
 			// Create new placement
-			placement = getSchoolBusiness(iwc).storeSchoolClassMember(studentID, schoolClassID, 
+			newPlacement = getSchoolBusiness(iwc).storeSchoolClassMember(studentID, schoolClassID, 
 																									registerDate, registrator, notes);
-			if (placement != null) {
+			if (newPlacement != null) {
 			// *** START - Store the rest of the parameters ***
-
+				newPlacementID = ((Integer) newPlacement.getPrimaryKey()).intValue(); // test
+				
 				// Compensation by agreement
 				if (iwc.isParameterSet(CentralPlacementEditor.PARAM_PAYMENT_BY_AGREEMENT) &&
 								!iwc.getParameter(CentralPlacementEditor.PARAM_PAYMENT_BY_AGREEMENT).
@@ -150,48 +172,58 @@ public class CentralPlacementBusinessBean extends IBOServiceBean
 					String value = 
 									iwc.getParameter(CentralPlacementEditor.PARAM_PAYMENT_BY_AGREEMENT);
 					if (value.equals(CentralPlacementEditor.KEY_DROPDOWN_YES)) {
-						placement.setHasCompensationByAgreement(true);
+						newPlacement.setHasCompensationByAgreement(true);
 					} else if (value.equals(CentralPlacementEditor.KEY_DROPDOWN_NO)) {
-						placement.setHasCompensationByAgreement(false);
+						newPlacement.setHasCompensationByAgreement(false);
 					}
 				}
 				// Placement paragraph
 				if (iwc.isParameterSet(CentralPlacementEditor.PARAM_PLACEMENT_PARAGRAPH)) {
-					placement.setPlacementParagraph(
+					newPlacement.setPlacementParagraph(
 									iwc.getParameter(CentralPlacementEditor.PARAM_PLACEMENT_PARAGRAPH));					
 				}
 				// Invoice interval
 				if (iwc.isParameterSet(CentralPlacementEditor.PARAM_INVOICE_INTERVAL)) {
-					placement.setInvoiceInterval(
+					newPlacement.setInvoiceInterval(
 										iwc.getParameter(CentralPlacementEditor.PARAM_INVOICE_INTERVAL));
 				}
 				// Study path
 				if (iwc.isParameterSet(CentralPlacementEditor.PARAM_STUDY_PATH)) {
-					int pK = Integer.parseInt(
+					String studyPathIDStr = iwc.getParameter(CentralPlacementEditor.PARAM_STUDY_PATH);
+					if (!studyPathIDStr.equals("-1")) {
+						int pK = Integer.parseInt(
 													iwc.getParameter(CentralPlacementEditor.PARAM_STUDY_PATH));
-					placement.setStudyPathId(pK);
+						newPlacement.setStudyPathId(pK);
+					}
 				}
 				// Resources				
 				if (iwc.isParameterSet(CentralPlacementEditor.PARAM_RESOURCES)) {
 					String [] arr = iwc.getParameterValues(CentralPlacementEditor.PARAM_RESOURCES);
 					for (int i = 0; i < arr.length; i++) {
 						int rscPK = Integer.parseInt(arr[i]);
-						getResourceBusiness(iwc).createResourcePlacement(rscPK, studentID, 
-																									placementDateStr);						
+						ResourceClassMember rscPlace = getResourceBusiness(iwc)
+											.createResourcePlacement(rscPK, newPlacementID, placementDateStr);						
+						Integer rscPlPK = (Integer) rscPlace.getPrimaryKey();
+						int intPK = rscPlPK.intValue();
 					}					
 				}
+				// Store newPlacement
+				newPlacement.store();
 				
 			//	*** END - Store the rest of the parameters ***	
 			}
 			
-			
-//			Integer newPlaceID = (Integer) placement.getPrimaryKey(); // test
-
 			// End old placement
-			if (currentPlacement != null) {
-//				Integer currID = (Integer) currentPlacement.getPrimaryKey(); // test
-				currentPlacement.setRemovedDate(dayBeforeRegDate);
-				currentPlacement.store();
+			if (latestPlacement != null) {
+				latestPlacement.setRemovedDate(dayBeforeRegDate);
+				latestPlacement.store();
+				// finish old placements
+				Collection rscPlaces = getResourceBusiness(iwc).getResourcePlacementsByMemberId(
+																				(Integer) latestPlacement.getPrimaryKey());
+				for (Iterator iter = rscPlaces.iterator(); iter.hasNext();) {
+					ResourceClassMember rscPlace = (ResourceClassMember) iter.next();
+					rscPlace.setEndDate(dayBeforeRegDate);
+				}
 			}
 			trans.commit();
 		} catch (Exception e) {
@@ -210,7 +242,7 @@ public class CentralPlacementBusinessBean extends IBOServiceBean
 	// *** END - Store new placement and end current placement ***
 											
 		// int studentID, int schoolClassID, Timestamp registerDate, int registrator, String notes
-		return placement; 
+		return newPlacement; 
 		
 	}
 
@@ -218,15 +250,48 @@ public class CentralPlacementBusinessBean extends IBOServiceBean
 		throws RemoteException {
 		try {
 			final SchoolSeason season = getSchoolChoiceBusiness(iwc).getCurrentSeason();
+
 			//int childID = ((Integer) child.getPrimaryKey()).intValue();
 			//final SchoolClassMember placement = 
 			//    getSchoolBusiness(iwc).getSchoolClassMemberHome().findByUserAndSeason(childID, 2);
-			final SchoolClassMember placement =
-				getSchoolBusiness(iwc).getSchoolClassMemberHome().findByUserAndSeason(user, season);
-			return (null == placement || null != placement.getRemovedDate()) ? null : placement;
+
+			final SchoolClassMember placement = getSchoolBusiness(iwc).getSchoolClassMemberHome()
+																							.findByUserAndSeason(user, season);
+			Integer PK = (Integer) placement.getPrimaryKey();
+			Date removedDate = placement.getRemovedDate();
+			if (placement == null || removedDate != null)
+				return null;
+			else
+				return placement;
+				
+			//return (null == placement || null != placement.getRemovedDate()) ? null : placement;
 		} catch (final FinderException e) {
 			return null;
 		}
+	}
+	
+	public SchoolClassMember getLatestPlacement(IWContext iwc, User pupil) 
+																											throws RemoteException {
+		String schCategoryStr = iwc.getParameter(CentralPlacementEditor.PARAM_SCHOOL_CATEGORY);
+		SchoolCategory schCat = null;
+		SchoolClassMember mbr = null;
+		try {
+			if (schCategoryStr != null) {
+				schCat = getSchoolCategoryHome().findByPrimaryKey(schCategoryStr);			
+			}
+			if (schCat != null && pupil != null) {
+				// Find latest with removed_date == null
+				mbr = getSchoolClassMemberHome().findLatestByUserSchCatNoRemovedDate(pupil, schCat);						
+			}
+		} catch (FinderException fe1) {
+			try {
+				// Find latest with removed_date set, by register_date
+				mbr = getSchoolClassMemberHome().findLatestByUserAndSchCategory(pupil, schCat);											
+			} catch (FinderException fe2) {
+				return null;
+			}
+		}
+		return mbr;		
 	}
 
 	
@@ -250,6 +315,14 @@ public class CentralPlacementBusinessBean extends IBOServiceBean
 */	
 	private SchoolChoiceBusiness getSchoolChoiceBusiness(IWContext iwc) throws RemoteException {
 		return (SchoolChoiceBusiness) IBOLookup.getServiceInstance(iwc, SchoolChoiceBusiness.class);
+	}
+	
+	private SchoolClassMemberHome getSchoolClassMemberHome() throws RemoteException {
+		return (SchoolClassMemberHome) IDOLookup.getHome(SchoolClassMember.class);
+	}
+	
+	public SchoolCategoryHome getSchoolCategoryHome() throws RemoteException {
+		return (SchoolCategoryHome) IDOLookup.getHome(SchoolCategory.class);
 	}
 
 }
