@@ -56,6 +56,7 @@ public class SchoolChoiceMessagePdfHandler implements MessagePdfHandler,BundleRe
 	public final static String CODE_CHILD_SELF_APPLICATION_CHANGE = "CHLDCHG";
 	public final static String CODE_CHILD_SELF_APPLICATION_NEW = "CHLDNEW";
 	public final static String CODE_APPLICATION_REJECT ="APREJCT";
+	public final static String CODE_APPLICATION_REACTIVATE ="APREACT";
 	public final static String CODE_PRELIMINARY ="PRELIMI";
 	/* (non-Javadoc)
 	 * @see se.idega.idegaweb.commune.message.business.MessagePdfHandler#createMessageContent(se.idega.idegaweb.commune.printing.business.DocumentPrintContext)
@@ -84,6 +85,9 @@ public class SchoolChoiceMessagePdfHandler implements MessagePdfHandler,BundleRe
 		else if(CODE_CHILD_SELF_APPLICATION_NEW.equals(code)){
 			createChildSelfChangeContent(dpc,code);
 		}
+		else if(CODE_APPLICATION_REACTIVATE.equals(code)){
+			createReactivateContent(dpc,code);
+		}
 		else if(CODE_OLD_SCHOOL_CHANGE.equals(code)){
 			createOldHeadmasterContent(dpc,code);
 		}
@@ -99,6 +103,9 @@ public class SchoolChoiceMessagePdfHandler implements MessagePdfHandler,BundleRe
 	}
 	
 	private void createPreliminaryContent(DocumentPrintContext dpc,String code)throws ContentCreationException{
+		createContent( dpc, getHandlerCode()+"_"+code+"_letter.xml");
+	}
+	private void createReactivateContent(DocumentPrintContext dpc,String code)throws ContentCreationException{
 		createContent( dpc, getHandlerCode()+"_"+code+"_letter.xml");
 	}
 	
