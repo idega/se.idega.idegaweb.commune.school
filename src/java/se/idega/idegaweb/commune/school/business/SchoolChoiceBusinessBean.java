@@ -910,22 +910,38 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 
     public SchoolChoiceReminderReceiver []
         findAllStudentsThatMustDoSchoolChoice ()
-        throws RemoteException, FinderException {
+        throws RemoteException {
         com.idega.util.Timer timer = new com.idega.util.Timer ();
         timer.start ();
-
-        final Set ids = findStudentsInFinalClassesThatMustDoSchoolChoice ();
+        final Set ids = new HashSet ();
+        try {
+            ids.addAll (findStudentsInFinalClassesThatMustDoSchoolChoice ());
+        } catch (FinderException e) {
+            e.printStackTrace ();
+        }
         System.err.println ("ids.size=" + ids.size ());
-        ids.addAll (findSchoolStartersNotInChildCare ());
+        try {
+            ids.addAll (findSchoolStartersNotInChildCare ());
+        } catch (FinderException e) {
+            e.printStackTrace ();
+        }
         System.err.println ("ids.size=" + ids.size ());
-        ids.addAll (findChildCareStarters ());
+        try {
+            ids.addAll (findChildCareStarters ());
+        } catch (FinderException e) {
+            e.printStackTrace ();
+        }
         System.err.println ("ids.size=" + ids.size ());
-        ids.removeAll (findStudentIdsWhoChosedForCurrentSeason ());
+        try {
+            ids.removeAll (findStudentIdsWhoChosedForCurrentSeason ());
+        } catch (FinderException e) {
+            e.printStackTrace ();
+        }
         System.err.println ("ids.size=" + ids.size ());
         timer.stop ();
         System.err.println ("Total search time=" + timer.getTime () + " msec");
         timer.start ();
-
+        
         final int idCount = ids.size ();
         final Map receivers = new TreeMap ();
         final Iterator iter = ids.iterator ();
@@ -1030,9 +1046,23 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
         final Collection students = getUserHome().findUsersByYearOfBirth
                 (yearOfBirth, yearOfBirth);
         final Set ids = new HashSet ();
+        final SchoolClassMemberHome classMemberHome
+                = getSchoolClassMemberHome ();
+        final int previousSeasonId = getPreviousSeasonId ();
         for (Iterator i = students.iterator (); i.hasNext ();) {
             final User student = (User) i.next ();
-            ids.add (student.getPrimaryKey ());
+            final Integer studentId = (Integer) student.getPrimaryKey ();
+            SchoolClassMember member = null;
+            try {
+                member = classMemberHome.findByUserAndSeason
+                        (studentId.intValue (), previousSeasonId);
+            } catch (Exception e) {
+                // not a school class member - handle in 'finally' clause
+            } finally {
+                if (null == member) {
+                    ids.add (studentId);
+                }
+            }
         }
         timer.stop ();
         System.err.println ("Found " + students.size () + " childcarestarters in "
