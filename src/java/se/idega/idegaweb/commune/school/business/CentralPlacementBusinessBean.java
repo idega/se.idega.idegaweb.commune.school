@@ -51,6 +51,7 @@ public class CentralPlacementBusinessBean extends IBOServiceBean
 	//  Keys for error messages
 	private static final String KP = "central_placement_business.";
 	private static final String KEY_ERROR_CHILD_ID = KP + "error.child_id";
+	private static final String KEY_ERROR_CATEGORY_ID = KP + "error.category_id";
 	private static final String KEY_ERROR_PROVIDER_ID = KP + "error.provider_id";
 	private static final String KEY_ERROR_PLACEMENT_DATE = KP + "error.placement_date";
 	private static final String KEY_ERROR_SCHOOL_TYPE = KP + "error.school_type";
@@ -94,6 +95,14 @@ public class CentralPlacementBusinessBean extends IBOServiceBean
 			latestPlacement = getLatestPlacement(student);
 		}
 		
+		// operational field
+		if (iwc.isParameterSet(CentralPlacementEditor.PARAM_SCHOOL_CATEGORY)) {
+			String categoryID = iwc.getParameter(CentralPlacementEditor.PARAM_SCHOOL_CATEGORY);
+			if (categoryID.equals("-1")) {
+				throw new CentralPlacementException(KEY_ERROR_CATEGORY_ID, 
+						"You must chose an operational field for the placement");
+			} 
+		}
 		// provider
 		if (iwc.isParameterSet(CentralPlacementEditor.PARAM_PROVIDER)) {
 			String providerID = iwc.getParameter(CentralPlacementEditor.PARAM_PROVIDER);
