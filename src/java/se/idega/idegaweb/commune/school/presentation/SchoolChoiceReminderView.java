@@ -21,10 +21,10 @@ import se.idega.idegaweb.commune.school.data.SchoolChoiceReminder;
  * and entity ejb classes in {@link se.idega.idegaweb.commune.school.data}.
  * <p>
  * <p>
- * Last modified: $Date: 2003/01/21 10:39:07 $ by $Author: staffan $
+ * Last modified: $Date: 2003/01/21 15:42:58 $ by $Author: staffan $
  *
  * @author <a href="http://www.staffannoteberg.com">Staffan Nöteberg</a>
- * @version $Revision: 1.24 $
+ * @version $Revision: 1.25 $
  * @see javax.ejb
  */
 public class SchoolChoiceReminderView extends CommuneBlock {
@@ -113,13 +113,6 @@ public class SchoolChoiceReminderView extends CommuneBlock {
 		final Form form = new Form();
 		final DropdownMenu dropdown = (DropdownMenu) getStyledInterface
                 (new DropdownMenu (ACTION_KEY));
-        /*
-        dropdown.addMenuElement (SHOW_CREATE_FORM_KEY,
-                                 localize (CREATE_KEY,
-                                           CREATE_DEFAULT));
-        dropdown.addMenuElement (LIST_ALL_KEY,
-                                 localize (LIST_ALL_KEY, LIST_ALL_DEFAULT));
-        */
 		final SubmitButton submit = getSubmitButton (CONTINUE_KEY,
                                                      CONTINUE_DEFAULT);
 		final Table table = new Table ();
@@ -243,7 +236,7 @@ public class SchoolChoiceReminderView extends CommuneBlock {
         table.add (getHeader(localize (ACTIVE_REMINDERS_KEY,
                                        ACTIVE_REMINDERS_DEFAULT)), 1, row++);
         table.setHeight (row++, 12);
-        table.add ("Om du klickar på id-numret nedan så räknar systemet ut vilka som ska få påminnelse. Observera att detta kan ta upp till 3 minuter.", 1, row++);
+        table.add (localize ("scr_click below", "Om du klickar på id-numret nedan så räknar systemet ut vilka som ska få påminnelse. Observera att detta kan ta upp till 3 minuter."), 1, row++);
         table.setHeight (row++, 12);
         table.add(form, 1, row++);
 		add(table);
@@ -340,7 +333,7 @@ public class SchoolChoiceReminderView extends CommuneBlock {
 		table.setHeight (row++, 24);
         final Table submitTable = new Table ();
         submitTable.add (getStyledInterface
-                         (new SubmitButton("Skriv ut till adresser nedan",
+                         (new SubmitButton(localize ("scr_print_to_addresses_below", "Skriv ut till adresser nedan"),
                                            ACTION_KEY, GENERATE_LETTER_KEY)),
                          1, 1);
         submitTable.add (getStyledInterface
