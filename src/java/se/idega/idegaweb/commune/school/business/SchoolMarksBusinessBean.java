@@ -12,7 +12,6 @@ import javax.ejb.CreateException;
 import com.idega.data.IDOLookup;
 import com.idega.block.school.data.School;
 import com.idega.presentation.IWContext;
-import com.idega.block.school.business.SchoolBusiness;
 
 import se.idega.idegaweb.commune.school.business.SchoolStatistics;
 import se.idega.idegaweb.commune.school.data.SCBCode;
@@ -27,7 +26,7 @@ import se.idega.idegaweb.commune.school.business.SchoolMarkValues;
 /**
  * School marks business
  * <p>
- * $Id: SchoolMarksBusinessBean.java,v 1.5 2003/10/06 13:08:31 kjell Exp $
+ * $Id: SchoolMarksBusinessBean.java,v 1.6 2003/10/06 13:24:42 laddi Exp $
  *
  * I will add some comments on the school marks calculation technique here later.
  * However I am waiting for Nacka to present me that specification.
@@ -68,25 +67,25 @@ public class SchoolMarksBusinessBean extends com.idega.business.IBOServiceBean i
 	private int _sumMathsEG = 0;
 	private int _sumSwedishEG = 0;
 	private int _sumSwedish2EG = 0;
-	private int _sumTotalEG = 0;
+	//private int _sumTotalEG = 0;
 
 	private int _sumEnglishG = 0;
 	private int _sumMathsG = 0;
 	private int _sumSwedishG = 0;
 	private int _sumSwedish2G = 0;
-	private int _sumTotalG = 0;
+	//private int _sumTotalG = 0;
 
 	private int _sumEnglishVG = 0;
 	private int _sumMathsVG = 0;
 	private int _sumSwedishVG = 0;
 	private int _sumSwedish2VG = 0;
-	private int _sumTotalVG = 0;
+	//private int _sumTotalVG = 0;
 
 	private int _sumEnglishMVG = 0;
 	private int _sumMathsMVG = 0;
 	private int _sumSwedishMVG = 0;
 	private int _sumSwedish2MVG = 0;
-	private int _sumTotalMVG = 0;
+	//private int _sumTotalMVG = 0;
 
 	private static int _tallyMeriteValue = 0;
 	private static int _tallyMarksPoints = 0;
@@ -384,7 +383,7 @@ public class SchoolMarksBusinessBean extends com.idega.business.IBOServiceBean i
 		SchoolStatisticsData ss = null;
 		try {
 			home = (SchoolStatisticsDataHome) IDOLookup.getHome(SchoolStatisticsData.class);
-			ss = (SchoolStatisticsData) home.findBySCBCode(scbCode);
+			ss = home.findBySCBCode(scbCode);
 		} catch (RemoteException e) {
 			e.printStackTrace();
 			found = false;
@@ -711,7 +710,7 @@ public class SchoolMarksBusinessBean extends com.idega.business.IBOServiceBean i
 		SchoolStatisticsData ss = null;
 		try {
 			home = (SchoolStatisticsDataHome) IDOLookup.getHome(SchoolStatisticsData.class);
-			ss = (SchoolStatisticsData) home.findBySCBCode(scbCode);
+			ss = home.findBySCBCode(scbCode);
 		} catch (RemoteException e) {
 			e.printStackTrace();
 			found = false;
@@ -738,7 +737,7 @@ public class SchoolMarksBusinessBean extends com.idega.business.IBOServiceBean i
 		SchoolStatisticsData ss = null;
 		try {
 			home = (SchoolStatisticsDataHome) IDOLookup.getHome(SchoolStatisticsData.class);
-			ss = (SchoolStatisticsData) home.findBySCBCode(scbCode);
+			ss = home.findBySCBCode(scbCode);
 		} catch (RemoteException e) {
 			e.printStackTrace();
 			found = false;
@@ -765,7 +764,7 @@ public class SchoolMarksBusinessBean extends com.idega.business.IBOServiceBean i
 		SchoolStatisticsData ss = null;
 		try {
 			home = (SchoolStatisticsDataHome) IDOLookup.getHome(SchoolStatisticsData.class);
-			ss = (SchoolStatisticsData) home.findBySCBCode(scbCode);
+			ss = home.findBySCBCode(scbCode);
 		} catch (RemoteException e) {
 			e.printStackTrace();
 			found = false;
@@ -793,7 +792,7 @@ public class SchoolMarksBusinessBean extends com.idega.business.IBOServiceBean i
 		SchoolStatisticsData ss = null;
 		try {
 			home = (SchoolStatisticsDataHome) IDOLookup.getHome(SchoolStatisticsData.class);
-			ss = (SchoolStatisticsData) home.findBySCBCode(scbCode);
+			ss = home.findBySCBCode(scbCode);
 		} catch (RemoteException e) {
 			e.printStackTrace();
 			found = false;
@@ -820,7 +819,7 @@ public class SchoolMarksBusinessBean extends com.idega.business.IBOServiceBean i
 		SchoolStatisticsData ss = null;
 		try {
 			home = (SchoolStatisticsDataHome) IDOLookup.getHome(SchoolStatisticsData.class);
-			ss = (SchoolStatisticsData) home.findBySCBCode(scbCode);
+			ss = home.findBySCBCode(scbCode);
 		} catch (RemoteException e) {
 			e.printStackTrace();
 			found = false;
@@ -847,7 +846,7 @@ public class SchoolMarksBusinessBean extends com.idega.business.IBOServiceBean i
 		SchoolStatisticsData ss = null;
 		try {
 			home = (SchoolStatisticsDataHome) IDOLookup.getHome(SchoolStatisticsData.class);
-			ss = (SchoolStatisticsData) home.findBySCBCode(scbCode);
+			ss = home.findBySCBCode(scbCode);
 		} catch (RemoteException e) {
 			e.printStackTrace();
 			found = false;
@@ -1139,7 +1138,7 @@ public class SchoolMarksBusinessBean extends com.idega.business.IBOServiceBean i
 		SchoolStatisticsData ssd = null;
 		try {
 			home = getSchoolStatisticsDataHome();
-			ssd = (SchoolStatisticsData) home.findBySCBCode(scbCode);
+			ssd = home.findBySCBCode(scbCode);
 		} catch (RemoteException e) {
 		} catch (FinderException e) {
 		}
@@ -1179,25 +1178,25 @@ public class SchoolMarksBusinessBean extends com.idega.business.IBOServiceBean i
 		_sumMathsEG = 0;
 		_sumSwedishEG = 0;
 		_sumSwedish2EG = 0;
-		_sumTotalEG = 0;
+		//_sumTotalEG = 0;
 
 		_sumEnglishG = 0;
 		_sumMathsG = 0;
 		_sumSwedishG = 0;
 		_sumSwedish2G = 0;
-		_sumTotalG = 0;
+		//_sumTotalG = 0;
 
 		_sumEnglishVG = 0;
 		_sumMathsVG = 0;
 		_sumSwedishVG = 0;
 		_sumSwedish2VG = 0;
-		_sumTotalVG = 0;
+		//_sumTotalVG = 0;
 
 		_sumEnglishMVG = 0;
 		_sumMathsMVG = 0;
 		_sumSwedishMVG = 0;
 		_sumSwedish2MVG = 0;
-		_sumTotalMVG = 0;
+		//_sumTotalMVG = 0;
 
 	}
 	
@@ -1283,7 +1282,7 @@ public class SchoolMarksBusinessBean extends com.idega.business.IBOServiceBean i
 
 	public String getCommuneMeanMeriteValue() {
 		if (_tallyMeriteValue != 0) {
-			return ""+(_sumMeriteValue /((float) _tallyMeriteValue));
+			return ""+(_sumMeriteValue / _tallyMeriteValue);
 		} else {
 			return "0";
 		}
@@ -1291,7 +1290,7 @@ public class SchoolMarksBusinessBean extends com.idega.business.IBOServiceBean i
 
 	public String getCommuneMeanMarksPoints() {
 		if (_tallyMarksPoints != 0) {
-			return ""+(_sumMarksPoints /((float) _tallyMarksPoints));
+			return ""+(_sumMarksPoints / _tallyMarksPoints);
 		} else {
 			return "0";
 		}
@@ -1299,7 +1298,7 @@ public class SchoolMarksBusinessBean extends com.idega.business.IBOServiceBean i
 
 	public String getCommuneMeanAuthPoints() {
 		if (_tallyAuthPoints != 0) {
-			return ""+(_sumAuthPoints /((float) _tallyAuthPoints));
+			return ""+(_sumAuthPoints / _tallyAuthPoints);
 		} else {
 			return "0";
 		}
@@ -1307,21 +1306,21 @@ public class SchoolMarksBusinessBean extends com.idega.business.IBOServiceBean i
 
 	public String getCommuneMeanMarksNumberShare() {
 		if (_tallyMarksNumberShare != 0) {
-			return ""+(_sumMarksNumberShare /((float) _tallyMarksNumberShare));
+			return ""+(_sumMarksNumberShare / _tallyMarksNumberShare);
 		} else {
 			return "0";
 		}
 	}
 	public String getCommuneMeanMarksFailed() {
 		if (_tallyMarksFailed != 0) {
-			return ""+(_sumMarksFailed /((float) _tallyMarksFailed));
+			return ""+(_sumMarksFailed / _tallyMarksFailed);
 		} else {
 			return "0";
 		}
 	}
 	public String getCommuneMeanMarksNoGoal() {
 		if (_tallyMarksNoGoal != 0) {
-			return ""+(_sumMarksNoGoal /((float) _tallyMarksNoGoal));
+			return ""+(_sumMarksNoGoal / _tallyMarksNoGoal);
 		} else {
 			return "0";
 		}
