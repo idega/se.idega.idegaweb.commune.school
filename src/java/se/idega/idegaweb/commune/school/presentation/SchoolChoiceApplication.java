@@ -305,6 +305,11 @@ public class SchoolChoiceApplication extends CommuneBlock {
 							}
 							add(getSchoolChoiceAnswer(child));
 						}
+						else {
+							if (getResponsePage() != null)
+								iwc.forwardToIBPage(getParentPage(),getResponsePage());
+							add(getSchoolChoiceAnswer(child));
+						}
 					}
 					else if (hasChoosed) {
 						add(getAlreadyChosenAnswer(child));
