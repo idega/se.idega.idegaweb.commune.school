@@ -1159,7 +1159,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 			final Document document = new Document(PageSize.A4, mmToPoints(30), mmToPoints(30), mmToPoints(0), mmToPoints(0));
 			final PdfWriter writer = PdfWriter.getInstance(document, outStream);
 			writer.setViewerPreferences(PdfWriter.PageModeUseThumbs | PdfWriter.HideMenubar | PdfWriter.PageLayoutOneColumn | PdfWriter.FitWindow | PdfWriter.CenterWindow);
-			document.addTitle("Påminnelse " + reminderId);
+
 			document.addCreationDate();
 			document.open();
 			final SchoolChoiceReminder reminder = findSchoolChoiceReminder(reminderId);
@@ -1224,7 +1224,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 			PdfPCell logoCell;
 			try {
 				final Image logo = Image.getInstance(logoPath);
-				logo.scaleToFit(mmToPoints(30), mmToPoints(15));
+				logo.scaleToFit(mmToPoints(51), mmToPoints(17));
 				logoCell = new PdfPCell(logo);
 				logoCell.setVerticalAlignment(Element.ALIGN_MIDDLE);
 				logoCell.setHorizontalAlignment(Element.ALIGN_LEFT);
