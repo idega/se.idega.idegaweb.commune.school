@@ -57,8 +57,8 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	public MemberFamilyLogic  getMemberFamilyLogic() throws RemoteException {
 		return (MemberFamilyLogic) this.getServiceInstance(MemberFamilyLogic.class);
 	}
-	public UserBusiness  getUserBusiness() throws RemoteException {
-		return (UserBusiness) this.getServiceInstance(UserBusiness.class);
+	public CommuneUserBusiness  getUserBusiness() throws RemoteException {
+		return (CommuneUserBusiness) this.getServiceInstance(CommuneUserBusiness.class);
 	}
 	public SchoolHome getSchoolHome() throws java.rmi.RemoteException {
 		return getSchoolBusiness().getSchoolHome();
@@ -121,6 +121,11 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 				}
 				handleSeparatedParentApplication(childId,userId,returnList,false);
 				trans.commit();
+				
+				int previousSeasonID = getCommuneSchoolBusiness().getPreviousSchoolSeasonID(getCommuneSchoolBusiness().getCurrentSchoolSeasonID());
+				if (previousSeasonID != -1)
+					getCommuneSchoolBusiness().setNeedsSpecialAttention(childId, previousSeasonID,true);
+				
 				return returnList;
 			}
 			catch (Exception ex) {
@@ -195,8 +200,9 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 			Integer seasonId = (Integer) season.getPrimaryKey();
 			choice.setSchoolSeasonId(seasonId.intValue());
 		}
-		if (hasPrevious)
-			choice.setCreated(new IWTimestamp().getTimestampRightNow());
+		IWTimestamp stamp = new IWTimestamp();
+		stamp.addMinutes((1 - choiceOrder));
+		choice.setCreated(stamp.getTimestamp());
 		choice.setCaseStatus(caseStatus);
 		if (caseStatus.getStatus().equalsIgnoreCase("PREL")) {
 			getMessageBusiness().createUserMessage(choice.getOwner(), getPreliminaryMessageSubject(), getPreliminaryMessageBody(choice));
@@ -516,11 +522,11 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		throw new ClassCastException("Case with casecode: " + caseCode + " cannot be converted to a schoolchoice");
 	}
 	public String getLocalizedCaseDescription(Case theCase, Locale locale) throws RemoteException {
-		String desc = super.getLocalizedCaseDescription(theCase, locale);
 		SchoolChoice choice = getSchoolChoiceInstance(theCase);
-		desc += " ";
-		desc += choice.getChosenSchool().getName();
-		return desc;
+		Object[] arguments = { getUserBusiness().getUser(choice.getChildId()).getFirstName(), String.valueOf(choice.getChoiceOrder()), choice.getChosenSchool().getName() };
+		
+		String desc = super.getLocalizedCaseDescription(theCase, locale);
+		return MessageFormat.format(desc, arguments);
 	}
 	
 	public SchoolChoice findByStudentAndSchoolAndSeason(int studentID, int schoolID, int seasonID) throws RemoteException {
@@ -560,6 +566,15 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		}
 	}	
 
+	public int getNumberOfApplicationsForStudents(int userID, int schoolSeasonID) throws RemoteException {
+		try {
+			return getSchoolChoiceHome().getNumberOfChoices(userID, schoolSeasonID);
+		}
+		catch (IDOException ie) {
+			return 0;
+		}
+	}	
+
 	public int getNumberOfApplications(int schoolID, int schoolSeasonID, int grade) throws RemoteException {
 		try {
 			return getSchoolChoiceHome().getNumberOfApplications("PREL", schoolID, schoolSeasonID, grade);
@@ -574,6 +589,10 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 
 	private CommuneUserBusiness getCommuneUserBusiness() throws RemoteException {
 		return (CommuneUserBusiness) getServiceInstance(CommuneUserBusiness.class);
+	}
+
+	private SchoolCommuneBusiness getCommuneSchoolBusiness() throws RemoteException {
+		return (SchoolCommuneBusiness) getServiceInstance(SchoolCommuneBusiness.class);
 	}
 
 	/**

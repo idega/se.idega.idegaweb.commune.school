@@ -26,10 +26,12 @@ import com.idega.block.school.data.School;
 import com.idega.block.school.data.SchoolClass;
 import com.idega.block.school.data.SchoolClassMember;
 import com.idega.block.school.data.SchoolSeason;
+import com.idega.block.school.data.SchoolType;
 import com.idega.block.school.data.SchoolYear;
 import com.idega.business.IBOLookup;
 import com.idega.core.data.Address;
 import com.idega.core.data.Email;
+import com.idega.data.IDOException;
 import com.idega.idegaweb.IWPropertyList;
 import com.idega.user.business.UserBusiness;
 import com.idega.user.data.Group;
@@ -206,6 +208,17 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 		return false;	
 	}
 	
+	public boolean[] hasSchoolChoices(int userID, int seasonID) throws RemoteException {
+		boolean[] returnValue = {false,false};
+		int numberOfChoices = getSchoolChoiceBusiness().getNumberOfApplicationsForStudents(userID, seasonID);	
+		if (numberOfChoices > 0) {
+			if (numberOfChoices == 1)
+				returnValue[1] = true;
+			returnValue[0] = true;
+		}
+		return returnValue;
+	}
+	
 	public int getChosenSchoolID(Collection choices) throws RemoteException {
 		if (choices != null && !choices.isEmpty()) {
 			Iterator iter = choices.iterator();
@@ -299,39 +312,80 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 		return new Vector();
 	}
 	
-	public void finalizeGroup(int schoolClassID, String subject, String body) throws RemoteException {
-		SchoolClass schoolClass = getSchoolBusiness().findSchoolClass(new Integer(schoolClassID));
+	public void finalizeGroup(SchoolClass schoolClass, String subject, String body) throws RemoteException {
 		School school = getSchoolBusiness().getSchool(new Integer(schoolClass.getSchoolId()));
 
-		Map students = getStudentList(getSchoolBusiness().findStudentsInClass(schoolClassID));
+		Map students = getStudentList(getSchoolBusiness().findStudentsInClass(((Integer)schoolClass.getPrimaryKey()).intValue()));
 		Iterator iter = students.values().iterator();
 		while (iter.hasNext()) {
 			User student = (User) iter.next();
-			try {
-				Collection parents = getMemberFamilyLogic().getCustodiansFor(student);
-				if (!parents.isEmpty()) {
-					Iterator iterator = parents.iterator();
-					while (iterator.hasNext()) {
-						User parent = (User) iterator.next();
-						List emails = new Vector(parent.getEmails());
-						if (!emails.isEmpty()) {
-							Email email = (Email) emails.get(0);
-							try {
-								Object[] arguments = { school.getName(), parent.getNameLastFirst(true), schoolClass.getName(), student.getNameLastFirst(true) };
-								getMessageBusiness().createUserMessage(parent, subject, MessageFormat.format(body, arguments));
+			System.out.println("Doing student: "+student.getPrimaryKey());
+			if (hasSchoolChoices(((Integer)student.getPrimaryKey()).intValue(), schoolClass.getSchoolSeasonId())[0]) {
+				System.out.println("Sending message...");
+				try {
+					Collection parents = getMemberFamilyLogic().getCustodiansFor(student);
+					if (!parents.isEmpty()) {
+						Iterator iterator = parents.iterator();
+						while (iterator.hasNext()) {
+							User parent = (User) iterator.next();
+							List emails = new Vector(parent.getEmails());
+							if (!emails.isEmpty()) {
+								Email email = (Email) emails.get(0);
+								try {
+									Object[] arguments = { school.getName(), parent.getNameLastFirst(true), schoolClass.getName(), student.getNameLastFirst(true) };
+									getMessageBusiness().createUserMessage(parent, subject, MessageFormat.format(body, arguments));
+								}
+								catch (CreateException ce) {
+									ce.printStackTrace();
+								}
 							}
-							catch (CreateException ce) {
-								ce.printStackTrace();
-							}
-						}
-					}	
+						}	
+					}
 				}
-			}
-			catch (NoCustodianFound ncd) {
-				ncd.printStackTrace();
+				catch (NoCustodianFound ncd) {
+					ncd.printStackTrace();
+				}
 			}
 		}
 	}
+	
+	public void setStudentAsSpeciallyPlaced(SchoolClassMember schoolMember) throws RemoteException {
+		schoolMember.setSpeciallyPlaced(true);
+		schoolMember.store();	
+	}
+	
+	public void importStudentInformationToNewClass(SchoolClassMember schoolMember, SchoolSeason previousSeason) throws RemoteException {
+		SchoolClassMember oldStudentInfo = getSchoolBusiness().findByStudentAndSeason(schoolMember, previousSeason);
+		if (oldStudentInfo != null) {
+			boolean doUpdate = false;
+			if (oldStudentInfo.getSpeciallyPlaced()) {
+				schoolMember.setSpeciallyPlaced(true);
+				doUpdate = true;
+			}
+			if (oldStudentInfo.getLanguage() != null) {
+				schoolMember.setLanguage(oldStudentInfo.getLanguage());
+				doUpdate = true;
+			}
+			
+			if (doUpdate)
+				schoolMember.store();
+		}
+	}
+	
+	public void setNeedsSpecialAttention(int studentID, int schoolSeasonID, boolean needsAttention) throws RemoteException {
+		setNeedsSpecialAttention(getSchoolBusiness().findByStudentAndSeason(studentID, schoolSeasonID), needsAttention);
+	}	
+	
+	public void setNeedsSpecialAttention(SchoolClassMember schoolMember, SchoolSeason schoolSeason, boolean needsAttention) throws RemoteException {
+		setNeedsSpecialAttention(getSchoolBusiness().findByStudentAndSeason(schoolMember, schoolSeason), needsAttention);
+	}	
+	
+	public void setNeedsSpecialAttention(SchoolClassMember schoolMember, boolean needsAttention) {
+		if (schoolMember != null) {
+			schoolMember.setNeedsSpecialAttention(needsAttention);
+			schoolMember.store();	
+		}
+	}	
 	
 	public void addSchoolAdministrator(User user) throws RemoteException, FinderException, CreateException {
 		Group rootAdminGroup = getCommuneUserBusiness().getRootSchoolAdministratorGroup();
@@ -388,6 +442,13 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 	
 	private UserBusiness getUserBusiness() throws RemoteException {
 		return (UserBusiness) this.getServiceInstance(UserBusiness.class);
+	}
+	
+	public String getLocalizedSchoolType(SchoolType type) {
+		String key = type.getLocalizationKey();
+		if (key == null || key.length() == 0)
+			key = "school.school_type_" + type.getSchoolTypeName();
+		return getLocalizedString(key, type.getSchoolTypeName());
 	}
 		
 }

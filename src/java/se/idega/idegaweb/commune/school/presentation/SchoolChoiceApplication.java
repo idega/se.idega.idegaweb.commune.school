@@ -4,6 +4,7 @@ import is.idega.idegaweb.member.business.MemberFamilyLogic;
 import is.idega.idegaweb.member.business.NoCustodianFound;
 import java.rmi.RemoteException;
 import java.text.DateFormat;
+import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Hashtable;
@@ -54,6 +55,7 @@ import com.idega.presentation.ui.TextInput;
 import com.idega.user.business.UserBusiness;
 import com.idega.user.data.User;
 import com.idega.util.Age;
+import com.idega.util.IWCalendar;
 import com.idega.util.IWTimestamp;
 import com.idega.util.PersonalIDFormatter;
 
@@ -141,6 +143,10 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	private Age age;
 	
 	private IBPage childcarePage;
+	
+	private boolean isOwner = true;
+	private User owner;
+	private Date choiceDate;
 
 	public void main(IWContext iwc) throws Exception {
 		iwb = getBundle(iwc);
@@ -159,6 +165,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 				childId = Integer.parseInt(ID);
 				userbuiz = (UserBusiness) IBOLookup.getServiceInstance(iwc, UserBusiness.class);
 				schCommBiz = (SchoolCommuneBusiness) IBOLookup.getServiceInstance(iwc, SchoolCommuneBusiness.class);
+				boolean custodiansAgree = true;
 
 				User child = userbuiz.getUser(childId);
 				if (child != null) {
@@ -193,6 +200,10 @@ public class SchoolChoiceApplication extends CommuneBlock {
 									if (!hasPreviousSchool) {
 										initSchoolFromChoice(element);
 									}
+									owner = element.getOwner();
+									choiceDate = element.getCreated();
+									isOwner = iwc.getCurrentUser().equals(owner);
+									custodiansAgree = element.getCustodiansAgree();
 								}
 								else if (count == 2) {
 									valSecondSchool = schoolID;
@@ -212,7 +223,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 						valType = 4;
 					else
 						valType = 5;
-
+						
 					schoolTypes = getSchoolTypes(iwc, "SCHOOL");
 					if (saved) {
 						if (valSixyearCare && childcarePage != null) {
@@ -226,17 +237,20 @@ public class SchoolChoiceApplication extends CommuneBlock {
 						add(getAlreadyChosenAnswer(iwc, child, currentChildChoices));
 					}
 					else {
-						add(getSchoolChoiceForm(iwc, child));
+						if (custodiansAgree || isOwner)
+							add(getSchoolChoiceForm(iwc, child));
+						else 
+							add(getLocalizedHeader("school.cannot_alter_choice", "You cannot alter the school choice already made."));
 					}
 				}
 			}
 			else
-				add(iwrb.getLocalizedString("school.no_student_id_provided", "No student provided"));
+				add(getLocalizedHeader("school.no_student_id_provided", "No student provided"));
 		}
 		else if (!iwc.isLoggedOn())
-			add(iwrb.getLocalizedString("school.need_to_be_logged_on", "You need to log in"));
+			add(getLocalizedHeader("school.need_to_be_logged_on", "You need to log in"));
 		else if (!canApply[0])
-			add(iwrb.getLocalizedString("school_choice.last_date_expired", "Time limits to apply expired"));
+			add(getLocalizedHeader("school_choice.last_date_expired", "Time limits to apply expired"));
 	}
 
 	private boolean saveSchoolChoice(IWContext iwc) {
@@ -255,7 +269,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		valSixyearCare = iwc.isParameterSet(prmSixYearCare);
 		valAutoAssign = true;
 		valSchoolChange = iwc.isParameterSet(prmSchoolChange);
-		valCustodiansAgree = iwc.isParameterSet(prmCustodiansAgree);
+		valCustodiansAgree = iwc.isParameterSet(prmFirstSchool) ? Boolean.valueOf(iwc.isParameterSet(prmCustodiansAgree)).booleanValue() : false;
 		valMessage = iwc.getParameter(prmMessage);
 		valLanguage = iwc.getParameter(prmLanguage);
 		valFirstSchool = iwc.isParameterSet(prmFirstSchool) ? Integer.parseInt(iwc.getParameter(prmFirstSchool)) : -1;
@@ -289,6 +303,10 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		myForm.add(T);
 		int row = 1;
 		
+		if (!isOwner) {
+			T.add(getAlterChoiceInfo(iwc), 1, row++);
+			T.setHeight(row++, 12);
+		}
 		T.add(getCurrentSchoolSeasonInfo(iwc), 1, row++);
 		T.setHeight(row++, 12);
 		T.add(getChildInfo(iwc, child), 1, row++);
@@ -374,6 +392,18 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		T.add(getHeader(child.getName()), 1, row);
 		T.add(getText(text2), 1, row);
 		row++;
+		return T;
+	}
+
+	public PresentationObject getAlterChoiceInfo(IWContext iwc) throws RemoteException {
+		Table T = new Table();
+		if (owner != null && choiceDate != null) {
+			Object[] arguments = { owner.getName(), new IWCalendar(choiceDate).getLocaleDate(iwc.getCurrentLocale(), IWCalendar.SHORT) };
+			String message = iwrb.getLocalizedString("school_choice.school_choice_already_made", "The school choice has already been done by {0} on {1}.");
+			Text t = getHeader(MessageFormat.format(message, arguments));
+			t.setFontColor("FF0000");
+			T.add(t, 1, 1);
+		}
 		return T;
 	}
 
@@ -469,6 +499,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 			Iterator iter = parents.iterator();
 			String address = "";
 			boolean caseOwning = true;
+			boolean parentsSeparated = false;
 			while (iter.hasNext()) {
 				User parent = (User) iter.next();
 				
@@ -479,10 +510,16 @@ public class SchoolChoiceApplication extends CommuneBlock {
 				}
 				else{
 					sParAddress = "";
-				}	
-				// checkiing for same parent address
-				showAgree = address.equalsIgnoreCase(sParAddress);
+				}
 				
+				if (address == null) {
+					address = sParAddress;	
+				}
+				else {
+					if (!parentsSeparated)
+						parentsSeparated = address.equals(sParAddress);	
+				}
+
 				if (quickAdmin && caseOwning && valCaseOwner == -1) {
 					valCaseOwner = ((Integer) parent.getPrimaryKey()).intValue();
 					caseOwning = false;
@@ -490,6 +527,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 			}
 			if (valCaseOwner != -1)
 				table.add(new HiddenInput(prmParentId, String.valueOf(valCaseOwner)));
+			showAgree = parentsSeparated;
 		}
 		catch (NoCustodianFound ex) {
 			ex.printStackTrace();
@@ -587,7 +625,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 				canChoose = false;
 				
 			if (canChoose)
-				drp.addMenuElement(type.getPrimaryKey().toString(), type.getSchoolTypeName());
+				drp.addMenuElement(type.getPrimaryKey().toString(), schCommBiz.getLocalizedSchoolType(type));
 		}
 		
 		return drp;
@@ -655,7 +693,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 			table.add(drpThirdSchool, 5, row++);
 		}
 		
-		if (schoolYear != null && schoolYear.getSchoolYearAge() == 12) {
+		if (schoolYear != null && schoolYear.getSchoolYearAge() >= 12) {
 			table.setHeight(row++, 5);
 			table.add(getSmallHeader(iwrb.getLocalizedString("school.six_year_language", "Language")+":"), 1, row);
 			table.add(txtLangChoice, 3, row);
@@ -669,6 +707,8 @@ public class SchoolChoiceApplication extends CommuneBlock {
 			table.add(chkChildCare, 1, row);
 			table.add(getSmallHeader(Text.NON_BREAKING_SPACE + iwrb.getLocalizedString("school.child_care_requested", "Interested in after school child care")), 1, row);
 		}
+		
+		table.add(new HiddenInput(prmCustodiansAgree,String.valueOf(showAgree)), 1, row);
 				
 		table.setWidth(1, "100");
 		table.setWidth(2, "8");

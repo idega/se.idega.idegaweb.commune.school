@@ -26,6 +26,8 @@ public class SchoolClassMemberComparator implements Comparator {
   public static final int NAME_SORT = 1;
   public static final int GENDER_SORT = 2;
   public static final int ADDRESS_SORT = 3;
+  public static final int PERSONAL_ID_SORT = 4;
+  public static final int LANGUAGE_SORT = 5;
   
   private Locale locale;
   private UserBusiness business;
@@ -61,6 +63,12 @@ public class SchoolClassMemberComparator implements Comparator {
 					break;
 				case ADDRESS_SORT :
 					result = addressSort(o1,o2);
+					break;
+				case LANGUAGE_SORT :
+					result = languageSort(o1,o2);
+					break;
+				case PERSONAL_ID_SORT :
+					result = personalIDSort(o1,o2);
 					break;
 			}
     }
@@ -126,4 +134,29 @@ public class SchoolClassMemberComparator implements Comparator {
 		return result;
 	}	
 
+	public int personalIDSort(Object o1, Object o2) throws RemoteException {
+		User p1 = (User) students.get(new Integer((((SchoolClassMember)o1).getClassMemberId())));
+		User p2 = (User) students.get(new Integer((((SchoolClassMember)o2).getClassMemberId())));
+		int result = 0;
+		
+		String pID1 = p1.getPersonalID() != null ? p1.getPersonalID() : "";
+		String pID2 = p2.getPersonalID() != null ? p2.getPersonalID() : "";
+		
+		return collator.compare(pID1,pID2);
+	}	
+
+	public int languageSort(Object o1, Object o2) throws RemoteException {
+		SchoolClassMember p1 = (SchoolClassMember) o1;
+		SchoolClassMember p2 = (SchoolClassMember) o2;
+		
+		String one = p1.getLanguage()!=null?p1.getLanguage():"";
+		String two = p2.getLanguage()!=null?p2.getLanguage():"";
+		int result = collator.compare(one,two);
+				
+		if (result == 0){
+		  result = lastNameSort(o1,o2);
+		}
+
+		return result;
+	}	
 }

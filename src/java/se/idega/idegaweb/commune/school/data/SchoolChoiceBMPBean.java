@@ -248,7 +248,7 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
     setColumn(AUTOASSIGNMENT,auto);
   }
    public boolean getCustodiansAgree(){
-    return getBooleanColumnValue(CUSTODIANSAGGREE);
+    return getBooleanColumnValue(CUSTODIANSAGGREE,true);
   }
   public void setCustodiansAgree(boolean agree){
     setColumn(CUSTODIANSAGGREE,agree);
@@ -492,4 +492,9 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
   	return super.idoFindPKsBySQL(sql.toString());
   }
 
+	public int ejbHomeGetNumberOfChoices(int userID, int seasonID) throws IDOException {
+		IDOQuery sql = new IDOQuery();
+		sql.appendSelectCountFrom(this).appendWhereEquals(CHILD, userID).appendAndEquals(SCHOOL_SEASON, seasonID);
+		return super.idoGetNumberOfRecords(sql.toString());
+	}
 }

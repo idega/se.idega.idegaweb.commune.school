@@ -109,5 +109,12 @@ public int getNumberOfApplications(java.lang.String p0,int p1,int p2,int p3)thro
 	return theReturn;
 }
 
+public int getNumberOfChoices(int p0,int p1)throws com.idega.data.IDOException{
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	int theReturn = ((SchoolChoiceBMPBean)entity).ejbHomeGetNumberOfChoices(p0,p1);
+	this.idoCheckInPooledEntity(entity);
+	return theReturn;
+}
+
 
 }
