@@ -52,6 +52,7 @@ import com.idega.presentation.Page;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.Script;
 import com.idega.presentation.Table;
+import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.CheckBox;
 import com.idega.presentation.ui.DataTable;
@@ -191,7 +192,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	public void control(IWContext iwc) throws Exception {
 		//debugParameters(iwc);
 		String ID = iwc.getParameter(prmChildId);
-		if (iwc.isLoggedOn()) { 				//********* && canApply[0]) {
+		if (iwc.isLoggedOn() && canApply[0]) {
 			if (ID != null) {
 				childId = Integer.parseInt(ID);
 				userbuiz = (UserBusiness) IBOLookup.getServiceInstance(iwc, UserBusiness.class);
@@ -315,10 +316,10 @@ public class SchoolChoiceApplication extends CommuneBlock {
 						add(getAlreadyChosenAnswer(child));
 					}
 					else {
-//						if (custodiansAgree || isOwner)
+						if (custodiansAgree || isOwner)
 							add(getSchoolChoiceForm(iwc, child));
-//						else 
-//							add(getLocalizedHeader("school.cannot_alter_choice", "You cannot alter the school choice already made."));
+						else 
+							add(getLocalizedHeader("school.cannot_alter_choice", "You cannot alter the school choice already made."));
 					}
 				}
 			}
@@ -391,6 +392,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		Table T = new Table();
 		T.setCellpadding(0);
 		T.setCellspacing(0);
+		T.setBorder(0);
 		myForm.add(T);
 		int row = 1;
 		
@@ -825,9 +827,17 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		table.setCellpadding(2);
 		table.setCellspacing(0);
 		table.setColumns(5);
-		table.mergeCells(1, 1, table.getColumns(), 1);
+		table.mergeCells(1, 1, 4, 1);
 		table.setBorder(0);
+		table.setWidthAndHeightToHundredPercent();
 		table.add(getHeader(iwrb.getLocalizedString("school.choice_for_schoolyear", "Choice for the schoolyear")), 1, 1);
+		
+		// School choice message link
+		Link msgLink = new Link(localize("school_choice.form_message_link_text", "School choice message"));
+		msgLink.setWindowToOpen(SchoolChoiceFormMessageWindow.class);
+		table.add(msgLink, 5, 1);
+		table.setWidth(5, 1, "200");
+
 
 		DropdownMenu typeDrop = getTypeDrop(prmType, true, false);
 		typeDrop.setOnChange(getFilterCallerScript(prmType, prmFirstArea, prmFirstSchool, 1, false));
@@ -902,7 +912,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		if (age.getYears() <= 10) {
 			table.setHeight(row++, 5);
 			table.mergeCells(1, row, 5, row);
-			table.setWidth(1, row, Table.HUNDRED_PERCENT);
+			//table.setWidth(1, row, Table.HUNDRED_PERCENT);
 			RadioButton rbWantsAfterSchool = new RadioButton(prmAfterschool,Boolean.TRUE.toString());
 			RadioButton rbNotAfterSchool = new RadioButton(prmAfterschool,Boolean.FALSE.toString());
 			rbNotAfterSchool.setMustBeSelected(iwrb.getLocalizedString("school.must_select_after_school_option", "You have to select an after school option"));
@@ -922,10 +932,9 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		table.add(getSmallHeader(Text.getNonBrakingSpace()+iwrb.getLocalizedString("school.native_lang_prefix","I would like")),1,row);
 		table.add(Text.getNonBrakingSpace(), 1, row);		
 		table.add(getNativeLanguagesDropdown(), 1, row);
-		//table.add(getSmallHeader(Text.getNonBrakingSpace()+iwrb.getLocalizedString("school.native_lang_postfix","as native language")),1,row);
+		table.add(getSmallHeader(Text.getNonBrakingSpace()+iwrb.getLocalizedString("school.native_lang_postfix","as native language")),1,row);
 		table.mergeCells(1, row, 5, row);
-		table.setWidth(1, row, Table.HUNDRED_PERCENT);
-		
+				
 		table.add(new HiddenInput(prmCustodiansAgree,String.valueOf(showAgree)), 1, row);
 				
 		//table.setWidth(1, "100");
