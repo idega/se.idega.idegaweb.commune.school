@@ -1,5 +1,5 @@
 /*
- * $Id: ReportModel.java,v 1.22 2004/01/23 07:50:58 anders Exp $
+ * $Id: ReportModel.java,v 1.23 2004/01/27 10:26:12 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -21,10 +21,10 @@ import com.idega.util.database.ConnectionBroker;
  * This abstract class holds cell and header values for school statistics reports.
  * Subclasses implements methods for generating report data and cell value calculations.
  * <p>
- * Last modified: $Date: 2004/01/23 07:50:58 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/27 10:26:12 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.22 $
+ * @version $Revision: 1.23 $
  */
 public abstract class ReportModel {
 
@@ -122,6 +122,9 @@ public abstract class ReportModel {
 	protected final static String KEY_PRIVATE_UNITS = KP + "private_units";
 	protected final static String KEY_CHILDREN_IN_FAMILY_DAYCARE = KP + "children_in_family_daycare";
 	protected final static String KEY_MEAN_WEEK_HOURS = KP + "mean_week_hours";
+	protected final static String KEY_PARENTAL_LEAVE = KP + "parental_leave";
+	protected final static String KEY_JOB_CANDIDATE = KP + "job_candidate";
+	protected final static String KEY_GENERAL_PRE_SCHOOL = KP + "general_pre_school";
 
 	/**
 	 * Constructs a report model with the specified report business logic. 
