@@ -19,7 +19,7 @@ import se.idega.idegaweb.commune.presentation.CommuneBlock;
 /**
  * Presents school marks statistics in a formatted table (approved by Nacka)
  * <p>
- * $Id: SchoolMarksPresenter2.java,v 1.3 2003/10/06 13:05:08 kjell Exp $
+ * $Id: SchoolMarksPresenter2.java,v 1.4 2003/10/06 13:30:34 laddi Exp $
  *
  * This block presents School Marks Statistics according to the specifications made my 
  * Jill Salander
@@ -142,7 +142,7 @@ public class SchoolMarksPresenter2  extends CommuneBlock {
 				if(smtOld.compareTo(smtNew) != 0) {
 					smtOld = stat.getSchoolManagementType();
 					if(count++  > 0) {
-						table = insertTotals(iwc, iwrb.getLocalizedString("school_marks_stats.header1", "Totalt kommunala skolor"), table, row);
+						table = insertTotals(iwrb.getLocalizedString("school_marks_stats.header1", "Totalt kommunala skolor"), table, row);
 						row +=9;
 					}
 				}
@@ -285,7 +285,7 @@ public class SchoolMarksPresenter2  extends CommuneBlock {
 				table.mergeCells(1, row, 11, row);
 				row++;
 			}
-			table = insertTotals(iwc, iwrb.getLocalizedString("school_marks_stats.header2", "Totalt Nacka skolor"), table, row);
+			table = insertTotals(iwrb.getLocalizedString("school_marks_stats.header2", "Totalt Nacka skolor"), table, row);
 		} catch (RemoteException e) {
 			e.printStackTrace();		
 		} catch (Exception e) {
@@ -295,7 +295,7 @@ public class SchoolMarksPresenter2  extends CommuneBlock {
 
 	}
 
-	private Table insertTotals(IWContext iwc, String header, Table table, int row) {	
+	private Table insertTotals(String header, Table table, int row) {	
 		table.add(getSmallText(iwrb.getLocalizedString("school_marks_stats.eg", "Ej godkänt")), 2, row);			
 		table.add(getSmallText(iwrb.getLocalizedString("school_marks_stats.g", "Godkänt")), 4, row);			
 		table.add(getSmallText(iwrb.getLocalizedString("school_marks_stats.vg", "Väl godkänt")), 6, row);
