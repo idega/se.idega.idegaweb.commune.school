@@ -50,10 +50,11 @@ import com.idega.user.data.User;
  * and entity ejb classes in {@link se.idega.idegaweb.commune.school.data}.
  * <p>
  * <p>
- * Last modified: $Date: 2004/02/06 15:21:39 $ by $Author: malin $
+ * Last modified: $Date: 2004/02/10 14:03:09 $ by $Author: staffan $
  *
  * @author <a href="http://www.staffannoteberg.com">Staffan Nöteberg</a>
- * @version $Revision: 1.41 $
+ * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
+ * @version $Revision: 1.42 $
  * @see javax.ejb
  */
 public class SchoolChoiceReminderView extends CommuneBlock {
@@ -89,6 +90,7 @@ public class SchoolChoiceReminderView extends CommuneBlock {
 	private final static String GOBACKTOMYPAGE_KEY = PREFIX + "goBackToMyPage";
 	private final static String NEW_REMINDER_DEFAULT = "Skapa ny påminnelse";
 	private final static String NEW_REMINDER_KEY = PREFIX + "new_reminder";
+	private final static String ONLY_CHILDREN_IN_SCHOOLS_LAST_GRADE_KEY = PREFIX + "only_children_in_schools_last_grade";
 	private final static String ONLY_CHILDREN_LIVING_IN_COMMUNE_KEY = PREFIX + "only_children_living_in_commune";
 	private final static String PARENT_NAME_DEFAULT = "Vårdnadshavare";
 	private final static String PARENT_NAME_KEY = PREFIX + "parent_name";
@@ -116,6 +118,7 @@ public class SchoolChoiceReminderView extends CommuneBlock {
     private final static String REMINDER_TEXT_2_DEFAULT = "Påminnelse - sista möjligheten att välja skola!\n\nSkolvalsperioden är nu slut och skolorna påbörjar inom kort arbetet med att placera de barn som har valt skola. Utnyttja möjligheten att själv göra ett aktivt val för ditt barn!\n\nDitt val måste vara gjort på www.nacka24.nacka.se senast fredagen den 7 februari kl. 24.00.\n\nOm du ej själv gör ett aktivt skolval för ditt barn får barnet en skolplacering på närmaste skola som har ledig plats.\n\nOm du har frågor angående skolvalet kontakta Kundvalsgruppen på telefon\n08-718 80 00 eller e-post kundvalsgruppen@nacka.se\n\n\nMed vänlig hälsning\n\nKundvalsgruppen";
 
 	private final static String PARAM_IS_ONLY_IN_DEFAULT_COMMUNE=PREFIX+"is_only_in_default_commune";
+	private final static String PARAM_IS_ONLY_IN_SCHOOLS_LAST_GRADE=PREFIX+"is_only_in_schools_last_year";
 	private final static String PARAM_SCHOOL_SEASON_ID=PREFIX+"sch_season_id";
 	private final static String PARAM_SCHOOL_YEAR_ID=PREFIX+"sch_year_id";
 
@@ -168,6 +171,7 @@ public class SchoolChoiceReminderView extends CommuneBlock {
 		t.add(yearSelectorCont,1,1);
 		form.maintainParameter(PARAM_SCHOOL_SEASON_ID);
 		form.maintainParameter(PARAM_IS_ONLY_IN_DEFAULT_COMMUNE);
+		form.maintainParameter(PARAM_IS_ONLY_IN_SCHOOLS_LAST_GRADE);
 		form.maintainParameter(CASE_ID_KEY);
 		t.add(this.getSubmitButton2(ACTION_KEY,SHOW_DETAILS_KEY),1,2);
 		
@@ -188,11 +192,16 @@ public class SchoolChoiceReminderView extends CommuneBlock {
 		form.maintainParameter(CASE_ID_KEY);
 		int row = 1;
 		t.add(dropSeasonsCont, 1, row++);
-		final CheckBox checkBox = new CheckBox (PARAM_IS_ONLY_IN_DEFAULT_COMMUNE);
-		checkBox.setChecked (true);
-		t.add (checkBox, 1, row);
+		final CheckBox isInDefaultCommuneCheckBox = new CheckBox (PARAM_IS_ONLY_IN_DEFAULT_COMMUNE);
+		isInDefaultCommuneCheckBox.setChecked (true);
+		t.add (isInDefaultCommuneCheckBox, 1, row);
 		t.add (Text.getNonBrakingSpace (), 1, row);
 		t.add (getSmallText (localize (ONLY_CHILDREN_LIVING_IN_COMMUNE_KEY, ONLY_CHILDREN_LIVING_IN_COMMUNE_KEY)), 1, row++);
+		final CheckBox isInSchoolsLastGradeCheckBox = new CheckBox (PARAM_IS_ONLY_IN_SCHOOLS_LAST_GRADE);
+		isInSchoolsLastGradeCheckBox.setChecked (true);
+		t.add (isInDefaultCommuneCheckBox, 1, row);
+		t.add (Text.getNonBrakingSpace (), 1, row);
+		t.add (getSmallText (localize (ONLY_CHILDREN_IN_SCHOOLS_LAST_GRADE_KEY, ONLY_CHILDREN_IN_SCHOOLS_LAST_GRADE_KEY)), 1, row++);
 
 		t.setHeight(row++, 12);
 		t.add(this.getSubmitButton2(ACTION_KEY,SCHOOL_YEAR_KEY), 1, row++);		
@@ -239,7 +248,7 @@ public class SchoolChoiceReminderView extends CommuneBlock {
 				SchoolSeason season = this.getSchoolSeason(iwc);
 				String yearPK = year.getPrimaryKey().toString();
 				String yearName = year.getSchoolYearName();
-				int numberOfNotDoneSchoolChoices = this.getSchoolChoiceBusiness(iwc).getNumberOfStudentsThatMustDoSchoolChoiceButHaveNot(season,year,isOnlyInCommune (iwc));
+				int numberOfNotDoneSchoolChoices = this.getSchoolChoiceBusiness(iwc).getNumberOfStudentsThatMustDoSchoolChoiceButHaveNot(season,year,isOnlyInCommune (iwc),isOnlyInSchoolsLastGrade (iwc));
 				String yearString = yearName+" ("+numberOfNotDoneSchoolChoices+")";
 				group.addOption(yearPK,yearString);
 			}
@@ -253,6 +262,10 @@ public class SchoolChoiceReminderView extends CommuneBlock {
 
 	private boolean isOnlyInCommune (IWContext context) {
 		return context.isParameterSet (PARAM_IS_ONLY_IN_DEFAULT_COMMUNE);
+	}
+
+	private boolean isOnlyInSchoolsLastGrade (IWContext context) {
+		return context.isParameterSet (PARAM_IS_ONLY_IN_SCHOOLS_LAST_GRADE);
 	}
 
 	private void showMainMenu () {
@@ -525,7 +538,7 @@ public class SchoolChoiceReminderView extends CommuneBlock {
 				SchoolSeason season = getSchoolSeason(iwc);
 				  //final SchoolChoiceReminder reminder = business.findSchoolChoiceReminder (reminderId);
 				  final SchoolChoiceReminderReceiver [] receivers
-							= business.findAllStudentsThatMustDoSchoolChoiceButHaveNot(season,years,isOnlyInCommune (iwc));
+							= business.findAllStudentsThatMustDoSchoolChoiceButHaveNot(season,years,isOnlyInCommune (iwc),isOnlyInSchoolsLastGrade (iwc));
 				  iwc.getSession ().setAttribute (STUDENT_LIST_KEY, receivers);
 				  for (int i = 0; i < receivers.length; i++) {
 				      try {

@@ -311,9 +311,9 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 				trans.commit();
 
 				int previousSeasonID = getCommuneSchoolBusiness().getPreviousSchoolSeasonID(getCommuneSchoolBusiness().getCurrentSchoolSeasonID());
-				if (previousSeasonID != -1)
+				if (previousSeasonID != -1) {
 					getCommuneSchoolBusiness().setNeedsSpecialAttention(childId, previousSeasonID, true);
-
+				}
 				// Set native language for child if param is set
 				if (childId != -1 && nativeLangIsChecked && nativeLang != -1) {
 					User child = getUserBusiness().getUser(childId);
@@ -1313,11 +1313,11 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		}
 	}
 
-	public SchoolChoiceReminderReceiver[] findAllStudentsThatMustDoSchoolChoiceButHaveNot(SchoolSeason season, SchoolYear[] years, boolean isOnlyInCommune) {
+	public SchoolChoiceReminderReceiver[] findAllStudentsThatMustDoSchoolChoiceButHaveNot(SchoolSeason season, SchoolYear[] years, boolean isOnlyInCommune, boolean isOnlyInSchoolsLastGrade) {
 		Collection coll = new ArrayList();
 		for (int i = 0; i < years.length; i++) {
 			SchoolYear year = years[i];
-			SchoolChoiceReminderReceiver[] receivers = findAllStudentsThatMustDoSchoolChoiceButHaveNot(season, year,isOnlyInCommune);
+			SchoolChoiceReminderReceiver[] receivers = findAllStudentsThatMustDoSchoolChoiceButHaveNot(season, year,isOnlyInCommune, isOnlyInSchoolsLastGrade);
 			for (int j = 0; j < receivers.length; j++) {
 				SchoolChoiceReminderReceiver receiver = receivers[j];
 				coll.add(receiver);
@@ -1330,8 +1330,8 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	/**
 	 * Gets The number of students who should make a schoolchoice for the SchoolYear year and SchoolSeason season
 	 */
-	public int getNumberOfStudentsThatMustDoSchoolChoiceButHaveNot(SchoolSeason season, SchoolYear year,boolean isOnlyInCommune) {
-		SchoolChoiceReminderReceiver[] students = findAllStudentsThatMustDoSchoolChoiceButHaveNot(season, year,isOnlyInCommune);
+	public int getNumberOfStudentsThatMustDoSchoolChoiceButHaveNot(SchoolSeason season, SchoolYear year,boolean isOnlyInCommune, boolean isOnlyInSchoolsLastGrade) {
+		SchoolChoiceReminderReceiver[] students = findAllStudentsThatMustDoSchoolChoiceButHaveNot(season, year,isOnlyInCommune, isOnlyInSchoolsLastGrade);
 		if (students != null) {
 			return students.length;
 		}
@@ -1343,12 +1343,12 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	/**
 	 * Gets an array of SchoolChoiceReminderReceiver for all students who should make a schoolchoice for the SchoolYear year and SchoolSeason season
 	 */
-	public SchoolChoiceReminderReceiver[] findAllStudentsThatMustDoSchoolChoiceButHaveNot(SchoolSeason season, SchoolYear year,boolean isOnlyInCommune) {
+	public SchoolChoiceReminderReceiver[] findAllStudentsThatMustDoSchoolChoiceButHaveNot(SchoolSeason season, SchoolYear year,boolean isOnlyInCommune, boolean isOnlyInSchoolsLastGrade) {
 		try {
 			com.idega.util.Timer timer = new com.idega.util.Timer();
 			timer.start();
 			final Set ids = new HashSet();
-			ids.addAll(this.findAllStudentsThatMustDoSchoolChoice(season, year));
+			ids.addAll(this.findAllStudentsThatMustDoSchoolChoice(season, year,isOnlyInSchoolsLastGrade));
 			System.err.println("ids.size=" + ids.size());
 			try {
 				ids.removeAll(findStudentIdsWhoChosedForSeason(season));
@@ -1387,16 +1387,10 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		}
 	}
 
-	public Collection findAllStudentsThatMustDoSchoolChoice(SchoolSeason season, SchoolYear year) {
+	public Collection findAllStudentsThatMustDoSchoolChoice(SchoolSeason season, SchoolYear year, boolean isOnlyInSchoolsLastGrade) {
 		com.idega.util.Timer timer = new com.idega.util.Timer();
 		timer.start();
 		final Set ids = new HashSet();
-		//try {
-		//    ids.addAll (findStudentsInFinalClassesThatMustDoSchoolChoice(season.getPreviousSeason()));
-		//} catch (FinderException e) {
-		//    e.printStackTrace ();
-		//}
-		//System.err.println ("ids.size=" + ids.size ());
 		if (year.getSchoolYearName().equals("F")) {
 			try {
 				ids.addAll(findPreSchooolStarters(season));
@@ -1417,7 +1411,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		}
 		else {
 			try {
-				ids.addAll(findStudentsInLastYearClassesThatMustDoSchoolChoice(season, year));
+				ids.addAll(findStudentsThatMustDoSchoolChoice(season, year, isOnlyInSchoolsLastGrade));
 			}
 			catch (FinderException e) {
 				e.printStackTrace();
@@ -1450,6 +1444,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		System.err.println("Found " + choices.size() + " chosedstudents in " + timer.getTime() + " msec");
 		return ids;
 	}
+
 	/**
 	 * Find All the Students that have a placement for season season and SchoolYear year and are in the last year of their school
 	 * 
@@ -1461,19 +1456,20 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	 * @throws FinderException
 	 *           if an error occured during search
 	 */
-	private Set findStudentsInLastYearClassesThatMustDoSchoolChoice(SchoolSeason season, SchoolYear year) throws FinderException {
+	private Set findStudentsThatMustDoSchoolChoice(SchoolSeason season, SchoolYear year,boolean isOnlyInSchoolsLastGrade) throws FinderException {
 		try {
 			com.idega.util.Timer timer = new com.idega.util.Timer();
 			timer.start();
 
 			//final int previousSeasonId = getPreviousSeasonId ();
 			SchoolSeason previousSeason = season.getPreviousSeason();
-			int previousSeasonId = ((Integer) previousSeason.getPrimaryKey()).intValue();
 			SchoolYear previousYear = year.getPreviousSchoolYearFromAge();
-			System.err.println("findStudentsInFinalClassesThatMustDoSchoolChoice: previousSeasonId=" + previousSeasonId);
-			final Collection students
-			// = getSchoolClassMemberHome().findAllBySeasonAndMaximumAge(seasonId, 14);
-			= getSchoolClassMemberHome().findAllLastYearStudentsBySeasonAndYear(previousSeason, previousYear);
+			final Collection students;
+			if (isOnlyInSchoolsLastGrade) {
+				students = getSchoolClassMemberHome().findAllLastYearStudentsBySeasonAndYear(previousSeason, previousYear);
+			} else {
+				students = getSchoolClassMemberHome ().findAllBySeasonAndSchoolYear (previousSeason, previousYear);
+			}
 			final Set ids = new HashSet();
 			for (Iterator i = students.iterator(); i.hasNext(); ) {
 				final SchoolClassMember student = (SchoolClassMember) i.next();
