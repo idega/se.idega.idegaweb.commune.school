@@ -13,6 +13,8 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Vector;
+
 import javax.ejb.FinderException;
 
 import se.cubecon.bun24.viewpoint.business.ViewpointBusiness;
@@ -57,17 +59,10 @@ public class AdminUserCases extends UserCases {
 	 * The method does not return viewpoints.
 	 */
 	protected List getCases(IWContext iwc, User user, int startingCase, int numberOfCases) throws RemoteException, FinderException, Exception {
-		List cases = super.getCases(iwc, user, startingCase, numberOfCases);
-		
-		// add cases belonging to my group 
 		CaseBusiness caseBusiness = (CaseBusiness) IBOLookup.getServiceInstance(iwc, CaseBusiness.class);
-		Iterator g = getGroups(iwc, user.getNodeID()).iterator();
+		Collection groups = getGroups(iwc, user.getNodeID());
 		CaseCode [] hiddenCases = getCommuneCaseBusiness(iwc).getUserHiddenCaseCodes();
-		while(g.hasNext()){
-			cases.addAll(caseBusiness.getAllCasesForGroupExceptCodes((Group) g.next(), hiddenCases));
-		}
-				
-		return cases;
+		return new Vector(caseBusiness.getAllCasesForUserAndGroupsExceptCodes(user, groups, hiddenCases, startingCase, numberOfCases));
 	}
 	
 	/**
