@@ -1,5 +1,5 @@
 /*
- * $Id: NackaHighSchoolPlacementReportModel.java,v 1.7 2004/01/09 17:07:08 anders Exp $
+ * $Id: NackaHighSchoolPlacementReportModel.java,v 1.8 2004/01/12 09:26:06 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -18,19 +18,18 @@ import com.idega.block.school.data.SchoolStudyPath;
 /** 
  * Report model for high school placements per student age for students in Nacka and schools in Nacka.
  * <p>
- * Last modified: $Date: 2004/01/09 17:07:08 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/12 09:26:06 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.8 $
  */
 public class NackaHighSchoolPlacementReportModel extends ReportModel {
 
 	private final static int COLUMN_SIZE = 25;
 	
 	private final static int ROW_METHOD_STUDY_PATH = 1;
-	private final static int ROW_METHOD_STUDY_PATH_COMPULSORY = 2;
-	private final static int ROW_METHOD_SHARE = 3;
-	private final static int ROW_METHOD_TOTAL = 4;
+	private final static int ROW_METHOD_SHARE = 2;
+	private final static int ROW_METHOD_TOTAL = 3;
 
 	private final static int COLUMN_METHOD_NACKA_COMMUNE = 101;
 	private final static int COLUMN_METHOD_OTHER_COMMUNES = 102;
@@ -297,7 +296,7 @@ public class NackaHighSchoolPlacementReportModel extends ReportModel {
 				if (columnParameter != null) {
 					compulsoryAge = new Integer(columnParameter.intValue() + COMPULSORY_AGE_OFFSET);
 				}
-				Cell cell = new Cell(this, row, column, ROW_METHOD_STUDY_PATH_COMPULSORY,
+				Cell cell = new Cell(this, row, column, ROW_METHOD_STUDY_PATH,
 						columnMethod, "GY", compulsoryAge, Cell.CELLTYPE_NORMAL);
 				setCell(row, column, cell);
 				row++;
