@@ -1,5 +1,5 @@
 /*
- * $Id: NackaCCProviderReportModel.java,v 1.3 2004/01/22 11:39:54 anders Exp $
+ * $Id: NackaCCProviderReportModel.java,v 1.4 2004/01/22 14:26:14 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -14,10 +14,10 @@ import java.rmi.RemoteException;
 /** 
  * Report model for child care commune and private providers.
  * <p>
- * Last modified: $Date: 2004/01/22 11:39:54 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/22 14:26:14 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class NackaCCProviderReportModel extends ReportModel {
 
@@ -188,43 +188,61 @@ public class NackaCCProviderReportModel extends ReportModel {
 			case COLUMN_METHOD_SHARE:
 				switch (cell.getRowMethod()) {
 					case ROW_METHOD_COMMUNE_PRE_SCHOOLS:
-						float total = getCell(0, 0).getFloatValue() + getCell(1, 0).getFloatValue();
+						float total = 0;
+						for (int i = 0; i < 6; i++) {
+							total += getCell(i, 0).getFloatValue();
+						}
 						if (total > 0) {
 							value = 100 * getCell(row, 0).getFloatValue() / total;
 						}
 						break;
 					case ROW_METHOD_COMMUNE_AFTER_SCHOOLS:
-						total = getCell(0, 0).getFloatValue() + getCell(1, 0).getFloatValue();
+						total = 0;
+						for (int i = 0; i < 6; i++) {
+							total += getCell(i, 0).getFloatValue();
+						}
 						if (total > 0) {
 							value = 100 * getCell(row, 0).getFloatValue() / total;
 						}
 						break;
 					case ROW_METHOD_COMMUNE_FAMILY_DAYCARE:
-						total = getCell(2, 0).getFloatValue() + getCell(3, 0).getFloatValue();
+						total = 0;
+						for (int i = 0; i < 6; i++) {
+							total += getCell(i, 0).getFloatValue();
+						}
 						if (total > 0) {
 							value = 100 * getCell(row, 0).getFloatValue() / total;
 						}
 						break;
 					case ROW_METHOD_PRIVATE_PRE_SCHOOLS:
-						total = getCell(2, 0).getFloatValue() + getCell(3, 0).getFloatValue();
+						total = 0;
+						for (int i = 0; i < 6; i++) {
+							total += getCell(i, 0).getFloatValue();
+						}
 						if (total > 0) {
 							value = 100 * getCell(row, 0).getFloatValue() / total;
 						}
 						break;
 					case ROW_METHOD_PRIVATE_AFTER_SCHOOLS:
-						total = getCell(4, 0).getFloatValue() + getCell(5, 0).getFloatValue();
+						total = 0;
+						for (int i = 0; i < 6; i++) {
+							total += getCell(i, 0).getFloatValue();
+						}
 						if (total > 0) {
 							value = 100 * getCell(row, 0).getFloatValue() / total;
 						}
 						break;
 					case ROW_METHOD_PRIVATE_FAMILY_DAYCARE:
-						total = getCell(4, 0).getFloatValue() + getCell(5, 0).getFloatValue();
+						total = 0;
+						for (int i = 0; i < 6; i++) {
+							total += getCell(i, 0).getFloatValue();
+						}
 						if (total > 0) {
 							value = 100 * getCell(row, 0).getFloatValue() / total;
 						}
 						break;
 					case ROW_METHOD_TOTAL:
-						total = 100.0f;
+						value = 100.0f;
 						break;
 				}
 				break;
