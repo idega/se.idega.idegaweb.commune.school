@@ -180,7 +180,7 @@ public class SchoolReportBusinessBean extends IBOSessionBean implements SchoolRe
 					data.addData(name, user.getNameLastFirst(true));
 				}
 
-				if (address != null) {
+				if (homeAddress != null) {
 					if (displayColumn(FIELD_ADDRESS)) {
 						data.addData(address, homeAddress.getStreetAddress());
 					}
@@ -369,7 +369,7 @@ public class SchoolReportBusinessBean extends IBOSessionBean implements SchoolRe
 					data.addData(name, user.getNameLastFirst(true));
 				}
 
-				if (address != null) {
+				if (homeAddress != null) {
 					if (displayColumn(FIELD_ADDRESS)) {
 						data.addData(address, homeAddress.getStreetAddress());
 					}
