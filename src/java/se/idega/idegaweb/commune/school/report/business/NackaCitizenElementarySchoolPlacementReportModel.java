@@ -1,5 +1,5 @@
 /*
- * $Id: NackaCitizenElementarySchoolPlacementReportModel.java,v 1.7 2004/01/30 16:34:31 anders Exp $
+ * $Id: NackaCitizenElementarySchoolPlacementReportModel.java,v 1.8 2004/02/17 16:51:20 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -14,10 +14,10 @@ import java.rmi.RemoteException;
 /** 
  * Report model for Nacka citizen placement for elementary schools.
  * <p>
- * Last modified: $Date: 2004/01/30 16:34:31 $ by $Author: anders $
+ * Last modified: $Date: 2004/02/17 16:51:20 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.8 $
  */
 public class NackaCitizenElementarySchoolPlacementReportModel extends ReportModel {
 
@@ -391,7 +391,7 @@ public class NackaCitizenElementarySchoolPlacementReportModel extends ReportMode
 				query.setPlacements(rb.getSchoolSeasonId());
 				query.setOnlyNackaCitizens();
 				query.setOnlyNackaSchools();
-				query.setNotPrivateSchools();
+				query.setOnlyCommuneSchools();
 				query.setNotForeignSchools();
 				query.setSchoolType(); // parameter 1
 				query.setSchoolYearName(); // parameter 2
@@ -412,8 +412,8 @@ public class NackaCitizenElementarySchoolPlacementReportModel extends ReportMode
 				query.setPlacements(getReportBusiness().getSchoolSeasonId());
 				query.setOnlyNackaCitizens();
 				query.setOnlyNackaSchools();
+				query.setOnlyCommuneSchools();
 				query.setOnlyStudentsBorn(getReportBusiness().getSchoolSeasonStartYear() - 6);
-				query.setNotPrivateSchools();
 				query.setNotForeignSchools();
 				query.setSchoolYearName("1");
 				query.setSchoolTypeElementarySchool();
@@ -440,7 +440,7 @@ public class NackaCitizenElementarySchoolPlacementReportModel extends ReportMode
 				query.setPlacements(rb.getSchoolSeasonId());
 				query.setOnlyNackaCitizens();
 				query.setOnlySchoolsInOtherCommunes();
-				query.setNotPrivateSchools();
+				query.setOnlyCommuneSchools();
 				query.setNotForeignSchools();
 				query.setSchoolType(); // parameter 1
 				query.setSchoolYearName(); // parameter 2
@@ -461,8 +461,8 @@ public class NackaCitizenElementarySchoolPlacementReportModel extends ReportMode
 				query.setPlacements(getReportBusiness().getSchoolSeasonId());
 				query.setOnlyNackaCitizens();
 				query.setOnlySchoolsInOtherCommunes();
+				query.setOnlyCommuneSchools();
 				query.setOnlyStudentsBorn(getReportBusiness().getSchoolSeasonStartYear() - 6);
-				query.setNotPrivateSchools();
 				query.setNotForeignSchools();
 				query.setSchoolYearName("1");
 				query.setSchoolTypeElementarySchool();
@@ -581,6 +581,7 @@ public class NackaCitizenElementarySchoolPlacementReportModel extends ReportMode
 				query.setPlacements(rb.getSchoolSeasonId());
 				query.setOnlyNackaCitizens();
 				query.setOnlyNackaSchools();
+				query.setOnlyCommuneSchools();
 				query.setNotPrivateSchools();
 				query.setNotForeignSchools();
 				query.setSchoolTypeCompulsorySchool();
@@ -600,6 +601,7 @@ public class NackaCitizenElementarySchoolPlacementReportModel extends ReportMode
 				query.setPlacements(getReportBusiness().getSchoolSeasonId());
 				query.setOnlyNackaCitizens();
 				query.setOnlyNackaSchools();
+				query.setOnlyCommuneSchools();
 				query.setOnlyStudentsBorn(getReportBusiness().getSchoolSeasonStartYear() - 6);
 				query.setNotPrivateSchools();
 				query.setNotForeignSchools();
@@ -628,6 +630,7 @@ public class NackaCitizenElementarySchoolPlacementReportModel extends ReportMode
 				query.setPlacements(rb.getSchoolSeasonId());
 				query.setOnlyNackaCitizens();
 				query.setOnlySchoolsInOtherCommunes();
+				query.setOnlyCommuneSchools();
 				query.setNotPrivateSchools();
 				query.setNotForeignSchools();
 				query.setSchoolTypeCompulsorySchool();
@@ -647,6 +650,7 @@ public class NackaCitizenElementarySchoolPlacementReportModel extends ReportMode
 				query.setPlacements(getReportBusiness().getSchoolSeasonId());
 				query.setOnlyNackaCitizens();
 				query.setOnlySchoolsInOtherCommunes();
+				query.setOnlyCommuneSchools();
 				query.setOnlyStudentsBorn(getReportBusiness().getSchoolSeasonStartYear() - 6);
 				query.setNotPrivateSchools();
 				query.setNotForeignSchools();
