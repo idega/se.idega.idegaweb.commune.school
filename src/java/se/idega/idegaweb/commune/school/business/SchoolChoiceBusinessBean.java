@@ -25,6 +25,10 @@ import java.util.*;
 
 public class SchoolChoiceBusinessBean extends com.idega.block.process.business.CaseBusinessBean implements SchoolChoiceBusiness{
 	
+	public String getBundleIdentifier(){
+		return se.idega.idegaweb.commune.presentation.CommuneBlock.IW_BUNDLE_IDENTIFIER;
+	}
+	
 
 	public SchoolBusiness getSchoolBusiness()throws java.rmi.RemoteException{
 		return (SchoolBusiness) this.getServiceInstance(SchoolBusiness.class);
@@ -338,6 +342,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	}
 
 
+	
 
 
 }
