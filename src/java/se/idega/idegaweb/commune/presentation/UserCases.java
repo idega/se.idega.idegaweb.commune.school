@@ -172,7 +172,8 @@ public class UserCases extends CommuneBlock {
 						row--;
 					}
 				}
-
+				table.setColumnAlignment(getNumberColumn(), Table.HORIZONTAL_ALIGN_CENTER);
+				
 				mainTable.add(form, 1, 1);
 			}
 			else {
@@ -237,7 +238,7 @@ public class UserCases extends CommuneBlock {
 
 		DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.SHORT, iwc.getCurrentLocale());
 		Date caseDate = new Date(useCase.getCreated().getTime());
-		Text caseNumber = getSmallText(useCase.getPrimaryKey().toString());
+		Text caseNumber = getSmallHeader(useCase.getPrimaryKey().toString());
 		CaseBusiness caseBusiness = getCaseBusiness(iwc).getCaseBusiness(useCase.getCaseCode());
 		
 		
