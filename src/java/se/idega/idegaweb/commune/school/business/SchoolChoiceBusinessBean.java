@@ -1706,4 +1706,34 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	private DocumentBusiness getDocumentBusiness() throws RemoteException{
 		return (DocumentBusiness)getServiceInstance(DocumentBusiness.class);
 	}
+	
+	public void importLanguageToPlacement() {
+		try {
+			SchoolSeason season = getCurrentSeason();
+			Collection choices = getSchoolChoiceHome().findAllWithLanguageWithinSeason(season, getCaseStatusInactive().getStatus());
+			int size = choices.size();
+			int number = 1;
+			Iterator iter = choices.iterator();
+			while (iter.hasNext()) {
+				SchoolChoice choice = (SchoolChoice) iter.next();
+				System.out.print("[IMPORT] (" + (number++) +"/"+ size + ") Adding language choice for user with ID="+choice.getChildId()+": ");
+				try {
+					SchoolClassMember member = getSchoolBusiness().getSchoolClassMemberHome().findByUserAndSchoolAndSeason(choice.getChildId(), choice.getChosenSchoolId(), choice.getSchoolSeasonId());
+					member.setLanguage(choice.getLanguageChoice());
+					member.store();
+					System.out.println("Done!");
+				}
+				catch (FinderException e) {
+					System.out.println("No placement found...");
+					//Has no placement so nothing is done...
+				}
+			}
+		}
+		catch (RemoteException re) {
+			re.printStackTrace();
+		}
+		catch (FinderException fe) {
+			fe.printStackTrace();
+		}
+	}
 }
