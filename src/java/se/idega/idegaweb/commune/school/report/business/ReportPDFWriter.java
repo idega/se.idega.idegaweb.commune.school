@@ -1,5 +1,5 @@
 /*
- * $Id: ReportPDFWriter.java,v 1.8 2004/03/01 10:25:12 anders Exp $
+ * $Id: ReportPDFWriter.java,v 1.9 2004/03/01 12:42:48 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -37,10 +37,10 @@ import com.lowagie.text.pdf.PdfWriter;
 /** 
  * Creates report files in Adobe PDF format.
  * <p>
- * Last modified: $Date: 2004/03/01 10:25:12 $ by $Author: anders $
+ * Last modified: $Date: 2004/03/01 12:42:48 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.8 $
+ * @version $Revision: 1.9 $
  */
 public class ReportPDFWriter {
 
@@ -157,7 +157,7 @@ public class ReportPDFWriter {
 
 		int totalWidth = 0;
 		for (int i = 0; i < cols; i++) {
-			_widths[i] += 2;
+			_widths[i] += 1;
 			totalWidth += _widths[i];
 		}
 		int width = (100 * totalWidth) / 140;
