@@ -1,5 +1,5 @@
 /*
- * $Id: SchoolReports.java,v 1.29 2004/03/02 09:42:45 laddi Exp $
+ * $Id: SchoolReports.java,v 1.30 2004/03/03 09:40:58 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -56,10 +56,10 @@ import com.idega.presentation.ui.SubmitButton;
 /** 
  * This block handles selecting and presenting school reports.
  * <p>
- * Last modified: $Date: 2004/03/02 09:42:45 $ by $Author: laddi $
+ * Last modified: $Date: 2004/03/03 09:40:58 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.29 $
+ * @version $Revision: 1.30 $
  */
 public class SchoolReports extends CommuneBlock {
 
@@ -215,15 +215,10 @@ public class SchoolReports extends CommuneBlock {
 			reportModelClasses = _childCareReportModelClasses;
 		}
 		Class reportModelClass = reportModelClasses[Integer.parseInt(reportIndex)];
-		table.add(new ReportBlock(reportModelClass), 1, 1);
-		add(table);
-		add(new Break());
+
 		GenericButton button = new GenericButton("", localize(KEY_FOR_PRINTING, "For printing"));
 		button = getButton(button);
 		button.setWindowToOpen(ReportWindow.class);
-		table = new Table();
-		table.setCellpadding(getCellpadding());
-		table.setCellspacing(getCellspacing());
 		table.add(button, 1, 1);
 		
 		Form form = new Form();
@@ -235,9 +230,17 @@ public class SchoolReports extends CommuneBlock {
 		table.add(xlsButton, 3, 1);
 		form.add(table);
 		HiddenInput reportClassName = new HiddenInput(PARAMETER_REPORT_CLASS_NAME, reportModelClass.getName());
-		form.add(reportClassName);
-		
+		form.add(reportClassName);		
 		add(form);
+
+		add(new Break());
+		
+		table = new Table();
+		table.setCellpadding(getCellpadding());
+		table.setCellspacing(getCellspacing());
+		table.add(new ReportBlock(reportModelClass), 1, 1);
+		add(table);
+
 	}
 
 	/*
