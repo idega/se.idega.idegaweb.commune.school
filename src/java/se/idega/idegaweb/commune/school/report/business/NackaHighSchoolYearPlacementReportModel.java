@@ -1,5 +1,5 @@
 /*
- * $Id: NackaHighSchoolYearPlacementReportModel.java,v 1.22 2004/02/17 21:24:52 anders Exp $
+ * $Id: NackaHighSchoolYearPlacementReportModel.java,v 1.23 2004/04/13 09:53:29 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -18,14 +18,14 @@ import com.idega.block.school.data.SchoolStudyPath;
 /** 
  * Report model for high school placements per year for students in Nacka.
  * <p>
- * Last modified: $Date: 2004/02/17 21:24:52 $ by $Author: anders $
+ * Last modified: $Date: 2004/04/13 09:53:29 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.22 $
+ * @version $Revision: 1.23 $
  */
 public class NackaHighSchoolYearPlacementReportModel extends ReportModel {
 
-	private final static int COLUMN_SIZE = 24;
+	private final static int COLUMN_SIZE = 25;
 	
 	private final static int ROW_METHOD_STUDY_PATH = 1;
 	private final static int ROW_METHOD_SHARE = 2;
@@ -143,15 +143,17 @@ public class NackaHighSchoolYearPlacementReportModel extends ReportModel {
 		h.setChild(4, child4);
 		headers[1] = h;
 		
-		h = new Header(KEY_COUNTY_COUNCIL, Header.HEADERTYPE_COLUMN_HEADER, 4);
+		h = new Header(KEY_COUNTY_COUNCIL, Header.HEADERTYPE_COLUMN_HEADER, 5);
 		child0 = new Header(KEY_SCHOOL_YEAR_1, Header.HEADERTYPE_COLUMN_NORMAL);
 		child1 = new Header(KEY_SCHOOL_YEAR_2, Header.HEADERTYPE_COLUMN_NORMAL);
 		child2 = new Header(KEY_SCHOOL_YEAR_3, Header.HEADERTYPE_COLUMN_NORMAL);
-		child3 = new Header(KEY_SUM, Header.HEADERTYPE_COLUMN_NORMAL);
+		child3 = new Header(KEY_SCHOOL_YEAR_4, Header.HEADERTYPE_COLUMN_NORMAL);
+		child4 = new Header(KEY_SUM, Header.HEADERTYPE_COLUMN_NORMAL);
 		h.setChild(0, child0);
 		h.setChild(1, child1);
 		h.setChild(2, child2);
 		h.setChild(3, child3);
+		h.setChild(4, child4);
 		headers[2] = h;
 		
 		h = new Header(KEY_FREE_STANDING, Header.HEADERTYPE_COLUMN_HEADER, 5);
@@ -249,47 +251,51 @@ public class NackaHighSchoolYearPlacementReportModel extends ReportModel {
 					break;
 				case 13:
 					columnMethod = COLUMN_METHOD_COUNTY_COUNCIL;
-					columnParameter = null;
-					cellType = Cell.CELLTYPE_SUM;
+					columnParameter = "4";
 					break;
 				case 14:
-					columnMethod = COLUMN_METHOD_FREE_STANDING;
-					columnParameter = "1";
+					columnMethod = COLUMN_METHOD_COUNTY_COUNCIL;
+					columnParameter = null;
+					cellType = Cell.CELLTYPE_SUM;
 					break;
 				case 15:
 					columnMethod = COLUMN_METHOD_FREE_STANDING;
-					columnParameter = "2";
+					columnParameter = "1";
 					break;
 				case 16:
 					columnMethod = COLUMN_METHOD_FREE_STANDING;
-					columnParameter = "3";
+					columnParameter = "2";
 					break;
 				case 17:
 					columnMethod = COLUMN_METHOD_FREE_STANDING;
-					columnParameter = "4";
+					columnParameter = "3";
 					break;
 				case 18:
+					columnMethod = COLUMN_METHOD_FREE_STANDING;
+					columnParameter = "4";
+					break;
+				case 19:
 					columnMethod = COLUMN_METHOD_FREE_STANDING;
 					columnParameter = null;
 					cellType = Cell.CELLTYPE_SUM;
 					break;
-				case 19:
+				case 20:
 					columnMethod = COLUMN_METHOD_TOTAL;
 					columnParameter = "1";
 					break;
-				case 20:
+				case 21:
 					columnMethod = COLUMN_METHOD_TOTAL;
 					columnParameter = "2";
 					break;
-				case 21:
+				case 22:
 					columnMethod = COLUMN_METHOD_TOTAL;
 					columnParameter = "3";
 					break;
-				case 22:
+				case 23:
 					columnMethod = COLUMN_METHOD_TOTAL;
 					columnParameter = "4";
 					break;
-				case 23:
+				case 24:
 					columnMethod = COLUMN_METHOD_TOTAL;
 					columnParameter = null;
 					cellType = Cell.CELLTYPE_TOTAL;
@@ -380,37 +386,32 @@ public class NackaHighSchoolYearPlacementReportModel extends ReportModel {
 							value += getCell(row, 10).getFloatValue();
 							value += getCell(row, 11).getFloatValue();
 							value += getCell(row, 12).getFloatValue();
+							value += getCell(row, 13).getFloatValue();
 						} else {
 							value = getHighSchoolCountyCouncilPlacementCount(schoolYearName, studyPathPrefix);
 						}
 						break;
 					case COLUMN_METHOD_FREE_STANDING:
 						if (schoolYearName == null) {
-							value += getCell(row, 14).getFloatValue();
 							value += getCell(row, 15).getFloatValue();
 							value += getCell(row, 16).getFloatValue();
 							value += getCell(row, 17).getFloatValue();
+							value += getCell(row, 18).getFloatValue();
 						} else {
 							value = getHighSchoolPrivatePlacementCount(schoolYearName, studyPathPrefix);
 						}
 						break;
 					case COLUMN_METHOD_TOTAL:
 						if (schoolYearName == null) {
-							value += getCell(row, 19).getFloatValue();
 							value += getCell(row, 20).getFloatValue();
 							value += getCell(row, 21).getFloatValue();
 							value += getCell(row, 22).getFloatValue();
+							value += getCell(row, 23).getFloatValue();
 						} else {
-							if (column == 22) {
-								value += getCell(row, column - 19).getFloatValue();
-								value += getCell(row, column - 14).getFloatValue();
-								value += getCell(row, column - 5).getFloatValue();
-							} else {
-								value += getCell(row, column - 19).getFloatValue();
-								value += getCell(row, column - 14).getFloatValue();
-								value += getCell(row, column - 9).getFloatValue();
-								value += getCell(row, column - 5).getFloatValue();								
-							}
+							value += getCell(row, column - 20).getFloatValue();
+							value += getCell(row, column - 15).getFloatValue();
+							value += getCell(row, column - 10).getFloatValue();
+							value += getCell(row, column - 5).getFloatValue();								
 						}
 						break;
 				}
@@ -428,8 +429,8 @@ public class NackaHighSchoolYearPlacementReportModel extends ReportModel {
 							float total = 0f;
 							total += getCell(row - 1, 4).getFloatValue();
 							total += getCell(row - 1, 9).getFloatValue();
-							total += getCell(row - 1, 13).getFloatValue();
-							total += getCell(row - 1, 18).getFloatValue();
+							total += getCell(row - 1, 14).getFloatValue();
+							total += getCell(row - 1, 19).getFloatValue();
 							if (total > 0) {
 								value = getCell(row - 1, 4).getFloatValue() / total;								
 							}
@@ -441,8 +442,8 @@ public class NackaHighSchoolYearPlacementReportModel extends ReportModel {
 							float total = 0f;
 							total += getCell(row - 1, 4).getFloatValue();
 							total += getCell(row - 1, 9).getFloatValue();
-							total += getCell(row - 1, 13).getFloatValue();
-							total += getCell(row - 1, 18).getFloatValue();
+							total += getCell(row - 1, 14).getFloatValue();
+							total += getCell(row - 1, 19).getFloatValue();
 							if (total > 0) {
 								value = getCell(row - 1, 9).getFloatValue() / total;								
 							}
@@ -454,10 +455,10 @@ public class NackaHighSchoolYearPlacementReportModel extends ReportModel {
 							float total = 0f;
 							total += getCell(row - 1, 4).getFloatValue();
 							total += getCell(row - 1, 9).getFloatValue();
-							total += getCell(row - 1, 13).getFloatValue();
-							total += getCell(row - 1, 18).getFloatValue();
+							total += getCell(row - 1, 14).getFloatValue();
+							total += getCell(row - 1, 19).getFloatValue();
 							if (total > 0) {
-								value = getCell(row - 1, 13).getFloatValue() / total;								
+								value = getCell(row - 1, 14).getFloatValue() / total;								
 							}
 							value *= 100;
 						}
@@ -467,10 +468,10 @@ public class NackaHighSchoolYearPlacementReportModel extends ReportModel {
 							float total = 0f;
 							total += getCell(row - 1, 4).getFloatValue();
 							total += getCell(row - 1, 9).getFloatValue();
-							total += getCell(row - 1, 13).getFloatValue();
-							total += getCell(row - 1, 18).getFloatValue();
+							total += getCell(row - 1, 14).getFloatValue();
+							total += getCell(row - 1, 19).getFloatValue();
 							if (total > 0) {
-								value = getCell(row - 1, 18).getFloatValue() / total;								
+								value = getCell(row - 1, 19).getFloatValue() / total;								
 							}
 							value *= 100;
 						}
@@ -479,7 +480,7 @@ public class NackaHighSchoolYearPlacementReportModel extends ReportModel {
 						if (schoolYearName == null) {
 							value = 100.0f;
 						} else {
-							float total = getCell(row - 1, 23).getFloatValue();
+							float total = getCell(row - 1, 24).getFloatValue();
 							if (total > 0) {
 								value = getCell(row - 1, column).getFloatValue() / total;								
 							}
