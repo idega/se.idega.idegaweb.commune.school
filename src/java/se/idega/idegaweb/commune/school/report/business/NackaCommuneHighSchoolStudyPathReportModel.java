@@ -1,5 +1,5 @@
 /*
- * $Id: NackaCommuneHighSchoolStudyPathReportModel.java,v 1.8 2004/02/24 11:15:37 anders Exp $
+ * $Id: NackaCommuneHighSchoolStudyPathReportModel.java,v 1.9 2004/02/24 12:37:34 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -21,10 +21,10 @@ import com.idega.block.school.data.SchoolStudyPath;
 /** 
  * Report model for Nacka high school student placements with all study paths listed.
  * <p>
- * Last modified: $Date: 2004/02/24 11:15:37 $ by $Author: anders $
+ * Last modified: $Date: 2004/02/24 12:37:34 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.8 $
+ * @version $Revision: 1.9 $
  */
 public class NackaCommuneHighSchoolStudyPathReportModel extends ReportModel {
 
@@ -521,6 +521,7 @@ public class NackaCommuneHighSchoolStudyPathReportModel extends ReportModel {
 			int studyPathAmount = 0;
 			int row = 0;
 			int studyPathRow = -1;
+			String studyPathCode = "";
 			while (iter.hasNext()) {
 				SchoolStudyPath sp = (SchoolStudyPath) iter.next();
 				String code = sp.getCode();
@@ -531,14 +532,19 @@ public class NackaCommuneHighSchoolStudyPathReportModel extends ReportModel {
 						studyPathAmount = getStudyPathAmount(studyPathId);
 						_studyPaths.add(sp);
 						studyPathRow = row;
+						studyPathCode = code;
 						row++;
 					} else {
 						int subStudyPathAmount = getStudyPathAmount(studyPathId);
 						String description = sp.getDescription();
-						if (((studyPathAmount != subStudyPathAmount) && (subStudyPathAmount != -1)) 
-								|| description.matches("lokal inriktning")) {
+						String subCode = code.substring(0, 2);
+						if (!subCode.equals(studyPathCode) ||
+								(((studyPathAmount != subStudyPathAmount) && (subStudyPathAmount != -1)) 
+								|| description.matches("lokal inriktning"))) {
 							_studyPaths.add(sp);
-							_subtractRow[row] = studyPathRow;
+							if (subCode.equals(studyPathCode)) {
+								_subtractRow[row] = studyPathRow;
+							}
 							studyPathRow = -1;
 							row++;
 						}
