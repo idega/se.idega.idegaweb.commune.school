@@ -760,7 +760,10 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		table.add(getSmallHeader(iwrb.getLocalizedString("school.school_name", "School name") + ":"), 1, 4);
 		table.add(getSmallHeader(iwrb.getLocalizedString("school.school_year", "School year") + ":"), 1, 5);
 
-		/*DropdownMenu drpTypes = getTypeDrop(prmPreType, false, _showChildCareTypes);
+		
+		
+		/*
+		DropdownMenu drpTypes = getTypeDrop(prmPreType, false, _showChildCareTypes);
 		drpTypes.addMenuElement("-2", localize("school.school_type_other", "Other/None"));
 		drpTypes.setOnChange(getFilterCallerScript(prmPreType, prmPreArea, prmPreSchool, 1, true));
 
@@ -820,21 +823,25 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		Text schoolAreaCurr = null;
 		Text schoolYearCurr = null;
 		Text schoolCurr = null;
+					
 		
 		if (schoolType != null) {
 			schoolTypeCurr = getSmallText(schoolType.toString());
+			table.add(new HiddenInput(prmPreType, String.valueOf(schoolType.getPrimaryKey())), 1, 6);
 		}
 		else {
 			schoolTypeCurr = getSmallText("-");
 		}
 		if (schoolArea != null) {
 			schoolAreaCurr = getSmallText(schoolArea.toString());
+			table.add(new HiddenInput(prmPreArea, String.valueOf(schoolArea.getPrimaryKey())), 1, 6);
 		}
 		else {
 			schoolAreaCurr = getSmallText("-");
 		} 
 		if (school != null) {
 			schoolCurr = getSmallText(school.getName());
+			table.add(new HiddenInput(prmPreSchool, String.valueOf(school.getPrimaryKey())), 1, 6);
 		}
 		else {
 			schoolCurr = getSmallText("-");
@@ -842,6 +849,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		
 		if (schoolYear != null) {
 			schoolYearCurr = getSmallText(schoolYear.toString());
+			table.add(new HiddenInput(prmPreYear, String.valueOf(schoolYear.getPrimaryKey().toString())), 1, 6);
 		}
 		else {
 			schoolYearCurr = getSmallText("-");
@@ -856,7 +864,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		table.add(schoolCurr, 3, 4);
 		//table.add(drpGrade, 3, 5);
 		table.add(schoolYearCurr, 3, 5);
-		//table.setWidth(1, 2, "100");
+		table.setWidth(1, 2, "100");
 		table.setWidth(2, 2, "8");
 
 		return table;
