@@ -37,7 +37,7 @@ import com.idega.block.datareport.util.ReportableField;
 import com.idega.block.process.business.CaseBusiness;
 import com.idega.block.process.business.CaseBusinessBean;
 import com.idega.block.school.business.SchoolBusiness;
-import com.idega.block.school.business.SchoolClassComparator;
+import com.idega.block.school.business.SchoolTypeComparator;
 import com.idega.block.school.business.SchoolYearComparator;
 import com.idega.block.school.data.School;
 import com.idega.block.school.data.SchoolClass;
@@ -150,7 +150,7 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 	
 	public Map getSchoolTypeClassMap(Collection schoolTypes,int schoolID,int seasonID,boolean showSubGroups){
 		try {
-			SortedMap typeMap = new TreeMap();
+			SortedMap typeMap = new TreeMap(new SchoolTypeComparator());
 			if (schoolTypes != null) {
 				Map groupMap = null;
 				SchoolType schoolType = null;
