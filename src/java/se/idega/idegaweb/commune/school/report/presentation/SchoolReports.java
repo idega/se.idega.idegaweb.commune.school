@@ -1,5 +1,5 @@
 /*
- * $Id: SchoolReports.java,v 1.32 2004/03/08 12:37:37 staffan Exp $
+ * $Id: SchoolReports.java,v 1.33 2004/03/15 11:12:03 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -55,10 +55,10 @@ import com.idega.presentation.ui.SubmitButton;
 /** 
  * This block handles selecting and presenting school reports.
  * <p>
- * Last modified: $Date: 2004/03/08 12:37:37 $ by $Author: staffan $
+ * Last modified: $Date: 2004/03/15 11:12:03 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.32 $
+ * @version $Revision: 1.33 $
  */
 public class SchoolReports extends CommuneBlock {
 
@@ -91,17 +91,28 @@ public class SchoolReports extends CommuneBlock {
 				NackaCitizenElementarySchoolPlacementReportModel.class,
 				NackaElementarySchoolPlacementReportModel.class,
 				NackaElementarySchoolOCCPlacementReportModel.class,
+				NackaCompulsorySchoolPlacementReportModel.class,
+				NackaCompulsorySchoolOCCPlacementReportModel.class,
+				NackaPrivateSchoolPlacementReportModel.class,
+				NackaProviderSummaryReportModel.class
+	};
+
+	private Class[] _highSchoolReportModelClasses = {
 				NackaHighSchoolYearPlacementReportModel.class,
 				NackaHighSchoolAgePlacementReportModel.class,
 				NackaCommuneHighSchoolPlacementReportModel.class,
-				NackaCompulsorySchoolPlacementReportModel.class,
-				NackaCompulsorySchoolOCCPlacementReportModel.class,
 				NackaCompulsoryHighSchoolPlacementReportModel.class,
-				NackaPrivateSchoolPlacementReportModel.class,
 				NackaPrivateHighSchoolPlacementReportModel.class,
 				NackaHighSchoolStudyPathPlacementReportModel.class,
 				NackaCommuneHighSchoolStudyPathReportModel.class,
-				NackaProviderSummaryReportModel.class
+	};
+
+	private Class[] _publicHighSchoolReportModelClasses = {
+				NackaHighSchoolYearPlacementReportModel.class,
+				NackaHighSchoolAgePlacementReportModel.class,
+				NackaCompulsoryHighSchoolPlacementReportModel.class,
+				NackaPrivateHighSchoolPlacementReportModel.class,
+				NackaHighSchoolStudyPathPlacementReportModel.class,
 	};
 
 	private Class[] _childCareReportModelClasses = {
@@ -119,6 +130,8 @@ public class SchoolReports extends CommuneBlock {
 	private ReportModel[] _reportModels = null;
 	
 	private boolean _useChildCareReports = false;
+	private boolean _useHighSchoolReports = false;
+	private boolean _usePublicReports = false;
 	
 	/**
 	 * @see com.idega.presentation.PresentationObject#getBundleIdentifier()
@@ -139,6 +152,34 @@ public class SchoolReports extends CommuneBlock {
 	 */
 	public void setChildCare(boolean useChildCareReports) {
 		_useChildCareReports = useChildCareReports;
+	}
+
+	/**
+	 * Returns true if high school reports should be used.
+	 */
+	public boolean getHighSchool() {
+		return _useHighSchoolReports;
+	}
+
+	/**
+	 * Sets if high school reports should be used.
+	 */
+	public void setHighSchool(boolean useHighSchoolReports) {
+		_useHighSchoolReports = useHighSchoolReports;
+	}
+
+	/**
+	 * Returns true if public reports should be used.
+	 */
+	public boolean getPublicReports() {
+		return _usePublicReports;
+	}
+
+	/**
+	 * Sets if public reports should be used.
+	 */
+	public void setPublicReports(boolean usePublicReports) {
+		_usePublicReports = usePublicReports;
 	}
 	
 	/**
@@ -211,6 +252,11 @@ public class SchoolReports extends CommuneBlock {
 		Class[] reportModelClasses = _reportModelClasses;
 		if (_useChildCareReports) {
 			reportModelClasses = _childCareReportModelClasses;
+		} else if (_useHighSchoolReports) {
+			reportModelClasses = _highSchoolReportModelClasses;
+			if (_usePublicReports) {
+				reportModelClasses = _publicHighSchoolReportModelClasses;
+			}
 		}
 		Class reportModelClass = reportModelClasses[Integer.parseInt(reportIndex)];
 
@@ -368,6 +414,11 @@ public class SchoolReports extends CommuneBlock {
 		Class[] reportModelClasses = _reportModelClasses;
 		if (_useChildCareReports) {
 			reportModelClasses = _childCareReportModelClasses;
+		} else if (_useHighSchoolReports) {
+			reportModelClasses = _highSchoolReportModelClasses;
+			if (_usePublicReports) {
+				reportModelClasses = _publicHighSchoolReportModelClasses;
+			}
 		}
 		ReportBusiness rb = getReportBusiness(iwc);
 		_reportModels = new ReportModel[reportModelClasses.length];
