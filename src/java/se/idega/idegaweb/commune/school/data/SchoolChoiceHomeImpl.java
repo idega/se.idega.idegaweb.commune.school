@@ -48,9 +48,9 @@ public java.util.Collection findByCodeAndStatus(java.lang.String p0,java.lang.St
 	return this.getEntityCollectionForPrimaryKeys(ids);
 }
 
-public java.util.Collection findBySchoolAndFreeTime(int p0,boolean p1)throws javax.ejb.FinderException{
+public java.util.Collection findBySchoolAndFreeTime(int p0,int p1,boolean p2)throws javax.ejb.FinderException{
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-	java.util.Collection ids = ((SchoolChoiceBMPBean)entity).ejbFindBySchoolAndFreeTime(p0,p1);
+	java.util.Collection ids = ((SchoolChoiceBMPBean)entity).ejbFindBySchoolAndFreeTime(p0,p1,p2);
 	this.idoCheckInPooledEntity(entity);
 	return this.getEntityCollectionForPrimaryKeys(ids);
 }

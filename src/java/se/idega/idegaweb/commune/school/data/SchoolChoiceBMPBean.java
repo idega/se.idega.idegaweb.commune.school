@@ -527,7 +527,7 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
   	return super.idoFindPKsBySQL(sql.toString());
   }
   
-  public Collection ejbFindBySchoolAndFreeTime(int schoolId, boolean freeTimeInSchool) throws FinderException {
+  public Collection ejbFindBySchoolAndFreeTime(int schoolId, int schoolSeasonID, boolean freeTimeInSchool) throws FinderException {
   	IDOQuery sql = idoQuery();
   	sql.appendSelectAllFrom(getEntityName());
   	sql.appendWhere();
@@ -537,7 +537,10 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
   	sql.appendAnd();
   	sql.append(FREETIMETHISSCHOOL);
   	sql.appendEqualSign();
-  	sql.append(freeTimeInSchool);
+  	if (freeTimeInSchool)
+  		sql.appendWithinSingleQuotes("Y");
+  	else
+  		sql.appendWithinSingleQuotes("N");
   	
   	
 		return super.idoFindPKsBySQL(sql.toString());
