@@ -24,7 +24,7 @@ import com.idega.presentation.ui.Window;
 public class CentralPlacementChildCareContracts extends Window {
 
 	// *** Localization keys ***
-	private static final String KP = "central_placement_floating_window.";
+	private static final String KP = "central_placement_floating_windows.";
 	private static final String KEY_WINDOW_HEADING_1 = KP + "edit_window_opened_from";
 	private static final String KEY_WINDOW_HEADING_2 = KP + "CENTRAL_PLACEMENT_EDITOR";
 	private static final String KEY_WINDOW_HEADING_RELOAD_MSG = KP + "close_reload_msg";
