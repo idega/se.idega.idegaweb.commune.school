@@ -14,12 +14,19 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
+
 import javax.ejb.CreateException;
 import javax.ejb.FinderException;
+
+import net.sf.jasperreports.engine.JRDataSource;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.design.JasperDesign;
 import se.idega.idegaweb.commune.business.CommuneUserBusiness;
 import se.idega.idegaweb.commune.presentation.CommuneBlock;
 import se.idega.idegaweb.commune.school.business.SchoolChoiceBusiness;
 import se.idega.idegaweb.commune.school.business.SchoolCommuneBusiness;
+
 import com.idega.block.datareport.business.DynamicReportDesign;
 import com.idega.block.datareport.business.JasperReportBusiness;
 import com.idega.block.datareport.util.ReportableCollection;
@@ -45,10 +52,6 @@ import com.idega.presentation.ui.SubmitButton;
 import com.idega.user.data.Group;
 import com.idega.util.IWTimestamp;
 import com.idega.util.datastructures.QueueMap;
-import dori.jasper.engine.JRDataSource;
-import dori.jasper.engine.JRException;
-import dori.jasper.engine.JasperPrint;
-import dori.jasper.engine.design.JasperDesign;
 
 /**
  * Title:		MandatorySchoolReminder
