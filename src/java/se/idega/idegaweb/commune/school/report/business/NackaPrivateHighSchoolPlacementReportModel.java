@@ -1,5 +1,5 @@
 /*
- * $Id: NackaPrivateHighSchoolPlacementReportModel.java,v 1.9 2004/01/21 15:15:05 anders Exp $
+ * $Id: NackaPrivateHighSchoolPlacementReportModel.java,v 1.10 2004/01/21 16:18:45 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -20,10 +20,10 @@ import com.idega.block.school.data.SchoolStudyPath;
 /** 
  * Report model for private high school placements in Nacka.
  * <p>
- * Last modified: $Date: 2004/01/21 15:15:05 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/21 16:18:45 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.9 $
+ * @version $Revision: 1.10 $
  */
 public class NackaPrivateHighSchoolPlacementReportModel extends ReportModel {
 
@@ -232,14 +232,14 @@ public class NackaPrivateHighSchoolPlacementReportModel extends ReportModel {
 						columnMethod, rowParameter, columnParameter, Cell.CELLTYPE_NORMAL);
 				setCell(row, column, cell);
 				row++;
-				if (studyPath.getCode().equals("IB")) {
-					cell = new Cell(this, row, column, ROW_METHOD_STUDY_PATH,
-							columnMethod, "LP", columnParameter, Cell.CELLTYPE_NORMAL);
-					setCell(row, column, cell);
-					row++;
-				}					
 			}
-			Cell cell = new Cell(this, row, column, ROW_METHOD_TOTAL,
+			
+			Cell cell = new Cell(this, row, column, ROW_METHOD_STUDY_PATH,
+					columnMethod, "LP", columnParameter, Cell.CELLTYPE_NORMAL);
+			setCell(row, column, cell);
+			row++;
+
+			cell = new Cell(this, row, column, ROW_METHOD_TOTAL,
 					columnMethod, null, columnParameter, Cell.CELLTYPE_TOTAL);
 			setCell(row, column, cell);
 			row++;
