@@ -16,15 +16,15 @@ public interface SchoolChoiceBusiness extends com.idega.business.IBOService,com.
 	public void createTestFamily() throws java.rmi.RemoteException;
 	public se.idega.idegaweb.commune.school.data.SchoolChoiceReminder[] findAllSchoolChoiceReminders()throws java.rmi.RemoteException,javax.ejb.FinderException, java.rmi.RemoteException;
 	public java.util.Collection findAllStudentsThatMustDoSchoolChoice(com.idega.block.school.data.SchoolSeason p0,com.idega.block.school.data.SchoolYear p1, boolean p2) throws java.rmi.RemoteException;
-	public se.idega.idegaweb.commune.school.business.SchoolChoiceReminderReceiver[] findAllStudentsThatMustDoSchoolChoiceButHaveNot(com.idega.block.school.data.SchoolSeason p0,com.idega.block.school.data.SchoolYear[] p1,boolean p2,boolean p3) throws java.rmi.RemoteException;
-	public se.idega.idegaweb.commune.school.business.SchoolChoiceReminderReceiver[] findAllStudentsThatMustDoSchoolChoiceButHaveNot(com.idega.block.school.data.SchoolSeason p0,com.idega.block.school.data.SchoolYear p1,boolean p2,boolean p3) throws java.rmi.RemoteException;
+	public se.idega.idegaweb.commune.school.business.MailReceiver[] findAllStudentsThatMustDoSchoolChoiceButHaveNot(com.idega.block.school.data.SchoolSeason p0,com.idega.block.school.data.SchoolYear[] p1,boolean p2,boolean p3) throws java.rmi.RemoteException;
+	public se.idega.idegaweb.commune.school.business.MailReceiver[] findAllStudentsThatMustDoSchoolChoiceButHaveNot(com.idega.block.school.data.SchoolSeason p0,com.idega.block.school.data.SchoolYear p1,boolean p2,boolean p3) throws java.rmi.RemoteException;
 	public java.util.Collection findBySchoolAndFreeTime(int p0,int p1,boolean p2)throws java.rmi.RemoteException, java.rmi.RemoteException;
 	public java.util.Collection findByStudentAndSchool(int p0,int p1)throws java.rmi.RemoteException, java.rmi.RemoteException;
 	public se.idega.idegaweb.commune.school.data.SchoolChoice findByStudentAndSchoolAndSeason(int p0,int p1,int p2)throws java.rmi.RemoteException, java.rmi.RemoteException;
 	public java.util.Collection findByStudentAndSeason(int p0,int p1)throws java.rmi.RemoteException, java.rmi.RemoteException;
 	public se.idega.idegaweb.commune.school.data.SchoolChoiceReminder findSchoolChoiceReminder(int p0)throws java.rmi.RemoteException,javax.ejb.FinderException, java.rmi.RemoteException;
 	public se.idega.idegaweb.commune.school.data.SchoolChoiceReminder[] findUnhandledSchoolChoiceReminders(com.idega.user.data.Group[] p0)throws java.rmi.RemoteException,javax.ejb.FinderException, java.rmi.RemoteException;
-	public int generateReminderLetter(int p0,se.idega.idegaweb.commune.school.business.SchoolChoiceReminderReceiver[] p1)throws java.rmi.RemoteException, java.rmi.RemoteException;
+	public int generateReminderLetter(int p0,se.idega.idegaweb.commune.school.business.MailReceiver[] p1)throws java.rmi.RemoteException, java.rmi.RemoteException;
 	public java.util.Collection getApplicantsForSchool(int p0,int p1,int p2,java.lang.String[] p3,java.lang.String p4,int p5,int p6,int p7)throws java.rmi.RemoteException, java.rmi.RemoteException;
 	public java.util.Collection getApplicantsForSchool(int p0,int p1,int p2,int[] p3,java.lang.String[] p4,java.lang.String p5,int p6,int p7,int p8)throws java.rmi.RemoteException, java.rmi.RemoteException;
 	public java.util.Collection getApplicantsForSchool(int p0,int p1,int p2,java.lang.String[] p3,java.lang.String p4,int p5,int p6,int p7,int p8)throws java.rmi.RemoteException, java.rmi.RemoteException;

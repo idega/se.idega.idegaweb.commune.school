@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.rmi.RemoteException;
 import java.sql.Date;
+import java.sql.SQLException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -1420,7 +1421,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	/**
 	 * @return int id of document
 	 */
-	public int generateReminderLetter(final int reminderId, final SchoolChoiceReminderReceiver[] receivers) throws RemoteException {
+	public int generateReminderLetter(final int reminderId, final MailReceiver[] receivers) throws RemoteException {
 		try {
 			DocumentBusiness docBusiness = getDocumentBusiness();
 			Font nameFont = getDefaultParagraphFont();
@@ -1484,37 +1485,84 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		}
 	}
 
-	public SchoolChoiceReminderReceiver[] findAllStudentsThatMustDoSchoolChoiceButHaveNot(SchoolSeason season, SchoolYear[] years, boolean isOnlyInCommune, boolean isOnlyInSchoolsLastGrade) {
+	public MailReceiver[] findAllStudentsThatMustDoSchoolChoiceButHaveNot(SchoolSeason season, SchoolYear[] years, boolean isOnlyInCommune, boolean isOnlyInSchoolsLastGrade) {
 		Collection coll = new ArrayList();
 		for (int i = 0; i < years.length; i++) {
 			SchoolYear year = years[i];
-			SchoolChoiceReminderReceiver[] receivers = findAllStudentsThatMustDoSchoolChoiceButHaveNot(season, year,isOnlyInCommune, isOnlyInSchoolsLastGrade);
-			for (int j = 0; j < receivers.length; j++) {
-				SchoolChoiceReminderReceiver receiver = receivers[j];
-				coll.add(receiver);
-			}
+			//MailReceiver[] receivers = findAllStudentsThatMustDoSchoolChoiceButHaveNot(season, year,isOnlyInCommune, isOnlyInSchoolsLastGrade);
+			try {
+                MailReceiver[] receivers = getStudentsWithoutSchoolChoice(season,year,isOnlyInCommune, isOnlyInSchoolsLastGrade);
+                for (int j = 0; j < receivers.length; j++) {
+                	MailReceiver receiver = receivers[j];
+                	coll.add(receiver);
+                }
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            } catch (FinderException e) {
+                e.printStackTrace();
+            }
 
 		}
-		return (SchoolChoiceReminderReceiver[]) coll.toArray(new SchoolChoiceReminderReceiver[0]);
+		return (MailReceiver[]) coll.toArray(new MailReceiver[0]);
 	}
 
 	/**
 	 * Gets The number of students who should make a schoolchoice for the SchoolYear year and SchoolSeason season
 	 */
 	public int getNumberOfStudentsThatMustDoSchoolChoiceButHaveNot(SchoolSeason season, SchoolYear year,boolean isOnlyInCommune, boolean isOnlyInSchoolsLastGrade) {
-		SchoolChoiceReminderReceiver[] students = findAllStudentsThatMustDoSchoolChoiceButHaveNot(season, year,isOnlyInCommune, isOnlyInSchoolsLastGrade);
-		if (students != null) {
-			return students.length;
-		}
-		else {
-			return 0;
-		}
+		try {
+            /*
+            MailReceiver[] students = findAllStudentsThatMustDoSchoolChoiceButHaveNot(season, year,isOnlyInCommune, isOnlyInSchoolsLastGrade);
+            if (students != null) {
+            	return students.length;
+            }
+            else {
+            	return 0;
+            }*/
+            return countStudentsWithoutSchoolChoice(season,year,isOnlyInCommune, isOnlyInSchoolsLastGrade);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
 
 	}
+	
+	/**
+	 * Count all students that need to make a school choice for the given season.
+	 * @param season
+	 * @param year
+	 * @param onlyInCommune
+	 * @param onlyLastSchoolYear
+	 * @return
+	 * @throws SQLException
+	 * @throws RemoteException
+	 */
+	public int countStudentsWithoutSchoolChoice(SchoolSeason season,SchoolYear year, boolean onlyInCommune,boolean onlyLastSchoolYear) throws RemoteException, SQLException{
+	    com.idega.util.Timer timer = new com.idega.util.Timer();
+		timer.start();
+		int count = getSchoolChoiceHome().countChildrenWithoutSchoolChoice(season,year,onlyInCommune,onlyLastSchoolYear);
+		
+		timer.stop();
+		System.err.println("Found student count " + timer.getTime() + " msec");
+		return count;
+	}
+	
+	public MailReceiver[] getStudentsWithoutSchoolChoice(SchoolSeason season, SchoolYear year, boolean onlyInCommune, boolean onlyLastSchoolYear) throws RemoteException, FinderException{
+	    com.idega.util.Timer timer = new com.idega.util.Timer();
+		timer.start();
+		MailReceiver[] receivers = getSchoolChoiceHome().getChildrenWithoutSchoolChoice(season,year,onlyInCommune,onlyLastSchoolYear);
+		
+		timer.stop();
+		System.err.println("Found students " + timer.getTime() + " msec");
+		return receivers;
+	}
+
 	/**
 	 * Gets an array of SchoolChoiceReminderReceiver for all students who should make a schoolchoice for the SchoolYear year and SchoolSeason season
 	 */
-	public SchoolChoiceReminderReceiver[] findAllStudentsThatMustDoSchoolChoiceButHaveNot(SchoolSeason season, SchoolYear year,boolean isOnlyInCommune, boolean isOnlyInSchoolsLastGrade) {
+	public MailReceiver[] findAllStudentsThatMustDoSchoolChoiceButHaveNot(SchoolSeason season, SchoolYear year,boolean isOnlyInCommune, boolean isOnlyInSchoolsLastGrade) {
 		try {
 			com.idega.util.Timer timer = new com.idega.util.Timer();
 			timer.start();
@@ -1540,7 +1588,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 			for (int i = 0; i < idCount; i++) {
 				final Integer id = (Integer) iter.next();
 				try {
-					final SchoolChoiceReminderReceiver receiver = new SchoolChoiceReminderReceiver(familyLogic, userBusiness, id);
+					final MailReceiver receiver = new MailReceiver(familyLogic, userBusiness, id);
 					if (!isOnlyInCommune || receiver.isInDefaultCommune ()) {
 						receivers.put(receiver.getSsn(), receiver);
 					}
@@ -1550,7 +1598,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 			}
 			timer.stop();
 			System.err.println("Found parents and addresses in " + timer.getTime() + " msec");
-			return (SchoolChoiceReminderReceiver[]) receivers.values().toArray(new SchoolChoiceReminderReceiver[receivers.size()]);
+			return (MailReceiver[]) receivers.values().toArray(new MailReceiver[receivers.size()]);
 
 		}
 		catch (RemoteException re) {
@@ -1773,7 +1821,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	 return new Chunk(address.toString(), SERIF_FONT);
 	 }
 	 */
-	private String getReceiverAddressString(SchoolChoiceReminderReceiver receiver) {
+	private String getReceiverAddressString(MailReceiver receiver) {
 		//String ssn = PersonalIDFormatter.format(receiver.getSsn(), getIWApplicationContext().getApplicationSettings().getDefaultLocale());
 		StringBuffer address = new StringBuffer();
 		address.append(getLocalizedString("school.spokesperson_for", "Spokesperson for")).append(": ").append("\n");
