@@ -293,6 +293,11 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	}
 
 	public PresentationObject getSchoolChoiceForm(IWContext iwc, User child) throws java.rmi.RemoteException {
+		if (this.schoolChange) {
+			if (!canApply[2])
+				return getSmallHeader(localize("school_choice.not_possible_to_change_school","It is not possible to change school until after the 22nd of February."));
+		}
+
 		Form myForm = new Form();
 		myForm.setName(prmForm);
 		myForm.setOnSubmit("return checkApplication()");
@@ -356,10 +361,6 @@ public class SchoolChoiceApplication extends CommuneBlock {
 			}
 		}
 		
-		if (this.schoolChange) {
-			if (!canApply[2])
-				return getSmallHeader(localize("school_choice.not_possible_to_change_school","It is not possible to change school until after the 22nd of February."));
-		}
 		return myForm;
 	}
 
