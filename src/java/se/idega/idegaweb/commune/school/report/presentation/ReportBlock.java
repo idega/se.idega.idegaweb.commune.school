@@ -1,5 +1,5 @@
 /*
- * $Id: ReportBlock.java,v 1.32 2004/04/24 09:47:49 anders Exp $
+ * $Id: ReportBlock.java,v 1.33 2004/04/24 10:43:50 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -10,7 +10,7 @@
 package se.idega.idegaweb.commune.school.report.presentation;
 
 import java.rmi.RemoteException;
-//import java.sql.Date;
+import java.sql.Date;
 import java.text.NumberFormat;
 
 import se.idega.idegaweb.commune.presentation.CommuneBlock;
@@ -29,10 +29,10 @@ import com.idega.presentation.ui.PrintButton;
 /** 
  * This is the base class for school report blocks.
  * <p>
- * Last modified: $Date: 2004/04/24 09:47:49 $ by $Author: anders $
+ * Last modified: $Date: 2004/04/24 10:43:50 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.32 $
+ * @version $Revision: 1.33 $
  */
 public class ReportBlock extends CommuneBlock {
 
@@ -184,9 +184,8 @@ public class ReportBlock extends CommuneBlock {
 				table.add(getSmallText(title), 1, 1);
 			}
 			if (getShowDate()) {
-//				Date date = new Date(System.currentTimeMillis());
-//				table.add(getSmallText(date.toString()), 1, 1);
-				table.add(getSmallText("2004-02-15"), 1, 1);
+				Date date = new Date(System.currentTimeMillis());
+				table.add(getSmallText(date.toString()), 1, 1);
 			}
 			add(table);
 			add(new Break());
