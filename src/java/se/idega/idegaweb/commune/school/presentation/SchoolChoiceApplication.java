@@ -191,7 +191,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	public void control(IWContext iwc) throws Exception {
 		//debugParameters(iwc);
 		String ID = iwc.getParameter(prmChildId);
-		if (iwc.isLoggedOn() && canApply[0]) {
+		if (iwc.isLoggedOn()) { 				//********* && canApply[0]) {
 			if (ID != null) {
 				childId = Integer.parseInt(ID);
 				userbuiz = (UserBusiness) IBOLookup.getServiceInstance(iwc, UserBusiness.class);
@@ -315,10 +315,10 @@ public class SchoolChoiceApplication extends CommuneBlock {
 						add(getAlreadyChosenAnswer(child));
 					}
 					else {
-						if (custodiansAgree || isOwner)
+//						if (custodiansAgree || isOwner)
 							add(getSchoolChoiceForm(iwc, child));
-						else 
-							add(getLocalizedHeader("school.cannot_alter_choice", "You cannot alter the school choice already made."));
+//						else 
+//							add(getLocalizedHeader("school.cannot_alter_choice", "You cannot alter the school choice already made."));
 					}
 				}
 			}
@@ -398,29 +398,28 @@ public class SchoolChoiceApplication extends CommuneBlock {
 			T.add(getAlterChoiceInfo(iwc), 1, row++);
 			T.setHeight(row++, 12);
 		}
+		
 		T.add(getCurrentSchoolSeasonInfo(iwc), 1, row++);
 		T.setHeight(row++, 12);
 		T.add(getChildInfo(iwc, child), 1, row++);
 		T.setHeight(row++, 12);
-		T.add(getCurrentSchool(), 1, row++);
-		T.setHeight(row++, 12);
+//		T.add(getCurrentSchool(), 1, row++);
+//		T.setHeight(row++, 12);
 		T.add(getChoiceSchool(), 1, row++);
 		T.setHeight(row++, 12);
 		T.add(getMessagePart(), 1, row++);
 		T.setHeight(row++, 12);
+		T.add(getCurrentSchool(), 1, row++);
+		T.setHeight(row++, 12);
 
+		// Space table over submit button
+		Table spaceT = new Table(1, 1);
+		spaceT.setBorder(0);
+		spaceT.setHeight(1, 10);
+		T.add(spaceT, 1, row++);
 
 		SubmitButton button = (SubmitButton) getButton(new SubmitButton("submit",localize("school_choice.ready", "Ready")));
 		button.setOnSubmitFunction("checkApplication", getSchoolCheckScript());
-		
-		// Add msg to button, if new schoolchoice for sports or music class exist
-		if (true) {
-			String passedTestRequiredMsg =
-				iwrb.getLocalizedString("school_choice.passed_test_required_msg",
-							"Information: An approved applicationtest is required for sports and music classes.");		
-	
-			button.setSubmitConfirm(passedTestRequiredMsg);
-		}
 		//button.setToDisableOnClick(button, true);
 		
 		T.add(button, 1, row++);
