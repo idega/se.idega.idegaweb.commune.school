@@ -1,5 +1,5 @@
 /*
- * $Id: NackaCCPlacementReportModel.java,v 1.7 2004/01/22 12:55:26 anders Exp $
+ * $Id: NackaCCPlacementReportModel.java,v 1.8 2004/01/23 12:57:14 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -11,15 +11,13 @@ package se.idega.idegaweb.commune.school.report.business;
 
 import java.rmi.RemoteException;
 
-import com.idega.util.IWTimestamp;
-
 /** 
  * Report model for child care placements in Nacka.
  * <p>
- * Last modified: $Date: 2004/01/22 12:55:26 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/23 12:57:14 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.8 $
  */
 public class NackaCCPlacementReportModel extends ReportModel {
 
@@ -152,10 +150,10 @@ public class NackaCCPlacementReportModel extends ReportModel {
 	protected Header[] buildColumnHeaders() {
 		Header[] headers = new Header[1];
 		
-		IWTimestamp now = IWTimestamp.RightNow();
-		String date = now.getDateString("yy-MM-dd");
+//		IWTimestamp now = IWTimestamp.RightNow();
+//		String date = now.getDateString("yy-MM-dd");
 		
-		headers[0] = new Header(date, Header.HEADERTYPE_COLUMN_NONLOCALIZED_HEADER);
+		headers[0] = new Header(KEY_NUMBER_OF_CHILDREN, Header.HEADERTYPE_COLUMN_NONLOCALIZED_HEADER);
 		
 		return headers;
 	}
