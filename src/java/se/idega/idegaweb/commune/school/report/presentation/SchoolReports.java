@@ -1,5 +1,5 @@
 /*
- * $Id: SchoolReports.java,v 1.21 2004/01/27 13:36:14 anders Exp $
+ * $Id: SchoolReports.java,v 1.22 2004/01/27 16:09:14 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -12,11 +12,13 @@ package se.idega.idegaweb.commune.school.report.presentation;
 import java.rmi.RemoteException;
 
 import se.idega.idegaweb.commune.presentation.CommuneBlock;
+import se.idega.idegaweb.commune.school.report.business.NackaCC15HoursPlacementReportModel;
 import se.idega.idegaweb.commune.school.report.business.NackaCC6YearPlacementReportModel;
 import se.idega.idegaweb.commune.school.report.business.NackaCC7_9YearPlacementReportModel;
 import se.idega.idegaweb.commune.school.report.business.NackaCCCommunePrivatePlacementReportModel;
 import se.idega.idegaweb.commune.school.report.business.NackaCCPlacementReportModel;
 import se.idega.idegaweb.commune.school.report.business.NackaCCPreSchoolPlacementReportModel;
+import se.idega.idegaweb.commune.school.report.business.NackaCCProviderCareTimeReportModel;
 import se.idega.idegaweb.commune.school.report.business.NackaCCProviderReportModel;
 import se.idega.idegaweb.commune.school.report.business.NackaCCTotalPlacementReportModel;
 import se.idega.idegaweb.commune.school.report.business.NackaCitizenElementarySchoolPlacementReportModel;
@@ -46,10 +48,10 @@ import com.idega.presentation.ui.SubmitButton;
 /** 
  * This block handles selecting and presenting school reports.
  * <p>
- * Last modified: $Date: 2004/01/27 13:36:14 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/27 16:09:14 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.21 $
+ * @version $Revision: 1.22 $
  */
 public class SchoolReports extends CommuneBlock {
 
@@ -92,7 +94,9 @@ public class SchoolReports extends CommuneBlock {
 				NackaCCPreSchoolPlacementReportModel.class,
 				NackaCC6YearPlacementReportModel.class,
 				NackaCC7_9YearPlacementReportModel.class,
-				NackaCCTotalPlacementReportModel.class
+				NackaCC15HoursPlacementReportModel.class,
+				NackaCCTotalPlacementReportModel.class,
+				NackaCCProviderCareTimeReportModel.class		
 	};
 
 	private ReportModel[] _reportModels = null;
