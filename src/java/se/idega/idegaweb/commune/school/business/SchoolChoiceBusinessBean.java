@@ -714,10 +714,12 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 				Iterator iter = coll.iterator();
 				while (iter.hasNext()) {
 					SchoolChoice element = (SchoolChoice) iter.next();
-					if (element.getChoiceOrder() == (choice.getChoiceOrder() + 1)) {
+					if (element.getChoiceOrder() >= (choice.getChoiceOrder() + 1)) {
+						if (!element.getStatus().equalsIgnoreCase("AVSL")){
 						super.changeCaseStatus(element, getCaseStatusPreliminary().getStatus(), performer);
 						sendMessageToParents(element, getPreliminaryMessageSubject(), getPreliminaryMessageBody(element),code,getPreliminaryMessageSubject(),getPreliminaryMessageBody(element),code,false);
 						continue;
+						}
 					}
 				}
 			}
@@ -783,6 +785,14 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	public void setAsPreliminary(SchoolChoice choice, User performer) {
 		try {
 			super.changeCaseStatus(choice, getCaseStatusPreliminary().getStatus(), performer);
+		}
+		catch (Exception e) {
+		}
+	}
+	
+	public void setAsInactive(SchoolChoice choice, User performer) {
+		try {
+			super.changeCaseStatus(choice, getCaseStatusInactive().getStatus(), performer);
 		}
 		catch (Exception e) {
 		}
