@@ -50,11 +50,11 @@ import com.idega.user.data.User;
  * and entity ejb classes in {@link se.idega.idegaweb.commune.school.data}.
  * <p>
  * <p>
- * Last modified: $Date: 2004/02/10 14:03:09 $ by $Author: staffan $
+ * Last modified: $Date: 2004/03/22 16:23:12 $ by $Author: joakim $
  *
  * @author <a href="http://www.staffannoteberg.com">Staffan Nöteberg</a>
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.42 $
+ * @version $Revision: 1.43 $
  * @see javax.ejb
  */
 public class SchoolChoiceReminderView extends CommuneBlock {
@@ -558,19 +558,37 @@ public class SchoolChoiceReminderView extends CommuneBlock {
 				                           + ssn.substring (8, 12)), col++, row);
 				          final String parentName = receiver.getParentName ();
 				          final Text parentText = new Text(parentName);
-				          if (parentName.startsWith ("?")) {
+/*				          if (parentName.startsWith ("?")) {
 				              parentText.setFontColor("#ff0000");
 				              parentText.setBold ();
 				          }
 				          studentList.add (parentText, col++, row);
+*/
+				          if (!parentName.startsWith("?")) {
+				          	studentList.add (parentText, col, row);
+				          }
+				          col++;
+
+				          StringBuffer addr = new StringBuffer("");
+				          if (!receiver.getStreetAddress().startsWith("?") &&
+				          		!receiver.getStreetAddress().equalsIgnoreCase("")){
+				          	addr.append(receiver.getStreetAddress());
+				          }
+				          if (!receiver.getPostalAddress().startsWith("?") &&
+				          		!receiver.getPostalAddress().equalsIgnoreCase("")){
+				          	if(addr.length()>0){
+				          		addr.append(", ");
+				          	}
+				          	addr.append(receiver.getPostalAddress());
+				          }
 				          final Text addressText
-				                  = new Text (receiver.getStreetAddress () + ", "
-				                              + receiver.getPostalAddress ());
-				          if (receiver.getStreetAddress ().startsWith ("?")
+				                  = new Text (addr.toString());
+/*				          if (receiver.getStreetAddress ().startsWith ("?")
 				              || receiver.getPostalAddress ().startsWith ("?")) {
 				              addressText.setFontColor("#ff0000");
 				              addressText.setBold ();
 				          }
+*/
 				          studentList.add (addressText, col++, row++);
 				      } catch (Exception e) {
 				          e.printStackTrace ();
