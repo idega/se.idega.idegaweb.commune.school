@@ -168,6 +168,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	private boolean _useOngoingSeason = false;
 	private String prmPlacementDate = "prm_placement_date";
 	private java.sql.Date valPlacementDate = null;
+	private boolean _isForTesting = false;
 
 	/**
 	 * @param ongoingSeason
@@ -1327,7 +1328,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 						checkCanApply[1] = true;
 						
 					//temporary, for testing only...
-					if (dateNow.getYear() <= 2002) {
+					if (_isForTesting = false) {
 						checkCanApply[0] = true;
 						checkCanApply[1] = false;
 					}
@@ -1413,4 +1414,10 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		}	
 	}
 
+	/**
+	 * @param isForTesting The isForTesting to set.
+	 */
+	public void setForTesting(boolean isForTesting) {
+		this._isForTesting = isForTesting;
+	}
 }
