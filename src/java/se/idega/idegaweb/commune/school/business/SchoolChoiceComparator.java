@@ -6,6 +6,7 @@ import java.util.Comparator;
 import java.util.Map;
 import java.util.Locale;
 
+import se.idega.idegaweb.commune.school.data.SchoolChoice;
 import se.idega.util.PIDChecker;
 
 import com.idega.block.school.data.SchoolClassMember;
@@ -21,27 +22,26 @@ import com.idega.user.data.User;
  * To enable and disable the creation of type comments go to
  * Window>Preferences>Java>Code Generation.
  */
-public class SchoolClassMemberComparator implements Comparator {
+public class SchoolChoiceComparator implements Comparator {
 
   public static final int NAME_SORT = 1;
   public static final int GENDER_SORT = 2;
   public static final int ADDRESS_SORT = 3;
+  public static final int LANGUAGE_SORT = 4;
   
   private Locale locale;
   private UserBusiness business;
   private Collator collator;
-  private Map students;
   private int sortBy = NAME_SORT;
   
-  public SchoolClassMemberComparator(Locale locale, UserBusiness business, Map students) {
-  	this(NAME_SORT, locale, business, students);
+  public SchoolChoiceComparator(Locale locale, UserBusiness business) {
+  	this(NAME_SORT, locale, business);
   }
   
-  public SchoolClassMemberComparator(int sortBy, Locale locale, UserBusiness business, Map students) {
+  public SchoolChoiceComparator(int sortBy, Locale locale, UserBusiness business) {
   	this.sortBy = sortBy;
   	this.locale = locale;
   	this.business = business;
-  	this.students = students;
   }
   
 	/**
@@ -62,6 +62,9 @@ public class SchoolClassMemberComparator implements Comparator {
 				case ADDRESS_SORT :
 					result = addressSort(o1,o2);
 					break;
+				case LANGUAGE_SORT :
+					result = languageSort(o1,o2);
+					break;
 			}
     }
     catch (RemoteException re) {
@@ -72,8 +75,8 @@ public class SchoolClassMemberComparator implements Comparator {
 	}
 	
 	public int lastNameSort(Object o1, Object o2) throws RemoteException {
-		User p1 = (User) students.get(new Integer(((SchoolClassMember)o1).getClassMemberId()));
-		User p2 = (User) students.get(new Integer(((SchoolClassMember)o2).getClassMemberId()));
+		User p1 = business.getUser(((SchoolChoice)o1).getChildId());
+		User p2 = business.getUser(((SchoolChoice)o2).getChildId());
 		
 		String one = p1.getLastName()!=null?p1.getLastName():"";
 		String two = p2.getLastName()!=null?p2.getLastName():"";
@@ -96,8 +99,8 @@ public class SchoolClassMemberComparator implements Comparator {
 	}	
 
 	public int genderSort(Object o1, Object o2) throws RemoteException {
-		User p1 = (User) students.get(new Integer(((SchoolClassMember)o1).getClassMemberId()));
-		User p2 = (User) students.get(new Integer(((SchoolClassMember)o2).getClassMemberId()));
+		User p1 = business.getUser(((SchoolChoice)o1).getChildId());
+		User p2 = business.getUser(((SchoolChoice)o2).getChildId());
 		int result = 0;
 		
 		boolean isFemale1 = PIDChecker.getInstance().isFemale(p1.getPersonalID());
@@ -116,13 +119,32 @@ public class SchoolClassMemberComparator implements Comparator {
 	}	
 
 	public int addressSort(Object o1, Object o2) throws RemoteException {
-		Address p1 = business.getUserAddress1(((SchoolClassMember)o1).getClassMemberId());
-		Address p2 = business.getUserAddress1(((SchoolClassMember)o2).getClassMemberId());
+		Address p1 = business.getUserAddress1(((SchoolChoice)o1).getChildId());
+		Address p2 = business.getUserAddress1(((SchoolChoice)o2).getChildId());
 		
 		String one = p1.getStreetAddress()!=null?p1.getStreetAddress():"";
 		String two = p2.getStreetAddress()!=null?p2.getStreetAddress():"";
 		int result = collator.compare(one,two);
 				
+		if (result == 0){
+		  result = lastNameSort(o1,o2);
+		}
+
+		return result;
+	}	
+
+	public int languageSort(Object o1, Object o2) throws RemoteException {
+		SchoolChoice p1 = (SchoolChoice) o1;
+		SchoolChoice p2 = (SchoolChoice) o2;
+		
+		String one = p1.getLanguageChoice()!=null?p1.getLanguageChoice():"";
+		String two = p2.getLanguageChoice()!=null?p2.getLanguageChoice():"";
+		int result = collator.compare(one,two);
+				
+		if (result == 0){
+		  result = lastNameSort(o1,o2);
+		}
+
 		return result;
 	}	
 
