@@ -168,7 +168,7 @@ public class UserCases extends CommuneBlock {
 				mainTable.add(getSmallHeader(localize(NOONGOINGCASES_KEY, NOONGOINGCASES_DEFAULT)), 1, 1);
 			}
 
-			/*
+			
 			// 1. find my groups
 			final GroupBusiness groupBusiness = (GroupBusiness) IBOLookup.getServiceInstance(iwc, GroupBusiness.class);
 			final int userId = ((Integer) iwc.getCurrentUser().getPrimaryKey()).intValue();
@@ -205,7 +205,7 @@ public class UserCases extends CommuneBlock {
 					addViewpointToMessageList(iwc, viewpoints[i], messageList, row++);
 				}
 				mainTable.add(form, 1, 5);
-			}*/
+			}
 		}
 	}
 
