@@ -286,15 +286,19 @@ public class SchoolChoiceApplication extends CommuneBlock {
 
   private PresentationObject getChildInfo(User child)throws java.rmi.RemoteException{
     Table T = new Table(6,5);
-    T.mergeCells(2,1,3,1);
-    T.mergeCells(2,2,3,2);
+    T.setColor("#ffffcc");
+	T.setCellpadding(3);
+    //T.mergeCells(2,1,3,1);
+    //T.mergeCells(2,2,3,2);
     T.mergeCells(1,3,6,3);
     T.mergeCells(1,4,3,4);
     T.mergeCells(1,5,3,5);
     T.add(getSmallHeader(iwrb.getLocalizedString("last_name","Last name")),1,1);
     T.add(getSmallHeader(iwrb.getLocalizedString("first_name","First name")),2,1);
+    T.add(getSmallHeader(iwrb.getLocalizedString("personal_id","Personal ID")),3,1);
     T.add(getText(child.getLastName()),1,2);
     T.add(getText(child.getFirstName()),2,2);
+    T.add(getText(child.getPersonalID()),3,2);
 
     T.add(getSmallHeader(iwrb.getLocalizedString("address","Address")),1,4);
     T.add(getSmallHeader(iwrb.getLocalizedString("zip_and_area","Zip area")),4,4);
@@ -677,13 +681,33 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	  StringBuffer s = new StringBuffer();
 		s.append("\nfunction checkApplication(){\n\t");
 		//s.append("\n\t\t alert('").append("checking choices").append("');");
+		s.append("\n\t var currSchool = ").append("document.").append(prmForm).append(".elements['").append(prmPreSchool).append("'];");
 		s.append("\n\t var dropOne = ").append("document.").append(prmForm).append(".elements['").append(prmFirstSchool).append("'];");
 		s.append("\n\t var dropTwo = ").append("document.").append(prmForm).append(".elements['").append(prmSecondSchool).append("'];");
 		s.append("\n\t var dropThree = ").append("document.").append(prmForm).append(".elements['").append(prmThirdSchool).append("'];");
+		s.append("\n\t var gradeDrop = ").append("document.").append(prmForm).append(".elements['").append(prmPreGrade).append("'];");
 		s.append("\n\t var one = ").append("dropOne.options[dropOne.selectedIndex].value;");
-		s.append("\n\t var two = ").append("dropOne.options[dropTwo.selectedIndex].value;");
-		s.append("\n\t var  three = ").append("dropOne.options[dropThree.selectedIndex].value;");
-		s.append("\n\t if(one && two && three){");
+		s.append("\n\t var two = ").append("dropTwo.options[dropTwo.selectedIndex].value;");
+		s.append("\n\t var  three = ").append("dropThree.options[dropThree.selectedIndex].value;");
+		s.append("\n\t var  year = ").append("gradeDrop.options[gradeDrop.selectedIndex].value;");
+		s.append("\n\t var  school = ").append("preSchool.options[preSchool.selectedIndex].value;");
+		
+		// current school check
+		s.append("\n\t if(school <= 0){");
+		String msg1 = iwrb.getLocalizedString("school_choice.must_set_current_school","You must provide current shool");
+		s.append("\n\t\t\t alert('").append(msg1).append("');");
+		s.append("\n\t\t ");
+		s.append("\n\t }");
+		
+		// year check
+		s.append("\n\t else if(year <= 0){");
+		String msg2 = iwrb.getLocalizedString("school_choice.must_set_grade","You must provide current shool year");
+		s.append("\n\t\t\t alert('").append(msg2).append("');");
+		s.append("\n\t\t ");
+		s.append("\n\t }");
+		
+		// schoolchoices checked
+		s.append("\n\t else if(one && two && three){");
 		s.append("\n\t if(one == two || two == three || three == one){");
 		String msg = iwrb.getLocalizedString("school_school.must_not_be_the_same","Please do not choose the same school more than once");
 		s.append("\n\t\t\t alert('").append(msg).append("');");
@@ -707,9 +731,9 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		s.append("\n\t\t document.").append(prmForm).append(".elements['").append(prmAction).append("'].value='true';");
 		s.append("\n\t\t document.").append(prmForm).append(".submit();");
 		s.append("\n\t }");
-		s.append("\n\t else{");
-		s.append("\n\t\t alert('").append(iwrb.getLocalizedString("school_choice.unfinished","You have to finish the application")).append("');");
-		s.append("\n\t }");
+		//s.append("\n\t else{");
+		//s.append("\n\t\t alert('").append(iwrb.getLocalizedString("school_choice.unfinished","You have to finish the application")).append("');");
+		//s.append("\n\t }");
 		s.append("\n}\n");
 		return s.toString();
 		
