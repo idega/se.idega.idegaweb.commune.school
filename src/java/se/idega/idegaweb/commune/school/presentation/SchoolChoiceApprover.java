@@ -53,7 +53,7 @@ public class SchoolChoiceApprover extends CommuneBlock {
 	private SchoolChoiceBusiness choiceBean;
 	private MessageBusiness msgBean;
 	private DateFormat df;
-	private int schoolId = 1;
+	private int schoolId = -1;
 	private int seasonId = -1;
 
 	private String prmPrelimIds = "prelim_chk_ids";
@@ -67,7 +67,7 @@ public class SchoolChoiceApprover extends CommuneBlock {
 	private boolean pupilList = false;
 
 	public void control(IWContext iwc) throws RemoteException {
-		debugParameters(iwc);
+		//debugParameters(iwc);
 		init(iwc);
 		parse(iwc);
 		String[] statusToSearch = { "UBEH", "PLAC", "PREL" };
@@ -79,21 +79,24 @@ public class SchoolChoiceApprover extends CommuneBlock {
 			}
 			else{
 				try {
+					seasonId = ((Integer)choiceBean.getCurrentSeason().getPrimaryKey()).intValue();
+					
 					if (pupilList)
 						cases = choiceBean.getSchoolChoiceHome().findByCodeAndStatus(code, statusToSearch, schoolId,seasonId,"group_place");
 					else
 						cases = choiceBean.getSchoolChoiceHome().findByCodeAndStatus(code, statusToSearch, schoolId,seasonId);
 				}
 				catch (javax.ejb.FinderException ex) {
-	
+					
 				}
 				if (cases != null){
 					if(pupilList){
 						add(getPupilList());
 					}
 					else
-					add(getChoiceList());
+						add(getChoiceList());
 				}
+				
 			}
 		}
 		else {
@@ -103,6 +106,7 @@ public class SchoolChoiceApprover extends CommuneBlock {
 	}
 
 	public void init(IWContext iwc) throws RemoteException {
+		
 		userBean = (UserBusiness) IBOLookup.getServiceInstance(iwc, UserBusiness.class);
 		schoolBean = (SchoolBusiness) IBOLookup.getServiceInstance(iwc, SchoolBusiness.class);
 		choiceBean = (SchoolChoiceBusiness) IBOLookup.getServiceInstance(iwc, SchoolChoiceBusiness.class);
