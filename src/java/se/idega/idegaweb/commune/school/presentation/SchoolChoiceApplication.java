@@ -195,13 +195,13 @@ public class SchoolChoiceApplication extends CommuneBlock {
 								if (count == 1) {
 									valFirstSchool = schoolID;
 									valFirstArea = areaID;
-									if (element.getFreetimeInThisSchool())
+									/*if (element.getFreetimeInThisSchool())
 										valSixyearCare = true;
 									else if (element.getFreetimeOther() != null)
 										valSixyearCare = true;
 									else
-										valSixyearCare = false;
-									//valSixyearCare = element.getKeepChildrenCare();
+										valSixyearCare = false;*/
+									valSixyearCare = element.getKeepChildrenCare();
 									if (element.getLanguageChoice() != null)
 										valLanguage = element.getLanguageChoice();
 									if (element.getMessage() != null)
@@ -337,6 +337,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		T.setHeight(row++, 12);
 
 		SubmitButton button = (SubmitButton) getButton(new SubmitButton("submit",localize("school_choice.ready", "Ready")));
+		button.setToDisableOnClick(button, true);
 		
 		T.add(button, 1, row++);
 		T.add(new HiddenInput(prmAction, "true"));
