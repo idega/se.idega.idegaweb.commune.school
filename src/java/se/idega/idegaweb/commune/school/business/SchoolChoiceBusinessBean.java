@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.sql.Date;
+import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -1230,7 +1231,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		//System.err.println ("ids.size=" + ids.size ());
 		if(year.getSchoolYearName().equals("F")){
 			try {
-				ids.addAll (findChildCareStarters (season.getPreviousSeason()));
+				ids.addAll (findPreSchooolStarters (season));
 			} catch (FinderException e) {
 				e.printStackTrace ();
 			}
@@ -1238,7 +1239,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		}
 		else if(year.getSchoolYearName().equals("1")){
 			try {
-				ids.addAll (findSchoolStartersNotInChildCare (season.getPreviousSeason()));
+				ids.addAll (findSchoolStartersNotInPreSchool (season));
 			} catch (FinderException e) {
 				e.printStackTrace ();
 			}
@@ -1289,8 +1290,8 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	/**
 	 * Find All the Students that have a placement for season season and SchoolYear year and are in 
 	 * the last year of their school
-	 * @param season
-	 * @param year
+	 * @param season The Season for the students to do schoolchoice for
+	 * @param year the SchoolYear 
 	 * @return A Set of primary Keys for students
 	 * @throws FinderException if an error occured during search
 	 */
@@ -1301,11 +1302,13 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		timer.start ();
 
 		//final int previousSeasonId = getPreviousSeasonId ();
-		final int seasonId = ((Integer)season.getPrimaryKey()).intValue();
-		System.err.println ("findStudentsInFinalClassesThatMustDoSchoolChoice: seasonId=" + seasonId);
+		SchoolSeason previousSeason = season.getPreviousSeason();
+		int previousSeasonId = ((Integer)previousSeason.getPrimaryKey()).intValue();
+		SchoolYear previousYear = year.getPreviousSchoolYearFromAge();
+		System.err.println ("findStudentsInFinalClassesThatMustDoSchoolChoice: previousSeasonId=" + previousSeasonId);
 		final Collection students
 			   // = getSchoolClassMemberHome().findAllBySeasonAndMaximumAge(seasonId, 14);
-			= getSchoolClassMemberHome().findAllLastYearStudentsBySeasonAndYear(season,year);
+			= getSchoolClassMemberHome().findAllLastYearStudentsBySeasonAndYear(previousSeason,previousYear);
 		final Set ids = new HashSet ();
 		for (Iterator i = students.iterator (); i.hasNext ();) {
 			final SchoolClassMember student = (SchoolClassMember) i.next ();
@@ -1321,27 +1324,35 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		}
            
 	}
-
-	private Set findSchoolStartersNotInChildCare (SchoolSeason season)throws FinderException {
+	/**
+	 * Finds all students who are beginning in school for SchoolSeason season and were not in preschool
+	 * @param season the Season to begin in.
+	 * @return a Set of Integer PKs for students.
+	 * @throws FinderException
+	 */
+	private Set findSchoolStartersNotInPreSchool (SchoolSeason season)throws FinderException {
 		try{
 		com.idega.util.Timer timer = new com.idega.util.Timer ();
 		timer.start ();
-		final SchoolYear childCare = getSchoolYearHome ().findByYearName ("1");
-		final int currentYear = Calendar.getInstance ().get (Calendar.YEAR);
-		final int yearOfBirth = currentYear - childCare.getSchoolYearAge();
+		final SchoolYear firstClass = getSchoolYearHome ().findByYearName ("1");
+		Calendar schoolStart = new GregorianCalendar();
+		schoolStart.setTime(season.getSchoolSeasonStart());
+		final int yearOfSchoolStart= schoolStart.get(Calendar.YEAR);
+		final int yearOfBirth = yearOfSchoolStart - firstClass.getSchoolYearAge();
 		final Collection students = getUserHome().findUsersByYearOfBirth
 				(yearOfBirth, yearOfBirth);
 		final Set ids = new HashSet ();
 		final SchoolClassMemberHome classMemberHome
 				= getSchoolClassMemberHome ();
-		final int seasonId = ((Integer)season.getPrimaryKey()).intValue();
+		SchoolSeason previousSeason = season.getPreviousSeason();
+		int previousSeasonId = ((Integer)previousSeason.getPrimaryKey()).intValue();
 		for (Iterator i = students.iterator (); i.hasNext ();) {
 			final User student = (User) i.next ();
 			final Integer studentId = (Integer) student.getPrimaryKey ();
 			SchoolClassMember member = null;
 			try {
 				member = classMemberHome.findByUserAndSeason
-						(studentId.intValue (), seasonId);
+						(studentId.intValue (), previousSeasonId);
 			} catch (Exception e) {
 				// not a school Class member - handle in 'finally' clause
 			} finally {
@@ -1360,26 +1371,38 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		}
 	}
 
-	private Set findChildCareStarters (SchoolSeason season) throws FinderException {
+	/**
+	 * Finds all students who are beginning in childCareClass ("F") for SchoolSeason season
+	 * @param season the Season to begin in.
+	 * @return a Set of Integer PKs for students.
+	 * @throws FinderException
+	 */
+	private Set findPreSchooolStarters (SchoolSeason season) throws FinderException {
 		try{
 		com.idega.util.Timer timer = new com.idega.util.Timer ();
 		timer.start ();
 		final SchoolYear childCare = getSchoolYearHome ().findByYearName ("F");
-		final int currentYear = Calendar.getInstance ().get (Calendar.YEAR);
-		final int yearOfBirth = currentYear - childCare.getSchoolYearAge();
+		Calendar schoolStart = new GregorianCalendar();
+		schoolStart.setTime(season.getSchoolSeasonStart());
+		final int yearOfSchoolStart= schoolStart.get(Calendar.YEAR);
+		final int yearOfBirth = yearOfSchoolStart - childCare.getSchoolYearAge();
 		final Collection students = getUserHome().findUsersByYearOfBirth
 				(yearOfBirth, yearOfBirth);
 		final Set ids = new HashSet ();
-		final SchoolClassMemberHome classMemberHome
+		//TL: Note:  I don't think the following clause is valid for PreSchool as those students have never
+		//			gone in a SchoolClass the previous year/season.
+		//
+		/*final SchoolClassMemberHome classMemberHome
 				= getSchoolClassMemberHome ();
-		final int seasonId = ((Integer)season.getPrimaryKey()).intValue();
+		SchoolSeason previousSeason = season.getPreviousSeason();
+		int previousSeasonId = ((Integer)previousSeason.getPrimaryKey()).intValue();
 		for (Iterator i = students.iterator (); i.hasNext ();) {
 			final User student = (User) i.next ();
 			final Integer studentId = (Integer) student.getPrimaryKey ();
 			SchoolClassMember member = null;
 			try {
 				member = classMemberHome.findByUserAndSeason
-						(studentId.intValue (), seasonId);
+						(studentId.intValue (), previousSeasonId);
 			} catch (Exception e) {
 				// not a school Class member - handle in 'finally' clause
 			} finally {
@@ -1387,6 +1410,11 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 					ids.add (studentId);
 				}
 			}
+		}*/
+		for (Iterator i = students.iterator (); i.hasNext ();) {
+			User student = (User) i.next ();
+			Integer studentId = (Integer) student.getPrimaryKey ();
+			ids.add (studentId);
 		}
 		timer.stop ();
 		System.err.println ("Found " + students.size () + " childcarestarters in "
