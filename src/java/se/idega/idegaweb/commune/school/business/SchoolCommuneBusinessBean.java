@@ -2,7 +2,6 @@ package se.idega.idegaweb.commune.school.business;
 
 import is.idega.block.family.business.FamilyLogic;
 import is.idega.block.family.business.NoCustodianFound;
-
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
 import java.text.DateFormat;
@@ -17,12 +16,10 @@ import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.Vector;
-
 import javax.ejb.CreateException;
 import javax.ejb.EJBException;
 import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
-
 import se.idega.idegaweb.commune.business.CommuneUserBusiness;
 import se.idega.idegaweb.commune.care.business.CareBusiness;
 import se.idega.idegaweb.commune.care.data.ProviderAccountingProperties;
@@ -31,7 +28,6 @@ import se.idega.idegaweb.commune.message.business.MessageBusiness;
 import se.idega.idegaweb.commune.school.data.SchoolChoice;
 import se.idega.idegaweb.commune.user.data.Citizen;
 import se.idega.idegaweb.commune.user.data.CitizenHome;
-
 import com.idega.block.datareport.util.ReportableCollection;
 import com.idega.block.datareport.util.ReportableData;
 import com.idega.block.datareport.util.ReportableField;
@@ -160,23 +156,6 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 		catch (IBOLookupException ile) {
 			throw new IBORuntimeException(ile);
 		}
-	}
-
-	public Map getStudentList(Collection students) throws RemoteException {
-		HashMap coll = new HashMap();
-
-		if (!students.isEmpty()) {
-			Collection users = getCommuneUserBusiness().getUsers(this.getUserIDsFromClassMembers(students));
-			User user;
-
-			Iterator iter = users.iterator();
-			while (iter.hasNext()) {
-				user = (User) iter.next();
-				coll.put(user.getPrimaryKey(), user);
-			}
-		}
-
-		return coll;
 	}
 
 	public boolean isOngoingSeason(int seasonID) throws RemoteException {
@@ -326,22 +305,7 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 		return null;
 	}
 
-	private String[] getUserIDsFromClassMembers(Collection classMembers) {
-		if (classMembers != null) {
-			String[] userIDs = new String[classMembers.size()];
-			SchoolClassMember classMember;
 
-			int a = 0;
-			Iterator iter = classMembers.iterator();
-			while (iter.hasNext()) {
-				classMember = (SchoolClassMember) iter.next();
-				userIDs[a] = String.valueOf(classMember.getClassMemberId());
-				a++;
-			}
-			return userIDs;
-		}
-		return null;
-	}
 
 	/*
 	 * Commented out since it is never used... private String[]

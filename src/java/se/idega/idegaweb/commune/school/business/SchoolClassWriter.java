@@ -10,19 +10,17 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Vector;
-
 import javax.servlet.http.HttpServletRequest;
-
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-
 import se.idega.idegaweb.commune.business.CommuneUserBusiness;
+import se.idega.idegaweb.commune.care.business.CareBusiness;
 import se.idega.idegaweb.commune.presentation.CommuneBlock;
-
+import com.idega.block.school.business.SchoolBusiness;
 import com.idega.block.school.data.SchoolClass;
 import com.idega.block.school.data.SchoolClassMember;
 import com.idega.business.IBOLookup;
@@ -61,8 +59,9 @@ import com.lowagie.text.pdf.PdfWriter;
 public class SchoolClassWriter implements MediaWritable {
 
 	private MemoryFileBuffer buffer = null;
-	private SchoolCommuneBusiness business;
+	private SchoolBusiness schoolBusiness;
 	private CommuneUserBusiness userBusiness;
+	private CareBusiness careBusiness;
 	private Locale locale;
 	private SchoolClass schoolClass;
 	private IWResourceBundle iwrb;
@@ -84,15 +83,16 @@ public class SchoolClassWriter implements MediaWritable {
 	public void init(HttpServletRequest req, IWContext iwc) {
 		try {
 			locale = iwc.getApplicationSettings().getApplicationLocale();
-			business = getSchoolCommuneBusiness(iwc);
+			schoolBusiness = getSchoolBusiness(iwc);
 			userBusiness = getCommuneUserBusiness(iwc);
+			careBusiness = getCareBusiness(iwc);
 			iwrb = iwc.getIWMainApplication().getBundle(CommuneBlock.IW_BUNDLE_IDENTIFIER).getResourceBundle(locale);
 			
 			if (req.getParameter(prmClassId) != null && req.getParameter(prmYearId) != null) {
-				schoolClass = business.getSchoolBusiness().findSchoolClass(new Integer(req.getParameter(prmClassId)));
-				schoolName = business.getSchoolBusiness().getSchool(new Integer(schoolClass.getSchoolId())).getSchoolName();
-				seasonName = business.getSchoolBusiness().getSchoolSeason(new Integer(schoolClass.getSchoolSeasonId())).getSchoolSeasonName();
-				yearName = business.getSchoolBusiness().getSchoolYear(new Integer(req.getParameter(prmYearId))).getSchoolYearName();
+				schoolClass = schoolBusiness.findSchoolClass(new Integer(req.getParameter(prmClassId)));
+				schoolName = schoolBusiness.getSchool(new Integer(schoolClass.getSchoolId())).getSchoolName();
+				seasonName = schoolBusiness.getSchoolSeason(new Integer(schoolClass.getSchoolSeasonId())).getSchoolSeasonName();
+				yearName = schoolBusiness.getSchoolYear(new Integer(req.getParameter(prmYearId))).getSchoolYearName();
 				groupName = schoolClass.getSchoolClassName();
 				
 				String type = req.getParameter(prmPrintType);
@@ -131,10 +131,10 @@ public class SchoolClassWriter implements MediaWritable {
 	public MemoryFileBuffer writeXLS(SchoolClass schoolClass) throws Exception {
 		MemoryFileBuffer buffer = new MemoryFileBuffer();
 		MemoryOutputStream mos = new MemoryOutputStream(buffer);
-		List students = new Vector(business.getSchoolBusiness().findStudentsInClass(((Integer)schoolClass.getPrimaryKey()).intValue()));
+		List students = new Vector(schoolBusiness.findStudentsInClass(((Integer)schoolClass.getPrimaryKey()).intValue()));
 
 		if (!students.isEmpty()) {
-			Map studentMap = business.getStudentList(students);
+			Map studentMap = careBusiness.getStudentList(students);
 			Collections.sort(students, new SchoolClassMemberComparator(SchoolClassMemberComparator.NAME_SORT, locale, userBusiness, studentMap));
 			
 	    HSSFWorkbook wb = new HSSFWorkbook();
@@ -222,10 +222,10 @@ public class SchoolClassWriter implements MediaWritable {
 	public MemoryFileBuffer writePDF(SchoolClass schoolClass) throws Exception {
 		MemoryFileBuffer buffer = new MemoryFileBuffer();
 		MemoryOutputStream mos = new MemoryOutputStream(buffer);
-		List students = new Vector(business.getSchoolBusiness().findStudentsInClass(((Integer)schoolClass.getPrimaryKey()).intValue()));
+		List students = new Vector(schoolBusiness.findStudentsInClass(((Integer)schoolClass.getPrimaryKey()).intValue()));
 
 		if (!students.isEmpty()) {
-			Map studentMap = business.getStudentList(students);
+			Map studentMap = careBusiness.getStudentList(students);
 			Collections.sort(students, new SchoolClassMemberComparator(SchoolClassMemberComparator.NAME_SORT, locale, userBusiness, studentMap));
 			
 			Document document = new Document(PageSize.A4, 50, 50, 50, 50);
@@ -325,8 +325,12 @@ public class SchoolClassWriter implements MediaWritable {
 		return datatable;
 	}
 
-	protected SchoolCommuneBusiness getSchoolCommuneBusiness(IWApplicationContext iwc) throws RemoteException {
-		return (SchoolCommuneBusiness) IBOLookup.getServiceInstance(iwc, SchoolCommuneBusiness.class);	
+	protected CareBusiness getCareBusiness(IWApplicationContext iwc) throws RemoteException {
+		return (CareBusiness) IBOLookup.getServiceInstance(iwc, CareBusiness.class);	
+	}
+	
+	protected SchoolBusiness getSchoolBusiness(IWApplicationContext iwc) throws RemoteException {
+		return (SchoolBusiness) IBOLookup.getServiceInstance(iwc, SchoolBusiness.class);	
 	}
 
 	protected CommuneUserBusiness getCommuneUserBusiness(IWApplicationContext iwc) throws RemoteException {

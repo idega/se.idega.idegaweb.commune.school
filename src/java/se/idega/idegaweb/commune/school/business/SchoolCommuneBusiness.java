@@ -1,77 +1,314 @@
+/*
+ * $Id: SchoolCommuneBusiness.java 1.1 Oct 21, 2004 thomas Exp $
+ * Created on Oct 21, 2004
+ *
+ * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
+ *
+ * This software is the proprietary information of Idega hf.
+ * Use is subject to license terms.
+ */
 package se.idega.idegaweb.commune.school.business;
 
 import java.rmi.RemoteException;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Map;
 import javax.ejb.CreateException;
 import javax.ejb.FinderException;
+import se.idega.idegaweb.commune.business.CommuneUserBusiness;
+import se.idega.idegaweb.commune.school.data.SchoolChoice;
 import com.idega.block.datareport.util.ReportableCollection;
+import com.idega.block.process.business.CaseBusiness;
+import com.idega.block.school.business.SchoolBusiness;
+import com.idega.block.school.data.School;
+import com.idega.block.school.data.SchoolClass;
 import com.idega.block.school.data.SchoolClassMember;
 import com.idega.block.school.data.SchoolSeason;
 import com.idega.block.school.data.SchoolStudyPath;
+import com.idega.block.school.data.SchoolType;
+import com.idega.block.school.data.SchoolYear;
+import com.idega.business.IBOService;
 import com.idega.data.IDOException;
-import com.idega.data.IDOLookupException;
+import com.idega.data.IDOQuery;
 import com.idega.user.data.User;
 
-public interface SchoolCommuneBusiness extends com.idega.business.IBOService,com.idega.block.process.business.CaseBusiness
-{
- public void addSchoolAdministrator(com.idega.user.data.User p0)throws java.rmi.RemoteException,javax.ejb.FinderException,javax.ejb.CreateException, java.rmi.RemoteException;
- public boolean canMarkSchoolClass(com.idega.block.school.data.SchoolClass p0,java.lang.String p1)throws java.rmi.RemoteException, java.rmi.RemoteException;
- public void finalizeGroup(com.idega.block.school.data.SchoolClass p0,java.lang.String p1,java.lang.String p2, boolean confirmation)throws java.rmi.RemoteException, java.rmi.RemoteException;
- public int getChosenSchoolID(java.util.Collection p0)throws java.rmi.RemoteException, java.rmi.RemoteException;
- public com.idega.block.school.data.SchoolSeason getCurrentSchoolSeason()throws javax.ejb.FinderException, java.rmi.RemoteException;
- public int getCurrentSchoolSeasonID()throws java.rmi.RemoteException, java.rmi.RemoteException;
- public int getGradeForYear(int p0)throws java.rmi.RemoteException, java.rmi.RemoteException;
- public java.util.Collection getPreviousSchoolClasses(com.idega.block.school.data.School p0,com.idega.block.school.data.SchoolSeason p1,com.idega.block.school.data.SchoolYear p2)throws java.rmi.RemoteException, java.rmi.RemoteException;
- public com.idega.block.school.data.SchoolSeason getPreviousSchoolSeason(com.idega.block.school.data.SchoolSeason p0)throws java.rmi.RemoteException, java.rmi.RemoteException;
- public com.idega.block.school.data.SchoolSeason getPreviousSchoolSeason(int p0)throws java.rmi.RemoteException, java.rmi.RemoteException;
- public int getPreviousSchoolSeasonID(int p0)throws java.rmi.RemoteException, java.rmi.RemoteException;
- public int getPreviousSchoolYear(int p0)throws java.rmi.RemoteException, java.rmi.RemoteException;
- public com.idega.block.school.business.SchoolBusiness getSchoolBusiness()throws java.rmi.RemoteException, java.rmi.RemoteException;
- public se.idega.idegaweb.commune.school.business.SchoolChoiceBusiness getSchoolChoiceBusiness()throws java.rmi.RemoteException, java.rmi.RemoteException;
- public com.idega.block.school.data.SchoolYear getSchoolYear(int p0)throws java.rmi.RemoteException, java.rmi.RemoteException;
- public com.idega.block.school.data.SchoolYear getSchoolYear(int p0, int p1)throws java.rmi.RemoteException, java.rmi.RemoteException;
- public java.util.Map getStudentChoices(java.util.Collection p0,int p1)throws java.rmi.RemoteException, java.rmi.RemoteException;
- public java.util.Map getStudentList(java.util.Collection p0)throws java.rmi.RemoteException, java.rmi.RemoteException;
- public java.util.Map getUserAddressesMapFromChoices(java.util.Collection p0)throws java.rmi.RemoteException, java.rmi.RemoteException;
- public java.util.Map getUserMapFromChoices(com.idega.data.IDOQuery p0)throws java.rmi.RemoteException, java.rmi.RemoteException;
- public java.util.Map getUserPhoneMapFromChoicesUserIdPK(java.util.Collection p0)throws java.rmi.RemoteException, java.rmi.RemoteException;
- public java.util.Map getUserAddressMapFromChoicesUserIdPK(java.util.Collection p0)throws java.rmi.RemoteException, java.rmi.RemoteException;
- public boolean hasChosenOtherSchool(java.util.Collection p0,int p1)throws java.rmi.RemoteException, java.rmi.RemoteException;
- public void importStudentInformationToNewClass(com.idega.block.school.data.SchoolClassMember p0,com.idega.block.school.data.SchoolSeason p1)throws java.rmi.RemoteException, java.rmi.RemoteException;
- public void markSchoolClassLocked(com.idega.block.school.data.SchoolClass p0)throws java.rmi.RemoteException, java.rmi.RemoteException;
- public void markSchoolClassReady(com.idega.block.school.data.SchoolClass p0)throws java.rmi.RemoteException, java.rmi.RemoteException;
- public void moveToGroup(int p0,int p1,int p2,int p3)throws java.rmi.RemoteException, java.rmi.RemoteException;
- public void setNeedsSpecialAttention(int p0,int p1,boolean p2)throws java.rmi.RemoteException, java.rmi.RemoteException;
- public void setNeedsSpecialAttention(com.idega.block.school.data.SchoolClassMember p0,boolean p2) throws java.rmi.RemoteException;
- public void setNeedsSpecialAttention(com.idega.block.school.data.SchoolClassMember p0,com.idega.block.school.data.SchoolSeason p1,boolean p2)throws java.rmi.RemoteException, java.rmi.RemoteException;
- public void setStudentAsSpeciallyPlaced(com.idega.block.school.data.SchoolClassMember p0)throws java.rmi.RemoteException, java.rmi.RemoteException;
- public boolean[] hasSchoolChoices(int userID, int seasonID) throws java.rmi.RemoteException;
- public String getLocalizedSchoolTypeKey(com.idega.block.school.data.SchoolType type);
- public void resetSchoolClassStatus(int schoolClassID) throws java.rmi.RemoteException;
- public com.idega.block.school.data.SchoolYear getNextSchoolYear(com.idega.block.school.data.SchoolYear schoolYear) throws java.rmi.RemoteException;
- public java.util.Map getUserMapFromChoices(java.util.Collection choices) throws java.rmi.RemoteException;
- public java.util.Map getUserAddressesMapFromChoices(com.idega.data.IDOQuery query) throws java.rmi.RemoteException;
- public boolean isAlreadyInSchool(int userID, int schoolID, int seasonID) throws java.rmi.RemoteException;
- public boolean isOngoingSeason(int seasonID) throws java.rmi.RemoteException;
- public boolean hasMoveChoiceToOtherSchool(int userID, int schoolID, int seasonID);
- public boolean hasChoiceToThisSchool(int userID, int schoolID, int seasonID);
 
-    SchoolClassMember [] getCurrentMembersWithInvoiceInterval (String operationalField) throws RemoteException;
+/**
+ * 
+ *  Last modified: $Date: 2004/06/28 09:09:50 $ by $Author: thomas $
+ * 
+ * @author <a href="mailto:thomas@idega.com">thomas</a>
+ * @version $Revision: 1.1 $
+ */
+public interface SchoolCommuneBusiness extends IBOService, CaseBusiness {
 
-    SchoolClassMember getCurrentSchoolClassMembership (User user)
-        throws RemoteException;
+	/**
+	 * @see se.idega.idegaweb.commune.school.business.SchoolCommuneBusinessBean#getYearClassMap
+	 */
+	public Map getYearClassMap(Collection schoolYears, int schoolID, int seasonID, String emptyString,
+			boolean showSubGroups) throws java.rmi.RemoteException;
 
-    SchoolClassMember getCurrentSchoolClassMembership (User user, int schoolId)
-        throws RemoteException;
+	/**
+	 * @see se.idega.idegaweb.commune.school.business.SchoolCommuneBusinessBean#getSchoolBusiness
+	 */
+	public SchoolBusiness getSchoolBusiness() throws RemoteException;
 
-    SchoolStudyPath getStudyPath (SchoolClassMember student);
-    SchoolStudyPath [] getAllStudyPaths ();
+	/**
+	 * @see se.idega.idegaweb.commune.school.business.SchoolCommuneBusinessBean#getSchoolChoiceBusiness
+	 */
+	public SchoolChoiceBusiness getSchoolChoiceBusiness() throws java.rmi.RemoteException;
 
-	public ReportableCollection getReportOfUsersNotRegisteredInAnyClass(Locale currentLocale, Date selectedDate, SchoolSeason currentSeason) throws RemoteException, IDOLookupException, IDOException, FinderException, CreateException;
+	/**
+	 * @see se.idega.idegaweb.commune.school.business.SchoolCommuneBusinessBean#isOngoingSeason
+	 */
+	public boolean isOngoingSeason(int seasonID) throws RemoteException;
+
+	/**
+	 * @see se.idega.idegaweb.commune.school.business.SchoolCommuneBusinessBean#isAlreadyInSchool
+	 */
+	public boolean isAlreadyInSchool(int userID, int schoolID, int seasonID) throws RemoteException;
+
+	/**
+	 * @see se.idega.idegaweb.commune.school.business.SchoolCommuneBusinessBean#isPlacedAtSchool
+	 */
 	public boolean isPlacedAtSchool(int userID, int schoolID) throws java.rmi.RemoteException;
-	public se.idega.idegaweb.commune.business.CommuneUserBusiness getUserBusiness() throws java.rmi.RemoteException;
-	public java.util.Map getYearClassMap(java.util.Collection schoolYears, int schoolID, int seasonID, String emptyString, boolean showSubGroups) throws java.rmi.RemoteException;
-	public boolean removeSubGroupPlacements(int userID, int schoolID, int seasonID) throws java.rmi.RemoteException;
+
+	/**
+	 * @see se.idega.idegaweb.commune.school.business.SchoolCommuneBusinessBean#getUserMapFromChoices
+	 */
+	public Map getUserMapFromChoices(IDOQuery query) throws RemoteException;
+
+	/**
+	 * @see se.idega.idegaweb.commune.school.business.SchoolCommuneBusinessBean#getUserMapFromChoices
+	 */
+	public Map getUserMapFromChoices(Collection choices) throws RemoteException;
+
+	/**
+	 * @see se.idega.idegaweb.commune.school.business.SchoolCommuneBusinessBean#getUserAddressesMapFromChoices
+	 */
+	public Map getUserAddressesMapFromChoices(Collection choices) throws RemoteException;
+
+	/**
+	 * @see se.idega.idegaweb.commune.school.business.SchoolCommuneBusinessBean#getUserAddressesMapFromChoices
+	 */
+	public Map getUserAddressesMapFromChoices(IDOQuery query) throws RemoteException;
+
+	/**
+	 * @see se.idega.idegaweb.commune.school.business.SchoolCommuneBusinessBean#getUserPhoneMapFromChoicesUserIdPK
+	 */
+	public Map getUserPhoneMapFromChoicesUserIdPK(Collection choices) throws RemoteException;
+
+	/**
+	 * @see se.idega.idegaweb.commune.school.business.SchoolCommuneBusinessBean#getUserAddressMapFromChoicesUserIdPK
+	 */
+	public Map getUserAddressMapFromChoicesUserIdPK(Collection choices) throws RemoteException;
+
+	/**
+	 * @see se.idega.idegaweb.commune.school.business.SchoolCommuneBusinessBean#getStudentChoices
+	 */
+	public Map getStudentChoices(Collection students, int seasonID) throws RemoteException;
+
+	/**
+	 * @see se.idega.idegaweb.commune.school.business.SchoolCommuneBusinessBean#hasChosenOtherSchool
+	 */
+	public boolean hasChosenOtherSchool(Collection choices, int schoolID) throws java.rmi.RemoteException;
+
+	/**
+	 * @see se.idega.idegaweb.commune.school.business.SchoolCommuneBusinessBean#hasSchoolChoices
+	 */
+	public boolean[] hasSchoolChoices(int userID, int seasonID) throws RemoteException;
+
+	/**
+	 * @see se.idega.idegaweb.commune.school.business.SchoolCommuneBusinessBean#hasMoveChoiceToOtherSchool
+	 */
+	public boolean hasMoveChoiceToOtherSchool(int userID, int schoolID, int seasonID) throws java.rmi.RemoteException;
+
+	/**
+	 * @see se.idega.idegaweb.commune.school.business.SchoolCommuneBusinessBean#hasChoicesForSeason
+	 */
 	public boolean hasChoicesForSeason(int userID, int seasonID) throws java.rmi.RemoteException;
+
+	/**
+	 * @see se.idega.idegaweb.commune.school.business.SchoolCommuneBusinessBean#hasChoiceToThisSchool
+	 */
+	public boolean hasChoiceToThisSchool(int userID, int schoolID, int seasonID) throws java.rmi.RemoteException;
+
+	/**
+	 * @see se.idega.idegaweb.commune.school.business.SchoolCommuneBusinessBean#getChosenSchoolID
+	 */
+	public int getChosenSchoolID(Collection choices) throws java.rmi.RemoteException;
+
+	/**
+	 * @see se.idega.idegaweb.commune.school.business.SchoolCommuneBusinessBean#getPreviousSchoolSeason
+	 */
+	public SchoolSeason getPreviousSchoolSeason(SchoolSeason schoolSeason) throws RemoteException;
+
+	/**
+	 * @see se.idega.idegaweb.commune.school.business.SchoolCommuneBusinessBean#getPreviousSchoolSeason
+	 */
+	public SchoolSeason getPreviousSchoolSeason(int schoolSeasonID) throws RemoteException;
+
+	/**
+	 * @see se.idega.idegaweb.commune.school.business.SchoolCommuneBusinessBean#getPreviousSchoolSeasonID
+	 */
+	public int getPreviousSchoolSeasonID(int schoolSeasonID) throws RemoteException;
+
+	/**
+	 * @see se.idega.idegaweb.commune.school.business.SchoolCommuneBusinessBean#getCurrentSchoolSeasonID
+	 */
+	public int getCurrentSchoolSeasonID() throws RemoteException;
+
+	/**
+	 * @see se.idega.idegaweb.commune.school.business.SchoolCommuneBusinessBean#getCurrentSchoolSeason
+	 */
+	public SchoolSeason getCurrentSchoolSeason() throws FinderException, java.rmi.RemoteException;
+
+	/**
+	 * @see se.idega.idegaweb.commune.school.business.SchoolCommuneBusinessBean#getSchoolYear
+	 */
+	public SchoolYear getSchoolYear(int age) throws RemoteException;
+
+	/**
+	 * @see se.idega.idegaweb.commune.school.business.SchoolCommuneBusinessBean#getSchoolYear
+	 */
+	public SchoolYear getSchoolYear(int schoolYear, int test) throws RemoteException;
+
+	/**
+	 * @see se.idega.idegaweb.commune.school.business.SchoolCommuneBusinessBean#getPreviousSchoolYear
+	 */
+	public int getPreviousSchoolYear(int schoolYearID) throws RemoteException;
+
+	/**
+	 * @see se.idega.idegaweb.commune.school.business.SchoolCommuneBusinessBean#getNextSchoolYear
+	 */
+	public SchoolYear getNextSchoolYear(SchoolYear schoolYear) throws RemoteException;
+
+	/**
+	 * @see se.idega.idegaweb.commune.school.business.SchoolCommuneBusinessBean#getGradeForYear
+	 */
+	public int getGradeForYear(int schoolYearID) throws RemoteException;
+
+	/**
+	 * @see se.idega.idegaweb.commune.school.business.SchoolCommuneBusinessBean#getPreviousSchoolClasses
+	 */
+	public Collection getPreviousSchoolClasses(School school, SchoolSeason schoolSeason, SchoolYear schoolYear)
+			throws RemoteException;
+
+	/**
+	 * @see se.idega.idegaweb.commune.school.business.SchoolCommuneBusinessBean#finalizeGroup
+	 */
+	public void finalizeGroup(SchoolClass schoolClass, String subject, String body, boolean confirmation)
+			throws RemoteException;
+
+	/**
+	 * @see se.idega.idegaweb.commune.school.business.SchoolCommuneBusinessBean#setStudentAsSpeciallyPlaced
+	 */
+	public void setStudentAsSpeciallyPlaced(SchoolClassMember schoolMember) throws java.rmi.RemoteException;
+
+	/**
+	 * @see se.idega.idegaweb.commune.school.business.SchoolCommuneBusinessBean#importStudentInformationToNewClass
+	 */
+	public void importStudentInformationToNewClass(SchoolClassMember schoolMember, SchoolSeason previousSeason)
+			throws RemoteException;
+
+	/**
+	 * @see se.idega.idegaweb.commune.school.business.SchoolCommuneBusinessBean#setNeedsSpecialAttention
+	 */
+	public void setNeedsSpecialAttention(int studentID, int schoolSeasonID, boolean needsAttention)
+			throws RemoteException;
+
+	/**
+	 * @see se.idega.idegaweb.commune.school.business.SchoolCommuneBusinessBean#setNeedsSpecialAttention
+	 */
+	public void setNeedsSpecialAttention(SchoolClassMember schoolMember, SchoolSeason schoolSeason,
+			boolean needsAttention) throws RemoteException;
+
+	/**
+	 * @see se.idega.idegaweb.commune.school.business.SchoolCommuneBusinessBean#setNeedsSpecialAttention
+	 */
+	public void setNeedsSpecialAttention(SchoolClassMember schoolMember, boolean needsAttention)
+			throws java.rmi.RemoteException;
+
+	/**
+	 * @see se.idega.idegaweb.commune.school.business.SchoolCommuneBusinessBean#addSchoolAdministrator
+	 */
+	public void addSchoolAdministrator(User user) throws RemoteException, FinderException, CreateException;
+
+	/**
+	 * @see se.idega.idegaweb.commune.school.business.SchoolCommuneBusinessBean#markSchoolClassReady
+	 */
+	public void markSchoolClassReady(SchoolClass schoolClass) throws java.rmi.RemoteException;
+
+	/**
+	 * @see se.idega.idegaweb.commune.school.business.SchoolCommuneBusinessBean#markSchoolClassLocked
+	 */
+	public void markSchoolClassLocked(SchoolClass schoolClass) throws java.rmi.RemoteException;
+
+	/**
+	 * @see se.idega.idegaweb.commune.school.business.SchoolCommuneBusinessBean#canMarkSchoolClass
+	 */
+	public boolean canMarkSchoolClass(SchoolClass schoolClass, String propertyName) throws RemoteException;
+
+	/**
+	 * @see se.idega.idegaweb.commune.school.business.SchoolCommuneBusinessBean#moveToGroup
+	 */
+	public void moveToGroup(int studentID, int schoolClassID, int oldSchoolClassID, int schoolYearID)
+			throws RemoteException;
+
+	/**
+	 * @see se.idega.idegaweb.commune.school.business.SchoolCommuneBusinessBean#getUserBusiness
+	 */
+	public CommuneUserBusiness getUserBusiness() throws RemoteException;
+
+	/**
+	 * @see se.idega.idegaweb.commune.school.business.SchoolCommuneBusinessBean#getLocalizedSchoolTypeKey
+	 */
+	public String getLocalizedSchoolTypeKey(SchoolType type) throws java.rmi.RemoteException;
+
+	/**
+	 * @see se.idega.idegaweb.commune.school.business.SchoolCommuneBusinessBean#resetSchoolClassStatus
+	 */
+	public void resetSchoolClassStatus(int schoolClassID) throws RemoteException;
+
+	/**
+	 * @see se.idega.idegaweb.commune.school.business.SchoolCommuneBusinessBean#removeSubGroupPlacements
+	 */
+	public boolean removeSubGroupPlacements(int userID, int schoolID, int seasonID) throws java.rmi.RemoteException;
+
+	/**
+	 * @see se.idega.idegaweb.commune.school.business.SchoolCommuneBusinessBean#getCurrentMembersWithInvoiceInterval
+	 */
+	public SchoolClassMember[] getCurrentMembersWithInvoiceInterval(String operationalField) throws RemoteException;
+
+	/**
+	 * @see se.idega.idegaweb.commune.school.business.SchoolCommuneBusinessBean#getCurrentSchoolClassMembership
+	 */
+	public SchoolClassMember getCurrentSchoolClassMembership(User user) throws RemoteException;
+
+	/**
+	 * @see se.idega.idegaweb.commune.school.business.SchoolCommuneBusinessBean#getCurrentSchoolClassMembership
+	 */
+	public SchoolClassMember getCurrentSchoolClassMembership(User user, int schoolId) throws RemoteException;
+
+	/**
+	 * @see se.idega.idegaweb.commune.school.business.SchoolCommuneBusinessBean#getStudyPath
+	 */
+	public SchoolStudyPath getStudyPath(SchoolClassMember student) throws java.rmi.RemoteException;
+
+	/**
+	 * @see se.idega.idegaweb.commune.school.business.SchoolCommuneBusinessBean#getAllStudyPaths
+	 */
+	public SchoolStudyPath[] getAllStudyPaths() throws java.rmi.RemoteException;
+
+	/**
+	 * @see se.idega.idegaweb.commune.school.business.SchoolCommuneBusinessBean#getReportOfUsersNotRegisteredInAnyClass
+	 */
+	public ReportableCollection getReportOfUsersNotRegisteredInAnyClass(Locale currentLocale, Date selectedDate,
+			SchoolSeason currentSeason) throws IDOException, RemoteException, CreateException, FinderException;
+
+	/**
+	 * @see se.idega.idegaweb.commune.school.business.SchoolCommuneBusinessBean#sendMessageToParents
+	 */
+	public void sendMessageToParents(SchoolChoice choice, String subject, String body) throws java.rmi.RemoteException;
 }
