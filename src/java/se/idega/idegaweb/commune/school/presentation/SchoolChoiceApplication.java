@@ -450,16 +450,9 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		T.add(getChoiceSchool(), 1, row++);
 		T.setHeight(row++, 12);
 		T.add(getMessagePart(), 1, row++);
-		T.setHeight(row++, 12);
-		
 		//T.setHeight(row++, 12);
-
-		// Space table over submit button
-		Table spaceT = new Table(1, 1);
-		spaceT.setBorder(0);
-		spaceT.setHeight(1, 10);
-		T.add(spaceT, 1, row++);
-
+		
+		
 		/*SubmitButton button = (SubmitButton) getButton(new SubmitButton("submit", localize("school_choice.ready", "Ready")));
 		//T.setAlignment(1, row, Table.HORIZONTAL_ALIGN_RIGHT);
 		T.add(button, 1, row++);
@@ -1145,7 +1138,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		table.setCellspacing(0);
 		table.setBorder(0);
 		SubmitButton button = (SubmitButton) getButton(new SubmitButton("submit", localize("school_choice.ready", "Ready")));
-		table.setHeight(1, 3, 60);
+		table.setHeight(1, 3, 50);
 		table.setVerticalAlignment(1, 3, Table.VERTICAL_ALIGN_BOTTOM);
 		table.setAlignment(1, 3, Table.HORIZONTAL_ALIGN_RIGHT);
 		
