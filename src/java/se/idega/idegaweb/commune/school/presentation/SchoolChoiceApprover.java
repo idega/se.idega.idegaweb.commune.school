@@ -115,7 +115,7 @@ public class SchoolChoiceApprover extends CommuneBlock {
 			}
 		}
 		else {
-			add(tf.format(iwrb.getLocalizedString("school_choice.no_school_chosen"), tf.HEADER));
+			add(tf.format(iwrb.getLocalizedString("school_choice.no_school_chosen"), TextFormat.HEADER));
 		}
 
 	}
@@ -171,13 +171,13 @@ public class SchoolChoiceApprover extends CommuneBlock {
 		T.setUseTop(false);
 		T.setUseBottom(false);
 		T.setUseTitles(false);
-		T.add(tf.format(iwrb.getLocalizedString("school_choice.child", "Child"), tf.HEADER), 1, 1);
-		T.add(tf.format(iwrb.getLocalizedString("school_choice.grade", "Grade"), tf.HEADER), 2, 1);
-		T.add(tf.format(iwrb.getLocalizedString("school_choice.choice_date", "Choice date"), tf.HEADER), 3, 1);
-		T.add(tf.format(iwrb.getLocalizedString("school_choice.change_from", "Change from"), tf.HEADER), 4, 1);
-		T.add(tf.format(iwrb.getLocalizedString("school_choice.preliminary", "Preliminary"), tf.HEADER), 5, 1);
-		T.add(tf.format(iwrb.getLocalizedString("school_choice.not_room", "No room"), tf.HEADER), 7, 1);
-		T.add(tf.format(iwrb.getLocalizedString("school_choice.group_place", "Group"), tf.HEADER), 6, 1);
+		T.add(tf.format(iwrb.getLocalizedString("school_choice.child", "Child"), TextFormat.HEADER), 1, 1);
+		T.add(tf.format(iwrb.getLocalizedString("school_choice.grade", "Grade"), TextFormat.HEADER), 2, 1);
+		T.add(tf.format(iwrb.getLocalizedString("school_choice.choice_date", "Choice date"), TextFormat.HEADER), 3, 1);
+		T.add(tf.format(iwrb.getLocalizedString("school_choice.change_from", "Change from"), TextFormat.HEADER), 4, 1);
+		T.add(tf.format(iwrb.getLocalizedString("school_choice.preliminary", "Preliminary"), TextFormat.HEADER), 5, 1);
+		T.add(tf.format(iwrb.getLocalizedString("school_choice.not_room", "No room"), TextFormat.HEADER), 7, 1);
+		T.add(tf.format(iwrb.getLocalizedString("school_choice.group_place", "Group"), TextFormat.HEADER), 6, 1);
 
 		Iterator iter = cases.iterator();
 		SchoolChoice choice;
@@ -238,11 +238,11 @@ public class SchoolChoiceApprover extends CommuneBlock {
 		T.setUseTop(false);
 		T.setUseBottom(false);
 		T.setUseTitles(false);
-		T.add(tf.format(iwrb.getLocalizedString("school_choice.child", "Child"), tf.HEADER), 1, 1);
-		T.add(tf.format(iwrb.getLocalizedString("school_choice.group_place", "Group"), tf.HEADER), 2, 1);
-		T.add(tf.format(iwrb.getLocalizedString("school_choice.choice_date", "Choice date"), tf.HEADER), 3, 1);
-		T.add(tf.format(iwrb.getLocalizedString("school_choice.change_from", "Change from"), tf.HEADER), 4, 1);
-		T.add(tf.format(iwrb.getLocalizedString("school_choice.regroup_place", "Regroup"), tf.HEADER), 5, 1);
+		T.add(tf.format(iwrb.getLocalizedString("school_choice.child", "Child"), TextFormat.HEADER), 1, 1);
+		T.add(tf.format(iwrb.getLocalizedString("school_choice.group_place", "Group"), TextFormat.HEADER), 2, 1);
+		T.add(tf.format(iwrb.getLocalizedString("school_choice.choice_date", "Choice date"), TextFormat.HEADER), 3, 1);
+		T.add(tf.format(iwrb.getLocalizedString("school_choice.change_from", "Change from"), TextFormat.HEADER), 4, 1);
+		T.add(tf.format(iwrb.getLocalizedString("school_choice.regroup_place", "Regroup"), TextFormat.HEADER), 5, 1);
 
 		Iterator iter = cases.iterator();
 		SchoolChoice choice;
@@ -295,8 +295,8 @@ public class SchoolChoiceApprover extends CommuneBlock {
 			
 			
 			int row = 1;
-			T.add(tf.format(iwrb.getLocalizedString("child","Child"),tf.HEADER),1,row);		
-			T.add(tf.format(iwrb.getLocalizedString("address","Address"),tf.HEADER),2,row);
+			T.add(tf.format(iwrb.getLocalizedString("child","Child"),TextFormat.HEADER),1,row);		
+			T.add(tf.format(iwrb.getLocalizedString("address","Address"),TextFormat.HEADER),2,row);
 			row++;
 			T.add(tf.format(child.getNameLastFirst()),1,row);
 			Collection addresses  = child.getAddresses();
@@ -319,8 +319,8 @@ public class SchoolChoiceApprover extends CommuneBlock {
 	        		int count = 1;
 	        		while(piter.hasNext()){
 	        			User p = (User) piter.next();
-	        			T.add(tf.format(iwrb.getLocalizedString( "custodian","Custodian")+" "+count,tf.HEADER),1,row);
-	        			T.add(tf.format(iwrb.getLocalizedString("phone","Phone"),tf.HEADER),2,row);
+	        			T.add(tf.format(iwrb.getLocalizedString( "custodian","Custodian")+" "+count,TextFormat.HEADER),1,row);
+	        			T.add(tf.format(iwrb.getLocalizedString("phone","Phone"),TextFormat.HEADER),2,row);
 	        			row++;
 	        			T.add(tf.format(p.getNameLastFirst()),1,row);
 	        			row++;
@@ -342,26 +342,26 @@ public class SchoolChoiceApprover extends CommuneBlock {
 		Table T = new Table();
 		T.setCellpadding(3);
 		int row = 1;
-		T.add(tf.format(iwrb.getLocalizedString("personal_id","Personal ID"),tf.HEADER),1,row);
+		T.add(tf.format(iwrb.getLocalizedString("personal_id","Personal ID"),TextFormat.HEADER),1,row);
 			String personalID = PersonalIDFormatter.format(child.getPersonalID(),iwc.getApplication().getSettings().getApplicationLocale());
 			T.add(tf.format(personalID),2,row);
 			row++;
 			if(choice!=null){
-				T.add(tf.format(iwrb.getLocalizedString("school_choice.grade","Grade"),tf.HEADER),1,row);
+				T.add(tf.format(iwrb.getLocalizedString("school_choice.grade","Grade"),TextFormat.HEADER),1,row);
 				T.add(tf.format(choice.getGrade()),2,row);
 				row++;
-				T.add(tf.format(iwrb.getLocalizedString("school_choice.choice_date", "Choice date"),tf.HEADER),1,row);
+				T.add(tf.format(iwrb.getLocalizedString("school_choice.choice_date", "Choice date"),TextFormat.HEADER),1,row);
 				T.add(tf.format(df.format( choice.getSchoolChoiceDate() ) ),2,row);
 				row++;
 				
-				T.add(tf.format(iwrb.getLocalizedString("school_choice.change_from", "Change from"),tf.HEADER),1,row);
+				T.add(tf.format(iwrb.getLocalizedString("school_choice.change_from", "Change from"),TextFormat.HEADER),1,row);
 				if (choice.getChangeOfSchool()) {
 						School changeFromSchool = schoolBean.getSchool(new Integer(choice.getCurrentSchoolId()));
 						T.add(tf.format(changeFromSchool.getSchoolName()), 2, row);
 		
 				}
 				row++;
-				T.add(tf.format(iwrb.getLocalizedString("school_choice.language", "Language"),tf.HEADER),1,row);
+				T.add(tf.format(iwrb.getLocalizedString("school_choice.language", "Language"),TextFormat.HEADER),1,row);
 				String language = choice.getLanguageChoice();
 				if(language!=null)
 					T.add(tf.format(language),2,row);
@@ -381,15 +381,15 @@ public class SchoolChoiceApprover extends CommuneBlock {
 		T.setColor("#ffffcc");
 		T.setCellpadding(6);
 		T.setWidth(600);
-		T.add(tf.format(iwrb.getLocalizedString("school","School"),tf.HEADER),1,1);
+		T.add(tf.format(iwrb.getLocalizedString("school","School"),TextFormat.HEADER),1,1);
 		T.add(tf.format(school.getSchoolName()),1,2);
-		T.add(tf.format(iwrb.getLocalizedString("letter_address","Letter address"),tf.HEADER),2,1);
+		T.add(tf.format(iwrb.getLocalizedString("letter_address","Letter address"),TextFormat.HEADER),2,1);
 		//Address addr = school.getSchoolAddress();
 		//T.add(tf.format(addr.getStreetAddress()+" , "+addr.getPostalAddress() ),2,2);
 		T.add(tf.format(school.getSchoolAddress()),2,2);
-		T.add(tf.format(iwrb.getLocalizedString("phone","Phone"),tf.HEADER),1,4);
+		T.add(tf.format(iwrb.getLocalizedString("phone","Phone"),TextFormat.HEADER),1,4);
 		T.add(tf.format(school.getSchoolPhone()),1,5);
-		T.add(tf.format(iwrb.getLocalizedString("school_address","School address"),tf.HEADER),2,4);
+		T.add(tf.format(iwrb.getLocalizedString("school_address","School address"),TextFormat.HEADER),2,4);
 		T.add(tf.format(school.getSchoolAddress()),2,5);
 		
 		return T;
@@ -413,7 +413,7 @@ public class SchoolChoiceApprover extends CommuneBlock {
 		//iwb = getBundle(iwc);
 		iwrb = getResourceBundle(iwc);
 		tf = TextFormat.getInstance();
-		df = DateFormat.getDateInstance(df.SHORT, iwc.getCurrentLocale());
+		df = DateFormat.getDateInstance(DateFormat.SHORT, iwc.getCurrentLocale());
 		control(iwc);
 	}
 }

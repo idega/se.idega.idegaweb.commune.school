@@ -195,7 +195,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	public void main(IWContext iwc) throws Exception {
 		iwb = getBundle(iwc);
 		iwrb = getResourceBundle(iwc);
-		df = DateFormat.getDateInstance(df.SHORT, iwc.getCurrentLocale());
+		df = DateFormat.getDateInstance(DateFormat.SHORT, iwc.getCurrentLocale());
 		schBuiz = (SchoolChoiceBusiness) IBOLookup.getServiceInstance(iwc, SchoolChoiceBusiness.class);
 		canApply = checkCanApply(iwc);
 		control(iwc);

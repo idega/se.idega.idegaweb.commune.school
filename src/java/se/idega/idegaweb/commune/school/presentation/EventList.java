@@ -46,7 +46,7 @@ import com.idega.util.IWTimestamp;
  * Copyright:    Copyright idega Software (c) 2002
  * Company:	idega Software
  * @author <a href="mailto:roar@idega.is">roar</a>
- * @version $Id: EventList.java,v 1.6 2004/01/12 09:00:16 gimmi Exp $
+ * @version $Id: EventList.java,v 1.7 2004/01/12 09:58:08 laddi Exp $
  * @since 17.3.2003 
  */
 
@@ -504,7 +504,7 @@ public class EventList extends CommuneBlock {
 
 	private PresentationObject getPrintButton() {
 		Table T = new Table();
-		T.setAlignment(T.HORIZONTAL_ALIGN_RIGHT);
+		T.setAlignment(Table.HORIZONTAL_ALIGN_RIGHT);
 		T.setCellpadding(2);
 		SubmitButton print =
 			new SubmitButton(
@@ -523,7 +523,7 @@ public class EventList extends CommuneBlock {
 		String cursorPrm,
 		int step) {
 		Table T = new Table();
-		T.setAlignment(T.HORIZONTAL_ALIGN_RIGHT);
+		T.setAlignment(Table.HORIZONTAL_ALIGN_RIGHT);
 		T.setCellpadding(2);
 		if (cursor > 0) {
 			Link prev = new Link(localize(LOCALE_LAST, "last") + "  " + step);

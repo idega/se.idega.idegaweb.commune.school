@@ -50,10 +50,10 @@ import com.idega.user.data.User;
  * and entity ejb classes in {@link se.idega.idegaweb.commune.school.data}.
  * <p>
  * <p>
- * Last modified: $Date: 2004/01/12 08:55:59 $ by $Author: gimmi $
+ * Last modified: $Date: 2004/01/12 09:59:56 $ by $Author: laddi $
  *
  * @author <a href="http://www.staffannoteberg.com">Staffan Nöteberg</a>
- * @version $Revision: 1.36 $
+ * @version $Revision: 1.37 $
  * @see javax.ejb
  */
 public class SchoolChoiceReminderView extends CommuneBlock {
@@ -160,12 +160,12 @@ public class SchoolChoiceReminderView extends CommuneBlock {
 		form.add(t);
 		
 		PresentationObject yearSelector = getSchoolYearsSelector(iwc);
-		InputContainer yearSelectorCont = this.getInputContainer(this.SCHOOL_YEAR_KEY,"Select SchoolYear:",yearSelector);
+		InputContainer yearSelectorCont = this.getInputContainer(SCHOOL_YEAR_KEY,"Select SchoolYear:",yearSelector);
 		
 		t.add(yearSelectorCont,1,1);
 		form.maintainParameter(this.PARAM_SCHOOL_SEASON_ID);
 		form.maintainParameter(CASE_ID_KEY);
-		t.add(this.getSubmitButton2(this.ACTION_KEY,this.SHOW_DETAILS_KEY),1,2);
+		t.add(this.getSubmitButton2(ACTION_KEY,SHOW_DETAILS_KEY),1,2);
 		
 	}
 
@@ -183,10 +183,10 @@ public class SchoolChoiceReminderView extends CommuneBlock {
 
 	
 		DropdownMenu dropSeasons = getSchoolSeasonsInput();
-		InputContainer dropSeasonsCont = this.getInputContainer(this.SCHOOL_SEASON_KEY,"Select season:",dropSeasons);
+		InputContainer dropSeasonsCont = this.getInputContainer(SCHOOL_SEASON_KEY,"Select season:",dropSeasons);
 		form.maintainParameter(CASE_ID_KEY);
 		t.add(dropSeasonsCont,1,1);
-		t.add(this.getSubmitButton2(this.ACTION_KEY,SCHOOL_YEAR_KEY),1,2);
+		t.add(this.getSubmitButton2(ACTION_KEY,SCHOOL_YEAR_KEY),1,2);
 		
 	}
 
@@ -348,7 +348,7 @@ public class SchoolChoiceReminderView extends CommuneBlock {
             idLink.addParameter (CASE_ID_KEY, id);
             //idLink.addParameter (ACTION_KEY, SHOW_DETAILS_KEY);
             //Go to select school season when this link is clicked
-			idLink.addParameter (ACTION_KEY, this.SCHOOL_SEASON_KEY);
+			idLink.addParameter (ACTION_KEY, SCHOOL_SEASON_KEY);
             messageList.add (idLink, col++, row);
             final String text = reminder.getText ();
             final String message = text.length () > 33
