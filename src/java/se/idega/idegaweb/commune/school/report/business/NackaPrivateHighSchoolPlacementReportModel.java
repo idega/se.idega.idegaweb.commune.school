@@ -1,5 +1,5 @@
 /*
- * $Id: NackaPrivateHighSchoolPlacementReportModel.java,v 1.10 2004/01/21 16:18:45 anders Exp $
+ * $Id: NackaPrivateHighSchoolPlacementReportModel.java,v 1.11 2004/01/22 07:56:47 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -20,10 +20,10 @@ import com.idega.block.school.data.SchoolStudyPath;
 /** 
  * Report model for private high school placements in Nacka.
  * <p>
- * Last modified: $Date: 2004/01/21 16:18:45 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/22 07:56:47 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.10 $
+ * @version $Revision: 1.11 $
  */
 public class NackaPrivateHighSchoolPlacementReportModel extends ReportModel {
 
@@ -57,7 +57,7 @@ public class NackaPrivateHighSchoolPlacementReportModel extends ReportModel {
 		super(reportBusiness);
 		Collection studyPaths = getStudyPaths();
 		int rowSize = 0;
-		rowSize += studyPaths.size() + 2; 
+		rowSize += studyPaths.size() + 1; 
 		setReportSize(rowSize, COLUMN_SIZE);
 	}
 	
@@ -68,7 +68,7 @@ public class NackaPrivateHighSchoolPlacementReportModel extends ReportModel {
 		Header[] headers = null;
 		
 		Collection studyPaths = getStudyPaths();
-		headers = new Header[studyPaths.size() + 2];
+		headers = new Header[studyPaths.size() + 1];
 		Iterator iter = studyPaths.iterator();
 		int headerIndex = 0;
 		while (iter.hasNext()) {
@@ -78,10 +78,6 @@ public class NackaPrivateHighSchoolPlacementReportModel extends ReportModel {
 			headers[headerIndex].setChild(0, child);
 			headerIndex++;
 		}
-		headers[headerIndex] = new Header(KEY_PROVISIONS_PROGRAM, Header.HEADERTYPE_ROW_HEADER, 1);
-		Header child = new Header("LP", Header.HEADERTYPE_ROW_NONLOCALIZED_NORMAL);
-		headers[headerIndex].setChild(0, child);
-		headerIndex++;
 		
 		Header header = new Header(KEY_TOTAL, Header.HEADERTYPE_ROW_TOTAL);
 		headers[headerIndex] = header;
@@ -234,12 +230,7 @@ public class NackaPrivateHighSchoolPlacementReportModel extends ReportModel {
 				row++;
 			}
 			
-			Cell cell = new Cell(this, row, column, ROW_METHOD_STUDY_PATH,
-					columnMethod, "LP", columnParameter, Cell.CELLTYPE_NORMAL);
-			setCell(row, column, cell);
-			row++;
-
-			cell = new Cell(this, row, column, ROW_METHOD_TOTAL,
+			Cell cell = new Cell(this, row, column, ROW_METHOD_TOTAL,
 					columnMethod, null, columnParameter, Cell.CELLTYPE_TOTAL);
 			setCell(row, column, cell);
 			row++;
