@@ -80,7 +80,7 @@ public class SchoolReportBusinessBean extends IBOSessionBean implements SchoolRe
 		return false;
 	}
 	
-	public ReportableCollection getGroupReport(Collection schoolGroups, Collection columnNames, String freeText, Boolean showNativeLanguage, Boolean showSecondLanguage) {
+	public ReportableCollection getGroupReport(Collection schoolGroups, Collection columnNames, String freeText, Boolean showNativeLanguage, Boolean showSecondLanguage, Boolean showTerminated) {
 		fillColumns(columnNames);
 		initializeBundlesIfNeeded();
 		Locale currentLocale = this.getUserContext().getCurrentLocale();
@@ -202,6 +202,14 @@ public class SchoolReportBusinessBean extends IBOSessionBean implements SchoolRe
 			Iterator iter = students.iterator();
 			while (iter.hasNext()) {
 				SchoolClassMember student = (SchoolClassMember) iter.next();
+				if (showTerminated != null) {
+					if (showTerminated.booleanValue() && student.getRemovedDate() == null) {
+						continue;
+					}
+					else if (!showTerminated.booleanValue() && student.getRemovedDate() != null) {
+						continue;
+					}
+				}
 				boolean hasNativeLanguage = getResourceBusiness().hasResources(((Integer)student.getPrimaryKey()).intValue(), nativeLanguageIDs);
 				if (showNativeLanguage != null) {
 					if (showNativeLanguage.booleanValue() != hasNativeLanguage) {
