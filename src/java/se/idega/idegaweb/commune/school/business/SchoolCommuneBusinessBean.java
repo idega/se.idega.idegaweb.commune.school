@@ -23,7 +23,6 @@ import javax.ejb.RemoveException;
 import se.idega.idegaweb.commune.accounting.school.data.ProviderAccountingProperties;
 import se.idega.idegaweb.commune.accounting.school.data.ProviderAccountingPropertiesHome;
 import se.idega.idegaweb.commune.business.CommuneUserBusiness;
-import se.idega.idegaweb.commune.care.business.CareBusiness;
 import se.idega.idegaweb.commune.message.business.MessageBusiness;
 import se.idega.idegaweb.commune.school.data.SchoolChoice;
 import se.idega.idegaweb.commune.user.data.Citizen;
@@ -635,7 +634,7 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 	}
 
 	public void addSchoolAdministrator(User user) throws RemoteException, FinderException, CreateException {
-		Group rootAdminGroup = getCareBusiness().getRootSchoolAdministratorGroup();
+		Group rootAdminGroup = getSchoolBusiness().getRootSchoolAdministratorGroup();
 		getUserBusiness().getGroupBusiness().addUser(((Integer) rootAdminGroup.getPrimaryKey()).intValue(), user);
 	}
 
@@ -704,10 +703,6 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 		return (CommuneUserBusiness) com.idega.business.IBOLookup.getServiceInstance(getIWApplicationContext(), CommuneUserBusiness.class);
 	}
 	
-	private CareBusiness getCareBusiness() throws RemoteException {
-		return (CareBusiness) com.idega.business.IBOLookup.getServiceInstance(getIWApplicationContext(), CareBusiness.class);
-	}
-
 	public CommuneUserBusiness getUserBusiness() throws RemoteException {
 		return (CommuneUserBusiness) this.getServiceInstance(CommuneUserBusiness.class);
 	}

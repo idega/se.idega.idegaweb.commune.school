@@ -28,7 +28,6 @@ import se.cubecon.bun24.viewpoint.data.SubCategory;
 import se.idega.idegaweb.commune.accounting.extra.business.ResourceBusiness;
 import se.idega.idegaweb.commune.accounting.extra.data.ResourceClassMember;
 import se.idega.idegaweb.commune.business.CommuneUserBusiness;
-import se.idega.idegaweb.commune.care.business.CareBusiness;
 import se.idega.idegaweb.commune.care.data.ChildCareApplication;
 import se.idega.idegaweb.commune.care.data.ChildCareApplicationHome;
 import se.idega.idegaweb.commune.message.business.MessageBusiness;
@@ -1348,11 +1347,6 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		return (SchoolCommuneBusiness) getServiceInstance(SchoolCommuneBusiness.class);
 	}
 	
-	private CareBusiness getCareBusiness() throws RemoteException {
-		return (CareBusiness) getServiceInstance(CareBusiness.class);
-	}
-
-
 	/**
 	 * Method getFirstProviderForUser. If there is no school that the user then the method throws a FinderException.
 	 * 
@@ -1363,10 +1357,10 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	 *           if ther is no school that the user manages.
 	 */
 	public School getFirstProviderForUser(User user) throws FinderException, RemoteException {
-		CareBusiness careBusiness = getCareBusiness();
+		SchoolBusiness schoolBusiness = getSchoolBusiness();
 
 		try {
-			Group rootGroup = careBusiness.getRootProviderAdministratorGroup();
+			Group rootGroup = schoolBusiness.getRootProviderAdministratorGroup();
 			// if user is a SchoolAdministrator
 			if (user.hasRelationTo(rootGroup)) {
 				Collection schools = getSchoolHome().findAllBySchoolGroup(user);
