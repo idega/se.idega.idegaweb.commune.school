@@ -1569,7 +1569,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	private Chunk getReceiverChunk(SchoolChoiceReminderReceiver receiver) {
 		//String ssn = PersonalIDFormatter.format(receiver.getSsn(), getIWApplicationContext().getApplicationSettings().getDefaultLocale());
 		StringBuffer address = new StringBuffer();
-		address.append(getLocalizedString("school.spokesperson_for", "Spokesperson for")).append(": ");
+		address.append(getLocalizedString("school.spokesperson_for", "Spokesperson for")).append(": ").append("\n");
 		address.append(receiver.getStudentName()).append("\n"); 
 		address.append(receiver.getStreetAddress()).append("\n");
 		address.append(receiver.getPostalAddress()).append("\n");
