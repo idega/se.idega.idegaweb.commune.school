@@ -2,7 +2,6 @@ package se.idega.idegaweb.commune.school.business;
 
 import is.idega.block.family.business.FamilyLogic;
 import is.idega.block.family.business.NoCustodianFound;
-
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.rmi.RemoteException;
@@ -21,25 +20,22 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.Vector;
-
 import javax.ejb.CreateException;
 import javax.ejb.FinderException;
-
 import se.cubecon.bun24.viewpoint.business.ViewpointBusiness;
 import se.cubecon.bun24.viewpoint.data.SubCategory;
 import se.idega.idegaweb.commune.business.CommuneUserBusiness;
 import se.idega.idegaweb.commune.care.business.CareBusiness;
-import se.idega.idegaweb.commune.care.business.CareConstants;
+import se.idega.idegaweb.commune.care.data.CurrentSchoolSeason;
+import se.idega.idegaweb.commune.care.data.CurrentSchoolSeasonHome;
 import se.idega.idegaweb.commune.care.resource.business.ResourceBusiness;
 import se.idega.idegaweb.commune.care.resource.data.ResourceClassMember;
 import se.idega.idegaweb.commune.message.business.MessageBusiness;
-import se.idega.idegaweb.commune.presentation.CommuneBlock;
 import se.idega.idegaweb.commune.printing.business.DocumentBusiness;
 import se.idega.idegaweb.commune.school.data.SchoolChoice;
 import se.idega.idegaweb.commune.school.data.SchoolChoiceHome;
 import se.idega.idegaweb.commune.school.data.SchoolChoiceReminder;
 import se.idega.idegaweb.commune.school.data.SchoolChoiceReminderHome;
-
 import com.idega.block.process.data.Case;
 import com.idega.block.process.data.CaseStatus;
 import com.idega.block.school.business.SchoolBusiness;
@@ -60,7 +56,6 @@ import com.idega.data.IDOCreateException;
 import com.idega.data.IDOException;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOStoreException;
-import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWPropertyList;
 import com.idega.io.MemoryFileBuffer;
 import com.idega.io.MemoryInputStream;
@@ -613,11 +608,35 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		}
 	}
 
-	public void setCurrentSchoolSeason(Integer newKey) {
-		IWBundle iwb = getIWApplicationContext().getIWMainApplication().getBundle(CommuneBlock.IW_BUNDLE_IDENTIFIER);
-		iwb.setProperty(CareConstants.PROPERTY_CURRENT_SEASON, newKey.toString());
+	public void createCurrentSchoolSeason(Integer newKey, Integer oldKey) throws java.rmi.RemoteException {
+		CurrentSchoolSeasonHome shome = getCareBusiness().getCurrentSchoolSeasonHome();
+		CurrentSchoolSeason season;
+		try {
+			season = shome.findByPrimaryKey(oldKey);
+			if (oldKey.intValue() != newKey.intValue()) {
+				season.remove();
+				season = shome.create();
+			}
+		}
+		catch (javax.ejb.RemoveException rme) {
+			throw new java.rmi.RemoteException(rme.getMessage());
+		}
+		catch (javax.ejb.CreateException cre) {
+			throw new java.rmi.RemoteException(cre.getMessage());
+		}
+		catch (javax.ejb.FinderException fe) {
+			//fe.printStackTrace();
+			try {
+				season = shome.create();
+			}
+			catch (javax.ejb.CreateException ce) {
+				//ce.printStackTrace();
+				throw new java.rmi.RemoteException(ce.getMessage());
+			}
+		}
+		season.setCurrent(newKey);
+		season.store();
 	}
-	
 	public void createTestFamily() {
 		javax.transaction.UserTransaction trans = getSessionContext().getUserTransaction();
 		try {
