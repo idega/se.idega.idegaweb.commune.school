@@ -422,7 +422,7 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 	}
 
   public Collection ejbFindChoices(int schoolID, int seasonID, int gradeYear, String[] validStatuses, String searchStringForUser) throws FinderException, RemoteException {
-		return ejbFindChoices(schoolID, seasonID, gradeYear, validStatuses, searchStringForUser);
+		return ejbFindChoices(schoolID, seasonID, gradeYear, new int[]{}, validStatuses, searchStringForUser);
   }
 
 	public int  ejbHomeGetCount(String[] validStatuses) throws IDOException{
