@@ -284,6 +284,15 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		stamp.addSeconds((10 - (choiceOrder * 10)));
 		choice.setCreated(stamp.getTimestamp());
 		choice.setCaseStatus(caseStatus);
+		
+		
+		//If school is administrated by BUN, set the case handler so that BUN will see it in the UserCase list.
+		School provider = getSchoolBusiness().getSchool(new Integer(chosen_school));
+		if (provider.getCentralizedAdministration()){
+			Group bunAdmin = getUserBusiness().getGroupBusiness().getGroupByGroupName("Administrator");
+			choice.setHandler(bunAdmin);
+		}
+		
 		if (caseStatus.getStatus().equalsIgnoreCase("PREL")) {
 			sendMessageToParentOrChild(choice.getOwner(), choice.getChild(), getPreliminaryMessageSubject(), getPreliminaryMessageBody(choice));
 //			getMessageBusiness().createUserMessage(choice.getOwner(), getPreliminaryMessageSubject(), getPreliminaryMessageBody(choice));
@@ -468,15 +477,28 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		}
 	}
 
+	/**
+	 * 
+	 * @param schoolID
+	 * @param subject
+	 * @param body
+	 * @throws RemoteException
+	 */
 	private void sendMessageToSchool(int schoolID, String subject, String body) throws RemoteException {
 		try {
 			School school = getSchool(schoolID);
+			
+			//If school is centralized administrated (by BUN), the message shall be marked as such, so that it will show in BUN's messagebox.
+			boolean bunAdmin = school.getCentralizedAdministration();
+			//TODO is this the right way to find the BUN group?
+			Group bunGroup = bunAdmin ? getUserBusiness().getGroupBusiness().getGroupByGroupName("administrator") : null;
+			
 			Collection coll = getSchoolBusiness().getSchoolUserBusiness().getSchoolUserHome().findBySchool(school);
 			if (!coll.isEmpty()) {
 				Iterator iter = coll.iterator();
 				while (iter.hasNext()) {
 					SchoolUser user = (SchoolUser) iter.next();
-					getMessageBusiness().createUserMessage(user.getUser(),subject,body, false);
+					getMessageBusiness().createUserMessage(user.getUser(), subject, bunGroup, body, false);
 				}
 			}
 		}
