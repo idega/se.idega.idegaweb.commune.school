@@ -1,6 +1,10 @@
 package se.idega.idegaweb.commune.school.business;
 
+import java.rmi.RemoteException;
 import javax.ejb.*;
+
+import com.idega.block.school.data.School;
+//import com.idega.core.user.data.User;
 
 public interface SchoolChoiceBusiness extends com.idega.business.IBOService,com.idega.block.process.business.CaseBusiness
 {
@@ -15,4 +19,13 @@ public interface SchoolChoiceBusiness extends com.idega.business.IBOService,com.
  public boolean noRoomAction(Integer PK)  throws java.rmi.RemoteException;
  public boolean groupPlaceAction(Integer pk , String group) throws java.rmi.RemoteException;
  
+	/**
+	 * Method getFirstManagingSchoolForUser.
+	 * If there is no school that the user manages then the method throws a FinderException.
+	 * @param user a user
+	 * @return School that is the first school that the user is a manager for.
+	 * @throws javax.ejb.FinderException if ther is no school that the user manages.
+	 */
+	public School getFirstManagingSchoolForUser(com.idega.user.data.User user)throws FinderException,RemoteException;
+
 }

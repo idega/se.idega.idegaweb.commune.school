@@ -132,6 +132,21 @@ public class SchoolChoiceApprover extends CommuneBlock {
 		else if(iwc.getSessionAttribute(prmSchoolId)!=null){
 			schoolId = ((Integer) iwc.getSessionAttribute(prmSchoolId)).intValue();
 		}
+		else{
+			com.idega.core.user.data.User user = iwc.getUser();
+			if(user!=null){
+				User newUser = com.idega.user.Converter.convertToNewUser(user);
+				try{
+					School school = choiceBean.getFirstManagingSchoolForUser(newUser);
+					if(school!=null){
+						schoolId = ((Integer)school.getPrimaryKey()).intValue();
+						iwc.setSessionAttribute(prmSchoolId,new Integer(schoolId));
+					}
+				}
+				catch(FinderException fe){
+				}
+			}
+		}
 		pupilList = iwc.isParameterSet(prmPupilView);
 	}
 	
