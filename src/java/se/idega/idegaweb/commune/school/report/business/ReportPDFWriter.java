@@ -1,5 +1,5 @@
 /*
- * $Id: ReportPDFWriter.java,v 1.7 2004/03/01 09:57:24 anders Exp $
+ * $Id: ReportPDFWriter.java,v 1.8 2004/03/01 10:25:12 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -37,10 +37,10 @@ import com.lowagie.text.pdf.PdfWriter;
 /** 
  * Creates report files in Adobe PDF format.
  * <p>
- * Last modified: $Date: 2004/03/01 09:57:24 $ by $Author: anders $
+ * Last modified: $Date: 2004/03/01 10:25:12 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.8 $
  */
 public class ReportPDFWriter {
 
@@ -160,7 +160,7 @@ public class ReportPDFWriter {
 			_widths[i] += 2;
 			totalWidth += _widths[i];
 		}
-		int width = (100 * totalWidth) / 130;
+		int width = (100 * totalWidth) / 140;
 		if (width > 100) {
 			width = 100;
 		}
@@ -354,15 +354,15 @@ public class ReportPDFWriter {
 							align = Element.ALIGN_LEFT;
 							break;
 						case Cell.CELLTYPE_SUM:
-							s = formatNumber("" + cell.getValue());
+							s = formatNumber(cell.getValue());
 							font = _boldFont;
 							break;
 						case Cell.CELLTYPE_TOTAL:
-							s = formatNumber("" + cell.getValue());
+							s = formatNumber(cell.getValue());
 							font = _boldFont;
 							break;
 						default:
-							s = formatNumber("" + cell.getValue());
+							s = formatNumber(cell.getValue());
 							break;
 					}
 					int tableColumn = cellColumn + 1;
@@ -371,7 +371,7 @@ public class ReportPDFWriter {
 					pdfCell.setNoWrap(true);
 					pdfCell.setVerticalAlignment(Element.ALIGN_MIDDLE); 
 					table.addCell(pdfCell, new Point(tableRow, tableColumn));
-					setColSize(s, cellColumn, true);
+					setColSize(s, tableColumn, false);
 				}
 				cellRow++;
 				tableRow++;
@@ -406,7 +406,11 @@ public class ReportPDFWriter {
 	/*
 	 * Returns a string with space for numbers larger than 999.
 	 */
-	String formatNumber(String s) {
+	String formatNumber(int n) {
+		if (n == 0) {
+			return " ";
+		}
+		String s = "" + n;
 		int length = s.length();
 		if (length > 3) {
 			s = s.substring(0, (length - 3)) + " " + s.substring(length - 3);
