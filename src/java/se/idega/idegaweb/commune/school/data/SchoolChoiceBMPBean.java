@@ -625,6 +625,34 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 		return super.idoFindPKsBySQL(sql.toString());
   }
   
+  public Collection ejbFindChoicesInClassAndSeasonAndSchool(int classID, int seasonID, int schoolID, boolean confirmation) throws FinderException {
+		IDOQuery sql = idoQuery();
+		sql.append("select sc.* from ").append(getEntityName()).append(" sc,");
+		sql.append("sch_school_class c, sch_class_member cm ");
+		sql.appendWhere();
+		sql.append("sc.").append(CHOSEN_SCHOOL);
+		sql.appendEqualSign();
+		sql.append(schoolID);
+		sql.appendAndEquals("sc."+SCHOOL_SEASON,seasonID);
+		sql.appendAndEquals("c.school_id","sc."+CHOSEN_SCHOOL);
+		sql.appendAndEquals("c.sch_school_class_id", classID);
+		sql.appendAndEquals("c.sch_school_class_id", "cm.sch_school_class_id");
+		sql.appendAndEquals("cm.ic_user_id", "sc."+CHILD);
+		if (confirmation) {
+			sql.appendAnd().appendLeftParenthesis();
+			sql.append("sc."+HAS_RECEIVED_CONFIRMATION_MESSAGE).appendEqualSign().append("'N'");
+			sql.appendOr().append("sc."+HAS_RECEIVED_CONFIRMATION_MESSAGE).append(" is null").appendRightParenthesis();
+		}
+		else {
+			sql.appendAnd().appendLeftParenthesis();
+			sql.append("sc."+HAS_RECEIVED_PLACEMENT_MESSAGE).appendEqualSign().append("'N'");
+			sql.appendOr().append("sc."+HAS_RECEIVED_PLACEMENT_MESSAGE).append(" is null").appendRightParenthesis();
+		}
+ 
+ 		System.out.println(sql.toString());
+ 		return idoFindPKsBySQL(sql.toString());
+  }
+  
 	public int ejbHomeGetNumberOfChoices(int userID, int seasonID) throws IDOException {
 		IDOQuery sql = idoQuery();
 		sql.appendSelectCountFrom(this).appendWhereEquals(CHILD, userID).appendAndEquals(SCHOOL_SEASON, seasonID);

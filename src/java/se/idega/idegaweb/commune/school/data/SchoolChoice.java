@@ -16,6 +16,7 @@ public interface SchoolChoice extends com.idega.data.IDOEntity,com.idega.block.p
  public void setFreetimeInThisSchool(boolean p0);
  public java.sql.Timestamp getSchoolChoiceDate();
  public int getWorkSituation2();
+ public com.idega.data.IDOQuery getIDOQuery(int p0,int p1,int p2,int[] p3,java.lang.String[] p4,java.lang.String p5,boolean p6,boolean p7,int p8);
  public void setWorksituation2(int p0);
  public int getWorkSituation1();
  public void setWorksituation1(int p0);
@@ -38,7 +39,6 @@ public interface SchoolChoice extends com.idega.data.IDOEntity,com.idega.block.p
  public java.lang.String getCaseStatusQuiet();
  public void setChangeOfSchool(boolean p0);
  public void setChoiceOrder(int p0);
- public com.idega.user.data.User getChild();
  public int getChildId();
  public void setCustodiansAgree(boolean p0);
  public void initializeAttributes();
@@ -51,6 +51,7 @@ public interface SchoolChoice extends com.idega.data.IDOEntity,com.idega.block.p
  public int getMethod();
  public boolean getCustodiansAgree();
  public int getSchoolTypeId();
+ public com.idega.user.data.User getChild();
  public boolean getHasReceivedConfirmationMessage();
  public java.lang.String getCaseStatusMoved();
  public boolean getSchoolCatalogue();

@@ -384,48 +384,41 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 	}
 	
 	public void finalizeGroup(SchoolClass schoolClass, String subject, String body, boolean confirmation) throws RemoteException {
-		School school = getSchoolBusiness().getSchool(new Integer(schoolClass.getSchoolId()));
-		SchoolChoice choice; 
-		Map students = getStudentList(getSchoolBusiness().findStudentsInClass(((Integer)schoolClass.getPrimaryKey()).intValue()));
-		Iterator iter = students.values().iterator();
+		//School school = getSchoolBusiness().getSchool(new Integer(schoolClass.getSchoolId()));
+		SchoolChoice choice;
+		User student;
+		//Map students = getStudentList(getSchoolBusiness().findStudentsInClass(((Integer)schoolClass.getPrimaryKey()).intValue()));
+		//Iterator iter = students.values().iterator();
+		Collection choices = getSchoolChoiceBusiness().getApplicationsInClass(schoolClass, confirmation);
+		Iterator iter = choices.iterator();
+		
 		while (iter.hasNext()) {
-			User student = (User) iter.next();
-			choice = getSchoolChoiceBusiness().findByStudentAndSchoolAndSeason(((Integer)student.getPrimaryKey()).intValue(),schoolClass.getSchoolId(),schoolClass.getSchoolSeasonId());
+			choice = (SchoolChoice) iter.next();
+			student = choice.getChild();
+			System.out.println("Sending confirmation for "+student.getName());
 			boolean sendMessage = false;
-			boolean updateChoice = false;
 			
-			if (choice != null) {
-				sendMessage = true;
-				if (confirmation) {
-					if (choice.getHasReceivedConfirmationMessage())
-						sendMessage = false;
-					else
-						choice.setHasReceivedConfirmationMessage(true);
-				}
-				else {
-					if (choice.getHasReceivedPlacementMessage())
-						sendMessage = false;
-					else
-						choice.setHasReceivedPlacementMessage(true);
+			if (confirmation) {
+				choice.setHasReceivedConfirmationMessage(true);
+			}
+			else {
+				choice.setHasReceivedPlacementMessage(true);
+			}
+			choice.store();
+
+			try {
+				Collection parents = getMemberFamilyLogic().getCustodiansFor(student);
+				if (!parents.isEmpty()) {
+					Iterator iterator = parents.iterator();
+					while (iterator.hasNext()) {
+						User parent = (User) iterator.next();
+						//Object[] arguments = { school.getName(), parent.getNameLastFirst(true), schoolClass.getName(), student.getNameLastFirst(true) };
+						getMessageBusiness().createUserMessage(parent, subject, body);
+					}	
 				}
 			}
-			
-			if (sendMessage) {
-				choice.store();
-				try {
-					Collection parents = getMemberFamilyLogic().getCustodiansFor(student);
-					if (!parents.isEmpty()) {
-						Iterator iterator = parents.iterator();
-						while (iterator.hasNext()) {
-							User parent = (User) iterator.next();
-							//Object[] arguments = { school.getName(), parent.getNameLastFirst(true), schoolClass.getName(), student.getNameLastFirst(true) };
-							getMessageBusiness().createUserMessage(parent, subject, body);
-						}	
-					}
-				}
-				catch (NoCustodianFound ncd) {
-					ncd.printStackTrace();
-				}
+			catch (NoCustodianFound ncd) {
+				ncd.printStackTrace();
 			}
 		}
 	}
