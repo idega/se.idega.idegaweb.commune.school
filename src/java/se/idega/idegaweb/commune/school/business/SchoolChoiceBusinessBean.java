@@ -55,7 +55,6 @@ import com.idega.core.contact.data.Phone;
 import com.idega.core.file.data.ICFile;
 import com.idega.core.file.data.ICFileHome;
 import com.idega.data.IDOCreateException;
-import com.idega.data.IDOEntity;
 import com.idega.data.IDOException;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOStoreException;
@@ -550,9 +549,10 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 						User parent = (User) iter.next();
 						if (!getUserBusiness().haveSameAddress(parent, appParent)) {
 							getMessageBusiness().createUserMessage(application, parent,null,null, nonApplyingSubject, MessageFormat.format(nonApplyingBody, arguments), true,nonApplyingCode);
-						} else if (!parent.equals((IDOEntity)appParent)){
-							getMessageBusiness().createUserMessage(application, parent,null,null, nonApplyingSubject, MessageFormat.format(nonApplyingBody, arguments), false,nonApplyingCode);
 						}
+						/*else if (!parent.equals((IDOEntity)appParent)){
+							getMessageBusiness().createUserMessage(application, parent,null,null, nonApplyingSubject, MessageFormat.format(nonApplyingBody, arguments), false,nonApplyingCode);
+						}*/
 					}
 				}
 				catch (NoCustodianFound ncf) {
