@@ -1,5 +1,5 @@
 /*
- * $Id: ReportQuery.java,v 1.16 2004/01/12 10:28:24 anders Exp $
+ * $Id: ReportQuery.java,v 1.17 2004/01/13 12:24:04 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -20,10 +20,10 @@ import com.idega.util.database.ConnectionBroker;
 /** 
  * Handles the SQL logic for school report calculations.
  * <p>
- * Last modified: $Date: 2004/01/12 10:28:24 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/13 12:24:04 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.16 $
+ * @version $Revision: 1.17 $
  */
 public class ReportQuery {
 
@@ -273,6 +273,13 @@ public class ReportQuery {
 	 */
 	public void setOnlyStudentsBorn(int year) {
 		sql += " and u.date_of_birth >= '" + year + "-01-01' and u.date_of_birth <= '" + year + "-12-31'";
+	}
+	
+	/**
+	 * Set select only the specified school.
+	 */
+	public void setSchool(int schoolId) {
+		sql += " and s.sch_school_id = " + schoolId;
 	}
 	
 	/**
