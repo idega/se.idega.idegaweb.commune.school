@@ -403,14 +403,7 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 	}
 	
 	public SchoolSeason getPreviousSchoolSeason(int schoolSeasonID) throws RemoteException {
-		Collection coll = getSchoolBusiness().findAllPreviousSchoolSeasons(schoolSeasonID);
-		if ( !coll.isEmpty() ) {
-			Iterator iter = coll.iterator();
-			while (iter.hasNext()) {
-				return (SchoolSeason) iter.next();
-			}	
-		}
-		return null;
+		return getSchoolBusiness().findPreviousSchoolSeason(schoolSeasonID);
 	}
 	
 	public int getPreviousSchoolSeasonID(int schoolSeasonID) throws RemoteException {
@@ -618,7 +611,7 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
      * @return SchoolClassMember objects that follows the method spec
      * @param operationalField only search in schools of this type
      * @exception RemoteException when methods in data layer fails
-     * @author <a href="http://www.staffannoteberg.com">Staffan Nöteberg</a>
+     * @author <a href="http://www.staffannoteberg.com">Staffan Nï¿½teberg</a>
      */
     public SchoolClassMember [] getCurrentMembersWithInvoiceInterval
         (final String operationalField) throws RemoteException {
@@ -647,7 +640,7 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
      * @param user user to search for
      * @return SchoolClassMember or null if not found
      * @exception RemoteException when methods in data layer fails
-     * @author <a href="http://www.staffannoteberg.com">Staffan Nöteberg</a>
+     * @author <a href="http://www.staffannoteberg.com">Staffan Nï¿½teberg</a>
      */
     public SchoolClassMember getCurrentSchoolClassMembership (final User user)
         throws RemoteException {
@@ -672,7 +665,7 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
      * @param schoolId only accept answers from this school
      * @return SchoolClassMember or null if not found
      * @exception RemoteException when methods in data layer fails
-     * @author <a href="http://www.staffannoteberg.com">Staffan Nöteberg</a>
+     * @author <a href="http://www.staffannoteberg.com">Staffan Nï¿½teberg</a>
      */
     public SchoolClassMember getCurrentSchoolClassMembership
         (final User user, final int schoolId)
@@ -699,7 +692,7 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
      *
      * @param student the one who has a study path
      * @return SchoolStudyPath or null if not found
-     * @author <a href="http://www.staffannoteberg.com">Staffan Nöteberg</a>
+     * @author <a href="http://www.staffannoteberg.com">Staffan Nï¿½teberg</a>
      */
     public SchoolStudyPath getStudyPath (final SchoolClassMember student) {
         try {
