@@ -12,20 +12,17 @@ import com.idega.data.IDOLookup;
 import com.idega.block.school.data.School;
 import com.idega.presentation.IWContext;
 
-import se.idega.idegaweb.commune.school.business.SchoolStatistics;
 import se.idega.idegaweb.commune.school.data.SCBCode;
 import se.idega.idegaweb.commune.school.data.SCBCodeHome;
 import se.idega.idegaweb.commune.school.data.SchoolMarksHome;
 import se.idega.idegaweb.commune.school.data.SchoolMarks;
 import se.idega.idegaweb.commune.school.data.SchoolStatisticsDataHome;
 import se.idega.idegaweb.commune.school.data.SchoolStatisticsData;
-import se.idega.idegaweb.commune.school.business.PercentValue;
-import se.idega.idegaweb.commune.school.business.SchoolMarkValues;
 
 /**
  * School marks business
  * <p>
- * $Id: SchoolMarksBusinessBean.java,v 1.11 2004/01/28 13:36:49 staffan Exp $
+ * $Id: SchoolMarksBusinessBean.java,v 1.12 2004/01/28 13:42:37 staffan Exp $
  *
  * I will add some comments on the school marks calculation technique here later.
  * However I am waiting for Nacka to present me that specification.
