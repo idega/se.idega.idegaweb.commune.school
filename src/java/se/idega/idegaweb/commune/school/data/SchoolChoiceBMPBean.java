@@ -535,12 +535,17 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
   	sql.appendEqualSign();
   	sql.append(schoolId);
   	sql.appendAnd();
+		sql.append(SCHOOL_SEASON);
+		sql.appendEqualSign();
+		sql.append(schoolSeasonID);
+		sql.appendAnd();
   	sql.append(FREETIMETHISSCHOOL);
   	sql.appendEqualSign();
   	if (freeTimeInSchool)
   		sql.appendWithinSingleQuotes("Y");
   	else
   		sql.appendWithinSingleQuotes("N");
+  	System.out.println(sql.toString());
   	
   	
 		return super.idoFindPKsBySQL(sql.toString());
