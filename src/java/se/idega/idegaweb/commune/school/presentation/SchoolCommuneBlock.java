@@ -9,6 +9,7 @@ import java.util.Vector;
 import javax.ejb.FinderException;
 
 import se.idega.idegaweb.commune.accounting.business.AccountingSession;
+import se.idega.idegaweb.commune.accounting.presentation.OperationalFieldsMenu;
 import se.idega.idegaweb.commune.presentation.CommuneBlock;
 import se.idega.idegaweb.commune.school.business.SchoolClassWriter;
 import se.idega.idegaweb.commune.school.business.SchoolCommuneBusiness;
@@ -124,12 +125,16 @@ public abstract class SchoolCommuneBlock extends CommuneBlock {
 	}
 	
 	protected Table getNavigationTable(boolean showClass, boolean multipleSchools, boolean centralizedAdminChoice, String category) throws RemoteException {
-		Table table = new Table(9,1);
+		Table table = new Table(9,2);
 		table.setCellpadding(0);
 		table.setCellspacing(0);
 		table.setWidth(3,"8");
 
 		int row = 1;
+		table.add(getSmallHeader(localize("school.opfield", "Operationalfield: ")), 1, row);
+		table.add(new OperationalFieldsMenu(), 2, row++);
+		table.setHeight(row++, 15);
+		
 
 		if (multipleSchools) {
 			
