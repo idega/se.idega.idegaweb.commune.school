@@ -231,18 +231,17 @@ public class MandatorySchoolReminder extends CommuneBlock {
 	 */
 	private void presentResultAsCount(IWContext iwc,IWResourceBundle iwrb) throws MandatorySchoolReminderException, RemoteException, CreateException, FinderException{
 		SchoolBusiness sBusiness =  (SchoolBusiness)IBOLookup.getServiceInstance(iwc,SchoolBusiness.class);
-		SchoolChoiceBusiness scBusiness = (SchoolChoiceBusiness)IBOLookup.getServiceInstance(iwc,SchoolChoiceBusiness.class);
 		CommuneUserBusiness communeUserService = (CommuneUserBusiness)IBOLookup.getServiceInstance(this.getIWApplicationContext(),CommuneUserBusiness.class);
 		Group communeGroup = communeUserService.getRootCitizenGroup();
 
-		
 		try {
-			SchoolSeason currentSeason = scBusiness.getCurrentSeason();
+			SchoolSeason currentSeason = sBusiness.getCurrentSchoolSeason();
 			Collection schoolyears = sBusiness.getSchoolYearHome().findAllSchoolYears();
 			IWTimestamp seasonStartDate = new IWTimestamp(currentSeason.getSchoolSeasonStart());
 			int currentYear = seasonStartDate.getYear();
-			
-			Collection classes = sBusiness.getSchoolClassHome().findBySeason(currentSeason);
+
+//			System.out.println("Current Season"+currentSeason.getName()+"  "+currentSeason.getPrimaryKey() );
+//			Collection classes = sBusiness.getSchoolClassHome().findBySeason(currentSeason);
 
 			Table countTable = new Table(2,1+schoolyears.size());
 			countTable.setCellpadding(0);
@@ -259,20 +258,16 @@ public class MandatorySchoolReminder extends CommuneBlock {
 				int countResult = -1;
 				
 				try {
-					countResult	= sBusiness.getSchoolClassMemberHome().getNumberOfUsersNotAssignedToClassOnGivenDate(communeGroup,new java.sql.Date(_selectedDate.getTime()),classes,firstDateOfBirth.getDate(),lastDateOfBirth.getDate());
+					countResult	= sBusiness.getSchoolClassMemberHome().getNumberOfUsersNotAssignedToClassOnGivenDateNew(communeGroup,new java.sql.Date(_selectedDate.getTime()),currentSeason,firstDateOfBirth.getDate(),lastDateOfBirth.getDate());
 				} catch (IDOException e) {
 					e.printStackTrace();
 				}
-							
 				
 				countTable.add(new Text(labelCourse+" "+schoolYear.getSchoolYearName()+":"),1,index);
 				countTable.add(new Text(String.valueOf(countResult)),2,index);
 				
-				
-				
 				index++;
 			}
-			
 			
 			this.add(countTable);	
 		
