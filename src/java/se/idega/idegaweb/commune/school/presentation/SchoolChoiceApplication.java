@@ -35,7 +35,6 @@ import com.idega.block.school.data.SchoolSeason;
 import com.idega.block.school.data.SchoolType;
 import com.idega.block.school.data.SchoolTypeHome;
 import com.idega.block.school.data.SchoolYear;
-import com.idega.block.school.data.SchoolYearHome;
 import com.idega.business.IBOLookup;
 import com.idega.business.IBOLookupException;
 import com.idega.business.IBORuntimeException;
@@ -768,9 +767,9 @@ public class SchoolChoiceApplication extends CommuneBlock {
 					}
 				}
 				// Add special school year 10 with name hard coded
-				if (getSpecialSchoolYear10() != null) {
-					drpGrade.addMenuElement(getSpecialSchoolYear10().getSchoolYearAge(), "10");
-				}
+				//if (getSpecialSchoolYear10() != null) {
+					//drpGrade.addMenuElement(getSpecialSchoolYear10().getSchoolYearAge(), "10");
+				//}
 			
 				drpGrade.setSelectedElement(String.valueOf(valPreGrade));
 
@@ -1149,7 +1148,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		return schYears;
 	}
 	
-	private SchoolYear getSpecialSchoolYear10() {
+	/*private SchoolYear getSpecialSchoolYear10() {
 		SchoolYear s10 = null;
 		try {
 			// Add school year S10 for with 10 shown in dropdown
@@ -1161,7 +1160,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 			log(e);			
 		}
 		return s10;
-	}
+	}*/
 		
 	/* Commented out since it is never used...
 	private Collection getSchools(IWContext iwc, int area, int type) {
