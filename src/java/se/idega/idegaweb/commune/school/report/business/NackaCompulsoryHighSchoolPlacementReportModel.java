@@ -1,5 +1,5 @@
 /*
- * $Id: NackaCompulsoryHighSchoolPlacementReportModel.java,v 1.3 2004/01/12 16:21:33 anders Exp $
+ * $Id: NackaCompulsoryHighSchoolPlacementReportModel.java,v 1.4 2004/01/12 17:22:15 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -18,14 +18,14 @@ import com.idega.block.school.data.School;
 /** 
  * Report model for placements in Nacka compulsory high schools.
  * <p>
- * Last modified: $Date: 2004/01/12 16:21:33 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/12 17:22:15 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class NackaCompulsoryHighSchoolPlacementReportModel extends ReportModel {
 
-	private final static int COLUMN_SIZE = 14;
+	private final static int COLUMN_SIZE = 6;
 	
 	private final static int ROW_METHOD_SCHOOL = 1;
 	private final static int ROW_METHOD_TOTAL = 2;
@@ -117,19 +117,19 @@ public class NackaCompulsoryHighSchoolPlacementReportModel extends ReportModel {
 			switch (column) {
 				case 0:
 					columnMethod = COLUMN_METHOD_SCHOOL_YEAR;
-					columnParameter = "S1";
+					columnParameter = "GS1";
 					break;
 				case 1:
 					columnMethod = COLUMN_METHOD_SCHOOL_YEAR;
-					columnParameter = "S2";
+					columnParameter = "GS2";
 					break;
 				case 2:
 					columnMethod = COLUMN_METHOD_SCHOOL_YEAR;
-					columnParameter = "S3";
+					columnParameter = "GS3";
 					break;
 				case 3:
 					columnMethod = COLUMN_METHOD_SCHOOL_YEAR;
-					columnParameter = "S4";
+					columnParameter = "GS4";
 					break;
 				case 4:
 					columnMethod = COLUMN_METHOD_TOTAL_1_4;
