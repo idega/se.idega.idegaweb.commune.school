@@ -102,6 +102,7 @@ public class UserCases extends CommuneBlock {
 				Table table = new Table();
 				table.setCellpadding(getCellpadding());
 				table.setCellspacing(getCellspacing());
+				table.setWidth(Table.HUNDRED_PERCENT);
 				table.setColumns(5);
 				if (isShowName())
 					table.setColumns(6);
@@ -163,6 +164,7 @@ public class UserCases extends CommuneBlock {
 				messageList.setColumns(5);
 				messageList.setCellpadding(getCellpadding());
 				messageList.setCellspacing(getCellspacing());
+				messageList.setWidth(Table.HUNDRED_PERCENT);
 				int row = 1;
 				
 				Form form = new Form();
