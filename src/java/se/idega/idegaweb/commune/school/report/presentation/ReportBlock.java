@@ -1,5 +1,5 @@
 /*
- * $Id: ReportBlock.java,v 1.21 2004/01/27 09:01:41 anders Exp $
+ * $Id: ReportBlock.java,v 1.22 2004/01/27 14:36:31 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -29,10 +29,10 @@ import com.idega.presentation.ui.PrintButton;
 /** 
  * This is the base class for school report blocks.
  * <p>
- * Last modified: $Date: 2004/01/27 09:01:41 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/27 14:36:31 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.21 $
+ * @version $Revision: 1.22 $
  */
 public class ReportBlock extends CommuneBlock {
 
@@ -281,7 +281,7 @@ public class ReportBlock extends CommuneBlock {
 			if (children == null) {
 				int headerType = header.getHeaderType();
 				if (headerType == Header.HEADERTYPE_ROW_SPACER) {
-					s = "";
+					s = " ";
 				} else if (headerType == Header.HEADERTYPE_ROW_NONLOCALIZED_HEADER
 						|| header.getHeaderType() == Header.HEADERTYPE_ROW_NONLOCALIZED_NORMAL) {
 					s = header.getLocalizationKey();
@@ -310,8 +310,9 @@ public class ReportBlock extends CommuneBlock {
 					Header child = children[j];
 					int headerType = child.getHeaderType();
 					if (headerType == Header.HEADERTYPE_ROW_SPACER) {
-						s = "";
-					} else if (headerType == Header.HEADERTYPE_ROW_NONLOCALIZED_HEADER) {
+						s = " ";
+					} else if (headerType == Header.HEADERTYPE_ROW_NONLOCALIZED_HEADER ||
+							headerType == Header.HEADERTYPE_ROW_NONLOCALIZED_NORMAL) {
 						s = child.getLocalizationKey();
 					} else {
 						s = localize(child.getLocalizationKey(), child.getLocalizationKey());					
