@@ -861,6 +861,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 			table.setWidth(1, row, Table.HUNDRED_PERCENT);
 			RadioButton rbWantsAfterSchool = new RadioButton(prmAfterschool,Boolean.TRUE.toString());
 			RadioButton rbNotAfterSchool = new RadioButton(prmAfterschool,Boolean.FALSE.toString());
+			rbNotAfterSchool.setMustBeSelected(iwrb.getLocalizedString("school.must_select_after_school_option", "You have to select an after school option"));
 			table.add(rbWantsAfterSchool,1,row);
 			table.add(getSmallHeader(Text.getNonBrakingSpace()+iwrb.getLocalizedString("school.want_after_school_care","I want afterschool care")),1,row++);
 			table.mergeCells(1, row, 5, row);
@@ -1218,13 +1219,6 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		}
 		s.append("\n\t var year = 0;");
 		s.append("\n\t var school = 0;");
-		
-		if (age.getYears() <= 10) {
-			s.append("\n\t var afterSchool = findObj('").append(prmAfterschool).append("').value;");
-			s.append("\n\n\t if (afterSchool.length <= 0) {");
-			s.append("\n\t\t alert('"+localize("school.must_select_after_school_option","You have to select an after school option.")+"');");
-			s.append("\n\t\t return false; \n}");
-		}
 		
 		s.append("\n\n\t if (dropOne.selectedIndex > 0) one = dropOne.options[dropOne.selectedIndex].value;");
 		if(!schoolChange){
