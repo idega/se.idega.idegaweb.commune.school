@@ -1,6 +1,6 @@
 package se.idega.idegaweb.commune.school.business;
 
-import is.idega.idegaweb.member.business.MemberFamilyLogic;
+import is.idega.block.family.business.FamilyLogic;
 import is.idega.idegaweb.member.business.NoCustodianFound;
 
 import java.rmi.RemoteException;
@@ -881,7 +881,7 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 	public ReportableCollection getReportOfUsersNotRegisteredInAnyClass(Locale currentLocale, Date selectedDate, SchoolSeason currentSeason, Collection classes) throws IDOException, RemoteException, CreateException, FinderException {
 		initializeBundlesIfNeeded(currentLocale);
 		CommuneUserBusiness _communeUserService = (CommuneUserBusiness) IBOLookup.getServiceInstance(this.getIWApplicationContext(), CommuneUserBusiness.class);
-		MemberFamilyLogic _familyLogic = (MemberFamilyLogic) IBOLookup.getServiceInstance(this.getIWApplicationContext(), MemberFamilyLogic.class);
+		FamilyLogic _familyLogic = (FamilyLogic) IBOLookup.getServiceInstance(this.getIWApplicationContext(), FamilyLogic.class);
 		Group communeGroup = _communeUserService.getRootCitizenGroup();
 
 		ReportableCollection reportData = new ReportableCollection();

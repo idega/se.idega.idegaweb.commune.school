@@ -1,6 +1,6 @@
 package se.idega.idegaweb.commune.school.presentation;
 
-import is.idega.idegaweb.member.business.MemberFamilyLogic;
+import is.idega.block.family.business.FamilyLogic;
 import is.idega.idegaweb.member.business.NoCustodianFound;
 import is.idega.idegaweb.member.presentation.UserSearcher;
 
@@ -749,7 +749,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 			}
 		}
 
-		MemberFamilyLogic mlogic = (MemberFamilyLogic) IBOLookup.getServiceInstance(iwc, MemberFamilyLogic.class);
+		FamilyLogic mlogic = (FamilyLogic) IBOLookup.getServiceInstance(iwc, FamilyLogic.class);
 		try {
 			Collection parents = mlogic.getCustodiansFor(child);
 			Iterator iter = parents.iterator();

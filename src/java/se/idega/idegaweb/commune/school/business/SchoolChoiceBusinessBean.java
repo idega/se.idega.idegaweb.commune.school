@@ -1,6 +1,6 @@
 package se.idega.idegaweb.commune.school.business;
 
-import is.idega.idegaweb.member.business.MemberFamilyLogic;
+import is.idega.block.family.business.FamilyLogic;
 import is.idega.idegaweb.member.business.NoCustodianFound;
 
 import java.io.InputStream;
@@ -147,8 +147,8 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		return (MessageBusiness) this.getServiceInstance(MessageBusiness.class);
 	}
 
-	public MemberFamilyLogic getMemberFamilyLogic() throws RemoteException {
-		return (MemberFamilyLogic) this.getServiceInstance(MemberFamilyLogic.class);
+	public FamilyLogic getMemberFamilyLogic() throws RemoteException {
+		return (FamilyLogic) this.getServiceInstance(FamilyLogic.class);
 	}
 	public CommuneUserBusiness getUserBusiness() {
 		try {
@@ -638,7 +638,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		try {
 			trans.begin();
 			com.idega.user.data.User[] familyMembers = new com.idega.user.data.User[5];
-			is.idega.idegaweb.member.business.MemberFamilyLogic ml = (is.idega.idegaweb.member.business.MemberFamilyLogic) getServiceInstance(is.idega.idegaweb.member.business.MemberFamilyLogic.class);
+			is.idega.block.family.business.FamilyLogic ml = (is.idega.block.family.business.FamilyLogic) getServiceInstance(is.idega.block.family.business.FamilyLogic.class);
 			se.idega.idegaweb.commune.business.CommuneUserBusiness ub = (se.idega.idegaweb.commune.business.CommuneUserBusiness) getServiceInstance(se.idega.idegaweb.commune.business.CommuneUserBusiness.class);
 			familyMembers[0] = ub.createOrUpdateCitizenByPersonalID("Gunnar", "P?ll", "Dan?elsson", "0101");
 			familyMembers[1] = ub.createOrUpdateCitizenByPersonalID("P?ll", "", "Helgason", "0202");
@@ -1630,7 +1630,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 			final int idCount = ids.size();
 			final Map receivers = new TreeMap();
 			final Iterator iter = ids.iterator();
-			final MemberFamilyLogic familyLogic = getMemberFamilyLogic();
+			final FamilyLogic familyLogic = getMemberFamilyLogic();
 			final UserBusiness userBusiness = getUserBusiness();
 			for (int i = 0; i < idCount; i++) {
 				final Integer id = (Integer) iter.next();

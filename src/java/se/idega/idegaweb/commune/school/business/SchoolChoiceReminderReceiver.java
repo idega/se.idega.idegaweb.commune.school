@@ -3,7 +3,7 @@ package se.idega.idegaweb.commune.school.business;
 import com.idega.core.location.data.Address;
 import com.idega.user.business.UserBusiness;
 import com.idega.user.data.User;
-import is.idega.idegaweb.member.business.MemberFamilyLogic;
+import is.idega.block.family.business.FamilyLogic;
 import is.idega.idegaweb.member.business.NoCustodianFound;
 import java.io.Serializable;
 import java.rmi.RemoteException;
@@ -18,7 +18,7 @@ public class SchoolChoiceReminderReceiver implements Serializable {
 	private final String postalAddress;
 	private final boolean isInDefaultCommune;
 
-	SchoolChoiceReminderReceiver(MemberFamilyLogic familyLogic, UserBusiness userBusiness, Integer userId) throws RemoteException, FinderException {
+	SchoolChoiceReminderReceiver(FamilyLogic familyLogic, UserBusiness userBusiness, Integer userId) throws RemoteException, FinderException {
 		User student = userBusiness.getUser(userId);
 		studentName = student.getName();
 		ssn = student.getPersonalID();

@@ -1,6 +1,6 @@
 package se.idega.idegaweb.commune.school.presentation;
 
-import is.idega.idegaweb.member.business.MemberFamilyLogic;
+import is.idega.block.family.business.FamilyLogic;
 
 import java.rmi.RemoteException;
 import java.text.DateFormat;
@@ -309,7 +309,7 @@ public class SchoolChoiceApprover extends CommuneBlock {
 			}
 			row++;
 			row++;
-			MemberFamilyLogic ml = (MemberFamilyLogic) IBOLookup.getServiceInstance(iwc,MemberFamilyLogic.class);
+			FamilyLogic ml = (FamilyLogic) IBOLookup.getServiceInstance(iwc,FamilyLogic.class);
 	       
 			Collection parents = null;
 			try {

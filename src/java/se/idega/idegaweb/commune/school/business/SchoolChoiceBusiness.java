@@ -40,7 +40,7 @@ public interface SchoolChoiceBusiness extends com.idega.business.IBOService,com.
 	public java.lang.String getGroupedMessageSubject() throws java.rmi.RemoteException;
 	public java.lang.String getLocalizedCaseDescription(com.idega.block.process.data.Case p0,java.util.Locale p1)throws java.rmi.RemoteException, java.rmi.RemoteException;
 	public java.util.Collection getMandatorySchoolChoiceYears() throws java.rmi.RemoteException;
-	public is.idega.idegaweb.member.business.MemberFamilyLogic getMemberFamilyLogic()throws java.rmi.RemoteException, java.rmi.RemoteException;
+	public is.idega.block.family.business.FamilyLogic getMemberFamilyLogic()throws java.rmi.RemoteException, java.rmi.RemoteException;
 	public se.idega.idegaweb.commune.message.business.MessageBusiness getMessageBusiness()throws java.rmi.RemoteException, java.rmi.RemoteException;
 	public java.lang.String getNewHeadMasterSubject() throws java.rmi.RemoteException;
 	public java.lang.String getNonApplyingSeparateParentSubjectAppl() throws java.rmi.RemoteException;
