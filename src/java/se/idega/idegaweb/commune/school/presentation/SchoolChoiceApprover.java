@@ -88,7 +88,7 @@ public class SchoolChoiceApprover extends CommuneBlock {
 						cases = choiceBean.getSchoolChoiceHome().findByCodeAndStatus(code, statusToSearch, schoolId,seasonId);
 				}
 				catch (javax.ejb.FinderException ex) {
-					
+					ex.printStackTrace();
 				}
 				if (cases != null){
 					if(pupilList){
@@ -246,7 +246,7 @@ public class SchoolChoiceApprover extends CommuneBlock {
 			child = userBean.getUser(choice.getChildId());
 			String status = choice.getCaseStatus().getStatus();
 			if (status.equals(choice.getCaseStatusPlaced())) {
-				T.add(getPupilInfoLink(child), 1, row);
+				T.add(getPupilInfoLink(choice), 1, row);
 				T.add(tf.format(choice.getGroupPlace()), 2, row);
 				T.add(tf.format(df.format(choice.getSchoolChoiceDate())), 3, row);
 				if (choice.getChangeOfSchool()) {
@@ -370,9 +370,9 @@ public class SchoolChoiceApprover extends CommuneBlock {
 		return T;
 	}
 	
-	private Link getPupilInfoLink(User child) throws  RemoteException{
+	private Link getPupilInfoLink(SchoolChoice choice) throws  RemoteException{
 		Link L = new Link(tf.format(child.getNameLastFirst()));
-		L.addParameter(prmPupilInfo,child.getPrimaryKey().toString());
+		L.addParameter(prmPupilInfo,choice.getPrimaryKey().toString());
 		return L;
 	}
 	
