@@ -172,7 +172,6 @@ public class UserCases extends CommuneBlock {
 						row--;
 					}
 				}
-				table.setColumnAlignment(getNumberColumn(), Table.HORIZONTAL_ALIGN_CENTER);
 				
 				mainTable.add(form, 1, 1);
 			}
@@ -204,6 +203,7 @@ public class UserCases extends CommuneBlock {
 
 	protected int addTableHeader(Table table, int row) {
 		if (useStyleNames) {
+			table.setAlignment(getNumberColumn(), row, Table.HORIZONTAL_ALIGN_CENTER);
 			table.setCellpaddingLeft(getNumberColumn(), row, firstColumnPadding);
 			table.setRowStyleClass(row, getStyleName(STYLENAME_HEADER_ROW));
 		}
@@ -326,6 +326,7 @@ public class UserCases extends CommuneBlock {
 		}
 
 		if (useStyleNames) {
+			messageList.setAlignment(getNumberColumn(), row, Table.HORIZONTAL_ALIGN_CENTER);
 			messageList.setCellpaddingLeft(getNumberColumn(), row, firstColumnPadding);
 			if (row % 2 == 0) {
 				messageList.setRowStyleClass(row, getStyleName(STYLENAME_LIGHT_ROW));
