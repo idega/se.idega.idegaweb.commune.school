@@ -191,6 +191,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
     Form myForm = new Form();
     myForm.setName(prmForm);
     Table T = new Table(1,8);
+    T.setCellpadding(3);
     T.add(getCurrentSchoolSeasonInfo(iwc),1,1);
     T.add(getChildInfo(child),1,2);
     T.add(getCurrentSchool(iwc,child),1,3);
@@ -335,14 +336,14 @@ public class SchoolChoiceApplication extends CommuneBlock {
     drpGrade.setSelectedElement(String.valueOf(valPreGrade));
 
 
-    T.add(getSmallHeader(iwrb.getLocalizedString("school.school_name","School name")),3,4);
-    T.add(getSmallHeader(iwrb.getLocalizedString("school.grade","Grade")),4,4);
+    T.add(getSmallHeader(iwrb.getLocalizedString("school.school_name","School name")),3,3);
+    T.add(getSmallHeader(iwrb.getLocalizedString("school.grade","Grade")),4,3);
 
 
-    T.add(drpTypes,1,5);
-    T.add(drpAreas,2,5);
-    T.add(drpSchools,3,5);
-    T.add(drpGrade,4,5);
+    T.add(drpTypes,1,4);
+    T.add(drpAreas,2,4);
+    T.add(drpSchools,3,4);
+    T.add(drpGrade,4,4);
 
     return T;
   }
