@@ -941,7 +941,8 @@ public class SchoolChoiceApplication extends CommuneBlock {
 					return sBuiz.findAllSchoolsByAreaAndTypeAndYear(area, type, ((Integer)yearAppliedFor.getPrimaryKey()).intValue());
 			}*/
 			Collection c = sBuiz.findAllSchoolsByAreaAndType(area, type);
-			return sBuiz.getHomeCommuneSchools(c);
+//			return sBuiz.getHomeCommuneSchools(c);
+			return c;
 
 		}
 		catch (Exception ex) {
