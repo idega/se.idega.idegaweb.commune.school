@@ -752,7 +752,12 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		drpSchools.addMenuElementFirst("-1", iwrb.getLocalizedString("school.school", "School................"));
 
 		DropdownMenu drpGrade = (DropdownMenu) getStyledInterface(new DropdownMenu(prmPreGrade));
-		drpGrade.addMenuElement("5", "");
+		if (_useOngoingSeason) {
+			drpGrade.addMenuElement("6", "");
+		}
+		else {
+			drpGrade.addMenuElement("5", "");
+		}
 		Collection coll = getSchoolYears();
 		if (coll != null) {
 			Iterator iter = coll.iterator();
