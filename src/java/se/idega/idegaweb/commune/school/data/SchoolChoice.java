@@ -3,6 +3,10 @@ package se.idega.idegaweb.commune.school.data;
 
 public interface SchoolChoice extends com.idega.data.IDOEntity,com.idega.block.process.data.Case
 {
+
+ public final static String FIELD_CHILD = "child_id";
+ public final static String FIELD_SCHOOL_SEASON = "school_season_id";
+	
  public boolean getAutoAssign();
  public java.lang.String getCaseCodeDescription();
  public java.lang.String getCaseCodeKey();
