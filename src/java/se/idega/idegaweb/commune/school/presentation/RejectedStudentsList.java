@@ -80,7 +80,11 @@ public class RejectedStudentsList extends SchoolCommuneBlock {
 		}
 		
 		table.setAlignment(2, 1, Table.HORIZONTAL_ALIGN_CENTER);
-		table.add(getSmallHeader(  ((currentStartEntry/totalChoices)+1)  +"/"+  ((totalChoices / ENTRIES_PER_PAGE)+1) ), 2, 1);
+		if (totalChoices == 0) {
+			table.add(getSmallHeader("0/"+  ((totalChoices / ENTRIES_PER_PAGE)+1) ), 2, 1);
+		} else {
+			table.add(getSmallHeader(  ((currentStartEntry/totalChoices)+1)  +"/"+  ((totalChoices / ENTRIES_PER_PAGE)+1) ), 2, 1);
+		}
 		
 		//table.add(getSmallHeader(  ((21/20)+1)   +"/"+  (Math.ceil(1 / 10)) ), 2, 1);
 		if (currentStartEntry < (totalChoices - ENTRIES_PER_PAGE)) {
