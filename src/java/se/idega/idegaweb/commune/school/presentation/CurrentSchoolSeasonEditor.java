@@ -11,7 +11,7 @@ import com.idega.presentation.PresentationObject;
 import com.idega.util.text.TextFormat;
 import com.idega.block.school.data.SchoolSeason;
 import com.idega.block.school.business.*;
-import com.idega.util.idegaTimestamp;
+import com.idega.util.IWTimeStamp;
 
 import java.util.Collection;
 import com.idega.business.IBOLookup;
