@@ -15,7 +15,11 @@ import com.idega.block.school.data.School;
 import com.idega.block.school.data.SchoolSeason;
 import com.idega.block.school.data.SchoolType;
 import com.idega.block.school.data.SchoolYear;
+import com.idega.data.IDOCompositePrimaryKeyException;
+import com.idega.data.IDOEntityDefinition;
 import com.idega.data.IDOException;
+import com.idega.data.IDOLookup;
+import com.idega.data.IDOLookupException;
 import com.idega.data.IDOQuery;
 import com.idega.user.data.User;
 import com.idega.user.data.UserBMPBean;
@@ -315,7 +319,59 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 	public boolean getHasReceivedConfirmationMessage() {
 		return getBooleanColumnValue(HAS_RECEIVED_CONFIRMATION_MESSAGE, false);
 	}
+	
+	public int ejbHomeCountBySchoolIDAndSeasonIDAndStatus(int schoolId, int seasonId, String[] statuses) throws IDOException {
+		try {
+			IDOQuery query = getIDOQueryFromSchoolIdSeasonIdAndStatus(schoolId, seasonId, statuses);
+			query.setToCount();
+			return idoGetNumberOfRecords(query);
+		}catch (IDOLookupException e1) {
+			throw new IDOException(e1.getMessage());
+		}catch (IDOCompositePrimaryKeyException e2) {
+			throw new IDOException(e2.getMessage());
+		}
+	}
+	
+	public Collection ejbFindBySchoolIDAndSeasonIDAndStatus(int schoolId, int seasonId, String[] statuses, int returningEntries, int startingEntries) throws FinderException {
+		try {
+			IDOQuery query = getIDOQueryFromSchoolIdSeasonIdAndStatus(schoolId, seasonId, statuses);
+			return idoFindPKsByQuery(query, returningEntries, startingEntries);
+		}catch (IDOLookupException e1) {
+			throw new FinderException(e1.getMessage());
+		}catch (IDOCompositePrimaryKeyException e2) {
+			throw new FinderException(e2.getMessage());
+		}
+	}
 
+	private IDOQuery getIDOQueryFromSchoolIdSeasonIdAndStatus(int schoolId, int seasonId, String[] statuses) throws IDOLookupException, IDOCompositePrimaryKeyException {
+		IDOQuery query = this.idoQuery();
+		IDOEntityDefinition caseDef = IDOLookup.getEntityDefinitionForClass(Case.class);
+		IDOEntityDefinition userDef = IDOLookup.getEntityDefinitionForClass(User.class);
+		query.appendSelectAllFrom(this).append(" sc,").append(caseDef.getSQLTableName()).append(" c,")
+		.append(userDef.getSQLTableName()).append(" u ")
+		.appendWhere("sc.").append(this.getIDColumnName()).append(" = c.").append(caseDef.getPrimaryKeyDefinition().getField().getSQLFieldName())
+		.appendAnd().append(" u.").append(userDef.getPrimaryKeyDefinition().getField().getSQLFieldName())
+		.append(" = sc.").append(this.CHILD);
+		if (schoolId > 0) {
+			query.appendAnd().append(" sc.").appendEquals(CHOSEN_SCHOOL, schoolId);
+		}
+		if (statuses != null && statuses.length > 0) {
+			query.append(" and c.CASE_STATUS in (");
+			for (int i = 0; i < statuses.length; i++) {
+				if (i > 0)
+					query.append(",");
+				query.append("'");
+				query.append(statuses[i]);
+				query.append("'");
+			}
+			query.append(" ) ");
+		}
+		if (seasonId > 0) {
+			query.appendAnd().append("sc.").appendEquals(SCHOOL_SEASON, seasonId);
+		}
+		query.appendOrderBy("u.last_name, u.first_name, u.middle_name");
+		return query;
+	}
 	public Collection ejbFindByChosenSchoolId(int chosenSchoolId, int schoolSeasonId) throws javax.ejb.FinderException {
 		return idoFindPKsBySQL("select * from " + getEntityName() + " where " + CHOSEN_SCHOOL + " = " + chosenSchoolId + " and " + SCHOOL_SEASON + " = " + schoolSeasonId);
 	}
