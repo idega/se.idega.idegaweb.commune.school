@@ -1,5 +1,5 @@
 /*
- * $Id: ReportModel.java,v 1.11 2004/01/15 13:32:39 anders Exp $
+ * $Id: ReportModel.java,v 1.12 2004/01/20 08:30:17 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -21,10 +21,10 @@ import com.idega.util.database.ConnectionBroker;
  * This abstract class holds cell and header values for school statistics reports.
  * Subclasses implements methods for generating report data and cell value calculations.
  * <p>
- * Last modified: $Date: 2004/01/15 13:32:39 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/20 08:30:17 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.11 $
+ * @version $Revision: 1.12 $
  */
 public abstract class ReportModel {
 
@@ -83,7 +83,19 @@ public abstract class ReportModel {
 	protected final static String KEY_OTHER_COMMUNE_CITIZENS = KP + "other_commune_citizens";
 	protected final static String KEY_TOTAL_1_4 = KP + "total_1_4";
 	protected final static String KEY_NACKA_STUDENTS = KP + "nacka_students";
-	
+
+	protected final static String KEY_PRE_SCHOOL_OPERATION = KP + "pre_school_operation";
+	protected final static String KEY_PRE_SCHOOL = KP + "pre_school";
+	protected final static String KEY_OF_WHICH_COMMUNE_MANAGEMENT = KP + "of_which_commune_management";
+	protected final static String KEY_OF_WHICH_PRIVATE_MANAGEMENT = KP + "of_which_private_management";
+	protected final static String KEY_FAMILY_DAY_NURSERY = KP + "family_day_nursery";
+	protected final static String KEY_COOPERATIVE = KP + "cooperative";
+	protected final static String KEY_SCHOOL_CHILDREN_CARE_6_YEAR = KP + "school_children_care_6_year";
+	protected final static String KEY_AFTER_SCHOOL_CENTRE = KP + "after_school_centre";
+	protected final static String KEY_SCHOOL_CHILDREN_CARE_7_9_YEAR = KP + "school_children_care_7_9_year";
+	protected final static String KEY_FAMILY_AFTER_SCHOOL_CENTRE = KP + "family_after_school_centre";
+	protected final static String KEY_SUM_CHILDREN = KP + "sum_children";
+
 	/**
 	 * Constructs a report model with the specified report business logic. 
 	 */	
