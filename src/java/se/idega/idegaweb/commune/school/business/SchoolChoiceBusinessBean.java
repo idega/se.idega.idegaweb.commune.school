@@ -389,6 +389,28 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		catch (Exception e) {
 		}
 	}
+	
+	public void setChildcarePreferences(int childID, boolean freetimeInThisSchool, String otherMessage) throws RemoteException {
+		try {
+			SchoolSeason season = getCurrentSeason();
+			if (season != null) {
+				Collection choices = this.findByStudentAndSeason(childID, ((Integer)season.getPrimaryKey()).intValue());
+				if (!choices.isEmpty()) {
+					Iterator iter = choices.iterator();
+					while (iter.hasNext()) {
+						SchoolChoice element = (SchoolChoice) iter.next();
+						element.setFreetimeInThisSchool(freetimeInThisSchool);
+						if (!freetimeInThisSchool && otherMessage != null && otherMessage.length() > 0)
+							element.setFreetimeOther(otherMessage);
+						element.store();
+					}	
+				}
+			}
+		}
+		catch (FinderException fe) {
+			fe.printStackTrace();
+		}
+	}
 
 	public boolean groupPlaceAction(Integer pk, User performer) {
 		try {
