@@ -1,5 +1,5 @@
 /*
- * $Id: NackaCommuneHighSchoolPlacementReportModel.java,v 1.7 2004/01/22 11:39:53 anders Exp $
+ * $Id: NackaCommuneHighSchoolPlacementReportModel.java,v 1.8 2004/01/23 12:47:17 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -10,6 +10,7 @@
 package se.idega.idegaweb.commune.school.report.business;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
@@ -19,10 +20,10 @@ import com.idega.block.school.data.SchoolStudyPath;
 /** 
  * Report model for Nacka high school student placements.
  * <p>
- * Last modified: $Date: 2004/01/22 11:39:53 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/23 12:47:17 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.8 $
  */
 public class NackaCommuneHighSchoolPlacementReportModel extends ReportModel {
 
@@ -42,9 +43,11 @@ public class NackaCommuneHighSchoolPlacementReportModel extends ReportModel {
 	private final static String QUERY_NACKA_GYMNASIUM = "nacka_gymnasium";
 	private final static String QUERY_OTHER_COMMUNES = "other_communes";
 	private final static String QUERY_NACKA_COMMUNE = "nacka_commune";
+	private final static String QUERY_STUDY_PATH = "study_path";
 
 	private final static String KEY_REPORT_TITLE = KP + "title_nacka_commune_high_school_placements";
 	
+	private Collection _studyPaths = null;
 	private School[] _schools = null;
 	private School[] _nackaGymnasium = null;
 
@@ -61,9 +64,9 @@ public class NackaCommuneHighSchoolPlacementReportModel extends ReportModel {
 	 */
 	protected void initReportSize() {
 		try {
-			Collection studyPaths = getReportBusiness().getAllStudyPaths();
+			Collection studyPaths = getStudyPaths();
 			int rowSize = 0;
-			rowSize += studyPaths.size() + 2; 
+			rowSize += studyPaths.size() + 1; 
 			setReportSize(rowSize, COLUMN_SIZE);
 		} catch (RemoteException e) {
 			log(e.getMessage());
@@ -77,9 +80,8 @@ public class NackaCommuneHighSchoolPlacementReportModel extends ReportModel {
 		Header[] headers = null;
 		
 		try {
-			ReportBusiness rb = getReportBusiness();
-			Collection studyPaths = rb.getAllStudyPaths();
-			headers = new Header[studyPaths.size() + 2];
+			Collection studyPaths = getStudyPaths();
+			headers = new Header[studyPaths.size() + 1];
 			Iterator iter = studyPaths.iterator();
 			int headerIndex = 0;
 			while (iter.hasNext()) {
@@ -88,12 +90,6 @@ public class NackaCommuneHighSchoolPlacementReportModel extends ReportModel {
 				Header child = new Header(studyPath.getCode(), Header.HEADERTYPE_ROW_NONLOCALIZED_NORMAL);
 				headers[headerIndex].setChild(0, child);
 				headerIndex++;
-				if (studyPath.getCode().equals("IB")) {
-					headers[headerIndex] = new Header(KEY_PROVISIONS_PROGRAM, Header.HEADERTYPE_ROW_HEADER, 1);
-					child = new Header("LP", Header.HEADERTYPE_ROW_NONLOCALIZED_NORMAL);
-					headers[headerIndex].setChild(0, child);
-					headerIndex++;
-				}
 			}
 			
 			Header header = new Header(KEY_TOTAL, Header.HEADERTYPE_ROW_TOTAL);
@@ -255,8 +251,7 @@ public class NackaCommuneHighSchoolPlacementReportModel extends ReportModel {
 			}
 			
 			try {
-				ReportBusiness rb = getReportBusiness();
-				Collection studyPaths = rb.getAllStudyPaths();
+				Collection studyPaths = getStudyPaths();
 				Iterator iter = studyPaths.iterator();
 				while (iter.hasNext()) {
 					SchoolStudyPath studyPath = (SchoolStudyPath) iter.next();
@@ -265,12 +260,6 @@ public class NackaCommuneHighSchoolPlacementReportModel extends ReportModel {
 							columnMethod, rowParameter, columnParameter, Cell.CELLTYPE_NORMAL);
 					setCell(row, column, cell);
 					row++;
-					if (studyPath.getCode().equals("IB")) {
-						cell = new Cell(this, row, column, ROW_METHOD_STUDY_PATH,
-								columnMethod, "LP", columnParameter, Cell.CELLTYPE_NORMAL);
-						setCell(row, column, cell);
-						row++;
-					}					
 				}
 				Cell cell = new Cell(this, row, column, ROW_METHOD_TOTAL,
 						columnMethod, null, columnParameter, Cell.CELLTYPE_TOTAL);
@@ -406,7 +395,7 @@ public class NackaCommuneHighSchoolPlacementReportModel extends ReportModel {
 	}
 	
 	/**
-	 * Returns the number of student placements for private high schools
+	 * Returns the number of student placements for Nacka commune high schools
 	 * for the specified study path prefix.
 	 * Only citizens outside Nacka commune are counted. 
 	 */
@@ -430,7 +419,7 @@ public class NackaCommuneHighSchoolPlacementReportModel extends ReportModel {
 	}	
 	
 	/**
-	 * Returns the number of student placements for private high schools
+	 * Returns the number of student placements for Nacka commune high schools
 	 * in Nacka commune for the specified school year.
 	 * Only citizens in Nacka commune are counted. 
 	 */
@@ -452,4 +441,46 @@ public class NackaCommuneHighSchoolPlacementReportModel extends ReportModel {
 		query.setString(1, studyPathPrefix + "%");
 		return query.execute();
 	}	
+	
+	/**
+	 * Returns the number of student placements for the specified study path code.
+	 */
+	protected int getHighSchoolPlacementCount(String studyPathCode) throws RemoteException {
+		PreparedQuery query = null;
+		ReportBusiness rb = getReportBusiness();
+		Collection schools = rb.getNackaCommuneHighSchools();
+		query = getQuery(QUERY_STUDY_PATH);
+		if (query == null) {
+			query = new PreparedQuery(getConnection());
+			query.setSelectCount();
+			query.setPlacements(rb.getSchoolSeasonId());
+			query.setSchools(schools);
+			query.setStudyPathPrefix(); // parameter 1
+			query.prepare();
+			setQuery(QUERY_STUDY_PATH, query);
+		}
+		query.setString(1, studyPathCode);
+		return query.execute();
+	}
+	
+	/*
+	 * Returns a filtered list with only Nacka study paths. 
+	 */
+	private Collection getStudyPaths() throws RemoteException {
+		if (_studyPaths == null) {
+			_studyPaths = new ArrayList();
+			ReportBusiness rb = getReportBusiness();
+			Collection c = rb.getAllStudyPathsIncludingDirections();
+			Iterator iter = c.iterator();
+			while (iter.hasNext()) {
+				SchoolStudyPath sp = (SchoolStudyPath) iter.next();
+				String code = sp.getCode();
+				int count = getHighSchoolPlacementCount(code);
+				if (count > 0) {
+					_studyPaths.add(sp);
+				}
+			}			
+		}
+		return _studyPaths;
+	}
 }
