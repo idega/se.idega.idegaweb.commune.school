@@ -2,7 +2,6 @@ package se.idega.idegaweb.commune.school.presentation;
 
 import is.idega.block.family.business.FamilyLogic;
 import is.idega.block.family.business.NoCustodianFound;
-
 import java.rmi.RemoteException;
 import java.text.DateFormat;
 import java.text.MessageFormat;
@@ -16,18 +15,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
-
 import javax.ejb.FinderException;
-
 import se.idega.idegaweb.commune.accounting.userinfo.presentation.ChildContracts;
-import se.idega.idegaweb.commune.childcare.check.business.CheckBusiness;
+import se.idega.idegaweb.commune.care.business.CareBusiness;
 import se.idega.idegaweb.commune.presentation.CitizenChildren;
 import se.idega.idegaweb.commune.presentation.CommuneBlock;
 import se.idega.idegaweb.commune.school.business.SchoolChoiceBusiness;
 import se.idega.idegaweb.commune.school.business.SchoolCommuneBusiness;
 import se.idega.idegaweb.commune.school.data.SchoolChoice;
 import se.idega.util.PIDChecker;
-
 import com.idega.block.navigation.presentation.UserHomeLink;
 import com.idega.block.school.business.SchoolBusiness;
 import com.idega.block.school.data.School;
@@ -388,7 +384,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 						 */
 						// User wants to choose
 						if (valWantsAfterSchool) {
-							boolean hasApprovedCheck = getCheckBusiness(iwc).hasGrantedCheck(child);
+							boolean hasApprovedCheck = getCareBusiness(iwc).hasGrantedCheck(child);
 							ChildContracts childContracts = (ChildContracts) ImplementorRepository.getInstance().newInstanceOrNull(ChildContracts.class, this.getClass());
 							if (childContracts != null) {
 								childContracts.storeChildInSession(((Integer) child.getPrimaryKey()).intValue(), iwc);
@@ -1740,9 +1736,9 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		return new UserHomeLink();
 	}
 
-	private CheckBusiness getCheckBusiness(IWApplicationContext iwc) {
+	private CareBusiness getCareBusiness(IWApplicationContext iwc) {
 		try {
-			return (CheckBusiness) IBOLookup.getServiceInstance(iwc, CheckBusiness.class);
+			return (CareBusiness) IBOLookup.getServiceInstance(iwc, CareBusiness.class);
 		}
 		catch (RemoteException e) {
 			throw new IBORuntimeException(e.getMessage());
