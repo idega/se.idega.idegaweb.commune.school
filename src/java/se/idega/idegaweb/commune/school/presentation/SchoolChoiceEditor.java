@@ -513,7 +513,7 @@ public class SchoolChoiceEditor extends SchoolCommuneBlock {
 		Link reactivate;
 		int choiceOrder = 0;
 		if (child != null){
-			Collection choices = getSchoolCommuneBusiness(iwc).getSchoolChoiceBusiness().findByStudentAndSeason(child.getID(), getSchoolCommuneSession(iwc).getSchoolSeasonID());
+			Collection choices = getSchoolCommuneBusiness(iwc).getSchoolChoiceBusiness().findByStudentAndSeason(((Integer)child.getPrimaryKey()).intValue(), getSchoolCommuneSession(iwc).getSchoolSeasonID());
 			
 			if (!choices.isEmpty()) {
 				School school;
