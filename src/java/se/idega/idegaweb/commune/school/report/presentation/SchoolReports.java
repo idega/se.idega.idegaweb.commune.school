@@ -1,5 +1,5 @@
 /*
- * $Id: SchoolReports.java,v 1.27 2004/02/27 10:21:12 anders Exp $
+ * $Id: SchoolReports.java,v 1.28 2004/03/01 13:49:46 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -56,10 +56,10 @@ import com.idega.presentation.ui.SubmitButton;
 /** 
  * This block handles selecting and presenting school reports.
  * <p>
- * Last modified: $Date: 2004/02/27 10:21:12 $ by $Author: anders $
+ * Last modified: $Date: 2004/03/01 13:49:46 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.27 $
+ * @version $Revision: 1.28 $
  */
 public class SchoolReports extends CommuneBlock {
 
@@ -302,6 +302,7 @@ public class SchoolReports extends CommuneBlock {
 				reportModel = getReportBusiness(iwc).createReportModel(reportModelClass);
 			}
 			ReportBlock rb = new ReportBlock(reportModel);
+			rb.setResourceBundle(getResourceBundle());
 			Table t = new Table();
 			rb.buildReportTable(t);
 			String key = reportModel.getReportTitleLocalizationKey();
