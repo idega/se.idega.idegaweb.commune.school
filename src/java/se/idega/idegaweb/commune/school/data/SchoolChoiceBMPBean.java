@@ -424,8 +424,12 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
   public Collection ejbFindChoices(int schoolID, int seasonID, int gradeYear, String[] validStatuses, String searchStringForUser) throws FinderException, RemoteException {
 		return ejbFindChoices(schoolID, seasonID, gradeYear, validStatuses, searchStringForUser);
   }
-  
-  public int  ejbHomeGetCount(String[] validStatuses) throws IDOException{
+
+	public int  ejbHomeGetCount(String[] validStatuses) throws IDOException{
+		return ejbHomeGetCount(-1, validStatuses);
+	}
+	  
+  public int  ejbHomeGetCount(int schoolId, String[] validStatuses) throws IDOException{
 		
   	if (validStatuses != null && validStatuses.length > 0) {
 			IDOQuery query = idoQuery();
@@ -438,6 +442,10 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 			query.appendWithinParentheses(idoQuery().appendCommaDelimitedWithinSingleQuotes(validStatuses));
 			query.appendAnd().append("pc.").append(CaseBMPBean.COLUMN_CASE_CODE).appendEqualSign().appendWithinSingleQuotes(this.CASECODE);
 
+			if (schoolId > 0) {
+				query.appendAnd().append("csc.").append(CHOSEN_SCHOOL).appendEqualSign().append(schoolId);	
+			}
+
 			return this.idoGetNumberOfRecords(query);
   	} else {
 			IDOQuery query = idoQuery();
@@ -447,98 +455,116 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
   	}
   	
   }
-  
+	public int ejbHomeGetCount(int schoolID, int seasonID, int gradeYear, int[] choiceOrder ,String[] validStatuses, String searchStringForUser) throws FinderException, RemoteException, IDOException {
+		IDOQuery query = getIDOQuery(schoolID, seasonID, gradeYear, choiceOrder, validStatuses, searchStringForUser, true);
+  	return this.idoGetNumberOfRecords(query);
+	}
+
   public Collection ejbFindChoices(int schoolID, int seasonID, int gradeYear, int[] choiceOrder ,String[] validStatuses, String searchStringForUser) throws FinderException, RemoteException {
-  	boolean search = searchStringForUser != null && !searchStringForUser.equals("");
-  	boolean statuses = validStatuses != null && validStatuses.length > 0;
-  	
-  	if (schoolID < 1 && seasonID < 1 && gradeYear < 1 && !search && !statuses) {
-  		return ejbFindAll();
-  	} 
-  	
-  	boolean needAnd = false;
-
-  	IDOQuery query = idoQuery();
-  	query.appendSelect().append("csc.*").appendFrom().append(getEntityName()).append(" csc");
-
-  	if (search) {
-  		query.append(", ").append(UserBMPBean.TABLE_NAME);
-  	}
-  	if (statuses) {
-  		query.append(", ").append(CaseBMPBean.TABLE_NAME).append(" pc");
-  	}
-  	
-  	query.appendWhere();
-  	
-  	if (statuses) {
-  		query.append("csc.").append(getIDColumnName())
-  		.appendEqualSign().append("pc.").append(CaseBMPBean.TABLE_NAME+"_ID")
-  		.appendAnd().append("pc.").append(CaseBMPBean.COLUMN_CASE_STATUS).appendIn();
-  		query.appendWithinParentheses(idoQuery().appendCommaDelimitedWithinSingleQuotes(validStatuses));
-  		query.appendAnd().append("pc.").append(CaseBMPBean.COLUMN_CASE_CODE).appendEqualSign().appendWithinSingleQuotes(this.CASECODE);
-  		needAnd = true;
-  	}
-  	
-  	if (search) {
-  		if (needAnd) {
-				query.appendAnd();
-  		}
-  		query.append("csc.").append(CHILD)
-  		.appendEqualSign().append(UserBMPBean.TABLE_NAME).append(".").append(UserBMPBean.getColumnNameUserID())
-  		.appendAnd().append("(");
-  		query.append(UserBMPBean.TABLE_NAME).append(".").append(UserBMPBean.getColumnNameFirstName())
-  		.append(" like '%").append(searchStringForUser).append("%'")
-  		.appendOr().append(UserBMPBean.TABLE_NAME).append(".").append(UserBMPBean.getColumnNameLastName())
-  		.append(" like '%").append(searchStringForUser).append("%'")
-  		.appendOr().append(UserBMPBean.TABLE_NAME).append(".").append(UserBMPBean.getColumnNameMiddleName())
-  		.append(" like '%").append(searchStringForUser).append("%'")
-  		.appendOr().append(UserBMPBean.TABLE_NAME).append(".").append(UserBMPBean.getColumnNamePersonalID())
-  		.append(" like '%").append(searchStringForUser).append("%'");
-  		query.append(")");
-  		needAnd = true;;
-  	}
-  	
-  	if (seasonID > 0) {
-			if (needAnd) {
-				query.appendAnd();
-			}
-  		query.append("csc.").append(SCHOOL_SEASON).appendEqualSign().append(seasonID);
-  		needAnd = true;
-  	}
-
-  	if (schoolID > 0) {
-			if (needAnd) {
-				query.appendAnd();
-			}
-  		query.append("csc.").append(CHOSEN_SCHOOL).appendEqualSign().append(schoolID);	
-  		needAnd = true;
-  	}
-
-  	if (gradeYear > 0) {
-			if (needAnd) {
-				query.appendAnd();
-			}
-  		query.append("csc.").append(GRADE).appendEqualSign().append(gradeYear);	
-  		needAnd = true;
-  	}
-  	
-  	if (choiceOrder != null && choiceOrder.length > 0) {
-  		if (needAnd) {
-  			query.appendAnd();	
-  		}
-  		query.append("csc.").append(CHOICEORDER).append(" in (");
-  		for (int i = 0; i < choiceOrder.length; i++) {
-  			if (	i != 0 ) {
-  				query.append(", ");	
-  			}
-  			query.append(choiceOrder[i]);
-  		}
-  		query.append(")");
-  		needAnd = true;
-  	}
-  	
+		IDOQuery query = getIDOQuery(schoolID, seasonID, gradeYear, choiceOrder, validStatuses, searchStringForUser, false);
   	return this.idoFindPKsByQuery(query);
   }
+  
+	private IDOQuery getIDOQuery( int schoolID, int seasonID, int gradeYear, int[] choiceOrder, String[] validStatuses, String searchStringForUser, boolean selectCount) {
+		boolean search = searchStringForUser != null && !searchStringForUser.equals("");
+		boolean statuses = validStatuses != null && validStatuses.length > 0;
+		
+		IDOQuery query = idoQuery();
+		if (schoolID < 1 && seasonID < 1 && gradeYear < 1 && !search && !statuses) {
+			if (selectCount) {
+				query.appendSelectCountFrom(this);	
+			}else {
+				query.appendSelectAllFrom(this);
+			}
+			//return ejbFindAll();
+			return query;
+		} 
+		
+		boolean needAnd = false;
+		
+		if ( selectCount ) {
+			query.appendSelectCountFrom().append(getEntityName()).append(" csc");
+		}else {
+			query.appendSelect().append("csc.*").appendFrom().append(getEntityName()).append(" csc");
+		}
+		
+		if (search) {
+			query.append(", ").append(UserBMPBean.TABLE_NAME);
+		}
+		if (statuses) {
+			query.append(", ").append(CaseBMPBean.TABLE_NAME).append(" pc");
+		}
+		
+		query.appendWhere();
+		
+		if (statuses) {
+			query.append("csc.").append(getIDColumnName())
+			.appendEqualSign().append("pc.").append(CaseBMPBean.TABLE_NAME+"_ID")
+			.appendAnd().append("pc.").append(CaseBMPBean.COLUMN_CASE_STATUS).appendIn();
+			query.appendWithinParentheses(idoQuery().appendCommaDelimitedWithinSingleQuotes(validStatuses));
+			query.appendAnd().append("pc.").append(CaseBMPBean.COLUMN_CASE_CODE).appendEqualSign().appendWithinSingleQuotes(this.CASECODE);
+			needAnd = true;
+		}
+		
+		if (search) {
+			if (needAnd) {
+				query.appendAnd();
+			}
+			query.append("csc.").append(CHILD)
+			.appendEqualSign().append(UserBMPBean.TABLE_NAME).append(".").append(UserBMPBean.getColumnNameUserID())
+			.appendAnd().append("(");
+			query.append(UserBMPBean.TABLE_NAME).append(".").append(UserBMPBean.getColumnNameFirstName())
+			.append(" like '%").append(searchStringForUser).append("%'")
+			.appendOr().append(UserBMPBean.TABLE_NAME).append(".").append(UserBMPBean.getColumnNameLastName())
+			.append(" like '%").append(searchStringForUser).append("%'")
+			.appendOr().append(UserBMPBean.TABLE_NAME).append(".").append(UserBMPBean.getColumnNameMiddleName())
+			.append(" like '%").append(searchStringForUser).append("%'")
+			.appendOr().append(UserBMPBean.TABLE_NAME).append(".").append(UserBMPBean.getColumnNamePersonalID())
+			.append(" like '%").append(searchStringForUser).append("%'");
+			query.append(")");
+			needAnd = true;;
+		}
+		
+		if (seasonID > 0) {
+			if (needAnd) {
+				query.appendAnd();
+			}
+			query.append("csc.").append(SCHOOL_SEASON).appendEqualSign().append(seasonID);
+			needAnd = true;
+		}
+		
+		if (schoolID > 0) {
+			if (needAnd) {
+				query.appendAnd();
+			}
+			query.append("csc.").append(CHOSEN_SCHOOL).appendEqualSign().append(schoolID);	
+			needAnd = true;
+		}
+		
+		if (gradeYear > 0) {
+			if (needAnd) {
+				query.appendAnd();
+			}
+			query.append("csc.").append(GRADE).appendEqualSign().append(gradeYear);	
+			needAnd = true;
+		}
+		
+		if (choiceOrder != null && choiceOrder.length > 0) {
+			if (needAnd) {
+				query.appendAnd();	
+			}
+			query.append("csc.").append(CHOICEORDER).append(" in (");
+			for (int i = 0; i < choiceOrder.length; i++) {
+				if (	i != 0 ) {
+					query.append(", ");	
+				}
+				query.append(choiceOrder[i]);
+			}
+			query.append(")");
+			needAnd = true;
+		}
+		return query;
+	}
   
   public Collection ejbFindBySchoolAndSeasonAndGrade(int schoolID, int seasonID, int gradeYear) throws FinderException {
   	IDOQuery sql = idoQuery();
