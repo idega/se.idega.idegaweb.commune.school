@@ -1,5 +1,5 @@
 /*
- * $Id: NackaHighSchoolAgePlacementReportModel.java,v 1.9 2004/01/12 09:25:06 anders Exp $
+ * $Id: NackaHighSchoolAgePlacementReportModel.java,v 1.10 2004/01/15 13:53:22 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -18,10 +18,10 @@ import com.idega.block.school.data.SchoolStudyPath;
 /** 
  * Report model for high school placements per student age for students in Nacka.
  * <p>
- * Last modified: $Date: 2004/01/12 09:25:06 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/15 13:53:22 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.9 $
+ * @version $Revision: 1.10 $
  */
 public class NackaHighSchoolAgePlacementReportModel extends ReportModel {
 
@@ -36,6 +36,11 @@ public class NackaHighSchoolAgePlacementReportModel extends ReportModel {
 	private final static int COLUMN_METHOD_COUNTY_COUNCIL = 103;
 	private final static int COLUMN_METHOD_FREE_STANDING = 104;
 	private final static int COLUMN_METHOD_TOTAL = 105;
+
+	private final static String QUERY_NACKA_COMMUNE = "nacka_commune";
+	private final static String QUERY_OTHER_COMMUNES = "other_communes";
+	private final static String QUERY_COUNTY_COUNCIL = "county_council";
+	private final static String QUERY_PRIVATE = "private";
 	
 	private final static String KEY_REPORT_TITLE = KP + "title_nacka_high_school_age_placements";
 
@@ -483,21 +488,30 @@ public class NackaHighSchoolAgePlacementReportModel extends ReportModel {
 	 * in Nacka commune for the specified student age.
 	 * Only students in Nacka commune are counted. 
 	 */
-	protected int getHighSchoolNackaCommunePlacementCount(int age, String studyPathPrefix, boolean isCompulsory) 
-			throws RemoteException {
+	protected int getHighSchoolNackaCommunePlacementCount(int age, String studyPathPrefix, boolean isCompulsory) throws RemoteException {
+		PreparedQuery query = null;
 		ReportBusiness rb = getReportBusiness();
-		ReportQuery query = new ReportQuery();
-		query.setSelectCountStudyPathPlacementsAge(rb.getSchoolSeasonId(), studyPathPrefix);
-		query.setOnlyNackaCitizens();
-		query.setOnlyNackaSchools();
-		if (isCompulsory) {
-			query.setSchoolTypeCompulsoryHighSchool();
-		} else {
-			query.setSchoolTypeHighSchool();
+		query = getQuery(QUERY_NACKA_COMMUNE + age);
+		if (query == null) {
+			query = new PreparedQuery(getConnection());
+			query.setSelectCount();
+			query.setPlacements(rb.getSchoolSeasonId());
+			query.setOnlyNackaCitizens();
+			query.setOnlyNackaSchools();
+			query.setNotPrivateSchools();
+			query.setNotCountyCouncilSchools();
+			query.setStudentAge(rb.getCurrentSchoolSeason(), rb.getHighSchoolStudentAgeFrom(age), rb.getHighSchoolStudentAgeTo(age));			
+			query.setSchoolType(); // parameter 1
+			query.setStudyPathPrefix(); // parameter 2
+			query.prepare();
+			setQuery(QUERY_NACKA_COMMUNE + age, query);
 		}
-		query.setStudentAge(rb.getCurrentSchoolSeason(), rb.getHighSchoolStudentAgeFrom(age), rb.getHighSchoolStudentAgeTo(age));			
-		query.setNotPrivateSchools();
-		query.setNotCountyCouncilSchools();
+		if (isCompulsory) {
+			query.setInt(1, rb.getCompulsoryHighSchoolTypeId());
+		} else {
+			query.setInt(1, rb.getHighSchoolTypeId());
+		}
+		query.setString(2, studyPathPrefix + "%");
 		return query.execute();
 	}
 	
@@ -506,21 +520,30 @@ public class NackaHighSchoolAgePlacementReportModel extends ReportModel {
 	 * outside Nacka commune for the specified student age.
 	 * Only students in Nacka commune are counted. 
 	 */
-	protected int getHighSchoolOtherCommunesPlacementCount(int age, String studyPathPrefix, boolean isCompulsory) 
-			throws RemoteException {
+	protected int getHighSchoolOtherCommunesPlacementCount(int age, String studyPathPrefix, boolean isCompulsory) throws RemoteException {
+		PreparedQuery query = null;
 		ReportBusiness rb = getReportBusiness();
-		ReportQuery query = new ReportQuery();
-		query.setSelectCountStudyPathPlacementsAge(rb.getSchoolSeasonId(), studyPathPrefix);
-		query.setOnlyNackaCitizens();
-		query.setOnlySchoolsInOtherCommunes();
-		if (isCompulsory) {
-			query.setSchoolTypeCompulsoryHighSchool();
-		} else {
-			query.setSchoolTypeHighSchool();
+		query = getQuery(QUERY_OTHER_COMMUNES + age);
+		if (query == null) {
+			query = new PreparedQuery(getConnection());
+			query.setSelectCount();
+			query.setPlacements(rb.getSchoolSeasonId());
+			query.setOnlyNackaCitizens();
+			query.setOnlySchoolsInOtherCommunes();
+			query.setNotPrivateSchools();
+			query.setNotCountyCouncilSchools();
+			query.setStudentAge(rb.getCurrentSchoolSeason(), rb.getHighSchoolStudentAgeFrom(age), rb.getHighSchoolStudentAgeTo(age));			
+			query.setSchoolType(); // parameter 1
+			query.setStudyPathPrefix(); // parameter 2
+			query.prepare();
+			setQuery(QUERY_OTHER_COMMUNES + age, query);
 		}
-		query.setStudentAge(rb.getCurrentSchoolSeason(), rb.getHighSchoolStudentAgeFrom(age), rb.getHighSchoolStudentAgeTo(age));			
-		query.setNotPrivateSchools();
-		query.setNotCountyCouncilSchools();
+		if (isCompulsory) {
+			query.setInt(1, rb.getCompulsoryHighSchoolTypeId());
+		} else {
+			query.setInt(1, rb.getHighSchoolTypeId());
+		}
+		query.setString(2, studyPathPrefix + "%");
 		return query.execute();
 	}
 	
@@ -529,19 +552,28 @@ public class NackaHighSchoolAgePlacementReportModel extends ReportModel {
 	 * for the specified student age.
 	 * Only students in Nacka commune are counted. 
 	 */
-	protected int getHighSchoolCountyCouncilPlacementCount(int age, String studyPathPrefix, boolean isCompulsory) 
-			throws RemoteException {
+	protected int getHighSchoolCountyCouncilPlacementCount(int age, String studyPathPrefix, boolean isCompulsory) throws RemoteException {
+		PreparedQuery query = null;
 		ReportBusiness rb = getReportBusiness();
-		ReportQuery query = new ReportQuery();
-		query.setSelectCountStudyPathPlacementsAge(rb.getSchoolSeasonId(), studyPathPrefix);
-		query.setOnlyNackaCitizens();
-		if (isCompulsory) {
-			query.setSchoolTypeCompulsoryHighSchool();
-		} else {
-			query.setSchoolTypeHighSchool();
+		query = getQuery(QUERY_COUNTY_COUNCIL + age);
+		if (query == null) {
+			query = new PreparedQuery(getConnection());
+			query.setSelectCount();
+			query.setPlacements(rb.getSchoolSeasonId());
+			query.setOnlyNackaCitizens();
+			query.setOnlyCountyCouncilSchools();
+			query.setStudentAge(rb.getCurrentSchoolSeason(), rb.getHighSchoolStudentAgeFrom(age), rb.getHighSchoolStudentAgeTo(age));			
+			query.setSchoolType(); // parameter 1
+			query.setStudyPathPrefix(); // parameter 2
+			query.prepare();
+			setQuery(QUERY_COUNTY_COUNCIL + age, query);
 		}
-		query.setStudentAge(rb.getCurrentSchoolSeason(), rb.getHighSchoolStudentAgeFrom(age), rb.getHighSchoolStudentAgeTo(age));			
-		query.setOnlyCountyCouncilSchools();
+		if (isCompulsory) {
+			query.setInt(1, rb.getCompulsoryHighSchoolTypeId());
+		} else {
+			query.setInt(1, rb.getHighSchoolTypeId());
+		}
+		query.setString(2, studyPathPrefix + "%");
 		return query.execute();
 	}
 	
@@ -550,19 +582,28 @@ public class NackaHighSchoolAgePlacementReportModel extends ReportModel {
 	 * in Nacka commune for the specified student age.
 	 * Only students in Nacka commune are counted. 
 	 */
-	protected int getHighSchoolPrivatePlacementCount(int age, String studyPathPrefix, boolean isCompulsory) 
-			throws RemoteException {
+	protected int getHighSchoolPrivatePlacementCount(int age, String studyPathPrefix, boolean isCompulsory) throws RemoteException {
+		PreparedQuery query = null;
 		ReportBusiness rb = getReportBusiness();
-		ReportQuery query = new ReportQuery();
-		query.setSelectCountStudyPathPlacementsAge(rb.getSchoolSeasonId(), studyPathPrefix);
-		query.setOnlyNackaCitizens();
-		if (isCompulsory) {
-			query.setSchoolTypeCompulsoryHighSchool();
-		} else {
-			query.setSchoolTypeHighSchool();
+		query = getQuery(QUERY_PRIVATE + age);
+		if (query == null) {
+			query = new PreparedQuery(getConnection());
+			query.setSelectCount();
+			query.setPlacements(rb.getSchoolSeasonId());
+			query.setOnlyNackaCitizens();
+			query.setOnlyPrivateSchools();
+			query.setStudentAge(rb.getCurrentSchoolSeason(), rb.getHighSchoolStudentAgeFrom(age), rb.getHighSchoolStudentAgeTo(age));			
+			query.setSchoolType(); // parameter 1
+			query.setStudyPathPrefix(); // parameter 2
+			query.prepare();
+			setQuery(QUERY_PRIVATE + age, query);
 		}
-		query.setStudentAge(rb.getCurrentSchoolSeason(), rb.getHighSchoolStudentAgeFrom(age), rb.getHighSchoolStudentAgeTo(age));			
-		query.setOnlyPrivateSchools();
+		if (isCompulsory) {
+			query.setInt(1, rb.getCompulsoryHighSchoolTypeId());
+		} else {
+			query.setInt(1, rb.getHighSchoolTypeId());
+		}
+		query.setString(2, studyPathPrefix + "%");
 		return query.execute();
 	}
 }
