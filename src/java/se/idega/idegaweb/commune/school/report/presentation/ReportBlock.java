@@ -1,5 +1,5 @@
 /*
- * $Id: ReportBlock.java,v 1.28 2004/02/23 14:35:43 anders Exp $
+ * $Id: ReportBlock.java,v 1.29 2004/02/27 11:44:50 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -29,10 +29,10 @@ import com.idega.presentation.ui.PrintButton;
 /** 
  * This is the base class for school report blocks.
  * <p>
- * Last modified: $Date: 2004/02/23 14:35:43 $ by $Author: anders $
+ * Last modified: $Date: 2004/02/27 11:44:50 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.28 $
+ * @version $Revision: 1.29 $
  */
 public class ReportBlock extends CommuneBlock {
 
@@ -387,13 +387,13 @@ public class ReportBlock extends CommuneBlock {
 							align = Table.HORIZONTAL_ALIGN_LEFT;
 							break;
 						case Cell.CELLTYPE_SUM:
-							text = getSmallHeader(formatNumber("" + cell.getValue()));
+							text = getSmallHeader(formatNumber(cell.getValue()));
 							break;
 						case Cell.CELLTYPE_TOTAL:
-							text = getSmallHeader(formatNumber("" + cell.getValue()));
+							text = getSmallHeader(formatNumber(cell.getValue()));
 							break;
 						default:
-							text = getSmallText(formatNumber("" + cell.getValue()));
+							text = getSmallText(formatNumber(cell.getValue()));
 							break;
 					}
 					int tableColumn = cellColumn + 2;
@@ -409,9 +409,13 @@ public class ReportBlock extends CommuneBlock {
 	}
 
 	/*
-	 * Returns a string with space for numbers larger than 999.
+	 * Returns a string with space for numbers larger than 999, blank if zero.
 	 */
-	String formatNumber(String s) {
+	String formatNumber(int n) {
+		if (n == 0) {
+			return "&nbsp;";
+		}
+		String s = "" + n;
 		int length = s.length();
 		if (length > 3) {
 			s = s.substring(0, (length - 3)) + " " + s.substring(length - 3);
