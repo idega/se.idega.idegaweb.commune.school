@@ -1,5 +1,5 @@
 /*
- * $Id: ReportQuery.java,v 1.9 2003/12/15 12:21:01 anders Exp $
+ * $Id: ReportQuery.java,v 1.10 2003/12/16 14:41:32 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -19,10 +19,10 @@ import com.idega.util.database.ConnectionBroker;
 /** 
  * Handles the SQL logic for school report calculations.
  * <p>
- * Last modified: $Date: 2003/12/15 12:21:01 $ by $Author: anders $
+ * Last modified: $Date: 2003/12/16 14:41:32 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.9 $
+ * @version $Revision: 1.10 $
  */
 public class ReportQuery {
 
@@ -98,6 +98,20 @@ public class ReportQuery {
 	}
 	
 	/**
+	 * Sets the query to select number of placements for the specified study path prefix (2 chars).
+	 * @param schoolSeasonId the school season id for the placements to count
+	 */
+	public void setSelectCountStudyPathPlacements(int schoolSeasonId, String studyPathPrefix) {
+		sql = "select count(*) from ic_user u, ic_address a, ic_user_address ua, sch_class_member cm," +
+				" sch_school_class sc, sch_school s, sch_school_year sy, sch_study_path sp where" +
+				" cm.register_date <= '" + currentDate + 
+				"' and (cm. removed_date is null or cm.removed_date > '" + currentDate + "')" + 
+				" and sc.school_id = s.sch_school_id and sc.sch_school_class_id = cm.sch_school_class_id" +
+				" and sc.sch_school_season_id = " + schoolSeasonId +
+				" and cm.study_path = sp.sch_study_path_id and sp.study_path_code like '" + studyPathPrefix +"%'";
+	}
+	
+	/**
 	 * Set select only Nacka citizens.
 	 */
 	public void setOnlyNackaCitizens() {
@@ -113,7 +127,7 @@ public class ReportQuery {
 	}
 	
 	/**
-	 * Set select only elementart school.
+	 * Set select only elementary school.
 	 */
 	public void setSchoolTypeElementarySchool() {
 		sql += " and cm.sch_school_type_id = 4";
@@ -131,6 +145,13 @@ public class ReportQuery {
 	 */
 	public void setSchoolTypePreSchoolClass() {
 		sql += " and cm.sch_school_type_id = 5";
+	}
+	
+	/**
+	 * Set select only high school.
+	 */
+	public void setSchoolTypeHighSchool() {
+		sql += " and cm.sch_school_type_id = 26";
 	}
 	
 	/**
@@ -180,6 +201,20 @@ public class ReportQuery {
 	 */
 	public void setNotForieignSchools() {
 		sql += " and s.school_name <> 'Utlandselever'";
+	}
+	
+	/**
+	 * Set select only county council schools.
+	 */
+	public void setOnlyCountyCouncilSchools() {
+		sql += " and s.management_type = 'COUNTY COUNCIL'";
+	}
+	
+	/**
+	 * Set select only other than county council schools.
+	 */
+	public void setNotCountyCouncilSchools() {
+		sql += " and s.management_type = 'COUNTY COUNCIL'";
 	}
 	
 	/**

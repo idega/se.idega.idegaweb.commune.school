@@ -1,5 +1,5 @@
 /*
- * $Id: ReportBusinessBean.java,v 1.8 2003/12/16 11:32:07 anders Exp $
+ * $Id: ReportBusinessBean.java,v 1.9 2003/12/16 14:41:32 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -29,10 +29,10 @@ import com.idega.block.school.data.SchoolStudyPathHome;
 /** 
  * Business logic for school reports.
  * <p>
- * Last modified: $Date: 2003/12/16 11:32:07 $ by $Author: anders $
+ * Last modified: $Date: 2003/12/16 14:41:32 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.8 $
+ * @version $Revision: 1.9 $
  */
 public class ReportBusinessBean extends com.idega.business.IBOServiceBean implements ReportBusiness  {
 
@@ -292,6 +292,24 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 		}
 		return query.execute();
 	}
+
+	
+	/**
+	 * Returns the number of student placements for high schools
+	 * in Nacka commune for the specified school year.
+	 * Only students in Nacka commune are counted. 
+	 */
+	public int getHighSchoolNackaCommunePlacementCount(String schoolYearName, String studyPathPrefix) {
+		ReportQuery query = new ReportQuery();
+		query.setSelectCountStudyPathPlacements(getSchoolSeasonId(), studyPathPrefix);
+		query.setOnlyNackaCitizens();
+		query.setOnlyNackaSchools();
+		query.setSchoolTypeHighSchool();
+		query.setSchoolYear(schoolYearName);			
+		query.setNotPrivateSchools();
+		query.setNotCountyCouncilSchools();
+		return query.execute();
+	}
 	
 	/**
 	 * Returns the current school season.
@@ -383,7 +401,7 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 		if (_studyPaths == null) {
 			try {
 				SchoolStudyPathHome home = (SchoolStudyPathHome) com.idega.data.IDOLookup.getHome(SchoolStudyPath.class);
-				_studyPaths = home.findAllStudyPaths();
+				_studyPaths = home.findAllStudyPathsByCodeLength(2);
 			} catch (Exception e) {}
 		}
 		return _studyPaths;

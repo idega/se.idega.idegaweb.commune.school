@@ -1,5 +1,5 @@
 /*
- * $Id: NackaHighSchoolYearPlacementReportModel.java,v 1.3 2003/12/16 12:20:33 anders Exp $
+ * $Id: NackaHighSchoolYearPlacementReportModel.java,v 1.4 2003/12/16 14:41:32 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -18,10 +18,10 @@ import com.idega.block.school.data.SchoolStudyPath;
 /** 
  * Report model for high school placements per year for students in Nacka.
  * <p>
- * Last modified: $Date: 2003/12/16 12:20:33 $ by $Author: anders $
+ * Last modified: $Date: 2003/12/16 14:41:32 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class NackaHighSchoolYearPlacementReportModel extends ReportModel {
 
@@ -269,13 +269,18 @@ public class NackaHighSchoolYearPlacementReportModel extends ReportModel {
 					break;
 			}
 
+			if (columnParameter != null) {
+				columnParameter = "G" + columnParameter;
+				// Fixa särskola oxo (en extra rad för GYSÄR)
+			}
+			
 			try {
 				ReportBusiness rb = getReportBusiness();
 				Collection studyPaths = rb.getAllStudyPaths();
 				Iterator iter = studyPaths.iterator();
 				while (iter.hasNext()) {
 					SchoolStudyPath studyPath = (SchoolStudyPath) iter.next();
-					Object rowParameter = studyPath.getPrimaryKey();
+					Object rowParameter = studyPath.getCode();
 					Cell cell = new Cell(this, row, column, ROW_METHOD_STUDY_PATH,
 							columnMethod, rowParameter, columnParameter, Cell.CELLTYPE_NORMAL);
 					setCell(row, column, cell);
@@ -299,11 +304,11 @@ public class NackaHighSchoolYearPlacementReportModel extends ReportModel {
 	 */
 	protected float calculate(Cell cell) throws RemoteException {
 		float value = 0f;
-//		ReportBusiness reportBusiness = getReportBusiness();
-//		int studyPathId = -1;
-//		if (cell.getRowParameter() != null) {
-//			studyPathId = ((Integer) cell.getRowParameter()).intValue();
-//		}
+		ReportBusiness reportBusiness = getReportBusiness();
+		String studyPathPrefix = null;
+		if (cell.getRowParameter() != null) {
+			studyPathPrefix = (String) cell.getRowParameter();
+		}
 		String schoolYearName = (String) cell.getColumnParameter();
 		int row = cell.getRow();
 		int column = cell.getColumn();
@@ -318,7 +323,7 @@ public class NackaHighSchoolYearPlacementReportModel extends ReportModel {
 							value += getCell(row, 2).getFloatValue();
 							value += getCell(row, 3).getFloatValue();
 						} else {
-							//
+							value = reportBusiness.getHighSchoolNackaCommunePlacementCount(schoolYearName, studyPathPrefix);
 						}
 						break;
 					case COLUMN_METHOD_OTHER_COMMUNES:
@@ -377,7 +382,9 @@ public class NackaHighSchoolYearPlacementReportModel extends ReportModel {
 							total += getCell(row - 1, 5).getFloatValue();
 							total += getCell(row - 1, 10).getFloatValue();
 							total += getCell(row - 1, 14).getFloatValue();
-							value = getCell(row - 1, 0).getFloatValue() / total;
+							if (total > 0) {
+								value = getCell(row - 1, 0).getFloatValue() / total;								
+							}
 						}
 						break;
 					case COLUMN_METHOD_OTHER_COMMUNES:
@@ -387,7 +394,9 @@ public class NackaHighSchoolYearPlacementReportModel extends ReportModel {
 							total += getCell(row - 1, 5).getFloatValue();
 							total += getCell(row - 1, 10).getFloatValue();
 							total += getCell(row - 1, 14).getFloatValue();
-							value = getCell(row - 1, 5).getFloatValue() / total;
+							if (total > 0) {
+								value = getCell(row - 1, 5).getFloatValue() / total;								
+							}
 						}
 						break;
 					case COLUMN_METHOD_COUNTY_COUNCIL:
@@ -397,7 +406,9 @@ public class NackaHighSchoolYearPlacementReportModel extends ReportModel {
 							total += getCell(row - 1, 5).getFloatValue();
 							total += getCell(row - 1, 10).getFloatValue();
 							total += getCell(row - 1, 14).getFloatValue();
-							value = getCell(row - 1, 10).getFloatValue() / total;
+							if (total > 0) {
+								value = getCell(row - 1, 10).getFloatValue() / total;								
+							}
 						}
 						break;
 					case COLUMN_METHOD_FREE_STANDING:
@@ -407,14 +418,19 @@ public class NackaHighSchoolYearPlacementReportModel extends ReportModel {
 							total += getCell(row - 1, 5).getFloatValue();
 							total += getCell(row - 1, 10).getFloatValue();
 							total += getCell(row - 1, 14).getFloatValue();
-							value = getCell(row - 1, 14).getFloatValue() / total;
+							if (total > 0) {
+								value = getCell(row - 1, 14).getFloatValue() / total;								
+							}
 						}
 						break;
 					case COLUMN_METHOD_TOTAL:
 						if (schoolYearName == null) {
 							value = 100.0f;
 						} else {
-							value = getCell(row - 1, column).getFloatValue() / getCell(row - 1, 23).getFloatValue();
+							float total = getCell(row - 1, 23).getFloatValue();
+							if (total > 0) {
+								value = getCell(row - 1, column).getFloatValue() / total;								
+							}
 						}
 						break;
 				}
