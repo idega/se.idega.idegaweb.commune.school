@@ -1,5 +1,5 @@
 /*
- * $Id: StudentAddressLabelsWriter.java,v 1.7 2004/10/20 15:46:25 aron Exp $
+ * $Id: StudentAddressLabelsWriter.java,v 1.8 2004/10/20 17:28:12 thomas Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -20,8 +20,8 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
-import se.idega.idegaweb.commune.Constants;
 import se.idega.idegaweb.commune.business.CommuneUserBusiness;
+import se.idega.idegaweb.commune.business.Constants;
 import se.idega.idegaweb.commune.presentation.CommuneBlock;
 
 import com.idega.block.school.business.SchoolBusiness;
@@ -51,10 +51,10 @@ import com.lowagie.text.pdf.PdfWriter;
 /** 
  * This MediaWritable class generates a PDF stream with student address labels.
  * <p>
- * Last modified: $Date: 2004/10/20 15:46:25 $ by $Author: aron $
+ * Last modified: $Date: 2004/10/20 17:28:12 $ by $Author: thomas $
  *
  * @author Anders Lindman
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.8 $
  * @see com.idega.io.MediaWritable
  */
 public class StudentAddressLabelsWriter {
