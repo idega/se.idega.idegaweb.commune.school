@@ -1,5 +1,5 @@
 /*
- * $Id: StudentAddressLabelsWriter.java,v 1.3 2004/03/18 13:53:28 anders Exp $
+ * $Id: StudentAddressLabelsWriter.java,v 1.4 2004/03/22 09:20:19 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -45,10 +45,10 @@ import com.lowagie.text.pdf.PdfWriter;
 /** 
  * This MediaWritable class generates a PDF stream with student address labels.
  * <p>
- * Last modified: $Date: 2004/03/18 13:53:28 $ by $Author: anders $
+ * Last modified: $Date: 2004/03/22 09:20:19 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  * @see com.idega.io.MediaWritable
  */
 public class StudentAddressLabelsWriter {
@@ -59,9 +59,9 @@ public class StudentAddressLabelsWriter {
 	private final static int NR_OF_ROWS = 8;
 	private final static int NR_OF_ADDRESSES_PER_PAGE = NR_OF_COLUMNS * NR_OF_ROWS;	
 	private final static int ADDRESS_TABLE_WIDTH = 195;
-	private final static int ADDRESS_TABLE_HEIGHT = 100;
-	private final static int LEFT_MARGIN = 25;
-	private final static int TOP_START = 800;
+	private final static int ADDRESS_TABLE_HEIGHT = 102;
+	private final static int LEFT_MARGIN = 35;
+	private final static int TOP_START = 798;
 
 	private SchoolCommuneBusiness business;
 	private CommuneUserBusiness userBusiness;
@@ -166,6 +166,7 @@ public class StudentAddressLabelsWriter {
 		}
 		
 		document.close();
+
 		writer.setPdfVersion(PdfWriter.VERSION_1_2);
 		buffer.setMimeType("application/pdf");
 		return buffer;
