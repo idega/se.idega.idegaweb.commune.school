@@ -414,7 +414,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
       catch(NumberFormatException nfe){      }
       catch(NullPointerException nex){}
       year++;
-      T.add(new HiddenInput(prmPreGrade,String.valueOf(year)),4,4);
+      T.add(new HiddenInput(prmPreGrade,String.valueOf(schoolYear.getSchoolYearAge())),4,4);
     }
     else {
       DropdownMenu drpTypes = getTypeDrop(prmPreType);

@@ -2,8 +2,10 @@ package se.idega.idegaweb.commune.school.business;
 
 import java.rmi.RemoteException;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import javax.ejb.FinderException;
@@ -74,8 +76,8 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 		return (SchoolChoiceBusiness) IBOLookup.getServiceInstance(getIWApplicationContext(), SchoolChoiceBusiness.class);	
 	}
 	
-	public List getStudentList(Collection students) throws RemoteException {
-		List coll = new Vector();
+	public Map getStudentList(Collection students) throws RemoteException {
+		HashMap coll = new HashMap();
 			
 		if ( !students.isEmpty() ) {
 			UserBusiness userBusiness = (UserBusiness) IBOLookup.getServiceInstance(getIWApplicationContext(), UserBusiness.class);	
@@ -86,7 +88,7 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 			while (iter.hasNext()) {
 				member = (SchoolClassMember) iter.next();
 				user = userBusiness.getUser(member.getClassMemberId());
-				coll.add(user);
+				coll.put(new Integer(member.getClassMemberId()), user);
 			}
 		}
 		
@@ -104,11 +106,31 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 		return null;
 	}
 	
+	public SchoolSeason getPreviousSchoolSeason(int schoolSeasonID) throws RemoteException {
+		Collection coll = getSchoolSeasonBusiness().findAllPreviousSchoolSeasons(schoolSeasonID);
+		if ( !coll.isEmpty() ) {
+			Iterator iter = coll.iterator();
+			while (iter.hasNext()) {
+				return (SchoolSeason) iter.next();
+			}	
+		}
+		return null;
+	}
+	
+	public int getPreviousSchoolSeasonID(int schoolSeasonID) throws RemoteException {
+		SchoolSeason season = getPreviousSchoolSeason(schoolSeasonID);
+		if (season != null) {
+			return ((Integer)season.getPrimaryKey()).intValue();
+		}
+		return -1;
+	}
+	
 	public int getCurrentSchoolSeasonID() throws RemoteException {
 		try {
 			return ((Integer)getSchoolChoiceBusiness().getCurrentSeason().getPrimaryKey()).intValue();	
 		}
 		catch (FinderException fe) {
+			fe.printStackTrace();
 			return -1;	
 		}
 	}
@@ -124,6 +146,23 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 		return null;
 	}
 	
+	public int getPreviousSchoolYear(int schoolYearID) throws RemoteException {
+		SchoolYear year = getSchoolYearBusiness().getSchoolYear(new Integer(schoolYearID));
+		if (year != null) {
+			SchoolYear previousYear = getSchoolYear(year.getSchoolYearAge()-1);
+			if (previousYear != null)
+				return ((Integer)previousYear.getPrimaryKey()).intValue();
+		}
+		return -1;
+	}
+	
+	public int getGradeForYear(int schoolYearID) throws RemoteException {
+		SchoolYear year = getSchoolYearBusiness().getSchoolYear(new Integer(schoolYearID));
+		if (year != null)
+			return year.getSchoolYearAge();
+		return -1;
+	}
+	
 	public Collection getPreviousSchoolClasses(School school, SchoolSeason schoolSeason, SchoolYear schoolYear) throws RemoteException {
 		SchoolSeason season = getPreviousSchoolSeason(schoolSeason);
 		if ( season != null ) {
@@ -132,6 +171,6 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 				return getSchoolClassBusiness().findSchoolClassesBySchoolAndSeasonAndYear(((Integer)school.getPrimaryKey()).intValue(), ((Integer)season.getPrimaryKey()).intValue(), ((Integer)year.getPrimaryKey()).intValue());
 			}
 		}
-		return null;
+		return new Vector();
 	}
 }

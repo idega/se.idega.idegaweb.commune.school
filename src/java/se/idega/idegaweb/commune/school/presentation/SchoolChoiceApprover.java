@@ -139,7 +139,7 @@ public class SchoolChoiceApprover extends CommuneBlock {
 				String[] ids = iwc.getParameterValues(prmPrelimIds);
 				for (int i = 0; i < ids.length; i++) {
 					Integer pk = new Integer(ids[i]);
-					choiceBean.preliminaryAction(pk);
+					choiceBean.preliminaryAction(pk, iwc.getCurrentUser());
 					// create message
 					//msgBean.createUserMessage();
 				}
@@ -153,7 +153,7 @@ public class SchoolChoiceApprover extends CommuneBlock {
 					String val = iwc.getParameter(prm);
 					if(!"".equals(val)){
 						String pk  = prm.substring(startIndex);
-						choiceBean.groupPlaceAction(new Integer(pk),val);
+						choiceBean.groupPlaceAction(new Integer(pk),iwc.getCurrentUser());
 					}
 				}
 			}
@@ -162,7 +162,7 @@ public class SchoolChoiceApprover extends CommuneBlock {
 		// no room action
 		else if(iwc.isParameterSet(prmNoRoom)){
 			Integer pk = new Integer(iwc.getParameter(prmNoRoom));
-			choiceBean.noRoomAction(pk);
+			choiceBean.noRoomAction(pk, iwc.getCurrentUser());
 		}
 	}
 

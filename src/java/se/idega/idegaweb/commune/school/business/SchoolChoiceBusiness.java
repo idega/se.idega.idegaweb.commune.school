@@ -11,18 +11,24 @@ public interface SchoolChoiceBusiness extends com.idega.business.IBOService,com.
  public void createTestFamily() throws java.rmi.RemoteException;
  public se.idega.idegaweb.commune.school.data.CurrentSchoolSeasonHome getCurrentSchoolSeasonHome()throws java.rmi.RemoteException, java.rmi.RemoteException;
  public void createCurrentSchoolSeason(java.lang.Integer p0,java.lang.Integer p1)throws java.rmi.RemoteException, java.rmi.RemoteException;
- public boolean groupPlaceAction(java.lang.Integer p0,java.lang.String p1) throws java.rmi.RemoteException;
+ public boolean groupPlaceAction(java.lang.Integer p0,com.idega.user.data.User p1) throws java.rmi.RemoteException;
  public com.idega.block.school.data.SchoolSeason getCurrentSeason()throws javax.ejb.FinderException,java.rmi.RemoteException, java.rmi.RemoteException;
  public com.idega.block.school.data.School getSchool(int p0)throws java.rmi.RemoteException, java.rmi.RemoteException;
  public com.idega.block.school.data.SchoolHome getSchoolHome()throws java.rmi.RemoteException, java.rmi.RemoteException;
- public boolean preliminaryAction(java.lang.Integer p0) throws java.rmi.RemoteException;
+ public boolean preliminaryAction(java.lang.Integer p0, com.idega.user.data.User p1) throws java.rmi.RemoteException;
  public com.idega.block.school.business.SchoolBusiness getSchoolBusiness()throws java.rmi.RemoteException, java.rmi.RemoteException;
  public java.lang.String getPreliminaryMessageSubject() throws java.rmi.RemoteException;
- public boolean noRoomAction(java.lang.Integer p0) throws java.rmi.RemoteException;
+ public boolean noRoomAction(java.lang.Integer p0, com.idega.user.data.User p1) throws java.rmi.RemoteException;
  public java.lang.String getGroupedMessageSubject() throws java.rmi.RemoteException;
  public se.idega.idegaweb.commune.school.data.SchoolChoiceHome getSchoolChoiceHome()throws java.rmi.RemoteException, java.rmi.RemoteException;
  public com.idega.block.school.data.SchoolSeasonHome getSchoolSeasonHome()throws java.rmi.RemoteException, java.rmi.RemoteException;
  public java.lang.String getBundleIdentifier() throws java.rmi.RemoteException;
  public com.idega.block.school.data.School getFirstProviderForUser(com.idega.user.data.User p0)throws java.rmi.RemoteException,javax.ejb.FinderException, java.rmi.RemoteException;
  public java.util.Collection getApplicantsForSchoolAndSeasonAndGrade(int schoolID,int seasonID,int grade) throws java.rmi.RemoteException; 
+ public int getNumberOfApplications(int schoolID, int schoolSeasonID, int grade) throws java.rmi.RemoteException;
+ public int getNumberOfApplications(int schoolID, int schoolSeasonID) throws java.rmi.RemoteException;
+ public se.idega.idegaweb.commune.school.data.SchoolChoice findByStudentAndSchoolAndSeason(int studentID, int schoolID, int seasonID) throws java.rmi.RemoteException;
+ public void setAsPreliminary(se.idega.idegaweb.commune.school.data.SchoolChoice choice, com.idega.user.data.User performer) throws java.rmi.RemoteException;
+ public java.util.Collection findByStudentAndSeason(int studentID, int seasonID) throws java.rmi.RemoteException;
+ public void rejectApplication(int applicationID, int seasonID, com.idega.user.data.User performer, String messageSubject, String messageBody) throws java.rmi.RemoteException;
 }

@@ -15,6 +15,7 @@ import se.idega.idegaweb.commune.school.data.CurrentSchoolSeason;
 import se.idega.idegaweb.commune.school.data.CurrentSchoolSeasonHome;
 import se.idega.idegaweb.commune.school.data.SchoolChoice;
 import se.idega.idegaweb.commune.school.data.SchoolChoiceHome;
+import sun.security.krb5.internal.crypto.c;
 
 import com.idega.block.process.data.Case;
 import com.idega.block.process.data.CaseStatus;
@@ -24,6 +25,7 @@ import com.idega.block.school.data.SchoolHome;
 import com.idega.block.school.data.SchoolSeason;
 import com.idega.block.school.data.SchoolSeasonHome;
 import com.idega.data.IDOCreateException;
+import com.idega.data.IDOException;
 import com.idega.data.IDOStoreException;
 import com.idega.user.data.Group;
 import com.idega.user.data.User;
@@ -197,17 +199,17 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 			}
 		}
 	}
-	public boolean noRoomAction(Integer pk) {
+	public boolean noRoomAction(Integer pk, User performer) {
 		javax.transaction.UserTransaction trans = getSessionContext().getUserTransaction();
 		try {
 			trans.begin();
 			SchoolChoice choice = this.getSchoolChoiceHome().findByPrimaryKey(pk);
-			choice.setCaseStatus(getCaseStatusInactive());
+			super.changeCaseStatus(choice, getCaseStatusInactive().getPrimaryKey().toString(), performer);
 			choice.store();
 			Iterator children = choice.getChildren();
 			if (children.hasNext()) {
 				Case child = (Case) children.next();
-				child.setCaseStatus(getCaseStatusOpen());
+				super.changeCaseStatus(child, "PREL", performer);
 				child.store();
 			}
 			trans.commit();
@@ -223,10 +225,31 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		}
 		return false;
 	}
-	public boolean preliminaryAction(Integer pk) {
+	
+	public void rejectApplication(int applicationID, int seasonID, User performer, String messageSubject, String messageBody) throws RemoteException {
+		try {
+			SchoolChoice choice = this.getSchoolChoiceHome().findByPrimaryKey(new Integer(applicationID));
+			super.changeCaseStatus(choice, getCaseStatusInactive().getPrimaryKey().toString(), performer);
+			choice.store();
+			
+			Collection coll = findByStudentAndSeason(choice.getChildId(), seasonID);
+			Iterator iter = coll.iterator();
+			while (iter.hasNext()) {
+				SchoolChoice element = (SchoolChoice) iter.next();
+				if (element.getChoiceOrder() == (choice.getChoiceOrder() + 1)) {
+					super.changeCaseStatus(element, "PREL", performer);
+					continue;
+				}
+			}
+		}
+		catch (FinderException fe) {
+		}
+	}
+	
+	public boolean preliminaryAction(Integer pk, User performer) {
 		try {
 			SchoolChoice choice = getSchoolChoiceHome().findByPrimaryKey(pk);
-			choice.setCaseStatus(getCaseStatus("PREL"));
+			super.changeCaseStatus(choice, "PREL", performer);
 			choice.store();
 			getMessageBusiness().createUserMessage(choice.getOwner(), getPreliminaryMessageSubject(), getPreliminaryMessageBody(choice));
 			return true;
@@ -235,19 +258,26 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		}
 		return false;
 	}
-	public boolean groupPlaceAction(Integer pk, String group) {
+
+	public void setAsPreliminary(SchoolChoice choice, User performer) throws RemoteException {
+		try {
+			super.changeCaseStatus(choice, "PREL", performer);
+		}
+		catch (Exception e) {
+		}
+	}
+
+	public boolean groupPlaceAction(Integer pk, User performer) {
 		try {
 			SchoolChoice choice = getSchoolChoiceHome().findByPrimaryKey(pk);
-			choice.setGroupPlace(group);
-			choice.setCaseStatus(getCaseStatus("PLAC"));
-			choice.store();
-			getMessageBusiness().createUserMessage(choice.getOwner(), getGroupedMessageSubject(), getGroupedMessageBody(choice));
+			super.changeCaseStatus(choice, "PLAC", performer);
 			return true;
 		}
 		catch (Exception e) {
 		}
 		return false;
 	}
+
 	protected String getPreliminaryMessageBody(SchoolChoice theCase) throws RemoteException, FinderException {
 		StringBuffer body = new StringBuffer(this.getLocalizedString("school_choice.prelim_mesg_body1", "Dear mr./ms./mrs. "));
 		body.append(theCase.getOwner().getNameLastFirst()).append("\n");
@@ -291,6 +321,55 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		desc += choice.getChosenSchool().getName();
 		return desc;
 	}
+	
+	public SchoolChoice findByStudentAndSchoolAndSeason(int studentID, int schoolID, int seasonID) throws RemoteException {
+		try {
+			Collection coll = getSchoolChoiceHome().findByChildAndSchoolAndSeason(studentID, schoolID, seasonID);
+			if (coll != null && !coll.isEmpty()) {
+				Iterator iter = coll.iterator();
+				while (iter.hasNext()) {
+					return (SchoolChoice) iter.next();
+				}
+			}
+			return null;
+		}
+		catch (FinderException fe) {
+			return null;
+		}
+	}
+	
+	public Collection findByStudentAndSeason(int studentID, int seasonID) throws RemoteException {
+		try {
+			return getSchoolChoiceHome().findByChildAndSeason(studentID, seasonID);
+		}
+		catch (FinderException fe) {
+			return new Vector();
+		}
+	}
+	
+	public int getNumberOfApplications(int schoolID, int schoolSeasonID) throws RemoteException {
+		try {
+			return getSchoolChoiceHome().getNumberOfApplications("PREL", schoolID, schoolSeasonID);
+		}
+		catch (IDOException ie) {
+			return 0;
+		}
+		catch (FinderException fe) {
+			return 0;
+		}
+	}	
+
+	public int getNumberOfApplications(int schoolID, int schoolSeasonID, int grade) throws RemoteException {
+		try {
+			return getSchoolChoiceHome().getNumberOfApplications("PREL", schoolID, schoolSeasonID, grade);
+		}
+		catch (IDOException ie) {
+			return 0;
+		}
+		catch (FinderException fe) {
+			return 0;
+		}
+	}	
 
 	private CommuneUserBusiness getCommuneUserBusiness() throws RemoteException {
 		return (CommuneUserBusiness) getServiceInstance(CommuneUserBusiness.class);

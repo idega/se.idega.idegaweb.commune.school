@@ -16,6 +16,8 @@ import com.idega.block.school.data.SchoolSeason;
 import com.idega.block.school.data.SchoolYear;
 import com.idega.business.IBOLookup;
 import com.idega.presentation.IWContext;
+import com.idega.presentation.Table;
+import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.DropdownMenu;
 /**
  * @author Laddi
@@ -50,6 +52,26 @@ public abstract class SchoolCommuneBlock extends CommuneBlock {
 		_schoolSeasonID = session.getSchoolSeasonID();
 		_schoolYearID = session.getSchoolYearID();
 		_schoolClassID = session.getSchoolClassID();
+	}
+	
+	protected Table getNavigationTable(boolean showClass) throws RemoteException {
+		Table table = new Table(5,1);
+		table.setCellpadding(0);
+		table.setCellspacing(0);
+		table.setWidth(3,"8");
+
+		table.add(getSmallHeader(localize("school.season","Season")+":"+Text.NON_BREAKING_SPACE),1,1);
+		table.add(getSchoolSeasons(),2,1);
+		table.add(getSmallHeader(localize("school.year","Year")+":"+Text.NON_BREAKING_SPACE),4,1);
+		table.add(getSchoolYears(),5,1);
+		if (showClass) {
+			table.resize(8, 1);
+			table.setWidth(6, "8");
+			table.add(getSmallHeader(localize("school.class","Class")+":"+Text.NON_BREAKING_SPACE),7,1);
+			table.add(getSchoolClasses(),8,1);
+		}
+		
+		return table;
 	}
 	
 	protected DropdownMenu getSchoolSeasons() throws RemoteException {

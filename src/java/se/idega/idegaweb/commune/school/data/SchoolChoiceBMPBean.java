@@ -3,6 +3,7 @@ package se.idega.idegaweb.commune.school.data;
 import com.idega.block.process.data.*;
 import com.idega.block.school.data.School;
 import com.idega.block.school.data.SchoolSeason;
+import com.idega.data.IDOException;
 import com.idega.data.IDOQuery;
 import com.idega.user.data.User;
 import java.sql.Timestamp;
@@ -274,6 +275,33 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
     return (Collection)super.idoFindPKsBySQL(sql.toString());
 
   }
+  
+  public int ejbHomeGetNumberOfApplications(String caseStatus, int schoolID, int schoolSeasonID) throws FinderException, IDOException {
+    StringBuffer sql = new StringBuffer("select count(*) from ");
+    sql.append(getEntityName()).append( " s ");
+    sql.append(",").append(CaseBMPBean.TABLE_NAME).append(" c ");
+    sql.append(" where s.COMM_SCH_CHOICE_ID = c.PROC_CASE_ID ");
+    sql.append(" and c.CASE_CODE = '").append(CASECODE).append("'");
+    sql.append(" and s.SCHOOL_ID = ").append(schoolID);
+    sql.append(" and s.").append(SCHOOL_SEASON).append(" = ").append(schoolSeasonID);
+    sql.append(" and c.CASE_STATUS = '").append(caseStatus).append("'");
+    
+    return super.idoGetNumberOfRecords(sql.toString());
+  }
+
+  public int ejbHomeGetNumberOfApplications(String caseStatus, int schoolID, int schoolSeasonID, int grade) throws FinderException, IDOException {
+    StringBuffer sql = new StringBuffer("select count(*) from ");
+    sql.append(getEntityName()).append( " s ");
+    sql.append(",").append(CaseBMPBean.TABLE_NAME).append(" c ");
+    sql.append(" where s.COMM_SCH_CHOICE_ID = c.PROC_CASE_ID ");
+    sql.append(" and c.CASE_CODE = '").append(CASECODE).append("'");
+    sql.append(" and s.SCHOOL_ID = ").append(schoolID);
+    sql.append(" and s.").append(SCHOOL_SEASON).append(" = ").append(schoolSeasonID);
+    sql.append(" and s.").append(GRADE).append(" = ").append(grade);
+    sql.append(" and c.CASE_STATUS = '").append(caseStatus).append("'");
+
+    return super.idoGetNumberOfRecords(sql.toString());
+  }
 
   public Collection ejbFindByChildAndSeason(int childID, int seasonID)throws javax.ejb.FinderException{
     StringBuffer sql = new StringBuffer("select * from ");
@@ -286,6 +314,26 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
     sql.append(SCHOOL_SEASON);
     sql.append(" = ");
     sql.append(seasonID);
+    sql.append(" order by ");
+    sql.append(CHOICEORDER);
+    return super.idoFindPKsBySQL(sql.toString());
+  }
+  
+  public Collection ejbFindByChildAndSchoolAndSeason(int childID, int schoolID, int seasonID)throws javax.ejb.FinderException{
+    StringBuffer sql = new StringBuffer("select * from ");
+    sql.append(SCHOOLCHOICE);
+    sql.append(" where ");
+    sql.append(CHILD);
+    sql.append(" = ");
+    sql.append(childID);
+    sql.append(" and ");
+    sql.append(SCHOOL_SEASON);
+    sql.append(" = ");
+    sql.append(seasonID);
+    sql.append(" and ");
+    sql.append(CHOSEN_SCHOOL);
+    sql.append(" = ");
+    sql.append(schoolID);
     return super.idoFindPKsBySQL(sql.toString());
   }
   
@@ -295,6 +343,7 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
   	sql.appendEqualSign().append(schoolID).appendAnd().append(SCHOOL_SEASON);
   	sql.appendEqualSign().append(seasonID).appendAnd().append(GRADE).appendEqualSign();
   	sql.append(gradeYear);
+
   	return super.idoFindPKsBySQL(sql.toString());
   }
 
