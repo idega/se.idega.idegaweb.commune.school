@@ -6,6 +6,7 @@ public interface SchoolChoiceHome extends com.idega.data.IDOHome
  public SchoolChoice create() throws javax.ejb.CreateException;
  public SchoolChoice findByPrimaryKey(Object pk) throws javax.ejb.FinderException;
  public java.util.Collection findAll()throws javax.ejb.FinderException;
+ public java.util.Collection findAllPlacedBySeason(int p0)throws javax.ejb.FinderException;
  public java.util.Collection findAllWithLanguageWithinSeason(com.idega.block.school.data.SchoolSeason p0,java.lang.String[] p1)throws javax.ejb.FinderException;
  public SchoolChoice findByChildAndChoiceNumberAndSeason(java.lang.Integer p0,java.lang.Integer p1,java.lang.Integer p2)throws javax.ejb.FinderException;
  public java.util.Collection findByChildAndSchool(int p0,int p1)throws javax.ejb.FinderException;
@@ -37,8 +38,8 @@ public interface SchoolChoiceHome extends com.idega.data.IDOHome
  public int getCountByChildAndSchool(int p0,int p1)throws com.idega.data.IDOException;
  public int getCountByChildAndSchoolAndStatus(int p0,int p1,java.lang.String[] p2)throws com.idega.data.IDOException;
  public int getMoveChoices(int p0,int p1,int p2)throws com.idega.data.IDOException;
- public int getNumberOfApplications(java.lang.String p0,int p1,int p2)throws com.idega.data.IDOException;
  public int getNumberOfApplications(java.lang.String p0,int p1,int p2,int p3)throws com.idega.data.IDOException;
+ public int getNumberOfApplications(java.lang.String p0,int p1,int p2)throws com.idega.data.IDOException;
  public int getNumberOfChoices(int p0,int p1)throws com.idega.data.IDOException;
  public int getNumberOfChoices(int p0,int p1,java.lang.String[] p2)throws com.idega.data.IDOException;
  public int getNumberOfHandledMoves(int p0)throws com.idega.data.IDOException;

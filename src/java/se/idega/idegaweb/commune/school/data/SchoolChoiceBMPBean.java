@@ -487,7 +487,6 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 		StringBuffer sql = new StringBuffer("select count(*) from " +			"proc_case p, proc_case_log l, comm_sch_choice c " +			"where " +			"p.proc_case_id = l.case_id and " +			"p.proc_case_id = c.comm_sch_choice_id and " +			"l.case_status_before = 'FLYT' and " +			"c.school_season_id =" + seasonID);			return super.idoGetNumberOfRecords(sql.toString());
 	}
 
-
 	public Collection ejbFindByChildAndSeason(int childID, int seasonID, String[] notInStatuses) throws javax.ejb.FinderException {
 		IDOQuery sql = idoQuery();
 		sql.appendSelectAllFrom(this).append(" sc, ").append("PROC_CASE pc ");
@@ -496,6 +495,15 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 		if (notInStatuses != null) {
 			sql.appendAnd().append("pc.case_status").appendNotInArrayWithSingleQuotes(notInStatuses);
 		}
+		return super.idoFindPKsBySQL(sql.toString());
+	}
+
+	public Collection ejbFindAllPlacedBySeason(int seasonID) throws javax.ejb.FinderException {
+		IDOQuery sql = idoQuery();
+		sql.appendSelectAllFrom(this).append(" sc, ").append("PROC_CASE pc ");
+		sql.appendWhereEquals(SCHOOL_SEASON, seasonID);
+		sql.appendAndEquals("sc." + getIDColumnName(), "pc.proc_case_id");
+		sql.appendAndEqualsQuoted("pc.case_satus", CASE_STATUS_PLACED);
 		return super.idoFindPKsBySQL(sql.toString());
 	}
 	
