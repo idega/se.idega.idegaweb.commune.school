@@ -1,5 +1,5 @@
 /*
- * $Id: SchoolReports.java,v 1.4 2003/12/15 12:22:13 anders Exp $
+ * $Id: SchoolReports.java,v 1.5 2003/12/16 11:33:56 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -15,6 +15,7 @@ import se.idega.idegaweb.commune.presentation.CommuneBlock;
 import se.idega.idegaweb.commune.school.report.business.NackaCitizenElementarySchoolPlacementReportModel;
 import se.idega.idegaweb.commune.school.report.business.NackaElementarySchoolOCCPlacementReportModel;
 import se.idega.idegaweb.commune.school.report.business.NackaElementarySchoolPlacementReportModel;
+import se.idega.idegaweb.commune.school.report.business.NackaHighSchoolYearPlacementReportModel;
 import se.idega.idegaweb.commune.school.report.business.ReportBusiness;
 import se.idega.idegaweb.commune.school.report.business.ReportModel;
 
@@ -30,10 +31,10 @@ import com.idega.presentation.ui.SubmitButton;
 /** 
  * This block handles selecting and presenting school reports.
  * <p>
- * Last modified: $Date: 2003/12/15 12:22:13 $ by $Author: anders $
+ * Last modified: $Date: 2003/12/16 11:33:56 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public class SchoolReports extends CommuneBlock {
 
@@ -57,7 +58,8 @@ public class SchoolReports extends CommuneBlock {
 	private Class[] _reportModelClasses = {
 				NackaCitizenElementarySchoolPlacementReportModel.class,
 				NackaElementarySchoolPlacementReportModel.class,
-				NackaElementarySchoolOCCPlacementReportModel.class
+				NackaElementarySchoolOCCPlacementReportModel.class,
+				NackaHighSchoolYearPlacementReportModel.class
 	};
 	
 	private ReportModel[] _reportModels = null;
