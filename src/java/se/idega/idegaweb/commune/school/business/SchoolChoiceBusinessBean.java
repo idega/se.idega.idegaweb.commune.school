@@ -412,18 +412,18 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 				if (isSchoolChangeApplication) {
 					nonApplyingSubject = getNonApplyingSeparateParentSubjectChange();
 					nonApplyingBody = getNonApplyingSeparateParentMessageBodyChange(choice, appParent);
-					nonApplyingCode = SchoolChoiceMessagePdfHandler.CODE_NONAPPLYING_SINGLEPARENT_APPLICATION_NEW ;
+					nonApplyingCode = SchoolChoiceMessagePdfHandler.CODE_NONAPPLYING_SINGLEPARENT_APPLICATION_CHANGE ;
 					applyingSubject = getApplyingSeparateParentSubjectChange();
 					applyingBody = getApplyingSeparateParentMessageBodyChange(choice, appParent);
-					applyingCode = SchoolChoiceMessagePdfHandler.CODE_NONAPPLYING_SINGLEPARENT_APPLICATION_NEW ;
+					applyingCode = SchoolChoiceMessagePdfHandler.CODE_NONAPPLYING_SINGLEPARENT_APPLICATION_CHANGE ;
 				}
 				else {
 					nonApplyingSubject = getNonApplyingSeparateParentSubjectAppl();
 					nonApplyingBody = getNonApplyingSeparateParentMessageBodyAppl(choices, appParent);
-					nonApplyingCode = SchoolChoiceMessagePdfHandler.CODE_NONAPPLYING_SINGLEPARENT_APPLICATION_CHANGE ;
+					nonApplyingCode = SchoolChoiceMessagePdfHandler.CODE_NONAPPLYING_SINGLEPARENT_APPLICATION_NEW ;
 					applyingSubject = getPreliminaryMessageSubject();//getApplyingSeparateParentSubjectAppl();
 					applyingBody = getPreliminaryMessageBody(choice);//getApplyingSeparateParentMessageBodyAppl(choices, appParent);
-					applyingCode = SchoolChoiceMessagePdfHandler.CODE_APPLYING_SINGLEPARENT_APPLICATION_CHANGE ;
+					applyingCode = SchoolChoiceMessagePdfHandler.CODE_APPLYING_SINGLEPARENT_APPLICATION_NEW ;
 				}
 
 				sendMessageToParents(choice, nonApplyingSubject, nonApplyingBody,nonApplyingCode,applyingSubject,applyingBody,applyingCode,isSchoolChangeApplication);
