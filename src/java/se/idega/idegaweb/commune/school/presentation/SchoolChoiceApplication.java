@@ -12,7 +12,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
@@ -215,7 +214,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	private final String NOUSERFOUND_KEY = prefix + "noUserFound";
 	private final String NOUSERFOUND_DEFAULT
 	= "No matches were found on given search criteria";
-	private String prmChildIdAdmin = CitizenChildren.getChildIDParameterName() + "_admin";
+	//private String prmChildIdAdmin = CitizenChildren.getChildIDParameterName() + "_admin";
 	private String _childId = null;
 	
 	
@@ -1676,7 +1675,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	 * @exception RemoteException if exception happens in lower layer
 	 */
 	private Table getUserSearchFormTable (final IWContext context)
-	throws RemoteException, FinderException, Exception {
+	throws RemoteException, Exception {
 		// set up searcher
 		final UserSearcher searcher = createSearcher ();
 		fillSearcherWithStudents (context, searcher);
@@ -1708,8 +1707,8 @@ public class SchoolChoiceApplication extends CommuneBlock {
 			table.add (terminateForm, 1, 3);
 			*/
 			//testar(foundUser);
-			boolean test1 = context.isParameterSet(prmChildIdAdmin);
-			String test = context.getParameter(prmChildIdAdmin);
+			//boolean test1 = context.isParameterSet(prmChildIdAdmin);
+			//String test = context.getParameter(prmChildIdAdmin);
 			try {
 				control(context);
 			}
@@ -1747,7 +1746,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	private void fillSearcherWithStudents (final IWContext context,
 			final UserSearcher searcher)
 	throws RemoteException {
-		final Collection students = new HashSet ();
+		//final Collection students = new HashSet ();
 		Collection usersFound = null;
 		try {
 			// 1. start with a raw search

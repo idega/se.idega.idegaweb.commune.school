@@ -96,7 +96,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	//Localization keys ,Messages
 	private static final String KP = "school_editor.";
 	private static final String KEY_REACTIVATE_SUBJECT1 = KP + "sch_admin_reactivate_subject1";
-	private static final String KEY_REACTIVATE_SUBJECT2 = KP + "sch_admin_reactivate_subject2";
+	//private static final String KEY_REACTIVATE_SUBJECT2 = KP + "sch_admin_reactivate_subject2";
 	private static final String KEY_REACTIVATE_BODY1 = KP + "sch_admin_reactivate_body1";
 	private static final String KEY_REACTIVATE_BODY2 = KP + "sch_admin_reactivate_body2";
 	
@@ -727,7 +727,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	public void reactivateApplication(int applicationID, int removedSchoolID, boolean hasReceivedPlacementMessage, String code) throws RemoteException {
 		try {
 			SchoolChoice choice = this.getSchoolChoiceHome().findByPrimaryKey(new Integer(applicationID));
-			User child = choice.getChild();
+			//User child = choice.getChild();
 			
 			String messageSubject1 = getReactivatedMessageSubject();
 			String messageBody1 = getReactivatedMessageBody(choice);
