@@ -1056,6 +1056,7 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
         sql.append(" select u.ic_user_id ").append("\n");
         sql.append("  from comm_sch_choice ch, ic_user u ").append("\n");
         sql.append("  where u.ic_user_id = ch.child_id ").append("\n");
+        sql.append("  and (ch.change_of_school is null or ch.change_of_school = 'N')");
         sql.append("  and ch.school_season_id = ").append(seasonID);
         // only check age for F and 1 years
         if(addAgeCheck) {
