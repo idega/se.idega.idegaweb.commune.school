@@ -91,6 +91,15 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 		return coll;		
 	}
 	
+	public boolean isOngoingSeason(int seasonID) throws RemoteException {
+		SchoolSeason season = getSchoolBusiness().getSchoolSeason(new Integer(seasonID));
+		if (season != null) {
+			IWTimestamp stamp = new IWTimestamp();
+			return stamp.isBetween(new IWTimestamp(season.getSchoolSeasonStart()), new IWTimestamp(season.getSchoolSeasonEnd()));
+		}
+		return false;
+	}
+	
 	public boolean isAlreadyInSchool(int userID, int schoolID, int seasonID) throws RemoteException {
 		try {
 			SchoolClassMember member = getSchoolBusiness().getSchoolClassMemberHome().findByUserAndSchoolAndSeason(userID, schoolID, seasonID);

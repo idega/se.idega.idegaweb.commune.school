@@ -1,6 +1,7 @@
 package se.idega.idegaweb.commune.school.business;
 
 import is.idega.idegaweb.member.business.MemberFamilyLogic;
+import is.idega.idegaweb.member.business.NoCustodianFound;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -27,6 +28,7 @@ import se.cubecon.bun24.viewpoint.business.ViewpointBusiness;
 import se.cubecon.bun24.viewpoint.data.SubCategory;
 import se.idega.idegaweb.commune.business.CommuneUserBusiness;
 import se.idega.idegaweb.commune.message.business.MessageBusiness;
+import se.idega.idegaweb.commune.message.data.Message;
 import se.idega.idegaweb.commune.school.data.CurrentSchoolSeason;
 import se.idega.idegaweb.commune.school.data.CurrentSchoolSeasonHome;
 import se.idega.idegaweb.commune.school.data.SchoolChoice;
@@ -44,6 +46,7 @@ import com.idega.block.school.data.SchoolClassMemberHome;
 import com.idega.block.school.data.SchoolHome;
 import com.idega.block.school.data.SchoolSeason;
 import com.idega.block.school.data.SchoolSeasonHome;
+import com.idega.block.school.data.SchoolUser;
 import com.idega.block.school.data.SchoolYear;
 import com.idega.block.school.data.SchoolYearHome;
 import com.idega.core.data.ICFile;
@@ -296,30 +299,11 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	
 	private void handleSchoolChangeHeadMasters(User child,int oldSchoolID,int newSchoolID)throws RemoteException{
 		try {
-			School oldSchool = getSchool(oldSchoolID);
-			Collection coll = getSchoolBusiness().getHeadmasters(oldSchool);
-			if (!coll.isEmpty()) {
-				Iterator iter = coll.iterator();
-				while (iter.hasNext()) {
-					User user = (User) iter.next();
-					getMessageBusiness().createUserMessage(user,getOldHeadmasterSubject(),getOldHeadmasterBody(child, getSchool(newSchoolID)), false);
-				}
-			}
+			sendMessageToSchool(oldSchoolID, getOldHeadmasterSubject(),getOldHeadmasterBody(child, getSchool(newSchoolID)));
+			sendMessageToSchool(newSchoolID,getNewHeadMasterSubject(),getNewHeadmasterBody(child, getSchool(oldSchoolID)));
 		}
-		catch(Exception ex){
-		}
-		try{
-			School newSchool = getSchool(newSchoolID);
-			Collection coll = getSchoolBusiness().getHeadmasters(newSchool);
-			if (!coll.isEmpty()) {
-				Iterator iter = coll.iterator();
-				while (iter.hasNext()) {
-					User user = (User) iter.next();
-					getMessageBusiness().createUserMessage(user,getNewHeadMasterSubject(),getNewHeadmasterBody(child, getSchool(oldSchoolID)), false);
-				}
-			}
-		}
-		catch(Exception ex){
+		catch (FinderException e) {
+			throw new RemoteException(e.getMessage());
 		}
 	}
 	
@@ -435,9 +419,60 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		return false;
 	}
 	
+	private void sendMessageToParents(SchoolChoice application, String subject, String body) {
+		try {
+			User child = application.getChild();
+			Object[] arguments = { child.getNameLastFirst(true), application.getChosenSchool().getSchoolName() };
+
+			User appParent = application.getOwner();
+			if (getUserBusiness().getMemberFamilyLogic().isChildInCustodyOf(child, appParent)) {
+				Message message = getMessageBusiness().createUserMessage(appParent, subject, MessageFormat.format(body, arguments));
+				message.setParentCase(application);
+				message.store();
+			}
+
+			try {
+				Collection parents = getUserBusiness().getMemberFamilyLogic().getCustodiansFor(child);
+				Iterator iter = parents.iterator();
+				while (iter.hasNext()) {
+					User parent = (User) iter.next();
+					if (!getUserBusiness().haveSameAddress(parent, appParent)) {
+						Message message = getMessageBusiness().createUserMessage(parent, subject, MessageFormat.format(body, arguments));
+						message.setParentCase(application);
+						message.store();
+					}
+				}
+			}
+			catch (NoCustodianFound ncf) {
+				ncf.printStackTrace();
+			}
+		}
+		catch (RemoteException re) {
+			re.printStackTrace();
+		}
+	}
+
+	private void sendMessageToSchool(int schoolID, String subject, String body) throws RemoteException {
+		try {
+			School school = getSchool(schoolID);
+			Collection coll = getSchoolBusiness().getSchoolUserBusiness().getSchoolUserHome().findBySchool(school);
+			if (!coll.isEmpty()) {
+				Iterator iter = coll.iterator();
+				while (iter.hasNext()) {
+					SchoolUser user = (SchoolUser) iter.next();
+					getMessageBusiness().createUserMessage(user.getUser(),subject,body, false);
+				}
+			}
+		}
+		catch (FinderException fe) {
+			throw new RemoteException(fe.getMessage());
+		}
+	}
+
 	public void rejectApplication(int applicationID, int seasonID, User performer, String messageSubject, String messageBody) throws RemoteException {
 		try {
 			SchoolChoice choice = this.getSchoolChoiceHome().findByPrimaryKey(new Integer(applicationID));
+			User child = choice.getChild();
 			String status = choice.getCaseStatus().toString();
 			super.changeCaseStatus(choice, getCaseStatusInactive().getPrimaryKey().toString(), performer);
 			choice.store();
@@ -449,18 +484,13 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 					SchoolChoice element = (SchoolChoice) iter.next();
 					if (element.getChoiceOrder() == (choice.getChoiceOrder() + 1)) {
 						super.changeCaseStatus(element, "PREL", performer);
+						sendMessageToParents(element, getPreliminaryMessageSubject(), getPreliminaryMessageBody(element));
 						continue;
 					}
 				}			
 			}
 
-			User child = choice.getChild();
-			Collection parents = getUserBusiness().getMemberFamilyLogic().getCustodiansFor(child);
-			Iterator iterator = parents.iterator();
-			while (iterator.hasNext()) {
-				User parent = (User) iterator.next();
-				getMessageBusiness().createUserMessage(parent,messageSubject,messageBody);
-			}
+			sendMessageToParents(choice, messageSubject, messageBody);
 
 			if (choice.getChoiceOrder() == 3) {
 				ViewpointBusiness vpb = (ViewpointBusiness) getServiceInstance(ViewpointBusiness.class);
