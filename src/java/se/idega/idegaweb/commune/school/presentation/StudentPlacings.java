@@ -7,12 +7,18 @@
 package se.idega.idegaweb.commune.school.presentation;
 
 import java.rmi.RemoteException;
+import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Locale;
 
+import se.idega.idegaweb.commune.school.data.SchoolChoice;
+
+import com.idega.block.process.business.CaseBusiness;
 import com.idega.block.school.data.School;
 import com.idega.block.school.data.SchoolClass;
 import com.idega.block.school.data.SchoolClassMember;
+import com.idega.business.IBOLookup;
 import com.idega.core.contact.data.Email;
 import com.idega.core.contact.data.Phone;
 import com.idega.core.location.data.Address;
@@ -28,12 +34,13 @@ import com.idega.util.PersonalIDFormatter;
  * @author laddi
  */
 public class StudentPlacings extends SchoolCommuneBlock {
-
+	
+	private boolean showChoicesTable = false;
 	/* (non-Javadoc)
 	 * @see se.idega.idegaweb.commune.school.presentation.SchoolCommuneBlock#init(com.idega.presentation.IWContext)
 	 */
 	public void init(IWContext iwc) throws Exception {
-		Table table = new Table(1,5);
+		Table table = new Table(1,7);
 		table.setCellpadding(0);
 		table.setCellspacing(0);
 		table.setWidth(getWidth());
@@ -47,7 +54,12 @@ public class StudentPlacings extends SchoolCommuneBlock {
 		if (getSession().getStudentID() != -1) {
 			table.add(getInformationTable(iwc), 1, 1);
 			table.add(getPlacingsTable(iwc), 1, 3);
-			table.add(back, 1, 5);
+			if (showChoicesTable) {
+				table.add(getChoicesTable(iwc), 1, 5);
+				table.add(back, 1, 7);
+			} else {
+				table.add(back, 1, 5);
+			}
 		}
 		else {
 			table.add(getLocalizedHeader("school.no_student_found","No student found."), 1, 1);
@@ -108,6 +120,94 @@ public class StudentPlacings extends SchoolCommuneBlock {
 		return table;
 	}
 
+	protected Table getChoicesTable(IWContext iwc) throws RemoteException {
+		Table table = new Table();
+		table.setWidth(getWidth());
+		table.setCellpadding(getCellpadding());
+		table.setCellspacing(getCellspacing());
+		table.setColumns(4);
+		table.setRowColor(1, getHeaderColor());
+		int column = 1;
+		int row = 1;
+		
+		CaseBusiness caseBusiness = (CaseBusiness) IBOLookup.getServiceInstance(iwc, CaseBusiness.class);
+		Locale currentLocale = iwc.getCurrentLocale();
+		
+		table.add(getLocalizedSmallHeader("school.school","Provider"), column++, row);
+		table.add(getLocalizedSmallHeader("school.status","Status"), column++, row);
+		table.add(getLocalizedSmallHeader("school.created","Created"), column++, row);
+		table.add(getLocalizedSmallHeader("school.grade","Grade"), column++, row);
+		table.add(getLocalizedSmallHeader("school.order","Order"), column++, row);
+		table.add(getLocalizedSmallHeader("school.language","Language"), column++, row);
+		
+		School provider =getSession().getSchool();
+		SchoolChoice choice;
+		Timestamp created;
+		IWTimestamp iwCreated;
+		int grade;
+		String langChoice;
+		String status;
+		int orderChoice;
+		Collection choices = getBusiness().getSchoolChoiceBusiness().findByStudentAndSchool(getSession().getStudentID(), getSession().getSchoolID());
+		Iterator iter = choices.iterator();
+		while (iter.hasNext()) {
+			++row;
+			column = 1;
+			choice = (SchoolChoice) iter.next();
+			status = caseBusiness.getLocalizedCaseDescription(choice, currentLocale);
+			created = choice.getCreated();
+			if (created != null) {
+				iwCreated = new IWTimestamp(created);
+			} else {
+				iwCreated = null;
+			}
+			try {
+				grade = choice.getGrade() +1;
+			} catch (Exception e) {
+				grade = -1;
+			}
+			orderChoice = choice.getChoiceOrder();
+			langChoice = choice.getLanguageChoice();
+			
+			if (row % 2 == 0)
+				table.setRowColor(row, getZebraColor1());
+			else
+				table.setRowColor(row, getZebraColor2());
+			
+			table.add(getSmallText(provider.getSchoolName()), column++, row);
+			table.add(getSmallText(status), column++, row);
+			if (iwCreated != null) {
+				table.add(getSmallText(iwCreated.getLocaleDate(currentLocale, IWTimestamp.SHORT)), column++, row);
+			} else {
+				table.add(getSmallText("-"), column++, row);
+			}
+			
+			if (grade != -1) {
+				table.add(getSmallText(Integer.toString(grade)), column++, row);
+			} else {
+				table.add(getSmallText("-"), column++, row);
+			}
+			
+			if (orderChoice != -1) {
+				table.add(getSmallText(Integer.toString(orderChoice)), column++, row);
+			} else {
+				table.add(getSmallText("-"), column++, row);
+			}
+			if (langChoice != null) {
+				table.add(getSmallText(langChoice), column++, row);
+			} else {
+				table.add(getSmallText("-"), column++, row);
+			}
+		}
+		table.setColumnAlignment(3, Table.HORIZONTAL_ALIGN_CENTER);
+		table.setColumnAlignment(4, Table.HORIZONTAL_ALIGN_CENTER);
+		table.setColumnAlignment(5, Table.HORIZONTAL_ALIGN_CENTER);
+		table.setColumnAlignment(6, Table.HORIZONTAL_ALIGN_CENTER);
+		
+		return table;
+	}
+	
+	
 	protected Table getInformationTable(IWContext iwc) throws RemoteException {
 		Table table = new Table();
 		table.setWidth(Table.HUNDRED_PERCENT);
@@ -176,5 +276,9 @@ public class StudentPlacings extends SchoolCommuneBlock {
 		}
 		
 		return table;
+	}
+	
+	public void setShowChoicesTable(boolean show) {
+		this.showChoicesTable = show;
 	}
 }
