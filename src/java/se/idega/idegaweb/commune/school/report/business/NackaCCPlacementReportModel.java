@@ -1,5 +1,5 @@
 /*
- * $Id: NackaCCPlacementReportModel.java,v 1.8 2004/01/23 12:57:14 anders Exp $
+ * $Id: NackaCCPlacementReportModel.java,v 1.9 2004/03/15 11:21:56 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -14,10 +14,10 @@ import java.rmi.RemoteException;
 /** 
  * Report model for child care placements in Nacka.
  * <p>
- * Last modified: $Date: 2004/01/23 12:57:14 $ by $Author: anders $
+ * Last modified: $Date: 2004/03/15 11:21:56 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.8 $
+ * @version $Revision: 1.9 $
  */
 public class NackaCCPlacementReportModel extends ReportModel {
 
@@ -153,7 +153,7 @@ public class NackaCCPlacementReportModel extends ReportModel {
 //		IWTimestamp now = IWTimestamp.RightNow();
 //		String date = now.getDateString("yy-MM-dd");
 		
-		headers[0] = new Header(KEY_NUMBER_OF_CHILDREN, Header.HEADERTYPE_COLUMN_NONLOCALIZED_HEADER);
+		headers[0] = new Header(KEY_NUMBER_OF_CHILDREN, Header.HEADERTYPE_COLUMN_HEADER);
 		
 		return headers;
 	}
