@@ -19,12 +19,7 @@ import se.idega.idegaweb.commune.school.data.*;
 import com.idega.block.process.data.Case;
 import com.idega.block.process.data.CaseStatus;
 import com.idega.block.school.business.SchoolBusiness;
-import com.idega.block.school.data.School;
-import com.idega.block.school.data.SchoolClassMember;
-import com.idega.block.school.data.SchoolClassMemberHome;
-import com.idega.block.school.data.SchoolHome;
-import com.idega.block.school.data.SchoolSeason;
-import com.idega.block.school.data.SchoolSeasonHome;
+import com.idega.block.school.data.*;
 import com.idega.core.data.*;
 import com.idega.core.data.Address;
 import com.idega.data.*;
@@ -80,6 +75,10 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		return (SchoolClassMemberHome) this.getIDOHome (SchoolClassMember.class);
 	}
 
+	public SchoolYearHome getSchoolYearHome () throws RemoteException {
+		return (SchoolYearHome) this.getIDOHome (SchoolYear.class);
+	}
+
 	public UserHome getUserHome () throws RemoteException {
 		return (UserHome) this.getIDOHome (User.class);
 	}
@@ -94,6 +93,14 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		CurrentSchoolSeason season = getCurrentSchoolSeasonHome().findCurrentSeason();
 		return getSchoolSeasonHome().findByPrimaryKey(season.getCurrent());
 	}
+
+	public int getPreviousSeasonId () throws RemoteException, FinderException {
+        final int currentSeasonId
+                = getCommuneSchoolBusiness().getCurrentSchoolSeasonID();
+        return getCommuneSchoolBusiness() .getPreviousSchoolSeasonID
+                (currentSeasonId);
+	}
+
 	public SchoolChoice getSchoolChoice(int schoolChoiceId) throws FinderException, RemoteException {
 		return getSchoolChoiceHome().findByPrimaryKey(new Integer(schoolChoiceId));
 	}
@@ -846,12 +853,19 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
     public SchoolChoiceReminderReceiver []
         findAllStudentsThatMustDoSchoolChoice ()
         throws RemoteException, FinderException {
+        com.idega.util.Timer timer = new com.idega.util.Timer ();
+        timer.start ();
         final Set ids = findStudentsInFinalClassesThatMustDoSchoolChoice ();
         System.err.println ("ids.size=" + ids.size ());
-        ids.addAll (findSchoolStartingStudents ());
+        ids.addAll (findSchoolStartersNotInChildCare ());
+        System.err.println ("ids.size=" + ids.size ());
+        ids.addAll (findChildCareStarters ());
         System.err.println ("ids.size=" + ids.size ());
         ids.removeAll (findStudentIdsWhoChosedForCurrentSeason ());
         System.err.println ("ids.size=" + ids.size ());
+        timer.stop ();
+        System.err.println ("Total search time=" + timer.getTime () + " msec");
+        timer.start ();
         final int idCount = ids.size ();
         final SchoolChoiceReminderReceiver [] receivers
                 = new SchoolChoiceReminderReceiver [idCount];
@@ -863,6 +877,9 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
             receivers [i] = new SchoolChoiceReminderReceiver
                     (familyLogic, userBusiness, id);
         }
+        timer.stop ();
+        System.err.println ("Found parents and addresses in "
+                            + timer.getTime () + " msec");
         return receivers;
     }
 
@@ -882,6 +899,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
         timer.stop ();
         System.err.println ("Found " + choices.size () + " chosedstudents in "
                             + timer.getTime () + " msec");
+        System.err.println (ids.toString ());
         return ids;
 	}
 
@@ -889,12 +907,12 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
         throws RemoteException, FinderException {
         com.idega.util.Timer timer = new com.idega.util.Timer ();
         timer.start ();
-        final Integer currentSeasonId
-                = (Integer) getCurrentSeason ().getPrimaryKey ();
-        System.err.println ("Current season=" + currentSeasonId);
+
+        final int previousSeasonId = getPreviousSeasonId ();
+        System.err.println ("Previous season=" + previousSeasonId);
         final Collection students
                 = getSchoolClassMemberHome().findAllBySeasonAndMaximumAge
-                (currentSeasonId.intValue (), 14);
+                (previousSeasonId, 14);
         final Set ids = new HashSet ();
         for (Iterator i = students.iterator (); i.hasNext ();) {
             final SchoolClassMember student = (SchoolClassMember) i.next ();
@@ -903,26 +921,63 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
         timer.stop ();
         System.err.println ("Found " + students.size () + " finalstudents in "
                             + timer.getTime () + " msec");
+        System.err.println (ids.toString ());
         return ids;        
     }
 
-    private Set findSchoolStartingStudents () throws RemoteException,
-                                                     FinderException {
+    private Set findSchoolStartersNotInChildCare ()throws RemoteException,
+                                                          FinderException {
         com.idega.util.Timer timer = new com.idega.util.Timer ();
         timer.start ();
+        final SchoolYear childCare = getSchoolYearHome ().findByYearName ("1");
         final int currentYear = Calendar.getInstance ().get (Calendar.YEAR);
-        final int minYear = currentYear - 7;
-        final int maxYear = currentYear - 6;
+        final int yearOfBirth = currentYear - childCare.getSchoolYearAge();
         final Collection students = getUserHome().findUsersByYearOfBirth
-                (minYear, maxYear);
+                (yearOfBirth, yearOfBirth);
+        final Set ids = new HashSet ();
+        final SchoolClassMemberHome classMemberHome
+                = getSchoolClassMemberHome ();
+        final int previousSeasonId = getPreviousSeasonId ();
+        for (Iterator i = students.iterator (); i.hasNext ();) {
+            final User student = (User) i.next ();
+            final Integer studentId = (Integer) student.getPrimaryKey ();
+            SchoolClassMember member = null;
+            try {
+                member = classMemberHome.findByUserAndSeason
+                        (studentId.intValue (), previousSeasonId);
+            } catch (Exception e) {
+                // not a school class member - handle in 'finally' clause
+            } finally {
+                if (null == member) {
+                    ids.add (studentId);
+                }
+            }
+        }
+        timer.stop ();
+        System.err.println ("Found " + ids.size () + " (" + students.size () + ") schoolstartersnotinchildcare in "
+                            + timer.getTime () + " msec (" + yearOfBirth + ")");
+        System.err.println (ids.toString ());
+        return ids;        
+    }
+
+    private Set findChildCareStarters () throws RemoteException,
+                                                FinderException {
+        com.idega.util.Timer timer = new com.idega.util.Timer ();
+        timer.start ();
+        final SchoolYear childCare = getSchoolYearHome ().findByYearName ("F");
+        final int currentYear = Calendar.getInstance ().get (Calendar.YEAR);
+        final int yearOfBirth = currentYear - childCare.getSchoolYearAge();
+        final Collection students = getUserHome().findUsersByYearOfBirth
+                (yearOfBirth, yearOfBirth);
         final Set ids = new HashSet ();
         for (Iterator i = students.iterator (); i.hasNext ();) {
             final User student = (User) i.next ();
             ids.add (student.getPrimaryKey ());
         }
         timer.stop ();
-        System.err.println ("Found " + students.size () + " startstudents in "
-                            + timer.getTime () + " msec (" + (currentYear - 6) + " - " + (currentYear - 7) + ")");
+        System.err.println ("Found " + students.size () + " childcarestarters in "
+                            + timer.getTime () + " msec (" + yearOfBirth + ")");
+        System.err.println (ids.toString ());
         return ids;        
     }
 
