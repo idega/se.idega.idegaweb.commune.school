@@ -1,5 +1,5 @@
 /*
- * $Id: PreparedQuery.java,v 1.3 2004/01/19 08:33:21 anders Exp $
+ * $Id: PreparedQuery.java,v 1.4 2004/01/19 09:43:52 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -27,10 +27,10 @@ import com.idega.block.school.data.SchoolSeason;
 /** 
  * Handles the SQL logic for school report calculations.
  * <p>
- * Last modified: $Date: 2004/01/19 08:33:21 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/19 09:43:52 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class PreparedQuery {
 
@@ -230,7 +230,7 @@ public class PreparedQuery {
 	 * Set select only compulsory high schools.
 	 */
 	public void setSchoolTypeCompulsoryHighSchool() {
-		String sql = " and cm.sch_school_type_id = 27";
+		String sql = "cm.sch_school_type_id = 27";
 		_sqlWhere.add(sql);
 		
 		_sqlFrom.put(CM, TABLE_CM);
@@ -347,10 +347,12 @@ public class PreparedQuery {
 	 * Set select only students born the specified year.
 	 */
 	public void setOnlyStudentsBorn(int year) {
-		String sql = "u.date_of_birth >= '" + year + "-01-01' and u.date_of_birth <= '" + year + "-12-31'";
+		String sql = "u.date_of_birth >= '" + year + "-01-01' and u.date_of_birth <= '" + year + "-12-31'" + 
+				" and cm.ic_user_id = u.ic_user_id";
 		_sqlWhere.add(sql);
 		
 		_sqlFrom.put(U, TABLE_U);
+		_sqlFrom.put(CM, TABLE_CM);
 	}
 	
 	/**
