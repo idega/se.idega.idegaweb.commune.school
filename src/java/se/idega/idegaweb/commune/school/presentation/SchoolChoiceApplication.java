@@ -54,6 +54,7 @@ import com.idega.presentation.ui.TextInput;
 import com.idega.user.business.UserBusiness;
 import com.idega.user.data.User;
 import com.idega.util.Age;
+import com.idega.util.IWTimestamp;
 import com.idega.util.PersonalIDFormatter;
 
 /**
@@ -135,6 +136,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 
 	private boolean hasPreviousSchool = false;
 	private boolean schoolChange = false;
+	private boolean canApply = false;
 	private Age age;
 
 	public void main(IWContext iwc) throws Exception {
@@ -142,13 +144,14 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		iwrb = getResourceBundle(iwc);
 		df = DateFormat.getDateInstance(df.SHORT, iwc.getCurrentLocale());
 		schBuiz = (SchoolChoiceBusiness) IBOLookup.getServiceInstance(iwc, SchoolChoiceBusiness.class);
+		canApply = checkCanApply(iwc);
 		control(iwc);
 	}
 
 	public void control(IWContext iwc) throws Exception {
 		//debugParameters(iwc);
 		String ID = iwc.getParameter(prmChildId);
-		if (iwc.isLoggedOn()) {
+		if (iwc.isLoggedOn() && canApply) {
 			if (ID != null) {
 				childId = Integer.parseInt(ID);
 				userbuiz = (UserBusiness) IBOLookup.getServiceInstance(iwc, UserBusiness.class);
@@ -216,8 +219,10 @@ public class SchoolChoiceApplication extends CommuneBlock {
 			else
 				add(iwrb.getLocalizedString("school.no_student_id_provided", "No student provided"));
 		}
-		else
+		else if (!iwc.isLoggedOn())
 			add(iwrb.getLocalizedString("school.need_to_be_logged_on", "You need to log in"));
+		else if (!canApply)
+			add(iwrb.getLocalizedString("school_choice.last_date_expired", "Time limits to apply expired"));
 	}
 
 	private boolean saveSchoolChoice(IWContext iwc) {
@@ -564,8 +569,8 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		DropdownMenu typeDrop = getTypeDrop(iwc, prmType);
 		typeDrop.setOnChange(getFilterCallerScript(iwc, prmType, prmFirstArea, prmFirstSchool, 1));
 
-		CheckBox chkSixYear = getCheckBox(prmSixYearCare, "true");
-		chkSixYear.setChecked(valSixyearCare);
+		CheckBox chkChildCare = getCheckBox(prmSixYearCare, "true");
+		chkChildCare.setChecked(valSixyearCare);
 
 		DropdownMenu txtLangChoice = (DropdownMenu) getStyledInterface(new DropdownMenu(prmLanguage));
 		txtLangChoice.addMenuElement("school.language_german", localize("school.language_german","German"));
@@ -614,6 +619,11 @@ public class SchoolChoiceApplication extends CommuneBlock {
 			table.add(txtLangChoice, 3, row);
 			table.mergeCells(3, row, 5, row++);
 		}
+		
+		table.setHeight(row++, 5);
+		table.mergeCells(1, row, 5, row);
+		table.add(chkChildCare, 1, row);
+		table.add(getSmallHeader(iwrb.getLocalizedString("school.child_care_requested", "Interested in after school child care")), 1, row);
 		
 		table.setWidth(1, "100");
 		table.setWidth(2, "8");
@@ -955,6 +965,24 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		return s.toString();
 	}
 
+	private boolean checkCanApply(IWContext iwc) throws RemoteException {
+		try {
+			SchoolSeason season = schBuiz.getCurrentSeason();
+			if (season != null) {
+				IWTimestamp dueDate = new IWTimestamp(season.getSchoolSeasonDueDate());
+				IWTimestamp dateNow = new IWTimestamp();
+				if (dateNow.isEarlierThan(dueDate))
+					return true;
+				else
+					return false;
+			}
+			return true;
+		}
+		catch (FinderException fe) {
+			return true;
+		}
+	}
+	
 	public void setAsAdminQuickChoice(boolean quick) {
 		this.quickAdmin = quick;
 	}

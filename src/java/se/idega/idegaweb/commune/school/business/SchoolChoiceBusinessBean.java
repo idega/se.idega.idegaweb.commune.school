@@ -135,12 +135,37 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	}
 	
 	public SchoolChoice createSchoolChoice(int userId, int childId, int current_school, int chosen_school, int grade, int choiceOrder, int method, int workSituation1, int workSituation2, String language, String message, java.sql.Timestamp choiceDate, boolean changeOfSchool, boolean keepChildrenCare, boolean autoAssign, boolean custodiansAgree, boolean schoolCatalogue, CaseStatus caseStatus, Case parentCase) throws CreateException, RemoteException, FinderException {
-		SchoolChoiceHome home = this.getSchoolChoiceHome();
-		SchoolChoice choice = home.create();
 		SchoolSeason season = null;
 		try {
-			choice.setOwner(getUser(userId));
 			season = getCurrentSeason();
+		}
+		catch(FinderException fex) {
+			season = null;
+		}
+
+		SchoolChoice choice = null;
+
+		if (season != null) {
+			Collection choices = this.findByStudentAndSeason(childId, ((Integer)season.getPrimaryKey()).intValue());
+			if (!choices.isEmpty()) {
+				Iterator iter = choices.iterator();
+				while (iter.hasNext()) {
+					SchoolChoice element = (SchoolChoice) iter.next();
+					if (element.getChoiceOrder() == choiceOrder) {
+						choice = element;
+						continue;	
+					}
+				}	
+			}
+		}
+		
+		if (choice == null) {
+			SchoolChoiceHome home = this.getSchoolChoiceHome();
+			choice = home.create();
+		}
+		
+		try {
+			choice.setOwner(getUser(userId));
 		}
 		catch (FinderException fex) {
 			throw new IDOCreateException(fex);
@@ -149,7 +174,6 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		if (current_school > 0)
 			choice.setCurrentSchoolId(current_school);
 		choice.setChosenSchoolId(chosen_school);
-		//if(grade >0 )
 		choice.setGrade(grade);
 		choice.setChoiceOrder(choiceOrder);
 		choice.setMethod(method);
