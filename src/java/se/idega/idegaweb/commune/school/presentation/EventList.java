@@ -46,7 +46,7 @@ import com.idega.util.IWTimestamp;
  * Copyright:    Copyright idega Software (c) 2002
  * Company:	idega Software
  * @author <a href="mailto:roar@idega.is">roar</a>
- * @version $Id: EventList.java,v 1.8 2004/01/13 10:11:57 jonas Exp $
+ * @version $Id: EventList.java,v 1.9 2004/01/13 13:09:24 jonas Exp $
  * @since 17.3.2003 
  */
 
@@ -322,18 +322,19 @@ public class EventList extends CommuneBlock {
 	/* creates the pdf file and returns the ICFile identifier */
 	private int createPrintableMessage(PrintMessage msg) {
 		try {
+			System.out.println("EventList message Case is \"" + msg.getParentCase() + "\"");
 			DocumentBusiness docBiz = getDocumentBusiness();
 			String userName = _iwc.getCurrentUser().getName();
-			String fileName = "schoolLetter-" + userName + "-" + msg.getPrimaryKey();
+			String fileName = "EventListLetter-" + msg.getNodeID() + "-" + _iwc.getCurrentLocaleId() + ".pdf";
 			ICFile file = null;
 			try {
 				file = getICFileHome().findByFileName(fileName);
+				System.out.println("found pdf file " + fileName);
 			} catch(FinderException e) {
 				// ok, just means we need to create this file
 			}
-			System.out.println("pdf filename is " + fileName);
 			if(file==null) {
-				System.out.println("creating new pdf (locale is " + _iwc.getCurrentLocale() + ")");
+				System.out.println("creating pdf file " + fileName);
 				return docBiz.writePDF(msg, _iwc.getCurrentUser(), fileName, _iwc.getCurrentLocale(), false);
 			} else {
 				System.out.println("Using existing pdf");
