@@ -1,5 +1,5 @@
 /*
- * $Id: NackaElementarySchoolPlacementReportModel.java,v 1.12 2004/02/26 08:02:03 anders Exp $
+ * $Id: NackaElementarySchoolPlacementReportModel.java,v 1.13 2004/02/26 08:25:27 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -22,10 +22,10 @@ import com.idega.block.school.data.SchoolArea;
 /** 
  * Report model for placements in Nacka elementary schools.
  * <p>
- * Last modified: $Date: 2004/02/26 08:02:03 $ by $Author: anders $
+ * Last modified: $Date: 2004/02/26 08:25:27 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.12 $
+ * @version $Revision: 1.13 $
  */
 public class NackaElementarySchoolPlacementReportModel extends ReportModel {
 
@@ -425,9 +425,8 @@ public class NackaElementarySchoolPlacementReportModel extends ReportModel {
 			query = new PreparedQuery(getConnection());
 			query.setSelectCountDistinctUsers();
 			query.setPlacements(rb.getSchoolSeasonId());
-			query.setFourSchoolTypes(); // parameter 1
-			query.setSchoolYearName(); // parameter 2
-			query.setSchool(); // parameter 3
+			query.setFourSchoolTypes(); // parameter 1-4
+			query.setSchool(); // parameter 5
 			query.prepare();
 			setQuery(QUERY_COUNT, query);
 		}
