@@ -280,7 +280,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		T.setHeight(row++, 12);
 
 		GenericButton button = (GenericButton) getButton(new GenericButton("submit",localize("save", "Save")));
-		button.setOnClick("javascript:MySubmit()");
+		button.setOnClick("javascript:MySubmit(this)");
 		
 		T.add(button, 1, row++);
 		T.add(new HiddenInput(prmAction, "false"));
@@ -421,8 +421,6 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		table.add(getSmallHeader(iwrb.getLocalizedString("school.name", "Name")+":"), 1, 1);
 		table.add(getSmallHeader(iwrb.getLocalizedString("school.personal_id", "Personal ID")+":"), 1, 2);
 		table.add(getSmallHeader(iwrb.getLocalizedString("school.address", "Address")+":"), 1, 3);
-		table.add(getSmallHeader(iwrb.getLocalizedString("school.custodians", "Custodians")+":"), 1, 4);
-		table.setVerticalAlignment(1, 4, Table.VERTICAL_ALIGN_TOP);
 
 		table.add(getSmallText(child.getNameLastFirst(true)), 3, 1);
 		String personalID = PersonalIDFormatter.format(child.getPersonalID(), iwc.getApplication().getSettings().getApplicationLocale());
@@ -444,9 +442,6 @@ public class SchoolChoiceApplication extends CommuneBlock {
 			while (iter.hasNext()) {
 				User parent = (User) iter.next();
 				String addr = userbuiz.getUsersMainAddress(parent).getStreetAddress();
-				table.add(getSmallText(parent.getNameLastFirst(true)), 3, 4);
-				if (iter.hasNext())
-					table.add(new Break(),3,4);
 
 				// checkiing for same parent address
 				showAgree = address.equalsIgnoreCase(addr);
@@ -605,19 +600,12 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		table.add(drpThirdArea, 3, row);
 		table.add(drpThirdSchool, 5, row++);
 
-		//if (schoolYear != null && schoolYear.getSchoolYearAge() == 5) {
+		if (schoolYear != null && schoolYear.getSchoolYearAge() == 6) {
 			table.setHeight(row++, 5);
 			table.add(getSmallHeader(iwrb.getLocalizedString("school.six_year_language", "Language")+":"), 1, row);
 			table.add(txtLangChoice, 3, row);
 			table.mergeCells(3, row, 5, row++);
-		//}
-		//if (age.getYears() == 6) {
-			table.setHeight(row++, 5);
-			table.add(chkSixYear, 1, row);
-			table.add(getSmallText(" " + iwrb.getLocalizedString("school.six_year_childcare", "I want my six years old to be within childcare")), 1, row);
-			table.setWidth(1, row, Table.HUNDRED_PERCENT);
-			table.mergeCells(1, row, 5, row++);
-		//}
+		}
 		
 		table.setWidth(1, "100");
 		table.setWidth(2, "8");
@@ -920,10 +908,10 @@ public class SchoolChoiceApplication extends CommuneBlock {
 
 	private String getMySubmitScript() {
 		StringBuffer s = new StringBuffer();
-		s.append("\n function MySubmit(){");
+		s.append("\n function MySubmit(input){");
 		s.append("\n\t if(checkApplication()) {");
-		s.append("\n\t\t document.").append(prmForm).append(".elements['").append(prmAction).append("'].value='true';");
-		s.append("\n\t\t document.").append(prmForm).append(".submit();");
+		s.append("\n\t\t findObj('").append(prmAction).append("').value='true';");
+		s.append("\n\t\t input.form.submit();");
 		s.append("\n\t }");
 		//s.append("\n\t else{");
 		//s.append("\n\t\t alert('").append(iwrb.getLocalizedString("school_choice.unfinished","You have to finish the application")).append("');");
