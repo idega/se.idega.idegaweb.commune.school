@@ -1,5 +1,5 @@
 /*
- * $Id: StudentAddressLabels.java,v 1.1 2004/03/17 13:03:02 anders Exp $
+ * $Id: StudentAddressLabels.java,v 1.2 2004/03/18 12:39:44 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -36,10 +36,10 @@ import com.idega.presentation.ui.SubmitButton;
 /** 
  * This idegaWeb block generates PDF files with student's addresses.
  * <p>
- * Last modified: $Date: 2004/03/17 13:03:02 $ by $Author: anders $
+ * Last modified: $Date: 2004/03/18 12:39:44 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class StudentAddressLabels extends SchoolCommuneBlock {
 
@@ -165,8 +165,10 @@ public class StudentAddressLabels extends SchoolCommuneBlock {
 		Form form = new Form();
 		SchoolGroupHandler sgh = new SchoolGroupHandler();
 		sgh.setName(PARAMETER_SCHOOL_CLASS_IDS);
+		sgh = (SchoolGroupHandler) getStyledInterface(sgh);
 		form.add(sgh);
 
+		form.add(Text.getBreak());
 		form.add(Text.getBreak());
 		
 		SubmitButton button = (SubmitButton) getButton(new SubmitButton(PARAMETER_CREATE_ADDRESS_LABELS, localize("school.continue", "Continue")));
