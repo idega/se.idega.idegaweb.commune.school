@@ -6,14 +6,20 @@
  */
 package se.idega.idegaweb.commune.message.presentation;
 
+import java.rmi.RemoteException;
 import java.text.DateFormat;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import se.idega.idegaweb.commune.message.data.Message;
+import javax.ejb.FinderException;
 
+import se.idega.idegaweb.commune.message.data.Message;
+import se.idega.idegaweb.commune.school.business.SchoolChoiceBusiness;
+import se.idega.idegaweb.commune.school.data.SchoolChoice;
+
+import com.idega.block.school.data.School;
 import com.idega.business.IBOLookup;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Table;
@@ -24,7 +30,7 @@ import com.idega.user.data.User;
 /**
  * @author Roar
  * In addition to being a regular MessageBox, AdminMessageBox views messages handled by 
- * the groups the user is member of and shows the owner of each message.
+ * the groups the user is member of and shows the school provider the message is sent to, if any.
  * 
  */
 public class AdminMessageBox extends MessageBox {
@@ -65,7 +71,7 @@ public class AdminMessageBox extends MessageBox {
 	 */
 	void addTableHeader(Table messageTable) {
 		super.addTableHeader(messageTable);
-		messageTable.add(getSmallHeader(localize("message.owner", "Owner")), 3, 1);
+		messageTable.add(getSmallHeader(localize("message.provider", "Provider")), 3, 1);
 	}	
 	
 	/**
@@ -73,14 +79,28 @@ public class AdminMessageBox extends MessageBox {
 	 */	
 	void addMessageToTable(IWContext iwc, Table messageTable, Message msg, int row, DateFormat dateFormat) throws Exception{
 		super.addMessageToTable(iwc, messageTable, msg, row, dateFormat);
-		messageTable.add(msg.getOwner().getName(), 3, row);		
+		SchoolChoice sc = null;
+		try{
+			sc = getSchoolChoiceBusiness().getSchoolChoice(msg.getNodeID());
+		} catch (FinderException ex){
+			//ignore
+		}
+		
+		if (sc != null){
+			School provider = sc.getChosenSchool();
+			messageTable.add(provider.getName(), 3, row);
+		}
 	}
+	
+	public SchoolChoiceBusiness getSchoolChoiceBusiness() throws RemoteException {
+		return (SchoolChoiceBusiness) IBOLookup.getServiceInstance(getIWApplicationContext(), SchoolChoiceBusiness.class);	
+	}	
 	
 	/**
 	 * @see MessageBox
 	 */	
 	int getDeleteColumn(){
-		return 4;
+		return super.getDeleteColumn() + 1;
 	}
 	
 }
