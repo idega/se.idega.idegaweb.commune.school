@@ -1,6 +1,8 @@
 package se.idega.idegaweb.commune.school.business;
 
 import se.idega.idegaweb.commune.school.data.*;
+import com.idega.block.school.data.SchoolSeason;
+import com.idega.block.school.data.SchoolSeasonHome;
 
 import com.idega.business.IBOServiceBean;
 import com.idega.data.*;
@@ -21,8 +23,21 @@ import java.util.*;
 
 public class SchoolChoiceBusinessBean extends com.idega.block.process.business.CaseBusinessBean implements SchoolChoiceBusiness{
 
-  private SchoolChoiceHome getSchoolChoiceHome() throws java.rmi.RemoteException{
+  public SchoolChoiceHome getSchoolChoiceHome() throws java.rmi.RemoteException{
     return (SchoolChoiceHome) this.getIDOHome(SchoolChoice.class);
+  }
+
+  public CurrentSchoolSeasonHome getCurrentSchoolSeasonHome() throws java.rmi.RemoteException{
+    return (CurrentSchoolSeasonHome) this.getIDOHome(CurrentSchoolSeason.class);
+  }
+
+  public SchoolSeasonHome getSchoolSeasonHome()throws java.rmi.RemoteException{
+    return (SchoolSeasonHome) this.getIDOHome(SchoolSeason.class);
+  }
+
+  public SchoolSeason getCurrentSeason()throws java.rmi.RemoteException,javax.ejb.FinderException{
+    CurrentSchoolSeason season =  getCurrentSchoolSeasonHome().findCurrentSeason();
+    return getSchoolSeasonHome().findByPrimaryKey(season.getCurrent());
   }
 
   public SchoolChoice getSchoolChoice(int schoolChoiceId) throws FinderException,RemoteException {
@@ -137,6 +152,32 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
       throw new IDOCreateException(idos);
     }
     return choice;
+  }
+
+  public void createCurrentSchoolSeason(Integer newKey,Integer oldKey)throws java.rmi.RemoteException{
+      CurrentSchoolSeasonHome shome = getCurrentSchoolSeasonHome();
+      CurrentSchoolSeason season;
+      try{
+        season = shome.findByPrimaryKey(oldKey);
+        if(oldKey.intValue()!=newKey.intValue()){
+          season.remove();
+          season = shome.create();
+        }
+      }
+      catch(javax.ejb.RemoveException rme){throw new java.rmi.RemoteException(rme.getMessage());}
+      catch(javax.ejb.CreateException cre){throw new java.rmi.RemoteException(cre.getMessage());}
+      catch(javax.ejb.FinderException fe){
+        //fe.printStackTrace();
+        try {
+          season = shome.create();
+        }
+        catch(javax.ejb.CreateException ce){
+          //ce.printStackTrace();
+          throw new java.rmi.RemoteException(ce.getMessage());
+        }
+      }
+      season.setCurrent(newKey);
+      season.store();
   }
 
 }
