@@ -703,7 +703,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		s.append("\n\t }");
 		
 		// year check
-		s.append("\n\t else if(year <= 0){");
+		s.append("\n\t else if(year <= 0 && school > 0){");
 		String msg2 = iwrb.getLocalizedString("school_choice.must_set_grade","You must provide current shool year");
 		s.append("\n\t\t\t alert('").append(msg2).append("');");
 		s.append("\n\t\t ");
