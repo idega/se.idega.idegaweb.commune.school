@@ -1,5 +1,5 @@
 /*
- * $Id: ReportBlock.java,v 1.17 2004/01/23 11:41:50 anders Exp $
+ * $Id: ReportBlock.java,v 1.18 2004/01/23 12:34:40 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -29,10 +29,10 @@ import com.idega.presentation.ui.PrintButton;
 /** 
  * This is the base class for school report blocks.
  * <p>
- * Last modified: $Date: 2004/01/23 11:41:50 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/23 12:34:40 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.17 $
+ * @version $Revision: 1.18 $
  */
 public class ReportBlock extends CommuneBlock {
 
@@ -358,6 +358,8 @@ public class ReportBlock extends CommuneBlock {
 				for (int cellColumn = 0; cellColumn < _reportModel.getColumnSize(); cellColumn++) {
 					Cell cell = _reportModel.getCell(cellRow, cellColumn);
 					Text text = null;
+					String align = Table.HORIZONTAL_ALIGN_RIGHT;
+					
 					switch (cell.getCellType()) {
 						case Cell.CELLTYPE_PERCENT:
 							String s = formatter.format(cell.getFloatValue());
@@ -366,6 +368,7 @@ public class ReportBlock extends CommuneBlock {
 						case Cell.CELLTYPE_ROW_HEADER:
 							s = (String) cell.getStringValue();
 							text = getSmallHeader(s);
+							align = Table.HORIZONTAL_ALIGN_LEFT;
 							break;
 						default:
 							text = getSmallText("" + cell.getValue());
@@ -373,7 +376,7 @@ public class ReportBlock extends CommuneBlock {
 					}
 					int tableColumn = cellColumn + 2;
 					table.add(text, tableColumn, tableRow);
-					table.setAlignment(tableColumn, tableRow, Table.HORIZONTAL_ALIGN_RIGHT);
+					table.setAlignment(tableColumn, tableRow, align);
 				}
 				cellRow++;
 				tableRow++;

@@ -1,5 +1,5 @@
 /*
- * $Id: NackaHighSchoolStudyPathPlacementReportModel.java,v 1.9 2004/01/23 11:55:00 anders Exp $
+ * $Id: NackaHighSchoolStudyPathPlacementReportModel.java,v 1.10 2004/01/23 12:31:57 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -21,10 +21,10 @@ import com.idega.block.school.data.SchoolStudyPath;
 /** 
  * Report model for high school placements for all study paths.
  * <p>
- * Last modified: $Date: 2004/01/23 11:55:00 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/23 12:31:57 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.9 $
+ * @version $Revision: 1.10 $
  */
 public class NackaHighSchoolStudyPathPlacementReportModel extends ReportModel {
 
@@ -164,7 +164,9 @@ public class NackaHighSchoolStudyPathPlacementReportModel extends ReportModel {
 					String studyPathCode = studyPath.getCode();
 					Object rowParameter = studyPathCode;
 					String schoolYear = columnParameter;
-					if (columnMethod == COLUMN_METHOD_SCHOOL_YEAR) {
+					if (columnMethod == COLUMN_METHOD_COMPULSORY_SCHOOL_YEAR) {
+						columnMethod = COLUMN_METHOD_SCHOOL_YEAR;
+					} else if (columnMethod == COLUMN_METHOD_SCHOOL_YEAR) {
 						if (studyPathCode.length() > 3 && studyPathCode.substring(0, 3).equals("GYS")) {
 							columnMethod = COLUMN_METHOD_COMPULSORY_SCHOOL_YEAR;
 							schoolYear = "GS" + columnParameter; 
