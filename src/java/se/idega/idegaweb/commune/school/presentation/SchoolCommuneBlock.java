@@ -6,16 +6,12 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
-
 import javax.ejb.FinderException;
-
-import se.idega.idegaweb.commune.accounting.presentation.OperationalFieldsMenu;
 import se.idega.idegaweb.commune.care.business.AccountingSession;
 import se.idega.idegaweb.commune.presentation.CommuneBlock;
 import se.idega.idegaweb.commune.school.business.SchoolClassWriter;
 import se.idega.idegaweb.commune.school.business.SchoolCommuneBusiness;
 import se.idega.idegaweb.commune.school.business.SchoolCommuneSession;
-
 import com.idega.block.school.business.SchoolBusiness;
 import com.idega.block.school.business.SchoolClassComparator;
 import com.idega.block.school.business.SchoolYearComparator;
@@ -39,7 +35,6 @@ import com.idega.presentation.Table;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.DropdownMenu;
-import com.idega.presentation.ui.RadioButton;
 import com.idega.presentation.ui.Window;
 /**
  * @author Laddi
@@ -51,8 +46,6 @@ import com.idega.presentation.ui.Window;
  */
 public abstract class SchoolCommuneBlock extends CommuneBlock {
 
-	private final static String PARAM_BUNADM = "PARAM_BUNADM";
-	
 	private SchoolCommuneBusiness business;
 	protected SchoolCommuneSession session;
 	private AccountingSession accountingSession;
@@ -61,7 +54,7 @@ public abstract class SchoolCommuneBlock extends CommuneBlock {
 	private int _schoolSeasonID = -1;
 	private int _schoolYearID = -1;
 	private int _schoolClassID = -1;
-	private boolean _centralAdmin = false;
+	protected boolean _centralAdmin = false;
 	
 	public static final String IS_SPECIALLY_PLACED_COLOR = "#EAF1FF";
 	public static final String HAS_SCHOOL_CHOICE_COLOR = "#EAFFEE";
@@ -83,8 +76,7 @@ public abstract class SchoolCommuneBlock extends CommuneBlock {
 	
 	public abstract void init(IWContext iwc) throws Exception;
 	
-	private void initialize(IWContext iwc) throws RemoteException {
-		_centralAdmin = iwc.getParameter(PARAM_BUNADM) != null && iwc.getParameter(PARAM_BUNADM).equals("true"); 
+	protected void initialize(IWContext iwc) throws RemoteException {
 		_schoolID = session.getSchoolID();	
 		_schoolSeasonID = session.getSchoolSeasonID();
 		_schoolYearID = session.getSchoolYearID();
@@ -125,89 +117,6 @@ public abstract class SchoolCommuneBlock extends CommuneBlock {
 		return accountingSession;
 	}
 		
-	protected Table getNavigationTable(boolean showClass) throws RemoteException {
-		return getNavigationTable(showClass, false, false);
-	}
-		
-	protected Table getNavigationTable(boolean showClass, boolean multipleSchools) throws RemoteException {
-		return getNavigationTable(showClass, multipleSchools, false);
-	}
-	protected Table getNavigationTable(boolean showClass, boolean multipleSchools, boolean centralizedAdminChoice) throws RemoteException {
-		return getNavigationTable(showClass, multipleSchools, centralizedAdminChoice, getAccountingSession().getOperationalField());
-	}
-	
-	protected Table getNavigationTable(boolean showClass, boolean multipleSchools, boolean centralizedAdminChoice, String category) throws RemoteException {
-		Table table = new Table(9,2);
-		table.setCellpadding(0);
-		table.setCellspacing(0);
-		table.setWidth(3,"8");
-		int row = 1;
-		
-		if (multipleSchools) {
-			table.add(getSmallHeader(localize("school.opfield", "Operationalfield: ")), 1, row);
-			table.mergeCells(2, row, 7, row);
-			table.add(new OperationalFieldsMenu(), 2, row++);
-			table.setHeight(row++, 15);			
-			
-			if (centralizedAdminChoice){
-				table.resize(9, row + 2);
-				table.add(getSmallHeader(localize("school.bun_adm","Show only BUN administrated schools")+":"+Text.NON_BREAKING_SPACE),1,row);
-//				table.mergeCells(2, row, 8, row);
-				
-		
-				RadioButton rb1 = new RadioButton(PARAM_BUNADM, ""+true);
-				RadioButton rb2 = new RadioButton(PARAM_BUNADM, ""+false);		
-						
-				if (_centralAdmin){
-					rb1.setSelected();
-				} else{
-					rb2.setSelected();
-				}
-
-				rb1.setToSubmit();
-				rb2.setToSubmit();
-				table.add(rb1,2,row);
-				table.add(getSmallHeader(localize("school.yes","Yes")+Text.NON_BREAKING_SPACE),2,row);
-					
-				table.setNoWrap(3, row);
-				table.add(rb2,3,row);
-				table.add(getSmallHeader(localize("school.no","No")+Text.NON_BREAKING_SPACE),3,row);
-
-				++row;
-				table.setHeight(row, "2");
-				++row;			
-		
-			}
-						
-			table.resize(9, row + 2);
-			table.add(getSmallHeader(localize("school.school_list","School")+":"+Text.NON_BREAKING_SPACE),1,row);
-			table.mergeCells(2, row, 8, row);
-			table.add(getSchools(_centralAdmin, category),2,row);
-			++row;
-			table.setHeight(row, "2");
-			++row;
-		}
-
-		table.add(getSmallHeader(localize("school.season","Season")+":"+Text.NON_BREAKING_SPACE),1,row);
-		DropdownMenu schSeas = getSchoolSeasons();
-		table.add(schSeas,2,row);
-		table.add(getSmallHeader(localize("school.year","Year")+":"+Text.NON_BREAKING_SPACE),4,row);
-		DropdownMenu schYears = getSchoolYears();
-			schYears.addMenuElementFirst("-1","");
-		table.add(schYears,5,row);
-		if (showClass) {
-//			table.resize(8, row);
-			table.setWidth(6, "10");
-			table.add(getSmallHeader(localize("school.class","Class")+":"+Text.NON_BREAKING_SPACE),7,row);
-			DropdownMenu schClasses = getSchoolClasses();
-			schClasses.addMenuElementFirst("-1","");
-			table.add(schClasses, 8, row);
-		}
-		
-		table.setColumnWidth(9, "10");
-		
-		return table;
-	}
 	
 
 
