@@ -175,7 +175,6 @@ public class StudentPlacings extends SchoolCommuneBlock {
 		SchoolSeason season;
 		Timestamp created;
 		IWTimestamp iwCreated;
-		int grade;
 		String strGrade;
 		String langChoice;
 		String status;
@@ -195,14 +194,9 @@ public class StudentPlacings extends SchoolCommuneBlock {
 				iwCreated = null;
 			}
 			try {
-				grade = choice.getGrade() +1;
-				if (grade != 0) {
-					strGrade = getBusiness().getSchoolYear(grade).getSchoolYearName();
-				} else {
-					strGrade = null;
-				}
-			} catch (Exception e) {
-				grade = -1;
+				strGrade = choice.getSchoolYear().getSchoolYearName();
+			}
+			catch (Exception e) {
 				strGrade = null;
 			}
 			orderChoice = choice.getChoiceOrder();

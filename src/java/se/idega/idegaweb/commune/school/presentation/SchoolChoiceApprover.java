@@ -188,7 +188,7 @@ public class SchoolChoiceApprover extends CommuneBlock {
 			String sid = choice.getPrimaryKey().toString();
 			child = userBean.getUser(choice.getChildId());
 			T.add(getPupilInfoLink(child,choice), 1, row);
-			T.add(tf.format(choice.getGrade()), 2, row);
+			//T.add(tf.format(choice.getGrade()), 2, row);
 			T.add(tf.format(df.format(choice.getSchoolChoiceDate())), 3, row);
 			if (choice.getChangeOfSchool()) {
 				School changeFromSchool = schoolBean.getSchool(new Integer(choice.getCurrentSchoolId()));
@@ -348,7 +348,7 @@ public class SchoolChoiceApprover extends CommuneBlock {
 			row++;
 			if(choice!=null){
 				T.add(tf.format(iwrb.getLocalizedString("school_choice.grade","Grade"),TextFormat.HEADER),1,row);
-				T.add(tf.format(choice.getGrade()),2,row);
+				//T.add(tf.format(choice.getGrade()),2,row);
 				row++;
 				T.add(tf.format(iwrb.getLocalizedString("school_choice.choice_date", "Choice date"),TextFormat.HEADER),1,row);
 				T.add(tf.format(df.format( choice.getSchoolChoiceDate() ) ),2,row);

@@ -20,6 +20,7 @@ public interface SchoolCommuneBusiness extends com.idega.business.IBOService,com
  public boolean canMarkSchoolClass(com.idega.block.school.data.SchoolClass p0,java.lang.String p1)throws java.rmi.RemoteException, java.rmi.RemoteException;
  public void finalizeGroup(com.idega.block.school.data.SchoolClass p0,java.lang.String p1,java.lang.String p2, boolean confirmation)throws java.rmi.RemoteException, java.rmi.RemoteException;
  public int getChosenSchoolID(java.util.Collection p0)throws java.rmi.RemoteException, java.rmi.RemoteException;
+ public com.idega.block.school.data.SchoolSeason getCurrentSchoolSeason()throws javax.ejb.FinderException, java.rmi.RemoteException;
  public int getCurrentSchoolSeasonID()throws java.rmi.RemoteException, java.rmi.RemoteException;
  public int getGradeForYear(int p0)throws java.rmi.RemoteException, java.rmi.RemoteException;
  public java.util.Collection getPreviousSchoolClasses(com.idega.block.school.data.School p0,com.idega.block.school.data.SchoolSeason p1,com.idega.block.school.data.SchoolYear p2)throws java.rmi.RemoteException, java.rmi.RemoteException;
