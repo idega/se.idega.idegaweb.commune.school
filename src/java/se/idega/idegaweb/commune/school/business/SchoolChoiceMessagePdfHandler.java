@@ -6,7 +6,7 @@ package se.idega.idegaweb.commune.school.business;
 
 
 import java.rmi.RemoteException;
-import java.text.DateFormat;
+
 import java.util.HashMap;
 import java.util.Locale;
 
@@ -20,10 +20,10 @@ import com.idega.business.IBOLookup;
 import com.idega.business.IBOLookupException;
 import com.idega.user.data.User;
 import com.idega.idegaweb.IWBundle;
-import com.idega.idegaweb.IWResourceBundle;
+
 import com.lowagie.text.Document;
 import com.lowagie.text.ElementTags;
-import com.lowagie.text.Paragraph;
+
 import com.lowagie.text.xml.SAXmyHandler;
 import com.lowagie.text.xml.XmlPeer;
 
