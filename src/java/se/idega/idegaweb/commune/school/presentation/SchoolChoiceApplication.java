@@ -573,8 +573,10 @@ public class SchoolChoiceApplication extends CommuneBlock {
 					myForm.setAssociatedFormScript(initScript);
 				}
 
+				String initFunction = getInitFilterCallerScript(prmType, prmFirstArea, prmFirstSchool, valType, valFirstArea, valFirstSchool, false, 1);
 				String initFunction2 = getInitFilterCallerScript(prmType, prmSecondArea, prmSecondSchool, valType, valSecondArea, valSecondSchool, false, 2);
 				String initFunction3 = getInitFilterCallerScript(prmType, prmThirdArea, prmThirdSchool, valType, valThirdArea, valThirdSchool, false, 3);
+
 				if (!schoolChange) {
 					initScript.addFunction("sch_init3", initFunction3);
 					getParentPage().setOnLoad(initFunction3);
@@ -582,13 +584,14 @@ public class SchoolChoiceApplication extends CommuneBlock {
 					getParentPage().setOnLoad(initFunction2);
 				}
 				
-				String initFunction = getInitFilterCallerScript(prmType, prmFirstArea, prmFirstSchool, valType, valFirstArea, valFirstSchool, false, 1);
 				initScript.addFunction("sch_init", initFunction);
 				getParentPage().setOnLoad(initFunction);
 				
 				if (!schoolChange) {
 					initScript.addFunction("sch_init3", initFunction3);
-					getParentPage().setOnLoad(initFunction3);
+				}
+				else {
+					initScript.addFunction("sch_init", initFunction);
 				}
 			}
 		}
