@@ -260,12 +260,12 @@ public class UserCases extends CommuneBlock {
 			}
 		}
 		
-		String caseCode = useCase.getCode(); //Malin
+		String caseCode = useCase.getCode(); 
 		
 		String caseCodeAS = new AfterSchoolChoiceBMPBean().getCaseCodeKey();
 		String caseCodeSc = new SchoolChoiceBMPBean().getCaseCodeKey();
 		
-		//String caseStatusOpen = caseBusiness.getCaseStatusOpen().toString();
+		
 		CaseStatus caseStatusOpen = caseBusiness.getCaseStatusOpen();
 		CaseStatus caseStatusPlaced = caseBusiness.getCaseStatusPlaced();
 		SchoolChoiceBusiness schBuiz;
