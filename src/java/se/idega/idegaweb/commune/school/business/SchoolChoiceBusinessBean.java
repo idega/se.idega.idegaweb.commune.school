@@ -5,6 +5,7 @@ import is.idega.idegaweb.member.business.MemberFamilyLogic;
 import java.io.*;
 import java.rmi.RemoteException;
 import java.text.MessageFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import javax.ejb.CreateException;
@@ -29,8 +30,11 @@ import com.idega.user.data.Group;
 import com.idega.user.data.User;
 import com.idega.user.data.UserHome;
 import com.idega.util.IWTimestamp;
+import com.lowagie.text.Chunk;
 import com.lowagie.text.Document;
 import com.lowagie.text.Element;
+import com.lowagie.text.Font;
+import com.lowagie.text.FontFactory;
 import com.lowagie.text.Image;
 import com.lowagie.text.PageSize;
 import com.lowagie.text.Paragraph;
@@ -48,6 +52,12 @@ import com.lowagie.text.pdf.*;
  */
 public class SchoolChoiceBusinessBean extends com.idega.block.process.business.CaseBusinessBean implements SchoolChoiceBusiness, com.idega.block.process.business.CaseBusiness {
 	public final static String SCHOOL_CHOICE_CASECODE = "MBSKOLV";
+    private final static int REMINDER_FONTSIZE = 12;
+    private final static Font SERIF_FONT
+        = FontFactory.getFont (FontFactory.TIMES, REMINDER_FONTSIZE);
+    private final static Font SANSSERIF_FONT
+        = FontFactory.getFont (FontFactory.HELVETICA, REMINDER_FONTSIZE - 1);
+
 	public String getBundleIdentifier() {
 		return se.idega.idegaweb.commune.presentation.CommuneBlock.IW_BUNDLE_IDENTIFIER;
 	}
@@ -758,30 +768,34 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
             final PdfPCell emptyCell = new PdfPCell (new Phrase (""));
             emptyCell.setBorder (0);
             emptyCell.setNoWrap (true);
-            final Calendar today = Calendar.getInstance ();
-            final int month = today.get (Calendar.MONTH) + 1;
-            final int day = today.get (Calendar.DATE);
-            final String date = today.get (Calendar.YEAR)
-                    + (month < 10 ? "-0" : "-") + month
-                    + (day < 10 ? "-0" : "-") + day;
+            final String rawReminderString = reminder.getText ();
+            final Chunk subjectChunk = getSubjectChunk (rawReminderString);
+            final Chunk bodyChunk = getBodyChunk (rawReminderString);
             final Phrase reminderPhrase = new Phrase (mmToPoints (20),
-                                                      reminder.getText ());
+                                                      subjectChunk);
+            reminderPhrase.add (bodyChunk);
             final PdfPCell reminderCell = new PdfPCell (reminderPhrase);
             reminderCell.setBorder (0);
             reminderCell.setVerticalAlignment (Element.ALIGN_MIDDLE);
-            reminderCell.setMinimumHeight (mmToPoints (205));
+            reminderCell.setMinimumHeight (mmToPoints (150));
             final PdfPTable reminderText = new PdfPTable (1);
             reminderText.setWidthPercentage (100f);
             reminderText.addCell (reminderCell);
+            final PdfPCell spaceCell = new PdfPCell (new Phrase (" "));
+            spaceCell.setBorder (0);
+            spaceCell.setNoWrap (true);
+            spaceCell.setMinimumHeight (mmToPoints (65));
+            PdfPTable spaceTable = new PdfPTable (1);
+            spaceTable.addCell (spaceCell);
             final PdfPTable footer
                     = new PdfPTable (new float [] {1, 1, 1.5f, 1});
             footer.getDefaultCell ().setBorder (0);
             footer.setWidthPercentage (100f);
-            footer.addCell ("Postadress:\nNacka Kommun\n131 81 Nacka");
-            footer.addCell ("Besöksadress:\nStadshuset\nGranitvägen 15\nNacka");
-            footer.addCell ("Tel växel:\n718 80 00\n"
-                            + "Hemsida:\nwww.nacka24.nacka.se");
-            footer.addCell ("Organisationsnr\n212000-0167");
+            footer.addCell (new Phrase (new Chunk ("Postadress:\nNacka Kommun\n131 81 Nacka", SANSSERIF_FONT)));
+            footer.addCell (new Phrase (new Chunk ("Besöksadress:\nStadshuset\nGranitvägen 15\nNacka", SANSSERIF_FONT)));
+            footer.addCell (new Phrase (new Chunk ("Tel växel:\n718 80 00\n"
+                            + "Hemsida:\nwww.nacka24.nacka.se", SANSSERIF_FONT)));
+            footer.addCell (new Phrase (new Chunk ("Organisationsnr:\n212000-0167", SANSSERIF_FONT)));
             final String logoPath = getIWApplicationContext().getApplication()
                     .getBundle("se.idega.idegaweb.commune")
                     .getResourcesRealPath() + "/shared/nacka_logo.jpg";
@@ -801,15 +815,6 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
             logoCell.setBorder (0);
             for (int i = 0; i < receivers.length; i++) {
                 if (i != 0) { document.newPage (); }
-                final SchoolChoiceReminderReceiver receiver = receivers [i];
-                final String longSsn = receiver.getSsn ();
-                final String ssn = longSsn.substring (2, 8) + "-"
-                        + longSsn.substring (8);
-                final String address = receiver.getParentName () + "\n"
-                        + receiver.getStreetAddress () + "\n"
-                        + receiver.getPostalAddress () + "\n"
-                        + "\nVårdnadshavare för:\n" + ssn + " "
-                        + receiver.getStudentName ();
                 final PdfPTable header
                         = new PdfPTable (new float [] {1, 1});
                 header.setWidthPercentage (100f);
@@ -820,16 +825,17 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
                 defaultCell.setNoWrap (true);
                 defaultCell.setVerticalAlignment (Element.ALIGN_MIDDLE);
                 header.addCell (logoCell);
-                header.addCell (date);
+                header.addCell (new Phrase (getDateChunk ()));
                 header.addCell (emptyCell);
-                header.addCell (address);
+                header.addCell (new Phrase (getReceiverChunk (receivers [i])));
                 header.addCell (emptyCell);
                 document.add (header);
-                document.add(reminderText);
+                document.add (reminderText);
+                document.add (spaceTable);
                 final PdfContentByte cb = writer.getDirectContent();
                 cb.setLineWidth (1);
-                cb.moveTo (mmToPoints(30), mmToPoints(32));
-                cb.lineTo (mmToPoints(180), mmToPoints(32));
+                cb.moveTo (mmToPoints(30), mmToPoints(22));
+                cb.lineTo (mmToPoints(180), mmToPoints(22));
                 cb.stroke (); 
                 document.add (footer);
             }
@@ -856,6 +862,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
         throws RemoteException, FinderException {
         com.idega.util.Timer timer = new com.idega.util.Timer ();
         timer.start ();
+
         final Set ids = findStudentsInFinalClassesThatMustDoSchoolChoice ();
         System.err.println ("ids.size=" + ids.size ());
         ids.addAll (findSchoolStartersNotInChildCare ());
@@ -867,6 +874,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
         timer.stop ();
         System.err.println ("Total search time=" + timer.getTime () + " msec");
         timer.start ();
+
         final int idCount = ids.size ();
         final Map receivers = new TreeMap ();
         final Iterator iter = ids.iterator ();
@@ -979,6 +987,39 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
         System.err.println ("Found " + students.size () + " childcarestarters in "
                             + timer.getTime () + " msec (" + yearOfBirth + ")");
         return ids;        
+    }
+
+    private static Chunk getSubjectChunk (final String rawString) {
+        final int newlineIndex = rawString.indexOf ('\n');
+        final Font font = FontFactory.getFont (FontFactory.HELVETICA_BOLD,
+                                               REMINDER_FONTSIZE);
+        return new Chunk (newlineIndex != -1 ? rawString.substring
+                          (0, newlineIndex) : "", font);
+    }
+
+    private static Chunk getBodyChunk (final String rawString) {
+        final int newlineIndex = rawString.indexOf ('\n');
+        final String bodyString
+                = rawString.substring (newlineIndex != -1 ? newlineIndex : 0);
+        return new Chunk (bodyString, SERIF_FONT);
+    }
+
+    private static Chunk getReceiverChunk
+        (final SchoolChoiceReminderReceiver receiver) {
+        final String longSsn = receiver.getSsn ();
+        final String ssn = longSsn.substring (2, 8) + "-"
+                + longSsn.substring (8);
+        final String address = receiver.getParentName () + "\n"
+                + receiver.getStreetAddress () + "\n"
+                + receiver.getPostalAddress () + "\n"
+                + "\nVårdnadshavare för:\n" + ssn + " "
+                + receiver.getStudentName ();
+        return new Chunk (address, SERIF_FONT);
+    }
+
+    private static Chunk getDateChunk () {
+        final SimpleDateFormat formatter = new SimpleDateFormat ("yyyy-MM-dd");
+        return new Chunk (formatter.format(new Date ()), SERIF_FONT);
     }
 
     private static float mmToPoints (final float mm) {
