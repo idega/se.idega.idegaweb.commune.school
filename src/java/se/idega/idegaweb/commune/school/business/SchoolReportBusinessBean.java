@@ -105,6 +105,7 @@ public class SchoolReportBusinessBean extends IBOSessionBean implements SchoolRe
 		
 		ReportableField name = new ReportableField(FIELD_NAME, String.class);
 		name.setLocalizedName(getLocalizedString(FIELD_NAME, "Name"), currentLocale);
+		name.setMaxNumberOfCharacters(50);
 		if (displayColumn(FIELD_NAME)) {
 			_fields.add(name);
 			reportCollection.addField(name);
@@ -112,6 +113,7 @@ public class SchoolReportBusinessBean extends IBOSessionBean implements SchoolRe
 		
 		ReportableField address = new ReportableField(FIELD_ADDRESS, String.class);
 		address.setLocalizedName(getLocalizedString(FIELD_ADDRESS, "Address"), currentLocale);
+		address.setMaxNumberOfCharacters(30);
 		if (displayColumn(FIELD_ADDRESS)) {
 			_fields.add(address);
 			reportCollection.addField(address);
@@ -133,6 +135,7 @@ public class SchoolReportBusinessBean extends IBOSessionBean implements SchoolRe
 		
 		ReportableField email = new ReportableField(FIELD_EMAIL, String.class);
 		email.setLocalizedName(getLocalizedString(FIELD_EMAIL, "E-mail"), currentLocale);
+		email.setMaxNumberOfCharacters(40);
 		if (displayColumn(FIELD_EMAIL)) {
 			_fields.add(email);
 			reportCollection.addField(email);
@@ -168,6 +171,7 @@ public class SchoolReportBusinessBean extends IBOSessionBean implements SchoolRe
 		
 		ReportableField swedishLanguage = new ReportableField(FIELD_SWEDISH_AS_SECOND_LANGUAGE, String.class);
 		swedishLanguage.setLocalizedName(getLocalizedString(FIELD_SWEDISH_AS_SECOND_LANGUAGE, "Swedish as second language"), currentLocale);
+		swedishLanguage.setMaxNumberOfCharacters(30);
 		if (displayColumn(FIELD_SWEDISH_AS_SECOND_LANGUAGE)) {
 			_fields.add(swedishLanguage);
 			reportCollection.addField(swedishLanguage);
@@ -182,6 +186,7 @@ public class SchoolReportBusinessBean extends IBOSessionBean implements SchoolRe
 		
 		ReportableField custodian = new ReportableField(FIELD_CUSTODIAN, String.class);
 		custodian.setLocalizedName(getLocalizedString(FIELD_CUSTODIAN, "Custodian"), currentLocale);
+		custodian.setMaxNumberOfCharacters(50);
 		if (displayColumn(FIELD_CUSTODIAN)) {
 			_fields.add(custodian);
 			reportCollection.addField(custodian);
@@ -189,6 +194,7 @@ public class SchoolReportBusinessBean extends IBOSessionBean implements SchoolRe
 		
 		ReportableField alternateAddress = new ReportableField(FIELD_ALTERNATE_ADDRESS, String.class);
 		alternateAddress.setLocalizedName(getLocalizedString(FIELD_ALTERNATE_ADDRESS, "Alternate address"), currentLocale);
+		alternateAddress.setMaxNumberOfCharacters(30);
 		if (displayColumn(FIELD_ALTERNATE_ADDRESS)) {
 			_fields.add(alternateAddress);
 			reportCollection.addField(alternateAddress);
@@ -196,6 +202,7 @@ public class SchoolReportBusinessBean extends IBOSessionBean implements SchoolRe
 		
 		ReportableField yearsWithLanguage = new ReportableField(FIELD_YEARS_WITH_LANGUAGE, String.class);
 		yearsWithLanguage.setLocalizedName(getLocalizedString(FIELD_YEARS_WITH_LANGUAGE, "Years with language"), currentLocale);
+		yearsWithLanguage.setMaxNumberOfCharacters(50);
 		if (displayColumn(FIELD_YEARS_WITH_LANGUAGE)) {
 			_fields.add(yearsWithLanguage);
 			reportCollection.addField(yearsWithLanguage);
@@ -327,7 +334,7 @@ public class SchoolReportBusinessBean extends IBOSessionBean implements SchoolRe
 					if (student.getLanguage() != null) {
 						SchoolYear year = student.getSchoolYear();
 						if (year != null) {
-							data.addData(yearsWithLanguage, new Integer(year.getSchoolYearAge() - 6));
+							data.addData(yearsWithLanguage, String.valueOf(year.getSchoolYearAge() - 6));
 						}
 						else {
 							data.addData(yearsWithLanguage, "-");
