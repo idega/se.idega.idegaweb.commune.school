@@ -13,6 +13,7 @@ import com.idega.business.IBOLookup;
 import com.idega.core.data.Address;
 import com.idega.core.data.Email;
 import com.idega.core.data.Phone;
+import com.idega.data.IDOException;
 import com.idega.data.IDOQuery;
 import com.idega.idegaweb.IWPropertyList;
 import com.idega.user.business.UserBusiness;
@@ -293,6 +294,21 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 			returnValue[0] = true;
 		}
 		return returnValue;
+	}
+	
+	public boolean hasMoveChoiceToOtherSchool(int userID, int schoolID, int seasonID) {
+		try {
+			int numberOfChoices = getSchoolChoiceBusiness().getSchoolChoiceHome().getMoveChoices(userID, schoolID, seasonID);
+			if (numberOfChoices > 0)
+				return true;
+			return false;
+		}
+		catch (RemoteException e) {
+			return false;
+		}
+		catch (IDOException e) {
+			return false;
+		}
 	}
 	
 	public int getChosenSchoolID(Collection choices) throws RemoteException {
