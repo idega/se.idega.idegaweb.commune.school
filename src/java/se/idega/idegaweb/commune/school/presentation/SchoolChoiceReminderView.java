@@ -20,10 +20,10 @@ import se.idega.idegaweb.commune.school.data.SchoolChoiceReminder;
  * and entity ejb classes in {@link se.idega.idegaweb.commune.school.data}.
  * <p>
  * <p>
- * Last modified: $Date: 2002/12/18 13:23:07 $ by $Author: staffan $
+ * Last modified: $Date: 2002/12/19 11:17:59 $ by $Author: staffan $
  *
  * @author <a href="http://www.staffannoteberg.com">Staffan Nöteberg</a>
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  * @see javax.ejb
  */
 public class SchoolChoiceReminderView extends CommuneBlock {
@@ -64,6 +64,8 @@ public class SchoolChoiceReminderView extends CommuneBlock {
         throws RemoteException, CreateException, FinderException {
 		setResourceBundle (getResourceBundle(iwc));
         final String action = iwc.getParameter (ACTION_KEY);
+
+        add ("<p>Den här funktionen är inte färdig!</p><p>/<a href=http://www.staffannoteberg.com>Staffan Nöteberg</a></p>");
 
         if (action != null && action.equals (SHOW_CREATE_REMINDER_FORM_KEY))  {
             showCreateReminderForm (iwc);
@@ -141,8 +143,6 @@ public class SchoolChoiceReminderView extends CommuneBlock {
 
     private void showAllReminders (final IWContext iwc) throws RemoteException,
                                                                FinderException {
-        add ("This method is not implemented yet. /<a href=http://www.staffannoteberg.com>Staffan Nöteberg</a><br/>");
-
 		Table mainTable = new Table();
 		mainTable.setCellpadding(0);
 		mainTable.setCellspacing(0);
@@ -155,25 +155,34 @@ public class SchoolChoiceReminderView extends CommuneBlock {
         table.setCellpadding(getCellpadding());
         table.setCellspacing(getCellspacing());
         table.setWidth(Table.HUNDRED_PERCENT);
-        table.setColumns(2);
+        table.setColumns (4);
         int row = 1;
-        int column = 1;
-        table.mergeCells(1, row, table.getColumns(), row);
+        int col = 1;
         Form form = new Form();
         form.add(table);
         table.setRowColor(row, getHeaderColor());
-        table.add(getSmallHeader("col 1"), column++, row);
-        table.add(getSmallHeader("col 2"), column++, row++);
+        table.add(getSmallHeader("Nr."), col++, row);
+        table.add(getSmallHeader("Meddelande"), col++, row);
+        table.add(getSmallHeader("Utskicksdatum"), col++, row);
+        table.add(getSmallHeader("Visa som ärende"), col++, row++);
         for (int i = 0; i < reminders.length; i++) {
-            table.add("" + reminders [i].getEventDate (), 1, row);
-            table.add(reminders [i].getText (), 2, row);
+            col = 1;
+            table.setRowColor(row, (row % 2 == 0) ? getZebraColor1()
+                              : getZebraColor2());
+            final SchoolChoiceReminder reminder = reminders [i];
+            table.add ("" + reminder.getPrimaryKey (), col++, row);
+            final String text = reminder.getText ();
+            final String message = text.length () > 33
+                    ? text.substring (0, 30) + "..." : text;
+            table.add(message, col++, row);
+            table.add("" + reminder.getEventDate (), col++, row);
+            table.add("" + reminder.getReminderDate (), col++, row);
             row++;
         }
         mainTable.add(form, 1, 1);
     }
 
     private void createReminder (final IWContext iwc) throws RemoteException, CreateException {
-        add ("This method is not implemented yet. /<a href=http://www.staffannoteberg.com>Staffan Nöteberg</a><br/>");
         add ("REMINDER_TEXT_KEY=" + iwc.getParameter (REMINDER_TEXT_KEY) + "<br/>");
         add ("CUSTOM_REMINDER_TEXT_KEY=" + iwc.getParameter (CUSTOM_REMINDER_TEXT_KEY) + "<br/>");
         add ("EVENT_DATE_KEY=" + iwc.getParameter (EVENT_DATE_KEY) + "<br/>");
