@@ -74,11 +74,20 @@ import com.idega.util.IWTimestamp;
 import com.idega.util.PersonalIDFormatter;
 
 /**
- * <p>Title: </p>
- * <p>Description: </p>
- * <p>Copyright: Copyright (c) 2002</p>
- * <p>Company: idega</p>
- * @author <br><a href="mailto:aron@idega.is">Aron Birkir</a><br>
+ * <p>
+ * Title:
+ * </p>
+ * <p>
+ * Description:
+ * </p>
+ * <p>
+ * Copyright: Copyright (c) 2002
+ * </p>
+ * <p>
+ * Company: idega
+ * </p>
+ * 
+ * @author <br><a href="mailto:aron@idega.is">Aron Birkir </a> <br>
  * @version 1.0
  */
 
@@ -118,10 +127,10 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	private String prmParentId = CitizenChildren.getParentIDParameterName();
 	private String prmForm = prefix + "the_frm";
 	//private String prmCaseOwner = prefix+"cse_own";
-	private String prmNativeLangIsChecked= prefix + "native_lang_is_checked";
-	private String prmNativeLang = prefix+"native_lang";
-	private String prmExtraChoiceMessage = prefix+"choice_message";
-	
+	private String prmNativeLangIsChecked = prefix + "native_lang_is_checked";
+	private String prmNativeLang = prefix + "native_lang";
+	private String prmExtraChoiceMessage = prefix + "choice_message";
+
 	private boolean valSendCatalogue = false;
 	private boolean valSixyearCare = false;
 	private boolean valAutoAssign = false;
@@ -161,14 +170,14 @@ public class SchoolChoiceApplication extends CommuneBlock {
 
 	private boolean hasPreviousSchool = false;
 	private boolean schoolChange = false;
-	private boolean[] canApply = {false,false,false};
+	private boolean[] canApply = {false, false, false};
 	private boolean hasChosen = false;
 	private Age age;
 	private Form myForm;
-	
+
 	private Integer afterSchoolPageID = null;
 	private Integer checkPageID = null;
-	
+
 	private boolean isOwner = true;
 	private User owner;
 	private Date choiceDate;
@@ -178,7 +187,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	private java.sql.Date valPlacementDate = null;
 	private boolean _isForTesting = false;
 	private boolean _showChoiceMessage = false;
-	
+
 	private boolean _forwardToCheckPage = true;
 	private int _maxAge = 0;
 	private boolean _useCheckBoxForAfterSchoolCare = false;
@@ -213,7 +222,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 				if (_useOngoingSeason) {
 					try {
 						season = schBuiz.getSchoolSeasonHome().findSeasonByDate(new IWTimestamp().getDate());
-						}
+					}
 					catch (FinderException e) {
 						season = schBuiz.getCurrentSeason();
 					}
@@ -241,19 +250,19 @@ public class SchoolChoiceApplication extends CommuneBlock {
 							while (iter.hasNext()) {
 								SchoolChoice element = (SchoolChoice) iter.next();
 								School school = element.getChosenSchool();
-								int schoolID = ((Integer)school.getPrimaryKey()).intValue();
+								int schoolID = ((Integer) school.getPrimaryKey()).intValue();
 								int areaID = school.getSchoolAreaId();
-								valExtraChoiceMessages[count-1] = element.getExtraChoiceMessage();
-								
+								valExtraChoiceMessages[count - 1] = element.getExtraChoiceMessage();
+
 								if (count == 1) {
 									valFirstSchool = schoolID;
 									valFirstArea = areaID;
-									/*if (element.getFreetimeInThisSchool())
-										valSixyearCare = true;
-									else if (element.getFreetimeOther() != null)
-										valSixyearCare = true;
-									else
-										valSixyearCare = false;*/
+									/*
+									 * if (element.getFreetimeInThisSchool())
+									 * valSixyearCare = true; else if
+									 * (element.getFreetimeOther() != null)
+									 * valSixyearCare = true; else
+									 */
 									valSixyearCare = element.getKeepChildrenCare();
 									if (element.getLanguageChoice() != null)
 										valLanguage = element.getLanguageChoice();
@@ -262,16 +271,10 @@ public class SchoolChoiceApplication extends CommuneBlock {
 									count++;
 									if (!hasPreviousSchool) {
 										initSchoolFromChoice(element);
-										/*logWarning("*** !hasPreviousSch * currentSch from Choice - child: " + childId 
-												+ " choiceID: " + ((Integer) element.getPrimaryKey()).intValue() + " ***");*/
-									} else {
-										/*logWarning("*** hasPreviousSchool * currentSch from latestPlc - child: " + childId 
-												+ " choiceID: " + ((Integer) element.getPrimaryKey()).intValue() + " ***");*/
-										
 									}
 									owner = element.getOwner();
 									choiceDate = element.getCreated();
-									isOwner = ((IDOEntity)iwc.getCurrentUser()).equals(owner);
+									isOwner = ((IDOEntity) iwc.getCurrentUser()).equals(owner);
 									custodiansAgree = element.getCustodiansAgree();
 									valType = element.getSchoolTypeId();
 								}
@@ -285,17 +288,16 @@ public class SchoolChoiceApplication extends CommuneBlock {
 									valThirdArea = areaID;
 									count++;
 								}
-							}	
+							}
 						}
 					}
-					
+
 					if (valType == -1) {
 						if (hasPreviousSchool)
 							valType = 4;
 						else
 							valType = 5;
 					}
-						
 
 					// Application has been saved
 
@@ -303,33 +305,32 @@ public class SchoolChoiceApplication extends CommuneBlock {
 
 					if (saved) {
 						/*
-						if (valSixyearCare && childcarePage != null) {
-							iwc.setSessionAttribute(CitizenChildren.getChildIDParameterName(), new Integer(childId));
-							iwc.forwardToIBPage(getParentPage(), childcarePage);
-						}
-						else
-							add(getSchoolChoiceAnswer(iwc, child));
-						*/
+						 * if (valSixyearCare && childcarePage != null) {
+						 * iwc.setSessionAttribute(CitizenChildren.getChildIDParameterName(),
+						 * new Integer(childId));
+						 * iwc.forwardToIBPage(getParentPage(), childcarePage); }
+						 * else add(getSchoolChoiceAnswer(iwc, child));
+						 */
 						// User wants to choose
-						if(valWantsAfterSchool){
+						if (valWantsAfterSchool) {
 							boolean hasApprovedCheck = getCheckBusiness(iwc).hasGrantedCheck(child);
-							getChildCareSession(iwc).setChildID(((Integer)child.getPrimaryKey()).intValue());
+							getChildCareSession(iwc).setChildID(((Integer) child.getPrimaryKey()).intValue());
 							if (!_forwardToCheckPage) {
 								hasApprovedCheck = true;
 							}
 							// forward to afterschool page
-							if(hasApprovedCheck && afterSchoolPageID!=null){
-								iwc.forwardToIBPage(getParentPage(),afterSchoolPageID.intValue());
+							if (hasApprovedCheck && afterSchoolPageID != null) {
+								iwc.forwardToIBPage(getParentPage(), afterSchoolPageID.intValue());
 							}
 							// forward to check application page
-							else if(checkPageID!=null){
-								iwc.forwardToIBPage(getParentPage(),checkPageID.intValue());
+							else if (checkPageID != null) {
+								iwc.forwardToIBPage(getParentPage(), checkPageID.intValue());
 							}
 							add(getSchoolChoiceAnswer(child));
 						}
 						else {
 							if (getResponsePage() != null)
-								iwc.forwardToIBPage(getParentPage(),getResponsePage());
+								iwc.forwardToIBPage(getParentPage(), getResponsePage());
 							add(getSchoolChoiceAnswer(child));
 						}
 					}
@@ -339,7 +340,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 					else {
 						if (custodiansAgree || isOwner)
 							add(getSchoolChoiceForm(iwc, child));
-						else 
+						else
 							add(getLocalizedHeader("school.cannot_alter_choice", "You cannot alter the school choice already made."));
 					}
 				}
@@ -353,10 +354,13 @@ public class SchoolChoiceApplication extends CommuneBlock {
 			add(getLocalizedHeader("school_choice.last_date_expired", "Time limits to apply expired"));
 	}
 
-
 	private boolean saveSchoolChoice() {
 		try {
-//			schBuiz.createSchoolChoices(valCaseOwner, childId, valType, valPreSchool, valFirstSchool, valSecondSchool, valThirdSchool, valPreGrade, valMethod, -1, -1, valLanguage, valMessage, schoolChange, valSixyearCare, valAutoAssign, valCustodiansAgree, valSendCatalogue, valPlacementDate, season);
+			//			schBuiz.createSchoolChoices(valCaseOwner, childId, valType,
+			// valPreSchool, valFirstSchool, valSecondSchool, valThirdSchool,
+			// valPreGrade, valMethod, -1, -1, valLanguage, valMessage,
+			// schoolChange, valSixyearCare, valAutoAssign, valCustodiansAgree,
+			// valSendCatalogue, valPlacementDate, season);
 			schBuiz.createSchoolChoices(valCaseOwner, childId, valType, valPreSchool, valFirstSchool, valSecondSchool, valThirdSchool, valPreGrade, valMethod, -1, -1, valLanguage, valMessage, schoolChange, valSixyearCare, valAutoAssign, valCustodiansAgree, valSendCatalogue, valPlacementDate, season, valNativeLangIsChecked, valNativeLang, valExtraChoiceMessages);
 			return true;
 		}
@@ -369,10 +373,10 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	private void parse(IWContext iwc) {
 		valSendCatalogue = iwc.isParameterSet(prmSendCatalogue);
 		valSixyearCare = iwc.isParameterSet(prmSixYearCare);
-		if(iwc.isParameterSet(prmAfterschool)){
+		if (iwc.isParameterSet(prmAfterschool)) {
 			valWantsAfterSchool = iwc.getParameter(prmAfterschool).equalsIgnoreCase(Boolean.TRUE.toString());
 		}
-		
+
 		valAutoAssign = true;
 		//valSchoolChange = iwc.isParameterSet(prmSchoolChange);
 		valCustodiansAgree = iwc.isParameterSet(prmFirstSchool) ? Boolean.valueOf(iwc.getParameter(prmCustodiansAgree)).booleanValue() : false;
@@ -405,30 +409,30 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	public PresentationObject getSchoolChoiceForm(IWContext iwc, User child) throws java.rmi.RemoteException {
 		if (this.schoolChange) {
 			if (!canApply[2])
-				return getSmallHeader(localize("school_choice.not_possible_to_change_school","It is not possible to change school until after the 22nd of February."));
+				return getSmallHeader(localize("school_choice.not_possible_to_change_school", "It is not possible to change school until after the 22nd of February."));
 		}
 
 		myForm = new Form();
 		myForm.setName(prmForm);
-		
+
 		Table T = new Table();
 		T.setCellpadding(0);
 		T.setCellspacing(0);
 		T.setBorder(0);
 		myForm.add(T);
 		int row = 1;
-		
+
 		if (!isOwner) {
 			T.add(getAlterChoiceInfo(iwc), 1, row++);
 			T.setHeight(row++, 12);
 		}
-		
+
 		T.add(getCurrentSchoolSeasonInfo(iwc), 1, row++);
 		T.setHeight(row++, 12);
 		T.add(getChildInfo(iwc, child), 1, row++);
 		T.setHeight(row++, 12);
-//		T.add(getCurrentSchool(), 1, row++);
-//		T.setHeight(row++, 12);
+		//		T.add(getCurrentSchool(), 1, row++);
+		//		T.setHeight(row++, 12);
 		T.add(getChoiceSchool(), 1, row++);
 		T.setHeight(row++, 12);
 		T.add(getMessagePart(), 1, row++);
@@ -442,11 +446,11 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		spaceT.setHeight(1, 10);
 		T.add(spaceT, 1, row++);
 
-		SubmitButton button = (SubmitButton) getButton(new SubmitButton("submit",localize("school_choice.ready", "Ready")));
+		SubmitButton button = (SubmitButton) getButton(new SubmitButton("submit", localize("school_choice.ready", "Ready")));
 		T.add(button, 1, row++);
 		button.setOnSubmitFunction("checkApplication", getSchoolCheckScript());
 		//button.setToDisableOnClick(button, true);
-		
+
 		T.add(new HiddenInput(prmAction, "true"), 1, 1);
 		T.add(new HiddenInput(prmChildId, child.getPrimaryKey().toString()), 1, 1);
 
@@ -454,10 +458,10 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		if (p != null) {
 			Script S = p.getAssociatedScript();
 			Script F = new Script();
-			
+
 			S.addVariable("sportOrMusicSchools", "new Array('2', '3', '4')");
-			S.addFunction("getAlertIfSportsOrMusicSchool", getAlertIfSportsOrMusicSchool());					
-			
+			S.addFunction("getAlertIfSportsOrMusicSchool", getAlertIfSportsOrMusicSchool());
+
 			S.addFunction("initFilter", getInitFilterScript());
 			S.addFunction("setSelected", getSetSelectedScript());
 
@@ -468,12 +472,12 @@ public class SchoolChoiceApplication extends CommuneBlock {
 			}
 			if (valType > 0) {
 				if (valFirstArea > 0 || valFirstSchool > 0)
-					p.setOnLoad(getInitFilterCallerScript(prmType, prmFirstArea, prmFirstSchool, valType, valFirstArea, valFirstSchool,false));
+					p.setOnLoad(getInitFilterCallerScript(prmType, prmFirstArea, prmFirstSchool, valType, valFirstArea, valFirstSchool, false));
 				if (!schoolChange) {
 					if (valSecondArea > 0 || valSecondSchool > 0)
-						p.setOnLoad(getInitFilterCallerScript(prmType, prmSecondArea, prmSecondSchool, valType, valSecondArea, valSecondSchool,false));
+						p.setOnLoad(getInitFilterCallerScript(prmType, prmSecondArea, prmSecondSchool, valType, valSecondArea, valSecondSchool, false));
 					if (valThirdArea > 0 || valThirdSchool > 0)
-						p.setOnLoad(getInitFilterCallerScript(prmType, prmThirdArea, prmThirdSchool, valType, valThirdArea, valThirdSchool,false));
+						p.setOnLoad(getInitFilterCallerScript(prmType, prmThirdArea, prmThirdSchool, valType, valThirdArea, valThirdSchool, false));
 				}
 			}
 			T.add(F, 1, T.getColumns());
@@ -484,12 +488,12 @@ public class SchoolChoiceApplication extends CommuneBlock {
 					myForm.setAssociatedFormScript(initScript);
 				}
 
-				String initFunction = getInitFilterCallerScript(prmType, prmFirstArea, prmFirstSchool, valType, valFirstArea, valFirstSchool,false);
+				String initFunction = getInitFilterCallerScript(prmType, prmFirstArea, prmFirstSchool, valType, valFirstArea, valFirstSchool, false);
 
 				initScript.addFunction("sch_init", initFunction);
 			}
 		}
-		
+
 		return myForm;
 	}
 
@@ -508,8 +512,8 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		T.add(getText(text2), 1, row++);
 		T.add(getText(text3), 1, row++);
 		T.add(getText(text4), 1, row++);
-		T.setHeight (row++, 12);
-		T.add (getUserHomePageLink (), 1, row++);
+		T.setHeight(row++, 12);
+		T.add(getUserHomePageLink(), 1, row++);
 
 		return T;
 	}
@@ -533,7 +537,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	public PresentationObject getAlterChoiceInfo(IWContext iwc) {
 		Table T = new Table();
 		if (owner != null && choiceDate != null) {
-			Object[] arguments = { owner.getName(), new IWCalendar(choiceDate).getLocaleDate(iwc.getCurrentLocale(), IWCalendar.SHORT) };
+			Object[] arguments = {owner.getName(), new IWCalendar(choiceDate).getLocaleDate(iwc.getCurrentLocale(), IWCalendar.SHORT)};
 			String message = iwrb.getLocalizedString("school_choice.school_choice_already_made", "The school choice has already been done by {0} on {1}.");
 			Text t = getHeader(MessageFormat.format(message, arguments));
 			t.setFontColor("FF0000");
@@ -586,24 +590,36 @@ public class SchoolChoiceApplication extends CommuneBlock {
 				previousSeason = season;
 			else
 				previousSeason = schCommBiz.getPreviousSchoolSeason(season);
-			
+
 			try {
 				schoolClassMember = schBuiz.getSchoolBusiness().getSchoolClassMemberHome().findLatestByUserAndSchCategoryAndSeason(child, schBuiz.getSchoolBusiness().getCategoryElementarySchool(), previousSeason);
-			} catch (Exception e) {}
-			if (schoolClassMember == null && _showChildCareTypes) {
-				// No elementary school placement found, look for one in child care
-				schoolClassMember = schBuiz.getSchoolBusiness().getSchoolClassMemberHome().findLatestByUserAndSchCategory(child, schBuiz.getSchoolBusiness().getCategoryChildcare());
 			}
-			
+			catch (FinderException e) {
+				if (_showChildCareTypes) {
+					// No elementary school placement found, look for one in child care
+					try {
+						schoolClassMember = schBuiz.getSchoolBusiness().getSchoolClassMemberHome().findLatestByUserAndSchCategory(child, schBuiz.getSchoolBusiness().getCategoryChildcare());
+					}
+					catch (FinderException fe) {
+						hasPreviousSchool = false;
+						return;
+					}
+				}
+				else {
+					hasPreviousSchool = false;
+					return;
+				}
+			}
+
 			schoolClass = schoolClassMember.getSchoolClass();
-			
-			school = schBuiz.getSchool(schoolClass.getSchoolId());
-			if (school != null)
+			school = schoolClass.getSchool();
+			if (school != null) {
 				hasPreviousSchool = true;
-			
-			if (school != null)
+			}
+			if (school != null) {
 				schoolArea = school.getSchoolArea();
-			
+			}
+
 			schoolType = schoolClassMember.getSchoolType();
 
 			schoolYear = schoolClassMember.getSchoolYear();
@@ -611,23 +627,28 @@ public class SchoolChoiceApplication extends CommuneBlock {
 				valPreGrade = 5;
 			}
 		}
-		catch (Exception e) {
+		catch (RemoteException re) {
 			hasPreviousSchool = false;
 		}
 	}
-	
+
 	private void initSchoolFromChoice(SchoolChoice choice) {
 		try {
-			school = schBuiz.getSchool(choice.getCurrentSchoolId());
-			schoolArea = schBuiz.getSchoolBusiness().getSchoolAreaHome().findByPrimaryKey(new Integer(school.getSchoolAreaId()));
+			school = choice.getCurrentSchool();
+			if (school == null) {
+				hasPreviousSchool = false;
+				valPreGrade = choice.getGrade();
+				valPreSchool = choice.getCurrentSchoolId();
+			}
+			schoolArea = school.getSchoolArea();
 			schoolYear = schCommBiz.getSchoolYear(choice.getGrade());
 			if (schoolYear == null) {
 				valPreGrade = choice.getGrade();
 			}
-			schoolType = schBuiz.getSchoolBusiness().getSchoolTypeHome().findByPrimaryKey(new Integer(choice.getSchoolTypeId()));
+			schoolType = choice.getSchoolType();
 			hasPreviousSchool = true;
 		}
-		catch (Exception e) {
+		catch (RemoteException e) {
 			hasPreviousSchool = false;
 			valPreGrade = choice.getGrade();
 			valPreSchool = choice.getCurrentSchoolId();
@@ -642,9 +663,9 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		table.setCellpadding(2);
 		table.setCellspacing(0);
 
-		table.add(getSmallHeader(iwrb.getLocalizedString("school.name", "Name")+":"), 1, 1);
-		table.add(getSmallHeader(iwrb.getLocalizedString("school.personal_id", "Personal ID")+":"), 1, 2);
-		table.add(getSmallHeader(iwrb.getLocalizedString("school.address", "Address")+":"), 1, 3);
+		table.add(getSmallHeader(iwrb.getLocalizedString("school.name", "Name") + ":"), 1, 1);
+		table.add(getSmallHeader(iwrb.getLocalizedString("school.personal_id", "Personal ID") + ":"), 1, 2);
+		table.add(getSmallHeader(iwrb.getLocalizedString("school.address", "Address") + ":"), 1, 3);
 
 		table.add(getSmallText(child.getNameLastFirst(true)), 3, 1);
 		String personalID = PersonalIDFormatter.format(child.getPersonalID(), iwc.getApplication().getSettings().getApplicationLocale());
@@ -654,7 +675,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 			Address address = userbuiz.getUsersMainAddress(child);
 			table.add(getSmallText(address.getStreetAddress() + ", " + address.getPostalAddress()), 3, 3);
 		}
-		catch (Exception ex) {
+		catch (RemoteException ex) {
 		}
 
 		MemberFamilyLogic mlogic = (MemberFamilyLogic) IBOLookup.getServiceInstance(iwc, MemberFamilyLogic.class);
@@ -666,22 +687,22 @@ public class SchoolChoiceApplication extends CommuneBlock {
 			boolean parentsSeparated = false;
 			while (iter.hasNext()) {
 				User parent = (User) iter.next();
-				
-				Address parAddress	=	userbuiz.getUsersMainAddress(parent);
+
+				Address parAddress = userbuiz.getUsersMainAddress(parent);
 				String sParAddress = null;
-				if(parAddress!=null){
+				if (parAddress != null) {
 					sParAddress = parAddress.getStreetAddress();
 				}
-				else{
+				else {
 					sParAddress = "";
 				}
-				
+
 				if (address == null) {
-					address = sParAddress;	
+					address = sParAddress;
 				}
 				else {
 					if (!parentsSeparated)
-						parentsSeparated = address.equals(sParAddress);	
+						parentsSeparated = address.equals(sParAddress);
 				}
 
 				if (quickAdmin && caseOwning && valCaseOwner == -1) {
@@ -697,160 +718,124 @@ public class SchoolChoiceApplication extends CommuneBlock {
 			ex.printStackTrace();
 			table.add(getSmallErrorText(iwrb.getLocalizedString("school.no_registered_custodians", "No registered custodians")), 3, 4);
 		}
-	
+
 		return table;
 	}
 
 	private PresentationObject getCurrentSchool() throws java.rmi.RemoteException {
-		/*if (age.getYears() <= 6) {
-			hasPreviousSchool = true;
-			PresentationObjectContainer container = new PresentationObjectContainer();
-			container.add(new HiddenInput(prmPreGrade, String.valueOf(5)));
-			container.add(new HiddenInput(prmPreSchool, "-1"));
-			return container;
-		}
-		else {*/
-			Table table = new Table();
-			table.setColumns(3);
-			table.setCellpadding(2);
-			table.setCellspacing(0);
-			table.setBorder(0);
-			table.mergeCells(1, 1, table.getColumns(), 1);
+		Table table = new Table();
+		table.setColumns(3);
+		table.setCellpadding(2);
+		table.setCellspacing(0);
+		table.setBorder(0);
+		table.mergeCells(1, 1, table.getColumns(), 1);
 
-			table.add(getHeader(iwrb.getLocalizedString("school.child_is_now_in", "Child is now in :")), 1, 1);
+		table.add(getHeader(iwrb.getLocalizedString("school.child_is_now_in", "Child is now in :")), 1, 1);
+		table.add(getSmallHeader(iwrb.getLocalizedString("school.school_type", "Type") + ":"), 1, 2);
+		table.add(getSmallHeader(iwrb.getLocalizedString("school.school_area", "Area") + ":"), 1, 3);
+		table.add(getSmallHeader(iwrb.getLocalizedString("school.school_name", "School name") + ":"), 1, 4);
+		table.add(getSmallHeader(iwrb.getLocalizedString("school.grade", "Grade") + ":"), 1, 5);
 
-			/*if (schoolClassMember != null || hasChosen) {
-				table.add(getSmallHeader(iwrb.getLocalizedString("school.school_name", "School name")+":"), 1, 2);
-				table.add(getSmallHeader(iwrb.getLocalizedString("school.school_class", "School class")+":"), 1, 3);
-				table.add(getSmallHeader(iwrb.getLocalizedString("school.school_year", "School year")+":"), 1, 4);
+		DropdownMenu drpTypes = getTypeDrop(prmPreType, false, _showChildCareTypes);
+		drpTypes.addMenuElement("-2", localize("school.school_type_other", "Other/None"));
+		drpTypes.setOnChange(getFilterCallerScript(prmPreType, prmPreArea, prmPreSchool, 1, true));
 
-				if (school != null)
-					table.add(getSmallText(school.getName()), 3, 2);
-				if (schoolClass != null)
-					table.add(getSmallText(schoolClass.getName()), 3, 3);
-				else
-					table.add(getSmallText("-"), 3, 3);
-				if (schoolYear != null) {
-					table.add(getSmallText(schoolYear.getName()), 3, 4);
-					table.add(new HiddenInput(prmPreGrade, String.valueOf(schoolYear.getSchoolYearAge())), 4, 4);
-				}
-				table.add(new HiddenInput(prmPreSchool, school.getPrimaryKey().toString()), 4, 4);
+		DropdownMenu drpAreas = (DropdownMenu) getStyledInterface(new DropdownMenu(prmPreArea));
+		drpAreas.addMenuElementFirst("-1", iwrb.getLocalizedString("school.area", "School area..........."));
+		drpAreas.setOnChange(getFilterCallerScript(prmPreType, prmPreArea, prmPreSchool, 2, true));
+
+		DropdownMenu drpSchools = (DropdownMenu) getStyledInterface(new DropdownMenu(prmPreSchool));
+		drpSchools.addMenuElementFirst("-1", iwrb.getLocalizedString("school.school", "School................"));
+
+		DropdownMenu drpGrade = (DropdownMenu) getStyledInterface(new DropdownMenu(prmPreGrade));
+		drpGrade.addMenuElement("5", "");
+		Collection coll = getSchoolYears();
+		if (coll != null) {
+			Iterator iter = coll.iterator();
+			while (iter.hasNext()) {
+				SchoolYear element = (SchoolYear) iter.next();
+				drpGrade.addMenuElement(element.getSchoolYearAge(), element.getName());
 			}
-			else {*/
-				table.add(getSmallHeader(iwrb.getLocalizedString("school.school_type", "Type")+":"), 1, 2);
-				table.add(getSmallHeader(iwrb.getLocalizedString("school.school_area", "Area")+":"), 1, 3);
-				table.add(getSmallHeader(iwrb.getLocalizedString("school.school_name", "School name")+":"), 1, 4);
-				table.add(getSmallHeader(iwrb.getLocalizedString("school.grade", "Grade")+":"), 1, 5);
-			
-				DropdownMenu drpTypes = getTypeDrop(prmPreType, false, _showChildCareTypes);
-				drpTypes.addMenuElement("-2",localize("school.school_type_other","Other/None"));
-				drpTypes.setOnChange(getFilterCallerScript(prmPreType, prmPreArea, prmPreSchool, 1, true));
-				
-				DropdownMenu drpAreas = (DropdownMenu) getStyledInterface(new DropdownMenu(prmPreArea));
-				drpAreas.addMenuElementFirst("-1", iwrb.getLocalizedString("school.area", "School area..........."));
-				drpAreas.setOnChange(getFilterCallerScript(prmPreType, prmPreArea, prmPreSchool, 2, true));
+		}
+		drpGrade.setSelectedElement(String.valueOf(valPreGrade));
 
-				DropdownMenu drpSchools = (DropdownMenu) getStyledInterface(new DropdownMenu(prmPreSchool));
-				drpSchools.addMenuElementFirst("-1", iwrb.getLocalizedString("school.school", "School................"));
-				
-				DropdownMenu drpGrade = (DropdownMenu) getStyledInterface(new DropdownMenu(prmPreGrade));
-				drpGrade.addMenuElement("5", "");
-				Collection coll = getSchoolYears();
-				if (coll != null) {
-					Iterator iter = coll.iterator();
-					while (iter.hasNext()) {
-						SchoolYear element = (SchoolYear) iter.next();
-						drpGrade.addMenuElement(element.getSchoolYearAge(), element.getName());
-					}
+		Script script = myForm.getAssociatedFormScript();
+		if (script == null) {
+			script = new Script();
+			myForm.setAssociatedFormScript(script);
+		}
+		String initFunction;
+		if (hasChosen) {
+			if (school != null) {
+				initFunction = getInitFilterCallerScript(prmPreType, prmPreArea, prmPreSchool, ((Integer) schoolType.getPrimaryKey()).intValue(), ((Integer) schoolArea.getPrimaryKey()).intValue(), ((Integer) school.getPrimaryKey()).intValue(), true);
+				script.addFunction("presch_init", initFunction);
+				if (schoolYear != null) {
+					drpGrade.setSelectedElement(schoolYear.getSchoolYearAge());
 				}
-				// Add special school year 10 with name hard coded
-				//if (getSpecialSchoolYear10() != null) {
-					//drpGrade.addMenuElement(getSpecialSchoolYear10().getSchoolYearAge(), "10");
-				//}
-			
-				drpGrade.setSelectedElement(String.valueOf(valPreGrade));
-
-				Script script = myForm.getAssociatedFormScript();
-				if (script == null) {
-					script = new Script();
-					myForm.setAssociatedFormScript(script);
+				else {
+					drpGrade.setSelectedElement(valPreGrade);
 				}
-				String initFunction;
-				if (hasChosen) {
-					if (school != null) {
-						initFunction = getInitFilterCallerScript(prmPreType, prmPreArea, prmPreSchool, ((Integer)schoolType.getPrimaryKey()).intValue(), ((Integer)schoolArea.getPrimaryKey()).intValue(), ((Integer)school.getPrimaryKey()).intValue(), true);
-						script.addFunction("presch_init", initFunction);
-						if (schoolYear != null) {
-							drpGrade.setSelectedElement(schoolYear.getSchoolYearAge());
-						}
-						else {
-							drpGrade.setSelectedElement(valPreGrade);
-						}
+			}
+			else {
+				initFunction = getInitFilterCallerScript(prmPreType, prmPreArea, prmPreSchool, -2, -1, -1, true);
+				script.addFunction("presch_init", initFunction);
+				drpGrade.setSelectedElement(valPreGrade);
+			}
+			getParentPage().setOnLoad(initFunction);
+		}
+		else {
+			if (schoolClassMember != null) {
+				try {
+					initFunction = getInitFilterCallerScript(prmPreType, prmPreArea, prmPreSchool, ((Integer) schoolType.getPrimaryKey()).intValue(), ((Integer) schoolArea.getPrimaryKey()).intValue(), ((Integer) school.getPrimaryKey()).intValue(), true);
+					script.addFunction("presch_init", initFunction);
+					if (schoolYear != null) {
+						drpGrade.setSelectedElement(schoolYear.getSchoolYearAge());
 					}
 					else {
-						initFunction = getInitFilterCallerScript(prmPreType, prmPreArea, prmPreSchool, -2, -1, -1, true);
-						script.addFunction("presch_init", initFunction);
 						drpGrade.setSelectedElement(valPreGrade);
 					}
 					getParentPage().setOnLoad(initFunction);
 				}
-				else {
-					if (schoolClassMember != null) {
-						try {
-							initFunction = getInitFilterCallerScript(prmPreType, prmPreArea, prmPreSchool, ((Integer)schoolType.getPrimaryKey()).intValue(), ((Integer)schoolArea.getPrimaryKey()).intValue(), ((Integer)school.getPrimaryKey()).intValue(), true);
-							script.addFunction("presch_init", initFunction);
-							if (schoolYear != null) {
-								drpGrade.setSelectedElement(schoolYear.getSchoolYearAge());
-							}
-							else {
-								drpGrade.setSelectedElement(valPreGrade);
-							}
-							getParentPage().setOnLoad(initFunction);
-						}
-						catch (Exception e) {
-							if (school != null)
-								System.err.println("Error in school: " + school.getName() + " (" + school.getPrimaryKey().toString() + ")");
-						}
-					}
+				catch (Exception e) {
+					if (school != null)
+						System.err.println("Error in school: " + school.getName() + " (" + school.getPrimaryKey().toString() + ")");
 				}
-				
-				table.add(drpTypes, 3, 2);
-				table.add(drpAreas, 3, 3);
-				table.add(drpSchools, 3, 4);
-				table.add(drpGrade, 3, 5);
-			//}
-			table.setWidth(1, 2, "100");
-			table.setWidth(2, 2, "8");
+			}
+		}
 
-			return table;
-		//}
+		table.add(drpTypes, 3, 2);
+		table.add(drpAreas, 3, 3);
+		table.add(drpSchools, 3, 4);
+		table.add(drpGrade, 3, 5);
+		table.setWidth(1, 2, "100");
+		table.setWidth(2, 2, "8");
+
+		return table;
 	}
 
 	private DropdownMenu getTypeDrop(String name, boolean useRestrictions, boolean showChildCare) throws java.rmi.RemoteException {
 		DropdownMenu drp = (DropdownMenu) getStyledInterface(new DropdownMenu(name));
 		drp.addMenuElement("-1", iwrb.getLocalizedString("school.school_type_select", "School type select"));
-		
-		if (showChildCare) {			
+
+		if (showChildCare) {
 			SchoolTypeHome tHome = (SchoolTypeHome) IDOLookup.getHome(SchoolType.class);
 			try {
-				Collection ccTypes = tHome.findAllByCategory(
-																		SchoolCategoryBMPBean.CATEGORY_CHILD_CARE,
-																		false);
+				Collection ccTypes = tHome.findAllByCategory(SchoolCategoryBMPBean.CATEGORY_CHILD_CARE, false);
 				for (Iterator iter = ccTypes.iterator(); iter.hasNext();) {
 					SchoolType tmpType = (SchoolType) iter.next();
-					//drp.addMenuElement(tmpType.getPrimaryKey().toString(), tmpType.getName());
-					drp.addMenuElement(tmpType.getPrimaryKey().toString(), localize(schCommBiz.getLocalizedSchoolTypeKey(tmpType),tmpType.getSchoolTypeName()));
+					drp.addMenuElement(tmpType.getPrimaryKey().toString(), localize(schCommBiz.getLocalizedSchoolTypeKey(tmpType), tmpType.getSchoolTypeName()));
 					schoolTypes.add(tmpType);
 				}
-			} catch (FinderException e) {
+			}
+			catch (FinderException e) {
 				logWarning("No childcare categories found");
 				log(e);
 			}
 		}
-		
+
 		Iterator iter = schoolTypes.iterator();
 		boolean canChoose = true;
-		
+
 		while (iter.hasNext()) {
 			SchoolType type = (SchoolType) iter.next();
 			if (age.getYears() <= type.getMaxSchoolAge())
@@ -859,16 +844,17 @@ public class SchoolChoiceApplication extends CommuneBlock {
 				canChoose = false;
 			if (!useRestrictions)
 				canChoose = true;
-				
+
 			if (canChoose)
-				drp.addMenuElement(type.getPrimaryKey().toString(), localize(schCommBiz.getLocalizedSchoolTypeKey(type),type.getSchoolTypeName()));
+				drp.addMenuElement(type.getPrimaryKey().toString(), localize(schCommBiz.getLocalizedSchoolTypeKey(type), type.getSchoolTypeName()));
 		}
-		
+
 		return drp;
 	}
 
 	/**
 	 * Method getChoiceSchool.
+	 * 
 	 * @param iwc
 	 * @param child
 	 * @return PresentationObject
@@ -884,7 +870,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		table.setWidthAndHeightToHundredPercent();
 		table.setWidth(5, 1, "100%");
 		table.add(getHeader(iwrb.getLocalizedString("school.choice_for_schoolyear", "Choice for the schoolyear")), 1, 1);
-		
+
 		DropdownMenu typeDrop = getTypeDrop(prmType, true, false);
 		typeDrop.setOnChange(getFilterCallerScript(prmType, prmFirstArea, prmFirstSchool, 1, false));
 
@@ -892,11 +878,11 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		chkChildCare.setChecked(valSixyearCare);
 
 		DropdownMenu txtLangChoice = (DropdownMenu) getStyledInterface(new DropdownMenu(prmLanguage));
-		txtLangChoice.addMenuElement(-1, localize("school.language","Language"));
-		txtLangChoice.addMenuElement("school.language_german", localize("school.language_german","German"));
-		txtLangChoice.addMenuElement("school.language_french", localize("school.language_french","French"));
-		txtLangChoice.addMenuElement("school.language_spanish", localize("school.language_spanish","Spanish"));
-		txtLangChoice.addMenuElement("school.language_swedish_english", localize("school.language_swedish_english","Swedish/English"));
+		txtLangChoice.addMenuElement(-1, localize("school.language", "Language"));
+		txtLangChoice.addMenuElement("school.language_german", localize("school.language_german", "German"));
+		txtLangChoice.addMenuElement("school.language_french", localize("school.language_french", "French"));
+		txtLangChoice.addMenuElement("school.language_spanish", localize("school.language_spanish", "Spanish"));
+		txtLangChoice.addMenuElement("school.language_swedish_english", localize("school.language_swedish_english", "Swedish/English"));
 		if (valLanguage != null)
 			txtLangChoice.setSelectedElement(valLanguage);
 
@@ -906,13 +892,13 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		drpFirstSchool.setOnChange("alertIfSportsOrMusicSchool(this)");
 
 		int row = 2;
-		table.add(getSmallHeader(iwrb.getLocalizedString("school.school_type", "SchoolType")+":"), 1, row);
+		table.add(getSmallHeader(iwrb.getLocalizedString("school.school_type", "SchoolType") + ":"), 1, row);
 		table.add(typeDrop, 3, row++);
 
-		table.add(getSmallHeader(iwrb.getLocalizedString("school.first_choice", "First choice")+":"), 1, row);
+		table.add(getSmallHeader(iwrb.getLocalizedString("school.first_choice", "First choice") + ":"), 1, row);
 		table.add(drpFirstArea, 3, row);
 		table.add(drpFirstSchool, 5, row++);
-		
+
 		if (this._showChoiceMessage) {
 			table.setHeight(row++, 2);
 			TextInput choiceMessage = (TextInput) getStyledInterface(new TextInput(prmExtraChoiceMessage));
@@ -921,7 +907,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 			}
 			choiceMessage.setLength(50);
 			table.mergeCells(3, row, 5, row);
-			table.add(getSmallHeader(iwrb.getLocalizedString("school.extra_message", "Extra message")+":"), 3, row);
+			table.add(getSmallHeader(iwrb.getLocalizedString("school.extra_message", "Extra message") + ":"), 3, row);
 			table.add(new Break(), 3, row);
 			table.add(choiceMessage, 3, row++);
 			table.setHeight(row++, 6);
@@ -941,10 +927,10 @@ public class SchoolChoiceApplication extends CommuneBlock {
 			drpThirdSchool.addMenuElementFirst("-1", iwrb.getLocalizedString("school.school_third", "School........................."));
 			drpThirdSchool.setOnChange("alertIfSportsOrMusicSchool(this)");
 
-			table.add(getSmallHeader(iwrb.getLocalizedString("school.second_choice", "Second choice")+":"), 1, row);
+			table.add(getSmallHeader(iwrb.getLocalizedString("school.second_choice", "Second choice") + ":"), 1, row);
 			table.add(drpSecondArea, 3, row);
 			table.add(drpSecondSchool, 5, row++);
-	
+
 			if (this._showChoiceMessage) {
 				table.setHeight(row++, 2);
 				TextInput choiceMessage = (TextInput) getStyledInterface(new TextInput(prmExtraChoiceMessage));
@@ -953,16 +939,16 @@ public class SchoolChoiceApplication extends CommuneBlock {
 				}
 				choiceMessage.setLength(50);
 				table.mergeCells(3, row, 5, row);
-				table.add(getSmallHeader(iwrb.getLocalizedString("school.extra_message", "Extra message")+":"), 3, row);
+				table.add(getSmallHeader(iwrb.getLocalizedString("school.extra_message", "Extra message") + ":"), 3, row);
 				table.add(new Break(), 3, row);
 				table.add(choiceMessage, 3, row++);
 				table.setHeight(row++, 6);
 			}
 
-			table.add(getSmallHeader(iwrb.getLocalizedString("school.third_choice", "Third choice")+":"), 1, row);
+			table.add(getSmallHeader(iwrb.getLocalizedString("school.third_choice", "Third choice") + ":"), 1, row);
 			table.add(drpThirdArea, 3, row);
 			table.add(drpThirdSchool, 5, row++);
-			
+
 			if (this._showChoiceMessage) {
 				table.setHeight(row++, 2);
 				TextInput choiceMessage = (TextInput) getStyledInterface(new TextInput(prmExtraChoiceMessage));
@@ -971,36 +957,36 @@ public class SchoolChoiceApplication extends CommuneBlock {
 				}
 				choiceMessage.setLength(50);
 				table.mergeCells(3, row, 5, row);
-				table.add(getSmallHeader(iwrb.getLocalizedString("school.extra_message", "Extra message")+":"), 3, row);
+				table.add(getSmallHeader(iwrb.getLocalizedString("school.extra_message", "Extra message") + ":"), 3, row);
 				table.add(new Break(), 3, row);
 				table.add(choiceMessage, 3, row++);
 				table.setHeight(row++, 6);
 			}
 		}
-		
+
 		if ((schoolYear != null && schoolYear.getSchoolYearAge() >= 12) || age.getYears() >= 11) {
 			table.setHeight(row++, 5);
-			table.add(getSmallHeader(iwrb.getLocalizedString("school.six_year_language", "Language")+":"), 1, row);
+			table.add(getSmallHeader(iwrb.getLocalizedString("school.six_year_language", "Language") + ":"), 1, row);
 			table.add(txtLangChoice, 3, row);
 			table.mergeCells(3, row, 5, row++);
 			hasLanguageSelection = true;
 		}
-		
+
 		if (_useOngoingSeason) {
 			IWTimestamp stamp = new IWTimestamp();
 			DateInput date = (DateInput) getStyledInterface(new DateInput(prmPlacementDate));
 			date.setDate(stamp.getDate());
 			date.setEarliestPossibleDate(stamp.getDate(), iwrb.getLocalizedString("school.dates_back_in_time_not_allowed", "You can not choose a date back in time."));
 			table.setHeight(row++, 5);
-			table.add(getSmallHeader(iwrb.getLocalizedString("school.placement_date", "Placement date")+":"), 1, row);
+			table.add(getSmallHeader(iwrb.getLocalizedString("school.placement_date", "Placement date") + ":"), 1, row);
 			table.add(date, 3, row);
 			table.mergeCells(3, row, 5, row++);
 		}
-		
+
 		if (_maxAge <= 0) {
 			_maxAge = 10;
 		}
-		
+
 		if (age.getYears() <= _maxAge) {
 			table.setHeight(row++, 5);
 			table.mergeCells(1, row, 5, row);
@@ -1009,28 +995,25 @@ public class SchoolChoiceApplication extends CommuneBlock {
 			Link infoLink = new Link(this.getInformationIcon(iwrb.getLocalizedString("school.after_school_choice_information", "Information about the after school choice.")));
 			infoLink.setToOpenAlert(iwrb.getLocalizedString("school.after_school_choice_message", "Information about the after school choice..."));
 			table.add(infoLink, 1, row++);
-			
+
 			table.mergeCells(1, row, 5, row);
-			//table.setWidth(1, row, Table.HUNDRED_PERCENT);
 			if (_useCheckBoxForAfterSchoolCare) {
 				CheckBox wantsAfterSchool = getCheckBox(prmAfterschool, Boolean.TRUE.toString());
-				table.add(wantsAfterSchool,1,row);
-				table.add(getSmallHeader(Text.getNonBrakingSpace()+iwrb.getLocalizedString("school.want_after_school_care","I want afterschool care")),1,row++);
+				table.add(wantsAfterSchool, 1, row);
+				table.add(getSmallHeader(Text.getNonBrakingSpace() + iwrb.getLocalizedString("school.want_after_school_care", "I want afterschool care")), 1, row++);
 			}
 			else {
-				RadioButton rbWantsAfterSchool = getRadioButton(prmAfterschool,Boolean.TRUE.toString());
-				RadioButton rbNotAfterSchool = getRadioButton(prmAfterschool,Boolean.FALSE.toString());
+				RadioButton rbWantsAfterSchool = getRadioButton(prmAfterschool, Boolean.TRUE.toString());
+				RadioButton rbNotAfterSchool = getRadioButton(prmAfterschool, Boolean.FALSE.toString());
 				rbNotAfterSchool.setMustBeSelected(iwrb.getLocalizedString("school.must_select_after_school_option", "You have to select an after school option"));
-				table.add(rbWantsAfterSchool,1,row);
-				table.add(getSmallHeader(Text.getNonBrakingSpace()+iwrb.getLocalizedString("school.want_after_school_care","I want afterschool care")),1,row++);
+				table.add(rbWantsAfterSchool, 1, row);
+				table.add(getSmallHeader(Text.getNonBrakingSpace() + iwrb.getLocalizedString("school.want_after_school_care", "I want afterschool care")), 1, row++);
 				table.mergeCells(1, row, 5, row);
-				table.add(rbNotAfterSchool,1,row);
+				table.add(rbNotAfterSchool, 1, row);
 				table.mergeCells(1, row, 5, row);
-				table.add(getSmallHeader(Text.getNonBrakingSpace()+iwrb.getLocalizedString("school.not_want_after_school_care","I do not want afterschool care")),1,row++);
+				table.add(getSmallHeader(Text.getNonBrakingSpace() + iwrb.getLocalizedString("school.not_want_after_school_care", "I do not want afterschool care")), 1, row++);
 			}
 			table.setHeight(row++, 5);
-			//table.add(chkChildCare, 1, row);
-			//table.add(getSmallHeader(Text.NON_BREAKING_SPACE + iwrb.getLocalizedString("school.child_care_requested", "Interested in after school child care")), 1, row);
 		}
 
 		// School choice message link
@@ -1038,52 +1021,48 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		table.add(getHeader(iwrb.getLocalizedString("school.language_choice", "Choice of language")), 1, row);
 		table.add(Text.getNonBrakingSpace(), 1, row);
 		Link msgLink = new Link(this.getInformationIcon(localize("school_choice.form_message_link_text", "School choice message")));
-		//msgLink.setWindowToOpen(SchoolChoiceFormMessageWindow.class);
 		msgLink.setToOpenAlert(localize("school_choice_form_message.message", "Localized School choice message ... "));
 		table.add(msgLink, 1, row++);
 
 		CheckBox langChecked = getCheckBox(prmNativeLangIsChecked, Boolean.TRUE.toString());
 		table.add(langChecked, 1, row);
-		table.add(getSmallHeader(Text.getNonBrakingSpace()+iwrb.getLocalizedString("school.native_lang_prefix","I would like")),1,row);
-		table.add(Text.getNonBrakingSpace(), 1, row);		
+		table.add(getSmallHeader(Text.getNonBrakingSpace() + iwrb.getLocalizedString("school.native_lang_prefix", "I would like")), 1, row);
+		table.add(Text.getNonBrakingSpace(), 1, row);
 		table.add(getNativeLanguagesDropdown(), 1, row);
-		//table.add(getSmallHeader(Text.getNonBrakingSpace()+iwrb.getLocalizedString("school.native_lang_postfix","as native language")),1,row);
 		table.mergeCells(1, row, 5, row);
-				
-		table.add(new HiddenInput(prmCustodiansAgree,String.valueOf(showAgree)), 1, row);
-				
-		//table.setWidth(1, "100");
-		//table.setWidth(2, "8");
-		//table.setWidth(4, "3");
+
+		table.add(new HiddenInput(prmCustodiansAgree, String.valueOf(showAgree)), 1, row);
 
 		return table;
 	}
-	
+
 	private DropdownMenu getDropdown(String name, String type, String area, String school, int index, String firstElement) {
 		DropdownMenu menu = (DropdownMenu) getStyledInterface(new DropdownMenu(name));
 		menu.addMenuElementFirst("-1", firstElement);
 		menu.setOnChange(getFilterCallerScript(type, area, school, index, false));
 		return menu;
 	}
-	
+
 	private DropdownMenu getNativeLanguagesDropdown() {
 		DropdownMenu drop = new DropdownMenu(prmNativeLang);
 		drop.addMenuElement("-1", localize("school.drp_chose_native_lang", "- Chose languge -"));
 		try {
 			Collection langs = getICLanguageHome().findAll();
 			if (langs != null) {
-					for (Iterator iter = langs.iterator(); iter.hasNext();) {
-						ICLanguage aLang = (ICLanguage) iter.next();
-						int langPK = ((Integer) aLang.getPrimaryKey()).intValue();
-						drop.addMenuElement(langPK, aLang.getName());					
-					}
-			}			
-		} catch (RemoteException re) {
+				for (Iterator iter = langs.iterator(); iter.hasNext();) {
+					ICLanguage aLang = (ICLanguage) iter.next();
+					int langPK = ((Integer) aLang.getPrimaryKey()).intValue();
+					drop.addMenuElement(langPK, aLang.getName());
+				}
+			}
+		}
+		catch (RemoteException re) {
 			re.printStackTrace();
-		} catch (FinderException fe) {
-			
-		}	
-		return drop;		
+		}
+		catch (FinderException fe) {
+
+		}
+		return drop;
 	}
 
 	private PresentationObject getMessagePart() {
@@ -1096,11 +1075,11 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		message.setColumns(65);
 		if (valMessage != null)
 			message.setValue(valMessage);
-		
-		if(schoolChange)
+
+		if (schoolChange)
 			table.add(getSmallHeader(localize("school.application_change_required_reason", "Reason for schoolchange (Required)")), 1, 1);
 		else
-		table.add(getSmallHeader(localize("school.application_extra_info", "Extra info")), 1, 1);
+			table.add(getSmallHeader(localize("school.application_extra_info", "Extra info")), 1, 1);
 		table.add(message, 1, 2);
 
 		return table;
@@ -1118,69 +1097,41 @@ public class SchoolChoiceApplication extends CommuneBlock {
 
 	private Collection getSchoolYears() {
 		Collection tmpVec;
-		Vector schYears = null;		
+		Vector schYears = null;
 		schYears = new Vector();
-		try {	
+		try {
 			// Add school years for school type "Forskola"
-			SchoolType preSch = schCommBiz.getSchoolBusiness().getSchoolTypeHome()
-																	.findByTypeKey("sch_type.school_type_forskoleklass");
+			SchoolType preSch = schCommBiz.getSchoolBusiness().getSchoolTypeHome().findByTypeKey("sch_type.school_type_forskoleklass");
 			int preID = ((Integer) preSch.getPrimaryKey()).intValue();
 			tmpVec = schCommBiz.getSchoolBusiness().findAllSchoolYearsBySchoolType(preID);
 
 			for (Iterator iter = tmpVec.iterator(); iter.hasNext();) {
 				SchoolYear element = (SchoolYear) iter.next();
 				schYears.add(element);
-			}			
-		} catch (Exception e) {
+			}
+		}
+		catch (Exception e) {
 			logWarning("Error loading school years for school type pre school class");
 			log(e);
 		}
-		
+
 		try {
-			// Add school years for school type "Grundskola"			
-			SchoolType elemSch = schCommBiz.getSchoolBusiness().getSchoolTypeHome()
-																	.findByTypeKey("sch_type.school_type_grundskola");
+			// Add school years for school type "Grundskola"
+			SchoolType elemSch = schCommBiz.getSchoolBusiness().getSchoolTypeHome().findByTypeKey("sch_type.school_type_grundskola");
 			int elemID = ((Integer) elemSch.getPrimaryKey()).intValue();
 			tmpVec = schCommBiz.getSchoolBusiness().findAllSchoolYearsBySchoolType(elemID);
 			for (Iterator iter = tmpVec.iterator(); iter.hasNext();) {
 				SchoolYear element = (SchoolYear) iter.next();
-				schYears.add(element);				
+				schYears.add(element);
 			}
 		}
 		catch (Exception e) {
 			logWarning("Error loading school years for school type elementary school");
-			log(e);			
+			log(e);
 		}
-				
+
 		return schYears;
 	}
-	
-	/*private SchoolYear getSpecialSchoolYear10() {
-		SchoolYear s10 = null;
-		try {
-			// Add school year S10 for with 10 shown in dropdown
-			SchoolYearHome syHome = (SchoolYearHome) IDOLookup.getHome(SchoolYear.class);
-			s10 = syHome.findByYearName("S10");
-			
-		} catch (Exception e) {
-			logWarning("Error loading school year for special school, year S10");
-			log(e);			
-		}
-		return s10;
-	}*/
-		
-	/* Commented out since it is never used...
-	private Collection getSchools(IWContext iwc, int area, int type) {
-		try {
-			SchoolBusiness sBuiz = (SchoolBusiness) IBOLookup.getServiceInstance(iwc, SchoolBusiness.class);
-			return sBuiz.findAllSchoolsByAreaAndType(area, type);
-
-		}
-		catch (Exception ex) {
-			ex.printStackTrace();
-			return new java.util.Vector();
-		}
-	}*/
 
 	private Collection getSchoolAreasWithType(int type) {
 		try {
@@ -1195,16 +1146,11 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	private Collection getSchoolByAreaAndType(IWContext iwc, int area, int type) {
 		try {
 			SchoolBusiness sBuiz = (SchoolBusiness) IBOLookup.getServiceInstance(iwc, SchoolBusiness.class);
-			/*if (schoolYear != null) {
-				SchoolYear yearAppliedFor = schCommBiz.getNextSchoolYear(schoolYear);
-				if (yearAppliedFor != null)
-					return sBuiz.findAllSchoolsByAreaAndTypeAndYear(area, type, ((Integer)yearAppliedFor.getPrimaryKey()).intValue());
-			}*/
 			Collection c = sBuiz.findAllSchoolsByAreaAndType(area, type);
 			return c;
 
 		}
-		catch (Exception ex) {
+		catch (RemoteException ex) {
 			ex.printStackTrace();
 		}
 		return null;
@@ -1250,8 +1196,8 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		s.append("changeFilter2(index,type,area,school,-1,showAll);").append("\n").append("}");
 		return s.toString();
 	}
- 	
- 	private String getFilterScript2(IWContext iwc) throws java.rmi.RemoteException {
+
+	private String getFilterScript2(IWContext iwc) throws java.rmi.RemoteException {
 		StringBuffer s = new StringBuffer();
 		s.append("function changeFilter2(index,type,area,school,selectedValue,showAll){").append(" \n\t");
 		s.append("var typeSelect = type;").append(" \n\t");
@@ -1269,7 +1215,6 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		s.append("else\n\t\t");
 		s.append("\tareaSelect.options[areaSelect.options.length] = new Option(\"");
 		s.append(iwrb.getLocalizedString("choose_area", "Choose Area")).append("\",\"-1\",true,true);").append("\n\t\t");
-		//s.append("schoolSelect.options[schoolSelect.options.length] = new Option(\"Veldu sk?la\",\"-1\",true,true);").append("\n\t");
 		s.append("}else if(index == 2){").append(" \n\t\t");
 		s.append("selected = areaSelect.options[areaSelect.selectedIndex].value;").append("\n\t\t");
 		s.append("if (selectedValue > -1) \n\t\t\tselected = selectedValue;").append("\n\t\t");
@@ -1299,7 +1244,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 			School school;
 			Collection areas;
 			Collection schools;
-			
+
 			SchoolYear yearAppliedFor = null;
 			if (schoolYear != null)
 				yearAppliedFor = schCommBiz.getNextSchoolYear(schoolYear);
@@ -1307,65 +1252,66 @@ public class SchoolChoiceApplication extends CommuneBlock {
 			while (iter.hasNext()) {
 				type = (SchoolType) iter.next();
 				//if (age.getYears() <= type.getMaxSchoolAge()) {
-	
-					Integer tPK = (Integer) type.getPrimaryKey();
-					//System.err.println("checking type "+tPK.toString());
-					areas = getSchoolAreasWithType(tPK.intValue());
-					if (areas != null && !areas.isEmpty()) {
-						Iterator iter2 = areas.iterator();
-						t.append("if(selected == \"").append(tPK.toString()).append("\"){").append("\n\t\t");
-	
-						Hashtable aHash = new Hashtable();
-	
-						// iterate through areas whithin types
-						while (iter2.hasNext()) {
-							area = (SchoolArea) iter2.next();
-							Integer aPK = (Integer) area.getPrimaryKey();
-							// System.err.println("checking area "+aPK.toString());
-							if (!aHash.containsKey(aPK)) {
-								aHash.put(aPK, aPK);
-								schools = getSchoolByAreaAndType(iwc, aPK.intValue(), tPK.intValue());
-								if (schools != null) {
-									Iterator iter3 = schools.iterator();
-									a.append("if(selected == \"").append(aPK.toString()).append("\" && selectedType == \"").append(tPK.toString()).append("\"){").append("\n\t\t");
-									Hashtable hash = new Hashtable();
-									// iterator through schools whithin area and type
-									while (iter3.hasNext()) {
-										school = (School) iter3.next();
-										boolean hasRelation = true;
-										if (yearAppliedFor != null) {
-											hasRelation = schBuiz.getSchoolBusiness().hasSchoolRelationToYear(school, yearAppliedFor);	
-										}
-										String pk = school.getPrimaryKey().toString();
-										//System.err.println("checking school "+pk.toString());
-										boolean invisibleForCitizen = false;
-										invisibleForCitizen = school.getInvisibleForCitizen();
-										if (!hash.containsKey(pk) && !invisibleForCitizen) {
-											if (!hasRelation)
-												a.append("if (showAll == true)\n\t\t\t");
-											a.append("schoolSelect.options[schoolSelect.options.length] = new Option(\"");
-											a.append(school.getSchoolName()).append("\",\"");
-											a.append(pk).append("\");\n\t\t");
-											hash.put(pk, pk);
-										}
-	
+
+				Integer tPK = (Integer) type.getPrimaryKey();
+				//System.err.println("checking type "+tPK.toString());
+				areas = getSchoolAreasWithType(tPK.intValue());
+				if (areas != null && !areas.isEmpty()) {
+					Iterator iter2 = areas.iterator();
+					t.append("if(selected == \"").append(tPK.toString()).append("\"){").append("\n\t\t");
+
+					Hashtable aHash = new Hashtable();
+
+					// iterate through areas whithin types
+					while (iter2.hasNext()) {
+						area = (SchoolArea) iter2.next();
+						Integer aPK = (Integer) area.getPrimaryKey();
+						// System.err.println("checking area "+aPK.toString());
+						if (!aHash.containsKey(aPK)) {
+							aHash.put(aPK, aPK);
+							schools = getSchoolByAreaAndType(iwc, aPK.intValue(), tPK.intValue());
+							if (schools != null) {
+								Iterator iter3 = schools.iterator();
+								a.append("if(selected == \"").append(aPK.toString()).append("\" && selectedType == \"").append(tPK.toString()).append("\"){").append("\n\t\t");
+								Hashtable hash = new Hashtable();
+								// iterator through schools whithin area and
+								// type
+								while (iter3.hasNext()) {
+									school = (School) iter3.next();
+									boolean hasRelation = true;
+									if (yearAppliedFor != null) {
+										hasRelation = schBuiz.getSchoolBusiness().hasSchoolRelationToYear(school, yearAppliedFor);
 									}
-									a.append("}\n\t\t");
+									String pk = school.getPrimaryKey().toString();
+									//System.err.println("checking school
+									// "+pk.toString());
+									boolean invisibleForCitizen = false;
+									invisibleForCitizen = school.getInvisibleForCitizen();
+									if (!hash.containsKey(pk) && !invisibleForCitizen) {
+										if (!hasRelation)
+											a.append("if (showAll == true)\n\t\t\t");
+										a.append("schoolSelect.options[schoolSelect.options.length] = new Option(\"");
+										a.append(school.getSchoolName()).append("\",\"");
+										a.append(pk).append("\");\n\t\t");
+										hash.put(pk, pk);
+									}
+
 								}
+								a.append("}\n\t\t");
 							}
-							else {
-								System.err.println("shools empty");
-							}
-							t.append("areaSelect.options[areaSelect.options.length] = new Option(\"");
-							t.append(area.getSchoolAreaName()).append("\",\"");
-							t.append(area.getPrimaryKey().toString()).append("\");").append("\n\t\t");
-							
-	
 						}
-						t.append("}\n\t");
+						else {
+							System.err.println("shools empty");
+						}
+						t.append("areaSelect.options[areaSelect.options.length] = new Option(\"");
+						t.append(area.getSchoolAreaName()).append("\",\"");
+						t.append(area.getPrimaryKey().toString()).append("\");").append("\n\t\t");
+
 					}
-					else
-						System.err.println("areas empty");
+					t.append("}\n\t");
+				}
+				else
+					System.err.println("areas empty");
 				//}
 			}
 		}
@@ -1415,62 +1361,68 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		s.append("\nfunction checkApplication(){\n\t");
 		//s.append("\n\t\t alert('").append("checking choices").append("');");
 		//if (!this.hasPreviousSchool && !hasChosen)
-			//s.append("\n\t var currSchool = ").append("findObj('").append(prmPreSchool).append("');");
+		//s.append("\n\t var currSchool =
+		// ").append("findObj('").append(prmPreSchool).append("');");
 		s.append("\n\t var dropOne = ").append("findObj('").append(prmFirstSchool).append("');");
-		if(!schoolChange){
+		if (!schoolChange) {
 			s.append("\n\t var dropTwo = ").append("findObj('").append(prmSecondSchool).append("');");
 			s.append("\n\t var dropThree = ").append("findObj('").append(prmThirdSchool).append("');");
 		}
 		//if (!this.hasPreviousSchool && !hasChosen)
-			//s.append("\n\t var gradeDrop = ").append("findObj('").append(prmPreGrade).append("');");
+		//s.append("\n\t var gradeDrop =
+		// ").append("findObj('").append(prmPreGrade).append("');");
 		if (hasLanguageSelection)
 			s.append("\n\t var languageDrop = ").append("findObj('").append(prmLanguage).append("');");
-		
+
 		s.append("\n\t var one = 0;");
-		if(!schoolChange){
+		if (!schoolChange) {
 			s.append("\n\t var two = 0;");
 			s.append("\n\t var three = 0;");
 		}
 		s.append("\n\t var year = 0;");
 		s.append("\n\t var school = 0;");
-		
+
 		s.append("\n\n\t if (dropOne.selectedIndex > 0) one = dropOne.options[dropOne.selectedIndex].value;");
-		if(!schoolChange){
+		if (!schoolChange) {
 			s.append("\n\t if (dropTwo.selectedIndex > 0) two = dropTwo.options[dropTwo.selectedIndex].value;");
 			s.append("\n\t if (dropThree.selectedIndex > 0) three = dropThree.options[dropThree.selectedIndex].value;");
 		}
-		
+
 		if (hasLanguageSelection) {
 			s.append("\n\n\t if (languageDrop.options[languageDrop.selectedIndex].value == -1) {");
-			s.append("\n\t\t alert('"+localize("school.must_fill_language","You must select a language choice")+"');");
+			s.append("\n\t\t alert('" + localize("school.must_fill_language", "You must select a language choice") + "');");
 			s.append("\n\t\t return false; \n}");
 		}
 		//if (!this.hasPreviousSchool)
-			//s.append("\n\t if (gradeDrop.selectedIndex > 0) year = gradeDrop.options?gradeDrop.options[gradeDrop.selectedIndex].value:document.sch_app_the_frm.elements['" + prmPreGrade + "'].value;");
+		//s.append("\n\t if (gradeDrop.selectedIndex > 0) year =
+		// gradeDrop.options?gradeDrop.options[gradeDrop.selectedIndex].value:document.sch_app_the_frm.elements['"
+		// + prmPreGrade + "'].value;");
 		//if (!this.hasPreviousSchool)
-			//s.append("\n\t if (currSchool.selectedIndex > 0) school = currSchool.options?currSchool.options[currSchool.selectedIndex].value:document.sch_app_the_frm.elements['" + prmPreSchool + "'].value;");
+		//s.append("\n\t if (currSchool.selectedIndex > 0) school =
+		// currSchool.options?currSchool.options[currSchool.selectedIndex].value:document.sch_app_the_frm.elements['"
+		// + prmPreSchool + "'].value;");
 
 		// current school check
-		/*if (!this.hasPreviousSchool) {
-			s.append("\n\n\t if(school <= 0){");
-			String msg1 = iwrb.getLocalizedString("school_choice.must_set_current_school", "You must provide current shool");
-			s.append("\n\t\t\t alert('").append(msg1).append("');");
-			s.append("\n\t\t return false;");
-			s.append("\n\t\t ");
-			s.append("\n\t }");
-		}*/
+		/*
+		 * if (!this.hasPreviousSchool) { s.append("\n\n\t if(school <= 0){");
+		 * String msg1 =
+		 * iwrb.getLocalizedString("school_choice.must_set_current_school",
+		 * "You must provide current shool"); s.append("\n\t\t\t
+		 * alert('").append(msg1).append("');"); s.append("\n\t\t return
+		 * false;"); s.append("\n\t\t "); s.append("\n\t }");
+		 */
 
 		// year check
-		/*s.append("\n\t if(year <= 0 && school > 0){");
-		String msg2 = iwrb.getLocalizedString("school_choice.must_set_grade", "You must provide current shool year");
-		s.append("\n\t\t\t alert('").append(msg2).append("');");
-		s.append("\n\t\t return false;");
-		s.append("\n\t\t ");
-		s.append("\n\t }");*/
+		/*
+		 * s.append("\n\t if(year <= 0 && school > 0){"); String msg2 =
+		 * iwrb.getLocalizedString("school_choice.must_set_grade", "You must
+		 * provide current shool year"); s.append("\n\t\t\t
+		 * alert('").append(msg2).append("');"); s.append("\n\t\t return
+		 * false;"); s.append("\n\t\t ");
+		 */
 
 		// schoolchoices checked
-		
-		if(!schoolChange){
+		if (!schoolChange) {
 			s.append("\n\t if(one > 0 && two > 0 && three > 0){");
 			s.append("\n\t if(one == two || two == three || three == one){");
 			String msg = iwrb.getLocalizedString("school_school.must_not_be_the_same", "Please do not choose the same school more than once");
@@ -1484,7 +1436,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 			s.append("\n\t\t return false;");
 			s.append("\n\t }");
 		}
-		else{
+		else {
 			s.append("\n\t if (one <= 0) {");
 			String msg = iwrb.getLocalizedString("school_school.must_fill_out", "Please fill out all choices");
 			s.append("\n\t\t alert('").append(msg).append("');");
@@ -1502,27 +1454,15 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		s.append("\n}\n");
 		return s.toString();
 	}
-	
+
 	/*
-	 * We hard code the schools for which an alert message is shown, until further notice, 
-	 * since this applies only for the nacka24 site.
+	 * We hard code the schools for which an alert message is shown, until
+	 * further notice, since this applies only for the nacka24 site.
 	 */
 	private String getAlertIfSportsOrMusicSchool() {
 		StringBuffer sb = new StringBuffer();
-		sb.append("function alertIfSportsOrMusicSchool(thisObject) {\n")
-		.append("\t var schools = new Array('Eklidens skola - Idrottsklass', 'Järla skola - Musikklass');\n")
-		.append("\t for (loop=0; loop < schools.length; loop++) {\n")
-		.append("\t\t tmpSchool = schools[loop];")
-		.append("\t\t if (tmpSchool == thisObject.options[thisObject.selectedIndex].text) {\n")		
-		.append("\t\t\t alert('")
-		.append(iwrb.getLocalizedString("school_choice.alert_if_sports_or_music_school_msg",
-					"Information: An approved application test is required for"))		
-		.append("' + ' ' + tmpSchool);\n")
-		.append("\t\t\t return false;\n")		
-		.append("\t\t }\n")
-		.append("\t }\n")
-		.append("}\n");
-		
+		sb.append("function alertIfSportsOrMusicSchool(thisObject) {\n").append("\t var schools = new Array('Eklidens skola - Idrottsklass', 'Järla skola - Musikklass');\n").append("\t for (loop=0; loop < schools.length; loop++) {\n").append("\t\t tmpSchool = schools[loop];").append("\t\t if (tmpSchool == thisObject.options[thisObject.selectedIndex].text) {\n").append("\t\t\t alert('").append(iwrb.getLocalizedString("school_choice.alert_if_sports_or_music_school_msg", "Information: An approved application test is required for")).append("' + ' ' + tmpSchool);\n").append("\t\t\t return false;\n").append("\t\t }\n").append("\t }\n").append("}\n");
+
 		return sb.toString();
 	}
 
@@ -1532,8 +1472,8 @@ public class SchoolChoiceApplication extends CommuneBlock {
 			boolean[] canApply = {true, true, true};
 			return canApply;
 		}
-			
-		boolean[] checkCanApply = {false,false,false};
+
+		boolean[] checkCanApply = {false, false, false};
 		try {
 			SchoolSeason season = schBuiz.getCurrentSeason();
 			if (season != null) {
@@ -1542,7 +1482,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 				String choiceEnd = properties.getProperty("choice_end_date");
 				String choiceRed = properties.getProperty("choice_critical_date");
 				String changeStart = properties.getProperty("school_change_start");
-				
+
 				IWTimestamp seasonStart = new IWTimestamp(season.getSchoolSeasonStart());
 				IWTimestamp dateNow = new IWTimestamp();
 				if (choiceStart != null && choiceEnd != null && choiceRed != null) {
@@ -1557,15 +1497,15 @@ public class SchoolChoiceApplication extends CommuneBlock {
 					IWTimestamp red = new IWTimestamp(seasonStart);
 					red.setDay(Integer.parseInt(choiceRed.substring(0, 2)));
 					red.setMonth(Integer.parseInt(choiceRed.substring(3)));
-					
+
 					if (dateNow.isBetween(start, end))
 						checkCanApply[0] = true;
 					else
 						checkCanApply[0] = false;
-						
+
 					if (red.isEarlierThan(dateNow))
 						checkCanApply[1] = true;
-						
+
 					//temporary, for testing only...
 					if (_isForTesting) {
 						checkCanApply[0] = true;
@@ -1579,10 +1519,10 @@ public class SchoolChoiceApplication extends CommuneBlock {
 					if (dateNow.isLaterThan(change)) {
 						checkCanApply[2] = true;
 					}
-						
+
 					if (dateNow.getYear() <= 2002)
 						checkCanApply[2] = true;
-						
+
 					if (schoolChange)
 						checkCanApply[0] = true;
 				}
@@ -1593,43 +1533,49 @@ public class SchoolChoiceApplication extends CommuneBlock {
 			return checkCanApply;
 		}
 	}
-	
+
 	public void setAsAdminQuickChoice(boolean quick) {
 		this.quickAdmin = quick;
 	}
-	
+
 	public void setAsSchoolChange(boolean change) {
-		this.schoolChange = change;	
+		this.schoolChange = change;
 	}
 
 	/**
 	 * Sets the childcarePage.
-	 * @param childcarePage The childcarePage to set
+	 * 
+	 * @param childcarePage
+	 *            The childcarePage to set
 	 */
 	public void setChildcarePage(ICPage childcarePage) {
 		afterSchoolPageID = (Integer) childcarePage.getPrimaryKey();
 	}
-	
+
 	/**
 	 * Sets the childcarePage.
-	 * @param childcarePage The childcarePage to set
+	 * 
+	 * @param childcarePage
+	 *            The childcarePage to set
 	 */
 	public void setAfterschoolPage(ICPage afterSchoolPage) {
 		this.afterSchoolPageID = (Integer) afterSchoolPage.getPrimaryKey();
-	 }
-	 
-	 /**
-	  * Sets the childcarePage ID.
-	  * @param childcarePageID The childcarePage to set
-	  */
-	 public void setCheckPage(ICPage checkPage) {
-		 this.checkPageID = (Integer) checkPage.getPrimaryKey();
-	  }
+	}
 
-	private UserHomeLink getUserHomePageLink () {
+	/**
+	 * Sets the childcarePage ID.
+	 * 
+	 * @param childcarePageID
+	 *            The childcarePage to set
+	 */
+	public void setCheckPage(ICPage checkPage) {
+		this.checkPageID = (Integer) checkPage.getPrimaryKey();
+	}
+
+	private UserHomeLink getUserHomePageLink() {
 		return new UserHomeLink();
 	}
-	
+
 	private CheckBusiness getCheckBusiness(IWApplicationContext iwc) {
 		try {
 			return (CheckBusiness) IBOLookup.getServiceInstance(iwc, CheckBusiness.class);
@@ -1638,7 +1584,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 			throw new IBORuntimeException(e.getMessage());
 		}
 	}
-	
+
 	private ICLanguageHome getICLanguageHome() throws RemoteException {
 		return (ICLanguageHome) IDOLookup.getHome(ICLanguage.class);
 	}
@@ -1649,41 +1595,48 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		}
 		catch (IBOLookupException e) {
 			throw new IBORuntimeException(e.getMessage());
-		}	
+		}
 	}
 
 	/**
-	 * @param isForTesting The isForTesting to set.
+	 * @param isForTesting
+	 *            The isForTesting to set.
 	 */
 	public void setForTesting(boolean isForTesting) {
 		this._isForTesting = isForTesting;
 	}
-	
+
 	/**
-	 * @param showChoiceMessage The showChoiceMessage to set.
+	 * @param showChoiceMessage
+	 *            The showChoiceMessage to set.
 	 */
 	public void setShowExtraChoiceMessage(boolean showChoiceMessage) {
 		this._showChoiceMessage = showChoiceMessage;
 	}
+
 	/**
-	 * @param forwardToCheckPage The forwardToCheckPage to set.
+	 * @param forwardToCheckPage
+	 *            The forwardToCheckPage to set.
 	 */
 	public void setForwardToCheckPage(boolean forwardToCheckPage) {
 		this._forwardToCheckPage = forwardToCheckPage;
 	}
-	
+
 	public void setMaxAfterCareAge(int age) {
 		_maxAge = age;
 	}
+
 	/**
-	 * @param useCheckBoxForAfterSchoolCare The useCheckBoxForAfterSchoolCare to set.
+	 * @param useCheckBoxForAfterSchoolCare
+	 *            The useCheckBoxForAfterSchoolCare to set.
 	 */
 	public void setUseCheckBoxForAfterSchoolCare(boolean useCheckBoxForAfterSchoolCare) {
 		this._useCheckBoxForAfterSchoolCare = useCheckBoxForAfterSchoolCare;
 	}
-	
+
 	/**
-	 * @param showChildCareTypes The showChildCareTypes to set.
+	 * @param showChildCareTypes
+	 *            The showChildCareTypes to set.
 	 */
 	public void setShowChildCareTypes(boolean showChildCareTypes) {
 		this._showChildCareTypes = showChildCareTypes;
