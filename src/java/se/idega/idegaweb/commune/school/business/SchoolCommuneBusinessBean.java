@@ -717,8 +717,9 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
     }
     
     /**
-     * Retreive school study path for this student or null if no path exists
+     * Retreive study path for this student or null if doesn't exist
      *
+     * @param student the one who has a study path
      * @return SchoolStudyPath or null if not found
      * @author <a href="http://www.staffannoteberg.com">Staffan Nöteberg</a>
      */
@@ -726,18 +727,15 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
         try {
             final SchoolStudyPathHome home = (SchoolStudyPathHome)
                     IDOLookup.getHome(SchoolStudyPath.class);
-            final Integer id = (Integer) student.getPrimaryKey ();
-            final Collection keys
-                    = home.findAllStudyPathsByMemberId (id.intValue ());
-            return keys.isEmpty () ? null
-                    : (SchoolStudyPath) keys.iterator ().next ();
+            final Integer studyPathId = new Integer (student.getStudyPathId ());
+            return home.findByPrimaryKey (studyPathId);
         } catch (FinderException e) {
             return null;
         } catch (IDOLookupException e) {
             e.printStackTrace ();
             return null;
         }
-    }    
+    }
 
     public SchoolStudyPath [] getAllStudyPaths () {
         SchoolStudyPath [] result = new SchoolStudyPath [0];
@@ -757,35 +755,6 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
             return result;
         }
     }
-
-    public void setStudyPath (final SchoolClassMember student,
-                              final int studyPathId) throws RemoteException {
-        try {
-            final SchoolStudyPath oldPath = getStudyPath (student);
-            if (null != oldPath) {
-                oldPath.removeSchoolClassMember (student);
-                oldPath.store ();
-            }
-            final SchoolStudyPathHome home = (SchoolStudyPathHome)
-                    IDOLookup.getHome(SchoolStudyPath.class);
-            final SchoolStudyPath newPath = home.findByPrimaryKey (new Integer (studyPathId));
-            newPath.addSchoolClassMember (student);
-            newPath.store ();
-        } catch (FinderException e) {
-            e.printStackTrace ();
-            throw new RemoteException (e.getMessage ());
-        } catch (IDORemoveRelationshipException e) {
-            e.printStackTrace ();
-            throw new RemoteException (e.getMessage ());
-        } catch (IDOLookupException e) {
-            e.printStackTrace ();
-            throw new RemoteException (e.getMessage ());
-        } catch (IDOAddRelationshipException e) {
-            e.printStackTrace ();
-            throw new RemoteException (e.getMessage ());
-        }
-    }
-
 
 	private void initializeBundlesIfNeeded(Locale currentLocale){
 		if(_iwb==null){
