@@ -497,16 +497,25 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	}
 	
 	protected String getSeparateParentMessageBodyAppl(List choices,User parent) throws RemoteException, FinderException {
-		StringBuffer body = new StringBuffer(this.getLocalizedString("school_choice.sep_parent_appl_mesg_body1", "Dear mr./ms./mrs. "));
-		body.append(parent.getNameLastFirst()).append("\n");
-		body.append(this.getLocalizedString("school_choice.separate_parent_appl_mesg_body2", "School application for your child has been received \n The schools are: "));
+		Object[] arguments = new Object[4];
+		arguments[0] = parent.getNameLastFirst(true);
 		Iterator iter = choices.iterator();
+		int count = 1;
 		while(iter.hasNext()){
 			SchoolChoice choice = (SchoolChoice) iter.next();
-			body.append(getSchool(choice.getChosenSchoolId()).getSchoolName()).append("\n");
+			arguments[count++] = getSchool(choice.getChosenSchoolId()).getSchoolName();
 		}
-		body.append(this.getLocalizedString("school_choice.separate_parent_appl_mesg_body3", "You can comment on this within 14 days from now."));
-		return body.toString();
+		if (choices.size() == 1) {
+			arguments[2] = "";
+			arguments[3] = "";
+		}
+		
+		String body = MessageFormat.format(getLocalizedString("school_choice.sep_parent_appl_mesg_body1", "Dear mr./ms./mrs. "), arguments);
+		/*StringBuffer body = new StringBuffer(this.getLocalizedString("school_choice.sep_parent_appl_mesg_body1", "Dear mr./ms./mrs. "));
+		body.append(parent.getNameLastFirst()).append("\n");
+		body.append(this.getLocalizedString("school_choice.separate_parent_appl_mesg_body2", "School application for your child has been received \n The schools are: "));
+		body.append(this.getLocalizedString("school_choice.separate_parent_appl_mesg_body3", "You can comment on this within 14 days from now."));*/
+		return body;
 	}
 	
 	protected String getSeparateParentMessageBodyChange(SchoolChoice theCase) throws RemoteException, FinderException {
