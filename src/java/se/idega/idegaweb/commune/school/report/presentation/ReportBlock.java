@@ -1,5 +1,5 @@
 /*
- * $Id: ReportBlock.java,v 1.9 2003/12/18 13:33:40 anders Exp $
+ * $Id: ReportBlock.java,v 1.10 2004/01/09 14:33:47 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -11,6 +11,7 @@ package se.idega.idegaweb.commune.school.report.presentation;
 
 import java.rmi.RemoteException;
 import java.sql.Date;
+import java.text.NumberFormat;
 
 import se.idega.idegaweb.commune.presentation.CommuneBlock;
 import se.idega.idegaweb.commune.school.report.business.Cell;
@@ -28,10 +29,10 @@ import com.idega.presentation.ui.PrintButton;
 /** 
  * This is the base class for school report blocks.
  * <p>
- * Last modified: $Date: 2003/12/18 13:33:40 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/09 14:33:47 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.9 $
+ * @version $Revision: 1.10 $
  */
 public class ReportBlock extends CommuneBlock {
 
@@ -309,6 +310,8 @@ public class ReportBlock extends CommuneBlock {
 		int cellRow = 0;
 		int tableRow = 3;
 		Header[] rowHeaders = _reportModel.getRowHeaders();
+		NumberFormat formatter = NumberFormat.getNumberInstance();
+		formatter.setMaximumFractionDigits(1);
 		for (int i = 0; i < rowHeaders.length; i++) {
 			int rowCount = 0;
 			Header header = rowHeaders[i];
@@ -322,7 +325,13 @@ public class ReportBlock extends CommuneBlock {
 			for (int j = 0; j < rowCount; j++) {
 				for (int cellColumn = 0; cellColumn < _reportModel.getColumnSize(); cellColumn++) {
 					Cell cell = _reportModel.getCell(cellRow, cellColumn);
-					Text text = getSmallText("" + cell.getValue());
+					Text text = null;
+					if (cell.getCellType() == cell.CELLTYPE_PERCENT) {
+						String s = formatter.format(cell.getFloatValue());
+						text = getSmallText(s);
+					} else {
+						text = getSmallText("" + cell.getValue());						
+					}
 					int tableColumn = cellColumn + 2;
 					table.add(text, tableColumn, tableRow);
 					table.setAlignment(tableColumn, tableRow, Table.HORIZONTAL_ALIGN_RIGHT);
