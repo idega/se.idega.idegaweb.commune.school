@@ -1,5 +1,5 @@
 /*
- * $Id: NackaCCPreSchoolPlacementReportModel.java,v 1.13 2004/01/27 09:26:07 anders Exp $
+ * $Id: NackaCCPreSchoolPlacementReportModel.java,v 1.14 2004/01/27 12:07:38 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -22,10 +22,10 @@ import com.idega.block.school.data.SchoolArea;
 /** 
  * Report model for child care pre school placements in Nacka.
  * <p>
- * Last modified: $Date: 2004/01/27 09:26:07 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/27 12:07:38 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.13 $
+ * @version $Revision: 1.14 $
  */
 public class NackaCCPreSchoolPlacementReportModel extends ReportModel {
 
@@ -391,8 +391,8 @@ public class NackaCCPreSchoolPlacementReportModel extends ReportModel {
 	 */
 	protected int getProviderPlacementCount(int schoolId) throws RemoteException {
 		ReportBusiness rb = getReportBusiness();
-		int schoolType1 = rb.getFamilyDayCareSchoolTypeId();
-		int schoolType2 = rb.getGeneralFamilyDaycareSchoolTypeId();
+		int schoolType1 = rb.getPreSchoolTypeId();
+		int schoolType2 = rb.getGeneralPreSchoolTypeId();
 		int schoolType3 = schoolType2;
 		int schoolType4 = schoolType2;
 
@@ -479,8 +479,8 @@ public class NackaCCPreSchoolPlacementReportModel extends ReportModel {
 	 */
 	protected int getProviderMeanHours(int schoolId) throws RemoteException {
 		ReportBusiness rb = getReportBusiness();
-		int schoolType1 = rb.getFamilyDayCareSchoolTypeId();
-		int schoolType2 = rb.getGeneralFamilyDaycareSchoolTypeId();
+		int schoolType1 = rb.getPreSchoolTypeId();
+		int schoolType2 = rb.getGeneralPreSchoolTypeId();
 		int schoolType3 = schoolType2;
 		int schoolType4 = schoolType2;
 
