@@ -1,5 +1,5 @@
 /*
- * $Id: NackaCCProviderCareTimeReportModel.java,v 1.2 2004/01/28 08:11:41 anders Exp $
+ * $Id: NackaCCProviderCareTimeReportModel.java,v 1.3 2005/01/20 12:47:12 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -17,10 +17,10 @@ import com.idega.block.school.data.School;
 /** 
  * Report model for total number of child care hours in Nacka.
  * <p>
- * Last modified: $Date: 2004/01/28 08:11:41 $ by $Author: anders $
+ * Last modified: $Date: 2005/01/20 12:47:12 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class NackaCCProviderCareTimeReportModel extends ReportModel {
 
@@ -32,6 +32,7 @@ public class NackaCCProviderCareTimeReportModel extends ReportModel {
 	private final static int COLUMN_METHOD_SUM_HOURS = 101;
 
 	private final static String QUERY_SUM_HOURS = "sum_hours";
+	private final static String QUERY_SUM_HOURS2 = "sum_hours2";
 	
 	private final static String KEY_REPORT_TITLE = KP + "title_nacka_child_care_provider_time";
 	
@@ -145,8 +146,7 @@ public class NackaCCProviderCareTimeReportModel extends ReportModel {
 						break;
 				}
 				break;
-		}
-		
+		}		
 		return value;
 	}
 
@@ -162,17 +162,27 @@ public class NackaCCProviderCareTimeReportModel extends ReportModel {
 	 */
 	protected float getProviderCareTime(int schoolId) {				
 		PreparedQuery query = null;
+		PreparedQuery query2 = null;
 		query = getQuery(QUERY_SUM_HOURS);
+		query2 = getQuery(QUERY_SUM_HOURS2);
 		if (query == null) {
 			query = new PreparedQuery(getConnection());
-			query.setSelectSumChildCareWeekHours();
-			query.setChildCarePlacements();
+			query.setSelectSumChildCareWeekHoursCareTime();
+			query.setChildCarePlacementsCareTime();
 			query.setSchool(); // parameter 1
 			query.prepare();
 			setQuery(QUERY_SUM_HOURS, query);
+
+			query2 = new PreparedQuery(getConnection());
+			query2.setSelectSumChildCareWeekHoursCareTimeString();
+			query2.setChildCarePlacementsCareTimeString();
+			query2.setSchool(); // parameter 1
+			query2.prepare();
+			setQuery(QUERY_SUM_HOURS2, query2);
 		}
 		query.setInt(1, schoolId);
+		query2.setInt(1, schoolId);
 		
-		return query.executeFloat();
+		return query.executeFloat() + query2.executeFloat();
 	}
 }

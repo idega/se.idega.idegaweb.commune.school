@@ -1,5 +1,5 @@
 /*
- * $Id: PreparedQuery.java,v 1.38 2004/10/14 11:45:29 anders Exp $
+ * $Id: PreparedQuery.java,v 1.39 2005/01/20 12:47:11 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -27,10 +27,10 @@ import com.idega.block.school.data.SchoolSeason;
 /** 
  * Handles the SQL logic for school report calculations.
  * <p>
- * Last modified: $Date: 2004/10/14 11:45:29 $ by $Author: anders $
+ * Last modified: $Date: 2005/01/20 12:47:11 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.38 $
+ * @version $Revision: 1.39 $
  */
 public class PreparedQuery {
 
@@ -96,7 +96,7 @@ public class PreparedQuery {
 	/**
 	 * Sets the query to calulate mean value for child care taker week hours.
 	 */
-	public void setSelectMeanChildCareWeekHours() {
+	public void setSelectMeanChildCareWeekHoursCareTime() {
 		_sqlSelect = "select avg(c.care_time)";
 		
 		_sqlFrom.put(C, TABLE_C);
@@ -105,8 +105,26 @@ public class PreparedQuery {
 	/**
 	 * Sets the query to calulate sum for child care taker week hours.
 	 */
-	public void setSelectSumChildCareWeekHours() {
+	public void setSelectSumChildCareWeekHoursCareTime() {
 		_sqlSelect = "select sum(c.care_time)";
+		
+		_sqlFrom.put(C, TABLE_C);
+	}
+
+	/**
+	 * Sets the query to calulate mean value for child care taker week hours.
+	 */
+	public void setSelectMeanChildCareWeekHoursCareTimeString() {
+		_sqlSelect = "select avg(c.care_time_string)";
+		
+		_sqlFrom.put(C, TABLE_C);
+	}
+
+	/**
+	 * Sets the query to calulate sum for child care taker week hours.
+	 */
+	public void setSelectSumChildCareWeekHoursCareTimeString() {
+		_sqlSelect = "select sum(c.care_time_string)";
 		
 		_sqlFrom.put(C, TABLE_C);
 	}
@@ -179,7 +197,51 @@ public class PreparedQuery {
 //				" and c.application_status in ('F', 'V') AND ca.VALID_FROM_DATE < '" + _currentDate + "'" +
 				" and (ca.terminated_date is null or ca.terminated_date >= sysdate)" +
 				" and c.application_status in ('F', 'V') AND ca.VALID_FROM_DATE <= sysdate" +
-				" and cm.ic_user_id = u.ic_user_id";
+				" and cm.ic_user_id = u.ic_user_id and c.care_time_string is null";
+		_sqlWhere.add(sql);
+		
+		_sqlFrom.put(CA, TABLE_CA);
+		_sqlFrom.put(C, TABLE_C);
+		_sqlFrom.put(CM, TABLE_CM);
+		_sqlFrom.put(S, TABLE_S);
+		_sqlFrom.put(U, TABLE_U);
+	}
+	
+	/**
+	 * Sets the query to select child care placements for rows with old care_time column.
+	 * @param schoolSeasonId the school season id for the placements to count
+	 */
+	public void setChildCarePlacementsCareTime() {
+		String sql = "ca.sch_class_member_id = cm.sch_class_member_id and ca.application_id = c.comm_childcare_id" +
+				" and c.provider_id = s.sch_school_id" +
+				" and (ca.terminated_date is null or ca.terminated_date >= sysdate)" +
+				" and c.application_status in ('F', 'V') AND ca.VALID_FROM_DATE <= sysdate" +
+				" and cm.ic_user_id = u.ic_user_id" + 
+				" and c.care_time_string is null" +
+				" and c.care_time > 0";
+		_sqlWhere.add(sql);
+		
+		_sqlFrom.put(CA, TABLE_CA);
+		_sqlFrom.put(C, TABLE_C);
+		_sqlFrom.put(CM, TABLE_CM);
+		_sqlFrom.put(S, TABLE_S);
+		_sqlFrom.put(U, TABLE_U);
+	}
+	
+	/**
+	 * Sets the query to select child care placements. Fix for new column care_time_string.
+	 * @param schoolSeasonId the school season id for the placements to count
+	 */
+	public void setChildCarePlacementsCareTimeString() {
+		String sql = "ca.sch_class_member_id = cm.sch_class_member_id and ca.application_id = c.comm_childcare_id" +
+				" and c.provider_id = s.sch_school_id" +
+//				" and (ca.terminated_date is null or ca.terminated_date >= '" + _currentDate + "')" +
+//				" and c.application_status in ('F', 'V') AND ca.VALID_FROM_DATE < '" + _currentDate + "'" +
+				" and (ca.terminated_date is null or ca.terminated_date >= sysdate)" +
+				" and c.application_status in ('F', 'V') AND ca.VALID_FROM_DATE <= sysdate" +
+				" and cm.ic_user_id = u.ic_user_id" +
+				" and c.care_time_string is not null" +
+				" and c.care_time_string > 0";
 		_sqlWhere.add(sql);
 		
 		_sqlFrom.put(CA, TABLE_CA);
@@ -700,8 +762,23 @@ public class PreparedQuery {
 	 * Set select only the specified child care week hours interval (from, to).
 	 * @return the index for the first interval hours
 	 */
-	public int setChildCareWeekHours() {
+	public int setChildCareWeekHoursCareTime() {
 		String sql = "ca.care_time >= ? and ca.care_time <= ?";
+		_sqlWhere.add(sql);
+		
+		_sqlFrom.put(CA, TABLE_CA);
+		
+		int index = _parameterIndex;
+		_parameterIndex += 2;
+		return index;
+	}
+	
+	/**
+	 * Set select only the specified child care week hours interval (from, to).
+	 * @return the index for the first interval hours
+	 */
+	public int setChildCareWeekHoursCareTimeString() {
+		String sql = "ca.care_time_string >= ? and ca.care_time_string <= ?";
 		_sqlWhere.add(sql);
 		
 		_sqlFrom.put(CA, TABLE_CA);

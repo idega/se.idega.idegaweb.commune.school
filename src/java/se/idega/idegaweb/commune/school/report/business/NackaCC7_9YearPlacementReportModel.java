@@ -1,5 +1,5 @@
 /*
- * $Id: NackaCC7_9YearPlacementReportModel.java,v 1.5 2004/01/28 08:02:40 anders Exp $
+ * $Id: NackaCC7_9YearPlacementReportModel.java,v 1.6 2005/01/20 12:47:12 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -23,10 +23,10 @@ import com.idega.block.school.data.SchoolArea;
  * Report model for child care after school and daycare placements 
  * for 7-9 years children in Nacka.
  * <p>
- * Last modified: $Date: 2004/01/28 08:02:40 $ by $Author: anders $
+ * Last modified: $Date: 2005/01/20 12:47:12 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
 public class NackaCC7_9YearPlacementReportModel extends ReportModel {
 
@@ -45,6 +45,8 @@ public class NackaCC7_9YearPlacementReportModel extends ReportModel {
 	private final static String QUERY_PROVIDER_PLACEMENTS = "provider_placements";
 	private final static String QUERY_FAMILY_DAYCARE_MEAN_HOURS = "family_daycare_mean_hours";
 	private final static String QUERY_PROVIDER_MEAN_HOURS = "provider_mean_hours";
+	private final static String QUERY_FAMILY_DAYCARE_MEAN_HOURS2 = "family_daycare_mean_hours2";
+	private final static String QUERY_PROVIDER_MEAN_HOURS2 = "provider_mean_hours2";
 	
 	private final static int COMMUNE = 1;
 	private final static int PRIVATE = 2;
@@ -436,27 +438,44 @@ public class NackaCC7_9YearPlacementReportModel extends ReportModel {
 		}
 		
 		PreparedQuery query = null;
+		PreparedQuery query2 = null;
 		query = getQuery(QUERY_FAMILY_DAYCARE_MEAN_HOURS);
+		query2 = getQuery(QUERY_FAMILY_DAYCARE_MEAN_HOURS2);
 		if (query == null) {
 			query = new PreparedQuery(getConnection());
-			query.setSelectMeanChildCareWeekHours();
-			query.setChildCarePlacements();
+			query.setSelectMeanChildCareWeekHoursCareTime();
+			query.setChildCarePlacementsCareTime();
 			query.setSchoolTypeForProvider(); // parameter 1
 			query.setFourManagementTypes(); // parameter 2-5
 			query.setSchoolArea(); // parameter 6
 			query.prepare();
 			setQuery(QUERY_FAMILY_DAYCARE_MEAN_HOURS, query);
+			
+			query2 = new PreparedQuery(getConnection());
+			query2.setSelectMeanChildCareWeekHoursCareTimeString();
+			query2.setChildCarePlacementsCareTimeString();
+			query2.setSchoolTypeForProvider(); // parameter 1
+			query2.setFourManagementTypes(); // parameter 2-5
+			query2.setSchoolArea(); // parameter 6
+			query2.prepare();
+			setQuery(QUERY_FAMILY_DAYCARE_MEAN_HOURS2, query2);
 		}
-		query.setInt(1, schoolType);
 		
+		query.setInt(1, schoolType);		
 		query.setString(2, managementType1);
 		query.setString(3, managementType2);
 		query.setString(4, managementType3);
-		query.setString(5, managementType4);
-		
+		query.setString(5, managementType4);		
 		query.setInt(6, areaId);
 		
-		return query.executeFloat();
+		query2.setInt(1, schoolType);		
+		query2.setString(2, managementType1);
+		query2.setString(3, managementType2);
+		query2.setString(4, managementType3);
+		query2.setString(5, managementType4);		
+		query2.setInt(6, areaId);
+		
+		return (query.executeFloat() + query2.executeFloat()) / 2;
 	}
 	
 	/**
@@ -467,20 +486,34 @@ public class NackaCC7_9YearPlacementReportModel extends ReportModel {
 		int schoolType = rb.getAfterSchool7_9TypeId();
 
 		PreparedQuery query = null;
+		PreparedQuery query2 = null;
 		query = getQuery(QUERY_PROVIDER_MEAN_HOURS);
+		query2 = getQuery(QUERY_PROVIDER_MEAN_HOURS2);
 		if (query == null) {
 			query = new PreparedQuery(getConnection());
-			query.setSelectMeanChildCareWeekHours();
-			query.setChildCarePlacements();
+			query.setSelectMeanChildCareWeekHoursCareTime();
+			query.setChildCarePlacementsCareTime();
 			query.setSchool(); // parameter 1
 			query.setSchoolTypeForProvider(); // parameter 2
 			query.prepare();
 			setQuery(QUERY_PROVIDER_MEAN_HOURS, query);
+			
+			query2 = new PreparedQuery(getConnection());
+			query2.setSelectMeanChildCareWeekHoursCareTimeString();
+			query2.setChildCarePlacementsCareTimeString();
+			query2.setSchool(); // parameter 1
+			query2.setSchoolTypeForProvider(); // parameter 2
+			query2.prepare();
+			setQuery(QUERY_PROVIDER_MEAN_HOURS2, query2);
 		}
+
 		query.setInt(1, schoolId);
 		query.setInt(2, schoolType);
-		
-		return query.executeFloat();
+
+		query2.setInt(1, schoolId);
+		query2.setInt(2, schoolType);
+
+		return (query.executeFloat() + query2.executeFloat()) / 2;
 	}
 	
 }

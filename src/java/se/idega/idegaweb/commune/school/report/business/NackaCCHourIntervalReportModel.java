@@ -1,5 +1,5 @@
 /*
- * $Id: NackaCCHourIntervalReportModel.java,v 1.4 2004/09/24 07:44:29 malin Exp $
+ * $Id: NackaCCHourIntervalReportModel.java,v 1.5 2005/01/20 12:47:12 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -14,10 +14,10 @@ import java.rmi.RemoteException;
 /** 
  * Report model for total number of child care placements per child care hour interval.
  * <p>
- * Last modified: $Date: 2004/09/24 07:44:29 $ by $Author: malin $
+ * Last modified: $Date: 2005/01/20 12:47:12 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public class NackaCCHourIntervalReportModel extends ReportModel {
 
@@ -42,6 +42,7 @@ public class NackaCCHourIntervalReportModel extends ReportModel {
 	private final static int COLUMN_METHOD_HOURS_40_ = 106;
 	
 	private final static String QUERY_HOUR_INTERVAL_PLACEMENTS = "hour_interval_placements";
+	private final static String QUERY_HOUR_INTERVAL_PLACEMENTS2 = "hour_interval_placements2";
 	
 	private final static String KEY_REPORT_TITLE = KP + "title_nacka_child_care_hour_interval_placements";
 
@@ -260,24 +261,41 @@ public class NackaCCHourIntervalReportModel extends ReportModel {
 		}
 
 		PreparedQuery query = null;
+		PreparedQuery query2 = null;
 		query = getQuery(QUERY_HOUR_INTERVAL_PLACEMENTS);
+		query2 = getQuery(QUERY_HOUR_INTERVAL_PLACEMENTS2);
 		if (query == null) {
 			query = new PreparedQuery(getConnection());
 			query.setSelectCount();
-			query.setChildCarePlacements();
-			query.setChildCareWeekHours(); // parameter 1-2
+			query.setChildCarePlacementsCareTime();
+			query.setChildCareWeekHoursCareTime(); // parameter 1-2
 			query.setFourSchoolTypes(); // parameter 3-6
 			query.prepare();
 			setQuery(QUERY_HOUR_INTERVAL_PLACEMENTS, query);
+			
+			query2 = new PreparedQuery(getConnection());
+			query2.setSelectCount();
+			query2.setChildCarePlacementsCareTimeString();
+			query2.setChildCareWeekHoursCareTimeString(); // parameter 1-2
+			query2.setFourSchoolTypes(); // parameter 3-6
+			query2.prepare();
+			setQuery(QUERY_HOUR_INTERVAL_PLACEMENTS2, query2);
 		}
-		query.setInt(1, fromHours);
-		query.setInt(2, toHours);
 		
+		query.setInt(1, fromHours);
+		query.setInt(2, toHours);		
 		query.setInt(3, schoolType1);
 		query.setInt(4, schoolType2);
 		query.setInt(5, schoolType3);
 		query.setInt(6, schoolType4);
 		
-		return query.execute();
+		query2.setInt(1, fromHours);
+		query2.setInt(2, toHours);		
+		query2.setInt(3, schoolType1);
+		query2.setInt(4, schoolType2);
+		query2.setInt(5, schoolType3);
+		query2.setInt(6, schoolType4);
+		
+		return query.execute() + query2.execute();
 	}
 }
