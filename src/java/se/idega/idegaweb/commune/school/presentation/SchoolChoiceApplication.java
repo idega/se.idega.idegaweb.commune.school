@@ -45,6 +45,7 @@ import com.idega.presentation.ui.TextInput;
 import com.idega.user.business.UserBusiness;
 import com.idega.user.data.User;
 import com.idega.util.Age;
+import com.idega.core.data.Address;
 
 
 /**
@@ -296,6 +297,11 @@ public class SchoolChoiceApplication extends CommuneBlock {
 
     T.add(getSmallHeader(iwrb.getLocalizedString("address","Address")),1,4);
     T.add(getSmallHeader(iwrb.getLocalizedString("zip_and_area","Zip area")),4,4);
+    Address address = userbuiz.getUsersMainAddress(child);
+    T.add(getText(address.getStreetAddress()),1,5);
+    try{
+    T.add(getText(address.getPostalCode().getName()),4,5);
+    }catch(java.sql.SQLException ex){}
 
 
     return T;
@@ -425,7 +431,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
       while(iter.hasNext()){
 				User parent = (User) iter.next();
 				T.add(getSmallText(parent.getNameLastFirst()),1,row++);
-				T.add(userbuiz.getUsersMainAddress(parent).toString());
+				T.add(userbuiz.getUsersMainAddress(parent).getStreetAddress());
       }
     }
     catch(NoCustodianFound ex){
