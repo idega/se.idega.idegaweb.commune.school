@@ -2,7 +2,7 @@ package se.idega.idegaweb.commune.school.data;
 
 import javax.ejb.*;
 
-public interface SchoolChoice extends com.idega.data.IDOEntity
+public interface SchoolChoice extends com.idega.data.IDOEntity,com.idega.block.process.data.Case
 {
  public int getChosenSchoolId() throws java.rmi.RemoteException;
  public int getWorkSituation2() throws java.rmi.RemoteException;

@@ -16,7 +16,7 @@ import java.util.Collection;
  * @version 1.0
  */
 
-public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolChoice {
+public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolChoice,Case {
 
   final static public String SCHOOLCHOICE = "comm_sch_choice";
   final static public String CASECODE = "MBSKOLV";
@@ -34,21 +34,23 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 
   public final static String LANGUAGECHOICE = "language_choice";
   public final static String SCHOOLCHOICEDATE = "school_choice_date";
-  public final static String MESSAGE = "message";
+  public final static String MESSAGE = "message_body";
   public final static String CHOICEORDER = "choice_order";
-  public final static String METHOD = "method";
+  public final static String METHOD = "choice_method";
 
   public final static String WORK_SITUATION_1 = "work_situation_1";
   public final static String WORK_SITUATION_2 = "work_situation_2";
 
-  public void initializeAttributes() {
-    this.addManyToOneRelationship(getIDColumnName(),"Case ID",Case.class);
-    this.getAttribute(getIDColumnName()).setAsPrimaryKey(true);
+  private static final String[] CASE_STATUS_KEYS = {"UBEH","TYST","PREL","PLAC"};
+  private static final String[] CASE_STATUS_DESCRIPTIONS = {"Case open","Sleep","Preliminary","Placed"};
 
-    this.addAttribute(CHILD,"child_id",Integer.class);
-    this.addAttribute(CURRENT_SCHOOL,"Current school",Integer.class);
+
+  public void initializeAttributes() {
+    addGeneralCaseRelation();
+    this.addAttribute(CHILD,"child_id",true,true,Integer.class,MANY_TO_ONE,User.class);
+    this.addAttribute(CURRENT_SCHOOL,"Current school",true,true,Integer.class,MANY_TO_ONE,School.class);
     this.addAttribute(GRADE,"Grade",Integer.class);
-    this.addAttribute(CHOSEN_SCHOOL,"Chosen school",Integer.class);
+    this.addAttribute(CHOSEN_SCHOOL,"Chosen school",true,true,Integer.class,MANY_TO_ONE,School.class);
 
     this.addAttribute(WORK_SITUATION_1,"Work situation one",Integer.class);
     this.addAttribute(WORK_SITUATION_2,"Work situation two",Integer.class);
@@ -65,9 +67,9 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
     this.addAttribute(SCHOOLCATALOGUE,"School catalogue",Boolean.class);
 
 
-    this.addManyToOneRelationship(CURRENT_SCHOOL,School.class);
-    this.addManyToOneRelationship(CHOSEN_SCHOOL,School.class);
-    this.addManyToOneRelationship(CHILD,User.class);
+    //this.addManyToOneRelationship(CURRENT_SCHOOL,School.class);
+    //this.addManyToOneRelationship(CHOSEN_SCHOOL,School.class);
+    //this.addManyToOneRelationship(CHILD,User.class);
 
 
   }
@@ -80,6 +82,14 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
   public String getCaseCodeDescription() {
     return "School choice application";
   }
+
+  public String[] getCaseStatusKeys(){
+    return CASE_STATUS_KEYS;
+  }
+  public String[] getCaseStatusDescriptions(){
+    return CASE_STATUS_DESCRIPTIONS;
+  }
+
   public int getChildId(){
     return getIntColumnValue(CHILD);
   }

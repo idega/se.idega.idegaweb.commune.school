@@ -1,5 +1,6 @@
 package se.idega.idegaweb.commune.school.presentation;
 
+import se.idega.idegaweb.commune.school.business.SchoolChoiceBusiness;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
@@ -97,21 +98,44 @@ public class SchoolChoiceApplication extends CommuneBlock {
   private int valPreArea = -1;
   private int valPreSchool = -1;
   private int valType = -1;
+  private int childId = -1;
 
   public void control(IWContext iwc) throws Exception{
     debugParameters(iwc);
     String ID = iwc.getParameter(prmChildId);
     if(ID!=null){
-      int childId = Integer.parseInt(ID);
+      childId = Integer.parseInt(ID);
       userbuiz = (UserBusiness) IBOLookup.getServiceInstance(iwc,UserBusiness.class);
 
       User child = userbuiz.getUser(childId);
       if(child!=null){
         parse(iwc);
+        boolean saved = false;
+        if(iwc.isParameterSet(prmAction) && iwc.getParameter(prmAction).equals("true")){
+          saved = saveSchoolChoice(iwc);
+
+        }
         schoolTypes = getSchoolTypes(iwc,"SCHOOL");
-        add(getSchoolChoiceForm(iwc,child));
+        if(!saved)
+          add(getSchoolChoiceForm(iwc,child));
       }
     }
+  }
+
+  private boolean saveSchoolChoice(IWContext iwc){
+    /** @todo Add some rule checking */
+
+    try{
+      SchoolChoiceBusiness schBuiz = (SchoolChoiceBusiness) IBOLookup.getServiceInstance(iwc,SchoolChoiceBusiness.class);
+      schBuiz.createSchoolChoices(iwc.getUserId(),childId,valPreSchool,
+          valFirstSchool,valSecondSchool,valThirdSchool,valPreGrade,1,-1,-1,
+          valLanguage,valMessage,valSchoolChange,valSixyearCare,valAutoAssign,
+          valCustodiansAgree,valSendCatalogue);
+      return true;
+    }catch(Exception ex){
+      ex.printStackTrace();
+    }
+    return false;
   }
 
   private void parse(IWContext iwc){
@@ -145,7 +169,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
     T.add(getChoiceSchool(iwc,child),1,3);
     T.add(getParentInfo(iwc,child),1,4);
     T.add(getMessagePart(iwc),1,5);
-    T.add(new SubmitButton(iwrb.getLocalizedString("school.submit_application",prmAction)),1,6);
+    T.add(new SubmitButton(iwrb.getLocalizedString("school.submit_application","Send"),prmAction,"true"),1,6);
     T.add(new HiddenInput(prmChildId,child.getPrimaryKey().toString() ) );
     myForm.add(T);
 
