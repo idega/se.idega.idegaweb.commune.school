@@ -9,8 +9,8 @@ import java.util.Vector;
 
 import javax.ejb.FinderException;
 
-import se.idega.idegaweb.commune.accounting.business.AccountingSession;
 import se.idega.idegaweb.commune.accounting.presentation.OperationalFieldsMenu;
+import se.idega.idegaweb.commune.care.business.AccountingSession;
 import se.idega.idegaweb.commune.presentation.CommuneBlock;
 import se.idega.idegaweb.commune.school.business.SchoolClassWriter;
 import se.idega.idegaweb.commune.school.business.SchoolCommuneBusiness;
