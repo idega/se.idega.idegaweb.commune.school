@@ -1,5 +1,9 @@
 package se.idega.idegaweb.commune.school.data;
 
+import java.util.Collection;
+
+import javax.ejb.FinderException;
+
 import com.idega.data.IDOException;
 
 
@@ -231,5 +235,15 @@ public int getNumberOfUnHandledMoves(int p0)throws javax.ejb.FinderException,com
 	return theReturn;
 }
 
+
+	/* (non-Javadoc)
+	 * @see se.idega.idegaweb.commune.school.data.SchoolChoiceHome#ejbFindByParent(se.idega.idegaweb.commune.school.data.SchoolChoice)
+	 */
+	public Collection findByParent(SchoolChoice parent) throws FinderException {
+		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+		java.util.Collection ids = ((SchoolChoiceBMPBean) entity).ejbFindByParent(parent);
+		this.idoCheckInPooledEntity(entity);
+		return this.getEntityCollectionForPrimaryKeys(ids);
+	}
 
 }

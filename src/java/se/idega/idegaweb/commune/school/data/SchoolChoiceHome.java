@@ -37,5 +37,6 @@ public interface SchoolChoiceHome extends com.idega.data.IDOHome
  public int getNumberOfChoices(int p0,int p1)throws com.idega.data.IDOException;
  public int getNumberOfHandledMoves(int p0)throws javax.ejb.FinderException,com.idega.data.IDOException;
  public int getNumberOfUnHandledMoves(int p0)throws javax.ejb.FinderException,com.idega.data.IDOException;
+ public java.util.Collection findByParent(SchoolChoice parent)throws javax.ejb.FinderException;
 
 }

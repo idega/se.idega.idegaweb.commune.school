@@ -818,5 +818,9 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 		sql.appendAndEquals(CHOSEN_SCHOOL, schoolID);
 		return super.idoGetNumberOfRecords(sql.toString());
 	}
+	
+	public Collection ejbFindByParent(Case parent)throws FinderException{
+		return super.ejbFindSubCasesUnder(parent);
+	}
 
 }
