@@ -86,7 +86,7 @@ public class SchoolGroupColumnsHandler extends SelectionBox implements InputHand
 	 * @see com.idega.business.InputHandler#getDisplayNameOfValue(java.lang.Object, com.idega.presentation.IWContext)
 	 */
 	public String getDisplayNameOfValue(Object value, IWContext iwc) {
-		return "";
+		return null;
 	}
 	
 	public String getLocalizedString(IWResourceBundle iwrb, String key, String defaultValue) {

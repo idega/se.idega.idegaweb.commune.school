@@ -47,7 +47,7 @@ public class TextAreaHandler extends TextArea implements InputHandler {
 	 * @see com.idega.business.InputHandler#getDisplayNameOfValue(java.lang.Object, com.idega.presentation.IWContext)
 	 */
 	public String getDisplayNameOfValue(Object value, IWContext iwc) {
-		return "";
+		return null;
 	}
 
 }
