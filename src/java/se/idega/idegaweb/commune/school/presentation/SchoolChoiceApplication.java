@@ -449,7 +449,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		SubmitButton button = (SubmitButton) getButton(new SubmitButton("submit", localize("school_choice.ready", "Ready")));
 		T.add(button, 1, row++);
 		button.setOnSubmitFunction("checkApplication", getSchoolCheckScript());
-		//button.setToDisableOnClick(button, true);
+		myForm.setToDisableOnSubmit(button, true);
 
 		T.add(new HiddenInput(prmAction, "true"), 1, 1);
 		T.add(new HiddenInput(prmChildId, child.getPrimaryKey().toString()), 1, 1);
@@ -1453,7 +1453,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 			s.append("\n\t\t return false;");
 			s.append("\n\t }");
 		}
-		s.append("\n\t\t findObj('").append("submit").append("').disabled=true;");
+		//s.append("\n\t\t findObj('").append("submit").append("').disabled=true;");
 		s.append("\n\t return true;");
 		s.append("\n}\n");
 		return s.toString();
