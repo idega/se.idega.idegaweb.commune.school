@@ -17,7 +17,6 @@
 package se.idega.idegaweb.commune.school.presentation;
 
 import java.rmi.RemoteException;
-import java.sql.Date;
 import java.sql.Timestamp;
 import java.text.MessageFormat;
 import java.util.Collection;
@@ -36,7 +35,6 @@ import se.idega.idegaweb.commune.school.event.SchoolEventListener;
 
 import com.idega.block.process.business.CaseBusiness;
 import com.idega.block.school.business.SchoolBusiness;
-import com.idega.block.school.business.SchoolBusinessBean;
 import com.idega.block.school.data.School;
 import com.idega.block.school.data.SchoolClass;
 import com.idega.block.school.data.SchoolClassMember;
