@@ -1,28 +1,31 @@
 package se.idega.idegaweb.commune.presentation;
 
-import com.idega.block.process.business.CaseBusiness;
-import com.idega.block.process.data.Case;
-import com.idega.block.process.data.CaseStatus;
-import com.idega.builder.data.IBPage;
-import com.idega.business.IBOLookup;
-import com.idega.core.user.data.User;
-import com.idega.idegaweb.*;
-import com.idega.presentation.*;
-import com.idega.presentation.text.*;
-import com.idega.presentation.ui.*;
-import com.idega.user.Converter;
-import com.idega.user.business.*;
-import com.idega.user.data.Group;
-import com.idega.util.*;
 import java.text.DateFormat;
-import java.util.*;
-import javax.ejb.EJBException;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Iterator;
+
 import se.cubecon.bun24.viewpoint.business.ViewpointBusiness;
 import se.cubecon.bun24.viewpoint.data.Viewpoint;
 import se.cubecon.bun24.viewpoint.presentation.ViewpointForm;
 import se.idega.idegaweb.commune.business.CommuneCaseBusiness;
-import se.idega.idegaweb.commune.message.business.*;
-import se.idega.idegaweb.commune.message.data.*;
+
+import com.idega.block.process.business.CaseBusiness;
+import com.idega.block.process.data.Case;
+import com.idega.builder.data.IBPage;
+import com.idega.business.IBOLookup;
+import com.idega.user.data.User;
+import com.idega.presentation.ExceptionWrapper;
+import com.idega.presentation.IWContext;
+import com.idega.presentation.PresentationObject;
+import com.idega.presentation.Table;
+import com.idega.presentation.text.Break;
+import com.idega.presentation.text.Link;
+import com.idega.presentation.text.Text;
+import com.idega.presentation.ui.Form;
+import com.idega.user.business.UserBusiness;
+import com.idega.user.data.Group;
+import com.idega.util.CustomDateFormat;
 
 /**
  * Title: UserCases
@@ -144,15 +147,16 @@ public class UserCases extends CommuneBlock {
             }
 
             // 1. find my groups
-            final GroupBusiness groupBusiness =
-                    (GroupBusiness) IBOLookup.getServiceInstance
-                    (iwc, GroupBusiness.class);
+            final UserBusiness userBusiness =
+                    (UserBusiness) IBOLookup.getServiceInstance
+                    (iwc, UserBusiness.class);
+            final User user
+                    = iwc.getCurrentUser();
             final int userId
-                    = ((Integer) iwc.getCurrentUser ().getPrimaryKey())
+                    = ((Integer) user.getPrimaryKey())
                     .intValue();
             final Collection groups
-                    = groupBusiness.getAllGroupsNotDirectlyRelated
-                    (userId, iwc);
+                    = userBusiness.getUserGroups(user);
 
             // 2. find unhandled viewpoints
             ViewpointBusiness viewpointBusiness
