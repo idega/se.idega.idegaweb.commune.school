@@ -9,7 +9,7 @@ import se.idega.idegaweb.commune.school.business.SchoolCommuneSession;
 
 import com.idega.block.school.data.SchoolClass;
 import com.idega.business.IBOLookup;
-import com.idega.business.IWEventListener;
+import com.idega.event.IWPageEventListener;
 import com.idega.idegaweb.IWException;
 import com.idega.presentation.IWContext;
 
@@ -21,7 +21,7 @@ import com.idega.presentation.IWContext;
  * To enable and disable the creation of type comments go to
  * Window>Preferences>Java>Code Generation.
  */
-public class SchoolEventListener implements IWEventListener {
+public class SchoolEventListener implements IWPageEventListener {
 
 	private int _schoolID = -1;
 	private int _schoolSeasonID = -1;
