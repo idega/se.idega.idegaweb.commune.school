@@ -862,7 +862,14 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 			stamp.addDays(-1);
 
 			Collection types = getSchoolBusiness().getSchoolTypesForCategory(getSchoolBusiness().getCategoryElementarySchool(), false);
-			SchoolClassMember member = getSchoolBusiness().getSchoolClassMemberHome().findLatestByUserAndSchool(choice.getChildId(), choice.getCurrentSchoolId(), types);
+			SchoolClassMember member = null;
+			if (choice.getCurrentSchoolId() != choice.getChosenSchoolId()) {
+				member = getSchoolBusiness().getSchoolClassMemberHome().findLatestByUserAndSchool(choice.getChildId(), choice.getCurrentSchoolId(), types);
+			}
+			else {
+				SchoolSeason season = getSchoolSeasonHome().findSeasonByDate(choice.getPlacementDate());
+				member = getSchoolBusiness().getSchoolClassMemberHome().findLatestByUserAndSchCategoryAndSeason(choice.getChild(), getSchoolBusiness().getCategoryElementarySchool(), season);
+			}
 			member.setRemovedDate(stamp.getTimestamp());
 			member.store();
 			
