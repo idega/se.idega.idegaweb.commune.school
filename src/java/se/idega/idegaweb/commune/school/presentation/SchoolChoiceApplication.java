@@ -440,10 +440,8 @@ public class SchoolChoiceApplication extends CommuneBlock {
 			Script S = p.getAssociatedScript();
 			Script F = new Script();
 			
-			/* *** Borgman addings *** */
 			S.addVariable("sportOrMusicSchools", "new Array('2', '3', '4')");
 			S.addFunction("getAlertIfSportsOrMusicSchool", getAlertIfSportsOrMusicSchool());					
-			/* *** */
 			
 			S.addFunction("initFilter", getInitFilterScript());
 			S.addFunction("setSelected", getSetSelectedScript());
@@ -964,7 +962,6 @@ public class SchoolChoiceApplication extends CommuneBlock {
 			//table.add(getSmallHeader(Text.NON_BREAKING_SPACE + iwrb.getLocalizedString("school.child_care_requested", "Interested in after school child care")), 1, row);
 		}
 
-		// *** borgman added
 		// School choice message link
 		table.mergeCells(1, row, 5, row);
 		table.add(getHeader(iwrb.getLocalizedString("school.after_school_choice", "Choice of after school care")), 1, row);
