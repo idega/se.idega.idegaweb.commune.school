@@ -107,23 +107,29 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 		try {
 			SortedMap yearMap = new TreeMap(new SchoolYearComparator());
 			if (schoolYears != null) {
+				Map groupMap = null;
+				SchoolYear year = null;
+				SchoolBusiness sb = getSchoolBusiness();
+				Collection groups = null;
+				SchoolClass group = null;
+				
 				Iterator iter = schoolYears.iterator();
 				while (iter.hasNext()) {
-					Map groupMap = new HashMap();
+					groupMap = new HashMap();
 					if (emptyString != null) {
 						groupMap.put("-1", emptyString);
 					}
 					
-					SchoolYear year = (SchoolYear) iter.next();
-					SchoolBusiness sb = getSchoolBusiness();
-					Collection providers = sb.findSchoolClassesBySchoolAndSeasonAndYear(schoolID, seasonID, ((Integer)year.getPrimaryKey()).intValue(), showSubGroups);
-					if (providers != null) {
-						Iterator iterator = providers.iterator();
+					year = (SchoolYear) iter.next();
+					groups = sb.findSchoolClassesBySchoolAndSeasonAndYear(schoolID, seasonID, ((Integer)year.getPrimaryKey()).intValue(), showSubGroups);
+					if (groups != null && groups.size() > 0) {
+						Iterator iterator = groups.iterator();
 						while (iterator.hasNext()) {
-							SchoolClass group = (SchoolClass) iterator.next();
+							group = (SchoolClass) iterator.next();
 							groupMap.put(group, group);
 						}
 					}
+					System.out.println("Adding year: " + year.getPrimaryKey());
 					yearMap.put(year, groupMap);
 				}
 			}
@@ -403,9 +409,26 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 		}
 	}
 	
+	public boolean hasChoicesForSeason(int userID, int seasonID) {
+		try {
+			String[] statuses = { getCaseStatusDeleted().getStatus(), getCaseStatusInactive().getStatus() };
+			int numberOfChoices = getSchoolChoiceBusiness().getSchoolChoiceHome().getChoices(userID, seasonID, statuses);
+			if (numberOfChoices > 0)
+				return true;
+			return false;
+		}
+		catch (RemoteException e) {
+			return false;
+		}
+		catch (IDOException e) {
+			return false;
+		}
+	}
+	
 	public boolean hasChoiceToThisSchool(int userID, int schoolID, int seasonID) {
 		try {
-			int numberOfChoices = getSchoolChoiceBusiness().getSchoolChoiceHome().getChoices(userID, schoolID, seasonID);
+			String[] statuses = { getCaseStatusDeleted().getStatus(), getCaseStatusInactive().getStatus() };
+			int numberOfChoices = getSchoolChoiceBusiness().getSchoolChoiceHome().getChoices(userID, schoolID, seasonID, statuses);
 			if (numberOfChoices > 0)
 				return true;
 			return false;
