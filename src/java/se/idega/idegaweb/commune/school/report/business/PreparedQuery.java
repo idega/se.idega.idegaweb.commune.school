@@ -1,5 +1,5 @@
 /*
- * $Id: PreparedQuery.java,v 1.19 2004/01/28 09:42:40 anders Exp $
+ * $Id: PreparedQuery.java,v 1.20 2004/01/28 11:49:50 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -27,10 +27,10 @@ import com.idega.block.school.data.SchoolSeason;
 /** 
  * Handles the SQL logic for school report calculations.
  * <p>
- * Last modified: $Date: 2004/01/28 09:42:40 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/28 11:49:50 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.19 $
+ * @version $Revision: 1.20 $
  */
 public class PreparedQuery {
 
@@ -595,7 +595,7 @@ public class PreparedQuery {
 	 * @return the index for the first interval hours
 	 */
 	public int setChildCareWeekHours() {
-		String sql = "ca.care_time >= ? and ca_care_time <= ?";
+		String sql = "ca.care_time >= ? and ca.care_time <= ?";
 		_sqlWhere.add(sql);
 		
 		_sqlFrom.put(CA, TABLE_CA);
