@@ -43,7 +43,7 @@ import com.idega.util.IWTimestamp;
  * Copyright:    Copyright idega Software (c) 2002
  * Company:	idega Software
  * @author <a href="mailto:roar@idega.is">roar</a>
- * @version $Id: EventList.java,v 1.1 2003/10/20 15:23:30 laddi Exp $
+ * @version $Id: EventList.java,v 1.2 2003/11/17 12:10:33 roar Exp $
  * @since 17.3.2003 
  */
 
@@ -291,7 +291,7 @@ public class EventList extends CommuneBlock {
 		Table toolbar = new Table();
 		toolbar.setAlignment(Table.HORIZONTAL_ALIGN_RIGHT);
 		toolbar.setCellpadding(2);
-		GenericButton printBtn = getButton(new PrintButton());
+		GenericButton printBtn = getButton(new PrintButton(localize("school.print","Print")));
 		GenericButton backBtn = getButton(new BackButton());
 
 		toolbar.add(backBtn, 1, 1);
