@@ -34,7 +34,7 @@ public interface SchoolChoiceBusiness extends com.idega.business.IBOService,com.
 	public java.lang.String getApplyingSeparateParentSubjectChange() throws java.rmi.RemoteException;
 	public java.lang.String getBundleIdentifier() throws java.rmi.RemoteException;
 	public java.util.List getConnectedSchoolchoices(se.idega.idegaweb.commune.school.data.SchoolChoice p0) throws java.rmi.RemoteException;
-	public se.idega.idegaweb.commune.school.data.CurrentSchoolSeasonHome getCurrentSchoolSeasonHome()throws java.rmi.RemoteException, java.rmi.RemoteException;
+	public se.idega.idegaweb.commune.care.data.CurrentSchoolSeasonHome getCurrentSchoolSeasonHome()throws java.rmi.RemoteException, java.rmi.RemoteException;
 	public com.idega.block.school.data.SchoolSeason getCurrentSeason()throws java.rmi.RemoteException,javax.ejb.FinderException, java.rmi.RemoteException;
 	public com.idega.block.school.data.School getFirstProviderForUser(com.idega.user.data.User p0)throws javax.ejb.FinderException,java.rmi.RemoteException, java.rmi.RemoteException;
 	public java.lang.String getGroupedMessageSubject() throws java.rmi.RemoteException;
