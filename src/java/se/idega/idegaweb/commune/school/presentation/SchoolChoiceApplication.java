@@ -1675,10 +1675,11 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	public void setUseCheckBoxForAfterSchoolCare(boolean useCheckBoxForAfterSchoolCare) {
 		this._useCheckBoxForAfterSchoolCare = useCheckBoxForAfterSchoolCare;
 	}
+	
 	/**
 	 * @param showChildCareTypes The showChildCareTypes to set.
 	 */
-	protected void setShowChildCareTypes(boolean showChildCareTypes) {
+	public void setShowChildCareTypes(boolean showChildCareTypes) {
 		this._showChildCareTypes = showChildCareTypes;
 	}
 }
