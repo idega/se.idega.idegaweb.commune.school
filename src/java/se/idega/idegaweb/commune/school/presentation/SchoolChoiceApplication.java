@@ -331,7 +331,10 @@ public class SchoolChoiceApplication extends CommuneBlock {
 						if (!currentChildChoices.isEmpty()) {
 							Iterator iter = currentChildChoices.iterator();
 							int count = 1;
-							valExtraChoiceMessages = new String[currentChildChoices.size()];
+							int size = currentChildChoices.size();
+							if (size > 3) {
+								valExtraChoiceMessages = new String[size];
+							}
 							while (iter.hasNext()) {
 								SchoolChoice element = (SchoolChoice) iter.next();
 								School school = element.getChosenSchool();
