@@ -219,6 +219,23 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	}
 
 	public List createSchoolChoices(int userId, int childId, int school_type_id, int current_school, int chosen_school_1, int chosen_school_2, int chosen_school_3, int grade, int method, int workSituation1, int workSituation2, String language, String message, boolean changeOfSchool, boolean keepChildrenCare, boolean autoAssign, boolean custodiansAgree, boolean schoolCatalogue, Date placementDate, SchoolSeason season, String[] extraMessages) throws IDOCreateException {
+		if (placementDate != null) {
+			try {
+				try {
+					season = getSchoolSeasonHome().findSeasonByDate(placementDate);
+				}
+				catch (FinderException e) {
+					season = getCurrentSeason();
+				}
+			}
+			catch (FinderException fe) {
+				fe.printStackTrace();
+			}
+			catch (RemoteException re) {
+				throw new IBORuntimeException(re);
+			}
+		}
+		
 		if (changeOfSchool) {
 			SchoolChoice choice = createSchoolChangeChoice(userId, childId, school_type_id, current_school, chosen_school_1, grade, method, workSituation1, workSituation2, language, message, keepChildrenCare, autoAssign, custodiansAgree, schoolCatalogue, placementDate, season, extraMessages[0]);
 			ArrayList list = new ArrayList(1);
@@ -243,7 +260,14 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 				handleSeparatedParentApplication(userId, returnList, false);
 				trans.commit();
 
-				int previousSeasonID = getCommuneSchoolBusiness().getPreviousSchoolSeasonID(getCommuneSchoolBusiness().getCurrentSchoolSeasonID());
+				int previousSeasonID = -1;
+				if (season != null) {
+					previousSeasonID = getCommuneSchoolBusiness().getPreviousSchoolSeasonID(((Integer)season.getPrimaryKey()).intValue());
+				}
+				else {
+					previousSeasonID = getCommuneSchoolBusiness().getPreviousSchoolSeasonID(getCommuneSchoolBusiness().getCurrentSchoolSeasonID());
+				}
+				
 				if (previousSeasonID != -1)
 					getCommuneSchoolBusiness().setNeedsSpecialAttention(childId, previousSeasonID, true);
 
@@ -290,6 +314,23 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	 *         IDOCreateException
 	 */
 	public List createSchoolChoices(int userId, int childId, int school_type_id, int current_school, int chosen_school_1, int chosen_school_2, int chosen_school_3, int grade, int method, int workSituation1, int workSituation2, String language, String message, boolean changeOfSchool, boolean keepChildrenCare, boolean autoAssign, boolean custodiansAgree, boolean schoolCatalogue, Date placementDate, SchoolSeason season, boolean nativeLangIsChecked, int nativeLang, String[] extraMessages) throws IDOCreateException {
+		if (placementDate != null) {
+			try {
+				try {
+					season = getSchoolSeasonHome().findSeasonByDate(placementDate);
+				}
+				catch (FinderException e) {
+					season = getCurrentSeason();
+				}
+			}
+			catch (FinderException fe) {
+				fe.printStackTrace();
+			}
+			catch (RemoteException re) {
+				throw new IBORuntimeException(re);
+			}
+		}
+		
 		if (changeOfSchool) {
 			SchoolChoice choice = createSchoolChangeChoice(userId, childId, school_type_id, current_school, chosen_school_1, grade, method, workSituation1, workSituation2, language, message, keepChildrenCare, autoAssign, custodiansAgree, schoolCatalogue, placementDate, season, extraMessages[0]);
 			ArrayList list = new ArrayList(1);
@@ -314,7 +355,14 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 				handleSeparatedParentApplication(userId, returnList, false);
 				trans.commit();
 
-				int previousSeasonID = getCommuneSchoolBusiness().getPreviousSchoolSeasonID(getCommuneSchoolBusiness().getCurrentSchoolSeasonID());
+				int previousSeasonID = -1;
+				if (season != null) {
+					previousSeasonID = getCommuneSchoolBusiness().getPreviousSchoolSeasonID(((Integer)season.getPrimaryKey()).intValue());
+				}
+				else {
+					previousSeasonID = getCommuneSchoolBusiness().getPreviousSchoolSeasonID(getCommuneSchoolBusiness().getCurrentSchoolSeasonID());
+				}
+				
 				if (previousSeasonID != -1) {
 					getCommuneSchoolBusiness().setNeedsSpecialAttention(childId, previousSeasonID, true);
 				}
