@@ -2,14 +2,17 @@ package se.idega.idegaweb.commune.school.presentation;
 
 import is.idega.idegaweb.member.business.MemberFamilyLogic;
 import is.idega.idegaweb.member.business.NoCustodianFound;
+import is.idega.idegaweb.member.presentation.UserSearcher;
 
 import java.rmi.RemoteException;
 import java.text.DateFormat;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
@@ -34,6 +37,7 @@ import com.idega.block.school.data.SchoolArea;
 import com.idega.block.school.data.SchoolCategoryBMPBean;
 import com.idega.block.school.data.SchoolClass;
 import com.idega.block.school.data.SchoolClassMember;
+import com.idega.block.school.data.SchoolClassMemberHome;
 import com.idega.block.school.data.SchoolSeason;
 import com.idega.block.school.data.SchoolType;
 import com.idega.block.school.data.SchoolTypeHome;
@@ -131,6 +135,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	private String prmAction = prefix + "snd_frm";
 	private String prmChildId = CitizenChildren.getChildIDParameterName();
 	private String prmParentId = CitizenChildren.getParentIDParameterName();
+	
 	private String prmForm = prefix + "the_frm";
 	//private String prmCaseOwner = prefix+"cse_own";
 	private String prmNativeLangIsChecked = prefix + "native_lang_is_checked";
@@ -199,7 +204,24 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	private int _maxAge = 0;
 	private boolean _useCheckBoxForAfterSchoolCare = false;
 	private boolean _showChildCareTypes = false;
-
+	
+	//variables for admin user
+	private boolean _useAsAdmin = false;
+	private static int MAX_FOUND_USER_COLS = 20;
+	private static int MAX_FOUND_USER_ROWS = 1;
+	private static int MAX_FOUND_USERS = MAX_FOUND_USER_COLS * MAX_FOUND_USER_ROWS;
+	private final String TOOMANYSTUDENTSFOUND_DEFAULT
+	= "Too many hits. Try to constrain your search";
+	private final String TOOMANYSTUDENTSFOUND_KEY = prefix + "tooManyStudentsFound";
+	private final String NOUSERFOUND_KEY = prefix + "noUserFound";
+	private final String NOUSERFOUND_DEFAULT
+	= "No matches were found on given search criteria";
+	private String prmChildIdAdmin = CitizenChildren.getChildIDParameterName() + "_admin";
+	private String _childId = null;
+	
+	
+	
+	
 	/**
 	 * @param ongoingSeason
 	 */
@@ -213,12 +235,30 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		df = DateFormat.getDateInstance(DateFormat.SHORT, iwc.getCurrentLocale());
 		schBuiz = (SchoolChoiceBusiness) IBOLookup.getServiceInstance(iwc, SchoolChoiceBusiness.class);
 		canApply = checkCanApply(iwc);
-		control(iwc);
+		//userbuiz = (UserBusiness) IBOLookup.getServiceInstance(iwc, UserBusiness.class);
+		//schCommBiz = (SchoolCommuneBusiness) IBOLookup.getServiceInstance(iwc, SchoolCommuneBusiness.class);
+		
+		if (_useAsAdmin) {
+			if (!iwc.isParameterSet(prmAction)) {
+			add (createMainTable (getUserSearchFormTable (iwc)));
+			}
+			else{
+				control(iwc);	
+			}
+		}
+		else {
+			control(iwc);
+		}
 	}
 
 	public void control(IWContext iwc) throws Exception {
 		//debugParameters(iwc);
-		String ID = iwc.getParameter(prmChildId);
+		String ID = null;
+		ID = iwc.getParameter(prmChildId);
+		if (ID == null && _useAsAdmin){
+			ID = _childId;	
+		}
+		
 		if (iwc.isLoggedOn() && canApply[0]) {
 			if (ID != null) {
 				childId = Integer.parseInt(ID);
@@ -338,15 +378,16 @@ public class SchoolChoiceApplication extends CommuneBlock {
 						add(getAlreadyChosenAnswer(child));
 					}
 					else {
-						if (custodiansAgree || isOwner)
+						if (custodiansAgree || isOwner || _useAsAdmin)
 							add(getSchoolChoiceForm(iwc, child));
 						else
 							add(getLocalizedHeader("school.cannot_alter_choice", "You cannot alter the school choice already made."));
 					}
 				}
 			}
-			else
-				add(getLocalizedHeader("school.no_student_id_provided", "No student provided"));
+			else{			
+					add(getLocalizedHeader("school.no_student_id_provided", "No student provided"));
+			}
 		}
 		else if (!iwc.isLoggedOn())
 			add(getLocalizedHeader("school.need_to_be_logged_on", "You need to log in"));
@@ -433,7 +474,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		
 		T.add(getChoiceSchool(), 1, row++);
 		T.setHeight(row++, 12);
-	
+		
 		//add table with messagePart and submit button
 		Table table = new Table();
 		table.setWidth(300);
@@ -456,7 +497,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		table.add(button, 1, 3);
 		button.setOnSubmitFunction("checkApplication", getSchoolCheckScript());
 		myForm.setToDisableOnSubmit(button, true);
-			
+		
 		////
 		
 		T.add(new HiddenInput(prmAction, "true"), 1, 1);
@@ -1043,6 +1084,27 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	}
 
 	/*private PresentationObject getMessagePart() {
+	 Table table = new Table(1, 3);
+	 table.setWidth(300);
+	 table.setCellpadding(2);
+	 table.setCellspacing(0);
+	 table.setBorder(0);
+	 
+	 TextArea message = (TextArea) getStyledInterface(new TextArea(prmMessage));
+	 message.setRows(6);
+	 message.setColumns(65);
+	 if (valMessage != null) message.setValue(valMessage);
+
+	 if (schoolChange)
+	 table.add(getSmallHeader(localize("school.application_change_required_reason", "Reason for schoolchange (Required)")), 1, 1);
+	 else
+	 table.add(getSmallHeader(localize("school.application_extra_info", "Extra info")), 1, 1);
+	 table.add(message, 1, 2);
+	 
+	 return table;
+	 }*/
+	
+	private TextArea getMessagePart2() {
 		Table table = new Table(1, 3);
 		table.setWidth(300);
 		table.setCellpadding(2);
@@ -1054,31 +1116,10 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		message.setColumns(65);
 		if (valMessage != null) message.setValue(valMessage);
 
-		if (schoolChange)
-			table.add(getSmallHeader(localize("school.application_change_required_reason", "Reason for schoolchange (Required)")), 1, 1);
-		else
-			table.add(getSmallHeader(localize("school.application_extra_info", "Extra info")), 1, 1);
-		table.add(message, 1, 2);
 		
-		return table;
-	}*/
-	
-	private TextArea getMessagePart2() {
-	Table table = new Table(1, 3);
-	table.setWidth(300);
-	table.setCellpadding(2);
-	table.setCellspacing(0);
-	table.setBorder(0);
-	
-	TextArea message = (TextArea) getStyledInterface(new TextArea(prmMessage));
-	message.setRows(6);
-	message.setColumns(65);
-	if (valMessage != null) message.setValue(valMessage);
-
-	
-	
-	return message;
-}
+		
+		return message;
+	}
 
 	private Collection getSchoolTypes(String category) {
 		try {
@@ -1613,7 +1654,204 @@ public class SchoolChoiceApplication extends CommuneBlock {
 			throw new IBORuntimeException(e.getMessage());
 		}
 	}
-
+//malin
+	
+	private UserSearcher createSearcher () {
+		final UserSearcher searcher = new UserSearcher ();
+		searcher.setOwnFormContainer (false);
+		searcher.setShowMiddleNameInSearch (false);
+		searcher.setLastNameLength (14);
+		searcher.setFirstNameLength (14);
+		searcher.setPersonalIDLength (12);
+		searcher.setMaxFoundUserCols (MAX_FOUND_USER_COLS); 
+		searcher.setMaxFoundUserRows (MAX_FOUND_USER_ROWS);
+		return searcher;
+	}
+	
+	/**
+	 * Shows a form where the user can enter ssn, first name and/or last name
+	 * and then after first search, click on one of possibly more than one name
+	 * in the search result.
+	 *
+	 * @param context session data
+	 * @exception RemoteException if exception happens in lower layer
+	 */
+	private Table getUserSearchFormTable (final IWContext context)
+	throws RemoteException, FinderException, Exception {
+		// set up searcher
+		final UserSearcher searcher = createSearcher ();
+		fillSearcherWithStudents (context, searcher);
+		final User foundUser = searcher.getUser ();
+		
+		// output result
+		final Table table = new Table ();
+		final Form searchForm = new Form();
+		searchForm.setOnSubmit("return checkInfoForm()");
+		
+		searchForm.add (searcher);
+		table.add (searchForm, 1, 1);
+		if (null == foundUser) {
+			/*final String message1 = localize (ONLY_MOVING_TO_OTHER_MUNICIP_KEY,
+					ONLY_MOVING_TO_OTHER_MUNICIP_KEY);
+			final String message2 = localize (ONLY_UNENDED_PLACEMENTS_SEARCHABLE_KEY,
+					ONLY_UNENDED_PLACEMENTS_SEARCHABLE_KEY);
+			
+			
+			table.add (getSmallText ("- " + message1), 1, 2);
+			table.add (getSmallText ("- " + message2), 1, 3);
+			*/
+		} else {
+			// exactly one user found - display user and termination form
+			/*final Table terminateTable = new Table ();
+			terminateTable.add (getStudentTable (context, foundUser), 1, 2);
+			final Form terminateForm = new Form ();
+			terminateForm.add (terminateTable);
+			table.add (terminateForm, 1, 3);
+			*/
+			//testar(foundUser);
+			boolean test1 = context.isParameterSet(prmChildIdAdmin);
+			String test = context.getParameter(prmChildIdAdmin);
+			try {
+				control(context);
+			}
+			catch (Exception e){
+				
+			}
+			//table.add(getSchoolChoiceForm(context, foundUser), 1, 3);
+		}
+		
+		return table;
+	}
+	
+	private void testar(User foundUser) {
+		/*final Table testTable = new Table();
+		testTable.setBorder(1);
+		testTable.add(new HiddenInput(prmChildIdAdmin, foundUser.getPrimaryKey().toString()), 1,1);
+		testTable.add("malin", 1, 2);
+		final Form testForm = new Form();
+		testForm.add(testTable);
+		
+		add(testForm);
+		*/
+		_childId = foundUser.getPrimaryKey().toString();
+	}
+	
+	
+	/**
+	 * Retreives students that are currently members of a school class
+	 *
+	 * @param context session data
+	 * @param searcher to use for searching
+	 * @return number of users found
+	 * @exception RemoteException if exception happens in lower layer
+	 */
+	private void fillSearcherWithStudents (final IWContext context,
+			final UserSearcher searcher)
+	throws RemoteException {
+		final Collection students = new HashSet ();
+		Collection usersFound = null;
+		try {
+			// 1. start with a raw search
+			searcher.process (context);
+			usersFound = searcher.getUsersFound ();
+			if (null == usersFound) {
+				final User singleUser = searcher.getUser ();
+				if (null != singleUser) {
+					usersFound = Collections.singleton (singleUser);
+				} else {
+					throw new FinderException ();
+				}
+			}
+			
+			// 2. filter out students that are placed and that the logged on
+			// user is authorized to see
+		/*	final SchoolCommuneBusiness communeBusiness
+			= (SchoolCommuneBusiness) IBOLookup.getServiceInstance
+			(context, SchoolCommuneBusiness.class);
+			final SchoolBusiness schoolBusiness
+			= communeBusiness.getSchoolBusiness ();
+			final SchoolClassMemberHome memberHome
+			= schoolBusiness.getSchoolClassMemberHome ();
+			final int schoolId = 3;
+			try {
+				final Collection members = memberHome
+				.findAllBySchoolAndUsersWithSchoolYearAndNotRemoved
+				(schoolId, usersFound);
+				for (Iterator i = members.iterator (); i.hasNext ();) {
+					final SchoolClassMember student
+					= (SchoolClassMember) i.next ();
+					if (MAX_FOUND_USERS <= students.size ()) {
+						// too many students found
+						displayRedText (TOOMANYSTUDENTSFOUND_KEY,
+								TOOMANYSTUDENTSFOUND_DEFAULT);
+						throw new FinderException ();
+					}
+					students.add (student.getStudent ());
+				}
+			} catch (FinderException e) {
+				// no problem, nu students found
+			}
+	*/
+			if (MAX_FOUND_USERS <= usersFound.size ()) {
+				// too many students found
+				displayRedText (TOOMANYSTUDENTSFOUND_KEY,
+						TOOMANYSTUDENTSFOUND_DEFAULT);
+				throw new FinderException ();
+			}
+			
+			if (usersFound.isEmpty ()) {
+				displayRedText (NOUSERFOUND_KEY, NOUSERFOUND_DEFAULT);
+			}
+	
+			} catch (FinderException e) {
+			// no students found or too many students found
+			// Collection 'students' will have the right members anyway
+		}
+		
+		// 3. Set up search result for display
+		if (usersFound == null) {
+			searcher.setUser (null);
+			searcher.setUsersFound (null);
+		} else if (1 == usersFound.size ()) {
+			searcher.setUser ((User) usersFound.toArray () [0]);
+			searcher.setUsersFound (null);
+			testar(searcher.getUser());
+		} else {
+			searcher.setUsersFound (usersFound);
+		}
+	
+	}
+	/**
+	 * Returns a styled table with content placed properly
+	 *
+	 * @param content the page unique content
+	 * @return Table to add to output
+	 */
+	private Table createMainTable (final PresentationObject content) {
+		final Table mainTable = new Table();
+		mainTable.setCellpadding (getCellpadding ());
+		mainTable.setCellspacing (getCellspacing ());
+		mainTable.setWidth (Table.HUNDRED_PERCENT);
+		mainTable.setColumns (1);
+		//mainTable.setRowColor (1, getHeaderColor ());
+		mainTable.setRowAlignment(1, Table.HORIZONTAL_ALIGN_CENTER) ;
+		
+		/*mainTable.add (getSmallHeader (localize (TERMINATEMEMBERSHIP_KEY,
+				TERMINATEMEMBERSHIP_DEFAULT)),
+				1, 1);
+			*/
+		mainTable.add (content, 1, 2);
+		return mainTable;
+	}
+	
+	private void displayRedText (final String key, final String defaultString) {
+		final Text text
+		= new Text ('\n' + localize (key, defaultString) + '\n');
+		text.setFontColor ("#ff0000");
+		add (text);
+	}
+	
+	//Malin
 	/**
 	 * @param isForTesting
 	 *          The isForTesting to set.
@@ -1621,7 +1859,13 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	public void setForTesting(boolean isForTesting) {
 		this._isForTesting = isForTesting;
 	}
-
+	/**
+	 * @param isUseAsAdmin
+	 *          The isUseAsAdmin to set.
+	 */
+	public void setUseAsAdmin(boolean isUseAsAdmin) {
+		this._useAsAdmin = isUseAsAdmin;
+	}
 	/**
 	 * @param showChoiceMessage
 	 *          The showChoiceMessage to set.
