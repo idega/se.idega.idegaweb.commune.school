@@ -10,8 +10,6 @@ import java.rmi.RemoteException;
 import java.text.DateFormat;
 import java.util.Collection;
 import java.util.Date;
-import java.util.List;
-import java.util.Vector;
 
 import javax.ejb.FinderException;
 
@@ -22,9 +20,7 @@ import se.idega.idegaweb.commune.school.business.SchoolChoiceBusiness;
 import se.idega.idegaweb.commune.school.data.SchoolChoice;
 import se.idega.idegaweb.commune.school.data.SchoolChoiceReminder;
 
-import com.idega.block.process.business.CaseBusiness;
 import com.idega.block.process.data.Case;
-import com.idega.block.process.data.CaseCode;
 import com.idega.block.school.data.School;
 import com.idega.business.IBOLookup;
 import com.idega.presentation.IWContext;
@@ -65,17 +61,6 @@ public class AdminUserCases extends UserCases {
 		}
 	}
 
-	/**
-	 * Returns a list of all the cases for a user, including the cases handled by any of the users groups.
-	 * The method does not return viewpoints.
-	 */
-	protected List getCases(IWContext iwc, User user, int startingCase, int numberOfCases) throws RemoteException, FinderException, Exception {
-		CaseBusiness caseBusiness = (CaseBusiness) IBOLookup.getServiceInstance(iwc, CaseBusiness.class);
-		Collection groups = getGroups(iwc, user.getNodeID());
-		CaseCode [] hiddenCases = getCommuneCaseBusiness(iwc).getUserHiddenCaseCodes();
-		return new Vector(caseBusiness.getAllCasesForUserAndGroupsExceptCodes(user, groups, hiddenCases, startingCase, numberOfCases));
-	}
-	
 	/**
 	 * Adds a case to the html table. If a school provider exist for the case, the providers name
 	 * is added to a separate column.
@@ -123,16 +108,6 @@ public class AdminUserCases extends UserCases {
 		return (SchoolChoiceBusiness) IBOLookup.getServiceInstance(getIWApplicationContext(), SchoolChoiceBusiness.class);	
 	}		
 	
-	/**
-	 * Adds the header labels to the html table. 
-	 * @return row index after header row. 
-	 */
-	protected int addTableHeader(Table table, int row) {
-		int ret = super.addTableHeader(table, row);
-		table.add(getSmallHeader(localize("usercases.caseProvider", "Provider")), getProviderColumn(), row);
-		return ret;
-	}
-		
 		/**
 		 * Adds viewpoints to the html table, if any exists.
 		 * @param iwc
