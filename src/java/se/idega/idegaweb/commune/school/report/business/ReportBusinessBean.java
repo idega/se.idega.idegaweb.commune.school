@@ -1,5 +1,5 @@
 /*
- * $Id: ReportBusinessBean.java,v 1.32 2004/01/26 11:04:04 anders Exp $
+ * $Id: ReportBusinessBean.java,v 1.33 2004/01/27 15:01:56 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -29,10 +29,10 @@ import com.idega.block.school.data.SchoolStudyPathHome;
 /** 
  * Business logic for school reports.
  * <p>
- * Last modified: $Date: 2004/01/26 11:04:04 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/27 15:01:56 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.32 $
+ * @version $Revision: 1.33 $
  */
 public class ReportBusinessBean extends com.idega.business.IBOServiceBean implements ReportBusiness  {
 
@@ -49,6 +49,8 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 	private final static int SCHOOL_TYPE_FAMILY_AFTER_SCHOOL_6 = 46;
 	private final static int SCHOOL_TYPE_AFTER_SCHOOL_7_9 = 30;
 	private final static int SCHOOL_TYPE_FAMILY_AFTER_SCHOOL_7_9 = 47;
+	
+	private final static String SCHOOL_CATEGORY_CHILD_CARE = "CHILD_CARE";
 	
 	private final static String MANAGEMENT_TYPE_COMMUNE = "COMMUNE";
 	private final static int NACKA_COMMUNE_ID = 1;
@@ -381,16 +383,31 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 	public Collection getCommuneSchools(int areaId, Collection schoolTypes, Collection managementTypes) {
 		Collection schools = null;
 		try {
-		SchoolHome schoolHome = getSchoolHome();
-		schools = schoolHome.findAllByAreaTypeManagementCommune(
-				areaId,
-				schoolTypes,
-				managementTypes,
-				NACKA_COMMUNE_ID);
+			SchoolHome schoolHome = getSchoolHome();
+			schools = schoolHome.findAllByAreaTypeManagementCommune(
+					areaId,
+					schoolTypes,
+					managementTypes,
+					NACKA_COMMUNE_ID);
 		} catch (Exception e) {
 			log(e);
 		}
 		return schools;
+	}
+
+	/**
+	 * Returns all child care providers.
+	 */
+	public Collection getChildCareProviders() {
+		if (_schools == null) {
+			try {
+				SchoolBusiness sb = getSchoolBusiness();
+				_schools = sb.findAllSchoolsByCategory(SCHOOL_CATEGORY_CHILD_CARE);
+			} catch (Exception e) {
+				log(e);
+			}
+		}
+		return _schools;
 	}
 	
 	/**
