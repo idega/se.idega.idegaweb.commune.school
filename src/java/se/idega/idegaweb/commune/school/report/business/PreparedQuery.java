@@ -1,5 +1,5 @@
 /*
- * $Id: PreparedQuery.java,v 1.36 2004/04/27 13:53:37 anders Exp $
+ * $Id: PreparedQuery.java,v 1.37 2004/09/08 09:17:32 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -27,10 +27,10 @@ import com.idega.block.school.data.SchoolSeason;
 /** 
  * Handles the SQL logic for school report calculations.
  * <p>
- * Last modified: $Date: 2004/04/27 13:53:37 $ by $Author: anders $
+ * Last modified: $Date: 2004/09/08 09:17:32 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.36 $
+ * @version $Revision: 1.37 $
  */
 public class PreparedQuery {
 
@@ -175,8 +175,10 @@ public class PreparedQuery {
 	public void setChildCarePlacements() {
 		String sql = "ca.sch_class_member_id = cm.sch_class_member_id and ca.application_id = c.comm_childcare_id" +
 				" and c.provider_id = s.sch_school_id" +
-				" and (ca.terminated_date is null or ca.terminated_date >= '" + _currentDate + "')" +
-				" and c.application_status in ('F', 'V') AND ca.VALID_FROM_DATE < '" + _currentDate + "'" +
+//				" and (ca.terminated_date is null or ca.terminated_date >= '" + _currentDate + "')" +
+//				" and c.application_status in ('F', 'V') AND ca.VALID_FROM_DATE < '" + _currentDate + "'" +
+				" and (ca.terminated_date is null or ca.terminated_date >= sysdate)" +
+				" and c.application_status in ('F', 'V') AND ca.VALID_FROM_DATE <= sysdate" +
 				" and cm.ic_user_id = u.ic_user_id";
 		_sqlWhere.add(sql);
 		
