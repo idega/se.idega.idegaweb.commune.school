@@ -30,6 +30,7 @@ import com.idega.block.school.data.SchoolClassMember;
 import com.idega.block.school.data.SchoolSeason;
 import com.idega.block.school.data.SchoolType;
 import com.idega.block.school.data.SchoolYear;
+import com.idega.builder.data.IBPage;
 import com.idega.business.IBOLookup;
 import com.idega.core.data.Address;
 import com.idega.idegaweb.IWBundle;
@@ -140,6 +141,8 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	private boolean canApply = false;
 	private boolean hasChosen = false;
 	private Age age;
+	
+	private IBPage childcarePage;
 
 	public void main(IWContext iwc) throws Exception {
 		iwb = getBundle(iwc);
@@ -185,6 +188,9 @@ public class SchoolChoiceApplication extends CommuneBlock {
 								if (count == 1) {
 									valFirstSchool = schoolID;
 									valFirstArea = areaID;
+									valSixyearCare = element.getKeepChildrenCare();
+									if (element.getLanguageChoice() != null)
+										valLanguage = element.getLanguageChoice();
 									count++;
 									if (!hasPreviousSchool) {
 										initSchoolFromChoice(element);
@@ -211,7 +217,12 @@ public class SchoolChoiceApplication extends CommuneBlock {
 
 					schoolTypes = getSchoolTypes(iwc, "SCHOOL");
 					if (saved) {
-						add(getSchoolChoiceAnswer(iwc, child));
+						if (valSixyearCare && childcarePage != null) {
+							iwc.setSessionAttribute(CitizenChildren.getChildIDParameterName(), new Integer(childId));
+							iwc.forwardToIBPage(getParentPage(), childcarePage);
+						}
+						else
+							add(getSchoolChoiceAnswer(iwc, child));
 					}
 					else if (hasChoosed) {
 						add(getAlreadyChosenAnswer(iwc, child, currentChildChoices));
@@ -603,6 +614,8 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		txtLangChoice.addMenuElement("school.language_french", localize("school.language_french","French"));
 		txtLangChoice.addMenuElement("school.language_spanish", localize("school.language_spanish","Spanish"));
 		txtLangChoice.addMenuElement("school.language_swedish_english", localize("school.language_swedish_english","Swedish/English"));
+		if (valLanguage != null)
+			txtLangChoice.setSelectedElement(valLanguage);
 
 		DropdownMenu drpFirstArea = getDropdown(iwc, prmFirstArea, null, prmType, prmFirstArea, prmFirstSchool, 2, iwrb.getLocalizedString("school.area_first", "School Area...................."));
 		DropdownMenu drpFirstSchool = (DropdownMenu) getStyledInterface(new DropdownMenu(prmFirstSchool));
@@ -635,10 +648,8 @@ public class SchoolChoiceApplication extends CommuneBlock {
 			table.add(getSmallHeader(iwrb.getLocalizedString("school.third_choice", "Third choice")+":"), 1, row);
 			table.add(drpThirdArea, 3, row);
 			table.add(drpThirdSchool, 5, row++);
-		}else {
-			/** Add something if needed */
 		}
-
+		
 		if (schoolYear != null && schoolYear.getSchoolYearAge() == 12) {
 			table.setHeight(row++, 5);
 			table.add(getSmallHeader(iwrb.getLocalizedString("school.six_year_language", "Language")+":"), 1, row);
@@ -1016,6 +1027,14 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	
 	public void setAsSchoolChange(boolean change) {
 		this.schoolChange = change;	
+	}
+
+	/**
+	 * Sets the childcarePage.
+	 * @param childcarePage The childcarePage to set
+	 */
+	public void setChildcarePage(IBPage childcarePage) {
+		this.childcarePage = childcarePage;
 	}
 
 }
