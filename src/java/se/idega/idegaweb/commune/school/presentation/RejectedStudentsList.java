@@ -70,7 +70,8 @@ public class RejectedStudentsList extends SchoolCommuneBlock {
 		} else {
 			table.setWidth(tableWidth);
 		}
-		table.add(getStudentList(iwc), 1, 2);
+		table.setHeight(2, 3);
+		table.add(getStudentList(iwc), 1, 3);
 		add(table);
 	}
 	
@@ -208,6 +209,7 @@ public class RejectedStudentsList extends SchoolCommuneBlock {
 			table.setRowStyleClass(1, getHeaderRowClass());
 		}
 		++row;
+		table.setHeight(row++, 3);
 		table.add(getSmallText(localize("school.total_students","Total students")+" : "+totalChoices), 1, row);
 		table.mergeCells(1, row, 4, row);
 		if (useStyleNames()) {
