@@ -6,7 +6,7 @@ public interface SchoolChoiceHome extends com.idega.data.IDOHome
  public SchoolChoice create() throws javax.ejb.CreateException;
  public SchoolChoice findByPrimaryKey(Object pk) throws javax.ejb.FinderException;
  public java.util.Collection findAll()throws javax.ejb.FinderException;
- public java.util.Collection findAllWithLanguageWithinSeason(com.idega.block.school.data.SchoolSeason p0,java.lang.String p1)throws javax.ejb.FinderException;
+ public java.util.Collection findAllWithLanguageWithinSeason(com.idega.block.school.data.SchoolSeason p0,java.lang.String[] p1)throws javax.ejb.FinderException;
  public SchoolChoice findByChildAndChoiceNumberAndSeason(java.lang.Integer p0,java.lang.Integer p1,java.lang.Integer p2)throws javax.ejb.FinderException;
  public java.util.Collection findByChildAndSchool(int p0,int p1)throws javax.ejb.FinderException;
  public java.util.Collection findByChildAndSchoolAndSeason(int p0,int p1,int p2)throws javax.ejb.FinderException;

@@ -405,13 +405,13 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 		return ejbFindByCodeAndStatus(caseCode, caseStatus, schoolId, schoolSeasonId, null);
 	}
 
-	public Collection ejbFindAllWithLanguageWithinSeason(SchoolSeason season, String caseStatus) throws FinderException {
+	public Collection ejbFindAllWithLanguageWithinSeason(SchoolSeason season, String[] caseStatus) throws FinderException {
 		IDOQuery query = idoQuery();
-		query.appendSelectAllFrom(this).append(" s, c.proc_case");
+		query.appendSelectAllFrom(this).append(" s, proc_case c");
 		query.appendWhereEquals("s."+getIDColumnName(), "c.proc_case_id");
 		query.appendAndEquals("s."+SCHOOL_SEASON, season);
-		query.appendAnd().append(LANGUAGECHOICE).append(" is not null");
-		query.appendAnd().append("c.case_status").appendNOTEqual().appendWithinSingleQuotes(caseStatus);
+		query.appendAnd().append("s."+LANGUAGECHOICE).append(" is not null");
+		query.appendAnd().append("c.case_status").appendNotInArrayWithSingleQuotes(caseStatus);
 		return idoFindPKsByQuery(query);
 	}
 	

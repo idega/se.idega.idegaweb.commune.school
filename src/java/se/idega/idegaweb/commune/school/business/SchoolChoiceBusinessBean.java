@@ -1710,7 +1710,8 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	public void importLanguageToPlacement() {
 		try {
 			SchoolSeason season = getCurrentSeason();
-			Collection choices = getSchoolChoiceHome().findAllWithLanguageWithinSeason(season, getCaseStatusInactive().getStatus());
+			String[] status = { getCaseStatusInactive().getStatus(), getCaseStatusDeleted().getStatus() };
+			Collection choices = getSchoolChoiceHome().findAllWithLanguageWithinSeason(season, status);
 			int size = choices.size();
 			int number = 1;
 			Iterator iter = choices.iterator();
