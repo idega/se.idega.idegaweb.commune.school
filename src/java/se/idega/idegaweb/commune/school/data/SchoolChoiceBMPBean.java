@@ -1040,7 +1040,7 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
             sql.append("    and u.date_of_birth <= ").append(dateTo.getDate()).append("\n");
             sql.append("     ) ").append("\n");
             if(onlyInCommune)
-                sql.append(" and a.ic_commune_id is not  null");
+                sql.append(" and c.default_commune  = 'Y'");
             sql.append(" and us.status_id is null ");
             return getIntTableValue(sql.toString());
         } catch (Exception e) {
@@ -1096,7 +1096,7 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
             sql.append("    and u.date_of_birth <= ").append(dateTo.getDate()).append("\n");
             sql.append("     ) ").append("\n");
             if(onlyInCommune)
-                sql.append(" and a.ic_commune_id is not  null");
+                sql.append(" and c.default_commune  = 'Y'");
             sql.append(" and us.status_id is null ");
             
             Connection conn = null;
