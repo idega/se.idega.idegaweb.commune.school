@@ -1,5 +1,5 @@
 /*
- * $Id: PreparedQuery.java,v 1.35 2004/04/24 10:44:02 anders Exp $
+ * $Id: PreparedQuery.java,v 1.36 2004/04/27 13:53:37 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -27,10 +27,10 @@ import com.idega.block.school.data.SchoolSeason;
 /** 
  * Handles the SQL logic for school report calculations.
  * <p>
- * Last modified: $Date: 2004/04/24 10:44:02 $ by $Author: anders $
+ * Last modified: $Date: 2004/04/27 13:53:37 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.35 $
+ * @version $Revision: 1.36 $
  */
 public class PreparedQuery {
 
@@ -613,6 +613,31 @@ public class PreparedQuery {
 		}
 		if (ageTo > 0) {
 			dateTo = "" + (seasonYear - ageTo - 1) + seasonDate.substring(4);
+			if (sql != null) {
+				sql += " and u.date_of_birth > '" + dateTo + "'";
+			} else {
+				sql =  "u.date_of_birth > '" + dateTo + "'";
+			}
+		}
+		_sqlWhere.add(sql);
+		
+		_sqlFrom.put(U, TABLE_U);
+	}
+
+	/**
+	 * Set select only students in the specified age interval calculated from current date.
+	 */
+	public void setStudentAge(int ageFrom, int ageTo) {
+		String sql = null;
+		String dateFrom = null;
+		String dateTo = null;
+		int currentYear = Integer.parseInt(_currentDate.substring(0, 4));
+		if (ageFrom > 0) {
+			dateFrom = "" + (currentYear - ageFrom) + _currentDate.substring(4);
+			sql = "u.date_of_birth <= '" + dateFrom + "'";
+		}
+		if (ageTo > 0) {
+			dateTo = "" + (currentYear - ageTo - 1) + _currentDate.substring(4);
 			if (sql != null) {
 				sql += " and u.date_of_birth > '" + dateTo + "'";
 			} else {
