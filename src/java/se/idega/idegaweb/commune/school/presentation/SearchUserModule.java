@@ -55,7 +55,7 @@ public class SearchUserModule extends CommuneBlock {
 	private static final String KP = "search_user_module.";
 	private static final String KEY_BUTTON_SEARCH = KP+"button_search";
 	private static final String KEY_BUTTON_RESET = KP+"button_reset";
-	private static final String KEY_BUTTON_BACK = KP+"button_back";
+	//private static final String KEY_BUTTON_BACK = KP+"button_back";
 
 	private String textFontStyleName;
 	private String headerFontStyleName;
@@ -97,7 +97,6 @@ public class SearchUserModule extends CommuneBlock {
 	private String uniqueIdentifier;
 	private boolean showOverFlowMessage;
 	private Collection addedButtons;
-	//WHAT THE HELL IS THIS!!?? caused broken compile on main server static Class class$com$idega$user$data$User; /* synthetic field */
 
 	public SearchUserModule() {
 		textFontStyleName = null;
@@ -338,16 +337,13 @@ public class SearchUserModule extends CommuneBlock {
 				searchTable.add(reset, col++, row + 1);
 			}
 			
-			//SubmitButton back = new SubmitButton(iwrb.getLocalizedString(KEY_BUTTON_BACK, "Back"),
-			//																	CentralPlacementEditor.PARAM_BACK, "true");
-
-			SubmitButton back = new SubmitButton(
+		/*	SubmitButton back = new SubmitButton(
 													iwrb.getLocalizedImageButton(KEY_BUTTON_BACK, "Back"),
 													CentralPlacementEditor.PARAM_BACK, "true");
 
 			back.setStyleClass(buttonStyleName);			
 			searchTable.add(back, col++, row + 1);
-			
+		*/	
 			
 			if (addedButtons != null && !addedButtons.isEmpty()) {
 				for (Iterator iter = addedButtons.iterator(); iter.hasNext();) {
