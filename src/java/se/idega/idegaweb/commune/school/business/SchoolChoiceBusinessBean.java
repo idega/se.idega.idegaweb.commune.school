@@ -284,7 +284,8 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		choice.setCreated(stamp.getTimestamp());
 		choice.setCaseStatus(caseStatus);
 		if (caseStatus.getStatus().equalsIgnoreCase("PREL")) {
-			getMessageBusiness().createUserMessage(choice.getOwner(), getPreliminaryMessageSubject(), getPreliminaryMessageBody(choice));
+			sendMessageToParentOrChild(choice.getOwner(), choice.getChild(), getPreliminaryMessageSubject(), getPreliminaryMessageBody(choice));
+//			getMessageBusiness().createUserMessage(choice.getOwner(), getPreliminaryMessageSubject(), getPreliminaryMessageBody(choice));
 		}
 		if (parentCase != null)
 			choice.setParentCase(parentCase);
@@ -309,30 +310,38 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	
 	private void handleSeparatedParentApplication(int childID,int applicationParentID,List choices,boolean isSchoolChangeApplication)throws RemoteException{
 		try{
-		if(choices!=null){
-			SchoolChoice choice = (SchoolChoice)choices.get(0);
-			MemberFamilyLogic familyLogic = getMemberFamilyLogic();
-			Collection parents = familyLogic.getCustodiansFor(getUser(childID));
-			User appParent = getUser(applicationParentID);
-			if (familyLogic.isChildInCustodyOf(choice.getChild(), appParent)) {
-				if(isSchoolChangeApplication)
-					getMessageBusiness().createUserMessage(appParent,getSeparateParentSubjectChange(),getSeparateParentMessageBodyChange(choice,appParent)); 
-				else
-					getMessageBusiness().createUserMessage(appParent,getSeparateParentSubjectAppl(),getSeparateParentMessageBodyAppl(choices,appParent)); 
-			}
+			if(choices!=null){
+				SchoolChoice choice = (SchoolChoice)choices.get(0);
+				MemberFamilyLogic familyLogic = getMemberFamilyLogic();
+				Collection parents = familyLogic.getCustodiansFor(getUser(childID));
+				User appParent = getUser(applicationParentID);
 
-			Iterator iter = parents.iterator();		
-			while(iter.hasNext()){
-				User parent = (User) iter.next();
-				if (!getUserBusiness().haveSameAddress(parent, appParent)) {
-					if(isSchoolChangeApplication)
-						getMessageBusiness().createUserMessage(parent,getSeparateParentSubjectChange(),getSeparateParentMessageBodyChange(choice,parent)); 
-					else
-						getMessageBusiness().createUserMessage(parent,getSeparateParentSubjectAppl(),getSeparateParentMessageBodyAppl(choices,parent)); 
+				String subject, body;
+				if(isSchoolChangeApplication) {
+					subject = getSeparateParentSubjectChange();
+					body = getSeparateParentMessageBodyChange(choice,appParent); 
+				} else {
+					subject = getSeparateParentSubjectAppl();
+					body = getSeparateParentMessageBodyAppl(choices,appParent); 					
 				}
-					
+				
+				if (isOfAge(choice.getChild())){
+					getMessageBusiness().createUserMessage(choice.getChild(), subject, body); 	
+									
+				} else {
+					if (familyLogic.isChildInCustodyOf(choice.getChild(), appParent)) {
+						getMessageBusiness().createUserMessage(appParent, subject, body); 
+					}
+	
+					Iterator iter = parents.iterator();		
+					while(iter.hasNext()){
+						User parent = (User) iter.next();
+						if (!getUserBusiness().haveSameAddress(parent, appParent)) {
+							getMessageBusiness().createUserMessage(appParent, subject, body); 
+						}
+					}
+				}
 			}
-		}
 		}
 		catch(Exception ex){throw new RemoteException(ex.getMessage());}
 	}
@@ -424,27 +433,33 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 			User child = application.getChild();
 			Object[] arguments = { child.getNameLastFirst(true), application.getChosenSchool().getSchoolName() };
 
-			User appParent = application.getOwner();
-			if (getUserBusiness().getMemberFamilyLogic().isChildInCustodyOf(child, appParent)) {
-				Message message = getMessageBusiness().createUserMessage(appParent, subject, MessageFormat.format(body, arguments));
-				message.setParentCase(application);
-				message.store();
-			}
+			if (isOfAge(child)){
+				getMessageBusiness().createUserMessage(child, subject, MessageFormat.format(body, arguments));	
+							
+			} else {
+				User appParent = application.getOwner();
+				if (getUserBusiness().getMemberFamilyLogic().isChildInCustodyOf(child, appParent)) {
+					Message message = getMessageBusiness().createUserMessage(appParent, subject, MessageFormat.format(body, arguments));
+					message.setParentCase(application);
+					message.store();
+				}
 
-			try {
-				Collection parents = getUserBusiness().getMemberFamilyLogic().getCustodiansFor(child);
-				Iterator iter = parents.iterator();
-				while (iter.hasNext()) {
-					User parent = (User) iter.next();
-					if (!getUserBusiness().haveSameAddress(parent, appParent)) {
-						Message message = getMessageBusiness().createUserMessage(parent, subject, MessageFormat.format(body, arguments));
-						message.setParentCase(application);
-						message.store();
+				try {
+					Collection parents = getUserBusiness().getMemberFamilyLogic().getCustodiansFor(child);
+					Iterator iter = parents.iterator();
+					while (iter.hasNext()) {
+						User parent = (User) iter.next();
+						if (!getUserBusiness().haveSameAddress(parent, appParent)) {
+							Message message = getMessageBusiness().createUserMessage(parent, subject, MessageFormat.format(body, arguments));
+							message.setParentCase(application);
+							message.store();
+						}
 					}
 				}
-			}
-			catch (NoCustodianFound ncf) {
-				ncf.printStackTrace();
+				catch (NoCustodianFound ncf) {
+					ncf.printStackTrace();
+				}
+
 			}
 		}
 		catch (RemoteException re) {
@@ -521,7 +536,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 			SchoolChoice choice = getSchoolChoiceHome().findByPrimaryKey(pk);
 			super.changeCaseStatus(choice, "PREL", performer);
 			choice.store();
-			getMessageBusiness().createUserMessage(choice.getOwner(), getPreliminaryMessageSubject(), getPreliminaryMessageBody(choice));
+			sendMessageToParentOrChild(choice.getOwner(), choice.getChild(), getPreliminaryMessageSubject(), getPreliminaryMessageBody(choice));
 			return true;
 		}
 		catch (Exception e) {
@@ -1239,4 +1254,24 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
     private static float mmToPoints (final float mm) {
         return mm*72/25.4f;
     }
+    
+	public void sendMessageToParentOrChild(User parent, User child, String subject, String body) throws RemoteException{
+		getMessageBusiness().createUserMessage(getReceiver(parent, child), subject, body);
+	}
+
+	
+	public User getReceiver(User parent, User child){
+		return isOfAge(child) ? child : parent;		
+	}
+	
+	/**
+	 * @return true if person's age >= 18
+	 */ 
+	private boolean isOfAge(User person){
+		Calendar c = Calendar.getInstance();
+		c.setLenient(true);
+		c.setTime(new java.util.Date(new java.util.Date().getTime() - person.getDateOfBirth().getTime()));
+		return c.get(Calendar.YEAR) >= 18;
+		    
+	}
 }
