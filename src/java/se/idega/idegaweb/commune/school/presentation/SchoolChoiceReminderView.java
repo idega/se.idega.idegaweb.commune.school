@@ -5,7 +5,7 @@ import com.idega.presentation.*;
 import com.idega.presentation.text.*;
 import com.idega.presentation.ui.*;
 import com.idega.user.business.UserBusiness;
-import com.idega.user.data.User;
+import com.idega.user.data.*;
 import java.rmi.RemoteException;
 import java.util.*;
 import javax.ejb.*;
@@ -20,10 +20,10 @@ import se.idega.idegaweb.commune.school.data.SchoolChoiceReminder;
  * and entity ejb classes in {@link se.idega.idegaweb.commune.school.data}.
  * <p>
  * <p>
- * Last modified: $Date: 2003/01/08 13:12:22 $ by $Author: staffan $
+ * Last modified: $Date: 2003/01/09 13:06:13 $ by $Author: staffan $
  *
  * @author <a href="http://www.staffannoteberg.com">Staffan Nöteberg</a>
- * @version $Revision: 1.19 $
+ * @version $Revision: 1.20 $
  * @see javax.ejb
  */
 public class SchoolChoiceReminderView extends CommuneBlock {
@@ -89,7 +89,9 @@ public class SchoolChoiceReminderView extends CommuneBlock {
 		setResourceBundle (getResourceBundle(iwc));
         final String action = iwc.getParameter (ACTION_KEY);
 
-        if (action != null && action.equals (CREATE_KEY)) {
+        if (!iwc.isLoggedOn ()) {
+            add ("You're not autorized to use this function.");
+        } else if (action != null && action.equals (CREATE_KEY)) {
             createReminder (iwc);
         } else if (action != null && action.equals (SHOW_DETAILS_KEY)) {
             showDetails (iwc);
@@ -177,6 +179,12 @@ public class SchoolChoiceReminderView extends CommuneBlock {
 		table.setCellspacing(0);
 		table.setWidth(getWidth());
 		add(table);
+        final UserBusiness userBusiness = (UserBusiness)
+                IBOLookup.getServiceInstance(iwc, UserBusiness.class);
+        final User user = iwc.getCurrentUser();
+        final int userId = ((Integer) user.getPrimaryKey()).intValue();
+        final Collection groupCollection = userBusiness.getUserGroups(userId);
+        final Group [] groups = (Group[]) groupCollection.toArray(new Group[0]);
 		final SchoolChoiceBusiness business = getSchoolChoiceBusiness (iwc);
         final SchoolChoiceReminder [] reminders
                 = business.findAllSchoolChoiceReminders ();
@@ -216,9 +224,14 @@ public class SchoolChoiceReminderView extends CommuneBlock {
             final String text = reminder.getText ();
             final String message = text.length () > 33
                     ? text.substring (0, 30) + "..." : text;
-            messageList.add(message, col++, row);
-            messageList.add("" + reminder.getEventDate (), col++, row);
-            messageList.add("" + reminder.getReminderDate (), col++, row);
+            messageList.add (message, col++, row);
+            messageList.add ("" + reminder.getEventDate (), col++, row);
+            messageList.add ("" + reminder.getReminderDate (), col++, row);
+            final Link deleteLink
+                    = getSmallLink (localize (DELETE_KEY, DELETE_DEFAULT));
+            deleteLink.addParameter (CASE_ID_KEY, id);
+            deleteLink.addParameter (ACTION_KEY, DELETE_KEY);
+            messageList.add (deleteLink, col++, row);
             row++;
         }
         table.add (getHeader(localize (ACTIVE_REMINDERS_KEY,
@@ -299,7 +312,7 @@ public class SchoolChoiceReminderView extends CommuneBlock {
         final int reminderId = Integer.parseInt (iwc.getParameter
                                                  (CASE_ID_KEY));
         final SchoolChoiceReminder  reminder
-                = business .findSchoolChoiceReminder (reminderId);
+                = business.findSchoolChoiceReminder (reminderId);
         int row = 1;
         table.add(getSmallHeader(localize (REMINDER_TEXT_KEY,
                                            REMINDER_TEXT_DEFAULT)), 1, row++);
@@ -321,7 +334,8 @@ public class SchoolChoiceReminderView extends CommuneBlock {
                          (new SubmitButton("Skriv ut till adresser nedan",
                                            ACTION_KEY, GENERATE_LETTER_KEY)),
                          1, 1);
-        submitTable.add (getStyledInterface(new SubmitButton(localize (DELETE_KEY, DELETE_DEFAULT))), 2, 1);
+        submitTable.add (getStyledInterface
+                         (new SubmitButton(localize (DELETE_KEY, DELETE_DEFAULT), ACTION_KEY, DELETE_KEY)), 2, 1);
         submitTable.add (getStyledInterface(new SubmitButton(localize (CANCEL_KEY, CANCEL_DEFAULT))), 3, 1);
         table.add (submitTable, 1, row++);
 		table.setHeight (row++, 24);

@@ -32,6 +32,7 @@ import com.idega.io.*;
 import com.idega.user.business.UserBusiness;
 import com.idega.user.data.Group;
 import com.idega.user.data.User;
+import com.idega.user.data.UserHome;
 import com.idega.util.IWTimestamp;
 import com.lowagie.text.Document;
 import com.lowagie.text.Element;
@@ -77,6 +78,10 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 
 	public SchoolClassMemberHome getSchoolClassMemberHome () throws RemoteException {
 		return (SchoolClassMemberHome) this.getIDOHome (SchoolClassMember.class);
+	}
+
+	public UserHome getUserHome () throws RemoteException {
+		return (UserHome) this.getIDOHome (User.class);
 	}
 
 	public CurrentSchoolSeasonHome getCurrentSchoolSeasonHome() throws java.rmi.RemoteException {
@@ -840,9 +845,11 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
         findAllStudentsThatMustDoSchoolChoice ()
         throws RemoteException, FinderException {
         final Set ids = findStudentsInFinalClassesThatMustDoSchoolChoice ();
-        final Set allreadyChosenIds
-                = findStudentIdsWhoChosedForCurrentSeason ();
-        ids.removeAll (allreadyChosenIds);
+        System.err.println ("ids.size=" + ids.size ());
+        ids.addAll (findSchoolStartingStudents ());
+        System.err.println ("ids.size=" + ids.size ());
+        ids.removeAll (findStudentIdsWhoChosedForCurrentSeason ());
+        System.err.println ("ids.size=" + ids.size ());
         final int idCount = ids.size ();
         final SchoolChoiceReminderReceiver [] receivers
                 = new SchoolChoiceReminderReceiver [idCount];
@@ -894,6 +901,28 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
         }
         timer.stop ();
         System.err.println ("Found " + students.size () + " finalstudents in "
+                            + timer.getTime () + " msec");
+        System.err.println (ids.toString ());
+        return ids;        
+    }
+
+    private Set findSchoolStartingStudents () throws RemoteException,
+                                                     FinderException {
+
+        if (true) return Collections.EMPTY_SET;
+
+        com.idega.util.Timer timer = new com.idega.util.Timer ();
+        timer.start ();
+        final int currentYear = Calendar.getInstance ().get (Calendar.YEAR);
+        final Collection students = getUserHome().findUsersByYearOfBirth
+                (currentYear - 6, currentYear - 7);
+        final Set ids = new HashSet ();
+        for (Iterator i = students.iterator (); i.hasNext ();) {
+            final User student = (User) i.next ();
+            ids.add (student.getPrimaryKey ());
+        }
+        timer.stop ();
+        System.err.println ("Found " + students.size () + " startstudents in "
                             + timer.getTime () + " msec");
         System.err.println (ids.toString ());
         return ids;        
