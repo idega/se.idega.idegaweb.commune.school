@@ -3,6 +3,7 @@ import java.text.DateFormat;
 import java.util.*;
 import javax.ejb.EJBException;
 import se.idega.idegaweb.commune.message.data.*;
+import se.idega.idegaweb.commune.business.CommuneCaseBusiness;
 import se.idega.idegaweb.commune.message.business.*;
 import com.idega.block.process.business.CaseBusiness;
 import com.idega.block.process.data.Case;
@@ -104,7 +105,7 @@ public class UserCases extends CommuneBlock
 		add(new Break(2));
 		if (iwc.isLoggedOn())
 		{
-			Collection cases = getCaseBusiness(iwc).getAllCasesForUser(Converter.convertToNewUser(iwc.getUser()));
+			Collection cases = getCommuneCaseBusiness(iwc).getAllCasesDefaultVisibleForUser(Converter.convertToNewUser(iwc.getUser()));
 			if (cases != null & !cases.isEmpty())
 			{
 				Form f = new Form();
@@ -287,6 +288,13 @@ public class UserCases extends CommuneBlock
 	{
 		return (CaseBusiness) com.idega.business.IBOLookup.getServiceInstance(iwc, CaseBusiness.class);
 	}
+
+	private CommuneCaseBusiness getCommuneCaseBusiness(IWContext iwc) throws Exception
+	{
+		return (CommuneCaseBusiness) com.idega.business.IBOLookup.getServiceInstance(iwc, CommuneCaseBusiness.class);
+	}
+
+
 	private Case getCase(String id, IWContext iwc) throws Exception
 	{
 		int msgId = Integer.parseInt(id);

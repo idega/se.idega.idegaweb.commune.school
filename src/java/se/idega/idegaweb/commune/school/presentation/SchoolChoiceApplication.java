@@ -45,6 +45,7 @@ import com.idega.presentation.ui.TextInput;
 import com.idega.user.business.UserBusiness;
 import com.idega.user.data.User;
 import com.idega.util.Age;
+import com.idega.util.PersonalIDFormatter;
 import com.idega.core.data.Address;
 
 
@@ -193,7 +194,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
     Table T = new Table(1,8);
     T.setCellpadding(3);
     T.add(getCurrentSchoolSeasonInfo(iwc),1,1);
-    T.add(getChildInfo(child),1,2);
+    T.add(getChildInfo(iwc,child),1,2);
     T.add(getCurrentSchool(iwc,child),1,3);
     T.add(getChoiceSchool(iwc,child),1,4);
     T.add(getParentInfo(iwc,child),1,5);
@@ -285,7 +286,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
     control(iwc);
   }
 
-  private PresentationObject getChildInfo(User child)throws java.rmi.RemoteException{
+  private PresentationObject getChildInfo(IWContext iwc,User child)throws java.rmi.RemoteException{
     Table T = new Table(6,5);
     T.setColor("#ffffcc");
 	T.setCellpadding(3);
@@ -299,7 +300,8 @@ public class SchoolChoiceApplication extends CommuneBlock {
     T.add(getSmallHeader(iwrb.getLocalizedString("personal_id","Personal ID")),3,1);
     T.add(getText(child.getLastName()),1,2);
     T.add(getText(child.getFirstName()),2,2);
-    T.add(getText(child.getPersonalID()),3,2);
+    String personalID = PersonalIDFormatter.format(child.getPersonalID(),iwc.getApplication().getSettings().getApplicationLocale());
+    T.add(getText(personalID),3,2);
 
     T.add(getSmallHeader(iwrb.getLocalizedString("address","Address")),1,4);
     T.add(getSmallHeader(iwrb.getLocalizedString("zip_and_area","Zip area")),4,4);

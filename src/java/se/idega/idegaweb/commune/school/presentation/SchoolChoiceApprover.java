@@ -31,6 +31,7 @@ import com.idega.presentation.*;
 import com.idega.presentation.text.*;
 import com.idega.user.business.UserBusiness;
 import com.idega.user.data.User;
+import com.idega.util.PersonalIDFormatter;
 import com.idega.util.text.TextFormat;
 
 /**
@@ -347,7 +348,8 @@ public class SchoolChoiceApprover extends CommuneBlock {
 		T.setCellpadding(3);
 		int row = 1;
 		T.add(tf.format(iwrb.getLocalizedString("personal_id","Personal ID"),tf.HEADER),1,row);
-			T.add(tf.format(child.getPersonalID()),2,row);
+			String personalID = PersonalIDFormatter.format(child.getPersonalID(),iwc.getApplication().getSettings().getApplicationLocale());
+			T.add(tf.format(personalID),2,row);
 			row++;
 			if(choice!=null){
 				T.add(tf.format(iwrb.getLocalizedString("school_choice.grade","Grade"),tf.HEADER),1,row);
