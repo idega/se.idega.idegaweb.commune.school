@@ -858,7 +858,8 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 			IWTimestamp stamp = new IWTimestamp(choice.getPlacementDate());
 			stamp.addDays(-1);
 
-			SchoolClassMember member = getSchoolBusiness().getSchoolClassMemberHome().findLatestByUserAndSchool(choice.getChildId(), choice.getCurrentSchoolId());
+			Collection types = getSchoolBusiness().getSchoolTypesForCategory(getSchoolBusiness().getCategoryElementarySchool(), false);
+			SchoolClassMember member = getSchoolBusiness().getSchoolClassMemberHome().findLatestByUserAndSchool(choice.getChildId(), choice.getCurrentSchoolId(), types);
 			member.setRemovedDate(stamp.getTimestamp());
 			member.store();
 			
