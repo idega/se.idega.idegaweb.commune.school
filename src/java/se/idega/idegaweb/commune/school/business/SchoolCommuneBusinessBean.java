@@ -311,6 +311,21 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 		}
 	}
 	
+	public boolean hasChoiceToThisSchool(int userID, int schoolID, int seasonID) {
+		try {
+			int numberOfChoices = getSchoolChoiceBusiness().getSchoolChoiceHome().getChoices(userID, schoolID, seasonID);
+			if (numberOfChoices > 0)
+				return true;
+			return false;
+		}
+		catch (RemoteException e) {
+			return false;
+		}
+		catch (IDOException e) {
+			return false;
+		}
+	}
+	
 	public int getChosenSchoolID(Collection choices) throws RemoteException {
 		if (choices != null && !choices.isEmpty()) {
 			Iterator iter = choices.iterator();

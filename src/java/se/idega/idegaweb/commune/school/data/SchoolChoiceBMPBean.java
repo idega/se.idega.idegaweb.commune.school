@@ -660,11 +660,20 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 
 	public int ejbHomeGetMoveChoices(int userID, int schoolID, int seasonID) throws IDOException {
 		IDOQuery sql = idoQuery();
-		sql.append("select sc.* from ").append(getEntityName()).append(" sc,").append("PROC_CASE pc ");
+		sql.append("select count(sc.*) from ").append(getEntityName()).append(" sc,").append("PROC_CASE pc ");
 		sql.appendWhereEquals("sc."+CHILD, userID);
 		sql.appendAndEquals("sc."+SCHOOL_SEASON, seasonID);
 		sql.appendAnd().append(CHOSEN_SCHOOL).appendNOTEqual().append(schoolID);
 		sql.appendAndEqualsQuoted("pc.case_status","FLYT");
+		return super.idoGetNumberOfRecords(sql.toString());
+	}
+	
+	public int ejbHomeGetChoices(int userID, int schoolID, int seasonID) throws IDOException {
+		IDOQuery sql = idoQuery();
+		sql.appendSelectCountFrom(this);
+		sql.appendWhereEquals(CHILD, userID);
+		sql.appendAndEquals(SCHOOL_SEASON, seasonID);
+		sql.appendAndEquals(CHOSEN_SCHOOL, schoolID);
 		return super.idoGetNumberOfRecords(sql.toString());
 	}
 	

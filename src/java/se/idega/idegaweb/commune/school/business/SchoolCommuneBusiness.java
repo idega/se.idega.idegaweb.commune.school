@@ -41,4 +41,5 @@ public interface SchoolCommuneBusiness extends com.idega.business.IBOService,com
  public java.util.Map getUserAddressesMapFromChoices(com.idega.data.IDOQuery query) throws java.rmi.RemoteException;
  public boolean isAlreadyInSchool(int userID, int schoolID, int seasonID) throws java.rmi.RemoteException;
  public boolean hasMoveChoiceToOtherSchool(int userID, int schoolID, int seasonID);
+ public boolean hasChoiceToThisSchool(int userID, int schoolID, int seasonID);
 }
