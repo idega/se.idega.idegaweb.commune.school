@@ -1,5 +1,5 @@
 /*
- * $Id: ReportBusinessBean.java,v 1.16 2004/01/12 12:35:17 anders Exp $
+ * $Id: ReportBusinessBean.java,v 1.17 2004/01/13 12:24:43 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -29,10 +29,10 @@ import com.idega.block.school.data.SchoolStudyPathHome;
 /** 
  * Business logic for school reports.
  * <p>
- * Last modified: $Date: 2004/01/12 12:35:17 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/13 12:24:43 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.16 $
+ * @version $Revision: 1.17 $
  */
 public class ReportBusinessBean extends com.idega.business.IBOServiceBean implements ReportBusiness  {
 
@@ -340,6 +340,25 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 			try {
 				SchoolHome home = getSchoolBusiness().getSchoolHome();
 				_schools = home.findAllBySchoolType(SCHOOL_TYPE_COMPULSORY_HIGH_SCHOOL);
+			} catch (Exception e) {}
+		}
+		return _schools;
+	}
+	
+	/**
+	 * Returns all private high schools. 
+	 */
+	public Collection getPrivateHighSchools() {
+		if (_schools == null) {
+			try {
+				_schools = new ArrayList();
+				SchoolHome home = getSchoolBusiness().getSchoolHome();
+				School s1 = home.findBySchoolName("Cybergymnasiet");
+				School s2 = home.findBySchoolName("Kunskapsgymnasiet");
+				School s3 = home.findBySchoolName("Mediagymnasiet");
+				_schools.add(s1);
+				_schools.add(s2);
+				_schools.add(s3);
 			} catch (Exception e) {}
 		}
 		return _schools;
