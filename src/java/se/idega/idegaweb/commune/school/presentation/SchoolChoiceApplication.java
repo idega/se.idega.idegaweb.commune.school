@@ -11,6 +11,7 @@ import java.util.Date;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Vector;
 
 import javax.ejb.FinderException;
 
@@ -1048,12 +1049,38 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	}
 
 	private Collection getSchoolYears() {
-		try {
+		/*try {
 			return schCommBiz.getSchoolBusiness().findAllSchoolYears();
 		}
 		catch (Exception e) {
 		}
 		return null;
+		*/
+		
+		Vector schYears = null;
+		try {
+			schYears = new Vector();
+			
+			// Add school years for school type "Forskola"
+			Collection tmpVec = schCommBiz.getSchoolBusiness().findAllSchoolYearsBySchoolType(5);
+			for (Iterator iter = tmpVec.iterator(); iter.hasNext();) {
+				SchoolYear element = (SchoolYear) iter.next();
+				schYears.add(element);
+			}
+			
+			// Add school years for school type "Grundskola"
+			tmpVec = schCommBiz.getSchoolBusiness().findAllSchoolYearsBySchoolType(4);
+			for (Iterator iter = tmpVec.iterator(); iter.hasNext();) {
+				SchoolYear element = (SchoolYear) iter.next();
+				schYears.add(element);				
+			}
+			
+			
+			return schYears;
+		}
+		catch (Exception e) {}
+		
+		return schYears;
 	}
 
 	/* Commented out since it is never used...
