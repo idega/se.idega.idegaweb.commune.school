@@ -1,5 +1,5 @@
 /*
- * $Id: PreparedQuery.java,v 1.26 2004/02/17 18:09:44 anders Exp $
+ * $Id: PreparedQuery.java,v 1.28 2004/02/17 18:10:54 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -27,10 +27,10 @@ import com.idega.block.school.data.SchoolSeason;
 /** 
  * Handles the SQL logic for school report calculations.
  * <p>
- * Last modified: $Date: 2004/02/17 18:09:44 $ by $Author: anders $
+ * Last modified: $Date: 2004/02/17 18:10:54 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.26 $
+ * @version $Revision: 1.28 $
  */
 public class PreparedQuery {
 
@@ -118,6 +118,8 @@ public class PreparedQuery {
 	 */
 	public void setSelectCountDistinctUsers() {
 		_sqlSelect = "select count(distinct u.personal_id)";
+
+		_sqlFrom.put(U, TABLE_U);
 	}
 
 	/**

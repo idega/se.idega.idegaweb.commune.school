@@ -1,5 +1,5 @@
 /*
- * $Id: NackaCitizenElementarySchoolPlacementReportModel.java,v 1.8 2004/02/17 16:51:20 anders Exp $
+ * $Id: NackaCitizenElementarySchoolPlacementReportModel.java,v 1.9 2004/02/17 18:09:44 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -14,10 +14,10 @@ import java.rmi.RemoteException;
 /** 
  * Report model for Nacka citizen placement for elementary schools.
  * <p>
- * Last modified: $Date: 2004/02/17 16:51:20 $ by $Author: anders $
+ * Last modified: $Date: 2004/02/17 18:09:44 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.8 $
+ * @version $Revision: 1.9 $
  */
 public class NackaCitizenElementarySchoolPlacementReportModel extends ReportModel {
 
@@ -387,7 +387,7 @@ public class NackaCitizenElementarySchoolPlacementReportModel extends ReportMode
 			query = getQuery(QUERY_NACKA_COMMUNE);
 			if (query == null) {
 				query = new PreparedQuery(getConnection());
-				query.setSelectCount();
+				query.setSelectCountDistinctUsers();
 				query.setPlacements(rb.getSchoolSeasonId());
 				query.setOnlyNackaCitizens();
 				query.setOnlyNackaSchools();
@@ -408,7 +408,7 @@ public class NackaCitizenElementarySchoolPlacementReportModel extends ReportMode
 			query = getQuery(QUERY_NACKA_COMMUNE_6_YEAR_STUDENTS);
 			if (query == null) {
 				query = new PreparedQuery(getConnection());
-				query.setSelectCount();
+				query.setSelectCountDistinctUsers();
 				query.setPlacements(getReportBusiness().getSchoolSeasonId());
 				query.setOnlyNackaCitizens();
 				query.setOnlyNackaSchools();
@@ -436,7 +436,7 @@ public class NackaCitizenElementarySchoolPlacementReportModel extends ReportMode
 			query = getQuery(QUERY_OTHER_COMMUNES);
 			if (query == null) {
 				query = new PreparedQuery(getConnection());
-				query.setSelectCount();
+				query.setSelectCountDistinctUsers();
 				query.setPlacements(rb.getSchoolSeasonId());
 				query.setOnlyNackaCitizens();
 				query.setOnlySchoolsInOtherCommunes();
@@ -457,7 +457,7 @@ public class NackaCitizenElementarySchoolPlacementReportModel extends ReportMode
 			query = getQuery(QUERY_OTHER_COMMUNES_6_YEAR_STUDENTS);
 			if (query == null) {
 				query = new PreparedQuery(getConnection());
-				query.setSelectCount();
+				query.setSelectCountDistinctUsers();
 				query.setPlacements(getReportBusiness().getSchoolSeasonId());
 				query.setOnlyNackaCitizens();
 				query.setOnlySchoolsInOtherCommunes();
@@ -485,7 +485,7 @@ public class NackaCitizenElementarySchoolPlacementReportModel extends ReportMode
 			query = getQuery(QUERY_PRIVATE);
 			if (query == null) {
 				query = new PreparedQuery(getConnection());
-				query.setSelectCount();
+				query.setSelectCountDistinctUsers();
 				query.setPlacements(rb.getSchoolSeasonId());
 				query.setOnlyNackaCitizens();
 				query.setOnlyPrivateSchools();
@@ -505,7 +505,7 @@ public class NackaCitizenElementarySchoolPlacementReportModel extends ReportMode
 			query = getQuery(QUERY_PRIVATE_6_YEAR_STUDENTS);
 			if (query == null) {
 				query = new PreparedQuery(getConnection());
-				query.setSelectCount();
+				query.setSelectCountDistinctUsers();
 				query.setPlacements(getReportBusiness().getSchoolSeasonId());
 				query.setOnlyNackaCitizens();
 				query.setOnlyStudentsBorn(getReportBusiness().getSchoolSeasonStartYear() - 6);
@@ -532,7 +532,7 @@ public class NackaCitizenElementarySchoolPlacementReportModel extends ReportMode
 			query = getQuery(QUERY_FOREIGN);
 			if (query == null) {
 				query = new PreparedQuery(getConnection());
-				query.setSelectCount();
+				query.setSelectCountDistinctUsers();
 				query.setPlacements(rb.getSchoolSeasonId());
 				query.setOnlyNackaCitizens();
 				query.setOnlyForeignSchools();
@@ -551,7 +551,7 @@ public class NackaCitizenElementarySchoolPlacementReportModel extends ReportMode
 			query = getQuery(QUERY_FOREIGN_6_YEAR_STUDENTS);
 			if (query == null) {
 				query = new PreparedQuery(getConnection());
-				query.setSelectCount();
+				query.setSelectCountDistinctUsers();
 				query.setPlacements(getReportBusiness().getSchoolSeasonId());
 				query.setOnlyNackaCitizens();
 				query.setOnlyStudentsBorn(getReportBusiness().getSchoolSeasonStartYear() - 6);
@@ -577,7 +577,7 @@ public class NackaCitizenElementarySchoolPlacementReportModel extends ReportMode
 			query = getQuery(QUERY_COMPULSORY_NACKA);
 			if (query == null) {
 				query = new PreparedQuery(getConnection());
-				query.setSelectCount();
+				query.setSelectCountDistinctUsers();
 				query.setPlacements(rb.getSchoolSeasonId());
 				query.setOnlyNackaCitizens();
 				query.setOnlyNackaSchools();
@@ -597,7 +597,7 @@ public class NackaCitizenElementarySchoolPlacementReportModel extends ReportMode
 			query = getQuery(QUERY_COMPULSORY_NACKA_6_YEAR_STUDENTS);
 			if (query == null) {
 				query = new PreparedQuery(getConnection());
-				query.setSelectCount();
+				query.setSelectCountDistinctUsers();
 				query.setPlacements(getReportBusiness().getSchoolSeasonId());
 				query.setOnlyNackaCitizens();
 				query.setOnlyNackaSchools();
@@ -626,7 +626,7 @@ public class NackaCitizenElementarySchoolPlacementReportModel extends ReportMode
 			query = getQuery(QUERY_COMPULSORY_OTHER_COMMUNES);
 			if (query == null) {
 				query = new PreparedQuery(getConnection());
-				query.setSelectCount();
+				query.setSelectCountDistinctUsers();
 				query.setPlacements(rb.getSchoolSeasonId());
 				query.setOnlyNackaCitizens();
 				query.setOnlySchoolsInOtherCommunes();
@@ -646,7 +646,7 @@ public class NackaCitizenElementarySchoolPlacementReportModel extends ReportMode
 			query = getQuery(QUERY_COMPULSORY_OTHER_COMMUNES_6_YEAR_STUDENTS);
 			if (query == null) {
 				query = new PreparedQuery(getConnection());
-				query.setSelectCount();
+				query.setSelectCountDistinctUsers();
 				query.setPlacements(getReportBusiness().getSchoolSeasonId());
 				query.setOnlyNackaCitizens();
 				query.setOnlySchoolsInOtherCommunes();
@@ -675,7 +675,7 @@ public class NackaCitizenElementarySchoolPlacementReportModel extends ReportMode
 			query = getQuery(QUERY_COMPULSORY_PRIVATE);
 			if (query == null) {
 				query = new PreparedQuery(getConnection());
-				query.setSelectCount();
+				query.setSelectCountDistinctUsers();
 				query.setPlacements(rb.getSchoolSeasonId());
 				query.setOnlyNackaCitizens();
 				query.setOnlyPrivateSchools();
@@ -693,7 +693,7 @@ public class NackaCitizenElementarySchoolPlacementReportModel extends ReportMode
 			query = getQuery(QUERY_COMPULSORY_PRIVATE_6_YEAR_STUDENTS);
 			if (query == null) {
 				query = new PreparedQuery(getConnection());
-				query.setSelectCount();
+				query.setSelectCountDistinctUsers();
 				query.setPlacements(getReportBusiness().getSchoolSeasonId());
 				query.setOnlyNackaCitizens();
 				query.setOnlyStudentsBorn(getReportBusiness().getSchoolSeasonStartYear() - 6);
