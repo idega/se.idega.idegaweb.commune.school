@@ -276,7 +276,7 @@ public class SchoolReportBusinessBean extends IBOSessionBean implements SchoolRe
 				
 				if (displayColumn(FIELD_LANGUAGE)) {
 					if (student.getLanguage() != null) {
-						data.addData(language, student.getLanguage());
+						data.addData(language, _iwrb.getLocalizedString(student.getLanguage(), student.getLanguage()));
 					}
 					else {
 						data.addData(language, "-");
@@ -531,7 +531,7 @@ public class SchoolReportBusinessBean extends IBOSessionBean implements SchoolRe
 				
 				if (displayColumn(FIELD_LANGUAGE_CHOICE)) {
 					if (choice.getLanguageChoice() != null) {
-						data.addData(language, choice.getLanguageChoice());
+						data.addData(language, _iwrb.getLocalizedString(choice.getLanguageChoice(), choice.getLanguageChoice()));
 					}
 				}
 				
