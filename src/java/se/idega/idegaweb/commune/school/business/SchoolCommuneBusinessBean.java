@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.Vector;
 
 import javax.ejb.CreateException;
+import javax.ejb.EJBException;
 import javax.ejb.FinderException;
 
 import se.idega.idegaweb.commune.business.CommuneUserBusiness;
@@ -947,67 +948,78 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 			
 			try {
 				//Parent data
-				Collection parents = _familyLogic.getCustodiansFor(child);
-				Iterator pIter = parents.iterator();
-				//parent1
-				if (pIter.hasNext()) {
-					User parent = (User)pIter.next();
-					ReportableData pData = new ReportableData();
-				
-					data.addData(parent1PersonalID,parent.getPersonalID());
-					data.addData(parent1LastName,parent.getLastName());
-					data.addData(parent1FirstName,parent.getFirstName());
-					reportData.add(pData);
-				
-					Address parent1AddressEntiy = _communeUserService.getUsersMainAddress(child);
-					if(parent1AddressEntiy!=null) {
-						String stName = parent1AddressEntiy.getStreetName();
-						String number = parent1AddressEntiy.getStreetNumber();
-						String parent1AddressString = stName+((number==null)?"":(" "+number));
-						data.addData(parent1Address,parent1AddressString);
-					}			
-					Collection pColl = gRelationHome.findGroupsRelationshipsContainingGroupsAndStatus(communeGroup,parent,GroupRelation.STATUS_ACTIVE);
-					Iterator pIterator = pColl.iterator();
-					while(pIterator.hasNext()){
-						GroupRelation rel = (GroupRelation)pIterator.next();
-						Timestamp time = rel.getInitiationDate();
-						if(time != null){
-							data.addData(parent1GroupInvitationDate,dateFormat.format(time));
-						} else {
-							data.addData(parent1GroupInvitationDate,_iwrb.getLocalizedString("CommuneReportBusiness.no_time_specified","No time specified"));
-						}
-					}
+				Collection parents = null;
+				try{
+					parents = _familyLogic.getCustodiansFor(child);
+				}catch (EJBException e){
+					 System.out.println("["+this.getClass()+"]: "+e.getMessage());
+					 System.out.println("["+this.getClass()+"]: user:"+child);
+					 e.printStackTrace();
 				}
+				 	
 				
-				//Parent2
-				if (pIter.hasNext()) {
-					User parent = (User)pIter.next();
-					ReportableData pData = new ReportableData();
-				
-					data.addData(parent2PersonalID,parent.getPersonalID());
-					data.addData(parent2LastName,parent.getLastName());
-					data.addData(parent2FirstName,parent.getFirstName());
-					reportData.add(pData);
-				
-					Address parent2AddressEntiy = _communeUserService.getUsersMainAddress(child);
-					if(parent2AddressEntiy!=null){
-						String stName = parent2AddressEntiy.getStreetName();
-						String number = parent2AddressEntiy.getStreetNumber();
-						String parent2AddressString = stName+((number==null)?"":(" "+number));
-						data.addData(parent2Address,parent2AddressString);
-					}
-								
-					Collection pColl = gRelationHome.findGroupsRelationshipsContainingGroupsAndStatus(communeGroup,parent,GroupRelation.STATUS_ACTIVE);
-					Iterator pIterator = pColl.iterator();
-					if(pIterator.hasNext()){
-						GroupRelation rel = (GroupRelation)pIterator.next();
-						Timestamp time = rel.getInitiationDate();
-						if(time != null){
-							data.addData(parent2GroupInvitationDate,dateFormat.format(time));
-						} else {
-							data.addData(parent2GroupInvitationDate,_iwrb.getLocalizedString("CommuneReportBusiness.no_time_specified","No time specified"));
+				if(parents!=null){
+					Iterator pIter = parents.iterator();
+					//parent1
+					if (pIter.hasNext()) {
+						User parent = (User)pIter.next();
+						ReportableData pData = new ReportableData();
+					
+						data.addData(parent1PersonalID,parent.getPersonalID());
+						data.addData(parent1LastName,parent.getLastName());
+						data.addData(parent1FirstName,parent.getFirstName());
+						reportData.add(pData);
+					
+						Address parent1AddressEntiy = _communeUserService.getUsersMainAddress(child);
+						if(parent1AddressEntiy!=null) {
+							String stName = parent1AddressEntiy.getStreetName();
+							String number = parent1AddressEntiy.getStreetNumber();
+							String parent1AddressString = stName+((number==null)?"":(" "+number));
+							data.addData(parent1Address,parent1AddressString);
+						}			
+						Collection pColl = gRelationHome.findGroupsRelationshipsContainingGroupsAndStatus(communeGroup,parent,GroupRelation.STATUS_ACTIVE);
+						Iterator pIterator = pColl.iterator();
+						while(pIterator.hasNext()){
+							GroupRelation rel = (GroupRelation)pIterator.next();
+							Timestamp time = rel.getInitiationDate();
+							if(time != null){
+								data.addData(parent1GroupInvitationDate,dateFormat.format(time));
+							} else {
+								data.addData(parent1GroupInvitationDate,_iwrb.getLocalizedString("CommuneReportBusiness.no_time_specified","No time specified"));
+							}
 						}
-				
+					}
+					
+					//Parent2
+					if (pIter.hasNext()) {
+						User parent = (User)pIter.next();
+						ReportableData pData = new ReportableData();
+					
+						data.addData(parent2PersonalID,parent.getPersonalID());
+						data.addData(parent2LastName,parent.getLastName());
+						data.addData(parent2FirstName,parent.getFirstName());
+						reportData.add(pData);
+					
+						Address parent2AddressEntiy = _communeUserService.getUsersMainAddress(child);
+						if(parent2AddressEntiy!=null){
+							String stName = parent2AddressEntiy.getStreetName();
+							String number = parent2AddressEntiy.getStreetNumber();
+							String parent2AddressString = stName+((number==null)?"":(" "+number));
+							data.addData(parent2Address,parent2AddressString);
+						}
+									
+						Collection pColl = gRelationHome.findGroupsRelationshipsContainingGroupsAndStatus(communeGroup,parent,GroupRelation.STATUS_ACTIVE);
+						Iterator pIterator = pColl.iterator();
+						if(pIterator.hasNext()){
+							GroupRelation rel = (GroupRelation)pIterator.next();
+							Timestamp time = rel.getInitiationDate();
+							if(time != null){
+								data.addData(parent2GroupInvitationDate,dateFormat.format(time));
+							} else {
+								data.addData(parent2GroupInvitationDate,_iwrb.getLocalizedString("CommuneReportBusiness.no_time_specified","No time specified"));
+							}
+					
+						}
 					}
 				}
 			} catch (NoCustodianFound e) {
