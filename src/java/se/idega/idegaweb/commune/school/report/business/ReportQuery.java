@@ -1,5 +1,5 @@
 /*
- * $Id: ReportQuery.java,v 1.2 2003/12/09 12:49:34 anders Exp $
+ * $Id: ReportQuery.java,v 1.3 2003/12/09 13:01:02 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -19,10 +19,10 @@ import com.idega.util.database.ConnectionBroker;
 /** 
  * Handles the SQL logic for school report calculations.
  * <p>
- * Last modified: $Date: 2003/12/09 12:49:34 $ by $Author: anders $
+ * Last modified: $Date: 2003/12/09 13:01:02 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class ReportQuery {
 
@@ -42,7 +42,8 @@ public class ReportQuery {
 		sql = "select count(*) from ic_user u, ic_address a, ic_user_address ua, sch_class_member cm," +
 				" sch_school_class sc, sch_school s, sch_school_year sy where" +
 				" cm.register_date <= '" + currentDate + 
-				"' and (cm. removed_date is null or cm.removed_date > '" + currentDate + "')";
+				"' and (cm. removed_date is null or cm.removed_date > '" + currentDate + "')" + 
+				" and sc.school_id = s.sch_school_id and sc.sch_school_class_id = cm.sch_school_class_id";
 	}
 	
 	/**
@@ -92,14 +93,14 @@ public class ReportQuery {
 	 * Set select only schools in Nacka commune.
 	 */
 	public void setOnlyNackaSchools() {
-		sql += " and s.commune = 1 and sc.school_id = s.sch_school_id and sc.sch_school_class_id = cm.sch_school_class_id";
+		sql += " and s.commune = 1";
 	}
 	
 	/**
 	 * Set select only schools in communes other than Nacka.
 	 */
 	public void setOnlySchoolsInOtherCommunes() {
-		sql += " and s.commune <> 1 and sc.school_id = s.sch_school_id and sc.sch_school_class_id = cm.sch_school_class_id";
+		sql += " and s.commune <> 1";
 	}
 	
 	/**
