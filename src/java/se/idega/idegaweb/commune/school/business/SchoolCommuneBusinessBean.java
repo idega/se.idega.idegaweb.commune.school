@@ -441,15 +441,6 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 		}
 	}
 
-	public SchoolSeason getCurrentSchoolSeason() throws FinderException {
-		try {
-			return getCareBusiness().getCurrentSeason();
-		}
-		catch (RemoteException re) {
-			throw new IBORuntimeException(re);
-		}
-	}
-
 	public SchoolYear getSchoolYear(int age) throws RemoteException {
 		Collection schoolYears = getSchoolBusiness().findAllSchoolYearsByAge(age);
 		if (!schoolYears.isEmpty()) {

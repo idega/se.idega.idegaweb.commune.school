@@ -160,11 +160,6 @@ public interface SchoolCommuneBusiness extends IBOService, CaseBusiness {
 	public int getCurrentSchoolSeasonID() throws RemoteException;
 
 	/**
-	 * @see se.idega.idegaweb.commune.school.business.SchoolCommuneBusinessBean#getCurrentSchoolSeason
-	 */
-	public SchoolSeason getCurrentSchoolSeason() throws FinderException, java.rmi.RemoteException;
-
-	/**
 	 * @see se.idega.idegaweb.commune.school.business.SchoolCommuneBusinessBean#getSchoolYear
 	 */
 	public SchoolYear getSchoolYear(int age) throws RemoteException;
