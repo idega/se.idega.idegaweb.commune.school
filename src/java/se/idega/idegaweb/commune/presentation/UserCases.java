@@ -5,8 +5,10 @@ import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 import java.util.logging.Level;
 import javax.ejb.FinderException;
@@ -23,7 +25,9 @@ import com.idega.block.process.data.Case;
 import com.idega.block.process.data.CaseStatus;
 import com.idega.business.IBOLookup;
 import com.idega.business.IBOLookupException;
+import com.idega.business.IBORuntimeException;
 import com.idega.core.builder.data.ICPage;
+import com.idega.idegaweb.IWUserContext;
 import com.idega.presentation.CollectionNavigator;
 import com.idega.presentation.ExceptionWrapper;
 import com.idega.presentation.IWContext;
@@ -33,6 +37,7 @@ import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.Form;
 import com.idega.user.business.UserBusiness;
+import com.idega.user.business.UserSession;
 import com.idega.user.data.Group;
 import com.idega.user.data.User;
 
@@ -53,6 +58,8 @@ public class UserCases extends CommuneBlock {
 	private int manager_page_id = -1;
 	private int viewpointPageId = -1;
 	private int reminderPageId = -1;
+
+	private Map pageMap;
 
 	private boolean _showName = false;
 	private boolean _showManager = true;
@@ -90,6 +97,8 @@ public class UserCases extends CommuneBlock {
 	public final static String PARAMETER_START_CASE = "case_start_nr";
 	public final static String PARAMETER_END_CASE = "case_end_nr";
 	
+	private boolean iUseUserInSession = false;
+	
 	public String getBundleIdentifier() {
 		return IW_BUNDLE_IDENTIFIER;
 	}
@@ -114,17 +123,38 @@ public class UserCases extends CommuneBlock {
 		return action;
 	}
 
+	protected UserSession getUserSession(IWUserContext iwuc) {
+		try {
+			return (UserSession) IBOLookup.getSessionInstance(iwuc, UserSession.class);
+		}
+		catch (IBOLookupException e) {
+			throw new IBORuntimeException(e);
+		}
+	}
+	
 	protected void viewCaseList(IWContext iwc, Table mainTable) throws Exception {
 		mainTable.setCellpadding(0);
 		mainTable.setCellspacing(0);
 		mainTable.setWidth(getWidth());
 		add(mainTable); 
 		
+		boolean showList = false;
+		if (iUseUserInSession) {
+			showList = getUserSession(iwc).getUser() != null;
+		}
+		else {
+			showList = iwc.isLoggedOn();
+		}
 		
-		if (iwc.isLoggedOn()) {
+		if (showList) {
 		
-						
-			User user = iwc.getCurrentUser();
+			User user = null;
+			if (iUseUserInSession) {
+				user = getUserSession(iwc).getUser();
+			}
+			else {
+				user = iwc.getCurrentUser();
+			}
 			final int userId = ((Integer) user.getPrimaryKey()).intValue();
 			
 			CollectionNavigator navigator = getNavigator(iwc, user);
@@ -228,6 +258,43 @@ public class UserCases extends CommuneBlock {
 		return row + 1;
 	}
 
+	protected ICPage getPage(String caseCode, String caseStatus) {
+		if (pageMap != null) {
+			Object object = pageMap.get(caseCode);
+			if (object != null) {
+				if (object instanceof ICPage) {
+					return (ICPage) object;
+				}
+				else if (object instanceof Map) {
+					Map statusMap = (Map) object;
+					return (ICPage) statusMap.get(caseStatus);
+				}
+			}
+		}
+		return null;
+	}
+	
+	public void setPage(String caseCode, String caseStatus, ICPage page) {
+		if (pageMap == null) {
+			pageMap = new HashMap();
+		}
+		
+		Map statusMap = (Map) pageMap.get(caseCode);
+		if (statusMap == null) {
+			statusMap = new HashMap();
+		}
+		statusMap.put(caseStatus, page);
+		pageMap.put(caseCode, statusMap);
+	}
+	
+	public void setPage(String caseCode, ICPage page) {
+		if (pageMap == null) {
+			pageMap = new HashMap();
+		}
+		
+		pageMap.put(caseCode, page);
+	}
+	
 	protected List getCases(IWContext iwc, User user, int startingCase, int numberOfCases) throws RemoteException, FinderException, Exception {
 		return new Vector(getCommuneCaseBusiness(iwc).getAllCasesDefaultVisibleForUser(user, startingCase, numberOfCases));
 	}
@@ -288,7 +355,8 @@ public class UserCases extends CommuneBlock {
 			}
 		}
 		
-		String caseCode = useCase.getCode(); 
+		String caseCode = useCase.getCode();
+		CaseStatus caseStatus = useCase.getCaseStatus();
 		
 		String caseCodeAS = new AfterSchoolChoiceBMPBean().getCaseCodeKey();
 		String caseCodeSc = new SchoolChoiceBMPBean().getCaseCodeKey();
@@ -310,11 +378,11 @@ public class UserCases extends CommuneBlock {
 				if (choice != null && !choice.getHasReceivedPlacementMessage())
 					status = getStatus(iwc, caseStatusOpen);
 				else
-					status = getStatus(iwc, useCase.getCaseStatus());
+					status = getStatus(iwc, caseStatus);
 				
 			}
 			else {			
-					status = getStatus(iwc, useCase.getCaseStatus());
+					status = getStatus(iwc, caseStatus);
 			}
 		
 		try {
@@ -355,7 +423,27 @@ public class UserCases extends CommuneBlock {
 		int column = getNumberColumn();
 
 		messageList.setNoWrap(column, row);
-		messageList.add(caseNumber, column, row);
+		ICPage page = getPage(caseCode, caseStatus.getStatus());
+		if (page != null) {
+			Link link = getSmallLink(useCase.getPrimaryKey().toString());
+			String parameter = caseBusiness.getPrimaryKeyParameter();
+			if (parameter != null) {
+				link.addParameter(parameter, useCase.getPrimaryKey().toString());
+			}
+			Class eventListener = caseBusiness.getEventListener();
+			if (eventListener != null) {
+				link.setEventListener(eventListener);
+			}
+			Map parameters = caseBusiness.getCaseParameters(useCase);
+			if (parameters != null) {
+				link.setParameter(parameters);
+			}
+			link.setPage(page);
+			messageList.add(link, column, row);
+		}
+		else {
+			messageList.add(caseNumber, column, row);
+		}
 
 		column = getTypeColumn();
 		messageList.add(caseType, column, row);
@@ -537,5 +625,9 @@ public class UserCases extends CommuneBlock {
 	 */
 	public void setFirstColumnPadding(int firstColumnPadding) {
 		this.firstColumnPadding = firstColumnPadding;
+	}
+	
+	public void setUseUserInSession(boolean useUserInSession) {
+		iUseUserInSession = useUserInSession;
 	}
 }
