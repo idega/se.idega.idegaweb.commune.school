@@ -21,10 +21,10 @@ import se.idega.idegaweb.commune.school.data.SchoolChoiceReminder;
  * and entity ejb classes in {@link se.idega.idegaweb.commune.school.data}.
  * <p>
  * <p>
- * Last modified: $Date: 2003/02/16 20:06:59 $ by $Author: palli $
+ * Last modified: $Date: 2003/04/02 16:12:22 $ by $Author: laddi $
  *
  * @author <a href="http://www.staffannoteberg.com">Staffan Nöteberg</a>
- * @version $Revision: 1.27 $
+ * @version $Revision: 1.28 $
  * @see javax.ejb
  */
 public class SchoolChoiceReminderView extends CommuneBlock {
@@ -171,12 +171,12 @@ public class SchoolChoiceReminderView extends CommuneBlock {
 
     private void showAllReminders (final IWContext iwc) throws RemoteException,
                                                                FinderException {
-        final UserBusiness userBusiness = (UserBusiness)
+        //final UserBusiness userBusiness = (UserBusiness)
                 IBOLookup.getServiceInstance(iwc, UserBusiness.class);
-        final User user = iwc.getCurrentUser();
-        final int userId = ((Integer) user.getPrimaryKey()).intValue();
-        final Collection groupCollection = userBusiness.getUserGroups(userId);
-        final Group [] groups = (Group[]) groupCollection.toArray(new Group[0]);
+        //final User user = iwc.getCurrentUser();
+        //final int userId = ((Integer) user.getPrimaryKey()).intValue();
+        //final Collection groupCollection = userBusiness.getUserGroups(userId);
+        //final Group [] groups = (Group[]) groupCollection.toArray(new Group[0]);
 		final SchoolChoiceBusiness business = getSchoolChoiceBusiness (iwc);
         final SchoolChoiceReminder [] reminders
                 = business.findAllSchoolChoiceReminders ();
@@ -260,8 +260,7 @@ public class SchoolChoiceReminderView extends CommuneBlock {
             showCreateReminderForm (iwc);
             return;
         }
-        final int daysBefore = Integer.parseInt (iwc.getParameter
-                                                 (REMINDER_DAYS_BEFORE_KEY));
+        //final int daysBefore = Integer.parseInt (iwc.getParameter(REMINDER_DAYS_BEFORE_KEY));
         final Date reminderDate
                 = getDaysBefore (iwc.getParameter (REMINDER_DAYS_BEFORE_KEY),
                                  eventDate);
@@ -375,8 +374,7 @@ public class SchoolChoiceReminderView extends CommuneBlock {
                                                  ADDRESS_DEFAULT)), col++,
                         row++);
         try {
-            final SchoolChoiceReminder  reminder
-                    = business.findSchoolChoiceReminder (reminderId);
+            //final SchoolChoiceReminder reminder = business.findSchoolChoiceReminder (reminderId);
             final SchoolChoiceReminderReceiver [] receivers
                     = business.findAllStudentsThatMustDoSchoolChoice ();
             iwc.getSession ().setAttribute (STUDENT_LIST_KEY, receivers);

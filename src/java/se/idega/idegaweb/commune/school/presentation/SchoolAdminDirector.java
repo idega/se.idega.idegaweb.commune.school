@@ -1,19 +1,23 @@
 package se.idega.idegaweb.commune.school.presentation;
 
 import java.rmi.RemoteException;
+import java.util.Collection;
+import java.util.Iterator;
 
+import se.idega.idegaweb.commune.business.CommuneUserBusiness;
 import se.idega.idegaweb.commune.presentation.CommuneBlock;
-import se.idega.idegaweb.commune.business.*;
-import com.idega.block.school.business.*;
-import com.idega.block.school.data.*;
-import com.idega.user.business.*;
-import com.idega.business.*;
-import com.idega.user.data.*;
+
+import com.idega.block.school.business.SchoolBusiness;
+import com.idega.block.school.data.School;
+import com.idega.business.IBOLookup;
 import com.idega.idegaweb.IWResourceBundle;
-import com.idega.idegaweb.IWConstants;
-import com.idega.presentation.*;
-import com.idega.presentation.text.*;
-import java.util.*;
+import com.idega.presentation.IWContext;
+import com.idega.presentation.Table;
+import com.idega.presentation.text.Link;
+import com.idega.user.business.GroupBusiness;
+import com.idega.user.business.UserBusiness;
+import com.idega.user.data.Group;
+import com.idega.user.data.User;
 
 /**
  * @author aron

@@ -1,6 +1,5 @@
 package se.idega.idegaweb.commune.school.data;
 
-import javax.ejb.*;
 
 public interface SchoolChoice extends com.idega.data.IDOEntity,com.idega.block.process.data.Case
 {

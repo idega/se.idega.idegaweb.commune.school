@@ -1,32 +1,33 @@
 package se.idega.idegaweb.commune.presentation;
 
-import com.idega.block.process.business.CaseBusiness;
-import com.idega.block.process.data.Case;
-import com.idega.block.process.data.CaseStatus;
-import com.idega.builder.data.IBPage;
-import com.idega.business.IBOLookup;
-import com.idega.user.data.User;
-import com.idega.idegaweb.*;
-import com.idega.presentation.*;
-import com.idega.presentation.text.*;
-import com.idega.presentation.ui.*;
-import com.idega.user.Converter;
-import com.idega.user.business.*;
-import com.idega.user.data.Group;
-import com.idega.util.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.*;
-import javax.ejb.EJBException;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Vector;
+
 import se.cubecon.bun24.viewpoint.business.ViewpointBusiness;
 import se.cubecon.bun24.viewpoint.data.Viewpoint;
 import se.cubecon.bun24.viewpoint.presentation.ViewpointForm;
 import se.idega.idegaweb.commune.business.CommuneCaseBusiness;
-import se.idega.idegaweb.commune.message.business.*;
-import se.idega.idegaweb.commune.message.data.*;
-import se.idega.idegaweb.commune.school.business.*;
-import se.idega.idegaweb.commune.school.data.*;
-import se.idega.idegaweb.commune.school.presentation.SchoolChoiceReminderView;
+import se.idega.idegaweb.commune.school.business.SchoolChoiceBusiness;
+import se.idega.idegaweb.commune.school.data.SchoolChoiceReminder;
+
+import com.idega.block.process.business.CaseBusiness;
+import com.idega.block.process.data.Case;
+import com.idega.builder.data.IBPage;
+import com.idega.business.IBOLookup;
+import com.idega.presentation.ExceptionWrapper;
+import com.idega.presentation.IWContext;
+import com.idega.presentation.Table;
+import com.idega.presentation.text.Link;
+import com.idega.presentation.text.Text;
+import com.idega.presentation.ui.Form;
+import com.idega.user.business.UserBusiness;
+import com.idega.user.data.Group;
+import com.idega.user.data.User;
 
 /**
  * Title: UserCases
@@ -153,7 +154,7 @@ public class UserCases extends CommuneBlock {
 				table.add(getSmallHeader(localize(MANAGER_KEY, MANAGER_DEFAULT)), column++, row);
 				table.add(getSmallHeader(localize(STATUS_KEY, STATUS_DEFAULT)), column, row++);
 
-				Collection messages = getCaseBusiness(iwc).getAllCasesForUser(iwc.getCurrentUser());
+				//Collection messages = getCaseBusiness(iwc).getAllCasesForUser(iwc.getCurrentUser());
 
 				if (_endCase > casesSize)
 					_endCase = casesSize;

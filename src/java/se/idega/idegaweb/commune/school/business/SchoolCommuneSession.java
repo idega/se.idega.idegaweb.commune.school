@@ -1,6 +1,5 @@
 package se.idega.idegaweb.commune.school.business;
 
-import javax.ejb.*;
 
 public interface SchoolCommuneSession extends com.idega.business.IBOSession
 {

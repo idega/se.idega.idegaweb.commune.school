@@ -6,6 +6,8 @@ import java.util.Iterator;
 
 import javax.ejb.FinderException;
 
+import se.idega.idegaweb.commune.presentation.CommuneBlock;
+
 import com.idega.block.school.business.SchoolUserBusinessBean;
 import com.idega.block.school.data.School;
 import com.idega.block.school.data.SchoolType;
@@ -13,15 +15,10 @@ import com.idega.block.school.data.SchoolTypeHome;
 import com.idega.business.IBOLookup;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDORelationshipException;
-import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWBundle;
 import com.idega.presentation.IWContext;
 import com.idega.user.business.GroupBusiness;
-import com.idega.user.data.Group;
 import com.idega.user.data.User;
-
-import se.idega.idegaweb.commune.business.CommuneUserBusiness;
-import se.idega.idegaweb.commune.presentation.CommuneBlock;
 
 /**
  * @author gimmi

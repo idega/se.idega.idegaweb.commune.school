@@ -1,6 +1,5 @@
 package se.idega.idegaweb.commune.school.data;
 
-import javax.ejb.*;
 
 public interface CurrentSchoolSeason extends com.idega.data.IDOEntity
 {

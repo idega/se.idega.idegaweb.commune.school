@@ -1,15 +1,5 @@
 package se.idega.idegaweb.commune.school.data;
 
-import com.idega.block.process.data.*;
-import com.idega.block.school.data.School;
-import com.idega.block.school.data.SchoolSeason;
-import com.idega.block.school.data.SchoolType;
-import com.idega.data.EntityControl;
-import com.idega.data.IDOException;
-import com.idega.data.IDOQuery;
-import com.idega.user.data.User;
-import com.idega.user.data.UserBMPBean;
-
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
 import java.util.Collection;
@@ -17,6 +7,17 @@ import java.util.Collection;
 import javax.ejb.FinderException;
 
 import se.idega.idegaweb.commune.school.business.SchoolChoiceBusinessBean;
+
+import com.idega.block.process.data.AbstractCaseBMPBean;
+import com.idega.block.process.data.Case;
+import com.idega.block.process.data.CaseBMPBean;
+import com.idega.block.school.data.School;
+import com.idega.block.school.data.SchoolSeason;
+import com.idega.block.school.data.SchoolType;
+import com.idega.data.IDOException;
+import com.idega.data.IDOQuery;
+import com.idega.user.data.User;
+import com.idega.user.data.UserBMPBean;
 
 /**
  * <p>Title: </p>

@@ -1,24 +1,24 @@
 package se.idega.idegaweb.commune.school.presentation;
 
-import com.idega.presentation.Block;
-import com.idega.presentation.IWContext;
-import com.idega.idegaweb.IWBundle;
-import com.idega.idegaweb.IWResourceBundle;
-import com.idega.presentation.ui.*;
-import com.idega.presentation.text.*;
-import com.idega.presentation.Table;
-import com.idega.presentation.PresentationObject;
-import com.idega.util.text.TextFormat;
-import com.idega.block.school.data.SchoolSeason;
-import com.idega.block.school.business.*;
-import com.idega.util.IWTimestamp;
-
-import java.util.Collection;
-import com.idega.business.IBOLookup;
 import java.text.DateFormat;
+import java.util.Collection;
 
 import se.idega.idegaweb.commune.school.business.SchoolChoiceBusiness;
-import se.idega.idegaweb.commune.school.data.CurrentSchoolSeason;
+
+import com.idega.block.school.business.SchoolBusiness;
+import com.idega.block.school.data.SchoolSeason;
+import com.idega.business.IBOLookup;
+import com.idega.idegaweb.IWBundle;
+import com.idega.idegaweb.IWResourceBundle;
+import com.idega.presentation.Block;
+import com.idega.presentation.IWContext;
+import com.idega.presentation.PresentationObject;
+import com.idega.presentation.Table;
+import com.idega.presentation.ui.Form;
+import com.idega.presentation.ui.HiddenInput;
+import com.idega.presentation.ui.RadioButton;
+import com.idega.presentation.ui.SubmitButton;
+import com.idega.util.text.TextFormat;
 
 
 /**

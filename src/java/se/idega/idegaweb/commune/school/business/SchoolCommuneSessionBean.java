@@ -1,20 +1,14 @@
 package se.idega.idegaweb.commune.school.business;
 
 import java.rmi.RemoteException;
-import java.util.Collection;
-import java.util.Iterator;
 
-import javax.ejb.CreateException;
 import javax.ejb.FinderException;
 
 import se.idega.idegaweb.commune.business.CommuneUserBusiness;
 
-import com.idega.block.school.business.SchoolBusiness;
 import com.idega.block.school.data.School;
-import com.idega.block.school.data.SchoolHome;
 import com.idega.business.IBOLookup;
 import com.idega.business.IBOSessionBean;
-import com.idega.user.data.Group;
 import com.idega.user.data.User;
 
 /**
