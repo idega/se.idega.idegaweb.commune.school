@@ -20,10 +20,10 @@ import se.idega.idegaweb.commune.school.data.SchoolChoiceReminder;
  * and entity ejb classes in {@link se.idega.idegaweb.commune.school.data}.
  * <p>
  * <p>
- * Last modified: $Date: 2002/12/20 12:05:48 $ by $Author: staffan $
+ * Last modified: $Date: 2002/12/20 13:28:58 $ by $Author: staffan $
  *
  * @author <a href="http://www.staffannoteberg.com">Staffan Nöteberg</a>
- * @version $Revision: 1.10 $
+ * @version $Revision: 1.11 $
  * @see javax.ejb
  */
 public class SchoolChoiceReminderView extends CommuneBlock {
@@ -275,18 +275,28 @@ public class SchoolChoiceReminderView extends CommuneBlock {
 		final SchoolChoiceBusiness business = getSchoolChoiceBusiness (iwc);
         final int reminderId = Integer.parseInt (iwc.getParameter
                                                  (CASE_ID_KEY));
+        final UserBusiness userBusiness = (UserBusiness)
+                IBOLookup.getServiceInstance (iwc, UserBusiness.class);
         try {
             final SchoolChoiceReminder  reminder
                     = business .findSchoolChoiceReminder (reminderId);
-            final Collection c = business.findAllChildSsnsInCurrentSeason ();
-            form.add (new HiddenInput (CHILDREN_COUNT_KEY, "" + c.size ()));
-            int j = 0;
-            for (Iterator i = c.iterator (); i.hasNext ();) {
-                final String ssn = i.next ().toString ();
-                final CheckBox checkBox = new CheckBox (CHILDREN_COUNT_KEY + j++, ssn);
+            final Set ids
+                    = business.findStudentIdsWhoChosedForCurrentSeason ();
+            final int studentCount = ids.size ();
+            form.add (new HiddenInput (CHILDREN_COUNT_KEY, "" + studentCount));
+            final Iterator iter = ids.iterator ();
+            for (int i = 0; i < studentCount; i++) {
+                final Integer id = (Integer) iter.next ();
+                final CheckBox checkBox
+                        = new CheckBox (CHILDREN_COUNT_KEY + i, "" + id);
                 checkBox.setChecked (true);
                 table.add (checkBox, 1, row);
-                table.add (ssn, 2, row++);
+                final User user = userBusiness.getUser (id);
+                final com.idega.core.data.Address address
+                        = userBusiness.getUserAddress1 (id.intValue());
+                table.add (user.getName () + " (" + user.getPersonalID() + "), "
+                           + address.getStreetAddress() + ", "
+                           + address.getPostalAddress(), 1, row++);
             }
         } catch (FinderException e) {
             e.printStackTrace ();
