@@ -278,10 +278,7 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
     setColumn(SCHOOLCATALOGUE,catalogue);
   }
   public boolean getFreetimeInThisSchool(){
-    String returnBoolean = getStringColumnValue(FREETIMETHISSCHOOL);
-    if (returnBoolean != null && Boolean.valueOf(returnBoolean).booleanValue())
-    	return true;
-    return false;
+    return getBooleanColumnValue(FREETIMETHISSCHOOL);
   }
   public void setFreetimeInThisSchool(boolean freetimeInThisSchool){
     setColumn(this.FREETIMETHISSCHOOL,freetimeInThisSchool);

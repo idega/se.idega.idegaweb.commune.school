@@ -226,6 +226,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		choice.setLanguageChoice(language);
 		choice.setChangeOfSchool(changeOfSchool);
 		choice.setKeepChildrenCare(keepChildrenCare);
+		choice.setFreetimeInThisSchool(false);
 		choice.setAutoAssign(autoAssign);
 		choice.setCustodiansAgree(custodiansAgree);
 		choice.setSchoolCatalogue(schoolCatalogue);
