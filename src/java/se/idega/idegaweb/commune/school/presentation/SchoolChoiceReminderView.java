@@ -50,10 +50,10 @@ import com.idega.user.data.User;
  * and entity ejb classes in {@link se.idega.idegaweb.commune.school.data}.
  * <p>
  * <p>
- * Last modified: $Date: 2003/10/07 11:25:51 $ by $Author: tryggvil $
+ * Last modified: $Date: 2003/12/11 15:51:00 $ by $Author: laddi $
  *
  * @author <a href="http://www.staffannoteberg.com">Staffan Nöteberg</a>
- * @version $Revision: 1.34 $
+ * @version $Revision: 1.35 $
  * @see javax.ejb
  */
 public class SchoolChoiceReminderView extends CommuneBlock {
@@ -489,7 +489,7 @@ public class SchoolChoiceReminderView extends CommuneBlock {
     }
 
     private Table getStudentList (final IWContext iwc,
-                                  final SchoolChoiceBusiness business) throws RemoteException {
+                                  final SchoolChoiceBusiness business) throws RemoteException, FinderException {
         final Table studentList = new Table();
         studentList.setCellpadding(getCellpadding ());
         studentList.setCellspacing(getCellspacing ());
@@ -509,52 +509,48 @@ public class SchoolChoiceReminderView extends CommuneBlock {
         studentList.add(getSmallHeader(localize (ADDRESS_KEY,
                                                  ADDRESS_DEFAULT)), col++,
                         row++);
-        try {
-        	SchoolYear[] years = getSchoolYears(iwc);
-        	SchoolSeason season = getSchoolSeason(iwc);
-            //final SchoolChoiceReminder reminder = business.findSchoolChoiceReminder (reminderId);
-            final SchoolChoiceReminderReceiver [] receivers
-                    = business.findAllStudentsThatMustDoSchoolChoiceButHaveNot(season,years);
-            iwc.getSession ().setAttribute (STUDENT_LIST_KEY, receivers);
-            for (int i = 0; i < receivers.length; i++) {
-                try {
-                    final CheckBox checkBox
-                            = new CheckBox (CHILDREN_COUNT_KEY + i, "" + i);
-                    checkBox.setChecked (true);
+        SchoolYear[] years = getSchoolYears(iwc);
+				SchoolSeason season = getSchoolSeason(iwc);
+				  //final SchoolChoiceReminder reminder = business.findSchoolChoiceReminder (reminderId);
+				  final SchoolChoiceReminderReceiver [] receivers
+				          = business.findAllStudentsThatMustDoSchoolChoiceButHaveNot(season,years);
+				  iwc.getSession ().setAttribute (STUDENT_LIST_KEY, receivers);
+				  for (int i = 0; i < receivers.length; i++) {
+				      try {
+				          final CheckBox checkBox
+				                  = new CheckBox (CHILDREN_COUNT_KEY + i, "" + i);
+				          checkBox.setChecked (true);
 
-                    final SchoolChoiceReminderReceiver receiver = receivers [i];
-                    col = 1;
-                    studentList.setRowColor(row, (i % 2 == 0)
-                                            ? getZebraColor1()
-                                            : getZebraColor2());
-                    studentList.add (checkBox, col++, row);
-                    studentList.add (new Text(receiver.getStudentName ()), col++, row);
-                    final String ssn = receiver.getSsn ();
-                    studentList.add (new Text(ssn.substring (2, 8) + "-"
-                                     + ssn.substring (8, 12)), col++, row);
-                    final String parentName = receiver.getParentName ();
-                    final Text parentText = new Text(parentName);
-                    if (parentName.startsWith ("?")) {
-                        parentText.setFontColor("#ff0000");
-                        parentText.setBold ();
-                    }
-                    studentList.add (parentText, col++, row);
-                    final Text addressText
-                            = new Text (receiver.getStreetAddress () + ", "
-                                        + receiver.getPostalAddress ());
-                    if (receiver.getStreetAddress ().startsWith ("?")
-                        || receiver.getPostalAddress ().startsWith ("?")) {
-                        addressText.setFontColor("#ff0000");
-                        addressText.setBold ();
-                    }
-                    studentList.add (addressText, col++, row++);
-                } catch (Exception e) {
-                    e.printStackTrace ();
-                }
-            }
-        } catch (FinderException e) {
-            e.printStackTrace ();
-        }
+				          final SchoolChoiceReminderReceiver receiver = receivers [i];
+				          col = 1;
+				          studentList.setRowColor(row, (i % 2 == 0)
+				                                  ? getZebraColor1()
+				                                  : getZebraColor2());
+				          studentList.add (checkBox, col++, row);
+				          studentList.add (new Text(receiver.getStudentName ()), col++, row);
+				          final String ssn = receiver.getSsn ();
+				          studentList.add (new Text(ssn.substring (2, 8) + "-"
+				                           + ssn.substring (8, 12)), col++, row);
+				          final String parentName = receiver.getParentName ();
+				          final Text parentText = new Text(parentName);
+				          if (parentName.startsWith ("?")) {
+				              parentText.setFontColor("#ff0000");
+				              parentText.setBold ();
+				          }
+				          studentList.add (parentText, col++, row);
+				          final Text addressText
+				                  = new Text (receiver.getStreetAddress () + ", "
+				                              + receiver.getPostalAddress ());
+				          if (receiver.getStreetAddress ().startsWith ("?")
+				              || receiver.getPostalAddress ().startsWith ("?")) {
+				              addressText.setFontColor("#ff0000");
+				              addressText.setBold ();
+				          }
+				          studentList.add (addressText, col++, row++);
+				      } catch (Exception e) {
+				          e.printStackTrace ();
+				      }
+				  }
         return studentList;
     }
 
