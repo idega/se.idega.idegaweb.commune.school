@@ -61,11 +61,11 @@ public class SchoolChoiceMessagePdfHandler implements MessagePdfHandler,BundleRe
 	 * @see se.idega.idegaweb.commune.message.business.MessagePdfHandler#createMessageContent(se.idega.idegaweb.commune.printing.business.DocumentPrintContext)
 	 */
 	public void createMessageContent(DocumentPrintContext dpc) throws ContentCreationException {
-		String code =dpc.getMessage().getContentCode();
+		/*String code =dpc.getMessage().getContentCode();
 		
 		if(CODE_PRELIMINARY.equals(code)){
 			createPreliminaryContent(dpc,code);
-		}/*
+		}
 		else if(CODE_APPLYING_SINGLEPARENT_APPLICATION_NEW.equals(code)){
 			createApplyingSeparateParentApplicationContent(dpc,code);
 		}
@@ -89,18 +89,18 @@ public class SchoolChoiceMessagePdfHandler implements MessagePdfHandler,BundleRe
 		}
 		else if(CODE_NEW_SCHOOL_CHANGE.equals(code)){
 			createNewHeadmasterContent(dpc,code);
-		}*/
+		}
 		else{
 			createDefaultContent(dpc);
-		}
-		
+		}*/
+		createDefaultContent(dpc);
 	}
 	
-	private void createPreliminaryContent(DocumentPrintContext dpc,String code)throws ContentCreationException{
+	/*private void createPreliminaryContent(DocumentPrintContext dpc,String code)throws ContentCreationException{
 		createContent( dpc, getHandlerCode()+"_"+code+"_letter.xml");
 	}
 	
-	/*private void createApplyingSeparateParentApplicationContent(DocumentPrintContext dpc,String code)throws ContentCreationException{
+	private void createApplyingSeparateParentApplicationContent(DocumentPrintContext dpc,String code)throws ContentCreationException{
 		createContent( dpc, getHandlerCode()+"_"+code+"_letter.xml");
 	}
 	
