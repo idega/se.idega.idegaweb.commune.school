@@ -647,7 +647,7 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
             }
        for (Iterator m = members.iterator (); m.hasNext ();) {
                 // sort retreived members
-                final SchoolClassMember member = (SchoolClassMember) m.next ();
+                //final SchoolClassMember member = (SchoolClassMember) m.next ();
            /*   if (member.getHasCompensationByInvoice ()) {    
                     final User user = member.getStudent ();
                     result.put (user.getPersonalID (), member);
