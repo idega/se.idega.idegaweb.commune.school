@@ -165,16 +165,16 @@ public int countBySchoolIDAndSeasonIDAndStatus(int p0,int p1,java.lang.String[] 
 	return theReturn;
 }
 
-public int getChoices(int p0,int p1,int p2)throws com.idega.data.IDOException{
+public int getChoices(int p0,int p1,java.lang.String[] p2)throws com.idega.data.IDOException{
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	int theReturn = ((SchoolChoiceBMPBean)entity).ejbHomeGetChoices(p0,p1,p2);
 	this.idoCheckInPooledEntity(entity);
 	return theReturn;
 }
 
-public int getCount(java.lang.String[] p0)throws com.idega.data.IDOException{
+public int getChoices(int p0,int p1,int p2,java.lang.String[] p3)throws com.idega.data.IDOException{
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-	int theReturn = ((SchoolChoiceBMPBean)entity).ejbHomeGetCount(p0);
+	int theReturn = ((SchoolChoiceBMPBean)entity).ejbHomeGetChoices(p0,p1,p2,p3);
 	this.idoCheckInPooledEntity(entity);
 	return theReturn;
 }
@@ -182,6 +182,13 @@ public int getCount(java.lang.String[] p0)throws com.idega.data.IDOException{
 public int getCount(java.lang.String[] p0,int p1)throws com.idega.data.IDOException{
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	int theReturn = ((SchoolChoiceBMPBean)entity).ejbHomeGetCount(p0,p1);
+	this.idoCheckInPooledEntity(entity);
+	return theReturn;
+}
+
+public int getCount(java.lang.String[] p0)throws com.idega.data.IDOException{
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	int theReturn = ((SchoolChoiceBMPBean)entity).ejbHomeGetCount(p0);
 	this.idoCheckInPooledEntity(entity);
 	return theReturn;
 }
@@ -249,16 +256,16 @@ public int getNumberOfApplications(java.lang.String p0,int p1,int p2,int p3)thro
 	return theReturn;
 }
 
-public int getNumberOfChoices(int p0,int p1,java.lang.String[] p2)throws com.idega.data.IDOException{
+public int getNumberOfChoices(int p0,int p1)throws com.idega.data.IDOException{
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-	int theReturn = ((SchoolChoiceBMPBean)entity).ejbHomeGetNumberOfChoices(p0,p1,p2);
+	int theReturn = ((SchoolChoiceBMPBean)entity).ejbHomeGetNumberOfChoices(p0,p1);
 	this.idoCheckInPooledEntity(entity);
 	return theReturn;
 }
 
-public int getNumberOfChoices(int p0,int p1)throws com.idega.data.IDOException{
+public int getNumberOfChoices(int p0,int p1,java.lang.String[] p2)throws com.idega.data.IDOException{
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-	int theReturn = ((SchoolChoiceBMPBean)entity).ejbHomeGetNumberOfChoices(p0,p1);
+	int theReturn = ((SchoolChoiceBMPBean)entity).ejbHomeGetNumberOfChoices(p0,p1,p2);
 	this.idoCheckInPooledEntity(entity);
 	return theReturn;
 }

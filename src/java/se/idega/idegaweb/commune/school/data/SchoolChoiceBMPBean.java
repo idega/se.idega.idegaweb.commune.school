@@ -493,7 +493,7 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 		sql.appendSelectAllFrom(this).append(" sc, ").append("PROC_CASE pc ");
 		sql.appendWhereEquals(CHILD, childID).appendAndEquals(SCHOOL_SEASON, seasonID);
 		sql.appendAndEquals("sc." + getIDColumnName(), "pc.proc_case_id");
-		if (notInStatuses == null) {
+		if (notInStatuses != null) {
 			sql.appendAnd().append("pc.case_status").appendNotInArrayWithSingleQuotes(notInStatuses);
 		}
 		return super.idoFindPKsBySQL(sql.toString());
@@ -861,12 +861,22 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 		return super.idoGetNumberOfRecords(sql.toString());
 	}
 
-	public int ejbHomeGetChoices(int userID, int schoolID, int seasonID) throws IDOException {
+	public int ejbHomeGetChoices(int userID, int seasonID, String[] notInStatus) throws IDOException {
+		return ejbHomeGetChoices(userID, -1, seasonID, notInStatus);
+	}
+	
+	public int ejbHomeGetChoices(int userID, int schoolID, int seasonID, String[] notInStatus) throws IDOException {
 		IDOQuery sql = idoQuery();
-		sql.appendSelectCountFrom(this);
-		sql.appendWhereEquals(CHILD, userID);
-		sql.appendAndEquals(SCHOOL_SEASON, seasonID);
-		sql.appendAndEquals(CHOSEN_SCHOOL, schoolID);
+		sql.appendSelectCountFrom(this).append(" sc,").append("PROC_CASE pc ");
+		sql.appendWhereEquals("sc." + CHILD, userID);
+		sql.appendAndEquals("sc." + getIDColumnName(), "pc.proc_case_id");
+		sql.appendAndEquals("sc." + SCHOOL_SEASON, seasonID);
+		if (schoolID != -1 ) {
+			sql.appendAndEquals("sc." + CHOSEN_SCHOOL, schoolID);
+		}
+		if (notInStatus != null) {
+			sql.appendAnd().append("pc.case_status").appendNotInArrayWithSingleQuotes(notInStatus);
+		}
 		return super.idoGetNumberOfRecords(sql.toString());
 	}
 	
