@@ -649,7 +649,6 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 			sql.appendOr().append("sc."+HAS_RECEIVED_PLACEMENT_MESSAGE).append(" is null").appendRightParenthesis();
 		}
  
- 		System.out.println(sql.toString());
  		return idoFindPKsBySQL(sql.toString());
   }
   
