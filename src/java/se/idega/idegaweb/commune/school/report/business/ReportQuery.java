@@ -1,5 +1,5 @@
 /*
- * $Id: ReportQuery.java,v 1.18 2004/01/14 13:22:55 anders Exp $
+ * $Id: ReportQuery.java,v 1.19 2004/01/14 13:29:45 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -23,10 +23,10 @@ import com.idega.util.database.ConnectionBroker;
 /** 
  * Handles the SQL logic for school report calculations.
  * <p>
- * Last modified: $Date: 2004/01/14 13:22:55 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/14 13:29:45 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.18 $
+ * @version $Revision: 1.19 $
  */
 public class ReportQuery {
 
@@ -249,14 +249,14 @@ public class ReportQuery {
 	 * Set select only private schools.
 	 */
 	public void setOnlyPrivateSchools() {
-		sql += " and (s.management_type = 'COMPANY' or s.management_type = 'PRIVATE' or s.management_type = 'FOUNDATION')";
+		sql += " and (s.management_type = 'COMPANY' or s.management_type = 'PRIVATE' or s.management_type = 'FOUNDATION' or s.management_type = 'OTHER')";
 	}
 	
 	/**
 	 * Set select only other than private schools.
 	 */
 	public void setNotPrivateSchools() {
-		sql += " and s.management_type <> 'COMPANY' and s.management_type <> 'PRIVATE' and s.management_type <> 'FOUNDATION'";
+		sql += " and s.management_type <> 'COMPANY' and s.management_type <> 'PRIVATE' and s.management_type <> 'FOUNDATION' and s.management_type <> 'OTHER'";
 	}
 	
 	/**
