@@ -469,12 +469,13 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	
 	private void initSchoolFromChoice(SchoolChoice choice) {
 		try {
-			school = schBuiz.getSchool(choice.getChosenSchoolId());
+			school = schBuiz.getSchool(choice.getCurrentSchoolId());
 			schoolArea = schBuiz.getSchoolBusiness().getSchoolAreaHome().findByPrimaryKey(new Integer(school.getSchoolAreaId()));
 			schoolYear = schCommBiz.getSchoolYear(choice.getGrade());
 			schoolType = schBuiz.getSchoolBusiness().getSchoolTypeHome().findByPrimaryKey(new Integer(choice.getSchoolTypeId()));
 		}
 		catch (Exception e) {
+			hasPreviousSchool = false;
 		}
 	}
 
