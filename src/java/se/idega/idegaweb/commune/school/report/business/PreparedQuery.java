@@ -1,5 +1,5 @@
 /*
- * $Id: PreparedQuery.java,v 1.24 2004/01/30 18:25:10 anders Exp $
+ * $Id: PreparedQuery.java,v 1.25 2004/02/17 16:50:44 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -27,10 +27,10 @@ import com.idega.block.school.data.SchoolSeason;
 /** 
  * Handles the SQL logic for school report calculations.
  * <p>
- * Last modified: $Date: 2004/01/30 18:25:10 $ by $Author: anders $
+ * Last modified: $Date: 2004/02/17 16:50:44 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.24 $
+ * @version $Revision: 1.25 $
  */
 public class PreparedQuery {
 
@@ -449,6 +449,16 @@ public class PreparedQuery {
 		_sqlWhere.add(sql);
 		
 		_sqlFrom.put(S, TABLE_S);
+	}
+	
+	/**
+	 * Set select only commune schools.
+	 */
+	public void setOnlyCommuneSchools() {
+		String sql = "s.management_type = 'COMMUNE'";
+		_sqlWhere.add(sql);
+		
+		_sqlFrom.put(S, TABLE_S);		
 	}
 	
 	/**
