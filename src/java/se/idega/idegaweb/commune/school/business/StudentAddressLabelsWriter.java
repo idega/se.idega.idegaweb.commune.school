@@ -1,5 +1,5 @@
 /*
- * $Id: StudentAddressLabelsWriter.java,v 1.8 2004/10/20 17:28:12 thomas Exp $
+ * $Id: StudentAddressLabelsWriter.java,v 1.9 2004/10/22 12:37:51 aron Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -51,10 +51,10 @@ import com.lowagie.text.pdf.PdfWriter;
 /** 
  * This MediaWritable class generates a PDF stream with student address labels.
  * <p>
- * Last modified: $Date: 2004/10/20 17:28:12 $ by $Author: thomas $
+ * Last modified: $Date: 2004/10/22 12:37:51 $ by $Author: aron $
  *
  * @author Anders Lindman
- * @version $Revision: 1.8 $
+ * @version $Revision: 1.9 $
  * @see com.idega.io.MediaWritable
  */
 public class StudentAddressLabelsWriter {
@@ -302,8 +302,8 @@ public class StudentAddressLabelsWriter {
 	    business = getSchoolCommuneBusiness(iwac);
 		userBusiness = getCommuneUserBusiness(iwac);
 		
-		//IWResourceBundle iwrb = iwac.getIWMainApplication().getBundle(CommuneBlock.IW_BUNDLE_IDENTIFIER).getResourceBundle(
-		//		iwac.getApplicationSettings().getApplicationLocale());
+		IWResourceBundle iwrb = iwac.getIWMainApplication().getBundle(CommuneBlock.IW_BUNDLE_IDENTIFIER).getResourceBundle(
+			iwac.getApplicationSettings().getApplicationLocale());
 
 		MemoryFileBuffer buffer = new MemoryFileBuffer();
 		MemoryOutputStream mos = new MemoryOutputStream(buffer);
@@ -316,6 +316,8 @@ public class StudentAddressLabelsWriter {
 	    sheet.setColumnWidth((short)1, colWidth);
 	    sheet.setColumnWidth((short)2, colWidth);
 	    
+	    String header = iwrb.getLocalizedString(KEY_TO_CUSTODIAN_FOR, "To custodian for") + ":";
+	    
 	    MailReceiver receiver;
 	    HSSFRow row;
 	    Iterator iter = receivers.iterator();
@@ -326,20 +328,24 @@ public class StudentAddressLabelsWriter {
 		   row = sheet.getRow(rowCount);
 		   if(row==null)
 		       row = sheet.createRow(rowCount);
-		   row.createCell((short)col).setCellValue(receiver.getStudentName());
-		   row = row = sheet.getRow(rowCount+1);
+		   row.createCell((short)col).setCellValue(header);
+		   row = sheet.getRow(rowCount+1);
 		   if(row==null)
 		       row = sheet.createRow(rowCount+1);
-		   row.createCell((short)col).setCellValue(receiver.getStreetAddress());
+		   row.createCell((short)col).setCellValue(receiver.getStudentName());
 		   row = row = sheet.getRow(rowCount+2);
 		   if(row==null)
 		       row = sheet.createRow(rowCount+2);
+		   row.createCell((short)col).setCellValue(receiver.getStreetAddress());
+		   row = row = sheet.getRow(rowCount+3);
+		   if(row==null)
+		       row = sheet.createRow(rowCount+3);
 		   row.createCell((short)col).setCellValue(receiver.getPostalAddress());
 		   
 		   col++;
 		   if(col==NR_OF_COLUMNS){
 		       col = 0;
-		       rowCount+=4; 
+		       rowCount+=5; 
 		   }
 		  
 		  
