@@ -1,5 +1,5 @@
 /*
- * $Id: NackaHighSchoolStudyPathPlacementReportModel.java,v 1.8 2004/01/23 09:31:32 anders Exp $
+ * $Id: NackaHighSchoolStudyPathPlacementReportModel.java,v 1.9 2004/01/23 11:55:00 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -21,10 +21,10 @@ import com.idega.block.school.data.SchoolStudyPath;
 /** 
  * Report model for high school placements for all study paths.
  * <p>
- * Last modified: $Date: 2004/01/23 09:31:32 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/23 11:55:00 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.8 $
+ * @version $Revision: 1.9 $
  */
 public class NackaHighSchoolStudyPathPlacementReportModel extends ReportModel {
 
@@ -163,12 +163,13 @@ public class NackaHighSchoolStudyPathPlacementReportModel extends ReportModel {
 					SchoolStudyPath studyPath = (SchoolStudyPath) iter.next();
 					String studyPathCode = studyPath.getCode();
 					Object rowParameter = studyPathCode;
+					String schoolYear = columnParameter;
 					if (columnMethod == COLUMN_METHOD_SCHOOL_YEAR) {
 						if (studyPathCode.length() > 3 && studyPathCode.substring(0, 3).equals("GYS")) {
 							columnMethod = COLUMN_METHOD_COMPULSORY_SCHOOL_YEAR;
-							columnParameter = "GS" + columnParameter; 
+							schoolYear = "GS" + columnParameter; 
 						} else {
-							columnParameter = "G" + columnParameter;
+							schoolYear = "G" + columnParameter;
 						}
 					}
 					int cellType = Cell.CELLTYPE_NORMAL;
@@ -176,7 +177,7 @@ public class NackaHighSchoolStudyPathPlacementReportModel extends ReportModel {
 						cellType = Cell.CELLTYPE_ROW_HEADER;
 					}
 					Cell cell = new Cell(this, row, column, ROW_METHOD_STUDY_PATH,
-							columnMethod, rowParameter, columnParameter, cellType);
+							columnMethod, rowParameter, schoolYear, cellType);
 					setCell(row, column, cell);
 					row++;
 				}
