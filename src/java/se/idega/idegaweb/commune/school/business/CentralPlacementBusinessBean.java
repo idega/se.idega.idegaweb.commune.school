@@ -55,6 +55,7 @@ public class CentralPlacementBusinessBean extends IBOServiceBean implements Cent
 	private static final String KEY_ERROR_SCHOOL_YEAR = KP + "error.school_year";
 	private static final String KEY_ERROR_SCHOOL_GROUP = KP + "error.school_group";
 	private static final String KEY_ERROR_STORING_PLACEMENT = KP + "error.saving_placement";
+	private static final String KEY_ERROR_STUDY_PATH = KP + "error.study_path";
 
 	/**
 	 * Stores a new placement(SchoolClassMember) with resources and ends the current placement
@@ -98,7 +99,33 @@ public class CentralPlacementBusinessBean extends IBOServiceBean implements Cent
 			if (categoryID.equals("-1")) {
 				throw new CentralPlacementException(KEY_ERROR_CATEGORY_ID, 
 						"You must chose an operational field for the placement");
-			} 
+			} else {
+				SchoolCategoryHome schCatHome = getSchoolBusiness().getSchoolCategoryHome();
+			
+				SchoolCategory highSchool;
+				try {
+					highSchool = schCatHome.findHighSchoolCategory();
+					String highSchoolPK = (String) highSchool.getPrimaryKey();
+				
+					// Study path
+					if (categoryID.equals(highSchoolPK)) {
+						if (iwc.isParameterSet(CentralPlacementEditor.PARAM_STUDY_PATH)) {
+							String studyPathID = iwc.getParameter(CentralPlacementEditor.PARAM_STUDY_PATH);
+							if (studyPathID.equals("-1")) {
+								throw new CentralPlacementException(KEY_ERROR_STUDY_PATH, 
+										"You must chose a study path, for a high school placement");
+							}						
+						} else {
+							throw new CentralPlacementException(KEY_ERROR_STUDY_PATH, 
+									"You must chose a study path, for a high school placement");
+							
+						}
+					}
+				
+				} catch (FinderException e1) {
+					log(e1);
+				}			
+			}
 		}
 		// provider
 		if (iwc.isParameterSet(CentralPlacementEditor.PARAM_PROVIDER)) {
@@ -149,6 +176,8 @@ public class CentralPlacementBusinessBean extends IBOServiceBean implements Cent
 			if (!placeDateStr.equals("")) {
 				placeStamp= new IWTimestamp(placeDateStr);
 				placeStamp.setAsDate();
+				
+				// Check if current season
 			  
 				// Get dayBeforeRegDate for further use
 				IWTimestamp dayBeforeStamp = new IWTimestamp(placeStamp.getDate());
