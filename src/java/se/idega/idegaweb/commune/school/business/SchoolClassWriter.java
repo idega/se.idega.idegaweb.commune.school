@@ -28,6 +28,7 @@ import com.idega.business.IBOLookup;
 import com.idega.core.data.Address;
 import com.idega.core.data.Phone;
 import com.idega.core.data.PhoneType;
+import com.idega.core.data.PostalCode;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.io.MediaWritable;
@@ -129,6 +130,7 @@ public class SchoolClassWriter implements MediaWritable {
 	    sheet.setColumnWidth((short)1, (short) (14 * 256));
 	    sheet.setColumnWidth((short)2, (short) (30 * 256));
 	    sheet.setColumnWidth((short)3, (short) (14 * 256));
+			sheet.setColumnWidth((short)4, (short) (14 * 256));
 	    HSSFFont font = wb.createFont();
 	    font.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
 	    HSSFCellStyle style = wb.createCellStyle();
@@ -144,12 +146,16 @@ public class SchoolClassWriter implements MediaWritable {
 	    cell = row.createCell((short)2);
 	    cell.setCellValue("Address");
 	    cell.setCellStyle(style);
+			cell = row.createCell((short)2);
+			cell.setCellValue("Postal code");
+			cell.setCellStyle(style);
 	    cell = row.createCell((short)3);
 	    cell.setCellValue("Phone");
 	    cell.setCellStyle(style);
 
 			User student;
 			Address address;
+			PostalCode postalCode = null;
 			Phone phone;
 			SchoolClassMember studentMember;
 			
@@ -160,14 +166,19 @@ public class SchoolClassWriter implements MediaWritable {
 				studentMember = (SchoolClassMember) iter.next();
 				student = (User) studentMap.get(new Integer(studentMember.getClassMemberId()));
 				address = userBusiness.getUsersMainAddress(student);
+				if (address != null)
+					postalCode = address.getPostalCode();
 				phone = userBusiness.getChildHomePhone(student);
 
 		    row.createCell((short)0).setCellValue(student.getNameLastFirst(true));
 		    row.createCell((short)1).setCellValue(PersonalIDFormatter.format(student.getPersonalID(), locale));
-		    if (address != null)
+		    if (address != null) {
 			    row.createCell((short)2).setCellValue(address.getStreetAddress());
+			    if (postalCode != null)
+						row.createCell((short)3).setCellValue(postalCode.getPostalAddress());
+		    }
 			  if (phone != null)
-			    row.createCell((short)3).setCellValue(phone.getNumber());
+			    row.createCell((short)4).setCellValue(phone.getNumber());
 			  cellRow++;
 			}
 			wb.write(mos);
@@ -195,12 +206,13 @@ public class SchoolClassWriter implements MediaWritable {
 			
 			User student;
 			Address address;
+			PostalCode postalCode = null;
 			Phone phone;
 			SchoolClassMember studentMember;
 			Cell cell;
 			
-			String[] headers = {"Name", "PersonalID", "Address", "Phone"};
-			int[] sizes = { 35, 20, 35, 10 };
+			String[] headers = {"Name", "PersonalID", "Address", "Postal code", "Phone"};
+			int[] sizes = { 35, 20, 25, 10, 10 };
 
 			Table datatable = getTable(headers, sizes);
 			Iterator iter = students.iterator();
@@ -208,6 +220,8 @@ public class SchoolClassWriter implements MediaWritable {
 				studentMember = (SchoolClassMember) iter.next();
 				student = (User) studentMap.get(new Integer(studentMember.getClassMemberId()));
 				address = userBusiness.getUsersMainAddress(student);
+				if (address != null)
+					postalCode = address.getPostalCode();
 				phone = userBusiness.getChildHomePhone(student);
 
 				cell = new Cell(new Phrase(student.getNameLastFirst(true), new Font(Font.HELVETICA, 10, Font.BOLD)));
@@ -222,6 +236,13 @@ public class SchoolClassWriter implements MediaWritable {
 				if (address != null)
 					streetAddress = address.getStreetAddress();
 				cell = new Cell(new Phrase(streetAddress, new Font(Font.HELVETICA, 10, Font.BOLD)));
+				cell.setBorder(Rectangle.NO_BORDER);
+				datatable.addCell(cell);
+
+				String postalAddress = "";
+				if (address != null && postalCode != null)
+				postalAddress = postalCode.getPostalAddress();
+				cell = new Cell(new Phrase(postalAddress, new Font(Font.HELVETICA, 10, Font.BOLD)));
 				cell.setBorder(Rectangle.NO_BORDER);
 				datatable.addCell(cell);
 
