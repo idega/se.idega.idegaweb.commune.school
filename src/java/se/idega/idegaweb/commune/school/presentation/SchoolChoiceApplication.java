@@ -645,11 +645,17 @@ public class SchoolChoiceApplication extends CommuneBlock {
 					getParentPage().setOnLoad(initFunction);
 				}
 				else {
-					if (hasPreviousSchool) {
-						initFunction = getInitFilterCallerScript(iwc, prmPreType, prmPreArea, prmPreSchool, ((Integer)schoolType.getPrimaryKey()).intValue(), ((Integer)schoolArea.getPrimaryKey()).intValue(), ((Integer)school.getPrimaryKey()).intValue(), true);
-						script.addFunction("presch_init", initFunction);
-						drpGrade.setSelectedElement(schoolYear.getSchoolYearAge());
-						getParentPage().setOnLoad(initFunction);
+					if (schoolClassMember != null) {
+						try {
+							initFunction = getInitFilterCallerScript(iwc, prmPreType, prmPreArea, prmPreSchool, ((Integer)schoolType.getPrimaryKey()).intValue(), ((Integer)schoolArea.getPrimaryKey()).intValue(), ((Integer)school.getPrimaryKey()).intValue(), true);
+							script.addFunction("presch_init", initFunction);
+							drpGrade.setSelectedElement(schoolYear.getSchoolYearAge());
+							getParentPage().setOnLoad(initFunction);
+						}
+						catch (Exception e) {
+							if (school != null)
+								System.err.println("Error in school: " + school.getName() + " (" + school.getPrimaryKey().toString() + ")");
+						}
 					}
 				}
 				
