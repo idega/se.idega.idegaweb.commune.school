@@ -46,7 +46,7 @@ import com.idega.util.IWTimestamp;
  * Copyright:    Copyright idega Software (c) 2002
  * Company:	idega Software
  * @author <a href="mailto:roar@idega.is">roar</a>
- * @version $Id: EventList.java,v 1.4 2004/01/12 01:37:33 jonas Exp $
+ * @version $Id: EventList.java,v 1.5 2004/01/12 04:25:53 jonas Exp $
  * @since 17.3.2003 
  */
 
@@ -287,6 +287,7 @@ public class EventList extends CommuneBlock {
 			message.add(getSmallText(msg.getBody()), 1, row++);
 			
 			int fileID = createPrintableMessage(msg);
+			System.out.println("parent case for EventList message is " + msg.getParentCase());
 			if(fileID!=-1) {
 				System.out.println("adding link for pdf");
 				Link viewLink = new Link(localize("printdoc.view", "View"));
