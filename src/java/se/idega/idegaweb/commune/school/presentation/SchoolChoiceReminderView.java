@@ -21,10 +21,10 @@ import se.idega.idegaweb.commune.school.data.SchoolChoiceReminder;
  * and entity ejb classes in {@link se.idega.idegaweb.commune.school.data}.
  * <p>
  * <p>
- * Last modified: $Date: 2003/04/02 17:55:51 $ by $Author: laddi $
+ * Last modified: $Date: 2003/04/02 20:47:26 $ by $Author: laddi $
  *
  * @author <a href="http://www.staffannoteberg.com">Staffan Nöteberg</a>
- * @version $Revision: 1.30 $
+ * @version $Revision: 1.31 $
  * @see javax.ejb
  */
 public class SchoolChoiceReminderView extends CommuneBlock {
@@ -109,7 +109,7 @@ public class SchoolChoiceReminderView extends CommuneBlock {
         }
     }
 
-    private void showMainMenu (final IWContext iwc) {
+    private void showMainMenu () {
 		final Form form = new Form();
 		final DropdownMenu dropdown = (DropdownMenu) getStyledInterface
                 (new DropdownMenu (ACTION_KEY));
@@ -344,7 +344,7 @@ public class SchoolChoiceReminderView extends CommuneBlock {
         submitTable.add (getStyledInterface(new SubmitButton(localize (CANCEL_KEY, CANCEL_DEFAULT))), 3, 1);
         table.add (submitTable, 1, row++);
 		table.setHeight (row++, 24);
-        table.add (getStudentList (iwc, business, reminderId), 1, row++);
+        table.add (getStudentList (iwc, business), 1, row++);
         final Form form = new Form ();
 		form.maintainParameter(CASE_ID_KEY);
         form.add (table);
@@ -352,8 +352,7 @@ public class SchoolChoiceReminderView extends CommuneBlock {
     }
 
     private Table getStudentList (final IWContext iwc,
-                                  final SchoolChoiceBusiness business,
-                                  final int reminderId) throws RemoteException {
+                                  final SchoolChoiceBusiness business) throws RemoteException {
         final Table studentList = new Table();
         studentList.setCellpadding(getCellpadding ());
         studentList.setCellspacing(getCellspacing ());
@@ -427,7 +426,7 @@ public class SchoolChoiceReminderView extends CommuneBlock {
                 iwc.getSession ().getAttribute (STUDENT_LIST_KEY);
         if (allReceivers == null) {
             add ("Lost session data - please try again.");
-            showMainMenu (iwc);
+            showMainMenu ();
             return;
         }
 

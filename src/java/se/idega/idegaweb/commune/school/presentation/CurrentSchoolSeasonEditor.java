@@ -52,15 +52,15 @@ public class CurrentSchoolSeasonEditor extends Block {
 
     if(iwc.isParameterSet("sch_current_season")){
       saveArea(iwc);
-      F.add(getListTable(null));
+      F.add(getListTable());
     }
     else if(iwc.isParameterSet("sch_delete_season")){
       int id = Integer.parseInt(iwc.getParameter("sch_delete_season"));
       sabBean.removeSchoolSeason(id);
-      F.add(getListTable(null));
+      F.add(getListTable());
     }
     else
-      F.add(getListTable(null));
+      F.add(getListTable());
 
      add(F);
 
@@ -83,7 +83,7 @@ public class CurrentSchoolSeasonEditor extends Block {
     }
   }
 
-  public PresentationObject getListTable(SchoolSeason area) {
+  public PresentationObject getListTable() {
     Table T = new Table();
     int row = 1;
 

@@ -168,13 +168,13 @@ public class SchoolChoiceApplication extends CommuneBlock {
 
 				User child = userbuiz.getUser(childId);
 				if (child != null) {
-					initSchoolChild(iwc, child);
+					initSchoolChild(child);
 					boolean hasChoosed = false;
 					Collection currentChildChoices = null;
 					parse(iwc);
 					boolean saved = false;
 					if (iwc.isParameterSet(prmAction) && iwc.getParameter(prmAction).equals("true")) {
-						saved = saveSchoolChoice(iwc);
+						saved = saveSchoolChoice();
 					}
 					else {
 						int CurrentSeasonID = ((Integer) schBuiz.getCurrentSeason().getPrimaryKey()).intValue();
@@ -234,7 +234,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 							valType = 5;
 					}
 						
-					schoolTypes = getSchoolTypes(iwc, "SCHOOL");
+					schoolTypes = getSchoolTypes("SCHOOL");
 					if (saved) {
 						if (valSixyearCare && childcarePage != null) {
 							iwc.setSessionAttribute(CitizenChildren.getChildIDParameterName(), new Integer(childId));
@@ -244,7 +244,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 							add(getSchoolChoiceAnswer(iwc, child));
 					}
 					else if (hasChoosed) {
-						add(getAlreadyChosenAnswer(iwc, child, currentChildChoices));
+						add(getAlreadyChosenAnswer(child));
 					}
 					else {
 						if (custodiansAgree || isOwner)
@@ -263,7 +263,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 			add(getLocalizedHeader("school_choice.last_date_expired", "Time limits to apply expired"));
 	}
 
-	private boolean saveSchoolChoice(IWContext iwc) {
+	private boolean saveSchoolChoice() {
 		try {
 			schBuiz.createSchoolChoices(valCaseOwner, childId, valType, valPreSchool, valFirstSchool, valSecondSchool, valThirdSchool, valPreGrade, valMethod, -1, -1, valLanguage, valMessage, schoolChange, valSixyearCare, valAutoAssign, valCustodiansAgree, valSendCatalogue);
 			return true;
@@ -326,11 +326,11 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		T.setHeight(row++, 12);
 		T.add(getChildInfo(iwc, child), 1, row++);
 		T.setHeight(row++, 12);
-		T.add(getCurrentSchool(iwc, child), 1, row++);
+		T.add(getCurrentSchool(), 1, row++);
 		T.setHeight(row++, 12);
-		T.add(getChoiceSchool(iwc, child), 1, row++);
+		T.add(getChoiceSchool(), 1, row++);
 		T.setHeight(row++, 12);
-		T.add(getMessagePart(iwc), 1, row++);
+		T.add(getMessagePart(), 1, row++);
 		T.setHeight(row++, 12);
 
 		SubmitButton button = (SubmitButton) getButton(new SubmitButton("submit",localize("school_choice.ready", "Ready")));
@@ -348,19 +348,19 @@ public class SchoolChoiceApplication extends CommuneBlock {
 			S.addFunction("checkApplication", getSchoolCheckScript());
 			S.addFunction("setSelected", getSetSelectedScript());
 
-			S.addFunction("changeFilter", getFilterScript(iwc));
+			S.addFunction("changeFilter", getFilterScript());
 			S.addFunction("changeFilter2", getFilterScript2(iwc));
 			if (valPreType > 0 || valPreArea > 0 || valPreSchool > 0) {
-				p.setOnLoad(getInitFilterCallerScript(iwc, prmPreType, prmPreArea, prmPreSchool, valPreType, valPreArea, valPreSchool, false));
+				p.setOnLoad(getInitFilterCallerScript(prmPreType, prmPreArea, prmPreSchool, valPreType, valPreArea, valPreSchool, false));
 			}
 			if (valType > 0) {
 				if (valFirstArea > 0 || valFirstSchool > 0)
-					p.setOnLoad(getInitFilterCallerScript(iwc, prmType, prmFirstArea, prmFirstSchool, valType, valFirstArea, valFirstSchool,false));
+					p.setOnLoad(getInitFilterCallerScript(prmType, prmFirstArea, prmFirstSchool, valType, valFirstArea, valFirstSchool,false));
 				if (!schoolChange) {
 					if (valSecondArea > 0 || valSecondSchool > 0)
-						p.setOnLoad(getInitFilterCallerScript(iwc, prmType, prmSecondArea, prmSecondSchool, valType, valSecondArea, valSecondSchool,false));
+						p.setOnLoad(getInitFilterCallerScript(prmType, prmSecondArea, prmSecondSchool, valType, valSecondArea, valSecondSchool,false));
 					if (valThirdArea > 0 || valThirdSchool > 0)
-						p.setOnLoad(getInitFilterCallerScript(iwc, prmType, prmThirdArea, prmThirdSchool, valType, valThirdArea, valThirdSchool,false));
+						p.setOnLoad(getInitFilterCallerScript(prmType, prmThirdArea, prmThirdSchool, valType, valThirdArea, valThirdSchool,false));
 				}
 			}
 			T.add(F, 1, T.getColumns());
@@ -371,7 +371,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 					myForm.setAssociatedFormScript(initScript);
 				}
 
-				String initFunction = getInitFilterCallerScript(iwc, prmType, prmFirstArea, prmFirstSchool, valType, valFirstArea, valFirstSchool,false);
+				String initFunction = getInitFilterCallerScript(prmType, prmFirstArea, prmFirstSchool, valType, valFirstArea, valFirstSchool,false);
 
 				initScript.addFunction("sch_init", initFunction);
 			}
@@ -401,7 +401,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		return T;
 	}
 
-	public PresentationObject getAlreadyChosenAnswer(IWContext iwc, User child, Collection choices) throws java.rmi.RemoteException {
+	public PresentationObject getAlreadyChosenAnswer(User child) throws java.rmi.RemoteException {
 		DataTable T = new DataTable();
 		T.setUseBottom(false);
 		T.setUseTop(false);
@@ -452,7 +452,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 
 	}
 
-	private void initSchoolChild(IWContext iwc, User child) {
+	private void initSchoolChild(User child) {
 		try {
 			Date d = child.getDateOfBirth();
 			if (d == null) {
@@ -567,7 +567,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		return table;
 	}
 
-	private PresentationObject getCurrentSchool(IWContext iwc, User child) throws java.rmi.RemoteException {
+	private PresentationObject getCurrentSchool() throws java.rmi.RemoteException {
 		/*if (age.getYears() <= 6) {
 			hasPreviousSchool = true;
 			PresentationObjectContainer container = new PresentationObjectContainer();
@@ -607,20 +607,20 @@ public class SchoolChoiceApplication extends CommuneBlock {
 				table.add(getSmallHeader(iwrb.getLocalizedString("school.school_name", "School name")+":"), 1, 4);
 				table.add(getSmallHeader(iwrb.getLocalizedString("school.grade", "Grade")+":"), 1, 5);
 			
-				DropdownMenu drpTypes = getTypeDrop(iwc, prmPreType, false);
+				DropdownMenu drpTypes = getTypeDrop(prmPreType, false);
 				drpTypes.addMenuElement("-2",localize("school.school_type_other","Other/None"));
-				drpTypes.setOnChange(getFilterCallerScript(iwc, prmPreType, prmPreArea, prmPreSchool, 1, true));
+				drpTypes.setOnChange(getFilterCallerScript(prmPreType, prmPreArea, prmPreSchool, 1, true));
 				
 				DropdownMenu drpAreas = (DropdownMenu) getStyledInterface(new DropdownMenu(prmPreArea));
 				drpAreas.addMenuElementFirst("-1", iwrb.getLocalizedString("school.area", "School area..........."));
-				drpAreas.setOnChange(getFilterCallerScript(iwc, prmPreType, prmPreArea, prmPreSchool, 2, true));
+				drpAreas.setOnChange(getFilterCallerScript(prmPreType, prmPreArea, prmPreSchool, 2, true));
 
 				DropdownMenu drpSchools = (DropdownMenu) getStyledInterface(new DropdownMenu(prmPreSchool));
 				drpSchools.addMenuElementFirst("-1", iwrb.getLocalizedString("school.school", "School................"));
 				
 				DropdownMenu drpGrade = (DropdownMenu) getStyledInterface(new DropdownMenu(prmPreGrade));
 				drpGrade.addMenuElement("5", "");
-				Collection coll = getSchoolYears(iwc);
+				Collection coll = getSchoolYears();
 				if (coll != null) {
 					Iterator iter = coll.iterator();
 					while (iter.hasNext()) {
@@ -638,12 +638,12 @@ public class SchoolChoiceApplication extends CommuneBlock {
 				String initFunction;
 				if (hasChosen) {
 					if (school != null && schoolYear != null) {
-						initFunction = getInitFilterCallerScript(iwc, prmPreType, prmPreArea, prmPreSchool, ((Integer)schoolType.getPrimaryKey()).intValue(), ((Integer)schoolArea.getPrimaryKey()).intValue(), ((Integer)school.getPrimaryKey()).intValue(), true);
+						initFunction = getInitFilterCallerScript(prmPreType, prmPreArea, prmPreSchool, ((Integer)schoolType.getPrimaryKey()).intValue(), ((Integer)schoolArea.getPrimaryKey()).intValue(), ((Integer)school.getPrimaryKey()).intValue(), true);
 						script.addFunction("presch_init", initFunction);
 						drpGrade.setSelectedElement(schoolYear.getSchoolYearAge());
 					}
 					else {
-						initFunction = getInitFilterCallerScript(iwc, prmPreType, prmPreArea, prmPreSchool, -2, -1, -1, true);
+						initFunction = getInitFilterCallerScript(prmPreType, prmPreArea, prmPreSchool, -2, -1, -1, true);
 						script.addFunction("presch_init", initFunction);
 						drpGrade.setSelectedElement(valPreGrade);
 					}
@@ -652,7 +652,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 				else {
 					if (schoolClassMember != null) {
 						try {
-							initFunction = getInitFilterCallerScript(iwc, prmPreType, prmPreArea, prmPreSchool, ((Integer)schoolType.getPrimaryKey()).intValue(), ((Integer)schoolArea.getPrimaryKey()).intValue(), ((Integer)school.getPrimaryKey()).intValue(), true);
+							initFunction = getInitFilterCallerScript(prmPreType, prmPreArea, prmPreSchool, ((Integer)schoolType.getPrimaryKey()).intValue(), ((Integer)schoolArea.getPrimaryKey()).intValue(), ((Integer)school.getPrimaryKey()).intValue(), true);
 							script.addFunction("presch_init", initFunction);
 							drpGrade.setSelectedElement(schoolYear.getSchoolYearAge());
 							getParentPage().setOnLoad(initFunction);
@@ -676,7 +676,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		//}
 	}
 
-	private DropdownMenu getTypeDrop(IWContext iwc, String name, boolean useRestrictions) throws java.rmi.RemoteException {
+	private DropdownMenu getTypeDrop(String name, boolean useRestrictions) throws java.rmi.RemoteException {
 		DropdownMenu drp = (DropdownMenu) getStyledInterface(new DropdownMenu(name));
 		drp.addMenuElement("-1", iwrb.getLocalizedString("school.school_type_select", "School type select"));
 		Iterator iter = schoolTypes.iterator();
@@ -705,7 +705,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	 * @return PresentationObject
 	 * @throws RemoteException
 	 */
-	private PresentationObject getChoiceSchool(IWContext iwc, User child) throws java.rmi.RemoteException {
+	private PresentationObject getChoiceSchool() throws java.rmi.RemoteException {
 		Table table = new Table();
 		table.setCellpadding(2);
 		table.setCellspacing(0);
@@ -713,8 +713,8 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		table.mergeCells(1, 1, table.getColumns(), 1);
 		table.add(getHeader(iwrb.getLocalizedString("school.choice_for_schoolyear", "Choice for the schoolyear")), 1, 1);
 
-		DropdownMenu typeDrop = getTypeDrop(iwc, prmType, true);
-		typeDrop.setOnChange(getFilterCallerScript(iwc, prmType, prmFirstArea, prmFirstSchool, 1, false));
+		DropdownMenu typeDrop = getTypeDrop(prmType, true);
+		typeDrop.setOnChange(getFilterCallerScript(prmType, prmFirstArea, prmFirstSchool, 1, false));
 
 		CheckBox chkChildCare = getCheckBox(prmSixYearCare, "true");
 		chkChildCare.setChecked(valSixyearCare);
@@ -728,7 +728,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		if (valLanguage != null)
 			txtLangChoice.setSelectedElement(valLanguage);
 
-		DropdownMenu drpFirstArea = getDropdown(iwc, prmFirstArea, null, prmType, prmFirstArea, prmFirstSchool, 2, iwrb.getLocalizedString("school.area_first", "School Area...................."));
+		DropdownMenu drpFirstArea = getDropdown(prmFirstArea, prmType, prmFirstArea, prmFirstSchool, 2, iwrb.getLocalizedString("school.area_first", "School Area...................."));
 		DropdownMenu drpFirstSchool = (DropdownMenu) getStyledInterface(new DropdownMenu(prmFirstSchool));
 		drpFirstSchool.addMenuElementFirst("-1", iwrb.getLocalizedString("school.school_first", "School........................."));
 
@@ -741,14 +741,14 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		table.add(drpFirstSchool, 5, row++);
 
 		if (!this.schoolChange) {
-			typeDrop.setOnChange(getFilterCallerScript(iwc, prmType, prmSecondArea, prmSecondSchool, 1, false));
-			typeDrop.setOnChange(getFilterCallerScript(iwc, prmType, prmThirdArea, prmThirdSchool, 1, false));
+			typeDrop.setOnChange(getFilterCallerScript(prmType, prmSecondArea, prmSecondSchool, 1, false));
+			typeDrop.setOnChange(getFilterCallerScript(prmType, prmThirdArea, prmThirdSchool, 1, false));
 
-			DropdownMenu drpSecondArea = getDropdown(iwc, prmSecondArea, null, prmType, prmSecondArea, prmSecondSchool, 2, iwrb.getLocalizedString("school.area_second", "School Area...................."));
+			DropdownMenu drpSecondArea = getDropdown(prmSecondArea, prmType, prmSecondArea, prmSecondSchool, 2, iwrb.getLocalizedString("school.area_second", "School Area...................."));
 			DropdownMenu drpSecondSchool = (DropdownMenu) getStyledInterface(new DropdownMenu(prmSecondSchool));
 			drpSecondSchool.addMenuElementFirst("-1", iwrb.getLocalizedString("school.school_second", "School........................."));
 
-			DropdownMenu drpThirdArea = getDropdown(iwc, prmThirdArea, null, prmType, prmThirdArea, prmThirdSchool, 2, iwrb.getLocalizedString("school.area_third", "School Area...................."));
+			DropdownMenu drpThirdArea = getDropdown(prmThirdArea, prmType, prmThirdArea, prmThirdSchool, 2, iwrb.getLocalizedString("school.area_third", "School Area...................."));
 			DropdownMenu drpThirdSchool = (DropdownMenu) getStyledInterface(new DropdownMenu(prmThirdSchool));
 			drpThirdSchool.addMenuElementFirst("-1", iwrb.getLocalizedString("school.school_third", "School........................."));
 
@@ -786,14 +786,14 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		return table;
 	}
 	
-	private DropdownMenu getDropdown(IWContext iwc, String name, String value, String type, String area, String school, int index, String firstElement) {
+	private DropdownMenu getDropdown(String name, String type, String area, String school, int index, String firstElement) {
 		DropdownMenu menu = (DropdownMenu) getStyledInterface(new DropdownMenu(name));
 		menu.addMenuElementFirst("-1", firstElement);
-		menu.setOnChange(getFilterCallerScript(iwc, type, area, school, index, false));
+		menu.setOnChange(getFilterCallerScript(type, area, school, index, false));
 		return menu;
 	}
 
-	private PresentationObject getMessagePart(IWContext iwc) throws java.rmi.RemoteException {
+	private PresentationObject getMessagePart() throws java.rmi.RemoteException {
 		Table table = new Table(1, 2);
 		table.setCellpadding(2);
 		table.setCellspacing(0);
@@ -813,7 +813,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		return table;
 	}
 
-	private Collection getSchoolTypes(IWContext iwc, String category) {
+	private Collection getSchoolTypes(String category) {
 		try {
 			return schCommBiz.getSchoolBusiness().findAllSchoolTypesInCategory(category);
 		}
@@ -823,7 +823,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		return null;
 	}
 
-	private Collection getSchoolYears(IWContext iwc) {
+	private Collection getSchoolYears() {
 		try {
 			return schCommBiz.getSchoolBusiness().findAllSchoolYears();
 		}
@@ -845,7 +845,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		}
 	}*/
 
-	private Collection getSchoolAreasWithType(IWContext iwc, int type) {
+	private Collection getSchoolAreasWithType(int type) {
 		try {
 			return schCommBiz.getSchoolBusiness().findAllSchoolAreasByType(type);
 		}
@@ -872,7 +872,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		return null;
 	}
 
-	private String getFilterCallerScript(IWContext iwc, String typeName, String areaName, String schoolName, int Type, boolean showAll) {
+	private String getFilterCallerScript(String typeName, String areaName, String schoolName, int Type, boolean showAll) {
 		StringBuffer script = new StringBuffer("changeFilter(");
 		script.append(Type);
 		script.append(",");
@@ -887,7 +887,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		return script.toString();
 	}
 
-	private String getInitFilterCallerScript(IWContext iwc, String typeName, String areaName, String schoolName, int typeSel, int areaSel, int schoolSel, boolean showAll) {
+	private String getInitFilterCallerScript(String typeName, String areaName, String schoolName, int typeSel, int areaSel, int schoolSel, boolean showAll) {
 		StringBuffer script = new StringBuffer("initFilter(");
 		script.append("findObj('").append(typeName).append("')");
 		script.append(",");
@@ -906,7 +906,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		return script.toString();
 	}
 
-	private String getFilterScript(IWContext iwc) throws java.rmi.RemoteException {
+	private String getFilterScript() throws java.rmi.RemoteException {
 		StringBuffer s = new StringBuffer();
 		s.append("function changeFilter(index,type,area,school,showAll){").append(" \n\t");
 		s.append("changeFilter2(index,type,area,school,-1,showAll);").append("\n").append("}");
@@ -972,7 +972,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	
 					Integer tPK = (Integer) type.getPrimaryKey();
 					//System.err.println("checking type "+tPK.toString());
-					areas = getSchoolAreasWithType(iwc, tPK.intValue());
+					areas = getSchoolAreasWithType(tPK.intValue());
 					if (areas != null && !areas.isEmpty()) {
 						Iterator iter2 = areas.iterator();
 						t.append("if(selected == \"").append(tPK.toString()).append("\"){").append("\n\t\t");
