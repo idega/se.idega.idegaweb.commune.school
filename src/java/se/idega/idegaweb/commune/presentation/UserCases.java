@@ -427,7 +427,7 @@ public class UserCases extends CommuneBlock {
 	}*/
 
 	public void setViewpointPage(final IBPage page) {
-		viewpointPageId = page.getID();
+		viewpointPageId = ((Integer)page.getPrimaryKey()).intValue();
 	}
 
 	public int getViewpointPage() {
@@ -435,7 +435,7 @@ public class UserCases extends CommuneBlock {
 	}
 
 	public void setReminderPage(final IBPage page) {
-		reminderPageId = page.getID();
+		reminderPageId = ((Integer)page.getPrimaryKey()).intValue();
 	}
 
 	public int getReminderPage() {
@@ -443,7 +443,7 @@ public class UserCases extends CommuneBlock {
 	}
 
 	public void setManagerPage(IBPage page) {
-		manager_page_id = page.getID();
+		manager_page_id = ((Integer)page.getPrimaryKey()).intValue();
 	}
 
 	public void setManagerPage(int ib_page_id) {
