@@ -1,5 +1,5 @@
 /*
- * $Id: ReportBusinessBean.java,v 1.7 2003/12/15 12:21:01 anders Exp $
+ * $Id: ReportBusinessBean.java,v 1.8 2003/12/16 11:32:07 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -23,14 +23,16 @@ import com.idega.block.school.data.SchoolArea;
 import com.idega.block.school.data.SchoolAreaHome;
 import com.idega.block.school.data.SchoolHome;
 import com.idega.block.school.data.SchoolSeason;
+import com.idega.block.school.data.SchoolStudyPath;
+import com.idega.block.school.data.SchoolStudyPathHome;
 
 /** 
  * Business logic for school reports.
  * <p>
- * Last modified: $Date: 2003/12/15 12:21:01 $ by $Author: anders $
+ * Last modified: $Date: 2003/12/16 11:32:07 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.8 $
  */
 public class ReportBusinessBean extends com.idega.business.IBOServiceBean implements ReportBusiness  {
 
@@ -43,6 +45,7 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 	private int _schoolSeasonStartYear = -1;
 	private Collection _schoolAreas = null;
 	private Map _schoolsByArea = null;
+	private Collection _studyPaths = null;
 	
 	/**
 	 * Factory method for creating a report model with the specified Class.
@@ -371,6 +374,19 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 		} else {
 			return new ArrayList();
 		}
+	}
+	
+	/**
+	 * Returns all study paths. 
+	 */
+	public Collection getAllStudyPaths() {
+		if (_studyPaths == null) {
+			try {
+				SchoolStudyPathHome home = (SchoolStudyPathHome) com.idega.data.IDOLookup.getHome(SchoolStudyPath.class);
+				_studyPaths = home.findAllStudyPaths();
+			} catch (Exception e) {}
+		}
+		return _studyPaths;
 	}
 	
 	/**
