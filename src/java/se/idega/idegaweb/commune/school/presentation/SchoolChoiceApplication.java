@@ -923,7 +923,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		table.add(getSmallHeader(Text.getNonBrakingSpace()+iwrb.getLocalizedString("school.native_lang_prefix","I would like")),1,row);
 		table.add(Text.getNonBrakingSpace(), 1, row);		
 		table.add(getNativeLanguagesDropdown(), 1, row);
-		table.add(getSmallHeader(Text.getNonBrakingSpace()+iwrb.getLocalizedString("school.native_lang_postfix","as native language")),1,row);
+		//table.add(getSmallHeader(Text.getNonBrakingSpace()+iwrb.getLocalizedString("school.native_lang_postfix","as native language")),1,row);
 		table.mergeCells(1, row, 5, row);
 		table.setWidth(1, row, Table.HUNDRED_PERCENT);
 		
