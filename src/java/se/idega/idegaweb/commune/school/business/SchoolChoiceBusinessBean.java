@@ -26,6 +26,8 @@ import javax.ejb.FinderException;
 
 import se.cubecon.bun24.viewpoint.business.ViewpointBusiness;
 import se.cubecon.bun24.viewpoint.data.SubCategory;
+import se.idega.idegaweb.commune.accounting.resource.business.ResourceBusiness;
+import se.idega.idegaweb.commune.accounting.resource.data.ResourceClassMember;
 import se.idega.idegaweb.commune.business.CommuneUserBusiness;
 import se.idega.idegaweb.commune.childcare.business.AfterSchoolBusiness;
 import se.idega.idegaweb.commune.childcare.data.AfterSchoolChoice;
@@ -51,6 +53,7 @@ import com.idega.block.school.data.SchoolSeasonHome;
 import com.idega.block.school.data.SchoolUser;
 import com.idega.block.school.data.SchoolYear;
 import com.idega.block.school.data.SchoolYearHome;
+import com.idega.business.IBOLookup;
 import com.idega.business.IBORuntimeException;
 import com.idega.core.contact.data.Phone;
 import com.idega.core.file.data.ICFile;
@@ -802,6 +805,17 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 			SchoolClassMember member = getSchoolBusiness().getSchoolClassMemberHome().findLatestByUserAndSchool(choice.getChildId(), choice.getCurrentSchoolId());
 			member.setRemovedDate(stamp.getTimestamp());
 			member.store();
+			
+			ResourceBusiness business = (ResourceBusiness) IBOLookup.getServiceInstance(getIWApplicationContext(), ResourceBusiness.class);
+			Collection resources = business.getResourcePlacementsByMemberId((Integer)member.getPrimaryKey());
+			if (resources != null) {
+				Iterator iter = resources.iterator();
+				while (iter.hasNext()) {
+					ResourceClassMember element = (ResourceClassMember) iter.next();
+					element.setEndDate(stamp.getDate());
+					element.store();
+				}
+			}
 		}
 		catch (FinderException fe) {
 			log(fe);
@@ -1110,7 +1124,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		}
 	}
 
-	public int getNumberOfApplicants () throws RemoteException {
+	public int getNumberOfApplicants () {
 		try {
 			return getSchoolChoiceHome ().getCount (getCurrentSeason ());
 		}	catch (Exception e) {
