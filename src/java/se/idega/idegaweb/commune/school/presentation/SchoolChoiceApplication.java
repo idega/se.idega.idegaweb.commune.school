@@ -890,7 +890,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 			table.add(drpThirdSchool, 5, row++);
 		}
 		
-		if (schoolYear != null && schoolYear.getSchoolYearAge() >= 12) {
+		if ((schoolYear != null && schoolYear.getSchoolYearAge() >= 12) || age.getYears() >= 11) {
 			table.setHeight(row++, 5);
 			table.add(getSmallHeader(iwrb.getLocalizedString("school.six_year_language", "Language")+":"), 1, row);
 			table.add(txtLangChoice, 3, row);
