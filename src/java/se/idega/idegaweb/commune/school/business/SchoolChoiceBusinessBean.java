@@ -91,6 +91,8 @@ import com.lowagie.text.pdf.PdfWriter;
  */
 public class SchoolChoiceBusinessBean extends com.idega.block.process.business.CaseBusinessBean implements SchoolChoiceBusiness, com.idega.block.process.business.CaseBusiness {
 	public final static String SCHOOL_CHOICE_CASECODE = "MBSKOLV";
+		
+	
 	private final static int REMINDER_FONTSIZE = 12;
 	private final static Font SERIF_FONT = FontFactory.getFont(FontFactory.TIMES, REMINDER_FONTSIZE);
 	private final static Font SANSSERIF_FONT = FontFactory.getFont(FontFactory.HELVETICA, REMINDER_FONTSIZE - 1);
@@ -381,7 +383,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		}
 
 		if (caseStatus.getStatus().equalsIgnoreCase(getCaseStatusPreliminary().getStatus())) {
-			sendMessageToParentOrChild(choice, choice.getOwner(), choice.getChild(), getPreliminaryMessageSubject(), getPreliminaryMessageBody(choice));
+			sendMessageToParentOrChild(choice, choice.getOwner(), choice.getChild(), getPreliminaryMessageSubject(), getPreliminaryMessageBody(choice),SchoolChoiceMessagePdfHandler.CODE_PRELIMINARY);
 			//			getMessageBusiness().createUserMessage(choice.getOwner(), getPreliminaryMessageSubject(), getPreliminaryMessageBody(choice));
 		}
 		if (parentCase != null)
@@ -397,8 +399,8 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 
 	private void handleSchoolChangeHeadMasters(SchoolChoice choice, User child, int oldSchoolID, int newSchoolID) throws RemoteException {
 		try {
-			sendMessageToSchool(oldSchoolID, getOldHeadmasterSubject(), getOldHeadmasterBody(choice, child, getSchool(newSchoolID)));
-			sendMessageToSchool(newSchoolID, getNewHeadMasterSubject(), getNewHeadmasterBody(choice, child, getSchool(oldSchoolID)));
+			sendMessageToSchool(oldSchoolID, getOldHeadmasterSubject(), getOldHeadmasterBody(choice, child, getSchool(newSchoolID)),SchoolChoiceMessagePdfHandler.CODE_OLD_SCHOOL_CHANGE);
+			sendMessageToSchool(newSchoolID, getNewHeadMasterSubject(), getNewHeadmasterBody(choice, child, getSchool(oldSchoolID)),SchoolChoiceMessagePdfHandler.CODE_NEW_SCHOOL_CHANGE);
 		}
 		catch (FinderException e) {
 			throw new RemoteException(e.getMessage());
@@ -411,17 +413,19 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 				SchoolChoice choice = (SchoolChoice) choices.get(0);
 				User appParent = getUser(applicationParentID);
 
-				String subject, body;
+				String subject, body,code;
 				if (isSchoolChangeApplication) {
 					subject = getSeparateParentSubjectChange();
 					body = getSeparateParentMessageBodyChange(choice, appParent);
+					code = SchoolChoiceMessagePdfHandler.CODE_SINGLEPARENT_APPLICATION_NEW ;
 				}
 				else {
 					subject = getSeparateParentSubjectAppl();
 					body = getSeparateParentMessageBodyAppl(choices, appParent);
+					code = SchoolChoiceMessagePdfHandler.CODE_SINGLEPARENT_APPLICATION_CHANGE ;
 				}
 
-				sendMessageToParents(choice, subject, body);
+				sendMessageToParents(choice, subject, body,code);
 			}
 		}
 		catch (Exception ex) {
@@ -511,19 +515,19 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		return false;
 	}
 
-	private void sendMessageToParents(SchoolChoice application, String subject, String body) {
+	private void sendMessageToParents(SchoolChoice application, String subject, String body,String code) {
 		try {
 			User child = application.getChild();
 			Object[] arguments = {child.getNameLastFirst(true), application.getChosenSchool().getSchoolName()};
 
 			if (isOfAge(child)) {
-				getMessageBusiness().createUserMessage(application, child, subject, MessageFormat.format(body, arguments), true);
+				getMessageBusiness().createUserMessage(application, child,null,null, subject, MessageFormat.format(body, arguments), true,code);
 
 			}
 			else {
 				User appParent = application.getOwner();
 				if (getUserBusiness().getMemberFamilyLogic().isChildInCustodyOf(child, appParent)) {
-					getMessageBusiness().createUserMessage(application, appParent, subject, MessageFormat.format(body, arguments), true);
+					getMessageBusiness().createUserMessage(application, appParent,  null,null,subject, MessageFormat.format(body, arguments), true,code);
 				}
 
 				try {
@@ -532,9 +536,9 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 					while (iter.hasNext()) {
 						User parent = (User) iter.next();
 						if (!getUserBusiness().haveSameAddress(parent, appParent)) {
-							getMessageBusiness().createUserMessage(application, parent, subject, MessageFormat.format(body, arguments), true);
+							getMessageBusiness().createUserMessage(application, parent,null,null, subject, MessageFormat.format(body, arguments), true,code);
 						} else if (!parent.equals((IDOEntity)appParent)){
-							getMessageBusiness().createUserMessage(application, parent, subject, MessageFormat.format(body, arguments), false);
+							getMessageBusiness().createUserMessage(application, parent,null,null, subject, MessageFormat.format(body, arguments), false,code);
 						}
 					}
 				}
@@ -555,7 +559,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	 * @param body
 	 * @throws RemoteException
 	 */
-	private void sendMessageToSchool(int schoolID, String subject, String body) throws RemoteException {
+	private void sendMessageToSchool(int schoolID, String subject, String body,String code) throws RemoteException {
 		try {
 			School school = getSchool(schoolID);
 
@@ -567,7 +571,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 				Iterator iter = coll.iterator();
 				while (iter.hasNext()) {
 					SchoolUser user = (SchoolUser) iter.next();
-					getMessageBusiness().createUserMessage(user.getUser(), subject, bunGroup, body, false);
+					getMessageBusiness().createUserMessage(user.getUser(), subject, bunGroup, body, false,code);
 				}
 			}
 		}
@@ -590,8 +594,10 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		}
 		return bunGroup;
 	}
-
 	public void rejectApplication(int applicationID, int seasonID, User performer, String messageSubject, String messageBody) throws RemoteException {
+		rejectApplication(applicationID,seasonID,performer,messageSubject,messageBody,SchoolChoiceMessagePdfHandler.CODE_APPLICATION_REJECT);
+	}
+	public void rejectApplication(int applicationID, int seasonID, User performer, String messageSubject, String messageBody,String code) throws RemoteException {
 		try {
 			SchoolChoice choice = this.getSchoolChoiceHome().findByPrimaryKey(new Integer(applicationID));
 			User child = choice.getChild();
@@ -606,13 +612,13 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 					SchoolChoice element = (SchoolChoice) iter.next();
 					if (element.getChoiceOrder() == (choice.getChoiceOrder() + 1)) {
 						super.changeCaseStatus(element, getCaseStatusPreliminary().getStatus(), performer);
-						sendMessageToParents(element, getPreliminaryMessageSubject(), getPreliminaryMessageBody(element));
+						sendMessageToParents(element, getPreliminaryMessageSubject(), getPreliminaryMessageBody(element),code);
 						continue;
 					}
 				}
 			}
 
-			sendMessageToParents(choice, messageSubject, messageBody);
+			sendMessageToParents(choice, messageSubject, messageBody,code);
 			rejectAfterSchoolApplication(choice.getChildId(), choice.getChosenSchoolId(), seasonID, performer);
 
 			if (choice.getChoiceOrder() == 3) {
@@ -662,7 +668,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 			SchoolChoice choice = getSchoolChoiceHome().findByPrimaryKey(pk);
 			super.changeCaseStatus(choice, getCaseStatusPreliminary().getStatus(), performer);
 			choice.store();
-			sendMessageToParentOrChild(choice, choice.getOwner(), choice.getChild(), getPreliminaryMessageSubject(), getPreliminaryMessageBody(choice));
+			sendMessageToParentOrChild(choice, choice.getOwner(), choice.getChild(), getPreliminaryMessageSubject(), getPreliminaryMessageBody(choice),SchoolChoiceMessagePdfHandler.CODE_PRELIMINARY);
 			return true;
 		}
 		catch (Exception e) {
@@ -731,7 +737,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 				User child = choice.getChild();
 				Object[] arguments = {child.getNameLastFirst(true), choice.getChosenSchool().getSchoolName(), PersonalIDFormatter.format(child.getPersonalID(), this.getIWApplicationContext().getApplicationSettings().getDefaultLocale())};
 				String body = MessageFormat.format(getLocalizedString("school_choice.student_moved_from_school_body", "Dear headmaster, {0} has been moved from your school and placed at {1}."), arguments);
-				this.sendMessageToSchool(choice.getCurrentSchoolId(), getLocalizedString("school_choice.student_moved_from_school_subject", "Student moved from your school"), body);
+				this.sendMessageToSchool(choice.getCurrentSchoolId(), getLocalizedString("school_choice.student_moved_from_school_subject", "Student moved from your school"), body,SchoolChoiceMessagePdfHandler.CODE_SCHOOL_MOVEAWAY);
 			}
 			super.changeCaseStatus(choice, getCaseStatusPlaced().getStatus(), performer);
 			return choice;
@@ -1477,8 +1483,8 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		return mm * 72 / 25.4f;
 	}
 
-	public void sendMessageToParentOrChild(SchoolChoice choice, User parent, User child, String subject, String body) throws RemoteException {
-		getMessageBusiness().createUserMessage(choice, getReceiver(parent, child), subject, body, true);
+	public void sendMessageToParentOrChild(SchoolChoice choice, User parent, User child, String subject, String body,String contentCode) throws RemoteException {
+		getMessageBusiness().createUserMessage(choice, getReceiver(parent, child),null,null, subject, body, true,contentCode);
 	}
 
 	public User getReceiver(User parent, User child) {

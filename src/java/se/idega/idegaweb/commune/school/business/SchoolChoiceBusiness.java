@@ -67,9 +67,10 @@ public interface SchoolChoiceBusiness extends CaseBusiness
  public se.idega.idegaweb.commune.school.data.SchoolChoice groupPlaceAction(java.lang.Integer p0,com.idega.user.data.User p1) throws java.rmi.RemoteException;
  public boolean noRoomAction(java.lang.Integer p0,com.idega.user.data.User p1) throws java.rmi.RemoteException;
  public boolean preliminaryAction(java.lang.Integer p0,com.idega.user.data.User p1) throws java.rmi.RemoteException;
- public void rejectApplication(int p0,int p1,com.idega.user.data.User p2,java.lang.String p3,java.lang.String p4)throws java.rmi.RemoteException, java.rmi.RemoteException;
- public void sendMessageToParentOrChild(se.idega.idegaweb.commune.school.data.SchoolChoice p0,com.idega.user.data.User p1,com.idega.user.data.User p2,java.lang.String p3,java.lang.String p4)throws java.rmi.RemoteException, java.rmi.RemoteException;
+ public void rejectApplication(int p0,int p1,com.idega.user.data.User p2,java.lang.String p3,java.lang.String p4,String contentCode)throws java.rmi.RemoteException;
+ public void rejectApplication(int p0,int p1,com.idega.user.data.User p2,java.lang.String p3,java.lang.String p4)throws java.rmi.RemoteException;
+ public void sendMessageToParentOrChild(se.idega.idegaweb.commune.school.data.SchoolChoice p0,com.idega.user.data.User p1,com.idega.user.data.User p2,java.lang.String p3,java.lang.String p4,String contentCode)throws java.rmi.RemoteException;
  public void setAsPreliminary(se.idega.idegaweb.commune.school.data.SchoolChoice p0,com.idega.user.data.User p1)throws java.rmi.RemoteException, java.rmi.RemoteException;
- public void setChildcarePreferences(com.idega.user.data.User p0,int p1,boolean p2,java.lang.String p3,java.lang.String p4,java.lang.String p5)throws java.rmi.RemoteException, java.rmi.RemoteException;
+ public void setChildcarePreferences(com.idega.user.data.User p0,int p1,boolean p2,java.lang.String p3,java.lang.String p4,java.lang.String p5)throws java.rmi.RemoteException;
  public String getSchoolChoiceCaseCode() throws java.rmi.RemoteException;
  }
