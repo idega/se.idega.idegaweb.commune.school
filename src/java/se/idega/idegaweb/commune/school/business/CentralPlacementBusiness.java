@@ -5,6 +5,7 @@ public interface CentralPlacementBusiness extends com.idega.business.IBOService
 {
  public se.idega.idegaweb.commune.business.CommuneUserBusiness getCommuneUserBusiness()throws java.rmi.RemoteException, java.rmi.RemoteException;
  public com.idega.block.school.data.SchoolClassMember getCurrentSchoolClassMembership(com.idega.user.data.User p0,com.idega.presentation.IWContext p1)throws java.rmi.RemoteException, java.rmi.RemoteException;
+ public java.lang.String getDateString(java.sql.Timestamp p0,java.lang.String p1) throws java.rmi.RemoteException;
  public com.idega.block.school.data.SchoolClassMember getLatestPlacement(com.idega.user.data.User p0)throws java.rmi.RemoteException, java.rmi.RemoteException;
  public com.idega.block.school.data.SchoolCategoryHome getSchoolCategoryHome()throws java.rmi.RemoteException, java.rmi.RemoteException;
  public com.idega.block.school.data.SchoolClassMember storeSchoolClassMember(com.idega.presentation.IWContext p0,int p1)throws java.rmi.RemoteException,se.idega.idegaweb.commune.school.business.CentralPlacementException, java.rmi.RemoteException;

@@ -323,6 +323,19 @@ public class CentralPlacementBusinessBean extends IBOServiceBean
 		return mbr;		
 	}
 	
+	public String getDateString(Timestamp stamp, String pattern) {
+		IWTimestamp iwts = null;
+		String dateStr = "";
+		if (stamp != null) {
+			iwts = new IWTimestamp(stamp);
+			dateStr = iwts.getDateString(pattern);
+		}
+		return dateStr;
+	}
+	
+
+
+	
 	public CommuneUserBusiness getCommuneUserBusiness() throws RemoteException {
 		return (CommuneUserBusiness) getServiceInstance(CommuneUserBusiness.class);
 	}
