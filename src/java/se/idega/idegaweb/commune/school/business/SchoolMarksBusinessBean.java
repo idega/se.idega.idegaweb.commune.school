@@ -27,7 +27,15 @@ import se.idega.idegaweb.commune.school.business.SchoolMarkValues;
 /**
  * School marks business
  * <p>
- * $Id: SchoolMarksBusinessBean.java,v 1.2 2003/10/06 11:58:45 kjell Exp $
+ * $Id: SchoolMarksBusinessBean.java,v 1.3 2003/10/06 12:05:59 kjell Exp $
+ *
+ * I will add some comments on the school marks calculation technique here later.
+ * However I am waiting for Nacka to present me that specification.
+ * 
+ * Meanwhile if anyone has questions about school statistics calculation please
+ * contact either Kelly at Lindman IT AB or
+ * Hans Wahlander, Jenny Dahlborg at Agura IT or
+ * Jill Salander at Nacka / Team SF
  *
  * @author <a href="mailto:kjell@lindman.com">Kjell Lindman</a>
  * @author <a href="http://www.ncmedia.com">Anders Lindman</a>
@@ -115,14 +123,6 @@ public class SchoolMarksBusinessBean extends com.idega.business.IBOServiceBean i
 			String scbCode = scb.getCode();
 			Integer idegaCode = (Integer) scb.getPrimaryKey();
 			School school = scb.getSchool();
-			
-			
-//			try {
-//				school = getSchoolBusiness(iwc).getSchool(idegaCode);
-//			} catch (RemoteException e) {
-//				return null;
-//			}
-			
 			SchoolStatistics sc = new SchoolStatistics(iwc, scbCode, school.getSchoolName(), school.getManagementTypeId());
 			stats.add(sc);
 		}
@@ -164,7 +164,6 @@ public class SchoolMarksBusinessBean extends com.idega.business.IBOServiceBean i
 		PercentValue mf = new PercentValue();
 		PercentValue mng = new PercentValue();
 
-
 		mv.number = "";
 		mv.percent = "";
 		if(scbCode.length() == 0) {
@@ -186,13 +185,10 @@ public class SchoolMarksBusinessBean extends com.idega.business.IBOServiceBean i
 			totalMerit = 0;
 			meritCount = 0;
 			
-			
 			_gNumber = 0;
 			_vgNumber = 0;
 			_mvgNumber = 0;
 			_ig1Number = 0;
-			
-			
 			
 			resetSchoolValues(); 
 			
@@ -384,8 +380,6 @@ public class SchoolMarksBusinessBean extends com.idega.business.IBOServiceBean i
 		
 		smvTotal.tot.number = "" + sumTotal;  
 		smvTotal.tot.percent = "" + ((float)((_gNumber * MERITE_G) + (_vgNumber * MERITE_VG) + (_mvgNumber * MERITE_MVG))) / ((float)(_gNumber + _vgNumber +_mvgNumber)); 	
-		
-		
 		
 		boolean found = true;
 		SchoolStatisticsDataHome home = null;
