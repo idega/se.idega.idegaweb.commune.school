@@ -425,26 +425,40 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		}
 
 		T.add(getCurrentSchoolSeasonInfo(iwc), 1, row++);
-		T.setHeight(row++, 12);
+		//T.setHeight(row++, 12);
 		T.add(getChildInfo(iwc, child), 1, row);
 		T.mergeCells(1, row, 3, row);
 		T.add(getCurrentSchool(), 2, row++);
 		T.setHeight(row++, 12);
-		//		T.add(getCurrentSchool(), 1, row++);
-		//		T.setHeight(row++, 12);
+		
 		T.add(getChoiceSchool(), 1, row++);
 		T.setHeight(row++, 12);
-		T.add(getMessagePart(), 1, row++);
-		//T.setHeight(row++, 12);
-
-		/*
-		 * SubmitButton button = (SubmitButton) getButton(new SubmitButton("submit",
-		 * localize("school_choice.ready", "Ready"))); //T.setAlignment(1, row,
-		 * Table.HORIZONTAL_ALIGN_RIGHT); T.add(button, 1, row++);
-		 * 
-		 * button.setOnSubmitFunction("checkApplication", getSchoolCheckScript());
-		 * myForm.setToDisableOnSubmit(button, true);
-		 */
+	
+		//add table with messagePart and submit button
+		Table table = new Table();
+		table.setWidth(300);
+		table.setCellpadding(0);
+		table.setCellspacing(0);
+		table.setBorder(0);		
+		SubmitButton button = (SubmitButton) getButton(new SubmitButton("submit",
+				localize("school_choice.ready", "Ready"))); 
+				
+		button.setOnSubmitFunction("checkApplication", getSchoolCheckScript());
+		myForm.setToDisableOnSubmit(button, true);
+			
+		if (schoolChange)
+			table.add(getSmallHeader(localize("school.application_change_required_reason", "Reason for schoolchange (Required)")), 1, 1);
+		else
+			table.add(getSmallHeader(localize("school.application_extra_info", "Extra info")), 1, 1);
+		
+		table.add(getMessagePart2(), 1, 2);
+		table.setHeight(1, 3, 50);
+		table.setVerticalAlignment(1, 3, Table.VERTICAL_ALIGN_BOTTOM);
+		table.setAlignment(1, 3, Table.HORIZONTAL_ALIGN_RIGHT);
+		table.add(button, 1, 3);
+		T.add(table, 1, row++);
+		////
+		
 		T.add(new HiddenInput(prmAction, "true"), 1, 1);
 		T.add(new HiddenInput(prmChildId, child.getPrimaryKey().toString()), 1, 1);
 
@@ -1036,14 +1050,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		table.setCellpadding(2);
 		table.setCellspacing(0);
 		table.setBorder(0);
-		SubmitButton button = (SubmitButton) getButton(new SubmitButton("submit", localize("school_choice.ready", "Ready")));
-		table.setHeight(1, 3, 50);
-		table.setVerticalAlignment(1, 3, Table.VERTICAL_ALIGN_BOTTOM);
-		table.setAlignment(1, 3, Table.HORIZONTAL_ALIGN_RIGHT);
-
-		button.setOnSubmitFunction("checkApplication", getSchoolCheckScript());
-		myForm.setToDisableOnSubmit(button, true);
-
+		
 		TextArea message = (TextArea) getStyledInterface(new TextArea(prmMessage));
 		message.setRows(6);
 		message.setColumns(65);
@@ -1054,9 +1061,26 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		else
 			table.add(getSmallHeader(localize("school.application_extra_info", "Extra info")), 1, 1);
 		table.add(message, 1, 2);
-		table.add(button, 1, 3);
+		
 		return table;
 	}
+	
+	private TextArea getMessagePart2() {
+	Table table = new Table(1, 3);
+	table.setWidth(300);
+	table.setCellpadding(2);
+	table.setCellspacing(0);
+	table.setBorder(0);
+	
+	TextArea message = (TextArea) getStyledInterface(new TextArea(prmMessage));
+	message.setRows(6);
+	message.setColumns(65);
+	if (valMessage != null) message.setValue(valMessage);
+
+	
+	
+	return message;
+}
 
 	private Collection getSchoolTypes(String category) {
 		try {
