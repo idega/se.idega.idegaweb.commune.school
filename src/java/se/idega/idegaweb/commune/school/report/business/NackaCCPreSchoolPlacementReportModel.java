@@ -1,5 +1,5 @@
 /*
- * $Id: NackaCCPreSchoolPlacementReportModel.java,v 1.3 2004/01/23 14:40:06 anders Exp $
+ * $Id: NackaCCPreSchoolPlacementReportModel.java,v 1.4 2004/01/23 15:13:24 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -22,10 +22,10 @@ import com.idega.block.school.data.SchoolArea;
 /** 
  * Report model for child care pre school placements in Nacka.
  * <p>
- * Last modified: $Date: 2004/01/23 14:40:06 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/23 15:13:24 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class NackaCCPreSchoolPlacementReportModel extends ReportModel {
 
@@ -98,7 +98,7 @@ public class NackaCCPreSchoolPlacementReportModel extends ReportModel {
 				_privateSchoolsByArea.put(areaName, privateSchools);
 				rowSize += privateSchools.size();
 				
-				rowSize += 2; // Sum + family daycare
+				rowSize += 4; // Sum + family daycare * 2
 			}
 			setReportSize(rowSize, COLUMN_SIZE);
 		} catch (RemoteException e) {}
@@ -212,41 +212,41 @@ public class NackaCCPreSchoolPlacementReportModel extends ReportModel {
 					String areaName = area.getName();
 					Object areaId = area.getPrimaryKey();
 					
-					Cell cell = new Cell(this, row++, column, ROW_METHOD_FAMILY_DAYCARE_COMMUNE,
+					Cell cell = new Cell(this, row, column, ROW_METHOD_FAMILY_DAYCARE_COMMUNE,
 							columnMethod, areaId, columnParameter, cellType);
-					setCell(row, column, cell);
+					setCell(row++, column, cell);
 					
 					Collection communeSchools = (Collection) _communeSchoolsByArea.get(areaName);
 					Iterator communeIter = communeSchools.iterator();
 					while (communeIter.hasNext()) {
 						School school = (School) communeIter.next();
 						rowParameter = school.getPrimaryKey();
-						cell = new Cell(this, row++, column, ROW_METHOD_PROVIDER_COMMUNE,
+						cell = new Cell(this, row, column, ROW_METHOD_PROVIDER_COMMUNE,
 								columnMethod, rowParameter, columnParameter, cellType);
-						setCell(row, column, cell);
+						setCell(row++, column, cell);
 					}
 					
-					cell = new Cell(this, row++, column, ROW_METHOD_SUM,
+					cell = new Cell(this, row, column, ROW_METHOD_SUM,
 							columnMethod, rowParameter, columnParameter, cellType);
-					setCell(row, column, cell);
+					setCell(row++, column, cell);
 
-					cell = new Cell(this, row++, column, ROW_METHOD_FAMILY_DAYCARE_PRIVATE,
+					cell = new Cell(this, row, column, ROW_METHOD_FAMILY_DAYCARE_PRIVATE,
 							columnMethod, areaId, columnParameter, cellType);
-					setCell(row, column, cell);
+					setCell(row++, column, cell);
 
 					Collection privateSchools = (Collection) _communeSchoolsByArea.get(areaName);
 					Iterator privateIter = privateSchools.iterator();
 					while (privateIter.hasNext()) {
 						School school = (School) privateIter.next();
 						rowParameter = school.getPrimaryKey();
-						cell = new Cell(this, row++, column, ROW_METHOD_PROVIDER_PRIVATE,
+						cell = new Cell(this, row, column, ROW_METHOD_PROVIDER_PRIVATE,
 								columnMethod, rowParameter, columnParameter, cellType);
-						setCell(row, column, cell);
+						setCell(row++, column, cell);
 					}
 
-					cell = new Cell(this, row++, column, ROW_METHOD_SUM,
+					cell = new Cell(this, row, column, ROW_METHOD_SUM,
 							columnMethod, rowParameter, columnParameter, cellType);
-					setCell(row, column, cell);
+					setCell(row++, column, cell);
 				}
 			} catch (RemoteException e) {}
 		}
