@@ -196,6 +196,8 @@ public class SchoolChoiceApplication extends CommuneBlock {
 									valSixyearCare = element.getKeepChildrenCare();
 									if (element.getLanguageChoice() != null)
 										valLanguage = element.getLanguageChoice();
+									if (element.getMessage() != null)
+										valMessage = element.getMessage();
 									count++;
 									if (!hasPreviousSchool) {
 										initSchoolFromChoice(element);
@@ -738,6 +740,8 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		TextArea message = (TextArea) getStyledInterface(new TextArea(prmMessage));
 		message.setRows(6);
 		message.setColumns(65);
+		if (valMessage != null)
+			message.setValue(valMessage);
 		
 		if(schoolChange)
 			table.add(getSmallHeader(localize("school.application_change_required_reason", "Reason for schoolchange (Required)")), 1, 1);
