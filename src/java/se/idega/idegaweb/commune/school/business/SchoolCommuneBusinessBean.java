@@ -427,14 +427,7 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 	}
 	
 	public SchoolSeason getPreviousSchoolSeason(SchoolSeason schoolSeason) throws RemoteException {
-		Collection coll = getSchoolBusiness().findAllPreviousSchoolSeasons(schoolSeason);
-		if ( !coll.isEmpty() ) {
-			Iterator iter = coll.iterator();
-			while (iter.hasNext()) {
-				return (SchoolSeason) iter.next();
-			}	
-		}
-		return null;
+		return getPreviousSchoolSeason(((Integer)schoolSeason.getPrimaryKey()).intValue());
 	}
 	
 	public SchoolSeason getPreviousSchoolSeason(int schoolSeasonID) throws RemoteException {
