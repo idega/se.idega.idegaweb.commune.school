@@ -46,7 +46,7 @@ import com.idega.util.IWTimestamp;
  * Copyright:    Copyright idega Software (c) 2002
  * Company:	idega Software
  * @author <a href="mailto:roar@idega.is">roar</a>
- * @version $Id: EventList.java,v 1.3 2004/01/11 03:40:23 jonas Exp $
+ * @version $Id: EventList.java,v 1.4 2004/01/12 01:37:33 jonas Exp $
  * @since 17.3.2003 
  */
 
@@ -324,7 +324,12 @@ public class EventList extends CommuneBlock {
 			DocumentBusiness docBiz = getDocumentBusiness();
 			String userName = _iwc.getCurrentUser().getName();
 			String fileName = "schoolLetter-" + userName + "-" + msg.getPrimaryKey();
-			ICFile file = getICFileHome().findByFileName(fileName);
+			ICFile file = null;
+			try {
+				file = getICFileHome().findByFileName(fileName);
+			} catch(FinderException e) {
+				// ok, just means we need to create this file
+			}
 			System.out.println("pdf filename is " + fileName);
 			if(file==null) {
 				System.out.println("creating new pdf");
