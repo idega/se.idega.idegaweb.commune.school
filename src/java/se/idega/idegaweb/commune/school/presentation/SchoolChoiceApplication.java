@@ -294,7 +294,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 					boolean saved = false;
 					if (iwc.isParameterSet(prmAction) && iwc.getParameter(prmAction).equals("true") && 
 							iwc.isParameterSet(prmRealSubmit) && iwc.getParameter(prmRealSubmit).equals("-1")) {
-						saved = saveSchoolChoice(iwc);
+						saved = saveSchoolChoice();
 					}
 					else {
 						int seasonID = ((Integer) season.getPrimaryKey()).intValue();
@@ -403,7 +403,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		else if (!canApply[0]) add(getLocalizedHeader("school_choice.last_date_expired", "Time limits to apply expired"));
 	}
 
-	private boolean saveSchoolChoice(IWContext iwc) {
+	private boolean saveSchoolChoice() {
 		try {
 			//			schBuiz.createSchoolChoices(valCaseOwner, childId, valType,
 			// valPreSchool, valFirstSchool, valSecondSchool, valThirdSchool,
@@ -507,7 +507,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		SubmitButton button = (SubmitButton) getButton(new SubmitButton("", localize("school_choice.ready", "Ready"))); 
 		table.add(button, 1, 3);
 		button.setOnClick("this.form.sch_app_real_submit.value==1;");
-		button.setOnSubmitFunction("checkApplication", getSchoolCheckScript(iwc));
+		button.setOnSubmitFunction("checkApplication", getSchoolCheckScript());
 		
 		myForm.setToDisableOnSubmit(button, true);
 		
@@ -1477,7 +1477,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		return s.toString();
 	}
 
-	public String getSchoolCheckScript(IWContext iwc) {
+	public String getSchoolCheckScript() {
 		StringBuffer s = new StringBuffer();
 		s.append("\nfunction checkApplication(){\n\t");
 		//if (!this.hasPreviousSchool && !hasChosen)
