@@ -239,12 +239,15 @@ public class SchoolChoiceApplication extends CommuneBlock {
    		String text2= iwrb.getLocalizedString("school_choice.receipt_2","has been received. ");
    		String text3= iwrb.getLocalizedString("school_choice.receipt_3","The application will be processed by each school you applied for .");
    		String text4= iwrb.getLocalizedString("school_choice.receipt_4","Thank you");
+   		
    		int row = 1;
-   		T.add(getText( text1),1,row++);
-   		T.add(getHeader(child.getName()),1,row++);
-   		T.add(getText(text2),1,row++);
-   		T.add(getText(text3),1,row++);
-   		T.add(getText(text4),1,row++);
+   		T.add(getText( text1),1,row);
+   		T.add(getHeader(child.getName()),1,row);
+   		T.add(getText(text2),1,row);
+   		row++;
+   		T.add(getText(text3),1,row);
+   		row++;
+   		T.add(getText(text4),1,row);
    		
    		return T;
    }
@@ -672,7 +675,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		s.append("\n\t\t alert('").append("no choices").append("');");
 		s.append("\n\t\t return false;");
 		s.append("\n\t }");
-		s.append("\n\t\t alert('").append("nothing wrong").append("');");
+		//s.append("\n\t\t alert('").append("nothing wrong").append("');");
 		s.append("\n\t return true;");
 		s.append("\n}\n");
 		return s.toString();
