@@ -38,6 +38,7 @@ import com.idega.user.data.User;
  * @version 1.0
  */
 public class UserCases extends CommuneBlock {
+	private String _dateWidth;
 	private final static String IW_BUNDLE_IDENTIFIER = "se.idega.idegaweb.commune";
 	private final static int ACTION_VIEW_CASE_LIST = 1;
 	//private final static String PARAM_CASE_ID = "USC_CASE_ID";
@@ -299,6 +300,8 @@ public class UserCases extends CommuneBlock {
 		messageList.add(caseType, column++, row);
 		if (isShowName())
 			messageList.add(caseOwnerName, column++, row);
+		if (_dateWidth != null)
+			messageList.setWidth(column, _dateWidth);
 		messageList.add(date, column++, row);
 		messageList.add(manager, column++, row);
 		messageList.add(status, column++, row);
@@ -330,6 +333,8 @@ public class UserCases extends CommuneBlock {
 		messageList.add(caseNumber, 1, row);
 		messageList.add(category, 2, row);
 		messageList.add(subject, 3, row);
+		if (_dateWidth != null)
+			messageList.setWidth(4, _dateWidth);
 		messageList.add(caseDate, 4, row);
 		messageList.add(group, 5, row);
 	}
@@ -359,6 +364,8 @@ public class UserCases extends CommuneBlock {
         final String reminderText = reminder.getText ();
         messageList.add (reminderText.length () < 25 ? new Text(reminderText)
                          : new Text((reminderText.substring (0, 20) + "...")), 3, row);
+		if (_dateWidth != null)
+			messageList.setWidth(4, _dateWidth);
 		messageList.add (caseDate, 4, row);
 		messageList.add (group, 5, row);
 	}
@@ -457,4 +464,17 @@ public class UserCases extends CommuneBlock {
 		return _showName;
 	}
 
+	/**
+	 * @param width
+	 */
+	public void setDateWidth(String width) {
+		_dateWidth = width;
+	}
+
+	/**
+	 * @param width
+	 */
+	public void setDateWidth(int width) {
+		setDateWidth(String.valueOf(width));
+	}
 }
