@@ -87,7 +87,7 @@ public class SearchUserModule extends CommuneBlock {
 	private String uniqueIdentifier;
 	private boolean showOverFlowMessage;
 	private Collection addedButtons;
-	static Class class$com$idega$user$data$User; /* synthetic field */
+	//WHAT THE HELL IS THIS!!?? caused broken compile on main server static Class class$com$idega$user$data$User; /* synthetic field */
 
 	public SearchUserModule() {
 		textFontStyleName = null;
@@ -188,10 +188,10 @@ public class SearchUserModule extends CommuneBlock {
 		if (userID != null)
 			try {
 				UserHome home =
-					(UserHome) IDOLookup.getHome(
-						class$com$idega$user$data$User != null
-							? class$com$idega$user$data$User
-							: (class$com$idega$user$data$User = class$("com.idega.user.data.User")));
+					(UserHome) IDOLookup.getHome(User.class);
+					//	class$com$idega$user$data$User != null
+					//		? class$com$idega$user$data$User
+					//		: (class$com$idega$user$data$User = class$("com.idega.user.data.User")));
 				user = home.findByPrimaryKey(userID);
 			} catch (IDOLookupException e) {
 				throw new FinderException(e.getMessage());
@@ -202,10 +202,10 @@ public class SearchUserModule extends CommuneBlock {
 	private void processSearch(IWContext iwc)
 		throws IDOLookupException, FinderException, RemoteException {
 		UserHome home =
-			(UserHome) IDOLookup.getHome(
-				class$com$idega$user$data$User != null
-					? class$com$idega$user$data$User
-					: (class$com$idega$user$data$User = class$("com.idega.user.data.User")));
+		(UserHome) IDOLookup.getHome(User.class);
+				//class$com$idega$user$data$User != null
+				//	? class$com$idega$user$data$User
+				//	: (class$com$idega$user$data$User = class$("com.idega.user.data.User")));
 		String first = iwc.getParameter("usrch_search_fname" + uniqueIdentifier);
 		String middle = iwc.getParameter("usrch_search_mname" + uniqueIdentifier);
 		String last = iwc.getParameter("usrch_search_lname" + uniqueIdentifier);
@@ -643,14 +643,6 @@ public class SearchUserModule extends CommuneBlock {
 
 	public void setShowButtons(boolean b) {
 		showButtons = b;
-	}
-
-	static Class class$(String x0) {
-		try {
-			return Class.forName(x0);
-		} catch (ClassNotFoundException x1) {
-			throw new NoClassDefFoundError(x1.getMessage());
-		}
 	}
 
 }
