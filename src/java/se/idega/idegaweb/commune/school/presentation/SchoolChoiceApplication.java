@@ -27,10 +27,12 @@ import com.idega.block.navigation.presentation.UserHomeLink;
 import com.idega.block.school.business.SchoolBusiness;
 import com.idega.block.school.data.School;
 import com.idega.block.school.data.SchoolArea;
+import com.idega.block.school.data.SchoolCategoryBMPBean;
 import com.idega.block.school.data.SchoolClass;
 import com.idega.block.school.data.SchoolClassMember;
 import com.idega.block.school.data.SchoolSeason;
 import com.idega.block.school.data.SchoolType;
+import com.idega.block.school.data.SchoolTypeHome;
 import com.idega.block.school.data.SchoolYear;
 import com.idega.business.IBOLookup;
 import com.idega.business.IBOLookupException;
@@ -653,6 +655,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 			table.setColumns(3);
 			table.setCellpadding(2);
 			table.setCellspacing(0);
+			table.setBorder(0);
 			table.mergeCells(1, 1, table.getColumns(), 1);
 
 			table.add(getHeader(iwrb.getLocalizedString("school.child_is_now_in", "Child is now in :")), 1, 1);
@@ -680,7 +683,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 				table.add(getSmallHeader(iwrb.getLocalizedString("school.school_name", "School name")+":"), 1, 4);
 				table.add(getSmallHeader(iwrb.getLocalizedString("school.grade", "Grade")+":"), 1, 5);
 			
-				DropdownMenu drpTypes = getTypeDrop(prmPreType, false);
+				DropdownMenu drpTypes = getTypeDrop(prmPreType, false, true);
 				drpTypes.addMenuElement("-2",localize("school.school_type_other","Other/None"));
 				drpTypes.setOnChange(getFilterCallerScript(prmPreType, prmPreArea, prmPreSchool, 1, true));
 				
@@ -742,16 +745,35 @@ public class SchoolChoiceApplication extends CommuneBlock {
 				table.add(drpSchools, 3, 4);
 				table.add(drpGrade, 3, 5);
 			//}
-			table.setWidth(1, "100");
-			table.setWidth(2, "8");
+			table.setWidth(1, 2, "100");
+			table.setWidth(2, 2, "8");
 
 			return table;
 		//}
 	}
 
-	private DropdownMenu getTypeDrop(String name, boolean useRestrictions) throws java.rmi.RemoteException {
+	private DropdownMenu getTypeDrop(String name, boolean useRestrictions, boolean showChildCare) throws java.rmi.RemoteException {
 		DropdownMenu drp = (DropdownMenu) getStyledInterface(new DropdownMenu(name));
 		drp.addMenuElement("-1", iwrb.getLocalizedString("school.school_type_select", "School type select"));
+		
+		if (showChildCare) {			
+			SchoolTypeHome tHome = (SchoolTypeHome) IDOLookup.getHome(SchoolType.class);
+			try {
+				Collection ccTypes = tHome.findAllByCategory(
+																		SchoolCategoryBMPBean.CATEGORY_CHILD_CARE,
+																		false);
+				for (Iterator iter = ccTypes.iterator(); iter.hasNext();) {
+					SchoolType tmpType = (SchoolType) iter.next();
+					//drp.addMenuElement(tmpType.getPrimaryKey().toString(), tmpType.getName());
+					drp.addMenuElement(tmpType.getPrimaryKey().toString(), localize(schCommBiz.getLocalizedSchoolTypeKey(tmpType),tmpType.getSchoolTypeName()));
+					schoolTypes.add(tmpType);
+				}
+			} catch (FinderException e) {
+				logWarning("No childcare categories found");
+				log(e);
+			}
+		}
+		
 		Iterator iter = schoolTypes.iterator();
 		boolean canChoose = true;
 		
@@ -787,7 +809,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		table.setBorder(0);
 		table.add(getHeader(iwrb.getLocalizedString("school.choice_for_schoolyear", "Choice for the schoolyear")), 1, 1);
 
-		DropdownMenu typeDrop = getTypeDrop(prmType, true);
+		DropdownMenu typeDrop = getTypeDrop(prmType, true, false);
 		typeDrop.setOnChange(getFilterCallerScript(prmType, prmFirstArea, prmFirstSchool, 1, false));
 
 		CheckBox chkChildCare = getCheckBox(prmSixYearCare, "true");
