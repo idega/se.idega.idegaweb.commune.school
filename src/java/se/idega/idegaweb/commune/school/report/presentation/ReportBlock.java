@@ -1,5 +1,5 @@
 /*
- * $Id: ReportBlock.java,v 1.24 2004/01/28 11:58:09 anders Exp $
+ * $Id: ReportBlock.java,v 1.25 2004/01/30 13:42:19 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -29,10 +29,10 @@ import com.idega.presentation.ui.PrintButton;
 /** 
  * This is the base class for school report blocks.
  * <p>
- * Last modified: $Date: 2004/01/28 11:58:09 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/30 13:42:19 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.24 $
+ * @version $Revision: 1.25 $
  */
 public class ReportBlock extends CommuneBlock {
 
@@ -379,8 +379,14 @@ public class ReportBlock extends CommuneBlock {
 							text = getSmallHeader(s);
 							align = Table.HORIZONTAL_ALIGN_LEFT;
 							break;
+						case Cell.CELLTYPE_SUM:
+							text = getSmallHeader(formatNumber("" + cell.getValue()));
+							break;
+						case Cell.CELLTYPE_TOTAL:
+							text = getSmallHeader(formatNumber("" + cell.getValue()));
+							break;
 						default:
-							text = getSmallText("" + cell.getValue());
+							text = getSmallText(formatNumber("" + cell.getValue()));
 							break;
 					}
 					int tableColumn = cellColumn + 2;
@@ -392,6 +398,17 @@ public class ReportBlock extends CommuneBlock {
 			}
 		}
 		_reportModel.close();
+	}
+
+	/*
+	 * Returns a string with space for numbers larger than 999.
+	 */
+	String formatNumber(String s) {
+		int length = s.length();
+		if (length > 3) {
+			s = s.substring(0, (length - 3)) + " " + s.substring(3);
+		}
+		return s;
 	}
 	
 	/**
