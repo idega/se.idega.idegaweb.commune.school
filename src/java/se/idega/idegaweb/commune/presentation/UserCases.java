@@ -17,7 +17,6 @@ import se.cubecon.bun24.viewpoint.presentation.ViewpointForm;
 import se.idega.idegaweb.commune.business.CommuneCaseBusiness;
 import se.idega.idegaweb.commune.childcare.data.AfterSchoolChoiceBMPBean;
 import se.idega.idegaweb.commune.school.business.SchoolChoiceBusiness;
-import se.idega.idegaweb.commune.school.business.SchoolChoiceBusinessBean;
 import se.idega.idegaweb.commune.school.data.SchoolChoice;
 import se.idega.idegaweb.commune.school.data.SchoolChoiceBMPBean;
 
