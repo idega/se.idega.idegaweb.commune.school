@@ -2,7 +2,6 @@ package se.idega.idegaweb.commune.school.presentation;
 
 import is.idega.block.family.business.FamilyLogic;
 import is.idega.block.family.business.NoCustodianFound;
-import is.idega.idegaweb.member.presentation.UserSearcher;
 
 import java.rmi.RemoteException;
 import java.text.DateFormat;
@@ -73,6 +72,7 @@ import com.idega.presentation.ui.TextArea;
 import com.idega.presentation.ui.TextInput;
 import com.idega.user.business.UserBusiness;
 import com.idega.user.data.User;
+import com.idega.user.presentation.UserSearcher;
 import com.idega.util.Age;
 import com.idega.util.IWCalendar;
 import com.idega.util.IWTimestamp;
