@@ -391,6 +391,19 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 		return super.idoGetNumberOfRecords(sql.toString());
 	}
 
+	public int ejbHomeGetNumberOfHandledMoves(int seasonID) throws FinderException, IDOException {
+		
+		
+		StringBuffer sql = new StringBuffer("select count(*) from " +			"proc_case p, comm_sch_choice c " +			"where " +			"p.proc_case_id = c.comm_sch_choice_id and " +			"p.case_status = 'FLYT' and c.school_season_id = "+ seasonID);
+			
+		return super.idoGetNumberOfRecords(sql.toString());
+	}
+
+	public int ejbHomeGetNumberOfUnHandledMoves(int seasonID) throws FinderException, IDOException {
+		StringBuffer sql = new StringBuffer("select count(*) from " +			"proc_case p, proc_case_log l, comm_sch_choice c " +			"where " +			"p.proc_case_id = l.case_id and " +			"p.proc_case_id = c.comm_sch_choice_id and " +			"l.case_status_before = 'FLYT' and " +			"c.school_season_id =" + seasonID);			return super.idoGetNumberOfRecords(sql.toString());
+	}
+
+
 	public Collection ejbFindByChildAndSeason(int childID, int seasonID) throws javax.ejb.FinderException {
 		StringBuffer sql = new StringBuffer("select * from ");
 		sql.append(SCHOOLCHOICE);
