@@ -530,74 +530,8 @@ public class SchoolChoiceApplication extends CommuneBlock {
     return s.toString();
   }
 
-  /*
-  function changeFilter(index,type,area,school){
-
-	// 1 = TYPE, 2 = AREA 3= SCHOOL
-
-	var typeSelect = type;
-	var areaSelect = area;
-	var schoolSelect = select;
-
-	int selected;
-
-	if(index == 1){
-	  selected = typeSelect.options[typeSelect.selectedIndex].value;
-	  areaSelect.options.length = 0;
-	  schoolSelect.options.length = 0;
-	  areaSelect.options[areaSelect.options.length] = new Option("Veldu svæði","-1",true,true);
-	  schoolSelect.options[schoolSelect.options.length] = new Option("Veldu skóla","-1",true,true);
-	}
-	else if(index == 2){
-	  selected = areaSelect.options[areaSelect.selectedIndex].value;
-	  schoolSelect.options.length = 0;
-	  schoolSelect.options[schoolSelect.options.length] = new Option("Veldu skóla","-1",true,true);
-	}
-	else if(index == 3){
-	  selected = schoolSelect.options[schoolSelect.selectedIndex].value;
-	}
-
-
-	if(index==1){
-	  if(selected == "1"){
-	    areaSelect.options[areaSelect.options.length] = new Option("Alte","0");
-	    areaSelect.options[areaSelect.options.length] = new Option("Sicklön","1");
-	    areaSelect.options[areaSelect.options.length] = new Option("Bimbo","2");
-
-	  }
-	  else if(selected == "2"){
-	    areaSelect.options[areaSelect.options.length] = new Option("Alte","0");
-	    areaSelect.options[areaSelect.options.length] = new Option("Sicklön","1");
-	    areaSelect.options[areaSelect.options.length] = new Option("Bimbo","2");
-	  }
-	}
-	else if(index==2){
-	  if(selected == "0"){
-
-	  }
-
-	}
-
-
-
-}
-  */
-
   public String getInitFilterScript(){
     StringBuffer s = new StringBuffer();
-    /*
-      funtion initFilter(type,area,school,type_sel,area_sel,school_sel){
-        changeFilter( 1 ,type,area,school);
-        type.selectedIndex = type_sel;
-        changeFilter(2,type,area,school);
-        area.selectedIndex = area_sel;
-        changeFilter(3,type,area,school);
-        school.selectedIndex = school_sel
-
-      }
-
-    */
-
     s.append("function initFilter(type,area,school,type_sel,area_sel,school_sel){ \n  ");
     s.append("changeFilter( 1 ,type,area,school); \n  ");
     s.append("type.selectedIndex = type_sel; \n  ");
@@ -607,6 +541,5 @@ public class SchoolChoiceApplication extends CommuneBlock {
     s.append("school.selectedIndex = school_sel; \n}");
     return s.toString();
   }
-
 
 }
