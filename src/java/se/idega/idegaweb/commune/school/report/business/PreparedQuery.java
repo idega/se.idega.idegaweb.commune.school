@@ -1,5 +1,5 @@
 /*
- * $Id: PreparedQuery.java,v 1.23 2004/01/30 16:48:38 anders Exp $
+ * $Id: PreparedQuery.java,v 1.24 2004/01/30 18:25:10 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -27,10 +27,10 @@ import com.idega.block.school.data.SchoolSeason;
 /** 
  * Handles the SQL logic for school report calculations.
  * <p>
- * Last modified: $Date: 2004/01/30 16:48:38 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/30 18:25:10 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.23 $
+ * @version $Revision: 1.24 $
  */
 public class PreparedQuery {
 
@@ -65,6 +65,7 @@ public class PreparedQuery {
 	private int _parameterIndex = 0;
 	private Connection _connection = null;
 	private PreparedStatement _preparedStatement = null;
+	private boolean _countSubQuery = false;
 
 	/**
 	 * Constructs an empty report query.
@@ -110,6 +111,20 @@ public class PreparedQuery {
 	 */
 	public void setSelectCount() {
 		_sqlSelect = "select count(*)";
+	}
+
+	/**
+	 * Sets the query to count rows.
+	 */
+	public void setSelectCountSubQuery() {
+		_countSubQuery = true;
+	}
+
+	/**
+	 * Sets the query to select distinct schools.
+	 */
+	public void setSelectDistinctSchools() {
+		_sqlSelect = "select distinct s.*";
 	}
 	
 	/**
@@ -287,22 +302,6 @@ public class PreparedQuery {
 		_sqlFrom.put(S, TABLE_S);
 		_sqlFrom.put(ST, TABLE_ST);
 		_sqlFrom.put(CM, TABLE_CM);
-		
-		int index = _parameterIndex;
-		_parameterIndex += 4;
-		return index;
-	}
-	
-	/**
-	 * Set select only the specified four school types.
-	 * @return the index for the first school type id
-	 */
-	public int setFourSchoolTypesForProvidersIn() {
-		String sql = "s.sch_school_id = st.sch_school_id and st.sch_school_type_id in (?, ?, ?, ?)";
-		_sqlWhere.add(sql);
-		
-		_sqlFrom.put(S, TABLE_S);
-		_sqlFrom.put(ST, TABLE_ST);
 		
 		int index = _parameterIndex;
 		_parameterIndex += 4;
@@ -662,6 +661,10 @@ public class PreparedQuery {
 			if (whereClauses.hasNext()) {
 				sql += " and ";
 			}
+		}
+		
+		if (_countSubQuery) {
+			sql = "select count(*) from (" + sql + ")"; 
 		}
 		try {
 			_preparedStatement = _connection.prepareStatement(sql);			
