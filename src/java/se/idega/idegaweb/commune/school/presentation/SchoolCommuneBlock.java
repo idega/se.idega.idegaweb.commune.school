@@ -65,6 +65,7 @@ public abstract class SchoolCommuneBlock extends CommuneBlock {
 	public static final String HAS_SCHOOL_CHOICE_COLOR = "#EAFFEE";
 	public static final String HAS_MOVE_CHOICE_COLOR = "#FFEAEA";
 	public static final String HAS_MOVE_CHOICE_COLOR_THIS_SCHOOL = "#FFEAFF";
+	public static final String HAS_REJECTED_FIRST_CHOICE_COLOR = "#FDFFDD";
 	
 	
 	public void main(IWContext iwc) throws Exception{
@@ -465,21 +466,20 @@ public abstract class SchoolCommuneBlock extends CommuneBlock {
 		
 		if (showWithMoveToSchool) {
 			table.add(getColorTable(HAS_MOVE_CHOICE_COLOR_THIS_SCHOOL), 1, 1);
+			table.add(getColorTable(HAS_REJECTED_FIRST_CHOICE_COLOR), 4, 1);
+
+			table.add(getSmallHeader(localize("school.student_has_move_choice_to_this_school","Student has move choice to this school")), 2, 1);
+			table.add(getSmallHeader(localize("school.student_has_rejected_first_choice","Student has rejected first choice")), 5, 1);
 		}
 		else {
 			table.add(getColorTable(HAS_MOVE_CHOICE_COLOR), 1, 1);
-		}
-		table.add(getColorTable(HAS_SCHOOL_CHOICE_COLOR), 4, 1);
-		table.add(getColorTable(IS_SPECIALLY_PLACED_COLOR), 7, 1);
+			table.add(getColorTable(HAS_SCHOOL_CHOICE_COLOR), 4, 1);
+			table.add(getColorTable(IS_SPECIALLY_PLACED_COLOR), 7, 1);
 		
-		if (showWithMoveToSchool) {
-			table.add(getSmallHeader(localize("school.student_has_move_choice_to_this_school","Student has move choice to this school")), 2, 1);
-		}
-		else {
 			table.add(getSmallHeader(localize("school.student_has_move_choice","Student has move choice")), 2, 1);
+			table.add(getSmallHeader(localize("school.student_has_school_choice","Student has school choice")), 5, 1);
+			table.add(getSmallHeader(localize("school.student_is_specially_placed","Student is specially placed")), 8, 1);
 		}
-		table.add(getSmallHeader(localize("school.student_has_school_choice","Student has school choice")), 5, 1);
-		table.add(getSmallHeader(localize("school.student_is_specially_placed","Student is specially placed")), 8, 1);
 		
 		return table;
 	}
