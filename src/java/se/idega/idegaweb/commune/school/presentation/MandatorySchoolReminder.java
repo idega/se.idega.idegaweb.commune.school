@@ -11,26 +11,17 @@ import java.rmi.RemoteException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.Date;
-import java.util.Iterator;
-import java.util.Locale;
-import java.util.Map;
-
 import javax.ejb.CreateException;
 import javax.ejb.FinderException;
-
 import net.sf.jasperreports.engine.JRDataSource;
-import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JasperPrint;
-import net.sf.jasperreports.engine.design.JasperDesign;
 import se.idega.idegaweb.commune.business.CommuneUserBusiness;
 import se.idega.idegaweb.commune.presentation.CommuneBlock;
 import se.idega.idegaweb.commune.school.business.SchoolChoiceBusiness;
 import se.idega.idegaweb.commune.school.business.SchoolCommuneBusiness;
-
 import com.idega.block.datareport.business.DynamicReportDesign;
 import com.idega.block.datareport.business.JasperReportBusiness;
+import com.idega.block.datareport.util.ReportDescription;
 import com.idega.block.datareport.util.ReportableCollection;
-import com.idega.block.datareport.util.ReportableField;
 import com.idega.block.school.business.SchoolBusiness;
 import com.idega.block.school.data.SchoolSeason;
 import com.idega.block.school.data.SchoolYear;
@@ -51,7 +42,6 @@ import com.idega.presentation.ui.InterfaceObject;
 import com.idega.presentation.ui.SubmitButton;
 import com.idega.user.data.Group;
 import com.idega.util.IWTimestamp;
-import com.idega.util.datastructures.QueueMap;
 
 /**
  * Title:		MandatorySchoolReminder
@@ -306,7 +296,7 @@ public class MandatorySchoolReminder extends CommuneBlock {
 	/**
 	 * 
 	 */
-	private void presentResultAsReport(IWContext iwc,IWResourceBundle iwrb) throws MandatorySchoolReminderException, IOException, JRException, IDOException, CreateException, RemoteException, FinderException{
+	private void presentResultAsReport(IWContext iwc,IWResourceBundle iwrb) throws MandatorySchoolReminderException, IOException, IDOException, CreateException, RemoteException, FinderException{
 
 		SchoolChoiceBusiness scBusiness = (SchoolChoiceBusiness)IBOLookup.getServiceInstance(iwc,SchoolChoiceBusiness.class);
 		System.out.println("Jasper reports Bus");
@@ -324,15 +314,14 @@ public class MandatorySchoolReminder extends CommuneBlock {
 //			IWTimestamp seasonStartDate = new IWTimestamp(currentSeason.getSchoolSeasonStart());
 //			int currentYear = seasonStartDate.getYear();
 		
-		System.out.println("Getting coll of schools");
+		System.out.println("Getting coll of childrens");
 
 		System.out.println("Date is "+_selectedDate);
 		JRDataSource dataSource = getDataSource(iwc,currentSeason);
 		System.out.println("Getting map");
-		Map parameterMap = getParameterMap(iwrb,df,dataSource,iwc.getCurrentLocale());
-		JasperDesign design = getReportDesign(jasperBusiness,dataSource);
+		ReportDescription description = getReportDescription(iwrb,df,dataSource);
 		System.out.println("Generate report");
-		String reportPath = generateReport(jasperBusiness,dataSource,parameterMap,design);
+		String reportPath = generateReport(jasperBusiness,dataSource,description);
 		
 		this.add(getReportLink(iwrb.getLocalizedString("MandatorySchoolReminder.report_name","Mandatory school reminder report"),reportPath));
 		
@@ -345,51 +334,42 @@ public class MandatorySchoolReminder extends CommuneBlock {
 	 * @param design
 	 * @return
 	 */
-	private String generateReport(JasperReportBusiness jasperBusiness, JRDataSource dataSource, Map parameterMap, JasperDesign design) throws RemoteException, JRException {				
-		parameterMap.put(DynamicReportDesign.PRM_REPORT_NAME,_reportName);
-		
-		JasperPrint print = jasperBusiness.getReport(dataSource,parameterMap,design);
-		return jasperBusiness.getExcelReport(print,_reportName);
-		//return jasperBusiness.getPdfReport(print,_reportName);
-		//return jasperBusiness.getHtmlReport(print,_reportName);
+	private String generateReport(JasperReportBusiness jasperBusiness, JRDataSource dataSource, ReportDescription description) {				
+		description.put(DynamicReportDesign.PRM_REPORT_NAME,_reportName);
+//		System.out.println("[MandatorySchoolReminder]: in generate report....");
+//		if(dataSource instanceof ReportableCollection){
+//			System.out.println("[MandatorySchoolReminder]: instanceof ReportableCollection");
+			return jasperBusiness.getSimpleExcelReport(dataSource,_reportName,description);
+//		} else {
+//			System.out.println("[MandatorySchoolReminder]: instanceof "+dataSource);
+//			JasperPrint print = jasperBusiness.getReport(dataSource,description.getDisplayValueMap(),design);		
+//			return jasperBusiness.getExcelReport(print,_reportName);
+//			//return jasperBusiness.getPdfReport(print,_reportName);
+//			//return jasperBusiness.getHtmlReport(print,_reportName);
+//		}
 	}
+
+//	/**
+//	 * @param dataSource
+//	 * @return
+//	 */
+//	private JasperDesign getReportDesign(JasperReportBusiness jasperBusiness,JRDataSource dataSource) throws IOException, JRException {
+//		return jasperBusiness.generateLayout(dataSource);
+//	}
 
 	/**
 	 * @param dataSource
 	 * @return
 	 */
-	private JasperDesign getReportDesign(JasperReportBusiness jasperBusiness,JRDataSource dataSource) throws IOException, JRException {
-		return jasperBusiness.generateLayout(dataSource);
-	}
-
-	/**
-	 * @param dataSource
-	 * @return
-	 */
-	private Map getParameterMap(IWResourceBundle iwrb,DateFormat dateFormat, JRDataSource _dataSource, Locale currentLocale) {
-		Map parameterMap = new QueueMap();
-		Map extraParameters = null;
+	private ReportDescription getReportDescription(IWResourceBundle iwrb,DateFormat dateFormat, JRDataSource _dataSource) {
+		ReportDescription description = new ReportDescription();
 				
 		if(_dataSource != null && _dataSource instanceof ReportableCollection){
 			ReportableCollection reportData = ((ReportableCollection)_dataSource);
-			
-			Iterator iter = reportData.getListOfFields().iterator();
-			while (iter.hasNext()) {
-				ReportableField field = (ReportableField)iter.next();
-				String name = field.getName();
-				parameterMap.put(name,field.getLocalizedName(currentLocale));
-			}
-			
 			reportData.addExtraHeaderParameterAtBeginning("label_selected_date",iwrb.getLocalizedString("MandatorySchoolReminder.label_selected_date","Date"),"selected_date",dateFormat.format(_selectedDate));
-
-			extraParameters = reportData.getExtraHeaderParameters();
-			
-			if(extraParameters!= null){
-				parameterMap.putAll(extraParameters);
-			}
-				
+			description = reportData.getReportDescription();	
 		}
-		return parameterMap;
+		return description;
 	}
 
 	/**
