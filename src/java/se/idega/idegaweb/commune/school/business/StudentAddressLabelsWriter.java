@@ -1,5 +1,5 @@
 /*
- * $Id: StudentAddressLabelsWriter.java,v 1.4 2004/03/22 09:20:19 anders Exp $
+ * $Id: StudentAddressLabelsWriter.java,v 1.5 2004/03/24 14:57:36 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -16,6 +16,7 @@ import java.util.Iterator;
 import javax.ejb.FinderException;
 
 import se.idega.idegaweb.commune.business.CommuneUserBusiness;
+import se.idega.idegaweb.commune.presentation.CommuneBlock;
 
 import com.idega.block.school.data.School;
 import com.idega.block.school.data.SchoolClass;
@@ -29,6 +30,7 @@ import com.idega.core.location.data.PostalCode;
 import com.idega.data.IDOLookupException;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWMainApplication;
+import com.idega.idegaweb.IWResourceBundle;
 import com.idega.io.MemoryFileBuffer;
 import com.idega.io.MemoryInputStream;
 import com.idega.io.MemoryOutputStream;
@@ -45,10 +47,10 @@ import com.lowagie.text.pdf.PdfWriter;
 /** 
  * This MediaWritable class generates a PDF stream with student address labels.
  * <p>
- * Last modified: $Date: 2004/03/22 09:20:19 $ by $Author: anders $
+ * Last modified: $Date: 2004/03/24 14:57:36 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  * @see com.idega.io.MediaWritable
  */
 public class StudentAddressLabelsWriter {
@@ -59,10 +61,14 @@ public class StudentAddressLabelsWriter {
 	private final static int NR_OF_ROWS = 8;
 	private final static int NR_OF_ADDRESSES_PER_PAGE = NR_OF_COLUMNS * NR_OF_ROWS;	
 	private final static int ADDRESS_TABLE_WIDTH = 195;
-	private final static int ADDRESS_TABLE_HEIGHT = 102;
+	private final static int ADDRESS_TABLE_HEIGHT = 101;
 	private final static int LEFT_MARGIN = 35;
-	private final static int TOP_START = 798;
+	private final static int TOP_START = 802;
 
+	private final static String KP = "sal.";
+	
+	private final static String KEY_TO_CUSTODIAN_FOR = KP + "to_custodian_for";
+	
 	private SchoolCommuneBusiness business;
 	private CommuneUserBusiness userBusiness;
 	private Font font = null;
@@ -130,6 +136,8 @@ public class StudentAddressLabelsWriter {
 	protected MemoryFileBuffer getPDFBuffer(String[] schoolClassIds, IWMainApplication iwma) throws Exception {
 		business = getSchoolCommuneBusiness(iwma.getIWApplicationContext());
 		userBusiness = getCommuneUserBusiness(iwma.getIWApplicationContext());
+		IWResourceBundle iwrb = iwma.getBundle(CommuneBlock.IW_BUNDLE_IDENTIFIER).getResourceBundle(
+				iwma.getIWApplicationContext().getApplicationSettings().getApplicationLocale());
 
 		MemoryFileBuffer buffer = new MemoryFileBuffer();
 		MemoryOutputStream mos = new MemoryOutputStream(buffer);
@@ -157,7 +165,7 @@ public class StudentAddressLabelsWriter {
 					document.newPage();
 				}
 				SchoolClassMember student = (SchoolClassMember) iter.next();
-				addAddress(writer, student, studentCount++);
+				addAddress(writer, iwrb, student, studentCount++);
 			}
 		}
 
@@ -175,7 +183,7 @@ public class StudentAddressLabelsWriter {
 	/**
 	 * Adds a student address to the specified document. 
 	 */
-	protected void addAddress(PdfWriter writer, SchoolClassMember member, int studentCount) throws RemoteException {
+	protected void addAddress(PdfWriter writer, IWResourceBundle iwrb, SchoolClassMember member, int studentCount) throws RemoteException {
 
 		User student = member.getStudent();
 		Address address = userBusiness.getUsersMainAddress(student);
@@ -196,6 +204,10 @@ public class StudentAddressLabelsWriter {
 		table.setTotalWidth(ADDRESS_TABLE_WIDTH);
 		table.getDefaultCell().setPadding(3);
 		PdfPCell cell;
+
+		cell = new PdfPCell(new Phrase(iwrb.getLocalizedString(KEY_TO_CUSTODIAN_FOR, "To custodian for") + ":", font));
+		cell.setBorder(Rectangle.NO_BORDER);
+		table.addCell(cell);
 
 		cell = new PdfPCell(new Phrase(name, font));
 		cell.setBorder(Rectangle.NO_BORDER);
