@@ -22,6 +22,7 @@ import com.idega.block.school.data.SchoolCategory;
 import com.idega.block.school.data.SchoolCategoryHome;
 import com.idega.block.school.data.SchoolClass;
 import com.idega.block.school.data.SchoolSeason;
+import com.idega.block.school.data.SchoolType;
 import com.idega.block.school.data.SchoolYear;
 import com.idega.business.IBOLookup;
 import com.idega.business.IBOLookupException;
@@ -285,6 +286,7 @@ public abstract class SchoolCommuneBlock extends CommuneBlock {
 	protected DropdownMenu getSchoolYears() throws RemoteException {
 		DropdownMenu menu = new DropdownMenu(session.getParameterSchoolYearID());
 		menu.setToSubmit();
+		int schoolTypeID = -1;
 		
 		if ( _schoolID != -1 ) {
 			List years = new Vector(business.getSchoolBusiness().findAllSchoolYearsInSchool(_schoolID));
@@ -293,20 +295,17 @@ public abstract class SchoolCommuneBlock extends CommuneBlock {
 				Iterator iter = years.iterator();
 				while (iter.hasNext()) {
 					SchoolYear element = (SchoolYear) iter.next();
-					menu.addMenuElement(element.getPrimaryKey().toString(), element.getSchoolYearName());
-					if ( _schoolYearID == -1 ) {
-						// Gimmi 13.11.2002
-						//_schoolYearID = ((Integer)element.getPrimaryKey()).intValue();
+					if (element.getSchoolTypeId() != schoolTypeID) {
+						SchoolType type = element.getSchoolType();
+						menu.addDisabledMenuElement("-1", type.getSchoolTypeName());
+						schoolTypeID = element.getSchoolTypeId();
 					}
+					menu.addMenuElement(element.getPrimaryKey().toString(), Text.NON_BREAKING_SPACE + Text.NON_BREAKING_SPACE + Text.NON_BREAKING_SPACE + element.getSchoolYearName());
 				}
 			}
 			else {
 				_schoolYearID = -1;
-//				menu.addMenuElement(-1, "");	
 			}
-		}
-		else {
-//			menu.addMenuElement(-1, "");	
 		}
 		
 		if ( _schoolYearID != -1 )
