@@ -1,5 +1,5 @@
 /*
- * $Id: NackaCommuneHighSchoolStudyPathReportModel.java,v 1.3 2004/02/24 07:40:48 anders Exp $
+ * $Id: NackaCommuneHighSchoolStudyPathReportModel.java,v 1.4 2004/02/24 07:48:16 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -21,10 +21,10 @@ import com.idega.block.school.data.SchoolStudyPath;
 /** 
  * Report model for Nacka high school student placements with all study paths listed.
  * <p>
- * Last modified: $Date: 2004/02/24 07:40:48 $ by $Author: anders $
+ * Last modified: $Date: 2004/02/24 07:48:16 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class NackaCommuneHighSchoolStudyPathReportModel extends ReportModel {
 
@@ -518,17 +518,19 @@ public class NackaCommuneHighSchoolStudyPathReportModel extends ReportModel {
 			while (iter.hasNext()) {
 				SchoolStudyPath sp = (SchoolStudyPath) iter.next();
 				String code = sp.getCode();
+				int studyPathId = ((Integer) sp.getPrimaryKey()).intValue();
 				int count = getHighSchoolPlacementCount(code);
 				if (count > 0) {
 					if (code.length() == 2) {
-						studyPathAmount = getStudyPathAmount(code);
+						studyPathAmount = getStudyPathAmount(studyPathId);
 						_studyPaths.add(sp);
 						studyPathRow = row;
 						row++;
 					} else {
-						int subStudyPathAmount = getStudyPathAmount(code);
+						int subStudyPathAmount = getStudyPathAmount(studyPathId);
 						String description = sp.getDescription();
-						if (studyPathAmount != subStudyPathAmount || description.matches("lokal inriktning")) {
+						if (((studyPathAmount != subStudyPathAmount) && (studyPathAmount != -1)) 
+								|| description.matches("lokal inriktning")) {
 							_studyPaths.add(sp);
 							_subtractRow[row] = studyPathRow;
 							row++;
@@ -543,7 +545,7 @@ public class NackaCommuneHighSchoolStudyPathReportModel extends ReportModel {
 	/**
 	 * Returns the amount for the specified study path code.
 	 */
-	protected int getStudyPathAmount(String studyPathCode) {
+	protected int getStudyPathAmount(int studyPathId) {
 		PreparedQuery query = null;
 		query = getQuery(QUERY_STUDY_PATH_AMOUNT);
 		if (query == null) {
@@ -553,7 +555,7 @@ public class NackaCommuneHighSchoolStudyPathReportModel extends ReportModel {
 			query.prepare();
 			setQuery(QUERY_STUDY_PATH_AMOUNT, query);
 		}
-		query.setString(1, studyPathCode);
+		query.setInt(1, studyPathId);
 		return query.execute();
 	}
 }
