@@ -1,5 +1,5 @@
 /*
- * $Id: NackaCCCommunePrivatePlacementReportModel.java,v 1.1 2004/01/21 10:35:54 anders Exp $
+ * $Id: NackaCCCommunePrivatePlacementReportModel.java,v 1.2 2004/01/21 12:36:02 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -14,10 +14,10 @@ import java.rmi.RemoteException;
 /** 
  * Report model for child care placements in Nacka for commune and private providers.
  * <p>
- * Last modified: $Date: 2004/01/21 10:35:54 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/21 12:36:02 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class NackaCCCommunePrivatePlacementReportModel extends ReportModel {
 
@@ -190,51 +190,51 @@ public class NackaCCCommunePrivatePlacementReportModel extends ReportModel {
 			case COLUMN_METHOD_SHARE:
 				switch (cell.getRowMethod()) {
 					case ROW_METHOD_COMMUNE_PRE_SCHOOL_OPERATION:
-						float total = getCell(0, 0).getFloatValue() + getCell(0, 1).getFloatValue();
+						float total = getCell(0, 0).getFloatValue() + getCell(1, 0).getFloatValue();
 						if (total > 0) {
-							value = getCell(0, row).getFloatValue() / total;
+							value = getCell(row, 0).getFloatValue() / total;
 						}
 						break;
 					case ROW_METHOD_PRIVATE_COOPERATIVE_PRE_SCHOOL_OPERATION:
-						total = getCell(0, 0).getFloatValue() + getCell(0, 1).getFloatValue();
+						total = getCell(0, 0).getFloatValue() + getCell(1, 0).getFloatValue();
 						if (total > 0) {
-							value = getCell(0, row).getFloatValue() / total;
+							value = getCell(row, 0).getFloatValue() / total;
 						}
 						break;
 					case ROW_METHOD_COMMUNE_SCHOOL_CHILDREN_CARE_6:
-						total = getCell(0, 2).getFloatValue() + getCell(0, 3).getFloatValue();
+						total = getCell(2, 0).getFloatValue() + getCell(3, 0).getFloatValue();
 						if (total > 0) {
-							value = getCell(0, row).getFloatValue() / total;
+							value = getCell(row, 0).getFloatValue() / total;
 						}
 						break;
 					case ROW_METHOD_PRIVATE_COOPERATIVE_SCHOOL_CHILDREN_CARE_6:
-						total = getCell(0, 2).getFloatValue() + getCell(0, 3).getFloatValue();
+						total = getCell(2, 0).getFloatValue() + getCell(3, 0).getFloatValue();
 						if (total > 0) {
-							value = getCell(0, row).getFloatValue() / total;
+							value = getCell(row, 0).getFloatValue() / total;
 						}
 						break;
 					case ROW_METHOD_COMMUNE_SCHOOL_CHILDREN_CARE_7_9:
-						total = getCell(0, 4).getFloatValue() + getCell(0, 5).getFloatValue();
+						total = getCell(4, 0).getFloatValue() + getCell(5, 0).getFloatValue();
 						if (total > 0) {
-							value = getCell(0, row).getFloatValue() / total;
+							value = getCell(row, 0).getFloatValue() / total;
 						}
 						break;
 					case ROW_METHOD_PRIVATE_SCHOOL_CHILDREN_CARE_7_9:
-						total = getCell(0, 4).getFloatValue() + getCell(0, 5).getFloatValue();
+						total = getCell(4, 0).getFloatValue() + getCell(5, 0).getFloatValue();
 						if (total > 0) {
-							value = getCell(0, row).getFloatValue() / total;
+							value = getCell(row, 0).getFloatValue() / total;
 						}
 						break;
 					case ROW_METHOD_COMMUNE_SUM:
-						total = getCell(0, 6).getFloatValue() + getCell(0, 7).getFloatValue();
+						total = getCell(6, 0).getFloatValue() + getCell(7, 0).getFloatValue();
 						if (total > 0) {
-							value = getCell(0, row).getFloatValue() / total;
+							value = getCell(row, 0).getFloatValue() / total;
 						}
 						break;
 					case ROW_METHOD_PRIVATE_SUM:
-						total = getCell(0, 6).getFloatValue() + getCell(0, 7).getFloatValue();
+						total = getCell(6, 0).getFloatValue() + getCell(7, 0).getFloatValue();
 						if (total > 0) {
-							value = getCell(0, row).getFloatValue() / total;
+							value = getCell(row, 0).getFloatValue() / total;
 						}
 						break;
 				}
