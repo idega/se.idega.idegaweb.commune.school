@@ -5,7 +5,7 @@ import com.idega.block.process.data.Case;
 import com.idega.block.process.data.CaseStatus;
 import com.idega.builder.data.IBPage;
 import com.idega.business.IBOLookup;
-import com.idega.user.data.User;
+import com.idega.core.user.data.User;
 import com.idega.idegaweb.*;
 import com.idega.presentation.*;
 import com.idega.presentation.text.*;
@@ -41,6 +41,9 @@ public class UserCases extends CommuneBlock {
 	private int viewpointPageId = -1;
 	
 	private boolean _showName = false;
+	
+	private int _startCase = -1;
+	private int _endCase = -1;
 
 	public final static String MYCASES_KEY = "usercases.myCases";
 	public final static String MYCASES_DEFAULT = "Mina ärenden";
@@ -64,6 +67,9 @@ public class UserCases extends CommuneBlock {
 	public final static String SUBJECT_DEFAULT = "Rubrik";
 	public final static String HANDLERGROUP_KEY = "usercases.handlerGroup";
 	public final static String HANDLERGROUP_DEFAULT = "Handläggargrupp";
+	
+	public final static String PARAMETER_START_CASE = "case_start_nr";
+	public final static String PARAMETER_END_CASE = "case_end_nr";
 
 	public String getBundleIdentifier() {
 		return IW_BUNDLE_IDENTIFIER;
@@ -85,6 +91,16 @@ public class UserCases extends CommuneBlock {
 	}
 
 	private int parseAction(IWContext iwc) {
+		if (iwc.isParameterSet(PARAMETER_START_CASE))
+			_startCase = Integer.parseInt(iwc.getParameter(PARAMETER_START_CASE));
+		else
+			_startCase = 1;
+		
+		if (iwc.isParameterSet(PARAMETER_END_CASE))
+			_endCase = Integer.parseInt(iwc.getParameter(PARAMETER_END_CASE));
+		else
+			_endCase = 10;
+
 		int action = ACTION_VIEW_CASE_LIST;
 		return action;
 	}
@@ -97,10 +113,11 @@ public class UserCases extends CommuneBlock {
 		add(mainTable);
 
 		if (iwc.isLoggedOn()) {
-			User user = iwc.getCurrentUser();
-			final int userId = ((Integer) user.getPrimaryKey()).intValue();
-			Collection cases = getCommuneCaseBusiness(iwc).getAllCasesDefaultVisibleForUser(user);
+			List cases = new Vector(getCommuneCaseBusiness(iwc).getAllCasesDefaultVisibleForUser(iwc.getCurrentUser()));
+			Collections.reverse(cases);
 			if (cases != null & !cases.isEmpty()) {
+				int casesSize = cases.size();
+
 				Table table = new Table();
 				table.setCellpadding(getCellpadding());
 				table.setCellspacing(getCellspacing());
@@ -110,9 +127,12 @@ public class UserCases extends CommuneBlock {
 					table.setColumns(6);
 				else
 					table.setColumns(5);
-					
+				
 				int row = 1;
 				int column = 1;
+
+				table.mergeCells(1, row, table.getColumns(), row);
+				table.add(getNavigationTable(casesSize), column, row++);
 
 				Form form = new Form();
 				form.add(table);
@@ -127,30 +147,31 @@ public class UserCases extends CommuneBlock {
 				table.add(getSmallHeader(localize(STATUS_KEY, STATUS_DEFAULT)), column, row++);
 
 				Collection messages = getCaseBusiness(iwc).getAllCasesForUser(iwc.getCurrentUser());
-				boolean isRead = false;
-				if (cases != null) {
-					for (Iterator i = cases.iterator(); i.hasNext();) {
-						try {
-							final Case useCase = (Case) i.next();
-							addCaseToMessageList(iwc, useCase, userId, table, row++);
-						}
-						catch (Exception e) {
-							add(e);
-							e.printStackTrace();
-						}
+
+				if (_endCase > casesSize)
+					_endCase = casesSize;
+				
+				for (int a = _startCase - 1; a < _endCase; a++) {
+					try {
+						final Case useCase = (Case) cases.get(a);
+						addCaseToMessageList(iwc, useCase, table, row++);
+					}
+					catch (Exception e) {
+						add(e);
+						e.printStackTrace();
 					}
 				}
-				// messageList.skip(6);
+				
 				mainTable.add(form, 1, 1);
 			}
 			else {
 				mainTable.add(getSmallHeader(localize(NOONGOINGCASES_KEY, NOONGOINGCASES_DEFAULT)), 1, 1);
 			}
 
+			/*
 			// 1. find my groups
 			final GroupBusiness groupBusiness = (GroupBusiness) IBOLookup.getServiceInstance(iwc, GroupBusiness.class);
-			// GJ removed userId, because aleady defined
-			//final int userId = ((Integer) iwc.getCurrentUser().getPrimaryKey()).intValue();
+			final int userId = ((Integer) iwc.getCurrentUser().getPrimaryKey()).intValue();
 			final Collection groups = groupBusiness.getAllGroupsNotDirectlyRelated(userId, iwc);
 
 			// 2. find unhandled viewpoints
@@ -184,11 +205,11 @@ public class UserCases extends CommuneBlock {
 					addViewpointToMessageList(iwc, viewpoints[i], messageList, row++);
 				}
 				mainTable.add(form, 1, 5);
-			}
+			}*/
 		}
 	}
 
-	private void addCaseToMessageList(final IWContext iwc, final Case useCase, final int userId,final Table messageList, int row) throws Exception {
+	private void addCaseToMessageList(final IWContext iwc, final Case useCase, final Table messageList, int row) throws Exception {
 
 		DateFormat dateFormat = CustomDateFormat.getDateTimeInstance(iwc.getCurrentLocale());
 		Date caseDate = new Date(useCase.getCreated().getTime());
@@ -210,9 +231,7 @@ public class UserCases extends CommuneBlock {
 			final Group handler = useCase.getHandler();
 			if (handler != null) {
 				managerID = ((Integer) handler.getPrimaryKey()).intValue();
-				if (managerID != userId) {
-					managerName = getUserBusiness(iwc).getNameOfGroupOrUser(handler);
-				}
+				managerName = getUserBusiness(iwc).getNameOfGroupOrUser(handler);
 			}
 		}
 		catch (Exception e) {
@@ -267,9 +286,6 @@ public class UserCases extends CommuneBlock {
 			viewpointLink.addParameter(ViewpointForm.PARAM_VIEWPOINT_ID, viewpoint.getPrimaryKey().toString());
 			caseNumber = viewpointLink;
 		}
-		else {
-			System.out.println("[" + this.getClass().getName() + "] Property" + " 'Viewpoint Page' not set in IdegaWeb " + "Builder. Can't create links to viewpoints.");
-		}
 
 		if (row % 2 == 0)
 			messageList.setRowColor(row, getZebraColor1());
@@ -281,6 +297,38 @@ public class UserCases extends CommuneBlock {
 		messageList.add(subject, 3, row);
 		messageList.add(date, 4, row);
 		messageList.add(group, 5, row);
+	}
+	
+	private Table getNavigationTable(int caseSize) {
+		Table navigationTable = new Table(2,1);
+		navigationTable.setCellpadding(0);
+		navigationTable.setCellspacing(0);
+		navigationTable.setWidth(Table.HUNDRED_PERCENT);
+		navigationTable.setAlignment(2, 1, Table.HORIZONTAL_ALIGN_RIGHT);
+		
+		if (_startCase > 1) {
+			Link previous = getSmallLink(localize("usercases.previous","<< previous"));
+			previous.addParameter(PARAMETER_START_CASE,(_startCase - 10));
+			previous.addParameter(PARAMETER_END_CASE,(_endCase - 10));
+			navigationTable.add(previous, 1, 1);
+		}
+		else {
+			Text previous = getSmallText(localize("usercases.previous","<< previous"));
+			navigationTable.add(previous, 1, 1);
+		}
+		
+		if (_endCase < caseSize) {
+			Link next = getSmallLink(localize("usercases.next","next >>"));
+			next.addParameter(PARAMETER_START_CASE,(_startCase + 10));
+			next.addParameter(PARAMETER_END_CASE,(_endCase + 10));
+			navigationTable.add(next, 2, 1);
+		}
+		else {
+			Text next = getSmallText(localize("usercases.next","next >>"));
+			navigationTable.add(next, 2, 1);
+		}
+
+		return navigationTable;	
 	}
 
 	private CaseBusiness getCaseBusiness(IWContext iwc) throws Exception {
