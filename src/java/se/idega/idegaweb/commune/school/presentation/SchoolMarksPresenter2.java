@@ -19,7 +19,7 @@ import se.idega.idegaweb.commune.presentation.CommuneBlock;
 /**
  * Presents school marks statistics in a formatted table (approved by Nacka)
  * <p>
- * $Id: SchoolMarksPresenter2.java,v 1.2 2003/10/06 11:58:45 kjell Exp $
+ * $Id: SchoolMarksPresenter2.java,v 1.3 2003/10/06 13:05:08 kjell Exp $
  *
  * This block presents School Marks Statistics according to the specifications made my 
  * Jill Salander
@@ -52,7 +52,6 @@ public class SchoolMarksPresenter2  extends CommuneBlock {
 	private IWResourceBundle iwrb = null;
 	private String blockWidth = "100%";
 	private String headerColor = "#003366";
-	private int currPage = 0;
 
 	private SchoolMarkValues _tallyEnglish;
 	private SchoolMarkValues _tallyMaths;
@@ -141,7 +140,6 @@ public class SchoolMarksPresenter2  extends CommuneBlock {
 				SchoolStatistics stat = (SchoolStatistics) iter.next();
 				smtNew = stat.getSchoolManagementType();
 				if(smtOld.compareTo(smtNew) != 0) {
-					System.out.println("##################################### GENERATE "+smtNew);
 					smtOld = stat.getSchoolManagementType();
 					if(count++  > 0) {
 						table = insertTotals(iwc, iwrb.getLocalizedString("school_marks_stats.header1", "Totalt kommunala skolor"), table, row);
@@ -158,17 +156,31 @@ public class SchoolMarksPresenter2  extends CommuneBlock {
 				table.setColor(6, row, "#aaaaaa");			
 				table.setColor(8, row, "#aaaaaa");			
 				table.setColor(10, row, "#aaaaaa");			
-				table.setAlignment(2, row, Table.HORIZONTAL_ALIGN_CENTER);
-				table.setAlignment(4, row, Table.HORIZONTAL_ALIGN_CENTER);
-				table.setAlignment(6, row, Table.HORIZONTAL_ALIGN_CENTER);
-				table.setAlignment(8, row, Table.HORIZONTAL_ALIGN_CENTER);
-				table.setAlignment(10, row, Table.HORIZONTAL_ALIGN_CENTER);
 				table.mergeCells(2, row, 3, row);
 				table.mergeCells(4, row, 5, row);
 				table.mergeCells(6, row, 7, row);
 				table.mergeCells(8, row, 9, row);
 				table.mergeCells(10, row, 11, row);
+				
+				table.setColumnAlignment(2, Table.HORIZONTAL_ALIGN_RIGHT);
+				table.setColumnAlignment(3, Table.HORIZONTAL_ALIGN_RIGHT);
+				table.setColumnAlignment(4, Table.HORIZONTAL_ALIGN_RIGHT);
+				table.setColumnAlignment(5, Table.HORIZONTAL_ALIGN_RIGHT);
+				table.setColumnAlignment(6, Table.HORIZONTAL_ALIGN_RIGHT);
+				table.setColumnAlignment(7, Table.HORIZONTAL_ALIGN_RIGHT);
+				table.setColumnAlignment(8, Table.HORIZONTAL_ALIGN_RIGHT);
+				table.setColumnAlignment(9, Table.HORIZONTAL_ALIGN_RIGHT);
+				table.setColumnAlignment(10, Table.HORIZONTAL_ALIGN_RIGHT);
+				table.setColumnAlignment(11, Table.HORIZONTAL_ALIGN_RIGHT);
+
+				table.setAlignment(2, row, Table.HORIZONTAL_ALIGN_CENTER);
+				table.setAlignment(4, row, Table.HORIZONTAL_ALIGN_CENTER);
+				table.setAlignment(6, row, Table.HORIZONTAL_ALIGN_CENTER);
+				table.setAlignment(8, row, Table.HORIZONTAL_ALIGN_CENTER);
+				table.setAlignment(10, row, Table.HORIZONTAL_ALIGN_CENTER);
+
 				row++;
+				
 				table.add(getHeader(stat.getSchoolName()), 1, row);
 				table.add(getSmallText(iwrb.getLocalizedString("school_marks_stats.number", "Antal")), 2, row);			
 				table.add(getSmallText("%"), 3, row);			
@@ -629,38 +641,11 @@ public class SchoolMarksPresenter2  extends CommuneBlock {
 		return "0";		
 	}
 
-	private String round(String value, int dec) {
-		try {
-			float ggr = (float) Math.pow(10, dec);
-			float n = Float.parseFloat(value);
-			float pctDec = 0;
-			if(dec == 0) {
-				int p = (""+value).indexOf(".");
-				if (p == -1) {
-					p = (""+value).length();
-				}
-				return (""+value).substring(0, p);
-			} else {
-				return "" + (Math.rint(n * ggr) / ggr);
-			}
-		} catch (NumberFormatException e) {}
-		return "0";			
-	}
-
 
 	private Table getMarksTable() {
 		Table ret = new Table();
 		ret.setColumns(11);
 		ret.setRows(6);
-		ret.setColumnAlignment(3, Table.HORIZONTAL_ALIGN_RIGHT);
-		ret.setColumnAlignment(4, Table.HORIZONTAL_ALIGN_RIGHT);
-		ret.setColumnAlignment(5, Table.HORIZONTAL_ALIGN_RIGHT);
-		ret.setColumnAlignment(6, Table.HORIZONTAL_ALIGN_RIGHT);
-		ret.setColumnAlignment(7, Table.HORIZONTAL_ALIGN_RIGHT);
-		ret.setColumnAlignment(8, Table.HORIZONTAL_ALIGN_RIGHT);
-		ret.setColumnAlignment(9, Table.HORIZONTAL_ALIGN_RIGHT);
-		ret.setColumnAlignment(10, Table.HORIZONTAL_ALIGN_RIGHT);
-		ret.setColumnAlignment(11, Table.HORIZONTAL_ALIGN_RIGHT);
 		ret.setBorderColor("#cccccc");
 		ret.setBorder(1);
 		ret.setCellspacing("0");

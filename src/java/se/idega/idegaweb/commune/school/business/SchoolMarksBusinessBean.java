@@ -27,7 +27,7 @@ import se.idega.idegaweb.commune.school.business.SchoolMarkValues;
 /**
  * School marks business
  * <p>
- * $Id: SchoolMarksBusinessBean.java,v 1.4 2003/10/06 13:05:28 kjell Exp $
+ * $Id: SchoolMarksBusinessBean.java,v 1.5 2003/10/06 13:08:31 kjell Exp $
  *
  * I will add some comments on the school marks calculation technique here later.
  * However I am waiting for Nacka to present me that specification.
@@ -120,7 +120,6 @@ public class SchoolMarksBusinessBean extends com.idega.business.IBOServiceBean i
 		while (iter.hasNext()) {
 			SCBCode scb = (SCBCode) iter.next();	
 			String scbCode = scb.getCode();
-			Integer idegaCode = (Integer) scb.getPrimaryKey();
 			School school = scb.getSchool();
 			SchoolStatistics sc = new SchoolStatistics(iwc, scbCode, school.getSchoolName(), school.getManagementTypeId());
 			stats.add(sc);
@@ -1098,7 +1097,6 @@ public class SchoolMarksBusinessBean extends com.idega.business.IBOServiceBean i
 		int vgCount = 0;
 		int mvgCount = 0;
 		int ig1Count = 0;
-		int ig2Count = 0;
 		
 		gCount = getStudentGValue(marks);
 		_gNumber += gCount;

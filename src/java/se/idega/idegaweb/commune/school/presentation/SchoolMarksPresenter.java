@@ -21,7 +21,7 @@ import se.idega.idegaweb.commune.presentation.CommuneBlock;
  * Presents school marks statistics in a formatted table (first version)
  * not approved by Nacka :-(
  * <p>
- * $Id: SchoolMarksPresenter.java,v 1.2 2003/10/06 13:04:53 kjell Exp $
+ * $Id: SchoolMarksPresenter.java,v 1.3 2003/10/06 13:08:52 kjell Exp $
  *
  * @author <a href="mailto:kjell@lindman.com">Kjell Lindman</a>
  * @version $version$
@@ -230,7 +230,6 @@ public class SchoolMarksPresenter  extends CommuneBlock {
 		try {
 			float ggr = (float) Math.pow(10, dec);
 			float n = Float.parseFloat(value);
-			float pctDec = 0;
 			if(dec == 0) {
 				int p = (""+value).indexOf(".");
 				if (p == -1) {
