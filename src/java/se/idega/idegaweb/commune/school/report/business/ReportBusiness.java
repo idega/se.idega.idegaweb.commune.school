@@ -13,6 +13,8 @@ public interface ReportBusiness extends com.idega.business.IBOService
  public java.util.Collection getElementarySchools(com.idega.block.school.data.SchoolArea p0) throws java.rmi.RemoteException;
  public int getHighSchoolStudentAgeFrom(int p0) throws java.rmi.RemoteException;
  public int getHighSchoolStudentAgeTo(int p0) throws java.rmi.RemoteException;
+ public java.util.Collection getPrivateSchoolAreas() throws java.rmi.RemoteException;
+ public java.util.Collection getPrivateSchools(com.idega.block.school.data.SchoolArea p0) throws java.rmi.RemoteException;
  public int getSchoolSeasonId() throws java.rmi.RemoteException;
  public int getSchoolSeasonStartYear() throws java.rmi.RemoteException;
  public void log(java.lang.String p0) throws java.rmi.RemoteException;

@@ -1,5 +1,5 @@
 /*
- * $Id: ReportBusinessBean.java,v 1.15 2004/01/12 10:28:24 anders Exp $
+ * $Id: ReportBusinessBean.java,v 1.16 2004/01/12 12:35:17 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -29,10 +29,10 @@ import com.idega.block.school.data.SchoolStudyPathHome;
 /** 
  * Business logic for school reports.
  * <p>
- * Last modified: $Date: 2004/01/12 10:28:24 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/12 12:35:17 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.15 $
+ * @version $Revision: 1.16 $
  */
 public class ReportBusinessBean extends com.idega.business.IBOServiceBean implements ReportBusiness  {
 
@@ -55,6 +55,13 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 	 * @param reportModelClass the report model Class to instantiate 
 	 */
 	public ReportModel createReportModel(Class reportModelClass) {
+		_currentSchoolSeason = null;
+		_schoolSeasonId = -1;
+		_schoolSeasonStartYear = -1;
+		_schools = null;
+		_schoolAreas = null;
+		_schoolsByArea = null;
+		_studyPaths = null;
 		ReportModel reportModel = null;		
 		try {
 			Class[] constructorArgumentTypes = { ReportBusiness.class };
@@ -191,6 +198,43 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 		}
 		return _schoolAreas;
 	}
+	
+	/**
+	 * Returns all school areas for private schools. 
+	 */
+	public Collection getPrivateSchoolAreas() {
+		if (_schoolAreas == null) {
+			Collection managementTypes = new ArrayList();
+			managementTypes.add("COMPANY");
+			managementTypes.add("PRIVATE");
+			managementTypes.add("FOUNDATION");
+			SchoolHome schoolHome = null;
+			try {
+				schoolHome = getSchoolHome();
+				SchoolAreaHome home = getSchoolBusiness().getSchoolAreaHome();
+				_schoolAreas = home.findAllBySchoolTypeCityAndManagementTypes(SCHOOL_TYPE_COMPULSORY_SCHOOL, 
+						"Nacka", managementTypes);
+			} catch (Exception e) {}
+			ArrayList areas = new ArrayList();
+			Iterator iter = _schoolAreas.iterator();
+			while (iter.hasNext()) {
+				SchoolArea area = (SchoolArea) iter.next();
+				int areaId = ((Integer) area.getPrimaryKey()).intValue();
+				try {
+					Collection schools = schoolHome.findAllByAreaTypeManagementCommune(
+							areaId,
+							SCHOOL_TYPE_COMPULSORY_SCHOOL,
+							managementTypes,
+							NACKA_COMMUNE_ID);
+					if (schools.size() > 0) {
+						areas.add(area);
+					}
+				} catch (Exception e) {}
+			}
+			_schoolAreas = areas;
+		}
+		return _schoolAreas;
+	}
 
 	/**
 	 * Returns all elementary for the specified area. 
@@ -239,6 +283,41 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 					Collection schools = schoolHome.findAllByAreaTypeCommune(
 							schoolAreaId,
 							SCHOOL_TYPE_COMPULSORY_SCHOOL,
+							NACKA_COMMUNE_ID);
+					_schoolsByArea.put(area.getName(), schools);
+				}
+			} catch (Exception e) {
+				log(e);
+			}
+		}
+		if (_schoolsByArea != null) {
+			return (Collection) _schoolsByArea.get(schoolArea.getName());
+		} else {
+			return new ArrayList();
+		}
+	}
+
+	/**
+	 * Returns all private for the specified area. 
+	 */
+	public Collection getPrivateSchools(SchoolArea schoolArea) {
+		if (_schoolsByArea == null) {
+			try {
+				_schoolsByArea = new TreeMap();
+				Collection managementTypes = new ArrayList();
+				managementTypes.add("COMPANY");
+				managementTypes.add("PRIVATE");
+				managementTypes.add("FOUNDATION");
+				SchoolHome schoolHome = getSchoolHome();
+				Collection areas = getPrivateSchoolAreas();
+				Iterator areaIter = areas.iterator();
+				while (areaIter.hasNext()) {
+					SchoolArea area = (SchoolArea) areaIter.next();
+					int schoolAreaId = ((Integer) area.getPrimaryKey()).intValue();
+					Collection schools = schoolHome.findAllByAreaTypeManagementCommune(
+							schoolAreaId,
+							SCHOOL_TYPE_COMPULSORY_SCHOOL,
+							managementTypes,
 							NACKA_COMMUNE_ID);
 					_schoolsByArea.put(area.getName(), schools);
 				}
