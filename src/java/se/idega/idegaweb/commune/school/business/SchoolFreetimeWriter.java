@@ -59,7 +59,7 @@ public class SchoolFreetimeWriter implements MediaWritable {
 
 	private MemoryFileBuffer buffer = null;
 	private SchoolCommuneBusiness business;
-	private CommuneUserBusiness userBusiness;
+	//private CommuneUserBusiness userBusiness;
 	private Locale locale;
 	private Map students;
 	private Map addresses;
@@ -79,7 +79,7 @@ public class SchoolFreetimeWriter implements MediaWritable {
 		try {
 			locale = iwma.getIWApplicationContext().getApplicationSettings().getApplicationLocale();
 			business = getSchoolCommuneBusiness(iwma.getIWApplicationContext());
-			userBusiness = getCommuneUserBusiness(iwma.getIWApplicationContext());
+			//userBusiness = getCommuneUserBusiness(iwma.getIWApplicationContext());
 			
 			if (req.getParameter(prmSchoolId) != null && req.getParameter(prmSchoolSeasonID) != null) {
 				school = business.getSchoolBusiness().getSchool(new Integer(req.getParameter(prmSchoolId)));

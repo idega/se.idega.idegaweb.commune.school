@@ -31,7 +31,7 @@ public class SchoolChoiceComparator implements Comparator {
   public static final int LANGUAGE_SORT = 5;
   
   private Locale locale;
-  private UserBusiness business;
+  public UserBusiness business;
   private Map studentMap;
   private Map addressMap;
   private Collator collator;

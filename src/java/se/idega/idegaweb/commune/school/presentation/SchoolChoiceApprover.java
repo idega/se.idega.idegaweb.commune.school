@@ -7,7 +7,7 @@ import java.text.DateFormat;
 import java.util.Collection;
 import java.util.Iterator;
 
-import se.idega.idegaweb.commune.message.business.MessageBusiness;
+//import se.idega.idegaweb.commune.message.business.MessageBusiness;
 import se.idega.idegaweb.commune.presentation.CommuneBlock;
 import se.idega.idegaweb.commune.school.business.SchoolChoiceBusiness;
 import se.idega.idegaweb.commune.school.business.SchoolCommuneSession;
@@ -17,7 +17,7 @@ import com.idega.block.school.business.SchoolBusiness;
 import com.idega.block.school.data.School;
 import com.idega.business.IBOLookup;
 import com.idega.core.data.Address;
-import com.idega.idegaweb.IWBundle;
+//import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObject;
@@ -45,14 +45,14 @@ import com.idega.util.text.TextFormat;
 
 public class SchoolChoiceApprover extends CommuneBlock {
 
-	private IWBundle iwb;
+	//private IWBundle iwb;
 	private IWResourceBundle iwrb;
 	private Collection cases;
 	private TextFormat tf;
 	private UserBusiness userBean;
 	private SchoolBusiness schoolBean;
 	private SchoolChoiceBusiness choiceBean;
-	private MessageBusiness msgBean;
+	//private MessageBusiness msgBean;
 	private DateFormat df;
 	private int schoolId = -1;
 	private int seasonId = -1;
@@ -124,7 +124,7 @@ public class SchoolChoiceApprover extends CommuneBlock {
 		userBean = (UserBusiness) IBOLookup.getServiceInstance(iwc, UserBusiness.class);
 		schoolBean = (SchoolBusiness) IBOLookup.getServiceInstance(iwc, SchoolBusiness.class);
 		choiceBean = (SchoolChoiceBusiness) IBOLookup.getServiceInstance(iwc, SchoolChoiceBusiness.class);
-		msgBean = (MessageBusiness) IBOLookup.getServiceInstance(iwc,MessageBusiness.class);
+		//msgBean = (MessageBusiness) IBOLookup.getServiceInstance(iwc,MessageBusiness.class);
 		
 		schoolId = getSchoolCommuneSession(iwc).getSchoolID();
 		pupilList = iwc.isParameterSet(prmPupilView);
@@ -410,7 +410,7 @@ public class SchoolChoiceApprover extends CommuneBlock {
 	}
 	
 	public void main(IWContext iwc) throws RemoteException{
-		iwb = getBundle(iwc);
+		//iwb = getBundle(iwc);
 		iwrb = getResourceBundle(iwc);
 		tf = TextFormat.getInstance();
 		df = DateFormat.getDateInstance(df.SHORT, iwc.getCurrentLocale());

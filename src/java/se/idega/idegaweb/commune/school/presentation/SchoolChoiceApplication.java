@@ -92,7 +92,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	private String prmPreGrade = prefix + "pre_grd";
 	private String prmMessage = prefix + "msg";
 	//private String prmAutoAssign = prefix + "aut_ass";
-	private String prmSchoolChange = prefix + "scl_chg";
+	//private String prmSchoolChange = prefix + "scl_chg";
 	private String prmSixYearCare = prefix + "six_car";
 	private String prmLanguage = prefix + "cho_lng";
 	private String prmAction = prefix + "snd_frm";
@@ -104,7 +104,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	private boolean valSendCatalogue = false;
 	private boolean valSixyearCare = false;
 	private boolean valAutoAssign = false;
-	private boolean valSchoolChange = false;
+	//private boolean valSchoolChange = false;
 	private boolean valCustodiansAgree = false;
 	private String valMessage = "";
 	private String valLanguage = "";
@@ -278,7 +278,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		valSendCatalogue = iwc.isParameterSet(prmSendCatalogue);
 		valSixyearCare = iwc.isParameterSet(prmSixYearCare);
 		valAutoAssign = true;
-		valSchoolChange = iwc.isParameterSet(prmSchoolChange);
+		//valSchoolChange = iwc.isParameterSet(prmSchoolChange);
 		valCustodiansAgree = iwc.isParameterSet(prmFirstSchool) ? Boolean.valueOf(iwc.getParameter(prmCustodiansAgree)).booleanValue() : false;
 		valMessage = iwc.getParameter(prmMessage);
 		valLanguage = iwc.getParameter(prmLanguage);
