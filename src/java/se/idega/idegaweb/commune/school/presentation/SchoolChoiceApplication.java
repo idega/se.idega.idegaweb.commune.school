@@ -532,7 +532,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 
 	private DropdownMenu getTypeDrop(IWContext iwc, String name) throws java.rmi.RemoteException {
 		DropdownMenu drp = (DropdownMenu) getStyledInterface(new DropdownMenu(name));
-		drp.addMenuElement("-1", iwrb.getLocalizedString("school.school_type", "School type"));
+		drp.addMenuElement("-1", iwrb.getLocalizedString("school.school_type_select", "School type select"));
 		Iterator iter = schoolTypes.iterator();
 		boolean changeValues = false;
 		
