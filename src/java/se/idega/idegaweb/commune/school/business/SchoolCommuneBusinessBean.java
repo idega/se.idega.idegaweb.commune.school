@@ -6,6 +6,7 @@ import is.idega.idegaweb.member.business.NoCustodianFound;
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
 import java.text.DateFormat;
+import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
@@ -55,6 +56,7 @@ import com.idega.user.data.GroupRelation;
 import com.idega.user.data.GroupRelationHome;
 import com.idega.user.data.User;
 import com.idega.util.IWTimestamp;
+import com.idega.util.text.TextSoap;
 
 /**
  * @author Laddi
@@ -133,6 +135,18 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 			return false;
 		}
 		catch (FinderException e) {
+			return false;
+		}
+	}
+	
+	public boolean isPlacedAtSchool(int userID, int schoolID) {
+		try {
+			return (getSchoolBusiness().getSchoolClassMemberHome().getNumberOfPlacingsAtSchool(userID, schoolID) > 0);
+		}
+		catch (RemoteException e) {
+			return false;
+		}
+		catch (IDOException e) {
 			return false;
 		}
 	}
@@ -479,6 +493,10 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 			}
 			choice.store();
 			
+			body = TextSoap.findAndReplace(body, "$barn$", "{0}");
+			Object[] arguments = { student.getNameLastFirst(true) };
+			body = MessageFormat.format(body, arguments);
+			
 			User parent = choice.getOwner();
 			User child = choice.getChild();	
 					
@@ -598,7 +616,7 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 		return (CommuneUserBusiness) com.idega.business.IBOLookup.getServiceInstance(getIWApplicationContext(), CommuneUserBusiness.class);
 	}
 	
-	private CommuneUserBusiness getUserBusiness() throws RemoteException {
+	public CommuneUserBusiness getUserBusiness() throws RemoteException {
 		return (CommuneUserBusiness) this.getServiceInstance(CommuneUserBusiness.class);
 	}
 	

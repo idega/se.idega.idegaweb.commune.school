@@ -69,5 +69,7 @@ public interface SchoolCommuneBusiness extends com.idega.business.IBOService,com
     SchoolStudyPath [] getAllStudyPaths ();
 
 	public ReportableCollection getReportOfUsersNotRegisteredInAnyClass(Locale currentLocale, Date selectedDate, SchoolSeason currentSeason, Collection classes) throws RemoteException, IDOLookupException, IDOException, FinderException, CreateException;
+	public boolean isPlacedAtSchool(int userID, int schoolID) throws java.rmi.RemoteException;
+	public se.idega.idegaweb.commune.business.CommuneUserBusiness getUserBusiness() throws java.rmi.RemoteException;
 
 }
