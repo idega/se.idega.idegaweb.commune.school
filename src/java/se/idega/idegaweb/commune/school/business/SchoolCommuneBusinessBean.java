@@ -384,18 +384,14 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 	}
 	
 	public void finalizeGroup(SchoolClass schoolClass, String subject, String body, boolean confirmation) throws RemoteException {
-		//School school = getSchoolBusiness().getSchool(new Integer(schoolClass.getSchoolId()));
 		SchoolChoice choice;
 		User student;
-		//Map students = getStudentList(getSchoolBusiness().findStudentsInClass(((Integer)schoolClass.getPrimaryKey()).intValue()));
-		//Iterator iter = students.values().iterator();
 		Collection choices = getSchoolChoiceBusiness().getApplicationsInClass(schoolClass, confirmation);
 		Iterator iter = choices.iterator();
 		
 		while (iter.hasNext()) {
 			choice = (SchoolChoice) iter.next();
 			student = choice.getChild();
-			System.out.println("Sending confirmation for "+student.getName());
 			boolean sendMessage = false;
 			
 			if (confirmation) {
@@ -405,15 +401,19 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 				choice.setHasReceivedPlacementMessage(true);
 			}
 			choice.store();
+			
+			User parent = choice.getOwner();
+			getMessageBusiness().createUserMessage(parent, subject, body);
 
 			try {
 				Collection parents = getMemberFamilyLogic().getCustodiansFor(student);
 				if (!parents.isEmpty()) {
 					Iterator iterator = parents.iterator();
 					while (iterator.hasNext()) {
-						User parent = (User) iterator.next();
-						//Object[] arguments = { school.getName(), parent.getNameLastFirst(true), schoolClass.getName(), student.getNameLastFirst(true) };
-						getMessageBusiness().createUserMessage(parent, subject, body);
+						User otherParent = (User) iterator.next();
+						if (!getUserBusiness().haveSameAddress(parent, otherParent)) {
+							getMessageBusiness().createUserMessage(otherParent, subject, body);
+						}
 					}	
 				}
 			}
@@ -514,8 +514,8 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 		return (CommuneUserBusiness) com.idega.business.IBOLookup.getServiceInstance(getIWApplicationContext(), CommuneUserBusiness.class);
 	}
 	
-	private UserBusiness getUserBusiness() throws RemoteException {
-		return (UserBusiness) this.getServiceInstance(UserBusiness.class);
+	private CommuneUserBusiness getUserBusiness() throws RemoteException {
+		return (CommuneUserBusiness) this.getServiceInstance(CommuneUserBusiness.class);
 	}
 	
 	public String getLocalizedSchoolTypeKey(SchoolType type) {
