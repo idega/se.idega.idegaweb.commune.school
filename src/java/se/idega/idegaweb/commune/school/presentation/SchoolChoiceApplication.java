@@ -441,7 +441,9 @@ public class SchoolChoiceApplication extends CommuneBlock {
 
 		T.add(getCurrentSchoolSeasonInfo(iwc), 1, row++);
 		T.setHeight(row++, 12);
-		T.add(getChildInfo(iwc, child), 1, row++);
+		T.add(getChildInfo(iwc, child), 1, row);
+		T.mergeCells(1, row, 3, row);
+		T.add(getCurrentSchool(), 2, row++);
 		T.setHeight(row++, 12);
 		//		T.add(getCurrentSchool(), 1, row++);
 		//		T.setHeight(row++, 12);
@@ -449,8 +451,8 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		T.setHeight(row++, 12);
 		T.add(getMessagePart(), 1, row++);
 		T.setHeight(row++, 12);
-		T.add(getCurrentSchool(), 1, row++);
-		T.setHeight(row++, 12);
+		
+		//T.setHeight(row++, 12);
 
 		// Space table over submit button
 		Table spaceT = new Table(1, 1);
@@ -485,6 +487,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 			if (valPreType > 0 || valPreArea > 0 || valPreSchool > 0) {
 				p.setOnLoad(getInitFilterCallerScript(prmPreType, prmPreArea, prmPreSchool, valPreType, valPreArea, valPreSchool, false));
 			}
+			
 			if (valType > 0) {
 				//if (valFirstArea > 0 || valFirstSchool > 0)
 					p.setOnLoad(getInitFilterCallerScript(prmType, prmFirstArea, prmFirstSchool, valType, valFirstArea, valFirstSchool, false));
@@ -495,6 +498,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 						p.setOnLoad(getInitFilterCallerScript(prmType, prmThirdArea, prmThirdSchool, valType, valThirdArea, valThirdSchool, false));
 				}
 			}
+			
 			T.add(F, 1, T.getColumns());
 			if (hasChosen) {
 				Script initScript = myForm.getAssociatedFormScript();
@@ -664,11 +668,21 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	private PresentationObject getChildInfo(IWContext iwc, User child) throws java.rmi.RemoteException {
 		Table table = new Table();
 		table.setColumns(3);
-		table.setWidth(1, "100");
+		//table.setWidth(1, "100");
 		table.setWidth(2, "8");
+		table.setWidth(4, "16");
 		table.setCellpadding(2);
 		table.setCellspacing(0);
-
+		table.setCellpaddingLeft(1, 1, 6);
+		table.setCellpaddingLeft(1, 2, 6);
+		table.setCellpaddingLeft(1, 3, 6);
+		table.setCellpaddingRight(5, 1, 6);
+		table.setCellpaddingTop(1, 1, 6);
+		table.setCellpaddingTop(3, 1, 6);
+		table.setStyleAttribute("background:#f4f4f4;");
+		table.setStyleAttribute("border:1px solid #cccccc;");
+		
+		table.setBorder(0);
 		table.add(getSmallHeader(iwrb.getLocalizedString("school.name", "Name") + ":"), 1, 1);
 		table.add(getSmallHeader(iwrb.getLocalizedString("school.personal_id", "Personal ID") + ":"), 1, 2);
 		table.add(getSmallHeader(iwrb.getLocalizedString("school.address", "Address") + ":"), 1, 3);
@@ -726,15 +740,24 @@ public class SchoolChoiceApplication extends CommuneBlock {
 			table.add(getSmallErrorText(iwrb.getLocalizedString("school.no_registered_custodians", "No registered custodians")), 3, 4);
 		}
 
+		table.add(new Break(3), 1, 5);
+		table.mergeCells(5, 1, 5, 5);
+		table.setVerticalAlignment(5, 1, Table.VERTICAL_ALIGN_TOP);
+		table.add(getCurrentSchool(), 5, 1);
 		return table;
 	}
 
+	
+	
 	private PresentationObject getCurrentSchool() throws java.rmi.RemoteException {
 		Table table = new Table();
 		table.setColumns(3);
 		table.setCellpadding(2);
 		table.setCellspacing(0);
 		table.setBorder(0);
+		
+		table.setCellpaddingTop(1, 1, 6);
+		
 		table.mergeCells(1, 1, table.getColumns(), 1);
 
 		table.add(getHeader(iwrb.getLocalizedString("school.child_is_now_in", "Child is now in :")), 1, 1);
@@ -743,7 +766,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		table.add(getSmallHeader(iwrb.getLocalizedString("school.school_name", "School name") + ":"), 1, 4);
 		table.add(getSmallHeader(iwrb.getLocalizedString("school.school_year", "School year") + ":"), 1, 5);
 
-		DropdownMenu drpTypes = getTypeDrop(prmPreType, false, _showChildCareTypes);
+		/*DropdownMenu drpTypes = getTypeDrop(prmPreType, false, _showChildCareTypes);
 		drpTypes.addMenuElement("-2", localize("school.school_type_other", "Other/None"));
 		drpTypes.setOnChange(getFilterCallerScript(prmPreType, prmPreArea, prmPreSchool, 1, true));
 
@@ -772,6 +795,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 			script = new Script();
 			myForm.setAssociatedFormScript(script);
 		}
+		
 		String initFunction;
 		if (hasChosen) {
 			if (school != null && schoolType != null && schoolArea != null) {
@@ -797,12 +821,48 @@ public class SchoolChoiceApplication extends CommuneBlock {
 				}
 			}
 		}
-
-		table.add(drpTypes, 3, 2);
-		table.add(drpAreas, 3, 3);
-		table.add(drpSchools, 3, 4);
-		table.add(drpGrade, 3, 5);
-		table.setWidth(1, 2, "100");
+*/
+		Text schoolTypeCurr = null;
+		Text schoolAreaCurr = null;
+		Text schoolYearCurr = null;
+		Text schoolCurr = null;
+		
+		if (schoolType != null) {
+			schoolTypeCurr = getSmallText(schoolType.toString());
+		}
+		else {
+			schoolTypeCurr = getSmallText("-");
+		}
+		if (schoolArea != null) {
+			schoolAreaCurr = getSmallText(schoolArea.toString());
+		}
+		else {
+			schoolAreaCurr = getSmallText("-");
+		} 
+		if (school != null) {
+			schoolCurr = getSmallText(school.getName());
+		}
+		else {
+			schoolCurr = getSmallText("-");
+		} 
+		
+		if (schoolYear != null) {
+			schoolYearCurr = getSmallText(schoolYear.toString());
+		}
+		else {
+			schoolYearCurr = getSmallText("-");
+		}
+		
+	
+		//table.add(drpTypes, 3, 2);
+		table.add(schoolTypeCurr, 3, 2);
+		//table.add(drpAreas, 3, 3);
+		table.add(schoolAreaCurr, 3, 3);
+		//table.add(drpSchools, 3, 4);
+		table.add(schoolCurr, 3, 4);
+		//table.add(drpGrade, 3, 5);
+		table.add(schoolYearCurr, 3, 5);
+		//table.setWidth(1, 2, "100");
 		table.setWidth(2, 2, "8");
 
 		return table;
@@ -1055,7 +1115,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	}
 
 	private DropdownMenu getNativeLanguagesDropdown() {
-		DropdownMenu drop = new DropdownMenu(prmNativeLang);
+		DropdownMenu drop = (DropdownMenu) getStyledInterface(new DropdownMenu(prmNativeLang));
 		drop.addMenuElement("-1", localize("school.drp_chose_native_lang", "- Chose languge -"));
 		try {
 			Collection langs = getICLanguageHome().findAll();
@@ -1204,7 +1264,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	private String getSchoolYearFilterScript() throws RemoteException {
 		StringBuffer s = new StringBuffer();
 		s.append("function changeSchoolYear(){\n");
-		s.append("  var dropSchoolTypes = ").append("findObj('").append(prmPreType).append("');\n");
+		/*s.append("  var dropSchoolTypes = ").append("findObj('").append(prmPreType).append("');\n");
 		s.append("  var dropSchoolYears = ").append("findObj('").append(prmPreYear).append("');\n");
 		s.append("  var dropSchool = ").append("findObj('").append(prmPreSchool).append("');\n");
 		s.append("  var typeId = dropSchoolTypes.options[dropSchoolTypes.selectedIndex].value;\n");
@@ -1259,6 +1319,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 			s.append("  }\n");
 		}
 		s.append("  dropSchoolYears.selectedIndex = 0;\n");
+		*/
 		s.append("}\n");
 		return s.toString();
 	}
@@ -1266,7 +1327,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	private String getFilterScript() {
 		StringBuffer s = new StringBuffer();
 		s.append("function changeFilter(index,type,area,school,showAll){").append(" \n\t");
-		s.append("changeFilter2(index,type,area,school,-1,showAll); changeSchoolYear();").append("\n").append("}");
+		s.append("changeFilter2(index,type,area,school,-1,showAll); changeSchoolYear();").append("\n").append("}"); 
 		return s.toString();
 	}
 
