@@ -42,6 +42,7 @@ public class SchoolChoiceColumnsHandler extends SchoolGroupColumnsHandler {
 		addMenuElement(SchoolReportBusiness.FIELD_APPLICATION_DATE, getLocalizedString(iwrb, SchoolReportBusiness.FIELD_APPLICATION_DATE, "Application date"));
 		addMenuElement(SchoolReportBusiness.FIELD_MESSAGE, getLocalizedString(iwrb, SchoolReportBusiness.FIELD_MESSAGE, "Message"));
 		addMenuElement(SchoolReportBusiness.FIELD_LANGUAGE_CHOICE, getLocalizedString(iwrb, SchoolReportBusiness.FIELD_LANGUAGE_CHOICE, "Language choice"));
+		addMenuElement(SchoolReportBusiness.FIELD_NATIVE_LANGUAGE, getLocalizedString(iwrb, SchoolReportBusiness.FIELD_NATIVE_LANGUAGE, "Native language"));
 		addMenuElement(SchoolReportBusiness.FIELD_CUSTODIAN, getLocalizedString(iwrb, SchoolReportBusiness.FIELD_CUSTODIAN, "Custodian"));
 		addMenuElement(SchoolReportBusiness.FIELD_ALTERNATE_ADDRESS, getLocalizedString(iwrb, SchoolReportBusiness.FIELD_ALTERNATE_ADDRESS, "Alternate address"));
 	}
