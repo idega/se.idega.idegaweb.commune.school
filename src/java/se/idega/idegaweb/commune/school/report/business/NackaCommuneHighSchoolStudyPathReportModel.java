@@ -1,5 +1,5 @@
 /*
- * $Id: NackaCommuneHighSchoolStudyPathReportModel.java,v 1.12 2004/02/24 14:37:42 anders Exp $
+ * $Id: NackaCommuneHighSchoolStudyPathReportModel.java,v 1.13 2004/02/25 12:15:44 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -21,10 +21,10 @@ import com.idega.block.school.data.SchoolStudyPath;
 /** 
  * Report model for Nacka high school student placements with all study paths listed.
  * <p>
- * Last modified: $Date: 2004/02/24 14:37:42 $ by $Author: anders $
+ * Last modified: $Date: 2004/02/25 12:15:44 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.12 $
+ * @version $Revision: 1.13 $
  */
 public class NackaCommuneHighSchoolStudyPathReportModel extends ReportModel {
 
@@ -518,7 +518,10 @@ public class NackaCommuneHighSchoolStudyPathReportModel extends ReportModel {
 			Iterator iter = c.iterator();
 			while (iter.hasNext()) {
 				SchoolStudyPath sp = (SchoolStudyPath) iter.next();
-				map.put(sp.getCode(), sp);
+				String code = sp.getCode();
+				if (code.equals("HV") && !code.equals("SM")) {
+					map.put(sp.getCode(), sp);					
+				}
 			}
 			iter = map.values().iterator();
 			int studyPathAmount = 0;
