@@ -195,7 +195,13 @@ public class SchoolChoiceApplication extends CommuneBlock {
 								if (count == 1) {
 									valFirstSchool = schoolID;
 									valFirstArea = areaID;
-									valSixyearCare = element.getKeepChildrenCare();
+									if (element.getFreetimeInThisSchool())
+										valSixyearCare = true;
+									else if (element.getFreetimeOther() != null)
+										valSixyearCare = true;
+									else
+										valSixyearCare = false;
+									//valSixyearCare = element.getKeepChildrenCare();
 									if (element.getLanguageChoice() != null)
 										valLanguage = element.getLanguageChoice();
 									if (element.getMessage() != null)
