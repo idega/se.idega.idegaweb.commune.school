@@ -920,9 +920,6 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		catch (IDOException ie) {
 			return 0;
 		}
-		catch (FinderException fe) {
-			return 0;
-		}
 	}
 
 	public int getNumberOfApplicationsForStudents(int userID, int schoolSeasonID) throws RemoteException {
@@ -939,9 +936,6 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 			return getSchoolChoiceHome().getNumberOfApplications(getCaseStatusPreliminary().getStatus(), schoolID, schoolSeasonID, grade);
 		}
 		catch (IDOException ie) {
-			return 0;
-		}
-		catch (FinderException fe) {
 			return 0;
 		}
 	}
@@ -1009,15 +1003,18 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 			ie.printStackTrace(System.err);
 			return 0;
 		}
-		catch (FinderException fe) {
-			fe.printStackTrace(System.err);
-			return 0;
-		}
 	}
 
 	public int getNumberOfApplicants(String[] validStatuses) throws RemoteException {
 		try {
-			return getSchoolChoiceHome().getCount(validStatuses);
+			int seasonID = -1;
+			try {
+				seasonID = ((Integer)getCurrentSeason().getPrimaryKey()).intValue();
+			}
+			catch (FinderException fe) {
+				seasonID = -1;
+			}
+			return getSchoolChoiceHome().getCount(validStatuses, seasonID);
 		}
 		catch (IDOException ie) {
 			ie.printStackTrace(System.err);
