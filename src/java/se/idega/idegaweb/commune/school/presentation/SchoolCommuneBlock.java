@@ -64,11 +64,9 @@ public abstract class SchoolCommuneBlock extends CommuneBlock {
 	public static final String IS_SPECIALLY_PLACED_COLOR = "#EAF1FF";
 	public static final String HAS_SCHOOL_CHOICE_COLOR = "#EAFFEE";
 	public static final String HAS_MOVE_CHOICE_COLOR = "#FFEAEA";
-//	public static final String HAS_MOVE_CHOICE_COLOR_THIS_SCHOOL = "#FFEAFF";
-	public static final String HAS_MOVE_CHOICE_COLOR_THIS_SCHOOL = "#FFCCFF";
-//	public static final String HAS_REJECTED_FIRST_CHOICE_COLOR = "#FDFFDD";
-	public static final String HAS_REJECTED_FIRST_CHOICE_COLOR = "#CCFFCC";
-	public static final String HAS_MOVED_TO_COMMUNE_COLOR = "#CCCCFF";
+	public static final String HAS_MOVE_CHOICE_COLOR_THIS_SCHOOL = "#FFEAFF";
+	public static final String HAS_REJECTED_FIRST_CHOICE_COLOR = "#FDFFDD";
+	public static final String HAS_MOVED_TO_COMMUNE_COLOR = "#DDDDFF";
 	
 	
 	public void main(IWContext iwc) throws Exception{
