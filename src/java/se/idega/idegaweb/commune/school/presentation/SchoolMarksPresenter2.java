@@ -20,7 +20,7 @@ import se.idega.idegaweb.commune.presentation.CommuneBlock;
 /**
  * Presents school marks statistics in a formatted table (approved by Nacka)
  * <p>
- * $Id: SchoolMarksPresenter2.java,v 1.7 2003/12/02 11:39:35 kjell Exp $
+ * $Id: SchoolMarksPresenter2.java,v 1.8 2003/12/03 16:10:33 kjell Exp $
  *
  * This block presents School Marks Statistics according to the specifications made my 
  * Jill Salander
@@ -146,14 +146,16 @@ public class SchoolMarksPresenter2  extends CommuneBlock {
 					smtOld = stat.getSchoolManagementType();
 					if(count++  > 0) {
 						table = insertTotals(iwrb.getLocalizedString("school_marks_stats.header1", "Totalt kommunala skolor"), table, row, roundAbout(mValue, mNumber));
-						row +=9;
+						row +=10;
 					}
 				}
+				table.add(getHeader(stat.getSchoolName()), 1, row);
 				table.add(getSmallText(iwrb.getLocalizedString("school_marks_stats.eg", "Ej godkänt")), 2, row);			
 				table.add(getSmallText(iwrb.getLocalizedString("school_marks_stats.g", "Godkänt")), 4, row);			
 				table.add(getSmallText(iwrb.getLocalizedString("school_marks_stats.vg", "Väl godkänt")), 6, row);
 				table.add(getSmallText(iwrb.getLocalizedString("school_marks_stats.mvg", "Mycket väl godkänt")), 8, row);
 				table.add(getSmallText(iwrb.getLocalizedString("school_marks_stats.tot", "Totalt")), 10, row);
+				table.setColor(1, row, "#aaaaaa");			
 				table.setColor(2, row, "#aaaaaa");			
 				table.setColor(4, row, "#aaaaaa");			
 				table.setColor(6, row, "#aaaaaa");			
@@ -170,7 +172,7 @@ public class SchoolMarksPresenter2  extends CommuneBlock {
 				table.setRowAlignment(row, Table.HORIZONTAL_ALIGN_CENTER);
 				table.setAlignment(1, row, Table.HORIZONTAL_ALIGN_LEFT);
 				
-				table.add(getHeader(stat.getSchoolName()), 1, row);
+				table.add(getHeader(iwrb.getLocalizedString("school_marks_stats.table_auth_marks_header", "Behörighetsgivande betyg")), 1, row);			
 				table.add(getSmallText(iwrb.getLocalizedString("school_marks_stats.number", "Antal")), 2, row);			
 				table.add(getSmallText("%"), 3, row);			
 				table.add(getSmallText(iwrb.getLocalizedString("school_marks_stats.number", "Antal")), 4, row);			
@@ -252,17 +254,17 @@ public class SchoolMarksPresenter2  extends CommuneBlock {
 				}
 
 				sumSchoolTally(stat.getSumAuthMarks(), "Auth");
-				table.add(getHeader(iwrb.getLocalizedString("school_marks_stats.sumauthmarks", "Summa behörighetsgivande poäng")), 1, row);
-				table.add(getHeader(stat.getSumAuthMarks().eg.number), 2, row);
-				table.add(getHeader(formatPct(stat.getSumAuthMarks().eg.percent)), 3, row);
-				table.add(getHeader(stat.getSumAuthMarks().g.number), 4, row);
-				table.add(getHeader(formatPct(stat.getSumAuthMarks().g.percent)), 5, row);
-				table.add(getHeader(stat.getSumAuthMarks().vg.number), 6, row);
-				table.add(getHeader(formatPct(stat.getSumAuthMarks().vg.percent)), 7, row);
-				table.add(getHeader(stat.getSumAuthMarks().mvg.number), 8, row);
-				table.add(getHeader(formatPct(stat.getSumAuthMarks().mvg.percent)), 9, row);
-				table.add(getHeader(stat.getSumAuthMarks().tot.number), 10, row);
-				table.add(getHeader(formatPct(stat.getSumAuthMarks().tot.percent)), 11, row);
+				table.add(getSmallText(iwrb.getLocalizedString("school_marks_stats.sumauthmarks", "Summa behörighetsgivande poäng")), 1, row);
+				table.add(getSmallText(stat.getSumAuthMarks().eg.number), 2, row);
+				table.add(getSmallText(formatPct(stat.getSumAuthMarks().eg.percent)), 3, row);
+				table.add(getSmallText(stat.getSumAuthMarks().g.number), 4, row);
+				table.add(getSmallText(formatPct(stat.getSumAuthMarks().g.percent)), 5, row);
+				table.add(getSmallText(stat.getSumAuthMarks().vg.number), 6, row);
+				table.add(getSmallText(formatPct(stat.getSumAuthMarks().vg.percent)), 7, row);
+				table.add(getSmallText(stat.getSumAuthMarks().mvg.number), 8, row);
+				table.add(getSmallText(formatPct(stat.getSumAuthMarks().mvg.percent)), 9, row);
+				table.add(getSmallText(stat.getSumAuthMarks().tot.number), 10, row);
+				table.add(getSmallText(formatPct(stat.getSumAuthMarks().tot.percent)), 11, row);
 
 				row++;
 				table.setRowAlignment(row, Table.HORIZONTAL_ALIGN_RIGHT);
@@ -300,11 +302,13 @@ public class SchoolMarksPresenter2  extends CommuneBlock {
 	}
 
 	private Table insertTotals(String header, Table table, int row, String meanMerite) {	
+		table.add(getHeader(header), 1, row);			
 		table.add(getSmallText(iwrb.getLocalizedString("school_marks_stats.eg", "Ej godkänt")), 2, row);			
 		table.add(getSmallText(iwrb.getLocalizedString("school_marks_stats.g", "Godkänt")), 4, row);			
 		table.add(getSmallText(iwrb.getLocalizedString("school_marks_stats.vg", "Väl godkänt")), 6, row);
 		table.add(getSmallText(iwrb.getLocalizedString("school_marks_stats.mvg", "Mycket väl godkänt")), 8, row);
 		table.add(getSmallText(iwrb.getLocalizedString("school_marks_stats.tot", "Totalt")), 10, row);
+		table.setColor(1, row, "#aaaaaa");			
 		table.setColor(2, row, "#aaaaaa");			
 		table.setColor(4, row, "#aaaaaa");			
 		table.setColor(6, row, "#aaaaaa");			
@@ -322,8 +326,8 @@ public class SchoolMarksPresenter2  extends CommuneBlock {
 		table.setRowColor(row, "#e0e0e0");
 		table.setRowAlignment(row, Table.HORIZONTAL_ALIGN_CENTER);
 		table.setAlignment(1, row, Table.HORIZONTAL_ALIGN_LEFT);
-		
-		table.add(getHeader(header), 1, row);			
+
+		table.add(getHeader(iwrb.getLocalizedString("school_marks_stats.table_auth_marks_header", "Behörighetsgivande betyg")), 1, row);			
 		table.add(getSmallText(iwrb.getLocalizedString("school_marks_stats.number", "Antal")), 2, row);			
 		table.add(getSmallText("%"), 3, row);			
 		table.add(getSmallText(iwrb.getLocalizedString("school_marks_stats.number", "Antal")), 4, row);			
@@ -409,17 +413,17 @@ public class SchoolMarksPresenter2  extends CommuneBlock {
 			table.setRowColor(row, "#e0e0e0");
 		}
 
-		table.add(getHeader(iwrb.getLocalizedString("school_marks_stats.sumauthmarks", "Summa behörighetsgivande poäng")), 1, row);
-		table.add(getHeader(_tallyAuth.eg.number), 2, row);
-		table.add(getHeader(formatPct(tallyMean(_tallyAuth.eg.percent, _tallyAuth.ceg))), 3, row);
-		table.add(getHeader(_tallyAuth.g.number), 4, row);
-		table.add(getHeader(formatPct(tallyMean(_tallyAuth.g.percent, _tallyAuth.cg))), 5, row);
-		table.add(getHeader(_tallyAuth.vg.number), 6, row);
-		table.add(getHeader(formatPct(tallyMean(_tallyAuth.vg.percent, _tallyAuth.cvg))), 7, row);
-		table.add(getHeader(_tallyAuth.mvg.number), 8, row);
-		table.add(getHeader(formatPct(tallyMean(_tallyAuth.mvg.percent, _tallyAuth.cmvg))), 9, row);
-		table.add(getHeader(_tallyAuth.tot.number), 10, row);
-		table.add(getHeader(formatPct(tallyMean(_tallyAuth.tot.percent, _tallyAuth.ctot))), 11, row);
+		table.add(getSmallText(iwrb.getLocalizedString("school_marks_stats.sumauthmarks", "Summa behörighetsgivande poäng")), 1, row);
+		table.add(getSmallText(_tallyAuth.eg.number), 2, row);
+		table.add(getSmallText(formatPct(tallyMean(_tallyAuth.eg.percent, _tallyAuth.ceg))), 3, row);
+		table.add(getSmallText(_tallyAuth.g.number), 4, row);
+		table.add(getSmallText(formatPct(tallyMean(_tallyAuth.g.percent, _tallyAuth.cg))), 5, row);
+		table.add(getSmallText(_tallyAuth.vg.number), 6, row);
+		table.add(getSmallText(formatPct(tallyMean(_tallyAuth.vg.percent, _tallyAuth.cvg))), 7, row);
+		table.add(getSmallText(_tallyAuth.mvg.number), 8, row);
+		table.add(getSmallText(formatPct(tallyMean(_tallyAuth.mvg.percent, _tallyAuth.cmvg))), 9, row);
+		table.add(getSmallText(_tallyAuth.tot.number), 10, row);
+		table.add(getSmallText(formatPct(tallyMean(_tallyAuth.tot.percent, _tallyAuth.ctot))), 11, row);
 
 		row++;
 		table.setRowAlignment(row, Table.HORIZONTAL_ALIGN_RIGHT);
