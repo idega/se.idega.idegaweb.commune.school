@@ -720,7 +720,7 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 		IDOEntityDefinition userDef = IDOLookup.getEntityDefinitionForClass(User.class);
 		IDOEntityDefinition grRelDef = IDOLookup.getEntityDefinitionForClass(GroupRelation.class);
 		IDOEntityDefinition addrDef = IDOLookup.getEntityDefinitionForClass(Address.class);
-		DateFormat dateFormat = SimpleDateFormat.getDateTimeInstance(DateFormat.DEFAULT,DateFormat.DEFAULT,currentLocale);
+		DateFormat dateFormat = SimpleDateFormat.getDateInstance(DateFormat.DEFAULT,currentLocale);
 		
 		
 		//Child - Fields
@@ -751,6 +751,9 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 		childGroupInvitationDate.setLocalizedName(_iwrb.getLocalizedString("CommuneReportBusiness.child_gr_initiation_date","Invitiation date"),currentLocale);
 		reportData.addField(childGroupInvitationDate);
 		
+		ReportableField lastPlacementField = new ReportableField("last_placement",String.class);
+		lastPlacementField.setLocalizedName(_iwrb.getLocalizedString("SchoolCommuneBusiness.lastPlacement","Last known school or child care / date"),currentLocale);
+		reportData.addField(lastPlacementField);
 		
 		
 		//Parent1 - Fields
@@ -851,6 +854,12 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 				data.addData(childGroupInvitationDate,"No relation to commune specified");
 			}
 			
+			
+			//lastPlacementField
+			//
+			//data.addData(lastPlacementField,);
+			
+			
 			try {
 				//Parent data
 				Collection parents = _familyLogic.getCustodiansFor(child);
@@ -924,7 +933,9 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 			
 		}
 		
-		reportData.addExtraHeaderParameter("label_current_date",_iwrb.getLocalizedString("CommuneReportBusiness.label_current_date","Current date"),"current_date",dateFormat.format(IWTimestamp.getTimestampRightNow()));
+		DateFormat dateTimeFormat = SimpleDateFormat.getDateTimeInstance(DateFormat.DEFAULT,DateFormat.DEFAULT,currentLocale);
+
+		reportData.addExtraHeaderParameter("label_current_date",_iwrb.getLocalizedString("CommuneReportBusiness.label_current_date","Current date"),"current_date",dateTimeFormat.format(IWTimestamp.getTimestampRightNow()));
 
 		return reportData;
     }
