@@ -440,12 +440,8 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		table.setCellpadding(0);
 		table.setCellspacing(0);
 		table.setBorder(0);		
-		SubmitButton button = (SubmitButton) getButton(new SubmitButton("submit",
-				localize("school_choice.ready", "Ready"))); 
-				
-		button.setOnSubmitFunction("checkApplication", getSchoolCheckScript());
-		myForm.setToDisableOnSubmit(button, true);
-			
+		T.add(table, 1, row++);
+
 		if (schoolChange)
 			table.add(getSmallHeader(localize("school.application_change_required_reason", "Reason for schoolchange (Required)")), 1, 1);
 		else
@@ -455,8 +451,12 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		table.setHeight(1, 3, 50);
 		table.setVerticalAlignment(1, 3, Table.VERTICAL_ALIGN_BOTTOM);
 		table.setAlignment(1, 3, Table.HORIZONTAL_ALIGN_RIGHT);
+
+		SubmitButton button = (SubmitButton) getButton(new SubmitButton("submit", localize("school_choice.ready", "Ready"))); 
+		button.setOnSubmitFunction("checkApplication", getSchoolCheckScript());
 		table.add(button, 1, 3);
-		T.add(table, 1, row++);
+		myForm.setToDisableOnSubmit(button, true);
+			
 		////
 		
 		T.add(new HiddenInput(prmAction, "true"), 1, 1);
@@ -1044,7 +1044,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		return drop;
 	}
 
-	private PresentationObject getMessagePart() {
+	/*private PresentationObject getMessagePart() {
 		Table table = new Table(1, 3);
 		table.setWidth(300);
 		table.setCellpadding(2);
@@ -1063,7 +1063,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		table.add(message, 1, 2);
 		
 		return table;
-	}
+	}*/
 	
 	private TextArea getMessagePart2() {
 	Table table = new Table(1, 3);
