@@ -13,6 +13,8 @@ import com.idega.block.process.data.AbstractCaseBMPBean;
 import com.idega.block.process.data.Case;
 import com.idega.block.process.data.CaseBMPBean;
 import com.idega.block.school.data.School;
+import com.idega.block.school.data.SchoolClassBMPBean;
+import com.idega.block.school.data.SchoolClassMemberBMPBean;
 import com.idega.block.school.data.SchoolSeason;
 import com.idega.block.school.data.SchoolType;
 import com.idega.block.school.data.SchoolYear;
@@ -82,6 +84,9 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 	public static final int PERSONAL_ID_SORT = 4;
 	public static final int LANGUAGE_SORT = 5;
 	public static final int CREATED_SORT = 6;
+	
+	public static final int PLACED_SORT = 7;
+	public static final int UNPLACED_SORT = 8;
 
 	private static final String[] CASE_STATUS_KEYS = { "UBEH", "TYST", "PREL", "PLAC", "GROU", "FLYT" };
 	private static final String[] CASE_STATUS_DESCRIPTIONS = { "Case open", "Sleep", "Preliminary", "Placed", "Grouped", "Moved" };
@@ -668,6 +673,11 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 		return this.idoGetNumberOfRecords(query);
 	}
 	
+	public int ejbHomeGetCount(int schoolID, int seasonID, int gradeYear, int[] choiceOrder, String[] validStatuses, String searchStringForUser, int placementType) throws IDOException {
+		IDOQuery query = getIDOQuery(schoolID, seasonID, gradeYear, choiceOrder, validStatuses, searchStringForUser, true, false, -1, placementType);
+		return this.idoGetNumberOfRecords(query);
+	}
+	
 	public int ejbHomeGetCountOutsideInterval(int schoolID, int seasonID, int gradeYear, int[] choiceOrder, String[] validStatuses, String searchStringForUser, Date from, Date to) throws IDOException {
 		IDOQuery query = getIDOQuery(schoolID, seasonID, gradeYear, choiceOrder, validStatuses, searchStringForUser, true, false, -1);
 		query.appendAnd().appendLeftParenthesis().append(SCHOOLCHOICEDATE).appendLessThanSign().appendWithinSingleQuotes(from)
@@ -679,8 +689,18 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 		IDOQuery query = getIDOQuery(schoolID, seasonID, gradeYear, choiceOrder, validStatuses, searchStringForUser, false, false, orderBy);
 		return this.idoFindPKsByQuery(query, numberOfEntries, startingEntry);
 	}
+	
+	public Collection ejbFindChoices(int schoolID, int seasonID, int gradeYear, int[] choiceOrder, String[] validStatuses, String searchStringForUser, int orderBy, int numberOfEntries, int startingEntry, int placementType) throws FinderException {
+		IDOQuery query = getIDOQuery(schoolID, seasonID, gradeYear, choiceOrder, validStatuses, searchStringForUser, false, false, orderBy, placementType);
+		return this.idoFindPKsByQuery(query, numberOfEntries, startingEntry);
+	}
 
 	public IDOQuery getIDOQuery(int schoolID, int seasonID, int gradeYear, int[] choiceOrder, String[] validStatuses, String searchStringForUser, boolean selectCount, boolean selectOnlyChildIDs, int orderBy) {
+		return getIDOQuery(schoolID, seasonID, gradeYear, choiceOrder, validStatuses, searchStringForUser, selectCount, selectOnlyChildIDs, orderBy, -1);
+		
+	}
+	
+	public IDOQuery getIDOQuery(int schoolID, int seasonID, int gradeYear, int[] choiceOrder, String[] validStatuses, String searchStringForUser, boolean selectCount, boolean selectOnlyChildIDs, int orderBy, int placementType) {
 		boolean search = searchStringForUser != null && !searchStringForUser.equals("");
 		boolean statuses = validStatuses != null && validStatuses.length > 0;
 
@@ -713,6 +733,8 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 		query.append(getEntityName()).append(" csc");
 		query.append(", ").append(UserBMPBean.TABLE_NAME).append(" u");
 		query.append(", ").append(CaseBMPBean.TABLE_NAME).append(" pc");
+		
+		
 
 		query.appendWhere();
 		query.append("u.").append(UserBMPBean.getColumnNameUserID()).appendEqualSign().append("csc.").append(CHILD);
@@ -773,6 +795,37 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 			query.append(")");
 			needAnd = true;
 		}
+		
+		if (placementType != -1){
+			if (placementType == PLACED_SORT){
+				query.appendAnd().append("csc.child_id in (");	
+			}
+			else {
+				query.appendAnd().append("csc.child_id not in (");	
+			}
+			
+			query.appendSelect().append("scm.ic_user_id");
+			query.appendFrom().append("sch_class_member").append(" scm");
+			query.append(", ").append("sch_school_class").append(" sc");
+			//query.append(", ").append("sch_school_year").append(" sy");
+			query.appendWhere();
+			query.appendEquals("scm.sch_school_class_id", "sc.SCH_SCHOOL_CLASS_ID");
+			//query.appendAndEquals("scm.sch_school_year_id", "sy.sch_school_year_id");
+			
+			if (schoolID > 0){
+				query.appendAndEquals("sc.school_id", schoolID);
+				query.appendAnd().append("(sc." + SchoolClassBMPBean.COLUMN_VALID).appendEqualSign().appendWithinSingleQuotes("Y").appendOr().append("sc." + SchoolClassBMPBean.COLUMN_VALID).append(" is null)");		
+			}
+			if (seasonID > 0){
+				query.appendAndEquals("sc.sch_school_season_id", seasonID);	
+			}
+			/*if (gradeYear > 0){
+				query.appendAndEquals("sy.year_age", gradeYear);	
+			}
+			*/
+			query.appendRightParenthesis();
+		}
+		
 		if (orderBy != -1) {
 			if (orderBy == NAME_SORT)
 				query.appendOrderBy("u.last_name,u.first_name,u.middle_name");
