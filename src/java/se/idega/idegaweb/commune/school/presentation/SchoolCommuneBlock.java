@@ -87,16 +87,17 @@ public abstract class SchoolCommuneBlock extends CommuneBlock {
 	}
 	
 	protected Table getNavigationTable(boolean showClass, boolean multipleSchools, boolean centralizedAdminChoice) throws RemoteException {
-		Table table = new Table(8,1);
+		Table table = new Table(9,1);
 		table.setCellpadding(0);
 		table.setCellspacing(0);
 		table.setWidth(3,"8");
+
 		int row = 1;
 
 		if (multipleSchools) {
 			
 			if (centralizedAdminChoice){
-				table.resize(8, row + 2);
+				table.resize(9, row + 2);
 				table.add(getSmallHeader(localize("school.bun_adm","Show only BUN administrated schools")+":"+Text.NON_BREAKING_SPACE),1,row);
 //				table.mergeCells(2, row, 8, row);
 				
@@ -114,7 +115,6 @@ public abstract class SchoolCommuneBlock extends CommuneBlock {
 				rb2.setToSubmit();
 				table.add(rb1,2,row);
 				table.add(getSmallHeader(localize("school.yes","Yes")+Text.NON_BREAKING_SPACE),2,row);
-//				table.add(getSmallHeader(localize("school.yes","Yes")+":"+Text.NON_BREAKING_SPACE),3,row);
 
 				table.add(rb2,3,row);
 				table.add(getSmallHeader(localize("school.no","No")+Text.NON_BREAKING_SPACE),3,row);
@@ -125,7 +125,7 @@ public abstract class SchoolCommuneBlock extends CommuneBlock {
 		
 			}
 						
-			table.resize(8, row + 2);
+			table.resize(9, row + 2);
 			table.add(getSmallHeader(localize("school.school_list","School")+":"+Text.NON_BREAKING_SPACE),1,row);
 			table.mergeCells(2, row, 8, row);
 			table.add(getSchools(_centralAdmin),2,row);
@@ -143,12 +143,14 @@ public abstract class SchoolCommuneBlock extends CommuneBlock {
 		table.add(schYears,5,row);
 		if (showClass) {
 //			table.resize(8, row);
-			table.setWidth(6, "8");
+			table.setWidth(6, "10");
 			table.add(getSmallHeader(localize("school.class","Class")+":"+Text.NON_BREAKING_SPACE),7,row);
 			DropdownMenu schClasses = getSchoolClasses();
 			schClasses.addMenuElementFirst("-1","");
 			table.add(schClasses, 8, row);
 		}
+		
+		table.setColumnWidth(9, "10");
 		
 		return table;
 	}
