@@ -33,6 +33,7 @@ import com.idega.user.data.User;
 import com.idega.util.IWTimestamp;
 import com.lowagie.text.Document;
 import com.lowagie.text.Element;
+import com.lowagie.text.Image;
 import com.lowagie.text.PageSize;
 import com.lowagie.text.Paragraph;
 import com.lowagie.text.Phrase;
@@ -757,6 +758,23 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
             footer.addCell ("Tel växel:\n718 80 00\n"
                             + "Hemsida:\nwww.nacka24.nacka.se");
             footer.addCell ("Organisationsnr\n212000-0167");
+            final String logoPath = getIWApplicationContext().getApplication()
+                    .getBundle("se.idega.idegaweb.commune")
+                    .getResourcesRealPath() + "/shared/nacka_logo.jpg";
+            PdfPCell logoCell;
+            try {
+                final Image logo = Image.getInstance (logoPath);
+                logo.scaleToFit (mmToPoints (30), mmToPoints (15));
+                logoCell = new PdfPCell (logo);
+                logoCell.setVerticalAlignment (logoCell.ALIGN_MIDDLE);
+                logoCell.setHorizontalAlignment (logoCell.ALIGN_LEFT);
+            } catch (Exception e) {
+                logoCell = new PdfPCell
+                        (new Phrase ("The file '" + logoPath
+                                     + "' is missing. Please contact the system"
+                                     + " administartor."));
+            }
+            logoCell.setBorder (0);
             for (int i = 0; i < receivers.length; i++) {
                 if (i != 0) { document.newPage (); }
                 final SchoolChoiceReminderReceiver receiver = receivers [i];
@@ -777,7 +795,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
                 defaultCell.setPadding (0);
                 defaultCell.setNoWrap (true);
                 defaultCell.setVerticalAlignment (Element.ALIGN_MIDDLE);
-                header.addCell ("Nackalogga");
+                header.addCell (logoCell);
                 header.addCell (date);
                 header.addCell (emptyCell);
                 header.addCell (address);

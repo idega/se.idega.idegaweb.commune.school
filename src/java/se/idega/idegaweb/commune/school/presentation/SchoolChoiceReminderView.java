@@ -20,10 +20,10 @@ import se.idega.idegaweb.commune.school.data.SchoolChoiceReminder;
  * and entity ejb classes in {@link se.idega.idegaweb.commune.school.data}.
  * <p>
  * <p>
- * Last modified: $Date: 2002/12/29 09:35:03 $ by $Author: staffan $
+ * Last modified: $Date: 2002/12/29 11:18:34 $ by $Author: staffan $
  *
  * @author <a href="http://www.staffannoteberg.com">Staffan Nöteberg</a>
- * @version $Revision: 1.15 $
+ * @version $Revision: 1.16 $
  * @see javax.ejb
  */
 public class SchoolChoiceReminderView extends CommuneBlock {
@@ -138,7 +138,7 @@ public class SchoolChoiceReminderView extends CommuneBlock {
         int row = 1;
         table.add (getHeader(localize (NEW_REMINDER_KEY,
                                        NEW_REMINDER_DEFAULT)), 1, row++);
-        table.setHeight (row++, 12);
+        table.setHeight (row++, 4);
 		table.add(getSmallHeader (localize(REMINDER_TEXT_KEY, REMINDER_TEXT_DEFAULT)), 1, row);
 		final RadioGroup radioGroup = new RadioGroup (REMINDER_TEXT_KEY);
         radioGroup.addRadioButton (localize (REMINDER_TEXT1_KEY, REMINDER_TEXT1_DEFAULT));
@@ -156,6 +156,7 @@ public class SchoolChoiceReminderView extends CommuneBlock {
 		table.add(getSmallHeader(localize (REMINDER_DATE_KEY, REMINDER_DATE_DEFAULT)), 1, row);
 		table.add(getSingleInput(iwc, REMINDER_DATE_KEY, 8), 3, row++);
 
+        table.setHeight (row++, 12);
         final SubmitButton submit = getSubmitButton (CREATE_KEY,
                                                      CREATE_DEFAULT);
 		table.add(submit, 1, row++);
@@ -177,7 +178,7 @@ public class SchoolChoiceReminderView extends CommuneBlock {
         messageList.setCellpadding(getCellpadding());
         messageList.setCellspacing(getCellspacing());
         messageList.setWidth(Table.HUNDRED_PERCENT);
-        messageList.setColumns (4);
+        messageList.setColumns (5);
         int row = 1;
         int col = 1;
         Form form = new Form();
@@ -373,6 +374,7 @@ public class SchoolChoiceReminderView extends CommuneBlock {
         add (table);
         int row = 1;
         table.add (getSmallHeader ("För att skriva ut påminnelsebreven så gör du enligt följande"), 1, row++);
+        table.setHeight (row++, 12);
         table.add (getSmallText ("1. Klicka på länken 'Öppna breven i Acrobat Reader' nedan - ett nytt fönster med breven som ska skrivas ut öppnas"), 1, row++);
         table.add (getSmallText ("2. Klicka på skrivarikonen i det nya fönstret"), 1, row++);
         table.add (getSmallText ("3. Välj skrivare och skriv ut"), 1, row++);
