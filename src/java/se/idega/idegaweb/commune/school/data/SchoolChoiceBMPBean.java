@@ -1064,7 +1064,7 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
         }
         sql.append(" )");
         //temporary check
-        if (!year.getSchoolYearName().equals("F")) {
+//        if (!year.getSchoolYearName().equals("F")) {
             if((year.getSchoolYearName().equals("1")) || (!onlyLastGrade) ){
 	            
 		            try {
@@ -1123,7 +1123,7 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
                     e.printStackTrace();
                 }
             }
-        }
+//        }
         if(onlyInCommune)
             sql.append(" and c.default_commune  = 'Y'").append("\n");
         sql.append(" and us.status_id is null ").append("\n");
