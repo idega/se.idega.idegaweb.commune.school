@@ -12,6 +12,7 @@ import se.idega.util.PIDChecker;
 
 import com.idega.block.school.data.School;
 import com.idega.business.IBOLookup;
+import com.idega.core.contact.data.Phone;
 import com.idega.core.location.data.Address;
 import com.idega.data.IDOLookup;
 import com.idega.idegaweb.IWApplicationContext;
@@ -115,12 +116,14 @@ public class RejectedStudentsList extends SchoolCommuneBlock {
 		table.add(getSmallHeader(localize("school.name", "Name")), column++, row);
 		table.add(getSmallHeader(localize("school.personal_id", "Personal ID")), column++, row);
 		table.add(getSmallHeader(localize("school.address", "Address")), column++, row);
+		table.add(getSmallHeader(localize("school.phone", "Phone")), column++, row);
 		table.add(getSmallHeader(localize("school.gender", "Gender")), column++, row);
 		table.add(getSmallHeader(localize("school.from_school", "From School")), column++, row);
 		
 		User applicant;
 		School school;
 		Address address;
+		Phone phone;
 		SchoolChoice choice;
 		Locale locale = iwc.getCurrentLocale();
 		for (Iterator iter = schoolChoices.iterator(); iter.hasNext(); ) {
@@ -131,12 +134,17 @@ public class RejectedStudentsList extends SchoolCommuneBlock {
 				applicant = getUserBusiness(iwc).getUser(choice.getChildId());
 				school = getBusiness().getSchoolBusiness().getSchool(new Integer(choice.getCurrentSchoolId()));
 				address = getUserBusiness(iwc).getUsersMainAddress(applicant);
+				phone = getUserBusiness(iwc).getUsersHomePhone(applicant);
 				table.add(getSmallText(applicant.getName()), column++, row);
 				if (applicant.getPersonalID() != null) {
 					table.add(getSmallText(PersonalIDFormatter.format(applicant.getPersonalID(), locale)), column++, row);
 				}
 				if (address != null && address.getStreetAddress() != null) {
 					table.add(getSmallText(address.getStreetAddress()), column, row);
+				}
+				column++;
+				if (phone != null && phone.getNumber() != null) {
+					table.add(getSmallText(phone.getNumber()), column, row);
 				}
 				column++;
 				if (PIDChecker.getInstance().isFemale(applicant.getPersonalID())) {
