@@ -688,16 +688,18 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
         reminder.setEventDate (eventDate);
         reminder.setReminderDate (reminderDate);
         reminder.setUser (user);
+        reminder.setHandler (getUserBusiness().getRootAdministratorGroupID());
         reminder.store ();
-    }
-
-    public Collection findAllChildrenThatMustDoSchoolChoice () {
-        throw new UnsupportedOperationException ();
     }
 
     public SchoolChoiceReminder [] findAllSchoolChoiceReminders ()
         throws RemoteException, FinderException {
         return getSchoolChoiceReminderHome ().findAll ();
+    }
+
+    public SchoolChoiceReminder [] findUnhandledSchoolChoiceReminders
+        (final Group [] groups) throws RemoteException, FinderException {
+        return getSchoolChoiceReminderHome ().findUnhandled (groups);
     }
 
     public SchoolChoiceReminder findSchoolChoiceReminder (final int id)

@@ -1,6 +1,6 @@
 package se.idega.idegaweb.commune.school.business;
 
-import com.idega.user.data.User;
+import com.idega.user.data.*;
 import java.rmi.RemoteException;
 import java.util.*;
 import javax.ejb.*;
@@ -59,6 +59,9 @@ public interface SchoolChoiceBusiness extends com.idega.business.IBOService,com.
 
     SchoolChoiceReminder [] findAllSchoolChoiceReminders ()
         throws RemoteException, FinderException;
+
+    SchoolChoiceReminder [] findUnhandledSchoolChoiceReminders
+        (Group [] groups) throws RemoteException, FinderException;
 
     SchoolChoiceReminderReceiver [] findAllStudentsThatMustDoSchoolChoice ()
         throws RemoteException, FinderException; 

@@ -1,17 +1,17 @@
 package se.idega.idegaweb.commune.school.data;
 
 import com.idega.block.process.data.*;
-import com.idega.data.IDOLookup;
+import com.idega.data.*;
 import com.idega.user.data.*;
 import java.rmi.RemoteException;
 import java.util.*;
 import javax.ejb.FinderException;
 
 /**
- * Last modified: $Date: 2002/12/18 13:23:07 $ by $Author: staffan $
+ * Last modified: $Date: 2002/12/29 13:49:39 $ by $Author: staffan $
  *
  * @author <a href="http://www.staffannoteberg.com">Staffan Nöteberg</a>
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public class SchoolChoiceReminderBMPBean extends AbstractCaseBMPBean implements SchoolChoiceReminder {
     private static final String ENTITY_NAME = "sch_reminder";
@@ -101,6 +101,30 @@ public class SchoolChoiceReminderBMPBean extends AbstractCaseBMPBean implements 
 
     Collection ejbFindAll () throws FinderException, RemoteException {
         return idoFindIDsBySQL ("select * from " + ENTITY_NAME);
+    }
+
+    Collection ejbFindUnhandled (final Group [] groups)
+        throws FinderException, RemoteException {
+        final IDOQuery query = idoQuery();
+        final Calendar today = Calendar.getInstance ();
+        final String date = today.get (Calendar.YEAR)
+                + "-" + (today.get (Calendar.MONTH) + 1)
+                + "-" + today.get (Calendar.DATE);
+        query.appendSelect().append("scr.*").appendFrom().append(getEntityName()).append(" scr").append(", ").append(CaseBMPBean.TABLE_NAME).append(" pc");
+        query.appendWhere().append("scr.").append(getIDColumnName()).appendEqualSign().append("pc.").append(CaseBMPBean.TABLE_NAME+"_ID").appendAnd().append("pc.").append(CaseBMPBean.COLUMN_CASE_STATUS).appendEqualSign().appendWithinSingleQuotes("UBEH").appendAnd().append("pc.").append(CaseBMPBean.COLUMN_CASE_CODE).appendEqualSign().appendWithinSingleQuotes(SchoolChoiceReminder.CASE_CODE_KEY).appendAnd().append(COLUMN_REMINDER_DATE).append(" <= ").appendWithinSingleQuotes(date);
+
+        for (int i = 0; i < groups.length; i++) {
+            query.append (i == 0 ? " and (" : " or ");
+            final int groupId
+                    = ((Integer) groups [i].getPrimaryKey ()).intValue ();
+            query.append ("pc.handler_group_id = '" + groupId + "'");
+            // special notice for super admin group, i.e. 1
+            if (groupId == 1) query.append (" or 1 = 1");
+        }
+        query.append (")");
+        final Collection primaryKeys = idoFindPKsByQuery(query);
+
+        return primaryKeys;
     }
 
     private synchronized void insertCaseCode () {

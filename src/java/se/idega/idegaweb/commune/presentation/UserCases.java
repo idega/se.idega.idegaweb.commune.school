@@ -24,6 +24,9 @@ import se.cubecon.bun24.viewpoint.presentation.ViewpointForm;
 import se.idega.idegaweb.commune.business.CommuneCaseBusiness;
 import se.idega.idegaweb.commune.message.business.*;
 import se.idega.idegaweb.commune.message.data.*;
+import se.idega.idegaweb.commune.school.business.*;
+import se.idega.idegaweb.commune.school.data.*;
+import se.idega.idegaweb.commune.school.presentation.SchoolChoiceReminderView;
 
 /**
  * Title: UserCases
@@ -40,6 +43,7 @@ public class UserCases extends CommuneBlock {
 	private final static String PARAM_MANAGER_ID = ManagerView.PARAM_MANAGER_ID;
 	private int manager_page_id = -1;
 	private int viewpointPageId = -1;
+	private int reminderPageId = -1;
 
 	private boolean _showName = false;
 
@@ -173,14 +177,27 @@ public class UserCases extends CommuneBlock {
 
 			// 1. find my groups
 			final UserBusiness userBusiness = (UserBusiness) IBOLookup.getServiceInstance(iwc, UserBusiness.class);
-			final Collection groups = userBusiness.getUserGroups(userId);
+			final Collection groupCollection
+                    = userBusiness.getUserGroups(userId);
+            final Group [] groups
+                    = (Group[]) groupCollection.toArray(new Group[0]);
 
-			// 2. find unhandled viewpoints
-			ViewpointBusiness viewpointBusiness = (ViewpointBusiness) IBOLookup.getServiceInstance(iwc, ViewpointBusiness.class);
-			final Viewpoint[] viewpoints = viewpointBusiness.findUnhandledViewpointsInGroups((Group[]) groups.toArray(new Group[0]));
+			// 2. find unhandled cases
+			final SchoolChoiceBusiness schoolChoiceBusiness
+                    = (SchoolChoiceBusiness) IBOLookup.getServiceInstance
+                    (iwc, SchoolChoiceBusiness.class);
+			final SchoolChoiceReminder [] reminders
+                    = schoolChoiceBusiness.findUnhandledSchoolChoiceReminders
+                    (groups);
+			final ViewpointBusiness viewpointBusiness
+                    = (ViewpointBusiness) IBOLookup.getServiceInstance
+                    (iwc, ViewpointBusiness.class);
+			final Viewpoint[] viewpoints
+                    = viewpointBusiness.findUnhandledViewpointsInGroups(groups);
 
-			// 3. display unhandled viewpoints
-			if (viewpoints != null && viewpoints.length > 0) {
+			// 3. display unhandled cases
+			if ((viewpoints != null && viewpoints.length > 0) ||
+                (reminders != null && reminders.length > 0)) {
 				mainTable.setHeight(2, 12);
 				mainTable.add(getLocalizedSmallHeader(UNHANDLEDCASESINMYGROUPS_KEY, UNHANDLEDCASESINMYGROUPS_DEFAULT), 1, 3);
 				mainTable.setHeight(4, 6);
@@ -202,9 +219,18 @@ public class UserCases extends CommuneBlock {
 				messageList.add(getSmallHeader(localize(DATE_KEY, DATE_DEFAULT)), 4, row);
 				messageList.add(getSmallHeader(localize(HANDLERGROUP_KEY, HANDLERGROUP_DEFAULT)), 5, row++);
 
-				for (int i = 0; i < viewpoints.length; i++) {
-					addViewpointToMessageList(iwc, viewpoints[i], messageList, row++);
-				}
+                if (viewpoints != null) {
+                    for (int i = 0; i < viewpoints.length; i++) {
+                        addViewpointToMessageList(iwc, viewpoints[i],
+                                                  messageList, row++);
+                    }
+                }
+                if (reminders != null) {
+                    for (int i = 0; i < reminders.length; i++) {
+                        addReminderToMessageList(iwc, reminders[i], messageList,
+                                                 row++);
+                    }
+                }
 				mainTable.add(form, 1, 5);
 			}
 		}
@@ -279,12 +305,11 @@ public class UserCases extends CommuneBlock {
 
 	private void addViewpointToMessageList(final IWContext iwc, final Viewpoint viewpoint, final Table messageList, int row) throws Exception {
 
-		DateFormat dateFormat = CustomDateFormat.getDateTimeInstance(iwc.getCurrentLocale());
-		Date caseDate = new Date(viewpoint.getCreated().getTime());
+		final DateFormat dateFormat = SimpleDateFormat.getDateInstance(SimpleDateFormat.SHORT, iwc.getCurrentLocale());
+		final Text caseDate = getSmallText(dateFormat.format(new Date(viewpoint.getCreated().getTime())));
 		Text caseNumber = getSmallText(viewpoint.getPrimaryKey().toString());
 		final Text category = getSmallText(viewpoint.getCategory());
 		final Text subject = getSmallText(viewpoint.getSubject());
-		final Text date = getSmallText(dateFormat.format(caseDate));
 		final Group handlerGroup = viewpoint.getHandlerGroup();
 		final Text group = getSmallText(handlerGroup != null ? handlerGroup.getName() : "-");
 
@@ -304,8 +329,43 @@ public class UserCases extends CommuneBlock {
 		messageList.add(caseNumber, 1, row);
 		messageList.add(category, 2, row);
 		messageList.add(subject, 3, row);
-		messageList.add(date, 4, row);
+		messageList.add(caseDate, 4, row);
 		messageList.add(group, 5, row);
+	}
+
+	private void addReminderToMessageList(final IWContext iwc, final SchoolChoiceReminder reminder, final Table messageList, int row) throws Exception {
+
+		final DateFormat dateFormat = SimpleDateFormat.getDateInstance(SimpleDateFormat.SHORT, iwc.getCurrentLocale());
+		final Text caseDate = getSmallText(dateFormat.format(new Date(reminder.getCreated().getTime())));
+		Text caseNumber = getSmallText(reminder.getPrimaryKey().toString());
+		Text caseType = getSmallText(getCaseBusiness(iwc).getCaseBusiness(reminder.getCaseCode()).getLocalizedCaseDescription(reminder, iwc.getCurrentLocale()));
+		final Group handlerGroup = reminder.getHandler();
+		final Text group = getSmallText(handlerGroup != null ? handlerGroup.getName() : "-");
+
+		if (getReminderPage() != -1) {
+			Link reminderLink = getSmallLink(reminder.getPrimaryKey().toString());
+			reminderLink.setPage(getReminderPage());
+			reminderLink.addParameter
+                    (SchoolChoiceReminderView.ACTION_KEY,
+                     SchoolChoiceReminderView.SHOW_DETAILS_KEY);
+			reminderLink.addParameter
+                    (SchoolChoiceReminderView.CASE_ID_KEY,
+                     reminder.getPrimaryKey().toString());
+			caseNumber = reminderLink;
+		}
+
+		if (row % 2 == 0)
+			messageList.setRowColor (row, getZebraColor1());
+		else
+			messageList.setRowColor (row, getZebraColor2());
+
+		messageList.add (caseNumber, 1, row);
+		messageList.add (caseType, 2, row);
+        final String reminderText = reminder.getText ();
+        messageList.add (reminderText.length () < 25 ? reminderText
+                         : (reminderText.substring (0, 20) + "..."), 3, row);
+		messageList.add (caseDate, 4, row);
+		messageList.add (group, 5, row);
 	}
 
 	private Table getNavigationTable(int caseSize) {
@@ -364,6 +424,14 @@ public class UserCases extends CommuneBlock {
 
 	public int getViewpointPage() {
 		return viewpointPageId;
+	}
+
+	public void setReminderPage(final IBPage page) {
+		reminderPageId = page.getID();
+	}
+
+	public int getReminderPage() {
+		return reminderPageId;
 	}
 
 	public void setManagerPage(IBPage page) {

@@ -20,19 +20,19 @@ import se.idega.idegaweb.commune.school.data.SchoolChoiceReminder;
  * and entity ejb classes in {@link se.idega.idegaweb.commune.school.data}.
  * <p>
  * <p>
- * Last modified: $Date: 2002/12/29 11:18:34 $ by $Author: staffan $
+ * Last modified: $Date: 2002/12/29 13:49:39 $ by $Author: staffan $
  *
  * @author <a href="http://www.staffannoteberg.com">Staffan Nöteberg</a>
- * @version $Revision: 1.16 $
+ * @version $Revision: 1.17 $
  * @see javax.ejb
  */
 public class SchoolChoiceReminderView extends CommuneBlock {
     private static final String PREFIX = "scr_";
-    private static final String ACTION_KEY = PREFIX + "action";
+    public static final String ACTION_KEY = PREFIX + "action";
 	private final static String CONFIRM_ENTER_DEFAULT = "Din påminnelse är nu registrerad";
 	private final static String GOBACKTOMYPAGE_DEFAULT = "Tillbaka till Min sida";
     private final static String CASE_ID_DEFAULT = "Nr.";
-    private final static String CASE_ID_KEY = PREFIX + "case_id";
+    public final static String CASE_ID_KEY = PREFIX + "case_id";
     private final static String CONFIRM_ENTER_KEY = PREFIX + "confirm_enter_reminder";
     private final static String GOBACKTOMYPAGE_KEY = PREFIX + "goBackToMyPage";
     private static final String ADDRESS_DEFAULT = "Adress";
@@ -61,7 +61,7 @@ public class SchoolChoiceReminderView extends CommuneBlock {
     private static final String REMINDER_TEXT_KEY = PREFIX + "reminder_text";
     private static final String SCHOOLCHOICEREMINDER_DEFAULT = "Påminnelse om skolval";
     private static final String SCHOOLCHOICEREMINDER_KEY = PREFIX + "schoolchoicereminder";
-    private static final String SHOW_DETAILS_KEY = PREFIX + "show_details";
+    public static final String SHOW_DETAILS_KEY = PREFIX + "show_details";
     private static final String SSN_DEFAULT = "Personnummer";
     private static final String SSN_KEY = PREFIX + "ssn";
     private static final String STUDENT_LIST_KEY = PREFIX + "student_list";
