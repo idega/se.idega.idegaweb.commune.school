@@ -399,7 +399,6 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
   		needAnd = true;
   	}
   	
-//  	System.out.println("[SchoolChoiceBean] sql : "+query.toString());
   	return this.idoFindPKsByQuery(query);
   }
   
