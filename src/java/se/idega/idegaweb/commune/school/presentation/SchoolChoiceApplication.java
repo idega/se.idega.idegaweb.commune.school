@@ -456,7 +456,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
   }
 
   private PresentationObject getChoiceSchool(IWContext iwc,User child)throws java.rmi.RemoteException{
-    Table T = new Table(3,10);
+    Table T = new Table(3,11);
     T.mergeCells(1,1,3,1);
     T.add(getHeader(iwrb.getLocalizedString("school.choice_for_schoolyear","Choice for the schoolyear")),1,1);
     Date d = child.getDateOfBirth();
@@ -491,29 +491,42 @@ public class SchoolChoiceApplication extends CommuneBlock {
     T.mergeCells(2,3,3,3);
     T.mergeCells(2,4,3,4);
     T.mergeCells(2,5,3,5);
+    T.mergeCells(2,6,3,6);
     typeDrop.setOnChange(getFilterCallerScript(iwc,prmType,prmFirstArea,prmFirstSchool,1));
     typeDrop.setOnChange(getFilterCallerScript(iwc,prmType,prmSecondArea,prmSecondSchool,1));
     typeDrop.setOnChange(getFilterCallerScript(iwc,prmType,prmThirdArea,prmThirdSchool,1));
     drpFirstArea.setOnChange(getFilterCallerScript(iwc,prmType,prmFirstArea,prmFirstSchool,2));
     drpSecondArea.setOnChange(getFilterCallerScript(iwc,prmType,prmSecondArea,prmSecondSchool,2));
     drpThirdArea.setOnChange(getFilterCallerScript(iwc,prmType,prmThirdArea,prmThirdSchool,2));
+    int row = 3;
     if(age.getYears()==6){
-      T.add(chkAutoAssign,2,3);
-      T.add(getSmallText(iwrb.getLocalizedString("school.six_year_childcare","I want my six years old to be within childcare")),2,3);
+      T.add(chkAutoAssign,2,row);
+      T.add(getSmallText(iwrb.getLocalizedString("school.six_year_childcare","I want my six years old to be within childcare")),2,row);
     }
-    T.add(chkAutoAssign,2,4);
-    T.add(getSmallText(iwrb.getLocalizedString("school.assign_school_placing","Assign me a school placing")),2,4);
-    T.add(chkSchoolChange,2,5);
-    T.add(getSmallText(iwrb.getLocalizedString("school.change_of_school","Change of school")),2,5);
-    T.add(getSmallText(iwrb.getLocalizedString("school.first_choice","First choice")),1,6);
-    T.add(drpFirstArea,2,6);
-    T.add(drpFirstSchool,3,6);
-    T.add(getSmallText(iwrb.getLocalizedString("school.second_choice","Second choice")),1,7);
-    T.add(drpSecondArea,2,7);
-    T.add(drpSecondSchool,3,7);
-    T.add(getSmallText(iwrb.getLocalizedString("school.third_choice","Third choice")),1,8);
-    T.add(drpThirdArea,2,8);
-    T.add(drpThirdSchool,3,8);
+    row++;
+    T.add(chkAutoAssign,2,row);
+    T.add(getSmallText(iwrb.getLocalizedString("school.assign_school_placing","Assign me a school placing")),2,row);
+    row++;
+    T.add(chkSchoolChange,2,row);
+    T.add(getSmallText(iwrb.getLocalizedString("school.change_of_school","Change of school")),2,row);
+    row++;
+     if(age.getYears()==6){
+      T.add(txtLangChoice,2,row);
+      T.add(getSmallText(iwrb.getLocalizedString("school.six_year_language","Language")),2,row);
+    }
+    row++;
+    T.add(getSmallText(iwrb.getLocalizedString("school.first_choice","First choice")),1,row);
+    T.add(drpFirstArea,2,row);
+    T.add(drpFirstSchool,3,row);
+    row++;
+    T.add(getSmallText(iwrb.getLocalizedString("school.second_choice","Second choice")),1,row);
+    T.add(drpSecondArea,2,row);
+    T.add(drpSecondSchool,3,row);
+    row++;
+    T.add(getSmallText(iwrb.getLocalizedString("school.third_choice","Third choice")),1,row);
+    T.add(drpThirdArea,2,row);
+    T.add(drpThirdSchool,3,row);
+    row++;
 
 
 
