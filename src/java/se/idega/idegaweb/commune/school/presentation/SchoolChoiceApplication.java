@@ -493,7 +493,11 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		}
 
 		try {
-			SchoolSeason previousSeason = schCommBiz.getPreviousSchoolSeason(season);
+			SchoolSeason previousSeason = null;
+			if (_useOngoingSeason)
+				previousSeason = season;
+			else
+				previousSeason = schCommBiz.getPreviousSchoolSeason(season);
 			schoolClassMember = schBuiz.getSchoolBusiness().getSchoolClassMemberHome().findByUserAndSeason(child, previousSeason);
 			schoolClass = schBuiz.getSchoolBusiness().getSchoolClassHome().findByPrimaryKey(new Integer(schoolClassMember.getSchoolClassId()));
 			school = schBuiz.getSchool(schoolClass.getSchoolId());
