@@ -24,7 +24,7 @@ import com.idega.user.data.User;
 /**
  * @author Roar
  * In addition to being a regular MessageBox, AdminMessageBox views messages handled by 
- * the groups the user is member of.
+ * the groups the user is member of and shows the owner of each message.
  * 
  */
 public class AdminMessageBox extends MessageBox {
