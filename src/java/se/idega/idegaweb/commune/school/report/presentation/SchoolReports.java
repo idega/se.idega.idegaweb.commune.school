@@ -1,5 +1,5 @@
 /*
- * $Id: SchoolReports.java,v 1.11 2004/01/12 15:32:56 anders Exp $
+ * $Id: SchoolReports.java,v 1.12 2004/01/19 08:46:06 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -13,13 +13,13 @@ import java.rmi.RemoteException;
 
 import se.idega.idegaweb.commune.presentation.CommuneBlock;
 import se.idega.idegaweb.commune.school.report.business.NackaCitizenElementarySchoolPlacementReportModel;
+import se.idega.idegaweb.commune.school.report.business.NackaCommuneHighSchoolPlacementReportModel;
 import se.idega.idegaweb.commune.school.report.business.NackaCompulsoryHighSchoolPlacementReportModel;
 import se.idega.idegaweb.commune.school.report.business.NackaCompulsorySchoolOCCPlacementReportModel;
 import se.idega.idegaweb.commune.school.report.business.NackaCompulsorySchoolPlacementReportModel;
 import se.idega.idegaweb.commune.school.report.business.NackaElementarySchoolOCCPlacementReportModel;
 import se.idega.idegaweb.commune.school.report.business.NackaElementarySchoolPlacementReportModel;
 import se.idega.idegaweb.commune.school.report.business.NackaHighSchoolAgePlacementReportModel;
-import se.idega.idegaweb.commune.school.report.business.NackaHighSchoolPlacementReportModel;
 import se.idega.idegaweb.commune.school.report.business.NackaHighSchoolYearPlacementReportModel;
 import se.idega.idegaweb.commune.school.report.business.NackaPrivateSchoolOCCPlacementReportModel;
 import se.idega.idegaweb.commune.school.report.business.NackaPrivateSchoolPlacementReportModel;
@@ -38,10 +38,10 @@ import com.idega.presentation.ui.SubmitButton;
 /** 
  * This block handles selecting and presenting school reports.
  * <p>
- * Last modified: $Date: 2004/01/12 15:32:56 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/19 08:46:06 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.11 $
+ * @version $Revision: 1.12 $
  */
 public class SchoolReports extends CommuneBlock {
 
@@ -68,7 +68,7 @@ public class SchoolReports extends CommuneBlock {
 				NackaElementarySchoolOCCPlacementReportModel.class,
 				NackaHighSchoolYearPlacementReportModel.class,
 				NackaHighSchoolAgePlacementReportModel.class,
-				NackaHighSchoolPlacementReportModel.class,
+				NackaCommuneHighSchoolPlacementReportModel.class,
 				NackaCompulsorySchoolPlacementReportModel.class,
 				NackaCompulsorySchoolOCCPlacementReportModel.class,
 				NackaCompulsoryHighSchoolPlacementReportModel.class,
