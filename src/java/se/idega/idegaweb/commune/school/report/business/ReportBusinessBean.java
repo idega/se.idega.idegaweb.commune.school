@@ -1,5 +1,5 @@
 /*
- * $Id: ReportBusinessBean.java,v 1.27 2004/01/20 15:02:34 anders Exp $
+ * $Id: ReportBusinessBean.java,v 1.28 2004/01/21 14:46:30 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -29,10 +29,10 @@ import com.idega.block.school.data.SchoolStudyPathHome;
 /** 
  * Business logic for school reports.
  * <p>
- * Last modified: $Date: 2004/01/20 15:02:34 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/21 14:46:30 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.27 $
+ * @version $Revision: 1.28 $
  */
 public class ReportBusinessBean extends com.idega.business.IBOServiceBean implements ReportBusiness  {
 
@@ -425,6 +425,27 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 			try {
 				SchoolStudyPathHome home = (SchoolStudyPathHome) com.idega.data.IDOLookup.getHome(SchoolStudyPath.class);
 				_studyPaths = home.findAllStudyPathsByCodeLength(2);
+			} catch (Exception e) {}
+		}
+		return _studyPaths;
+	}
+	
+	/**
+	 * Returns all study paths including sub paths (directions). 
+	 */
+	public Collection getAllStudyPathsIncludingDirections() {
+		if (_studyPaths == null) {
+			try {
+				_studyPaths = new ArrayList();
+				SchoolStudyPathHome home = (SchoolStudyPathHome) com.idega.data.IDOLookup.getHome(SchoolStudyPath.class);
+				Collection c = home.findAllStudyPaths();
+				Iterator iter = c.iterator();
+				while (iter.hasNext()) {
+					SchoolStudyPath sp = (SchoolStudyPath) iter.next();
+					if (sp.getDescription().length() > 3) {
+						_studyPaths.add(sp);
+					}
+				}
 			} catch (Exception e) {}
 		}
 		return _studyPaths;

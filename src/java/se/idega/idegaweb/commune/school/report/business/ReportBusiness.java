@@ -7,6 +7,7 @@ public interface ReportBusiness extends com.idega.business.IBOService
  public int getAfterSchool6TypeId() throws java.rmi.RemoteException;
  public int getAfterSchool7_9TypeId() throws java.rmi.RemoteException;
  public java.util.Collection getAllStudyPaths() throws java.rmi.RemoteException;
+ public java.util.Collection getAllStudyPathsIncludingDirections() throws java.rmi.RemoteException;
  public int getCompulsoryHighSchoolTypeId() throws java.rmi.RemoteException;
  public java.util.Collection getCompulsoryHighSchools() throws java.rmi.RemoteException;
  public java.util.Collection getCompulsorySchoolAreas() throws java.rmi.RemoteException;
