@@ -1,5 +1,5 @@
 /*
- * $Id: ReportBusinessBean.java,v 1.1 2003/12/08 16:24:24 anders Exp $
+ * $Id: ReportBusinessBean.java,v 1.2 2003/12/09 14:16:45 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -11,16 +11,20 @@ package se.idega.idegaweb.commune.school.report.business;
 
 import java.lang.reflect.Constructor;
 
+import com.idega.block.school.business.SchoolBusiness;
+
 /** 
  * Business logic for school reports.
  * <p>
- * Last modified: $Date: 2003/12/08 16:24:24 $ by $Author: anders $
+ * Last modified: $Date: 2003/12/09 14:16:45 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class ReportBusinessBean extends com.idega.business.IBOServiceBean implements ReportBusiness  {
 
+	private int _schoolSeasonId = -1;
+	
 	/**
 	 * Factory method for creating a report model with the specified class.
 	 * @param reportModelClass the report model class to instantiate 
@@ -49,7 +53,7 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 	 */
 	public int getElementaryNackaCommunePlacementCount(String schoolYearName) {
 		ReportQuery query = new ReportQuery();
-		query.setSelectCountPlacements();
+		query.setSelectCountPlacements(getSchoolSeasonId());
 		query.setOnlyNackaCitizens();
 		query.setOnlyNackaSchools();
 		if (schoolYearName.equals("F")) {
@@ -70,7 +74,7 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 	 */
 	public int getElementaryOtherCommunesPlacementCount(String schoolYearName) {
 		ReportQuery query = new ReportQuery();
-		query.setSelectCountPlacements();
+		query.setSelectCountPlacements(getSchoolSeasonId());
 		query.setOnlyNackaCitizens();
 		query.setOnlySchoolsInOtherCommunes();
 		if (schoolYearName.equals("F")) {
@@ -91,7 +95,7 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 	 */
 	public int getElementaryPrivateSchoolPlacementCount(String schoolYearName) {
 		ReportQuery query = new ReportQuery();
-		query.setSelectCountPlacements();
+		query.setSelectCountPlacements(getSchoolSeasonId());
 		query.setOnlyNackaCitizens();
 		if (schoolYearName.equals("F")) {
 			query.setSchoolTypePreSchoolClass();
@@ -111,7 +115,7 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 	 */
 	public int getElementaryForeignSchoolPlacementCount(String schoolYearName) {
 		ReportQuery query = new ReportQuery();
-		query.setSelectCountPlacements();
+		query.setSelectCountPlacements(getSchoolSeasonId());
 		query.setOnlyNackaCitizens();
 		if (schoolYearName.equals("F")) {
 			query.setSchoolTypePreSchoolClass();
@@ -130,7 +134,7 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 	 */
 	public int getCompulsoryNackaCommunePlacementCount(String schoolYearName) {
 		ReportQuery query = new ReportQuery();
-		query.setSelectCountPlacements();
+		query.setSelectCountPlacements(getSchoolSeasonId());
 		query.setOnlyNackaCitizens();
 		query.setOnlyNackaSchools();
 		if (schoolYearName.equals("F")) {
@@ -151,7 +155,7 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 	 */
 	public int getCompulsoryOtherCommunesPlacementCount(String schoolYearName) {
 		ReportQuery query = new ReportQuery();
-		query.setSelectCountPlacements();
+		query.setSelectCountPlacements(getSchoolSeasonId());
 		query.setOnlyNackaCitizens();
 		query.setOnlySchoolsInOtherCommunes();
 		if (schoolYearName.equals("F")) {
@@ -172,7 +176,7 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 	 */
 	public int getCompulsoryPrivateSchoolPlacementCount(String schoolYearName) {
 		ReportQuery query = new ReportQuery();
-		query.setSelectCountPlacements();
+		query.setSelectCountPlacements(getSchoolSeasonId());
 		query.setOnlyNackaCitizens();
 		if (schoolYearName.equals("F")) {
 			return 0;
@@ -183,6 +187,19 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 		query.setOnlyPrivateSchools();
 		query.setNotForieignSchools();
 		return query.execute();
+	}
+	
+	/**
+	 * Returns the current school season id.
+	 */
+	public int getSchoolSeasonId() {
+		if (_schoolSeasonId == -1) {
+			try {
+				SchoolBusiness sb = (SchoolBusiness) this.getServiceInstance(SchoolBusiness.class);
+				_schoolSeasonId = ((Integer) sb.getCurrentSchoolSeason().getPrimaryKey()).intValue();
+			} catch (Exception e) {}
+		}
+		return _schoolSeasonId;
 	}
 
 	/**

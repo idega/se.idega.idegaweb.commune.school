@@ -1,5 +1,5 @@
 /*
- * $Id: ReportQuery.java,v 1.3 2003/12/09 13:01:02 anders Exp $
+ * $Id: ReportQuery.java,v 1.4 2003/12/09 14:16:45 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -19,10 +19,10 @@ import com.idega.util.database.ConnectionBroker;
 /** 
  * Handles the SQL logic for school report calculations.
  * <p>
- * Last modified: $Date: 2003/12/09 13:01:02 $ by $Author: anders $
+ * Last modified: $Date: 2003/12/09 14:16:45 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class ReportQuery {
 
@@ -36,14 +36,16 @@ public class ReportQuery {
 	}	
 	
 	/**
-	 * Sets the query .
+	 * Sets the query to select number of placements.
+	 * @param schoolSeasonId the school season id for the placements to count
 	 */
-	public void setSelectCountPlacements() {
+	public void setSelectCountPlacements(int schoolSeasonId) {
 		sql = "select count(*) from ic_user u, ic_address a, ic_user_address ua, sch_class_member cm," +
 				" sch_school_class sc, sch_school s, sch_school_year sy where" +
 				" cm.register_date <= '" + currentDate + 
 				"' and (cm. removed_date is null or cm.removed_date > '" + currentDate + "')" + 
-				" and sc.school_id = s.sch_school_id and sc.sch_school_class_id = cm.sch_school_class_id";
+				" and sc.school_id = s.sch_school_id and sc.sch_school_class_id = cm.sch_school_class_id" +
+				" sc.sch_school_season_id = " + schoolSeasonId;
 	}
 	
 	/**
@@ -136,7 +138,6 @@ public class ReportQuery {
 	 * Returns -1 if error or no row found. 
 	 */
 	public int execute() {
-		System.out.println("SQL = " + sql);
 		int result = -1;
 		Connection connection = null;
 		Statement statement = null;
