@@ -1,5 +1,5 @@
 /*
- * $Id: NackaCCHourIntervalReportModel.java,v 1.3 2004/03/16 09:15:59 anders Exp $
+ * $Id: NackaCCHourIntervalReportModel.java,v 1.4 2004/09/24 07:44:29 malin Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -14,26 +14,33 @@ import java.rmi.RemoteException;
 /** 
  * Report model for total number of child care placements per child care hour interval.
  * <p>
- * Last modified: $Date: 2004/03/16 09:15:59 $ by $Author: anders $
+ * Last modified: $Date: 2004/09/24 07:44:29 $ by $Author: malin $
  *
  * @author Anders Lindman
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class NackaCCHourIntervalReportModel extends ReportModel {
 
 	private final static int ROW_SIZE = 7;
-	private final static int COLUMN_SIZE = 4;
+	private final static int COLUMN_SIZE = 6;
 	
 	private final static int ROW_METHOD_SUM_HOURS = 1;
 	private final static int ROW_METHOD_TOTAL_PRE_SCHOOL_OPERATION = 2;
 	private final static int ROW_METHOD_TOTAL_AFTER_SCHOOL_OPERATION = 3;
 	private final static int ROW_METHOD_TOTAL = 4;
 
-	private final static int COLUMN_METHOD_HOURS_1_15 = 101;
+	/*private final static int COLUMN_METHOD_HOURS_1_15 = 101;
 	private final static int COLUMN_METHOD_HOURS_16_25 = 102;
 	private final static int COLUMN_METHOD_HOURS_26_35 = 103;
 	private final static int COLUMN_METHOD_HOURS_36_ = 104;
-
+*/
+	private final static int COLUMN_METHOD_HOURS_1_15 = 101;
+	private final static int COLUMN_METHOD_HOURS_16_24 = 102;
+	private final static int COLUMN_METHOD_HOURS_25_29 = 103;
+	private final static int COLUMN_METHOD_HOURS_30_34 = 104;
+	private final static int COLUMN_METHOD_HOURS_35_39 = 105;
+	private final static int COLUMN_METHOD_HOURS_40_ = 106;
+	
 	private final static String QUERY_HOUR_INTERVAL_PLACEMENTS = "hour_interval_placements";
 	
 	private final static String KEY_REPORT_TITLE = KP + "title_nacka_child_care_hour_interval_placements";
@@ -83,15 +90,19 @@ public class NackaCCHourIntervalReportModel extends ReportModel {
 	protected Header[] buildColumnHeaders() {
 		Header[] headers = new Header[1];
 		
-		Header h = new Header(KEY_CHILD_CARE_HOURS, Header.HEADERTYPE_COLUMN_HEADER, 4);
+		Header h = new Header(KEY_CHILD_CARE_HOURS, Header.HEADERTYPE_COLUMN_HEADER, 6);
 		Header child0 = new Header("1-15", Header.HEADERTYPE_COLUMN_NONLOCALIZED_HEADER);
-		Header child1 = new Header("16-25", Header.HEADERTYPE_COLUMN_NONLOCALIZED_HEADER);
-		Header child2 = new Header("26-35", Header.HEADERTYPE_COLUMN_NONLOCALIZED_HEADER);
-		Header child3 = new Header(KEY_GTEQ_36, Header.HEADERTYPE_COLUMN_HEADER);
+		Header child1 = new Header("16-24", Header.HEADERTYPE_COLUMN_NONLOCALIZED_HEADER);
+		Header child2 = new Header("25-29", Header.HEADERTYPE_COLUMN_NONLOCALIZED_HEADER);
+		Header child3 = new Header("30-34", Header.HEADERTYPE_COLUMN_NONLOCALIZED_HEADER);
+		Header child4 = new Header("35-39", Header.HEADERTYPE_COLUMN_NONLOCALIZED_HEADER);
+		Header child5 = new Header(KEY_GTEQ_40, Header.HEADERTYPE_COLUMN_HEADER);
 		h.setChild(0, child0);
 		h.setChild(1, child1);
 		h.setChild(2, child2);
 		h.setChild(3, child3);
+		h.setChild(4, child4);
+		h.setChild(5, child5);
 		headers[0] = h;
 		
 		return headers;
@@ -110,13 +121,19 @@ public class NackaCCHourIntervalReportModel extends ReportModel {
 					columnMethod = COLUMN_METHOD_HOURS_1_15;
 					break;
 				case 1:
-					columnMethod = COLUMN_METHOD_HOURS_16_25;
+					columnMethod = COLUMN_METHOD_HOURS_16_24;
 					break;
 				case 2:
-					columnMethod = COLUMN_METHOD_HOURS_26_35;
+					columnMethod = COLUMN_METHOD_HOURS_25_29;
 					break;
 				case 3:
-					columnMethod = COLUMN_METHOD_HOURS_36_;
+					columnMethod = COLUMN_METHOD_HOURS_30_34;
+					break;
+				case 4:
+					columnMethod = COLUMN_METHOD_HOURS_35_39;
+					break;
+				case 5:
+					columnMethod = COLUMN_METHOD_HOURS_40_;
 					break;
 			}
 
@@ -166,14 +183,20 @@ public class NackaCCHourIntervalReportModel extends ReportModel {
 					case COLUMN_METHOD_HOURS_1_15:
 						value = getChildCareHoursPlacementCount(1, 15, schoolType);
 						break;
-					case COLUMN_METHOD_HOURS_16_25:
-						value = getChildCareHoursPlacementCount(16, 25, schoolType);
+					case COLUMN_METHOD_HOURS_16_24:
+						value = getChildCareHoursPlacementCount(16, 24, schoolType);
 						break;
-					case COLUMN_METHOD_HOURS_26_35:
-						value = getChildCareHoursPlacementCount(26, 35, schoolType);
+					case COLUMN_METHOD_HOURS_25_29:
+						value = getChildCareHoursPlacementCount(25, 29, schoolType);
 						break;
-					case COLUMN_METHOD_HOURS_36_:
-						value = getChildCareHoursPlacementCount(36, 168, schoolType);
+					case COLUMN_METHOD_HOURS_30_34:
+						value = getChildCareHoursPlacementCount(30, 34, schoolType);
+						break;
+					case COLUMN_METHOD_HOURS_35_39:
+						value = getChildCareHoursPlacementCount(35, 39, schoolType);
+						break;
+					case COLUMN_METHOD_HOURS_40_:
+						value = getChildCareHoursPlacementCount(40, 168, schoolType);
 						break;
 				}
 				break;
