@@ -130,9 +130,9 @@ public class UserCases extends CommuneBlock {
 			
 			//Finding cases
 			List cases = getCases(iwc, user, _startCase, _numberOfCases);
+			int numberOfCases = getNumberOfCases(iwc, user);
 					
 			if (cases != null & !cases.isEmpty()) {
-				int casesSize = cases.size();
 				Table table = new Table();
 				table.setCellpadding(getCellpadding());
 				table.setCellspacing(getCellspacing());
@@ -140,7 +140,7 @@ public class UserCases extends CommuneBlock {
 				table.setColumns(getLastColumn());
 
 				table.mergeCells(1, 1, table.getColumns(), 1);
-				table.add(getNavigationTable(casesSize), 1, 1);
+				table.add(getNavigationTable(numberOfCases), 1, 1);
 
 				Form form = new Form();
 				form.add(table);
@@ -169,6 +169,23 @@ public class UserCases extends CommuneBlock {
 		}
 	}
 
+
+	/**
+	 * @param iwc
+	 * @param user
+	 * @return
+	 */
+	protected int getNumberOfCases(IWContext iwc, User user) {
+		try {
+			return getCommuneCaseBusiness(iwc).getCaseBusiness().getNumberOfCasesForUserExceptCodes(user, getCommuneCaseBusiness(iwc).getUserHiddenCaseCodes());
+		}
+		catch (RemoteException e) {
+			return 0;
+		}
+		catch (Exception e) {
+			return 0;
+		}
+	}
 
 	protected int addTableHeader(Table table, int row) {
 		table.setRowColor(row, getHeaderColor());

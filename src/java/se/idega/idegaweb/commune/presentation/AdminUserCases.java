@@ -53,6 +53,19 @@ public class AdminUserCases extends UserCases {
 		addViewPoints(iwc, mainTable, ((Integer) user.getPrimaryKey()).intValue());
 	}
 	
+	protected int getNumberOfCases(IWContext iwc, User user) {
+		try {
+			Collection groups = getGroups(iwc, user.getNodeID());
+			return getCommuneCaseBusiness(iwc).getCaseBusiness().getNumberOfCasesForUserAndGroupsExceptCodes(user, groups, getCommuneCaseBusiness(iwc).getUserHiddenCaseCodes());
+		}
+		catch (RemoteException e) {
+			return 0;
+		}
+		catch (Exception e) {
+			return 0;
+		}
+	}
+
 	/**
 	 * Returns a list of all the cases for a user, including the cases handled by any of the users groups.
 	 * The method does not return viewpoints.
