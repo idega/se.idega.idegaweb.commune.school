@@ -735,7 +735,7 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 	}
 	
 	public IDOQuery getIDOQuery(int schoolID, int seasonID, int schoolYear, int[] choiceOrder, String[] validStatuses, String searchStringForUser, boolean selectCount, boolean selectOnlyChildIDs, int orderBy, int placementType) {
-		return getIDOQuery(schoolID, seasonID, schoolYear, choiceOrder, validStatuses, searchStringForUser, selectCount, selectOnlyChildIDs, true, orderBy, placementType);
+		return getIDOQuery(schoolID, seasonID, schoolYear, choiceOrder, validStatuses, searchStringForUser, selectCount, selectOnlyChildIDs, false, orderBy, placementType);
 	}
 	
 	public IDOQuery getIDOQuery(int schoolID, int seasonID, int schoolYear, int[] choiceOrder, String[] validStatuses, String searchStringForUser, boolean selectCount, boolean selectOnlyChildIDs, boolean searchOnAddr, int orderBy, int placementType) {
