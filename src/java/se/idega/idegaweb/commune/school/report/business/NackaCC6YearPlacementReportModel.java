@@ -1,5 +1,5 @@
 /*
- * $Id: NackaCC6YearPlacementReportModel.java,v 1.3 2004/01/27 12:37:26 anders Exp $
+ * $Id: NackaCC6YearPlacementReportModel.java,v 1.4 2004/01/27 14:30:14 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -23,10 +23,10 @@ import com.idega.block.school.data.SchoolArea;
  * Report model for child care after school and daycare placements 
  * for 6 years children in Nacka.
  * <p>
- * Last modified: $Date: 2004/01/27 12:37:26 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/27 14:30:14 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class NackaCC6YearPlacementReportModel extends ReportModel {
 
@@ -306,9 +306,12 @@ public class NackaCC6YearPlacementReportModel extends ReportModel {
 				case ROW_METHOD_SUM:
 					int i = row - 1;
 					int rowCount = 0;
-					while (i >= 0 && getCell(i, 0).getRowMethod() != ROW_METHOD_SUM) {
-						value += getCell(i, 0).getFloatValue();
-						rowCount++;
+					while (i >= 0 && getCell(i, 1).getRowMethod() != ROW_METHOD_SUM) {
+						float hours = getCell(i, 1).getFloatValue(); 
+						value += hours;
+						if (value > 0) {
+							rowCount++;
+						}
 						i--;
 					}
 					if (rowCount > 0) {
@@ -458,9 +461,9 @@ public class NackaCC6YearPlacementReportModel extends ReportModel {
 	}
 	
 	/**
-	 * Returns the number of child placements for the specified school.
+	 * Returns the number of child placement mean hours for the specified school.
 	 */
-	protected int getProviderMeanHours(int schoolId) throws RemoteException {
+	protected float getProviderMeanHours(int schoolId) throws RemoteException {
 		ReportBusiness rb = getReportBusiness();
 		int schoolType = rb.getAfterSchool6TypeId();
 
@@ -478,7 +481,7 @@ public class NackaCC6YearPlacementReportModel extends ReportModel {
 		query.setInt(1, schoolId);
 		query.setInt(2, schoolType);
 		
-		return query.execute();
+		return query.executeFloat();
 	}
 	
 }
