@@ -1,5 +1,5 @@
 /*
- * $Id: ReportBlock.java,v 1.18 2004/01/23 12:34:40 anders Exp $
+ * $Id: ReportBlock.java,v 1.19 2004/01/23 13:05:18 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -29,10 +29,10 @@ import com.idega.presentation.ui.PrintButton;
 /** 
  * This is the base class for school report blocks.
  * <p>
- * Last modified: $Date: 2004/01/23 12:34:40 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/23 13:05:18 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.18 $
+ * @version $Revision: 1.19 $
  */
 public class ReportBlock extends CommuneBlock {
 
@@ -282,7 +282,8 @@ public class ReportBlock extends CommuneBlock {
 				int headerType = header.getHeaderType();
 				if (headerType == Header.HEADERTYPE_ROW_SPACER) {
 					s = "";
-				} else if (headerType == Header.HEADERTYPE_ROW_NONLOCALIZED_HEADER) {
+				} else if (headerType == Header.HEADERTYPE_ROW_NONLOCALIZED_HEADER
+						|| header.getHeaderType() == Header.HEADERTYPE_ROW_NONLOCALIZED_NORMAL) {
 					s = header.getLocalizationKey();
 				} else {
 					s = localize(header.getLocalizationKey(), header.getLocalizationKey());					
@@ -297,7 +298,8 @@ public class ReportBlock extends CommuneBlock {
 				table.mergeCells(1, row, _reportModel.getColumnSize() + 1, row);
 				table.setHeight(1, row, "26");
 				table.setVerticalAlignment(1, row, Table.VERTICAL_ALIGN_BOTTOM);
-				if (header.getHeaderType() == Header.HEADERTYPE_ROW_NONLOCALIZED_HEADER) {
+				if (header.getHeaderType() == Header.HEADERTYPE_ROW_NONLOCALIZED_HEADER
+						|| header.getHeaderType() == Header.HEADERTYPE_ROW_NONLOCALIZED_NORMAL) {
 					s = header.getLocalizationKey();
 				} else {
 					s = localize(header.getLocalizationKey(), header.getLocalizationKey());					
