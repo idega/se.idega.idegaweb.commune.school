@@ -421,7 +421,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
       Iterator iter = parents.iterator();
       while(iter.hasNext()){
 				User parent = (User) iter.next();
-				T.add(getSmallText(parent.getNameLastFirst()),1,row);
+				T.add(getSmallText(parent.getNameLastFirst()),1,row++);
       }
     }
     catch(NoCustodianFound ex){
