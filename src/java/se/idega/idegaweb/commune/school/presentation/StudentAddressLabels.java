@@ -1,5 +1,5 @@
 /*
- * $Id: StudentAddressLabels.java,v 1.2 2004/03/18 12:39:44 anders Exp $
+ * $Id: StudentAddressLabels.java,v 1.3 2004/10/20 15:46:54 aron Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -26,7 +26,7 @@ import com.idega.data.IDORelationshipException;
 import com.idega.presentation.ExceptionWrapper;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Table;
-import com.idega.presentation.text.Link;
+import com.idega.presentation.text.DownloadLink;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.CheckBox;
 import com.idega.presentation.ui.Form;
@@ -36,10 +36,10 @@ import com.idega.presentation.ui.SubmitButton;
 /** 
  * This idegaWeb block generates PDF files with student's addresses.
  * <p>
- * Last modified: $Date: 2004/03/18 12:39:44 $ by $Author: anders $
+ * Last modified: $Date: 2004/10/20 15:46:54 $ by $Author: aron $
  *
  * @author Anders Lindman
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class StudentAddressLabels extends SchoolCommuneBlock {
 
@@ -190,11 +190,13 @@ public class StudentAddressLabels extends SchoolCommuneBlock {
 		try {
 			StudentAddressLabelsWriter pdfWriter = new StudentAddressLabelsWriter();
 			ICFile file = pdfWriter.createFile(schoolClassIds, iwc.getIWMainApplication());
-			Link iconLink = new Link(getBundle().getImage("shared/pdf.gif"));
+			DownloadLink iconLink = new DownloadLink(getBundle().getImage("shared/pdf.gif"));
+			//Link iconLink = new Link(getBundle().getImage("shared/pdf.gif"));
 			iconLink.setFile(file);
 			table.add(iconLink, 1, 1);
 			String title = localize(KEY_STUDENT_ADDRESS_LABELS, "Student address labels");
-			Link link = new Link(title);
+			//Link link = new Link(title);
+			DownloadLink link = new DownloadLink(title);
 			link.setFile(file);
 			table.add(link, 2, 1);
 		} catch (Exception e) {
