@@ -2,6 +2,7 @@ package se.idega.idegaweb.commune.school.data;
 
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.util.Calendar;
 import java.util.Collection;
 
 import javax.ejb.FinderException;
@@ -619,11 +620,17 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 	public int ejbHomeGetCount (final SchoolSeason schoolSeason,
 															final Date startDate, final Date endDate)
 		throws IDOException {
+		final Calendar dayAfterEndDate = Calendar.getInstance ();
+		dayAfterEndDate.setTimeInMillis(endDate.getTime () + (1000 * 60 * 60 * 24));
 		IDOQuery sql = idoQuery();
 		sql.appendSelect ().append (" count (distinct " + CHILD + ") ");
 		sql.appendFrom ().append (getEntityName());
 		sql.appendWhereEquals (SCHOOL_SEASON, schoolSeason);
-		sql.appendAnd ().appendWithinDates (SCHOOLCHOICEDATE, startDate, endDate);
+		sql.appendAnd ().append (SCHOOLCHOICEDATE).appendGreaterThanOrEqualsSign();
+		sql.append(startDate);
+		sql.appendAnd ().append (SCHOOLCHOICEDATE).appendLessThanSign();
+		sql.append (new Date (dayAfterEndDate.getTimeInMillis ()));
+		System.err.println ("### sql=\n" + sql);
 		return idoGetNumberOfRecords(sql);
 	}
 
