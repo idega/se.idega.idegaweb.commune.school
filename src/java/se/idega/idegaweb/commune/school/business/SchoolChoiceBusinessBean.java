@@ -10,6 +10,8 @@ import java.util.*;
 import javax.ejb.CreateException;
 import javax.ejb.FinderException;
 
+import se.cubecon.bun24.viewpoint.business.ViewpointBusiness;
+import se.cubecon.bun24.viewpoint.data.SubCategory;
 import se.idega.idegaweb.commune.business.CommuneUserBusiness;
 import se.idega.idegaweb.commune.message.business.MessageBusiness;
 import se.idega.idegaweb.commune.school.data.*;
@@ -400,7 +402,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		}
 	}
 	
-	public void setChildcarePreferences(int childID, boolean freetimeInThisSchool, String otherMessage) throws RemoteException {
+	public void setChildcarePreferences(User performer, int childID, boolean freetimeInThisSchool, String otherMessage, String messageSubject, String messageBody) throws RemoteException {
 		try {
 			SchoolSeason season = getCurrentSeason();
 			if (season != null) {
@@ -410,8 +412,19 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 					while (iter.hasNext()) {
 						SchoolChoice element = (SchoolChoice) iter.next();
 						element.setFreetimeInThisSchool(freetimeInThisSchool);
-						if (!freetimeInThisSchool && otherMessage != null && otherMessage.length() > 0)
+						if (!freetimeInThisSchool && otherMessage != null && otherMessage.length() > 0) {
 							element.setFreetimeOther(otherMessage);
+							ViewpointBusiness vpb = (ViewpointBusiness) getServiceInstance(ViewpointBusiness.class);
+							SubCategory subCategory = vpb.findSubCategory("Fritids");
+							if (subCategory != null) {
+								try {
+									vpb.createViewpoint(performer, messageSubject, messageBody, subCategory.getName(), getUserBusiness().getRootAdministratorGroupID());
+								}
+								catch (CreateException ce) {
+									ce.printStackTrace();
+								}
+							}
+						}
 						element.store();
 					}	
 				}

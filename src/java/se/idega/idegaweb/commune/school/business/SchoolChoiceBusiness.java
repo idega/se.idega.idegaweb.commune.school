@@ -48,7 +48,7 @@ public interface SchoolChoiceBusiness extends com.idega.business.IBOService,com.
  public boolean preliminaryAction(java.lang.Integer p0,com.idega.user.data.User p1) throws java.rmi.RemoteException;
  public void rejectApplication(int p0,int p1,com.idega.user.data.User p2,java.lang.String p3,java.lang.String p4)throws java.rmi.RemoteException, java.rmi.RemoteException;
  public void setAsPreliminary(se.idega.idegaweb.commune.school.data.SchoolChoice p0,com.idega.user.data.User p1)throws java.rmi.RemoteException, java.rmi.RemoteException;
- public void setChildcarePreferences(int p0,boolean p1,java.lang.String p2)throws java.rmi.RemoteException, java.rmi.RemoteException;
+ public void setChildcarePreferences(User performer,int p0,boolean p1,java.lang.String p2,java.lang.String messageSubject, java.lang.String messageBody)throws java.rmi.RemoteException, java.rmi.RemoteException;
 
     void createSchoolChoiceReminder (String text, Date eventDate,
                                      Date remindingDate, User user)
