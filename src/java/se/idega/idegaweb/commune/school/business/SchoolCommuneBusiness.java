@@ -1,6 +1,7 @@
 package se.idega.idegaweb.commune.school.business;
 
 import com.idega.block.school.data.SchoolClassMember;
+import com.idega.user.data.User;
 import java.rmi.RemoteException;
 
 public interface SchoolCommuneBusiness extends com.idega.business.IBOService,com.idega.block.process.business.CaseBusiness
@@ -51,8 +52,20 @@ public interface SchoolCommuneBusiness extends com.idega.business.IBOService,com
      * ssn.
      *
      * @return SchoolClassMember objects that follows the method spec
+     * @exception RemoteException when methods in data layer fails
      * @author <a href="http://www.staffannoteberg.com">Staffan Nöteberg</a>
      */
-    public SchoolClassMember [] getCurrentMembersWithInvoiceInterval
-        () throws RemoteException;
+    SchoolClassMember [] getCurrentMembersWithInvoiceInterval ()
+        throws RemoteException;
+
+    /**
+     * Retreive info about membership in a school class for this particular user
+     * in current season.
+     *
+     * @return SchoolClassMember or null if not found
+     * @exception RemoteException when methods in data layer fails
+     * @author <a href="http://www.staffannoteberg.com">Staffan Nöteberg</a>
+     */
+    SchoolClassMember getCurrentSchoolClassMembership (User user)
+        throws RemoteException;
 }

@@ -626,4 +626,17 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
         return (SchoolClassMember []) values.toArray (new SchoolClassMember
                                                       [values.size ()]);
     }
+
+    // The method getCurrentSchoolClassMembership is specified in the
+    // interface SchoolCommuneBusiness.  /Staffan
+    public SchoolClassMember getCurrentSchoolClassMembership (final User user)
+        throws RemoteException {
+        try {
+            final SchoolSeason season
+                    = getSchoolChoiceBusiness ().getCurrentSeason ();
+            return getSchoolBusiness ().findByStudentAndSeason (user, season);
+        } catch (final FinderException e) {
+            return null;
+        }
+    }
 }
