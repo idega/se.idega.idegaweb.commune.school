@@ -1,5 +1,5 @@
 /*
- * $Id: NackaCCProviderReportModel.java,v 1.9 2004/03/05 09:39:31 anders Exp $
+ * $Id: NackaCCProviderReportModel.java,v 1.10 2004/04/23 08:55:29 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -14,10 +14,10 @@ import java.rmi.RemoteException;
 /** 
  * Report model for child care commune and private providers.
  * <p>
- * Last modified: $Date: 2004/03/05 09:39:31 $ by $Author: anders $
+ * Last modified: $Date: 2004/04/23 08:55:29 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.9 $
+ * @version $Revision: 1.10 $
  */
 public class NackaCCProviderReportModel extends ReportModel {
 
@@ -94,7 +94,7 @@ public class NackaCCProviderReportModel extends ReportModel {
 	protected Header[] buildColumnHeaders() {
 		Header[] headers = new Header[2];
 		
-		headers[0] = new Header(KEY_NUMBER_OF_PROVIDERS, Header.HEADERTYPE_COLUMN_HEADER);
+		headers[0] = new Header(KEY_NUMBER_OF_PROVIDERS_CHILDCARE, Header.HEADERTYPE_COLUMN_HEADER);
 		headers[1] = new Header(KEY_SHARE_IN_PERCENT, Header.HEADERTYPE_COLUMN_HEADER);
 		
 		return headers;
