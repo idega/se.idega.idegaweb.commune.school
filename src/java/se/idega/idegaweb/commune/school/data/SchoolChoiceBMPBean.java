@@ -1,6 +1,5 @@
 package se.idega.idegaweb.commune.school.data;
 
-import java.rmi.RemoteException;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.Collection;
@@ -472,7 +471,7 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 		return this.idoFindPKsBySQL("select * from " + getEntityName());
 	}
 
-	public Collection ejbFindChoices(int schoolID, int seasonID, int gradeYear, String[] validStatuses, String searchStringForUser, int orderBy, int numberOfEntries, int startingEntry) throws FinderException, RemoteException {
+	public Collection ejbFindChoices(int schoolID, int seasonID, int gradeYear, String[] validStatuses, String searchStringForUser, int orderBy, int numberOfEntries, int startingEntry) throws FinderException {
 		return ejbFindChoices(schoolID, seasonID, gradeYear, new int[] {
 		}, validStatuses, searchStringForUser, orderBy, numberOfEntries, startingEntry);
 	}
@@ -506,12 +505,12 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 		}
 
 	}
-	public int ejbHomeGetCount(int schoolID, int seasonID, int gradeYear, int[] choiceOrder, String[] validStatuses, String searchStringForUser) throws FinderException, RemoteException, IDOException {
+	public int ejbHomeGetCount(int schoolID, int seasonID, int gradeYear, int[] choiceOrder, String[] validStatuses, String searchStringForUser) throws FinderException, IDOException {
 		IDOQuery query = getIDOQuery(schoolID, seasonID, gradeYear, choiceOrder, validStatuses, searchStringForUser, true, false, -1);
 		return this.idoGetNumberOfRecords(query);
 	}
 
-	public Collection ejbFindChoices(int schoolID, int seasonID, int gradeYear, int[] choiceOrder, String[] validStatuses, String searchStringForUser, int orderBy, int numberOfEntries, int startingEntry) throws FinderException, RemoteException {
+	public Collection ejbFindChoices(int schoolID, int seasonID, int gradeYear, int[] choiceOrder, String[] validStatuses, String searchStringForUser, int orderBy, int numberOfEntries, int startingEntry) throws FinderException {
 		IDOQuery query = getIDOQuery(schoolID, seasonID, gradeYear, choiceOrder, validStatuses, searchStringForUser, false, false, orderBy);
 		return this.idoFindPKsByQuery(query, numberOfEntries, startingEntry);
 	}

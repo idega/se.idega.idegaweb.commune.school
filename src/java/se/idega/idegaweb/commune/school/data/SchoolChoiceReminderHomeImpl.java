@@ -13,14 +13,14 @@ public class SchoolChoiceReminderHomeImpl extends com.idega.data.IDOFactory impl
  }
 
 
-public java.util.Collection findAll()throws javax.ejb.FinderException,java.rmi.RemoteException{
+public java.util.Collection findAll()throws javax.ejb.FinderException{
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	java.util.Collection ids = ((SchoolChoiceReminderBMPBean)entity).ejbFindAll();
 	this.idoCheckInPooledEntity(entity);
 	return this.getEntityCollectionForPrimaryKeys(ids);
 }
 
-public java.util.Collection findUnhandled(com.idega.user.data.Group[] p0)throws javax.ejb.FinderException,java.rmi.RemoteException{
+public java.util.Collection findUnhandled(com.idega.user.data.Group[] p0)throws javax.ejb.FinderException{
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	java.util.Collection ids = ((SchoolChoiceReminderBMPBean)entity).ejbFindUnhandled(p0);
 	this.idoCheckInPooledEntity(entity);

@@ -1,13 +1,15 @@
 package se.idega.idegaweb.commune.school.data;
 
-import java.util.Collection;
 import java.util.ArrayList;
-import com.idega.data.*;
+import java.util.Collection;
+
+import com.idega.data.GenericEntity;
+import com.idega.data.IDOException;
 
 /**
  * This BMP bean handles school marks.
  * <p>
- * $Id: SchoolMarksBMPBean.java,v 1.1 2003/09/25 07:59:14 kjell Exp $
+ * $Id: SchoolMarksBMPBean.java,v 1.2 2003/10/05 20:07:06 laddi Exp $
  *
  * @author Anders Lindman
  * @version $version$

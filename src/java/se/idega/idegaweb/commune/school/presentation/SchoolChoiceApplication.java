@@ -14,6 +14,7 @@ import java.util.List;
 
 import javax.ejb.FinderException;
 
+import se.idega.idegaweb.commune.childcare.check.business.CheckBusiness;
 import se.idega.idegaweb.commune.presentation.CitizenChildren;
 import se.idega.idegaweb.commune.presentation.CommuneBlock;
 import se.idega.idegaweb.commune.school.business.SchoolChoiceBusiness;
@@ -21,6 +22,7 @@ import se.idega.idegaweb.commune.school.business.SchoolCommuneBusiness;
 import se.idega.idegaweb.commune.school.data.SchoolChoice;
 import se.idega.util.PIDChecker;
 
+import com.idega.block.navigation.presentation.UserHomeLink;
 import com.idega.block.school.business.SchoolBusiness;
 import com.idega.block.school.data.School;
 import com.idega.block.school.data.SchoolArea;
@@ -31,8 +33,10 @@ import com.idega.block.school.data.SchoolType;
 import com.idega.block.school.data.SchoolYear;
 import com.idega.core.builder.data.ICPage;
 import com.idega.business.IBOLookup;
+import com.idega.business.IBORuntimeException;
 import com.idega.core.location.data.Address;
 import com.idega.data.IDOEntity;
+import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWPropertyList;
 import com.idega.idegaweb.IWResourceBundle;
@@ -279,8 +283,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 						*/
 						// User wants to choose
 						if(valWantsAfterSchool){
-							boolean hasApprovedCheck = false;
-							//TODO search for approved check
+							boolean hasApprovedCheck = getCheckBusiness(iwc).hasGrantedCheck(child);
 							// forward to afterschool page
 							if(hasApprovedCheck && afterSchoolPageID!=null){
 								iwc.forwardToIBPage(getParentPage(),afterSchoolPageID.intValue());
@@ -1339,16 +1342,17 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		 this.checkPageID = checkPageID;
 	  }
 
-	private Link getUserHomePageLink (final IWContext iwc)
+	private UserHomeLink getUserHomePageLink (final IWContext iwc)
         throws RemoteException {
-		final Text userHomePageText = new Text
-                (iwrb.getLocalizedString (prefix + "go_back_to_my_page",
-                                          "Tillbaka till Min sida"));
- 		final UserBusiness userBusiness = (UserBusiness)
-                IBOLookup.getServiceInstance (iwc, UserBusiness.class);
-        final User user = iwc.getCurrentUser ();
-		final Link link = new Link (userHomePageText);
-        link.setPage (userBusiness.getHomePageIDForUser (user));
-		return (link);
+		return new UserHomeLink();
+	}
+	
+	private CheckBusiness getCheckBusiness(IWApplicationContext iwc) {
+		try {
+			return (CheckBusiness) IBOLookup.getServiceInstance(iwc, CheckBusiness.class);
+		}
+		catch (RemoteException e) {
+			throw new IBORuntimeException(e.getMessage());
+		}
 	}
 }

@@ -16,5 +16,5 @@ public interface SchoolChoiceReminder extends com.idega.data.IDOEntity,com.idega
  public void setEventDate(java.util.Date p0);
  public void setReminderDate(java.util.Date p0);
  public void setText(java.lang.String p0);
- public void setUser(com.idega.user.data.User p0)throws java.rmi.RemoteException;
+ public void setUser(com.idega.user.data.User p0);
 }
