@@ -2,6 +2,7 @@ package se.idega.idegaweb.commune.school.business;
 
 import is.idega.block.family.business.FamilyLogic;
 import is.idega.block.family.business.NoCustodianFound;
+
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.rmi.RemoteException;
@@ -19,13 +20,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.Vector;
+
 import javax.ejb.CreateException;
 import javax.ejb.FinderException;
+
 import se.cubecon.bun24.viewpoint.business.ViewpointBusiness;
 import se.cubecon.bun24.viewpoint.data.SubCategory;
 import se.idega.idegaweb.commune.business.CommuneUserBusiness;
-import se.idega.idegaweb.commune.care.data.AfterSchoolChoice;
-import se.idega.idegaweb.commune.care.data.AfterSchoolChoiceHome;
 import se.idega.idegaweb.commune.care.data.CurrentSchoolSeason;
 import se.idega.idegaweb.commune.care.data.CurrentSchoolSeasonHome;
 import se.idega.idegaweb.commune.care.resource.business.ResourceBusiness;
@@ -36,6 +37,7 @@ import se.idega.idegaweb.commune.school.data.SchoolChoice;
 import se.idega.idegaweb.commune.school.data.SchoolChoiceHome;
 import se.idega.idegaweb.commune.school.data.SchoolChoiceReminder;
 import se.idega.idegaweb.commune.school.data.SchoolChoiceReminderHome;
+
 import com.idega.block.process.data.Case;
 import com.idega.block.process.data.CaseStatus;
 import com.idega.block.school.business.SchoolBusiness;
@@ -52,13 +54,11 @@ import com.idega.block.school.data.SchoolYearHome;
 import com.idega.business.IBOLookup;
 import com.idega.business.IBOLookupException;
 import com.idega.business.IBORuntimeException;
-import com.idega.core.contact.data.Phone;
 import com.idega.core.file.data.ICFile;
 import com.idega.core.file.data.ICFileHome;
 import com.idega.data.IDOCreateException;
 import com.idega.data.IDOException;
 import com.idega.data.IDOLookup;
-import com.idega.data.IDOLookupException;
 import com.idega.data.IDOStoreException;
 import com.idega.idegaweb.IWPropertyList;
 import com.idega.io.MemoryFileBuffer;
