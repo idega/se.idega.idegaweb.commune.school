@@ -1,6 +1,6 @@
 package se.idega.idegaweb.commune.school.presentation;
 
-import se.idega.idegaweb.commune.accounting.userinfo.presentation.ChildContracts;
+import se.idega.idegaweb.commune.care.presentation.ChildContracts;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
