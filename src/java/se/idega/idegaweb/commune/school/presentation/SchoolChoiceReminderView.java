@@ -20,10 +20,10 @@ import se.idega.idegaweb.commune.school.data.SchoolChoiceReminder;
  * and entity ejb classes in {@link se.idega.idegaweb.commune.school.data}.
  * <p>
  * <p>
- * Last modified: $Date: 2002/12/29 13:49:39 $ by $Author: staffan $
+ * Last modified: $Date: 2003/01/08 12:43:31 $ by $Author: staffan $
  *
  * @author <a href="http://www.staffannoteberg.com">Staffan Nöteberg</a>
- * @version $Revision: 1.17 $
+ * @version $Revision: 1.18 $
  * @see javax.ejb
  */
 public class SchoolChoiceReminderView extends CommuneBlock {
@@ -53,6 +53,8 @@ public class SchoolChoiceReminderView extends CommuneBlock {
     private static final String PARENT_NAME_KEY = PREFIX + "parent_name";
     private static final String REMINDER_DATE_DEFAULT = "Visa som ärende";
     private static final String REMINDER_DATE_KEY = PREFIX + "reminder_date";
+    private static final String REMINDER_DAYS_BEFORE_DEFAULT = "Antal dagar innan utskick som påminnelse ska visas som ärende";
+    private static final String REMINDER_DAYS_BEFORE_KEY = PREFIX + "reminder_days_before";
     private static final String REMINDER_TEXT1_DEFAULT = "Text 1 som kommer från Kristina Lundin.";
     private static final String REMINDER_TEXT1_KEY = PREFIX + "reminder_text1";
     private static final String REMINDER_TEXT2_DEFAULT = "Text 2 som kommer från Kristina Lundin.";
@@ -153,8 +155,8 @@ public class SchoolChoiceReminderView extends CommuneBlock {
 
 		table.add(getSmallHeader(localize (EVENT_DATE_KEY, EVENT_DATE_DEFAULT)), 1, row);
 		table.add(getSingleInput(iwc, EVENT_DATE_KEY, 8), 3, row++);
-		table.add(getSmallHeader(localize (REMINDER_DATE_KEY, REMINDER_DATE_DEFAULT)), 1, row);
-		table.add(getSingleInput(iwc, REMINDER_DATE_KEY, 8), 3, row++);
+		table.add(getSmallHeader(localize (REMINDER_DAYS_BEFORE_KEY, REMINDER_DAYS_BEFORE_DEFAULT)), 1, row);
+		table.add(getSingleInput(iwc, REMINDER_DAYS_BEFORE_KEY, 2), 3, row++);
 
         table.setHeight (row++, 12);
         final SubmitButton submit = getSubmitButton (CREATE_KEY,
@@ -223,12 +225,27 @@ public class SchoolChoiceReminderView extends CommuneBlock {
 
     private void createReminder (final IWContext iwc) throws RemoteException,
                                                              CreateException {
+        final String reminderTextChoice = iwc.getParameter (REMINDER_TEXT_KEY);
+        final String reminderText = reminderTextChoice.equals
+                (localize (CUSTOM_TEXT_KEY, CUSTOM_TEXT_DEFAULT)) ?
+                iwc.getParameter (CUSTOM_TEXT_KEY) : reminderTextChoice;
+        Date eventDate;
+        try {
+            eventDate = stringToDate (iwc.getParameter (EVENT_DATE_KEY));
+        } catch (IllegalArgumentException e) {
+            add ("Felaktigt inmatat datum (ååååmmdd)");
+            showCreateReminderForm (iwc);
+            return;
+        }
+        final int daysBefore = Integer.parseInt (iwc.getParameter
+                                                 (REMINDER_DAYS_BEFORE_KEY));
+        final Date reminderDate
+                = getDaysBefore (iwc.getParameter (REMINDER_DAYS_BEFORE_KEY),
+                                 eventDate);
 		final SchoolChoiceBusiness business = getSchoolChoiceBusiness (iwc);
-		business.createSchoolChoiceReminder
-                (iwc.getParameter (REMINDER_TEXT_KEY),
-                 Calendar.getInstance ().getTime (),
-                 Calendar.getInstance ().getTime (), iwc.getCurrentUser ());
-
+		business.createSchoolChoiceReminder (reminderText, eventDate,
+                                             reminderDate,
+                                             iwc.getCurrentUser ());
 		final Text text1
                 = new Text (getLocalizedString (CONFIRM_ENTER_KEY,
                                                 CONFIRM_ENTER_DEFAULT));
@@ -386,11 +403,6 @@ public class SchoolChoiceReminderView extends CommuneBlock {
         table.add (getUserHomePageLink (iwc), 1, row++);
     }
 
-    private static void logTime (final Table table, final int row) {
-        System.err.println (Calendar.getInstance ().getTime ().toString ());
-        table.add (Calendar.getInstance ().getTime ().toString (), 1, row);
-    }
-
 	private TextInput getSingleInput (IWContext iwc, final String paramId,
                                       final int maxLength) {
 		TextInput textInput = (TextInput) getStyledInterface
@@ -423,6 +435,55 @@ public class SchoolChoiceReminderView extends CommuneBlock {
         }
 		return link;
 	}
+
+    private Date getDaysBefore (final String rawInput, final Date event) {
+        if (rawInput == null) {
+            return new Date (event.getTime ());
+        }
+		final StringBuffer digitOnlyInput = new StringBuffer();
+		for (int i = 0; i < rawInput.length(); i++) {
+			if (Character.isDigit(rawInput.charAt(i))) {
+				digitOnlyInput.append(rawInput.charAt(i));
+			}
+		}
+        if (rawInput.length () == 0) {
+            return new Date (event.getTime ());
+        }
+
+        return new Date (event.getTime()
+                         - (Integer.parseInt (digitOnlyInput.toString ())
+                            * 1000 * 60 * 60 * 24));
+    }
+
+    private Date stringToDate (final String rawInput)
+        throws IllegalArgumentException {
+        if (rawInput == null) {
+            throw new IllegalArgumentException ();
+        }
+		final StringBuffer digitOnlyInput = new StringBuffer();
+		for (int i = 0; i < rawInput.length(); i++) {
+			if (Character.isDigit(rawInput.charAt(i))) {
+				digitOnlyInput.append(rawInput.charAt(i));
+			}
+		}
+        if (digitOnlyInput.length () == 6) {
+			digitOnlyInput.insert(0, 20);
+        } 
+        if (digitOnlyInput.length () != 8) {
+            throw new IllegalArgumentException ();
+        }
+        final int year = new Integer(digitOnlyInput.substring(0, 4)).intValue();
+		final int month = new Integer(digitOnlyInput.substring(4, 6)).intValue() - 1;
+		final int day = new Integer(digitOnlyInput.substring(6, 8)).intValue();
+        final Date now = Calendar.getInstance ().getTime ();
+        final Calendar calendar = Calendar.getInstance ();
+        calendar.set (year, month, day);
+        final Date event = calendar.getTime ();
+        if (event.before (now)) {
+            throw new IllegalArgumentException ();
+        }
+        return event;
+    }
 
 	private Text getHeader(final String paramId, final String defaultText) {
 		return getSmallHeader(localize(paramId, defaultText));
