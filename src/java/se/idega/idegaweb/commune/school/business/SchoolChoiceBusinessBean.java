@@ -54,6 +54,7 @@ import com.idega.block.school.data.SchoolUser;
 import com.idega.block.school.data.SchoolYear;
 import com.idega.block.school.data.SchoolYearHome;
 import com.idega.business.IBOLookup;
+import com.idega.business.IBOLookupException;
 import com.idega.business.IBORuntimeException;
 import com.idega.core.contact.data.Phone;
 import com.idega.core.file.data.ICFile;
@@ -69,7 +70,6 @@ import com.idega.io.MemoryOutputStream;
 import com.idega.user.business.UserBusiness;
 import com.idega.user.data.Group;
 import com.idega.user.data.User;
-import com.idega.user.data.UserHome;
 import com.idega.util.Age;
 import com.idega.util.IWTimestamp;
 import com.idega.util.PersonalIDFormatter;
@@ -144,8 +144,13 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	public MemberFamilyLogic getMemberFamilyLogic() throws RemoteException {
 		return (MemberFamilyLogic) this.getServiceInstance(MemberFamilyLogic.class);
 	}
-	public CommuneUserBusiness getUserBusiness() throws RemoteException {
-		return (CommuneUserBusiness) this.getServiceInstance(CommuneUserBusiness.class);
+	public CommuneUserBusiness getUserBusiness() {
+		try {
+			return (CommuneUserBusiness) this.getServiceInstance(CommuneUserBusiness.class);
+		}
+		catch (IBOLookupException ile) {
+			throw new IBORuntimeException(ile);
+		}
 	}
 	public AfterSchoolBusiness getAfterSchoolBusiness() {
 		try {
@@ -168,10 +173,6 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 
 	public SchoolYearHome getSchoolYearHome() throws RemoteException {
 		return (SchoolYearHome) this.getIDOHome(SchoolYear.class);
-	}
-
-	public UserHome getUserHome() throws RemoteException {
-		return (UserHome) this.getIDOHome(User.class);
 	}
 
 	public CurrentSchoolSeasonHome getCurrentSchoolSeasonHome() throws java.rmi.RemoteException {
@@ -200,7 +201,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	public SchoolChoice createSchoolChangeChoice(int userId, int childId, int school_type_id, int current_school, int chosen_school, int grade, int method, int workSituation1, int workSituation2, String language, String message, boolean keepChildrenCare, boolean autoAssign, boolean custodiansAgree, boolean schoolCatalogue, Date placementDate, SchoolSeason season, String extraMessage) throws IDOCreateException {
 		try {
 			java.sql.Timestamp time = new java.sql.Timestamp(System.currentTimeMillis());
-			CaseStatus unHandledStatus = getCaseStatus(getCaseStatusMoved().getStatus());
+			CaseStatus unHandledStatus = getCaseStatusMoved();
 			IWTimestamp stamp = new IWTimestamp();
 			SchoolChoice choice = createSchoolChoice(stamp, userId, childId, school_type_id, current_school, chosen_school, grade, 1, method, workSituation1, workSituation2, language, message, time, true, keepChildrenCare, autoAssign, custodiansAgree, schoolCatalogue, unHandledStatus, null, placementDate, season, extraMessage);
 			ArrayList choices = new ArrayList(1);
@@ -1015,9 +1016,16 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	}
 
 	
-	public String getLocalizedCaseDescription(Case theCase, Locale locale) throws RemoteException {
+	public String getLocalizedCaseDescription(Case theCase, Locale locale) {
 		SchoolChoice choice = getSchoolChoiceInstance(theCase);
-		Object[] arguments = {getUserBusiness().getUser(choice.getChildId()).getFirstName(), String.valueOf(choice.getChoiceOrder()), choice.getChosenSchool().getName()};
+		String firstName = null;
+		try {
+			firstName = getUserBusiness().getUser(choice.getChildId()).getFirstName();
+		}
+		catch (RemoteException re) {
+			firstName = "";
+		}
+		Object[] arguments = {firstName, String.valueOf(choice.getChoiceOrder()), choice.getChosenSchool().getName()};
 
 		String desc = super.getLocalizedCaseDescription(theCase, locale);
 		return MessageFormat.format(desc, arguments);

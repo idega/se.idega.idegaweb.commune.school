@@ -66,7 +66,6 @@ public interface SchoolChoiceBusiness extends com.idega.business.IBOService,com.
  public com.idega.block.school.data.SchoolSeasonHome getSchoolSeasonHome()throws java.rmi.RemoteException, java.rmi.RemoteException;
  public com.idega.block.school.data.SchoolYearHome getSchoolYearHome()throws java.rmi.RemoteException, java.rmi.RemoteException;
  public se.idega.idegaweb.commune.business.CommuneUserBusiness getUserBusiness()throws java.rmi.RemoteException, java.rmi.RemoteException;
- public com.idega.user.data.UserHome getUserHome()throws java.rmi.RemoteException, java.rmi.RemoteException;
  public se.idega.idegaweb.commune.school.data.SchoolChoice groupPlaceAction(java.lang.Integer p0,com.idega.user.data.User p1) throws java.rmi.RemoteException;
  public boolean noRoomAction(java.lang.Integer p0,com.idega.user.data.User p1) throws java.rmi.RemoteException;
  public boolean preliminaryAction(java.lang.Integer p0,com.idega.user.data.User p1) throws java.rmi.RemoteException;
