@@ -10,7 +10,7 @@ import com.idega.data.*;
  * This BMP bean handles caclulated statistics and stores them for
  * fast retrieval.
  * <p>
- * $Id: SchoolStatisticsDataBMPBean.java,v 1.1 2003/09/25 07:59:14 kjell Exp $
+ * $Id: SchoolStatisticsDataBMPBean.java,v 1.2 2003/12/13 16:51:48 kjell Exp $
  *
  * @author <a href="mailto:kjell@lindman.com">Kjell Lindman</a>
  * @version $version$
@@ -104,6 +104,9 @@ public class SchoolStatisticsDataBMPBean extends GenericEntity implements School
 	private static String TOTAL_MARKS_TOT_NUM = "TOTAL_MARKS_TOT_NUM";
 	private static String TOTAL_MARKS_TOT_PCT = "TOTAL_MARKS_TOT_PCT";
 
+	private static String TOTAL_AUTH_POINTS = "TOTAL_AUTH_POINTS";
+	private static String TOTAL_AUTH_STUDENTS = "TOTAL_AUTH_STUDENTS";
+
  
   public void initializeAttributes() {
   	
@@ -191,6 +194,9 @@ public class SchoolStatisticsDataBMPBean extends GenericEntity implements School
 	addAttribute(TOTAL_MARKS_MVG_PCT, "Total marks percent", String.class);
 	addAttribute(TOTAL_MARKS_TOT_NUM, "Total marks numeric", String.class);
 	addAttribute(TOTAL_MARKS_TOT_PCT, "Total marks percent", String.class);
+
+	addAttribute(TOTAL_AUTH_POINTS, "Total auth points", String.class);
+	addAttribute(TOTAL_AUTH_STUDENTS, "Total auth students", String.class);
 	
 	setAsPrimaryKey(ID_COLUMN_NAME, true);
   }
@@ -290,6 +296,8 @@ public class SchoolStatisticsDataBMPBean extends GenericEntity implements School
 	public String getTotalMarksTotNum() {return getStringColumnValue(TOTAL_MARKS_TOT_NUM);}
 	public String getTotalMarksTotPct() {return getStringColumnValue(TOTAL_MARKS_TOT_PCT);}
 
+	public String getTotalAuthPoints() {return getStringColumnValue(TOTAL_AUTH_POINTS);}
+	public String getTotalAuthStudents() {return getStringColumnValue(TOTAL_AUTH_STUDENTS);}
 
 	public void setSchoolCode(String value) {setColumn(SCHOOLCODE, value);}
 	public void setPeriodFrom(Date from) {setColumn(PERIOD_FROM, from);} 
@@ -377,7 +385,8 @@ public class SchoolStatisticsDataBMPBean extends GenericEntity implements School
 	public void setTotalMarksTotNum(String value) {setColumn(TOTAL_MARKS_TOT_NUM, value);}
 	public void setTotalMarksTotPct(String value) {setColumn(TOTAL_MARKS_TOT_PCT, value);}
 
-
+	public void setTotalAuthPoints(String value) {setColumn(TOTAL_AUTH_POINTS, value);}
+	public void setTotalAuthStudents(String value) {setColumn(TOTAL_AUTH_STUDENTS, value);}
 	
 	public Object ejbFindBySCBCode(String scbCode) throws FinderException {
 			IDOQuery sql = idoQuery();

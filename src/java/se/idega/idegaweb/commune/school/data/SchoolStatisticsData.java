@@ -69,6 +69,8 @@ public interface SchoolStatisticsData extends com.idega.data.IDOEntity
  public java.lang.String getSwedishMarksTotPct();
  public java.lang.String getSwedishMarksVGNum();
  public java.lang.String getSwedishMarksVGPct();
+ public java.lang.String getTotalAuthPoints();
+ public java.lang.String getTotalAuthStudents();
  public java.lang.String getTotalMarksEGNum();
  public java.lang.String getTotalMarksEGPct();
  public java.lang.String getTotalMarksGNum();
@@ -145,6 +147,8 @@ public interface SchoolStatisticsData extends com.idega.data.IDOEntity
  public void setSwedishMarksTotPct(java.lang.String p0);
  public void setSwedishMarksVGNum(java.lang.String p0);
  public void setSwedishMarksVGPct(java.lang.String p0);
+ public void setTotalAuthPoints(java.lang.String p0);
+ public void setTotalAuthStudents(java.lang.String p0);
  public void setTotalMarksEGNum(java.lang.String p0);
  public void setTotalMarksEGPct(java.lang.String p0);
  public void setTotalMarksGNum(java.lang.String p0);

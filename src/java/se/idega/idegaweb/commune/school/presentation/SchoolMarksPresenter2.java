@@ -20,7 +20,7 @@ import se.idega.idegaweb.commune.presentation.CommuneBlock;
 /**
  * Presents school marks statistics in a formatted table (approved by Nacka)
  * <p>
- * $Id: SchoolMarksPresenter2.java,v 1.8 2003/12/03 16:10:33 kjell Exp $
+ * $Id: SchoolMarksPresenter2.java,v 1.9 2003/12/13 16:51:48 kjell Exp $
  *
  * This block presents School Marks Statistics according to the specifications made my 
  * Jill Salander
@@ -283,8 +283,12 @@ public class SchoolMarksPresenter2  extends CommuneBlock {
 				table.add(getHeader(formatPct(stat.getTotalMarks().tot.percent)), 11, row);
 				row++;
 				table.add(getHeader(iwrb.getLocalizedString("school_marks_stats.merite_value", "Meritvärde")+ ": " +stat.getMeriteValue().number), 1, row);
-				mValue += Integer.parseInt(stat.getMeriteValue().number);
-				mNumber++;
+
+//				mValue += Integer.parseInt(stat.getMeriteValue().number);
+//				mNumber++;
+
+					mValue += Integer.parseInt(stat.getTotalAuthPoints());
+				mNumber+= Integer.parseInt(stat.getTotalAuthStudents());
 				
 				row++;
 

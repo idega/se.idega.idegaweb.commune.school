@@ -26,7 +26,7 @@ import se.idega.idegaweb.commune.school.business.SchoolMarkValues;
 /**
  * School marks business
  * <p>
- * $Id: SchoolMarksBusinessBean.java,v 1.8 2003/12/03 16:10:33 kjell Exp $
+ * $Id: SchoolMarksBusinessBean.java,v 1.9 2003/12/13 16:51:48 kjell Exp $
  *
  * I will add some comments on the school marks calculation technique here later.
  * However I am waiting for Nacka to present me that specification.
@@ -120,7 +120,7 @@ public class SchoolMarksBusinessBean extends com.idega.business.IBOServiceBean i
 			SCBCode scb = (SCBCode) iter.next();	
 			String scbCode = scb.getCode();
 			School school = scb.getSchool();
-//			if(scbCode.compareTo("018200104") == 0) {
+//			if(scbCode.compareTo("018201001") == 0) {
 				SchoolStatistics sc = new SchoolStatistics(iwc, scbCode, school.getSchoolName(), school.getManagementTypeId());
 				stats.add(sc);
 //			}
@@ -204,6 +204,7 @@ public class SchoolMarksBusinessBean extends com.idega.business.IBOServiceBean i
 					totalMerit += tmc;
 				}
 			}
+						
 			float mg = Float.parseFloat(""+MERITE_G);
 			float mvg = Float.parseFloat(""+MERITE_VG);
 			float mmvg = Float.parseFloat(""+MERITE_MVG);
@@ -211,6 +212,10 @@ public class SchoolMarksBusinessBean extends com.idega.business.IBOServiceBean i
 			float fg = Float.parseFloat(""+_gNumber);
 			float fvg = Float.parseFloat(""+_vgNumber);
 			float fmvg = Float.parseFloat(""+_mvgNumber);
+			
+			System.out.println("GNUMBER VGNUMBER MVGNUMBER"+_gNumber+" " +_vgNumber + " "+_mvgNumber);
+			System.out.println("MERITCOUND TOTALMERIT"+meritCount+" " +totalMerit);
+			
 			
 			Float fr = new Float(0);
 			if((fg + fvg + fmvg) != 0) {
@@ -220,7 +225,7 @@ public class SchoolMarksBusinessBean extends com.idega.business.IBOServiceBean i
 
 			mp.number = ""+x; 
 			mp.percent = " ";
-			saveMarksPoints(scbCode, mp);
+			saveMarksPoints(scbCode, mp, totalMerit, meritCount);
 
 			ap.number = " "; 
 			ap.percent = " ";
@@ -736,7 +741,7 @@ public class SchoolMarksBusinessBean extends com.idega.business.IBOServiceBean i
 		ss.store();
 	}
 
-	private void saveMarksPoints(String scbCode, PercentValue value) {
+	private void saveMarksPoints(String scbCode, PercentValue value, int totalMerite, int totalStudents) {
 		boolean found = true;
 		SchoolStatisticsDataHome home = null;
 		SchoolStatisticsData ss = null;
@@ -760,6 +765,8 @@ public class SchoolMarksBusinessBean extends com.idega.business.IBOServiceBean i
 		}
 		ss.setMarksPointsNum(value.number);
 		ss.setMarksPointsPct(value.percent);
+		ss.setTotalAuthPoints(""+totalMerite);
+		ss.setTotalAuthStudents(""+totalStudents);
 		ss.store();
 	}
 
@@ -1103,13 +1110,9 @@ public class SchoolMarksBusinessBean extends com.idega.business.IBOServiceBean i
 		int ig1Count = 0;
 		
 		gCount = getStudentGValue(marks);
-		_gNumber += gCount;
 		vgCount = getStudentVgValue(marks);
-		_vgNumber += vgCount;
 		mvgCount = getStudentMvgValue(marks);
-		_mvgNumber += mvgCount;
 		ig1Count = getStudentIg1Value(marks);
-		_ig1Number += ig1Count;
 	
 		int maxCount = TOTAL_MARKS;
 
@@ -1133,6 +1136,11 @@ public class SchoolMarksBusinessBean extends com.idega.business.IBOServiceBean i
 		}
 		
 		totalScore += gCount * MERITE_G;
+
+		_gNumber += gCount;
+		_vgNumber += vgCount;
+		_mvgNumber += mvgCount;
+		_ig1Number += ig1Count;
 		
 		return totalScore;
 	}

@@ -8,7 +8,7 @@ import se.idega.idegaweb.commune.school.data.SchoolStatisticsData;
 /**
  * Helpclass to hold and calculate school marks statistics
  * <p>
- * $Id: SchoolStatistics.java,v 1.2 2003/10/06 11:58:45 kjell Exp $
+ * $Id: SchoolStatistics.java,v 1.3 2003/12/13 16:51:48 kjell Exp $
  *
  * @author <a href="mailto:kjell@lindman.com">Kjell Lindman</a>
  * @author <a href="mailto:anders.lindman@ncmedia.com">Anders Lindman</a>
@@ -18,6 +18,8 @@ public class SchoolStatistics {
  
 	private String scbCode;
 	private String schoolName;
+
+
 	SchoolMarksBusiness smBiz = null;
 	SchoolStatisticsData schoolStatisticsData = null;
 	String schoolManagementType = null;
@@ -34,6 +36,7 @@ public class SchoolStatistics {
 			e.printStackTrace();
 		}
 	}
+
 	
 	public String getSchoolSCBCode() {
 			return scbCode;
@@ -141,6 +144,20 @@ public class SchoolStatistics {
 		 * Summed Auth marks
 		 */
 		return smBiz.getTotalMarks(schoolStatisticsData);
+	}
+
+	public String getTotalAuthPoints()  {
+		/**
+		 * Summed Total Auth Point
+		 */
+		return schoolStatisticsData.getTotalAuthPoints(); 
+	}
+
+	public String getTotalAuthStudents()  {
+		/**
+		 * Summed Total Auth Point
+		 */
+		return schoolStatisticsData.getTotalAuthStudents(); 
 	}
 
 
