@@ -154,8 +154,6 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	//private int valPreGrade = -1;
 	private int valYear = -1;
 	private int valPreYear = -1;
-	private int valPreType = -1;
-	private int valPreArea = -1;
 	private int valPreSchool = -1;
 	private int valType = -1;
 	private int childId = -1;
@@ -181,7 +179,6 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	private boolean hasPreviousSchool = false;
 	private boolean schoolChange = false;
 	private boolean[] canApply = { false, false, false};
-	private boolean hasChosen = false;
 	private Age age;
 	private Form myForm;
 
@@ -255,7 +252,6 @@ public class SchoolChoiceApplication extends CommuneBlock {
 						String[] statuses = { schBuiz.getCaseStatusDeleted().getStatus()};
 						currentChildChoices = schBuiz.getSchoolChoiceHome().findByChildAndSeason(childId, seasonID, statuses);
 						if (!currentChildChoices.isEmpty()) {
-							hasChosen = true;
 							Iterator iter = currentChildChoices.iterator();
 							int count = 1;
 							while (iter.hasNext()) {
@@ -397,8 +393,6 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		valThirdArea = iwc.isParameterSet(prmThirdArea) ? Integer.parseInt(iwc.getParameter(prmThirdArea)) : -1;
 		valYear = iwc.isParameterSet(prmYear) ? Integer.parseInt(iwc.getParameter(prmYear)) : -1;
 		valPreYear = iwc.isParameterSet(prmPreYear) ? Integer.parseInt(iwc.getParameter(prmPreYear)) : -1;
-		valPreType = iwc.isParameterSet(prmPreType) ? Integer.parseInt(iwc.getParameter(prmType)) : -1;
-		valPreArea = iwc.isParameterSet(prmPreArea) ? Integer.parseInt(iwc.getParameter(prmPreArea)) : -1;
 		valPreSchool = iwc.isParameterSet(prmPreSchool) ? Integer.parseInt(iwc.getParameter(prmPreSchool)) : -1;
 		valType = iwc.isParameterSet(prmType) ? Integer.parseInt(iwc.getParameter(prmType)) : -1;
 		valCaseOwner = iwc.isParameterSet(prmParentId) ? Integer.parseInt(iwc.getParameter(prmParentId)) : -1;
@@ -471,23 +465,8 @@ public class SchoolChoiceApplication extends CommuneBlock {
 			S.addFunction("changeFilter", getFilterScript());
 			S.addFunction("changeFilter2", getFilterScript2(iwc));
 
-			if (valPreType > 0 || valPreArea > 0 || valPreSchool > 0) {
-				p.setOnLoad(getInitFilterCallerScript(prmPreType, prmPreArea, prmPreSchool, valPreType, valPreArea, valPreSchool, false));
-			}
-
-			if (valType > 0) {
-				//if (valFirstArea > 0 || valFirstSchool > 0)
-				p.setOnLoad(getInitFilterCallerScript(prmType, prmFirstArea, prmFirstSchool, valType, valFirstArea, valFirstSchool, false));
-				if (!schoolChange) {
-					//if (valSecondArea > 0 || valSecondSchool > 0)
-					p.setOnLoad(getInitFilterCallerScript(prmType, prmSecondArea, prmSecondSchool, valType, valSecondArea, valSecondSchool, false));
-					//if (valThirdArea > 0 || valThirdSchool > 0)
-					p.setOnLoad(getInitFilterCallerScript(prmType, prmThirdArea, prmThirdSchool, valType, valThirdArea, valThirdSchool, false));
-				}
-			}
-
 			T.add(F, 1, T.getColumns());
-			if (hasChosen) {
+			if (valType > 0) {
 				Script initScript = myForm.getAssociatedFormScript();
 				if (initScript == null) {
 					initScript = new Script();
@@ -495,8 +474,15 @@ public class SchoolChoiceApplication extends CommuneBlock {
 				}
 
 				String initFunction = getInitFilterCallerScript(prmType, prmFirstArea, prmFirstSchool, valType, valFirstArea, valFirstSchool, false);
-
 				initScript.addFunction("sch_init", initFunction);
+				getParentPage().setOnLoad(initFunction);
+				
+				if (!schoolChange) {
+					String initFunction2 = getInitFilterCallerScript(prmType, prmSecondArea, prmSecondSchool, valType, valSecondArea, valSecondSchool, false);
+					String initFunction3 = getInitFilterCallerScript(prmType, prmThirdArea, prmThirdSchool, valType, valThirdArea, valThirdSchool, false);
+					initScript.addFunction("sch_init2", initFunction2);
+					initScript.addFunction("sch_init3", initFunction3);
+				}
 			}
 		}
 
