@@ -50,10 +50,10 @@ import com.idega.user.data.User;
  * and entity ejb classes in {@link se.idega.idegaweb.commune.school.data}.
  * <p>
  * <p>
- * Last modified: $Date: 2004/01/26 23:22:08 $ by $Author: laddi $
+ * Last modified: $Date: 2004/01/28 12:06:54 $ by $Author: staffan $
  *
  * @author <a href="http://www.staffannoteberg.com">Staffan Nöteberg</a>
- * @version $Revision: 1.39 $
+ * @version $Revision: 1.40 $
  * @see javax.ejb
  */
 public class SchoolChoiceReminderView extends CommuneBlock {
@@ -580,12 +580,10 @@ public class SchoolChoiceReminderView extends CommuneBlock {
 				}
 				catch (NumberFormatException e)
 				{
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				catch (FinderException e)
 				{
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 		}
@@ -642,12 +640,10 @@ public class SchoolChoiceReminderView extends CommuneBlock {
 				}
 				catch (NumberFormatException e)
 				{
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				catch (FinderException e)
 				{
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}

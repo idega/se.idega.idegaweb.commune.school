@@ -1314,7 +1314,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 			ids.addAll(this.findAllStudentsThatMustDoSchoolChoice(season, year));
 			System.err.println("ids.size=" + ids.size());
 			try {
-				ids.removeAll(findStudentIdsWhoChosedForSeasonAndYear(season, year));
+				ids.removeAll(findStudentIdsWhoChosedForSeason(season));
 			}
 			catch (FinderException e) {
 				e.printStackTrace();
@@ -1392,21 +1392,18 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	}
 
 	/**
-	 * Returns the Ids for all the students who made a schoolchoice for the season and year
+	 * Returns the Ids for all the students who made a schoolchoice for the season
 	 * 
 	 * @param season
-	 * @param year
 	 * @return Collection of Integer primary keys to Users
 	 * @throws RemoteException
 	 * @throws FinderException
 	 */
-	private Set findStudentIdsWhoChosedForSeasonAndYear(SchoolSeason season, SchoolYear year) throws RemoteException, FinderException {
+	private Set findStudentIdsWhoChosedForSeason(SchoolSeason season) throws RemoteException, FinderException {
 		com.idega.util.Timer timer = new com.idega.util.Timer();
 		timer.start();
-		//final Integer currentSeasonId
-		//        = (Integer) getCurrentSeason ().getPrimaryKey ();
-		//int currentSeasonId = ((Integer)season.getPrimaryKey()).intValue();
-		final Collection choices = getSchoolChoiceHome().findBySeasonAndSchoolYear(season, year);
+		final int seasonId = ((Integer) season.getPrimaryKey ()).intValue ();
+		final Collection choices = getSchoolChoiceHome().findBySeason(seasonId);
 		final Set ids = new HashSet();
 		for (Iterator i = choices.iterator(); i.hasNext(); ) {
 			final SchoolChoice choice = (SchoolChoice) i.next();
