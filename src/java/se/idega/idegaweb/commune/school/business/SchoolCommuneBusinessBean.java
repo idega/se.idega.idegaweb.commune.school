@@ -148,7 +148,7 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 		}
 	}
 	
-	public Map getSchoolTypeClassMap(Collection schoolTypes,int schoolID,int seasonID,boolean showSubGroups){
+	public Map getSchoolTypeClassMap(Collection schoolTypes,int schoolID,int seasonID,boolean showSubGroups,boolean showNonSeasonGroups){
 		try {
 			SortedMap typeMap = new TreeMap(new SchoolTypeComparator());
 			if (schoolTypes != null) {
@@ -163,7 +163,7 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 					groupMap = new HashMap();
 
 					schoolType = (SchoolType) iter.next();
-					groups = sb.findSchoolClassesBySchoolAndSchoolTypeAndSeason(schoolID, ((Integer) schoolType.getPrimaryKey()).intValue(),seasonID, showSubGroups);
+					groups = sb.findSchoolClassesBySchoolAndSchoolTypeAndSeason(schoolID, ((Integer) schoolType.getPrimaryKey()).intValue(),seasonID, showSubGroups,showNonSeasonGroups);
 					if (groups != null && groups.size() > 0) {
 						Iterator iterator = groups.iterator();
 						while (iterator.hasNext()) {
