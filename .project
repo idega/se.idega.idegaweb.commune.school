@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<projectDescription>
+  <name>se.idega.idegaweb.commune.school</name>
+  <comment>
+  </comment>
+  <projects>
+    <project>com.idega.core</project>
+    <project>com.idega.builder</project>
+    <project>com.idega.user</project>
+    <project>com.idega.block.school</project>
+    <project>com.idega.block.process</project>
+    <project>com.idega.block.datareport</project>
+    <project>com.idega.block.navigation</project>
+    <project>is.idega.block.family</project>
+    <project>se.idega.util</project>
+    <project>se.idega.idegaweb.commune</project>
+    <project>se.cubecon.bun24.viewpoint</project>
+    <project>se.idega.idegaweb.commune.accounting</project>
+    <project>se.idega.idegaweb.commune.provider</project>
+  </projects>
+  <buildSpec>
+    <buildCommand>
+      <name>org.eclipse.jdt.core.javabuilder</name>
+      <arguments>
+      </arguments>
+    </buildCommand>
+  </buildSpec>
+  <natures>
+    <nature>org.eclipse.jdt.core.javanature</nature>
+  </natures>
+</projectDescription>
