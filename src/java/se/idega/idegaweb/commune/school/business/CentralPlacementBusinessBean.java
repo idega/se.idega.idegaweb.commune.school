@@ -47,6 +47,7 @@ public class CentralPlacementBusinessBean extends IBOServiceBean
 	private static final String KEY_ERROR_CHILD_ID = KP + "error.child_id";
 	private static final String KEY_ERROR_PROVIDER_ID = KP + "error.provider_id";
 	private static final String KEY_ERROR_PLACEMENT_DATE = KP + "error.placement_date";
+	private static final String KEY_ERROR_SCHOOL_TYPE = KP + "error.school_type";
 	private static final String KEY_ERROR_SCHOOL_YEAR = KP + "error.school_year";
 	private static final String KEY_ERROR_SCHOOL_GROUP = KP + "error.school_group";
 
@@ -58,6 +59,7 @@ public class CentralPlacementBusinessBean extends IBOServiceBean
 		int studentID = -1;
 		int schoolClassID = -1;
 		int schoolYearID = -1;
+		int schoolTypeID = -1;
 		int registrator = -1;
 		String placementDateStr = "-1";
 		Timestamp registerDate = null;
@@ -99,7 +101,16 @@ public class CentralPlacementBusinessBean extends IBOServiceBean
 																				"You must chose a school for the placement");
 			} 
 		}
-
+		// school type
+		if (iwc.isParameterSet(CentralPlacementEditor.PARAM_SCHOOL_TYPE)) {
+			String typeID = iwc.getParameter(CentralPlacementEditor.PARAM_SCHOOL_TYPE);
+			if (typeID.equals("-1")) {
+				throw new CentralPlacementException(KEY_ERROR_SCHOOL_TYPE, 
+																				"You must chose a school type");
+			} else {
+				schoolTypeID = Integer.parseInt(typeID);
+			}
+		}
 		// school year
 		if (iwc.isParameterSet(CentralPlacementEditor.PARAM_SCHOOL_YEAR)) {
 			String yearID = iwc.getParameter(CentralPlacementEditor.PARAM_SCHOOL_YEAR);
@@ -138,9 +149,6 @@ public class CentralPlacementBusinessBean extends IBOServiceBean
 				dayBeforeRegStamp = dayBeforeStamp.getTimestamp();
 				dayBeforeRegDate = dayBeforeStamp.getDate();
 				
-//				seeDayBeforeDate = dayBeforeStamp.getDateString("yyyyMMdd"); // test
-				//int seeDayInt = dayBeforeRegDate.getDay();  // test
-			  
 				if (placeStamp.isEarlierThan(today)) {
 					throw new CentralPlacementException(KEY_ERROR_PLACEMENT_DATE, 
 														"Placement date must be set and cannot be earlier than today");
@@ -167,7 +175,7 @@ public class CentralPlacementBusinessBean extends IBOServiceBean
 			trans.begin();
 			// Create new placement
 			newPlacement = getSchoolBusiness(iwc).storeSchoolClassMember(studentID, schoolClassID, 
-																				schoolYearID, registerDate, registrator, notes);
+														schoolYearID, schoolTypeID, registerDate, registrator, notes);
 			if (newPlacement != null) {
 			// *** START - Store the rest of the parameters ***
 				newPlacementID = ((Integer) newPlacement.getPrimaryKey()).intValue(); // test
