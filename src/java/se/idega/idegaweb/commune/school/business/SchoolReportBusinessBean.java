@@ -82,7 +82,7 @@ public class SchoolReportBusinessBean extends IBOSessionBean implements SchoolRe
 		
 		ReportableCollection reportCollection = new ReportableCollection();
 		
-		reportCollection.addExtraHeaderParameter(
+		reportCollection.addExtraHeaderParameterAtBeginning(
 				"school_group_report",
 				getLocalizedString("extra_information", "Extra information"),
 				"label",
@@ -252,16 +252,11 @@ public class SchoolReportBusinessBean extends IBOSessionBean implements SchoolRe
 	}
 	
 	public ReportableCollection getChoicesReport(Collection columnNames) {
+		fillColumns(columnNames);
 		initializeBundlesIfNeeded();
 		Locale currentLocale = this.getUserContext().getCurrentLocale();
 		
 		ReportableCollection reportCollection = new ReportableCollection();
-		
-		reportCollection.addExtraHeaderParameter(
-				"school_choice_report",
-				getLocalizedString("extra_information", "Extra information"),
-				"label",
-				"Mamaseika");
 		
 		ReportableField personalID = new ReportableField(FIELD_PERSONAL_ID, String.class);
 		personalID.setLocalizedName(getLocalizedString(FIELD_PERSONAL_ID, "Personal ID"), currentLocale);
