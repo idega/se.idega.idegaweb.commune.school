@@ -1,5 +1,5 @@
 /*
- * $Id: NackaCommuneHighSchoolPlacementReportModel.java,v 1.8 2004/01/23 12:47:17 anders Exp $
+ * $Id: NackaCommuneHighSchoolPlacementReportModel.java,v 1.9 2004/01/23 13:19:40 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -20,10 +20,10 @@ import com.idega.block.school.data.SchoolStudyPath;
 /** 
  * Report model for Nacka high school student placements.
  * <p>
- * Last modified: $Date: 2004/01/23 12:47:17 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/23 13:19:40 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.8 $
+ * @version $Revision: 1.9 $
  */
 public class NackaCommuneHighSchoolPlacementReportModel extends ReportModel {
 
@@ -455,6 +455,7 @@ public class NackaCommuneHighSchoolPlacementReportModel extends ReportModel {
 			query.setSelectCount();
 			query.setPlacements(rb.getSchoolSeasonId());
 			query.setSchools(schools);
+			query.setSchoolTypeHighSchool();
 			query.setStudyPathPrefix(); // parameter 1
 			query.prepare();
 			setQuery(QUERY_STUDY_PATH, query);
