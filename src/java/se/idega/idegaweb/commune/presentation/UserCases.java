@@ -327,10 +327,10 @@ public class UserCases extends CommuneBlock {
 		if (useStyleNames) {
 			messageList.setCellpaddingLeft(getNumberColumn(), row, firstColumnPadding);
 			if (row % 2 == 0) {
-				messageList.setRowStyleClass(row++, getStyleName(STYLENAME_LIGHT_ROW));
+				messageList.setRowStyleClass(row, getStyleName(STYLENAME_LIGHT_ROW));
 			}
 			else {
-				messageList.setRowStyleClass(row++, getStyleName(STYLENAME_DARK_ROW));
+				messageList.setRowStyleClass(row, getStyleName(STYLENAME_DARK_ROW));
 			}
 		}
 		else {
