@@ -455,11 +455,11 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 			com.idega.user.data.User[] familyMembers = new com.idega.user.data.User[5];
 			is.idega.idegaweb.member.business.MemberFamilyLogic ml = (is.idega.idegaweb.member.business.MemberFamilyLogic) getServiceInstance(is.idega.idegaweb.member.business.MemberFamilyLogic.class);
 			se.idega.idegaweb.commune.business.CommuneUserBusiness ub = (se.idega.idegaweb.commune.business.CommuneUserBusiness) getServiceInstance(se.idega.idegaweb.commune.business.CommuneUserBusiness.class);
-			familyMembers[0] = ub.createCitizenByPersonalIDIfDoesNotExist("Gunnar", "P?ll", "Dan?elsson", "0101");
-			familyMembers[1] = ub.createCitizenByPersonalIDIfDoesNotExist("P?ll", "", "Helgason", "0202");
-			familyMembers[2] = ub.createCitizenByPersonalIDIfDoesNotExist("Tryggvi", "", "L?russon", "0303");
-			familyMembers[3] = ub.createCitizenByPersonalIDIfDoesNotExist("??rhallur", "", "Dan?elsson", "0404");
-			familyMembers[4] = ub.createCitizenByPersonalIDIfDoesNotExist("J?n", "Karl", "J?nsson", "0505");
+			familyMembers[0] = ub.createOrUpdateCitizenByPersonalID("Gunnar", "P?ll", "Dan?elsson", "0101");
+			familyMembers[1] = ub.createOrUpdateCitizenByPersonalID("P?ll", "", "Helgason", "0202");
+			familyMembers[2] = ub.createOrUpdateCitizenByPersonalID("Tryggvi", "", "L?russon", "0303");
+			familyMembers[3] = ub.createOrUpdateCitizenByPersonalID("??rhallur", "", "Dan?elsson", "0404");
+			familyMembers[4] = ub.createOrUpdateCitizenByPersonalID("J?n", "Karl", "J?nsson", "0505");
 			ml.setAsChildFor(familyMembers[1], familyMembers[0]);
 			ml.setAsChildFor(familyMembers[2], familyMembers[0]);
 			ml.setAsChildFor(familyMembers[3], familyMembers[1]);
