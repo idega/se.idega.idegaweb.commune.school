@@ -201,7 +201,8 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		try {
 			java.sql.Timestamp time = new java.sql.Timestamp(System.currentTimeMillis());
 			CaseStatus unHandledStatus = getCaseStatus(getCaseStatusMoved().getStatus());
-			SchoolChoice choice = createSchoolChoice(userId, childId, school_type_id, current_school, chosen_school, grade, 1, method, workSituation1, workSituation2, language, message, time, true, keepChildrenCare, autoAssign, custodiansAgree, schoolCatalogue, unHandledStatus, null, placementDate, season, extraMessage);
+			IWTimestamp stamp = new IWTimestamp();
+			SchoolChoice choice = createSchoolChoice(stamp, userId, childId, school_type_id, current_school, chosen_school, grade, 1, method, workSituation1, workSituation2, language, message, time, true, keepChildrenCare, autoAssign, custodiansAgree, schoolCatalogue, unHandledStatus, null, placementDate, season, extraMessage);
 			ArrayList choices = new ArrayList(1);
 			choices.add(choice);
 			handleSeparatedParentApplication(userId, choices, true);
@@ -253,8 +254,9 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 				CaseStatus other = getCaseStatusInactive();
 				int[] schoolIds = {chosen_school_1, chosen_school_2, chosen_school_3};
 				SchoolChoice choice = null;
+				IWTimestamp stamp = new IWTimestamp();
 				for (int i = 0; i < caseCount; i++) {
-					choice = createSchoolChoice(userId, childId, school_type_id, current_school, schoolIds[i], grade, i + 1, method, workSituation1, workSituation2, language, message, time, changeOfSchool, keepChildrenCare, autoAssign, custodiansAgree, schoolCatalogue, i == 0 ? first : other, choice, placementDate, season, extraMessages[i]);
+					choice = createSchoolChoice(stamp, userId, childId, school_type_id, current_school, schoolIds[i], grade, i + 1, method, workSituation1, workSituation2, language, message, time, changeOfSchool, keepChildrenCare, autoAssign, custodiansAgree, schoolCatalogue, i == 0 ? first : other, choice, placementDate, season, extraMessages[i]);
 					returnList.add(choice);
 				}
 				handleSeparatedParentApplication(userId, returnList, false);
@@ -348,8 +350,9 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 				CaseStatus other = getCaseStatusInactive();
 				int[] schoolIds = {chosen_school_1, chosen_school_2, chosen_school_3};
 				SchoolChoice choice = null;
+				IWTimestamp stamp = new IWTimestamp();
 				for (int i = 0; i < caseCount; i++) {
-					choice = createSchoolChoice(userId, childId, school_type_id, current_school, schoolIds[i], grade, i + 1, method, workSituation1, workSituation2, language, message, time, changeOfSchool, keepChildrenCare, autoAssign, custodiansAgree, schoolCatalogue, i == 0 ? first : other, choice, placementDate, season, extraMessages[i]);
+					choice = createSchoolChoice(stamp, userId, childId, school_type_id, current_school, schoolIds[i], grade, i + 1, method, workSituation1, workSituation2, language, message, time, changeOfSchool, keepChildrenCare, autoAssign, custodiansAgree, schoolCatalogue, i == 0 ? first : other, choice, placementDate, season, extraMessages[i]);
 					returnList.add(choice);
 				}
 				handleSeparatedParentApplication(userId, returnList, false);
@@ -389,7 +392,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		}
 	}
 
-	public SchoolChoice createSchoolChoice(int userId, int childId, int school_type_id, int current_school, int chosen_school, int grade, int choiceOrder, int method, int workSituation1, int workSituation2, String language, String message, java.sql.Timestamp choiceDate, boolean changeOfSchool, boolean keepChildrenCare, boolean autoAssign, boolean custodiansAgree, boolean schoolCatalogue, CaseStatus caseStatus, Case parentCase, Date placementDate, SchoolSeason season, String extraMessage) throws CreateException, RemoteException {
+	private SchoolChoice createSchoolChoice(IWTimestamp stamp, int userId, int childId, int school_type_id, int current_school, int chosen_school, int grade, int choiceOrder, int method, int workSituation1, int workSituation2, String language, String message, java.sql.Timestamp choiceDate, boolean changeOfSchool, boolean keepChildrenCare, boolean autoAssign, boolean custodiansAgree, boolean schoolCatalogue, CaseStatus caseStatus, Case parentCase, Date placementDate, SchoolSeason season, String extraMessage) throws CreateException, RemoteException {
 		if (season == null) {
 			try {
 				season = getCurrentSeason();
@@ -453,8 +456,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		}
 		if (placementDate != null)
 			choice.setPlacementDate(placementDate);
-		IWTimestamp stamp = new IWTimestamp();
-		stamp.addSeconds((10 - (choiceOrder * 10)));
+		stamp.addSeconds(1 - choiceOrder);
 		choice.setCreated(stamp.getTimestamp());
 		choice.setCaseStatus(caseStatus);
 
