@@ -7,14 +7,11 @@
 package se.idega.idegaweb.commune.school.business;
 
 import java.rmi.RemoteException;
-import java.sql.Timestamp;
 
 import javax.transaction.SystemException;
 import javax.transaction.UserTransaction;
 
-import com.idega.block.school.business.SchoolBusiness;
 import com.idega.block.school.data.SchoolClassMember;
-import com.idega.business.IBOLookup;
 import com.idega.business.IBOServiceBean;
 import com.idega.presentation.IWContext;
 
@@ -24,22 +21,24 @@ import com.idega.presentation.IWContext;
  * Business object with helper methods for CentralPlacingEditor
  */
 public class CentralPlacementBusinessBean extends IBOServiceBean 
-																					implements CentralPlacementBusiness {
+																						implements CentralPlacementBusiness {
 	/**
 	 * Stores a new placement(SchoolClassMember) with resources
 	 *
 	 */
-	public SchoolClassMember storeSchoolClassMember(IWContext iwc, int studentID, 
-										int schoolClassID, Timestamp registerDate, int registrator, String notes)
-																											 throws RemoteException{		
+	public SchoolClassMember storeSchoolClassMember(IWContext iwc, int childID) 
+																	throws RemoteException, CentralPlacementException {
+																											 	
+		// int studentID, int schoolClassID, Timestamp registerDate, int registrator, String notes)		
 		UserTransaction trans = getSessionContext().getUserTransaction();
 		SchoolClassMember member = null;
 		try {
 			trans.begin();
 			// TODO Store placement
+			
 
-			member = getSchoolBusiness(iwc).storeSchoolClassMember(studentID, schoolClassID, 
-																									registerDate, registrator, notes);
+			//member = getSchoolBusiness(iwc).storeSchoolClassMember(studentID, schoolClassID, 
+			//																						registerDate, registrator, notes);
 																									
 			trans.commit();
 		} catch (Exception e) {
@@ -61,8 +60,8 @@ public class CentralPlacementBusinessBean extends IBOServiceBean
 		
 	}
 		
-	private SchoolBusiness getSchoolBusiness(IWContext iwc) throws RemoteException {
+/*	private SchoolBusiness getSchoolBusiness(IWContext iwc) throws RemoteException {
 		return (SchoolBusiness) IBOLookup.getServiceInstance(iwc, SchoolBusiness.class);
 	}
-
+*/
 }
