@@ -28,7 +28,6 @@ import se.cubecon.bun24.viewpoint.business.ViewpointBusiness;
 import se.cubecon.bun24.viewpoint.data.SubCategory;
 import se.idega.idegaweb.commune.business.CommuneUserBusiness;
 import se.idega.idegaweb.commune.message.business.MessageBusiness;
-import se.idega.idegaweb.commune.message.data.Message;
 import se.idega.idegaweb.commune.school.data.CurrentSchoolSeason;
 import se.idega.idegaweb.commune.school.data.CurrentSchoolSeasonHome;
 import se.idega.idegaweb.commune.school.data.SchoolChoice;
@@ -64,6 +63,7 @@ import com.idega.user.business.UserBusiness;
 import com.idega.user.data.Group;
 import com.idega.user.data.User;
 import com.idega.user.data.UserHome;
+import com.idega.util.Age;
 import com.idega.util.IWTimestamp;
 import com.lowagie.text.Chunk;
 import com.lowagie.text.Document;
@@ -162,7 +162,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 			SchoolChoice choice = createSchoolChoice(userId, childId, school_type_id, current_school,chosen_school, grade, 1, method, workSituation1, workSituation2, language, message, time, true, keepChildrenCare, autoAssign, custodiansAgree, schoolCatalogue, unHandledStatus, null, null, season);
 			ArrayList choices = new ArrayList(1);
 			choices.add(choice);
-			handleSeparatedParentApplication(childId,userId,choices,true);
+			handleSeparatedParentApplication(userId,choices,true);
 			handleSchoolChangeHeadMasters(getUser(childId),current_school,chosen_school);
 
 			int previousSeasonID = getCommuneSchoolBusiness().getPreviousSchoolSeasonID(getCommuneSchoolBusiness().getCurrentSchoolSeasonID());
@@ -197,7 +197,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 					choice = createSchoolChoice(userId, childId, school_type_id, current_school, schoolIds[i], grade, i + 1, method, workSituation1, workSituation2, language, message, time, changeOfSchool, keepChildrenCare, autoAssign, custodiansAgree, schoolCatalogue, i == 0 ? first : other, choice, placementDate, season);
 					returnList.add(choice);
 				}
-				handleSeparatedParentApplication(childId,userId,returnList,false);
+				handleSeparatedParentApplication(userId,returnList,false);
 				trans.commit();
 				
 				int previousSeasonID = getCommuneSchoolBusiness().getPreviousSchoolSeasonID(getCommuneSchoolBusiness().getCurrentSchoolSeasonID());
@@ -267,7 +267,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 					choice = createSchoolChoice(userId, childId, school_type_id, current_school, schoolIds[i], grade, i + 1, method, workSituation1, workSituation2, language, message, time, changeOfSchool, keepChildrenCare, autoAssign, custodiansAgree, schoolCatalogue, i == 0 ? first : other, choice, placementDate, season);
 					returnList.add(choice);
 				}
-				handleSeparatedParentApplication(childId,userId,returnList,false);
+				handleSeparatedParentApplication(userId,returnList,false);
 				trans.commit();
 				
 				int previousSeasonID = getCommuneSchoolBusiness().getPreviousSchoolSeasonID(getCommuneSchoolBusiness().getCurrentSchoolSeasonID());
@@ -373,7 +373,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		}
 		
 		if (caseStatus.getStatus().equalsIgnoreCase("PREL")) {
-			sendMessageToParentOrChild(choice.getOwner(), choice.getChild(), getPreliminaryMessageSubject(), getPreliminaryMessageBody(choice));
+			sendMessageToParentOrChild(choice, choice.getOwner(), choice.getChild(), getPreliminaryMessageSubject(), getPreliminaryMessageBody(choice));
 //			getMessageBusiness().createUserMessage(choice.getOwner(), getPreliminaryMessageSubject(), getPreliminaryMessageBody(choice));
 		}
 		if (parentCase != null)
@@ -397,12 +397,10 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		}
 	}
 	
-	private void handleSeparatedParentApplication(int childID,int applicationParentID,List choices,boolean isSchoolChangeApplication)throws RemoteException{
+	private void handleSeparatedParentApplication(int applicationParentID,List choices,boolean isSchoolChangeApplication)throws RemoteException{
 		try{
 			if(choices!=null){
 				SchoolChoice choice = (SchoolChoice)choices.get(0);
-				MemberFamilyLogic familyLogic = getMemberFamilyLogic();
-				Collection parents = familyLogic.getCustodiansFor(getUser(childID));
 				User appParent = getUser(applicationParentID);
 
 				String subject, body;
@@ -414,22 +412,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 					body = getSeparateParentMessageBodyAppl(choices,appParent); 					
 				}
 				
-				if (isOfAge(choice.getChild())){
-					getMessageBusiness().createUserMessage(choice.getChild(), subject, body); 	
-									
-				} else {
-					if (familyLogic.isChildInCustodyOf(choice.getChild(), appParent)) {
-						getMessageBusiness().createUserMessage(appParent, subject, body); 
-					}
-	
-					Iterator iter = parents.iterator();		
-					while(iter.hasNext()){
-						User parent = (User) iter.next();
-						if (!getUserBusiness().haveSameAddress(parent, appParent)) {
-							getMessageBusiness().createUserMessage(appParent, subject, body); 
-						}
-					}
-				}
+				sendMessageToParents(choice, subject, body);
 			}
 		}
 		catch(Exception ex){throw new RemoteException(ex.getMessage());}
@@ -523,14 +506,12 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 			Object[] arguments = { child.getNameLastFirst(true), application.getChosenSchool().getSchoolName() };
 
 			if (isOfAge(child)){
-				getMessageBusiness().createUserMessage(child, subject, MessageFormat.format(body, arguments));	
+				getMessageBusiness().createUserMessage(application, child, subject, MessageFormat.format(body, arguments), true);	
 							
 			} else {
 				User appParent = application.getOwner();
 				if (getUserBusiness().getMemberFamilyLogic().isChildInCustodyOf(child, appParent)) {
-					Message message = getMessageBusiness().createUserMessage(appParent, subject, MessageFormat.format(body, arguments));
-					message.setParentCase(application);
-					message.store();
+					getMessageBusiness().createUserMessage(application, appParent, subject, MessageFormat.format(body, arguments), true);
 				}
 
 				try {
@@ -539,9 +520,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 					while (iter.hasNext()) {
 						User parent = (User) iter.next();
 						if (!getUserBusiness().haveSameAddress(parent, appParent)) {
-							Message message = getMessageBusiness().createUserMessage(parent, subject, MessageFormat.format(body, arguments));
-							message.setParentCase(application);
-							message.store();
+							getMessageBusiness().createUserMessage(application, parent, subject, MessageFormat.format(body, arguments), true);
 						}
 					}
 				}
@@ -650,7 +629,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 			SchoolChoice choice = getSchoolChoiceHome().findByPrimaryKey(pk);
 			super.changeCaseStatus(choice, "PREL", performer);
 			choice.store();
-			sendMessageToParentOrChild(choice.getOwner(), choice.getChild(), getPreliminaryMessageSubject(), getPreliminaryMessageBody(choice));
+			sendMessageToParentOrChild(choice, choice.getOwner(), choice.getChild(), getPreliminaryMessageSubject(), getPreliminaryMessageBody(choice));
 			return true;
 		}
 		catch (Exception e) {
@@ -1471,8 +1450,8 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		return mm*72/25.4f;
 	}
     
-	public void sendMessageToParentOrChild(User parent, User child, String subject, String body) throws RemoteException{
-		getMessageBusiness().createUserMessage(getReceiver(parent, child), subject, body);
+	public void sendMessageToParentOrChild(SchoolChoice choice, User parent, User child, String subject, String body) throws RemoteException{
+		getMessageBusiness().createUserMessage(choice, getReceiver(parent, child), subject, body, true);
 	}
 
 	
@@ -1484,10 +1463,13 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	 * @return true if person's age >= 18
 	 */ 
 	private boolean isOfAge(User person){
-		Calendar c = Calendar.getInstance();
-		c.setLenient(true);
-		c.setTime(new java.util.Date(new java.util.Date().getTime() - person.getDateOfBirth().getTime()));
-		return c.get(Calendar.YEAR) >= 18;
+		try {
+			Age age = new Age(person.getDateOfBirth());
+			return age.getYears() >= 18;
+		}
+		catch (NullPointerException e) {
+			return false;
+		}
 	}
 	
 	/**
