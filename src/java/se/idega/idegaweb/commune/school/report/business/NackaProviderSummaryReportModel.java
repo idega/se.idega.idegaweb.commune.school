@@ -1,5 +1,5 @@
 /*
- * $Id: NackaProviderSummaryReportModel.java,v 1.8 2004/02/23 13:19:45 anders Exp $
+ * $Id: NackaProviderSummaryReportModel.java,v 1.9 2004/02/25 15:52:07 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -14,10 +14,10 @@ import java.rmi.RemoteException;
 /** 
  * Report model that shows a summary of Nacka providers (child care and schools).
  * <p>
- * Last modified: $Date: 2004/02/23 13:19:45 $ by $Author: anders $
+ * Last modified: $Date: 2004/02/25 15:52:07 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.8 $
+ * @version $Revision: 1.9 $
  */
 public class NackaProviderSummaryReportModel extends ReportModel {
 
@@ -119,9 +119,11 @@ public class NackaProviderSummaryReportModel extends ReportModel {
 	protected void buildCells() {
 		for (int row = 0; row < getRowSize(); row++) {
 
+			boolean isPrivate = false;
 			int rowMethod = ROW_METHOD_PROVIDER_TYPE_COMMUNE;
 			if (row / 9 > 0) {
 				rowMethod = ROW_METHOD_PROVIDER_TYPE_PRIVATE;
+				isPrivate = true;
 			}
 			
 			Object rowParameter = null;
@@ -142,6 +144,10 @@ public class NackaProviderSummaryReportModel extends ReportModel {
 						
 					cell = new Cell(this, row, 2, rowMethod, COLUMN_METHOD_PLACEMENTS_OTHER_COMMUNES,
 							rowParameter, columnParameter, Cell.CELLTYPE_NORMAL);
+					if (isPrivate) {
+						cell = new Cell(this, row, 2, rowMethod, COLUMN_METHOD_PLACEMENTS_OTHER_COMMUNES,
+								"&nbsp;", columnParameter, Cell.CELLTYPE_ROW_HEADER);						
+					}
 					setCell(row, 2, cell);					
 					break;
 				case 1:
@@ -152,18 +158,22 @@ public class NackaProviderSummaryReportModel extends ReportModel {
 					setCell(row, 0, cell);
 						
 					cell = new Cell(this, row, 1, rowMethod, COLUMN_METHOD_PLACEMENTS,
-							" ", columnParameter, Cell.CELLTYPE_ROW_HEADER);
+							"&nbsp;", columnParameter, Cell.CELLTYPE_ROW_HEADER);
 					setCell(row, 1, cell);
 							
 					cell = new Cell(this, row, 2, rowMethod, COLUMN_METHOD_PLACEMENTS_OTHER_COMMUNES,
-							" ", columnParameter, Cell.CELLTYPE_ROW_HEADER);
+							"&nbsp;", columnParameter, Cell.CELLTYPE_ROW_HEADER);
+					if (isPrivate) {
+						cell = new Cell(this, row, 2, rowMethod, COLUMN_METHOD_PLACEMENTS_OTHER_COMMUNES,
+								"&nbsp;", columnParameter, Cell.CELLTYPE_ROW_HEADER);						
+					}
 					setCell(row, 2, cell);
 					break;
 				case 2:
 					rowParameter = new Integer(SCHOOL_TYPE_FAMILY_DAYCARE_PRE_SCHOOL_OPERATION);
 					
 					cell = new Cell(this, row, 0, rowMethod, COLUMN_METHOD_PROVIDER_COUNT,
-							" ", columnParameter, Cell.CELLTYPE_ROW_HEADER);
+							"&nbsp;", columnParameter, Cell.CELLTYPE_ROW_HEADER);
 					setCell(row, 0, cell);
 							
 					cell = new Cell(this, row, 1, rowMethod, COLUMN_METHOD_PLACEMENTS,
@@ -172,13 +182,17 @@ public class NackaProviderSummaryReportModel extends ReportModel {
 								
 					cell = new Cell(this, row, 2, rowMethod, COLUMN_METHOD_PLACEMENTS_OTHER_COMMUNES,
 							rowParameter, columnParameter, Cell.CELLTYPE_NORMAL);
+					if (isPrivate) {
+						cell = new Cell(this, row, 2, rowMethod, COLUMN_METHOD_PLACEMENTS_OTHER_COMMUNES,
+								"&nbsp;", columnParameter, Cell.CELLTYPE_ROW_HEADER);						
+					}
 					setCell(row, 2, cell);
 					break;
 				case 3:
 					rowParameter = new Integer(SCHOOL_TYPE_FAMILY_DAYCARE_AFTER_SCHOOL_OPERATION);
 					
 					cell = new Cell(this, row, 0, rowMethod, COLUMN_METHOD_PROVIDER_COUNT,
-							" ", columnParameter, Cell.CELLTYPE_ROW_HEADER);
+							"&nbsp;", columnParameter, Cell.CELLTYPE_ROW_HEADER);
 					setCell(row, 0, cell);
 								
 					cell = new Cell(this, row, 1, rowMethod, COLUMN_METHOD_PLACEMENTS,
@@ -187,6 +201,10 @@ public class NackaProviderSummaryReportModel extends ReportModel {
 									
 					cell = new Cell(this, row, 2, rowMethod, COLUMN_METHOD_PLACEMENTS_OTHER_COMMUNES,
 							rowParameter, columnParameter, Cell.CELLTYPE_NORMAL);
+					if (isPrivate) {
+						cell = new Cell(this, row, 2, rowMethod, COLUMN_METHOD_PLACEMENTS_OTHER_COMMUNES,
+								"&nbsp;", columnParameter, Cell.CELLTYPE_ROW_HEADER);						
+					}
 					setCell(row, 2, cell);
 					break;
 				case 4:
@@ -202,6 +220,10 @@ public class NackaProviderSummaryReportModel extends ReportModel {
 							
 					cell = new Cell(this, row, 2, rowMethod, COLUMN_METHOD_PLACEMENTS_OTHER_COMMUNES,
 							rowParameter, columnParameter, Cell.CELLTYPE_NORMAL);
+					if (isPrivate) {
+						cell = new Cell(this, row, 2, rowMethod, COLUMN_METHOD_PLACEMENTS_OTHER_COMMUNES,
+								"&nbsp;", columnParameter, Cell.CELLTYPE_ROW_HEADER);						
+					}
 					setCell(row, 2, cell);					
 					break;
 				case 5:
@@ -212,18 +234,22 @@ public class NackaProviderSummaryReportModel extends ReportModel {
 					setCell(row, 0, cell);
 							
 					cell = new Cell(this, row, 1, rowMethod, COLUMN_METHOD_PLACEMENTS,
-							" ", columnParameter, Cell.CELLTYPE_ROW_HEADER);
+							"&nbsp;", columnParameter, Cell.CELLTYPE_ROW_HEADER);
 					setCell(row, 1, cell);
 								
 					cell = new Cell(this, row, 2, rowMethod, COLUMN_METHOD_PLACEMENTS_OTHER_COMMUNES,
-							" ", columnParameter, Cell.CELLTYPE_ROW_HEADER);
+							"&nbsp;", columnParameter, Cell.CELLTYPE_ROW_HEADER);
+					if (isPrivate) {
+						cell = new Cell(this, row, 2, rowMethod, COLUMN_METHOD_PLACEMENTS_OTHER_COMMUNES,
+								"&nbsp;", columnParameter, Cell.CELLTYPE_ROW_HEADER);						
+					}
 					setCell(row, 2, cell);
 					break;
 				case 6:
 					rowParameter = new Integer(SCHOOL_TYPE_ELEMENTARY_SCHOOL_ONLY);
 					
 					cell = new Cell(this, row, 0, rowMethod, COLUMN_METHOD_PROVIDER_COUNT,
-							" ", columnParameter, Cell.CELLTYPE_ROW_HEADER);
+							"&nbsp;", columnParameter, Cell.CELLTYPE_ROW_HEADER);
 					setCell(row, 0, cell);
 								
 					cell = new Cell(this, row, 1, rowMethod, COLUMN_METHOD_PLACEMENTS,
@@ -232,13 +258,17 @@ public class NackaProviderSummaryReportModel extends ReportModel {
 									
 					cell = new Cell(this, row, 2, rowMethod, COLUMN_METHOD_PLACEMENTS_OTHER_COMMUNES,
 							rowParameter, columnParameter, Cell.CELLTYPE_NORMAL);
+					if (isPrivate) {
+						cell = new Cell(this, row, 2, rowMethod, COLUMN_METHOD_PLACEMENTS_OTHER_COMMUNES,
+								"&nbsp;", columnParameter, Cell.CELLTYPE_ROW_HEADER);						
+					}
 					setCell(row, 2, cell);
 					break;
 				case 7:
 					rowParameter = new Integer(SCHOOL_TYPE_ELEMENTARY_SCHOOL_PRES_SCHOOL_CLASS);
 					
 					cell = new Cell(this, row, 0, rowMethod, COLUMN_METHOD_PROVIDER_COUNT,
-							" ", columnParameter, Cell.CELLTYPE_ROW_HEADER);
+							"&nbsp;", columnParameter, Cell.CELLTYPE_ROW_HEADER);
 					setCell(row, 0, cell);
 								
 					cell = new Cell(this, row, 1, rowMethod, COLUMN_METHOD_PLACEMENTS,
@@ -247,6 +277,10 @@ public class NackaProviderSummaryReportModel extends ReportModel {
 									
 					cell = new Cell(this, row, 2, rowMethod, COLUMN_METHOD_PLACEMENTS_OTHER_COMMUNES,
 							rowParameter, columnParameter, Cell.CELLTYPE_NORMAL);
+					if (isPrivate) {
+						cell = new Cell(this, row, 2, rowMethod, COLUMN_METHOD_PLACEMENTS_OTHER_COMMUNES,
+								"&nbsp;", columnParameter, Cell.CELLTYPE_ROW_HEADER);						
+					}
 					setCell(row, 2, cell);
 					break;
 				case 8:
@@ -262,6 +296,10 @@ public class NackaProviderSummaryReportModel extends ReportModel {
 							
 					cell = new Cell(this, row, 2, rowMethod, COLUMN_METHOD_PLACEMENTS_OTHER_COMMUNES,
 							rowParameter, columnParameter, Cell.CELLTYPE_NORMAL);
+					if (isPrivate) {
+						cell = new Cell(this, row, 2, rowMethod, COLUMN_METHOD_PLACEMENTS_OTHER_COMMUNES,
+								"&nbsp;", columnParameter, Cell.CELLTYPE_ROW_HEADER);						
+					}
 					setCell(row, 2, cell);					
 					break;
 			}			
@@ -573,6 +611,7 @@ public class NackaProviderSummaryReportModel extends ReportModel {
 				query.setSelectCountDistinctUsers();
 				query.setChildCarePlacements();
 				query.setOnlyNackaSchools();
+				query.setOnlyNackaCitizens();
 				query.setFourSchoolTypesForProviders(); // parameter 1-4
 				query.setFourManagementTypes(); // parameter 5-8
 				query.prepare();
