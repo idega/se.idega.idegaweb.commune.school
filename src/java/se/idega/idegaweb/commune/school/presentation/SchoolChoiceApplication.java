@@ -36,8 +36,11 @@ import com.idega.business.IBOLookup;
 import com.idega.business.IBOLookupException;
 import com.idega.business.IBORuntimeException;
 import com.idega.core.builder.data.ICPage;
+import com.idega.core.localisation.data.ICLanguage;
+import com.idega.core.localisation.data.ICLanguageHome;
 import com.idega.core.location.data.Address;
 import com.idega.data.IDOEntity;
+import com.idega.data.IDOLookup;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWPropertyList;
@@ -109,6 +112,8 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	private String prmParentId = CitizenChildren.getParentIDParameterName();
 	private String prmForm = prefix + "the_frm";
 	//private String prmCaseOwner = prefix+"cse_own";
+	private String prmNativeLangIsChecked= prefix + "native_lang_is_checked";
+	private String prmNativeLang = prefix+"native_lang";
 
 	private boolean valSendCatalogue = false;
 	private boolean valSixyearCare = false;
@@ -774,6 +779,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		table.setCellspacing(0);
 		table.setColumns(5);
 		table.mergeCells(1, 1, table.getColumns(), 1);
+		table.setBorder(0);
 		table.add(getHeader(iwrb.getLocalizedString("school.choice_for_schoolyear", "Choice for the schoolyear")), 1, 1);
 
 		DropdownMenu typeDrop = getTypeDrop(prmType, true);
@@ -853,16 +859,27 @@ public class SchoolChoiceApplication extends CommuneBlock {
 			table.add(getSmallHeader(Text.getNonBrakingSpace()+iwrb.getLocalizedString("school.want_after_school_care","I want afterschool care")),1,row++);
 			table.mergeCells(1, row, 5, row);
 			table.add(rbNotAfterSchool,1,row);
+			table.mergeCells(1, row, 5, row);
 			table.add(getSmallHeader(Text.getNonBrakingSpace()+iwrb.getLocalizedString("school.not_want_after_school_care","I do not want afterschool care")),1,row++);
 			//table.add(chkChildCare, 1, row);
 			//table.add(getSmallHeader(Text.NON_BREAKING_SPACE + iwrb.getLocalizedString("school.child_care_requested", "Interested in after school child care")), 1, row);
 		}
+
+		// *** borgman added
+		CheckBox langChecked = new CheckBox(prmNativeLangIsChecked);
+		table.add(langChecked, 1, row);
+		table.add(getSmallHeader(Text.getNonBrakingSpace()+iwrb.getLocalizedString("school.native_lang_prefix","I would like")),1,row);
+		table.add(Text.getNonBrakingSpace(), 1, row);		
+		table.add(getNativeLanguagesDropdown(), 1, row);
+		table.add(getSmallHeader(Text.getNonBrakingSpace()+iwrb.getLocalizedString("school.native_lang_postfix","as native language")),1,row);
+		table.mergeCells(1, row, 5, row);
+		table.setWidth(1, row, Table.HUNDRED_PERCENT);
 		
 		table.add(new HiddenInput(prmCustodiansAgree,String.valueOf(showAgree)), 1, row);
 				
-		table.setWidth(1, "100");
-		table.setWidth(2, "8");
-		table.setWidth(4, "3");
+		//table.setWidth(1, "100");
+		//table.setWidth(2, "8");
+		//table.setWidth(4, "3");
 
 		return table;
 	}
@@ -872,6 +889,26 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		menu.addMenuElementFirst("-1", firstElement);
 		menu.setOnChange(getFilterCallerScript(type, area, school, index, false));
 		return menu;
+	}
+	
+	private DropdownMenu getNativeLanguagesDropdown() {
+		DropdownMenu drop = new DropdownMenu(prmNativeLang);
+		drop.addMenuElement("-1", localize("school.drp_chose_native_lang", "- Chose languge -"));
+		try {
+			Collection langs = getICLanguageHome().findAll();
+			if (langs != null) {
+					for (Iterator iter = langs.iterator(); iter.hasNext();) {
+						ICLanguage aLang = (ICLanguage) iter.next();
+						int langPK = ((Integer) aLang.getPrimaryKey()).intValue();
+						drop.addMenuElement(langPK, aLang.getName());					
+					}
+			}			
+		} catch (RemoteException re) {
+			re.printStackTrace();
+		} catch (FinderException fe) {
+			
+		}	
+		return drop;		
 	}
 
 	private PresentationObject getMessagePart() throws java.rmi.RemoteException {
@@ -1357,6 +1394,10 @@ public class SchoolChoiceApplication extends CommuneBlock {
 			throw new IBORuntimeException(e.getMessage());
 		}
 	}
+	
+	private ICLanguageHome getICLanguageHome() throws RemoteException {
+		return (ICLanguageHome) IDOLookup.getHome(ICLanguage.class);
+	}
 
 	private ChildCareSession getChildCareSession(IWContext iwc) {
 		try {
@@ -1366,4 +1407,5 @@ public class SchoolChoiceApplication extends CommuneBlock {
 			throw new IBORuntimeException(e.getMessage());
 		}	
 	}
+
 }
