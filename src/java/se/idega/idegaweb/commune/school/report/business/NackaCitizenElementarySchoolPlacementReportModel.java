@@ -1,5 +1,5 @@
 /*
- * $Id: NackaCitizenElementarySchoolPlacementReportModel.java,v 1.4 2004/01/12 10:28:24 anders Exp $
+ * $Id: NackaCitizenElementarySchoolPlacementReportModel.java,v 1.5 2004/01/15 10:51:57 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -14,10 +14,10 @@ import java.rmi.RemoteException;
 /** 
  * Report model for Nacka citizen placement for elementary schools.
  * <p>
- * Last modified: $Date: 2004/01/12 10:28:24 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/15 10:51:57 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public class NackaCitizenElementarySchoolPlacementReportModel extends ReportModel {
 
@@ -40,6 +40,21 @@ public class NackaCitizenElementarySchoolPlacementReportModel extends ReportMode
 	private final static int COLUMN_METHOD_SUM_4_6 = 103;
 	private final static int COLUMN_METHOD_SUM_7_10 = 104;
 	private final static int COLUMN_METHOD_TOTAL_1_10 = 105;
+
+	private final static String QUERY_NACKA_COMMUNE = "nacka_commune";
+	private final static String QUERY_NACKA_COMMUNE_6_YEAR_STUDENTS = "nacka_commune_6";
+	private final static String QUERY_OTHER_COMMUNES = "other_communes";
+	private final static String QUERY_OTHER_COMMUNES_6_YEAR_STUDENTS = "other_communes_6";
+	private final static String QUERY_PRIVATE = "private";
+	private final static String QUERY_PRIVATE_6_YEAR_STUDENTS = "private_6";
+	private final static String QUERY_FOREIGN = "foreign";
+	private final static String QUERY_FOREIGN_6_YEAR_STUDENTS = "foreign_6";
+	private final static String QUERY_COMPULSORY_NACKA = "compulsory_nacka";
+	private final static String QUERY_COMPULSORY_NACKA_6_YEAR_STUDENTS = "compulsory_nacka_6";
+	private final static String QUERY_COMPULSORY_OTHER_COMMUNES = "compulsory_other_communes";
+	private final static String QUERY_COMPULSORY_OTHER_COMMUNES_6_YEAR_STUDENTS = "compulsory_other_communes_6";
+	private final static String QUERY_COMPULSORY_PRIVATE = "compulsory_private";
+	private final static String QUERY_COMPULSORY_PRIVATE_6_YEAR_STUDENTS = "compulsory_other_communes_6";
 	
 	private final static String KEY_REPORT_TITLE = KP + "title_nacka_citizen_elementary_school_placements";
 
@@ -359,23 +374,46 @@ public class NackaCitizenElementarySchoolPlacementReportModel extends ReportMode
 	 * Only students in Nacka commune are counted. 
 	 */
 	protected int getElementaryNackaCommunePlacementCount(String schoolYearName) throws RemoteException {
-		ReportQuery query = new ReportQuery();
-		query.setSelectCountPlacements(getReportBusiness().getSchoolSeasonId());
-		query.setOnlyNackaCitizens();
-		query.setOnlyNackaSchools();
-		if (schoolYearName.equals("F")) {
-			query.setSchoolTypePreSchoolClass();
-		} else {
-			query.setSchoolTypeElementarySchool();
+		PreparedQuery query = null;
+		if (!schoolYearName.equals("0")) {
+			ReportBusiness rb = getReportBusiness();
+			query = getQuery(QUERY_NACKA_COMMUNE);
+			if (query == null) {
+				query = new PreparedQuery(getConnection());
+				query.setSelectCount();
+				query.setPlacements(rb.getSchoolSeasonId());
+				query.setOnlyNackaCitizens();
+				query.setOnlyNackaSchools();
+				query.setNotPrivateSchools();
+				query.setNotForeignSchools();
+				query.setSchoolType(); // parameter 1
+				query.setSchoolYearName(); // parameter 2
+				query.prepare();
+				setQuery(QUERY_NACKA_COMMUNE, query);
+			}
+			if (schoolYearName.equals("F")) {
+				query.setInt(1, rb.getPreSchoolClassTypeId());
+			} else {
+				query.setInt(1, rb.getElementarySchoolTypeId());
+			}
+			query.setString(2, schoolYearName);
+		} else { // 6 years old students
+			query = getQuery(QUERY_NACKA_COMMUNE_6_YEAR_STUDENTS);
+			if (query == null) {
+				query = new PreparedQuery(getConnection());
+				query.setSelectCount();
+				query.setPlacements(getReportBusiness().getSchoolSeasonId());
+				query.setOnlyNackaCitizens();
+				query.setOnlyNackaSchools();
+				query.setOnlyStudentsBorn(getReportBusiness().getSchoolSeasonStartYear() - 6);
+				query.setNotPrivateSchools();
+				query.setNotForeignSchools();
+				query.setSchoolYearName("1");
+				query.setSchoolTypeElementarySchool();
+				query.prepare();
+				setQuery(QUERY_NACKA_COMMUNE_6_YEAR_STUDENTS, query);
+			}
 		}
-		if (schoolYearName.equals("0")) {
-			query.setOnlyStudentsBorn(getReportBusiness().getSchoolSeasonStartYear() - 6);
-			query.setSchoolYear("1");
-		} else {
-			query.setSchoolYear(schoolYearName);			
-		}
-		query.setNotPrivateSchools();
-		query.setNotForieignSchools();
 		return query.execute();
 	}
 	
@@ -385,23 +423,46 @@ public class NackaCitizenElementarySchoolPlacementReportModel extends ReportMode
 	 * Only students in Nacka commune are counted. 
 	 */
 	protected int getElementaryOtherCommunesPlacementCount(String schoolYearName) throws RemoteException {
-		ReportQuery query = new ReportQuery();
-		query.setSelectCountPlacements(getReportBusiness().getSchoolSeasonId());
-		query.setOnlyNackaCitizens();
-		query.setOnlySchoolsInOtherCommunes();
-		if (schoolYearName.equals("F")) {
-			query.setSchoolTypePreSchoolClass();
-		} else {
-			query.setSchoolTypeElementarySchool();
+		PreparedQuery query = null;
+		if (!schoolYearName.equals("0")) {
+			ReportBusiness rb = getReportBusiness();
+			query = getQuery(QUERY_OTHER_COMMUNES);
+			if (query == null) {
+				query = new PreparedQuery(getConnection());
+				query.setSelectCount();
+				query.setPlacements(rb.getSchoolSeasonId());
+				query.setOnlyNackaCitizens();
+				query.setOnlySchoolsInOtherCommunes();
+				query.setNotPrivateSchools();
+				query.setNotForeignSchools();
+				query.setSchoolType(); // parameter 1
+				query.setSchoolYearName(); // parameter 2
+				query.prepare();
+				setQuery(QUERY_OTHER_COMMUNES, query);
+			}
+			if (schoolYearName.equals("F")) {
+				query.setInt(1, rb.getPreSchoolClassTypeId());
+			} else {
+				query.setInt(1, rb.getElementarySchoolTypeId());
+			}
+			query.setString(2, schoolYearName);
+		} else { // 6 years old students
+			query = getQuery(QUERY_OTHER_COMMUNES_6_YEAR_STUDENTS);
+			if (query == null) {
+				query = new PreparedQuery(getConnection());
+				query.setSelectCount();
+				query.setPlacements(getReportBusiness().getSchoolSeasonId());
+				query.setOnlyNackaCitizens();
+				query.setOnlySchoolsInOtherCommunes();
+				query.setOnlyStudentsBorn(getReportBusiness().getSchoolSeasonStartYear() - 6);
+				query.setNotPrivateSchools();
+				query.setNotForeignSchools();
+				query.setSchoolYearName("1");
+				query.setSchoolTypeElementarySchool();
+				query.prepare();
+				setQuery(QUERY_OTHER_COMMUNES_6_YEAR_STUDENTS, query);
+			}
 		}
-		if (schoolYearName.equals("0")) {
-			query.setOnlyStudentsBorn(getReportBusiness().getSchoolSeasonStartYear() - 6);
-			query.setSchoolYear("1");
-		} else {
-			query.setSchoolYear(schoolYearName);			
-		}
-		query.setNotPrivateSchools();
-		query.setNotForieignSchools();
 		return query.execute();
 	}
 	
@@ -411,22 +472,44 @@ public class NackaCitizenElementarySchoolPlacementReportModel extends ReportMode
 	 * Only students in Nacka commune are counted. 
 	 */
 	protected int getElementaryPrivateSchoolPlacementCount(String schoolYearName) throws RemoteException {
-		ReportQuery query = new ReportQuery();
-		query.setSelectCountPlacements(getReportBusiness().getSchoolSeasonId());
-		query.setOnlyNackaCitizens();
-		if (schoolYearName.equals("F")) {
-			query.setSchoolTypePreSchoolClass();
-		} else {
-			query.setSchoolTypeElementarySchool();
+		PreparedQuery query = null;
+		if (!schoolYearName.equals("0")) {
+			ReportBusiness rb = getReportBusiness();
+			query = getQuery(QUERY_PRIVATE);
+			if (query == null) {
+				query = new PreparedQuery(getConnection());
+				query.setSelectCount();
+				query.setPlacements(rb.getSchoolSeasonId());
+				query.setOnlyNackaCitizens();
+				query.setOnlyPrivateSchools();
+				query.setNotForeignSchools();
+				query.setSchoolType(); // parameter 1
+				query.setSchoolYearName(); // parameter 2
+				query.prepare();
+				setQuery(QUERY_PRIVATE, query);
+			}
+			if (schoolYearName.equals("F")) {
+				query.setInt(1, rb.getPreSchoolClassTypeId());
+			} else {
+				query.setInt(1, rb.getElementarySchoolTypeId());
+			}
+			query.setString(2, schoolYearName);
+		} else { // 6 years old students
+			query = getQuery(QUERY_PRIVATE_6_YEAR_STUDENTS);
+			if (query == null) {
+				query = new PreparedQuery(getConnection());
+				query.setSelectCount();
+				query.setPlacements(getReportBusiness().getSchoolSeasonId());
+				query.setOnlyNackaCitizens();
+				query.setOnlyStudentsBorn(getReportBusiness().getSchoolSeasonStartYear() - 6);
+				query.setOnlyPrivateSchools();
+				query.setNotForeignSchools();
+				query.setSchoolYearName("1");
+				query.setSchoolTypeElementarySchool();
+				query.prepare();
+				setQuery(QUERY_PRIVATE_6_YEAR_STUDENTS, query);
+			}
 		}
-		if (schoolYearName.equals("0")) {
-			query.setOnlyStudentsBorn(getReportBusiness().getSchoolSeasonStartYear() - 6);
-			query.setSchoolYear("1");
-		} else {
-			query.setSchoolYear(schoolYearName);			
-		}
-		query.setOnlyPrivateSchools();
-		query.setNotForieignSchools();
 		return query.execute();
 	}
 	
@@ -436,21 +519,42 @@ public class NackaCitizenElementarySchoolPlacementReportModel extends ReportMode
 	 * Only students in Nacka commune are counted. 
 	 */
 	protected int getElementaryForeignSchoolPlacementCount(String schoolYearName) throws RemoteException {
-		ReportQuery query = new ReportQuery();
-		query.setSelectCountPlacements(getReportBusiness().getSchoolSeasonId());
-		query.setOnlyNackaCitizens();
-		if (schoolYearName.equals("F")) {
-			query.setSchoolTypePreSchoolClass();
-		} else {
-			query.setSchoolTypeElementarySchool();
+		PreparedQuery query = null;
+		if (!schoolYearName.equals("0")) {
+			ReportBusiness rb = getReportBusiness();
+			query = getQuery(QUERY_FOREIGN);
+			if (query == null) {
+				query = new PreparedQuery(getConnection());
+				query.setSelectCount();
+				query.setPlacements(rb.getSchoolSeasonId());
+				query.setOnlyNackaCitizens();
+				query.setOnlyForeignSchools();
+				query.setSchoolType(); // parameter 1
+				query.setSchoolYearName(); // parameter 2
+				query.prepare();
+				setQuery(QUERY_FOREIGN, query);
+			}
+			if (schoolYearName.equals("F")) {
+				query.setInt(1, rb.getPreSchoolClassTypeId());
+			} else {
+				query.setInt(1, rb.getElementarySchoolTypeId());
+			}
+			query.setString(2, schoolYearName);
+		} else { // 6 years old students
+			query = getQuery(QUERY_FOREIGN_6_YEAR_STUDENTS);
+			if (query == null) {
+				query = new PreparedQuery(getConnection());
+				query.setSelectCount();
+				query.setPlacements(getReportBusiness().getSchoolSeasonId());
+				query.setOnlyNackaCitizens();
+				query.setOnlyStudentsBorn(getReportBusiness().getSchoolSeasonStartYear() - 6);
+				query.setOnlyForeignSchools();
+				query.setSchoolYearName("1");
+				query.setSchoolTypeElementarySchool();
+				query.prepare();
+				setQuery(QUERY_FOREIGN_6_YEAR_STUDENTS, query);
+			}
 		}
-		if (schoolYearName.equals("0")) {
-			query.setOnlyStudentsBorn(getReportBusiness().getSchoolSeasonStartYear() - 6);
-			query.setSchoolYear("1");
-		} else {
-			query.setSchoolYear(schoolYearName);			
-		}
-		query.setOnlyForieignSchools();
 		return query.execute();
 	}
 	
@@ -460,23 +564,44 @@ public class NackaCitizenElementarySchoolPlacementReportModel extends ReportMode
 	 * Only students in Nacka commune are counted. 
 	 */
 	protected int getCompulsoryNackaCommunePlacementCount(String schoolYearName) throws RemoteException {
-		ReportQuery query = new ReportQuery();
-		query.setSelectCountPlacements(getReportBusiness().getSchoolSeasonId());
-		query.setOnlyNackaCitizens();
-		query.setOnlyNackaSchools();
-		if (schoolYearName.equals("F")) {
-			return 0;
-		} else {
-			query.setSchoolTypeCompulsorySchool();
+		PreparedQuery query = null;
+		if (!schoolYearName.equals("0")) {
+			ReportBusiness rb = getReportBusiness();
+			query = getQuery(QUERY_COMPULSORY_NACKA);
+			if (query == null) {
+				query = new PreparedQuery(getConnection());
+				query.setSelectCount();
+				query.setPlacements(rb.getSchoolSeasonId());
+				query.setOnlyNackaCitizens();
+				query.setOnlyNackaSchools();
+				query.setNotPrivateSchools();
+				query.setNotForeignSchools();
+				query.setSchoolTypeCompulsorySchool();
+				query.setSchoolYearName(); // parameter 1
+				query.prepare();
+				setQuery(QUERY_COMPULSORY_NACKA, query);
+			}
+			if (schoolYearName.equals("F")) {
+				return 0;
+			}
+			query.setString(1, schoolYearName);
+		} else { // 6 years old students
+			query = getQuery(QUERY_COMPULSORY_NACKA_6_YEAR_STUDENTS);
+			if (query == null) {
+				query = new PreparedQuery(getConnection());
+				query.setSelectCount();
+				query.setPlacements(getReportBusiness().getSchoolSeasonId());
+				query.setOnlyNackaCitizens();
+				query.setOnlyNackaSchools();
+				query.setOnlyStudentsBorn(getReportBusiness().getSchoolSeasonStartYear() - 6);
+				query.setNotPrivateSchools();
+				query.setNotForeignSchools();
+				query.setSchoolYearName("S1");
+				query.setSchoolTypeCompulsorySchool();
+				query.prepare();
+				setQuery(QUERY_COMPULSORY_NACKA_6_YEAR_STUDENTS, query);
+			}
 		}
-		if (schoolYearName.equals("0")) {
-			query.setOnlyStudentsBorn(getReportBusiness().getSchoolSeasonStartYear() - 6);
-			query.setSchoolYear("S1");
-		} else {
-			query.setSchoolYear(schoolYearName);			
-		}
-		query.setNotPrivateSchools();
-		query.setNotForieignSchools();
 		return query.execute();
 	}
 	
@@ -486,23 +611,44 @@ public class NackaCitizenElementarySchoolPlacementReportModel extends ReportMode
 	 * Only students in Nacka commune are counted. 
 	 */
 	protected int getCompulsoryOtherCommunesPlacementCount(String schoolYearName) throws RemoteException {
-		ReportQuery query = new ReportQuery();
-		query.setSelectCountPlacements(getReportBusiness().getSchoolSeasonId());
-		query.setOnlyNackaCitizens();
-		query.setOnlySchoolsInOtherCommunes();
-		if (schoolYearName.equals("F")) {
-			return 0;
-		} else {
-			query.setSchoolTypeCompulsorySchool();
+		PreparedQuery query = null;
+		if (!schoolYearName.equals("0")) {
+			ReportBusiness rb = getReportBusiness();
+			query = getQuery(QUERY_COMPULSORY_OTHER_COMMUNES);
+			if (query == null) {
+				query = new PreparedQuery(getConnection());
+				query.setSelectCount();
+				query.setPlacements(rb.getSchoolSeasonId());
+				query.setOnlyNackaCitizens();
+				query.setOnlySchoolsInOtherCommunes();
+				query.setNotPrivateSchools();
+				query.setNotForeignSchools();
+				query.setSchoolTypeCompulsorySchool();
+				query.setSchoolYearName(); // parameter 1
+				query.prepare();
+				setQuery(QUERY_COMPULSORY_OTHER_COMMUNES, query);
+			}
+			if (schoolYearName.equals("F")) {
+				return 0;
+			}
+			query.setString(1, schoolYearName);
+		} else { // 6 years old students
+			query = getQuery(QUERY_COMPULSORY_OTHER_COMMUNES_6_YEAR_STUDENTS);
+			if (query == null) {
+				query = new PreparedQuery(getConnection());
+				query.setSelectCount();
+				query.setPlacements(getReportBusiness().getSchoolSeasonId());
+				query.setOnlyNackaCitizens();
+				query.setOnlySchoolsInOtherCommunes();
+				query.setOnlyStudentsBorn(getReportBusiness().getSchoolSeasonStartYear() - 6);
+				query.setNotPrivateSchools();
+				query.setNotForeignSchools();
+				query.setSchoolYearName("S1");
+				query.setSchoolTypeCompulsorySchool();
+				query.prepare();
+				setQuery(QUERY_COMPULSORY_OTHER_COMMUNES_6_YEAR_STUDENTS, query);
+			}
 		}
-		if (schoolYearName.equals("0")) {
-			query.setOnlyStudentsBorn(getReportBusiness().getSchoolSeasonStartYear() - 6);
-			query.setSchoolYear("S1");
-		} else {
-			query.setSchoolYear(schoolYearName);			
-		}
-		query.setNotPrivateSchools();
-		query.setNotForieignSchools();
 		return query.execute();
 	}
 	
@@ -512,22 +658,42 @@ public class NackaCitizenElementarySchoolPlacementReportModel extends ReportMode
 	 * Only students in Nacka commune are counted. 
 	 */
 	protected int getCompulsoryPrivateSchoolPlacementCount(String schoolYearName) throws RemoteException {
-		ReportQuery query = new ReportQuery();
-		query.setSelectCountPlacements(getReportBusiness().getSchoolSeasonId());
-		query.setOnlyNackaCitizens();
-		if (schoolYearName.equals("F")) {
-			return 0;
-		} else {
-			query.setSchoolTypeElementarySchool();
+		PreparedQuery query = null;
+		if (!schoolYearName.equals("0")) {
+			ReportBusiness rb = getReportBusiness();
+			query = getQuery(QUERY_COMPULSORY_PRIVATE);
+			if (query == null) {
+				query = new PreparedQuery(getConnection());
+				query.setSelectCount();
+				query.setPlacements(rb.getSchoolSeasonId());
+				query.setOnlyNackaCitizens();
+				query.setOnlyPrivateSchools();
+				query.setNotForeignSchools();
+				query.setSchoolTypeCompulsorySchool();
+				query.setSchoolYearName(); // parameter 1
+				query.prepare();
+				setQuery(QUERY_COMPULSORY_PRIVATE, query);
+			}
+			if (schoolYearName.equals("F")) {
+				return 0;
+			}
+			query.setString(1, schoolYearName);
+		} else { // 6 years old students
+			query = getQuery(QUERY_COMPULSORY_PRIVATE_6_YEAR_STUDENTS);
+			if (query == null) {
+				query = new PreparedQuery(getConnection());
+				query.setSelectCount();
+				query.setPlacements(getReportBusiness().getSchoolSeasonId());
+				query.setOnlyNackaCitizens();
+				query.setOnlyStudentsBorn(getReportBusiness().getSchoolSeasonStartYear() - 6);
+				query.setOnlyPrivateSchools();
+				query.setNotForeignSchools();
+				query.setSchoolYearName("S1");
+				query.setSchoolTypeCompulsorySchool();
+				query.prepare();
+				setQuery(QUERY_COMPULSORY_PRIVATE_6_YEAR_STUDENTS, query);
+			}
 		}
-		if (schoolYearName.equals("0")) {
-			query.setOnlyStudentsBorn(getReportBusiness().getSchoolSeasonStartYear() - 6);
-			query.setSchoolYear("S1");
-		} else {
-			query.setSchoolYear(schoolYearName);			
-		}
-		query.setOnlyPrivateSchools();
-		query.setNotForieignSchools();
 		return query.execute();
 	}
 }

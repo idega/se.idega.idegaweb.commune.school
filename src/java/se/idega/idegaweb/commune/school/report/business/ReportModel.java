@@ -1,5 +1,5 @@
 /*
- * $Id: ReportModel.java,v 1.9 2004/01/13 10:34:25 anders Exp $
+ * $Id: ReportModel.java,v 1.10 2004/01/15 10:51:57 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -10,15 +10,20 @@
 package se.idega.idegaweb.commune.school.report.business;
 
 import java.rmi.RemoteException;
+import java.sql.Connection;
+import java.util.HashMap;
+import java.util.Map;
+
+import com.idega.util.database.ConnectionBroker;
 
 /** 
  * This abstract class holds cell and header values for school statistics reports.
  * Subclasses implements methods for generating report data and cell value calculations.
  * <p>
- * Last modified: $Date: 2004/01/13 10:34:25 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/15 10:51:57 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.9 $
+ * @version $Revision: 1.10 $
  */
 public abstract class ReportModel {
 
@@ -30,6 +35,9 @@ public abstract class ReportModel {
 	private Cell[][] _cells = null;
 	private Header[] _rowHeaders = null;
 	private Header[] _columnHeaders = null;
+	
+	private Map _queryCache = null;
+	private Connection _connection = null;
 
 	protected final static String KP = "report."; // Localization key prefix
 	
@@ -75,12 +83,12 @@ public abstract class ReportModel {
 	protected final static String KEY_TOTAL_1_4 = KP + "total_1_4";
 	protected final static String KEY_NACKA_STUDENTS = KP + "nacka_students";
 	
-
 	/**
 	 * Constructs a report model with the specified report business logic. 
 	 */	
 	public ReportModel(ReportBusiness reportBusiness) {
 		_reportBusiness = reportBusiness;
+		_queryCache = new HashMap();
 	}
 
 	/**
@@ -169,11 +177,44 @@ public abstract class ReportModel {
 	}
 	
 	/**
+	 * Returns a database connection. 
+	 */
+	protected Connection getConnection() {
+		if (_connection == null) {
+			_connection = ConnectionBroker.getConnection();
+		}
+		return _connection;
+	}
+	
+	/**
+	 * Returns the prepared query for the specified key. 
+	 */
+	protected PreparedQuery getQuery(String key) {
+		return (PreparedQuery) _queryCache.get(key);
+	}
+	
+	/**
+	 * Sets the prepared query with the specified key. 
+	 */
+	protected void setQuery(String key, PreparedQuery query) {
+		_queryCache.put(key, query);
+	}
+	
+	/**
 	 * Sets the cell for the specified position. 
 	 */
 	protected void setCell(int row, int column, Cell cell) {
 		init();
 		_cells[row][column] = cell;
+	}
+
+	/**
+	 * Closes used resources for this report model.
+	 */
+	public void close() {
+		if (_connection != null) {
+			ConnectionBroker.freeConnection(_connection);
+		}
 	}
 	
 	/**

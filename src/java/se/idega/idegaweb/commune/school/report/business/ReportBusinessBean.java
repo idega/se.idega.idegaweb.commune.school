@@ -1,5 +1,5 @@
 /*
- * $Id: ReportBusinessBean.java,v 1.18 2004/01/14 13:31:03 anders Exp $
+ * $Id: ReportBusinessBean.java,v 1.19 2004/01/15 10:51:58 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -29,16 +29,18 @@ import com.idega.block.school.data.SchoolStudyPathHome;
 /** 
  * Business logic for school reports.
  * <p>
- * Last modified: $Date: 2004/01/14 13:31:03 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/15 10:51:58 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.18 $
+ * @version $Revision: 1.19 $
  */
 public class ReportBusinessBean extends com.idega.business.IBOServiceBean implements ReportBusiness  {
 
 	private final static int SCHOOL_TYPE_ELEMENTARY_SCHOOL = 4;
+	private final static int SCHOOL_TYPE_PRE_SCHOOL_CLASS = 5;
 	private final static int SCHOOL_TYPE_COMPULSORY_SCHOOL = 28;
-	private final static int SCHOOL_TYPE_COMPULSORY_HIGH_SCHOOL = 27;
+	private final static int SCHOOL_TYPE_HIGH_SCHOOL = 26;
+	private final static int SCHOOL_TYPE_COMPULSORY_HIGH_SCHOOL = 27;	
 	private final static String MANAGEMENT_TYPE_COMMUNE = "COMMUNE";
 	private final static int NACKA_COMMUNE_ID = 1;
 	
@@ -377,6 +379,41 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 			} catch (Exception e) {}
 		}
 		return _studyPaths;
+	}
+
+	/**
+	 * Returns the id for school type elementary school.
+	 */
+	public int getElementarySchoolTypeId() {
+		return SCHOOL_TYPE_ELEMENTARY_SCHOOL;
+	}
+
+	/**
+	 * Returns the id for school type pre-school class.
+	 */
+	public int getPreSchoolClassTypeId() {
+		return SCHOOL_TYPE_PRE_SCHOOL_CLASS;
+	}
+
+	/**
+	 * Returns the id for school type compulsory school.
+	 */
+	public int getCompulsorySchoolTypeId() {
+		return SCHOOL_TYPE_COMPULSORY_SCHOOL;
+	}
+
+	/**
+	 * Returns the id for school type high school.
+	 */
+	public int getHighSchoolTypeId() {
+		return SCHOOL_TYPE_HIGH_SCHOOL;
+	}
+
+	/**
+	 * Returns the id for school type compulsory high school.
+	 */
+	public int getCompulsoryHighSchoolTypeId() {
+		return SCHOOL_TYPE_COMPULSORY_HIGH_SCHOOL;
 	}
 	
 	/**
