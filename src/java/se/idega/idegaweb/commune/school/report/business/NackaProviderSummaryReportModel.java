@@ -1,5 +1,5 @@
 /*
- * $Id: NackaProviderSummaryReportModel.java,v 1.9 2004/02/25 15:52:07 anders Exp $
+ * $Id: NackaProviderSummaryReportModel.java,v 1.10 2004/02/26 07:32:33 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -14,10 +14,10 @@ import java.rmi.RemoteException;
 /** 
  * Report model that shows a summary of Nacka providers (child care and schools).
  * <p>
- * Last modified: $Date: 2004/02/25 15:52:07 $ by $Author: anders $
+ * Last modified: $Date: 2004/02/26 07:32:33 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.9 $
+ * @version $Revision: 1.10 $
  */
 public class NackaProviderSummaryReportModel extends ReportModel {
 
@@ -36,6 +36,10 @@ public class NackaProviderSummaryReportModel extends ReportModel {
 	private final static String QUERY_CHILD_CARE_PLACEMENT_COUNT_OTHER_COMMUNES = "cc_placement_count_oc";
 	private final static String QUERY_SCHOOL_PLACEMENT_COUNT = "sch_placement_count";
 	private final static String QUERY_SCHOOL_PLACEMENT_COUNT_OTHER_COMMUNES = "sch_placement_count_oc";
+	private final static String QUERY_CHILD_CARE_PLACEMENT_COUNT_PRIVATE = "p_cc_placement_count";
+	private final static String QUERY_CHILD_CARE_PLACEMENT_COUNT_OTHER_COMMUNES_PRIVATE = "p_cc_placement_count_oc";
+	private final static String QUERY_SCHOOL_PLACEMENT_COUNT_PRIVATE = "p_sch_placement_count";
+	private final static String QUERY_SCHOOL_PLACEMENT_COUNT_OTHER_COMMUNES_PRIVATE = "p_sch_placement_count_oc";
 
 	private final static int COMMUNE = 1;
 	private final static int PRIVATE = 2;
@@ -557,7 +561,12 @@ public class NackaProviderSummaryReportModel extends ReportModel {
 				break;				
 		}
 		
-		PreparedQuery query = getQuery(isChildCare, isOtherCommunes);
+		PreparedQuery query = null;
+		if (managementType == COMMUNE) {
+			query = getQuery(isChildCare, isOtherCommunes);
+		} else {
+			query = getQueryPrivate(isChildCare, isOtherCommunes);			
+		}
 
 		query.setInt(1, schoolType1);
 		query.setInt(2, schoolType2);
@@ -611,7 +620,6 @@ public class NackaProviderSummaryReportModel extends ReportModel {
 				query.setSelectCountDistinctUsers();
 				query.setChildCarePlacements();
 				query.setOnlyNackaSchools();
-				query.setOnlyNackaCitizens();
 				query.setFourSchoolTypesForProviders(); // parameter 1-4
 				query.setFourManagementTypes(); // parameter 5-8
 				query.prepare();
@@ -629,6 +637,70 @@ public class NackaProviderSummaryReportModel extends ReportModel {
 				query.setFourManagementTypes(); // parameter 5-8
 				query.prepare();
 				setQuery(QUERY_CHILD_CARE_PLACEMENT_COUNT_OTHER_COMMUNES, query);
+			}								
+		}
+		
+		return query;
+	}
+	
+	/*
+	 * Returns a prepared query for the specified parameters for private providers.
+	 */
+	private PreparedQuery getQueryPrivate(boolean isChildCare, boolean isOtherCommunes) throws RemoteException {
+		PreparedQuery query = null;
+		ReportBusiness rb = getReportBusiness();
+		
+		if (!isChildCare && !isOtherCommunes) {
+			query = getQuery(QUERY_SCHOOL_PLACEMENT_COUNT_PRIVATE);
+			if (query == null) {
+				query = new PreparedQuery(getConnection());
+				query.setSelectCountDistinctUsers();
+				query.setPlacements(rb.getSchoolSeasonId());
+				query.setOnlyNackaCitizens();
+				query.setOnlyNackaSchools();
+				query.setFourSchoolTypesForProviders(); // parameter 1-4
+				query.setFourManagementTypes(); // parameter 5-8
+				query.prepare();
+				setQuery(QUERY_SCHOOL_PLACEMENT_COUNT_PRIVATE, query);
+			}		
+		} else if (!isChildCare && isOtherCommunes) {
+			query = getQuery(QUERY_SCHOOL_PLACEMENT_COUNT_OTHER_COMMUNES_PRIVATE);
+			if (query == null) {
+				query = new PreparedQuery(getConnection());
+				query.setSelectCountDistinctUsers();
+				query.setPlacements(rb.getSchoolSeasonId());
+				query.setOnlyNackaSchools();
+				query.setNotNackaCitizens();
+				query.setFourSchoolTypesForProviders(); // parameter 1-4
+				query.setFourManagementTypes(); // parameter 5-8
+				query.prepare();
+				setQuery(QUERY_SCHOOL_PLACEMENT_COUNT_OTHER_COMMUNES_PRIVATE, query);
+			}					
+		} else if (isChildCare && !isOtherCommunes) {
+			query = getQuery(QUERY_CHILD_CARE_PLACEMENT_COUNT_PRIVATE);
+			if (query == null) {
+				query = new PreparedQuery(getConnection());
+				query.setSelectCountDistinctUsers();
+				query.setChildCarePlacements();
+				query.setOnlyNackaSchools();
+				query.setOnlyNackaCitizens();
+				query.setFourSchoolTypesForProviders(); // parameter 1-4
+				query.setFourManagementTypes(); // parameter 5-8
+				query.prepare();
+				setQuery(QUERY_CHILD_CARE_PLACEMENT_COUNT_PRIVATE, query);
+			}		
+		} else if (isChildCare && isOtherCommunes) {
+			query = getQuery(QUERY_CHILD_CARE_PLACEMENT_COUNT_OTHER_COMMUNES_PRIVATE);
+			if (query == null) {
+				query = new PreparedQuery(getConnection());
+				query.setSelectCountDistinctUsers();
+				query.setChildCarePlacements();
+				query.setOnlyNackaSchools();
+				query.setNotNackaCitizens();
+				query.setFourSchoolTypesForProviders(); // parameter 1-4
+				query.setFourManagementTypes(); // parameter 5-8
+				query.prepare();
+				setQuery(QUERY_CHILD_CARE_PLACEMENT_COUNT_OTHER_COMMUNES_PRIVATE, query);
 			}								
 		}
 		
