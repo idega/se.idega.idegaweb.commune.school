@@ -29,7 +29,9 @@ public class SchoolChoiceComparator implements Comparator {
   public static final int ADDRESS_SORT = 3;
   public static final int PERSONAL_ID_SORT = 4;
   public static final int LANGUAGE_SORT = 5;
-	public static final int CREATED_SORT = 6;
+  public static final int CREATED_SORT = 6;
+  public static final int PLACED_SORT = 7;
+  public static final int UNPLACED_SORT = 8;
   
   private Locale locale;
   public UserBusiness business;
