@@ -1,5 +1,5 @@
 /*
- * $Id: NackaCCProviderReportModel.java,v 1.4 2004/01/22 14:26:14 anders Exp $
+ * $Id: NackaCCProviderReportModel.java,v 1.5 2004/01/28 12:47:02 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -14,10 +14,10 @@ import java.rmi.RemoteException;
 /** 
  * Report model for child care commune and private providers.
  * <p>
- * Last modified: $Date: 2004/01/22 14:26:14 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/28 12:47:02 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public class NackaCCProviderReportModel extends ReportModel {
 
@@ -315,7 +315,7 @@ public class NackaCCProviderReportModel extends ReportModel {
 		if (query == null) {
 			query = new PreparedQuery(getConnection());
 			query.setSelectCount();
-			query.setFourSchoolTypesForProviders(); // parameter 1-4
+			query.setFourSchoolTypesForProvidersWithoutPlacements(); // parameter 1-4
 			query.setFourManagementTypes(); // parameter 5-8
 			query.prepare();
 			setQuery(QUERY_CHILD_CARE, query);
