@@ -1,5 +1,5 @@
 /*
- * $Id: PreparedQuery.java,v 1.29 2004/02/17 19:29:16 anders Exp $
+ * $Id: PreparedQuery.java,v 1.30 2004/02/18 15:47:08 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -27,10 +27,10 @@ import com.idega.block.school.data.SchoolSeason;
 /** 
  * Handles the SQL logic for school report calculations.
  * <p>
- * Last modified: $Date: 2004/02/17 19:29:16 $ by $Author: anders $
+ * Last modified: $Date: 2004/02/18 15:47:08 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.29 $
+ * @version $Revision: 1.30 $
  */
 public class PreparedQuery {
 
@@ -59,6 +59,7 @@ public class PreparedQuery {
 	private final static String ST = "st";	
 	
 	private String _sqlSelect = null;
+	private String _sql = null;
 	private Map _sqlFrom = null;
 	private List _sqlWhere = null; 
 	private String _currentDate = new Date(System.currentTimeMillis()).toString();
@@ -687,6 +688,7 @@ public class PreparedQuery {
 		if (_countSubQuery) {
 			sql = "select count(*) from (" + sql + ")"; 
 		}
+		_sql = sql;
 		try {
 			_preparedStatement = _connection.prepareStatement(sql);			
 		} catch (SQLException e) {
@@ -768,5 +770,9 @@ public class PreparedQuery {
 		}
 
 		return result;
+	}
+	
+	public String toString() {
+		return _sql;
 	}
 }
