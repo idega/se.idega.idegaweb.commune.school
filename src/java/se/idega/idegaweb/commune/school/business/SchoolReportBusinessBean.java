@@ -21,6 +21,7 @@ import com.idega.block.datareport.util.ReportableField;
 import com.idega.block.school.business.SchoolBusiness;
 import com.idega.block.school.data.School;
 import com.idega.block.school.data.SchoolClassMember;
+import com.idega.block.school.data.SchoolYear;
 import com.idega.business.IBOLookup;
 import com.idega.business.IBORuntimeException;
 import com.idega.business.IBOSessionBean;
@@ -30,7 +31,6 @@ import com.idega.core.location.data.Address;
 import com.idega.core.location.data.PostalCode;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWResourceBundle;
-import com.idega.user.business.NoEmailFoundException;
 import com.idega.user.data.User;
 import com.idega.util.IWTimestamp;
 import com.idega.util.PersonalIDFormatter;
@@ -143,6 +143,18 @@ public class SchoolReportBusinessBean extends IBOSessionBean implements SchoolRe
 			reportCollection.addField(language);
 		}
 		
+		ReportableField swedishLanguage = new ReportableField(FIELD_SWEDISH_AS_SECOND_LANGUAGE, String.class);
+		language.setLocalizedName(getLocalizedString(FIELD_SWEDISH_AS_SECOND_LANGUAGE, "Swedish as second language"), currentLocale);
+		if (displayColumn(FIELD_SWEDISH_AS_SECOND_LANGUAGE)) {
+			reportCollection.addField(swedishLanguage);
+		}
+		
+		ReportableField terminationDate = new ReportableField(FIELD_TERMINATION_DATE, String.class);
+		language.setLocalizedName(getLocalizedString(FIELD_TERMINATION_DATE, "Termination date"), currentLocale);
+		if (displayColumn(FIELD_TERMINATION_DATE)) {
+			reportCollection.addField(terminationDate);
+		}
+		
 		ReportableField custodian = new ReportableField(FIELD_CUSTODIAN, String.class);
 		custodian.setLocalizedName(getLocalizedString(FIELD_CUSTODIAN, "Custodian"), currentLocale);
 		if (displayColumn(FIELD_CUSTODIAN)) {
@@ -161,6 +173,8 @@ public class SchoolReportBusinessBean extends IBOSessionBean implements SchoolRe
 			reportCollection.addField(yearsWithLanguage);
 		}
 		
+		int numberOfStudents = 0;
+		
 		try {
 			Collection students = getSchoolBusiness().getSchoolClassMemberHome().findBySchoolClasses(schoolGroups);
 		
@@ -173,12 +187,7 @@ public class SchoolReportBusinessBean extends IBOSessionBean implements SchoolRe
 				User parent = getUserBusiness().getCustodianForChild(user);
 				Email mail = null;
 				if (parent != null) {
-					try {
-						getUserBusiness().getUsersMainEmail(parent);
-					}
-					catch (NoEmailFoundException e) {
-						mail = null;
-					}
+					mail = getUserBusiness().getEmail(parent);
 				}
 				
 				ReportableData data = new ReportableData();
@@ -231,6 +240,17 @@ public class SchoolReportBusinessBean extends IBOSessionBean implements SchoolRe
 					}
 				}
 				
+				if (displayColumn(FIELD_SWEDISH_AS_SECOND_LANGUAGE)) {
+					//Do something clever
+					data.addData(swedishLanguage, "N");
+				}
+				
+				if (displayColumn(FIELD_TERMINATION_DATE)) {
+					if (student.getRemovedDate() != null) {
+						data.addData(language, new IWTimestamp(student.getRemovedDate()).getLocaleDate(currentLocale, IWTimestamp.SHORT));
+					}
+				}
+				
 				if (parent != null) {
 					if (displayColumn(FIELD_CUSTODIAN)) {
 						data.addData(custodian, parent.getNameLastFirst(true));
@@ -244,10 +264,22 @@ public class SchoolReportBusinessBean extends IBOSessionBean implements SchoolRe
 					}
 				}
 				if (displayColumn(FIELD_YEARS_WITH_LANGUAGE)) {
-					data.addData(yearsWithLanguage, "1");
+					if (student.getLanguage() != null) {
+						SchoolYear year = student.getSchoolYear();
+						if (year != null) {
+							data.addData(yearsWithLanguage, new Integer(year.getSchoolYearAge() - 6));
+						}
+						else {
+							data.addData(yearsWithLanguage, "-");
+						}
+					}
+					else {
+						data.addData(yearsWithLanguage, "-");
+					}
 				}
 				
 				reportCollection.add(data);
+				numberOfStudents++;
 			}
 		}
 		catch (RemoteException e) {
@@ -365,12 +397,7 @@ public class SchoolReportBusinessBean extends IBOSessionBean implements SchoolRe
 				User parent = getUserBusiness().getCustodianForChild(user);
 				Email mail = null;
 				if (parent != null) {
-					try {
-						getUserBusiness().getUsersMainEmail(parent);
-					}
-					catch (NoEmailFoundException e) {
-						mail = null;
-					}
+					mail = getUserBusiness().getEmail(parent);
 				}
 				
 				ReportableData data = new ReportableData();
