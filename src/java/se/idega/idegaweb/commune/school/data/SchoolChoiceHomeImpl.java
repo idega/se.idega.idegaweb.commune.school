@@ -48,9 +48,9 @@ public java.util.Collection findByChosenSchoolId(int p0,int p1)throws javax.ejb.
 	return this.getEntityCollectionForPrimaryKeys(ids);
 }
 
-public java.util.Collection findChoices(int p0,int p1,int p2,java.lang.String p3)throws javax.ejb.FinderException,java.rmi.RemoteException{
+public java.util.Collection findChoices(int p0,int p1,int p2,java.lang.String[] p3,java.lang.String p4)throws javax.ejb.FinderException,java.rmi.RemoteException{
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-	java.util.Collection ids = ((SchoolChoiceBMPBean)entity).ejbFindChoices(p0,p1,p2,p3);
+	java.util.Collection ids = ((SchoolChoiceBMPBean)entity).ejbFindChoices(p0,p1,p2,p3,p4);
 	this.idoCheckInPooledEntity(entity);
 	return this.getEntityCollectionForPrimaryKeys(ids);
 }

@@ -3,6 +3,7 @@ package se.idega.idegaweb.commune.school.data;
 import com.idega.block.process.data.*;
 import com.idega.block.school.data.School;
 import com.idega.block.school.data.SchoolSeason;
+import com.idega.data.EntityControl;
 import com.idega.data.IDOException;
 import com.idega.data.IDOQuery;
 import com.idega.user.data.User;
@@ -350,19 +351,48 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 		return this.idoFindIDsBySQL("select * from "+getEntityName());	
 	}
   
-  public Collection ejbFindChoices(int schoolID, int seasonID, int gradeYear, String searchStringForUser) throws FinderException, RemoteException {
+  public Collection ejbFindChoices(int schoolID, int seasonID, int gradeYear, String[] validStatuses, String searchStringForUser) throws FinderException, RemoteException {
   	boolean search = searchStringForUser != null && !searchStringForUser.equals("");
-  	boolean needAnd = false;
-  	IDOQuery query = new IDOQuery();
-  	query.appendSelectAllFrom(getEntityName());
+  	boolean statuses = validStatuses != null && validStatuses.length > 0;
   	
-  	if (schoolID < 1 && seasonID < 1 && gradeYear < 1 && !search) {
+  	if (schoolID < 1 && seasonID < 1 && gradeYear < 1 && !search && !statuses) {
   		return ejbFindAll();
   	} 
   	
+  	boolean needAnd = false;
+
+  	IDOQuery query = new IDOQuery();
+  	query.appendSelectAllFrom(getEntityName());
+
   	if (search) {
-  		query.append(", ").append(UserBMPBean.TABLE_NAME)
-  		.appendWhere().append(getEntityName()).append(".").append(CHILD)
+  		query.append(", ").append(UserBMPBean.TABLE_NAME);
+  	}
+  	if (statuses) {
+  		query.append(", ").append(CaseBMPBean.TABLE_NAME);
+  	}
+  	
+  	query.appendWhere();
+  	
+  	if (statuses) {
+  		query.append(getEntityName()).append(".").append(getIDColumnName())
+  		.appendEqualSign().append(CaseBMPBean.TABLE_NAME).append(".").append(CaseBMPBean.TABLE_NAME+"_ID")
+  		.appendAnd().append("(");
+  		for (int i = 0; i < validStatuses.length; i++) {
+  			if (i != 0) {
+  				query.appendOr();	
+  			}
+	  		query.append(CaseBMPBean.TABLE_NAME).append(".").append(CaseBMPBean.COLUMN_CASE_STATUS)
+	  		.append(" like '").append(validStatuses[i]).append("'");
+  		}
+  		query.append(")");
+  		needAnd = true;
+  	}
+  	
+  	if (search) {
+  		if (needAnd) {
+				query.appendAnd();
+  		}
+  		query.append(getEntityName()).append(".").append(CHILD)
   		.appendEqualSign().append(UserBMPBean.TABLE_NAME).append(".").append(UserBMPBean.getColumnNameUserID())
   		.appendAnd().append("(");
   		query.append(UserBMPBean.TABLE_NAME).append(".").append(UserBMPBean.getColumnNameFirstName())
@@ -373,12 +403,14 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
   		.append(" like '%").append(searchStringForUser).append("%'")
   		.appendOr().append(UserBMPBean.TABLE_NAME).append(".").append(UserBMPBean.getColumnNamePersonalID())
   		.append(" like '%").append(searchStringForUser).append("%'");
-  		query.append(")").appendAnd();
-  	}else {
-  		query.appendWhere();	
+  		query.append(")");
+  		needAnd = true;;
   	}
   	
   	if (seasonID > 0) {
+			if (needAnd) {
+				query.appendAnd();
+			}
   		query.append(SCHOOL_SEASON).appendEqualSign().append(seasonID);
   		needAnd = true;
   	}
@@ -399,6 +431,7 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
   		needAnd = true;
   	}
   	
+  	//System.out.println("[SchoolChoiceBean] sql : "+query.toString());
   	return this.idoFindPKsByQuery(query);
   }
   

@@ -407,9 +407,9 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	}
 	
 
-	public Collection getApplicantsForSchool(int schoolID,int seasonID,int grade, String searchString) throws RemoteException {
+	public Collection getApplicantsForSchool(int schoolID,int seasonID,int grade, String[] validStatuses, String searchString) throws RemoteException {
 		try {
-			return getSchoolChoiceHome().findChoices(schoolID, seasonID, grade, searchString);	
+			return getSchoolChoiceHome().findChoices(schoolID, seasonID, grade, validStatuses, searchString);	
 		}
 		catch (FinderException fe) {
 			fe.printStackTrace(System.err);
