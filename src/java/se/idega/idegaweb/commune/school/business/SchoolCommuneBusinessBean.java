@@ -588,8 +588,8 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 		
     // The method getCurrentMembersWithInvoiceInterval is specified in the
     // interface SchoolCommuneBusiness.  /Staffan
-    public SchoolClassMember [] getCurrentMembersWithInvoiceInterval
-        () throws RemoteException {
+    public SchoolClassMember [] getCurrentMembersWithInvoiceInterval ()
+        throws RemoteException {
         final Map result = new TreeMap ();
         final String [] invoiceIntervals = { "Månad", "Kvartal", "Termin",
                                                "År" };
@@ -600,7 +600,7 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
             // retreive members for a invoice interval value
             final Collection members = java.util.Collections.EMPTY_LIST;
             // -- replace above with following when method is implemented --
-            //final Collection members = home.findBySeasonAndInvoiceInterval
+            //final Collection members = home.findAllBySeasonAndInvoiceInterval
             //        (currentSeasonId, invoiceIntervals [i]);
             for (Iterator m = members.iterator (); m.hasNext ();) {
                 // sort retreived members
