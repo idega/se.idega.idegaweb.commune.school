@@ -284,7 +284,7 @@ public class SchoolReportBusinessBean extends IBOSessionBean implements SchoolRe
 				}
 				
 				if (displayColumn(FIELD_NATIVE_LANGUAGE)) {
-					data.addData(nativeLanguage, _iwrb.getLocalizedString(String.valueOf(hasNativeLanguage), String.valueOf(hasNativeLanguage)));
+					data.addData(nativeLanguage, user.getNativeLanguage().getName());
 				}
 				
 				if (displayColumn(FIELD_SWEDISH_AS_SECOND_LANGUAGE)) {
