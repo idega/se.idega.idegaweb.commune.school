@@ -19,8 +19,8 @@ import java.util.Vector;
 
 import javax.ejb.FinderException;
 
-import se.idega.idegaweb.commune.accounting.childcare.check.business.CheckBusiness;
 import se.idega.idegaweb.commune.accounting.userinfo.presentation.ChildContracts;
+import se.idega.idegaweb.commune.childcare.check.business.CheckBusiness;
 import se.idega.idegaweb.commune.presentation.CitizenChildren;
 import se.idega.idegaweb.commune.presentation.CommuneBlock;
 import se.idega.idegaweb.commune.school.business.SchoolChoiceBusiness;

@@ -1,5 +1,5 @@
 /*
- * $Id: AfterSchoolChoiceBMPBean.java,v 1.1 2004/10/07 18:54:12 thomas Exp $
+ * $Id: AfterSchoolChoiceBMPBean.java,v 1.2 2004/10/14 10:23:57 thomas Exp $
  *
  * Copyright (C) 2002 Idega hf. All Rights Reserved.
  *
@@ -12,7 +12,7 @@ package se.idega.idegaweb.commune.school.data;
 import java.util.Collection;
 
 import javax.ejb.FinderException;
-import se.idega.idegaweb.commune.accounting.childcare.data.ChildCareApplicationBMPBean;
+import se.idega.idegaweb.commune.childcare.data.ChildCareApplicationBMPBean;
 
 import com.idega.block.process.data.CaseStatus;
 import com.idega.block.school.data.School;

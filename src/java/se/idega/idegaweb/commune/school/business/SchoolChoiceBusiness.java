@@ -5,7 +5,7 @@ import com.idega.user.data.User;
 import com.idega.util.IWTimestamp;
 import java.rmi.RemoteException;
 import javax.ejb.FinderException;
-import se.idega.idegaweb.commune.accounting.childcare.data.ChildCareApplication;
+import se.idega.idegaweb.commune.childcare.data.ChildCareApplication;
 
 public interface SchoolChoiceBusiness extends com.idega.business.IBOService,com.idega.block.process.business.CaseBusiness
 {
