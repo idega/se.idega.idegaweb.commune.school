@@ -27,6 +27,12 @@ import com.idega.user.data.User;
  */
 public class SchoolCommuneSessionBean extends IBOSessionBean implements SchoolCommuneSession {
 
+	protected static final String PARAMETER_SCHOOL_ID = "sch_s_id";
+	protected static final String PARAMETER_SCHOOL_YEAR_ID = "sch_s_y_id";
+	protected static final String PARAMETER_SCHOOL_SEASON_ID = "sch_s_s_id";
+	protected static final String PARAMETER_SCHOOL_CLASS_ID = "sch_s_c_id";
+	protected static final String PARAMETER_STUDENT_ID = "sch_st_id";
+
 	protected int _schoolID = -1;
 	protected int _schoolYearID = -1;
 	protected int _schoolSeasonID = -1;
@@ -117,4 +123,43 @@ public class SchoolCommuneSessionBean extends IBOSessionBean implements SchoolCo
 		_schoolYearID = schoolYearID;
 	}
 
+	/**
+	 * Returns the SchoolID parameter.
+	 * @return String
+	 */
+	public String getParameterSchoolID() {
+		return PARAMETER_SCHOOL_ID;
+	}
+
+	/**
+	 * Returns the SchoolClassID parameter.
+	 * @return String
+	 */
+	public String getParameterSchoolClassID() {
+		return PARAMETER_SCHOOL_CLASS_ID;
+	}
+
+	/**
+	 * Returns the SchoolSeasonID parameter.
+	 * @return String
+	 */
+	public String getParameterSchoolSeasonID() {
+		return PARAMETER_SCHOOL_SEASON_ID;
+	}
+
+	/**
+	 * Returns the SchoolYearID parameter.
+	 * @return String
+	 */
+	public String getParameterSchoolYearID() {
+		return PARAMETER_SCHOOL_YEAR_ID;
+	}
+
+	/**
+	 * Returns the StudentID parameter.
+	 * @return String
+	 */
+	public String getParameterStudentID() {
+		return PARAMETER_STUDENT_ID;
+	}
 }

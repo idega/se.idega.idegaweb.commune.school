@@ -25,15 +25,11 @@ import com.idega.presentation.IWContext;
  */
 public class SchoolEventListener implements IWEventListener {
 
-	protected static final String PARAMETER_SCHOOL_ID = "sch_s_id";
-	protected static final String PARAMETER_SCHOOL_YEAR_ID = "sch_s_y_id";
-	protected static final String PARAMETER_SCHOOL_SEASON_ID = "sch_s_s_id";
-	protected static final String PARAMETER_SCHOOL_CLASS_ID = "sch_s_c_id";
-
 	private int _schoolID = -1;
 	private int _schoolSeasonID = -1;
 	private int _schoolYearID = -1;
 	private int _schoolClassID = -1;
+	
 	/**
 	 * @see com.idega.business.IWEventListener#actionPerformed(IWContext)
 	 */
@@ -42,20 +38,20 @@ public class SchoolEventListener implements IWEventListener {
 			SchoolCommuneSession session = getSchoolCommuneSession(iwc);
 			_schoolID = session.getSchoolID();	
 	
-			if (iwc.isParameterSet(PARAMETER_SCHOOL_ID))
-				_schoolID = Integer.parseInt(iwc.getParameter(PARAMETER_SCHOOL_ID));
+			if (iwc.isParameterSet(session.getParameterSchoolID()))
+				_schoolID = Integer.parseInt(iwc.getParameter(session.getParameterSchoolID()));
 			
-			if (iwc.isParameterSet(PARAMETER_SCHOOL_SEASON_ID))
-				_schoolSeasonID = Integer.parseInt(iwc.getParameter(PARAMETER_SCHOOL_SEASON_ID));
+			if (iwc.isParameterSet(session.getParameterSchoolSeasonID()))
+				_schoolSeasonID = Integer.parseInt(iwc.getParameter(session.getParameterSchoolSeasonID()));
 			
-			if (iwc.isParameterSet(PARAMETER_SCHOOL_YEAR_ID))
-				_schoolYearID = Integer.parseInt(iwc.getParameter(PARAMETER_SCHOOL_YEAR_ID));
+			if (iwc.isParameterSet(session.getParameterSchoolYearID()))
+				_schoolYearID = Integer.parseInt(iwc.getParameter(session.getParameterSchoolYearID()));
 			
-			if (iwc.isParameterSet(PARAMETER_SCHOOL_CLASS_ID))
-				_schoolClassID = Integer.parseInt(iwc.getParameter(PARAMETER_SCHOOL_CLASS_ID));
+			if (iwc.isParameterSet(session.getParameterSchoolClassID()))
+				_schoolClassID = Integer.parseInt(iwc.getParameter(session.getParameterSchoolClassID()));
 			
 			if ( _schoolSeasonID == -1 )
-				setSchoolSeasonID(iwc);
+				_schoolSeasonID = getSchoolCommuneBusiness(iwc).getCurrentSchoolSeasonID();
 			
 			if ( _schoolClassID != -1 && _schoolYearID != -1 )
 				validateSchoolClass(iwc);
@@ -71,31 +67,17 @@ public class SchoolEventListener implements IWEventListener {
 		}
 	}
 
-	private void setSchoolSeasonID(IWContext iwc) throws RemoteException {
-		try {
-			_schoolSeasonID = ((Integer)getSchoolCommuneBusiness(iwc).getSchoolChoiceBusiness().getCurrentSeason().getPrimaryKey()).intValue();	
-		}
-		catch (FinderException fe) {
-			_schoolSeasonID = -1;	
-		}
-	}
-	
 	private void validateSchoolClass(IWContext iwc) throws RemoteException {
-		try {
-			SchoolClass schoolClass = getSchoolCommuneBusiness(iwc).getSchoolClassBusiness().findSchoolClass(new Integer(_schoolClassID));
-			if ( schoolClass.getSchoolYearId() != _schoolYearID ) {
-				Collection schoolClasses = getSchoolCommuneBusiness(iwc).getSchoolClassBusiness().findSchoolClassesBySchoolAndSeasonAndYear(_schoolID, _schoolSeasonID, _schoolYearID);
-				if ( !schoolClasses.isEmpty() ) {
-					Iterator iter = schoolClasses.iterator();
-					while (iter.hasNext()) {
-						_schoolClassID = ((Integer)((SchoolClass) iter.next()).getPrimaryKey()).intValue();
-						continue;
-					}
+		SchoolClass schoolClass = getSchoolCommuneBusiness(iwc).getSchoolClassBusiness().findSchoolClass(new Integer(_schoolClassID));
+		if ( schoolClass.getSchoolYearId() != _schoolYearID ) {
+			Collection schoolClasses = getSchoolCommuneBusiness(iwc).getSchoolClassBusiness().findSchoolClassesBySchoolAndSeasonAndYear(_schoolID, _schoolSeasonID, _schoolYearID);
+			if ( !schoolClasses.isEmpty() ) {
+				Iterator iter = schoolClasses.iterator();
+				while (iter.hasNext()) {
+					_schoolClassID = ((Integer)((SchoolClass) iter.next()).getPrimaryKey()).intValue();
+					continue;
 				}
 			}
-		}
-		catch (FinderException fe) {
-			_schoolClassID = -1;
 		}
 	}
 	

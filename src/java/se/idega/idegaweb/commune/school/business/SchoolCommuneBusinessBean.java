@@ -15,8 +15,11 @@ import com.idega.block.school.business.SchoolClassBusiness;
 import com.idega.block.school.business.SchoolClassMemberBusiness;
 import com.idega.block.school.business.SchoolSeasonBusiness;
 import com.idega.block.school.business.SchoolYearBusiness;
+import com.idega.block.school.data.School;
+import com.idega.block.school.data.SchoolClass;
 import com.idega.block.school.data.SchoolClassMember;
 import com.idega.block.school.data.SchoolSeason;
+import com.idega.block.school.data.SchoolYear;
 import com.idega.business.IBOLookup;
 import com.idega.user.business.UserBusiness;
 import com.idega.user.data.User;
@@ -31,11 +34,11 @@ import com.idega.user.data.User;
  */
 public class SchoolCommuneBusinessBean extends CaseBusinessBean implements SchoolCommuneBusiness,CaseBusiness {
 	
-	private Collection getSchoolClasses(int schoolID,int schoolSeasonID) throws FinderException, RemoteException {
+	private Collection getSchoolClasses(int schoolID,int schoolSeasonID) throws RemoteException {
 		return getSchoolClassBusiness().findSchoolClassesBySchoolAndSeason(schoolID, schoolSeasonID);
 	}
 	
-	private Collection getSchoolClassMember(int schoolClassID) throws FinderException, RemoteException {
+	private Collection getSchoolClassMember(int schoolClassID) throws RemoteException {
 		return getSchoolClassMemberBusiness().findStudentsInClass(schoolClassID);
 	}
 	
@@ -97,6 +100,37 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 			while (iter.hasNext()) {
 				return (SchoolSeason) iter.next();
 			}	
+		}
+		return null;
+	}
+	
+	public int getCurrentSchoolSeasonID() throws RemoteException {
+		try {
+			return ((Integer)getSchoolChoiceBusiness().getCurrentSeason().getPrimaryKey()).intValue();	
+		}
+		catch (FinderException fe) {
+			return -1;	
+		}
+	}
+	
+	public SchoolYear getSchoolYear(int age) throws RemoteException {
+		Collection schoolYears = getSchoolYearBusiness().findAllSchoolYearsByAge(age);
+		if ( !schoolYears.isEmpty() ) {
+			Iterator iter = schoolYears.iterator();
+			while (iter.hasNext()) {
+				return (SchoolYear) iter.next();
+			}
+		}
+		return null;
+	}
+	
+	public Collection getPreviousSchoolClasses(School school, SchoolSeason schoolSeason, SchoolYear schoolYear) throws RemoteException {
+		SchoolSeason season = getPreviousSchoolSeason(schoolSeason);
+		if ( season != null ) {
+			SchoolYear year = getSchoolYear(schoolYear.getSchoolYearAge()-1);
+			if ( year != null ) {
+				return getSchoolClassBusiness().findSchoolClassesBySchoolAndSeasonAndYear(((Integer)school.getPrimaryKey()).intValue(), ((Integer)season.getPrimaryKey()).intValue(), ((Integer)year.getPrimaryKey()).intValue());
+			}
 		}
 		return null;
 	}
