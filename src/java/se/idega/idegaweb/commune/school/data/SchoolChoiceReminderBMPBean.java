@@ -8,10 +8,10 @@ import java.util.*;
 import javax.ejb.FinderException;
 
 /**
- * Last modified: $Date: 2003/01/29 03:48:10 $ by $Author: laddi $
+ * Last modified: $Date: 2003/03/30 19:26:02 $ by $Author: laddi $
  *
  * @author <a href="http://www.staffannoteberg.com">Staffan Nöteberg</a>
- * @version $Revision: 1.9 $
+ * @version $Revision: 1.10 $
  */
 public class SchoolChoiceReminderBMPBean extends AbstractCaseBMPBean implements SchoolChoiceReminder {
     private static final String ENTITY_NAME = "sch_reminder";
@@ -110,10 +110,6 @@ public class SchoolChoiceReminderBMPBean extends AbstractCaseBMPBean implements 
 
     Collection ejbFindAll () throws FinderException, RemoteException {
         final IDOQuery query = idoQuery();
-        final Calendar today = Calendar.getInstance ();
-        final String date = today.get (Calendar.YEAR)
-                + "-" + (today.get (Calendar.MONTH) + 1)
-                + "-" + today.get (Calendar.DATE);
         query.appendSelect().append("scr.*").appendFrom().append(getEntityName()).append(" scr").append(", ").append(CaseBMPBean.TABLE_NAME).append(" pc");
         query.appendWhere().append("scr.").append(getIDColumnName()).appendEqualSign().append("pc.").append(CaseBMPBean.TABLE_NAME+"_ID").appendAnd().append("pc.").append(CaseBMPBean.COLUMN_CASE_STATUS).appendEqualSign().appendWithinSingleQuotes("UBEH").appendAnd().append("pc.").append(CaseBMPBean.COLUMN_CASE_CODE).appendEqualSign().appendWithinSingleQuotes(SchoolChoiceReminder.CASE_CODE_KEY);
 

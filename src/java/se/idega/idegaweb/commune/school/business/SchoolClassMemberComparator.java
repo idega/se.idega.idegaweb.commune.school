@@ -137,7 +137,6 @@ public class SchoolClassMemberComparator implements Comparator {
 	public int personalIDSort(Object o1, Object o2) throws RemoteException {
 		User p1 = (User) students.get(new Integer((((SchoolClassMember)o1).getClassMemberId())));
 		User p2 = (User) students.get(new Integer((((SchoolClassMember)o2).getClassMemberId())));
-		int result = 0;
 		
 		String pID1 = p1.getPersonalID() != null ? p1.getPersonalID() : "";
 		String pID2 = p2.getPersonalID() != null ? p2.getPersonalID() : "";

@@ -420,7 +420,6 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 		while (iter.hasNext()) {
 			choice = (SchoolChoice) iter.next();
 			student = choice.getChild();
-			boolean sendMessage = false;
 			
 			if (confirmation) {
 				choice.setHasReceivedConfirmationMessage(true);

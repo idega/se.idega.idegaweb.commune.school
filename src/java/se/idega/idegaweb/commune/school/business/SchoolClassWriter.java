@@ -129,8 +129,6 @@ public class SchoolClassWriter implements MediaWritable {
 	}
 	
 	public MemoryFileBuffer writeXLS(SchoolClass schoolClass) throws Exception {
-		boolean returner = false;
-		Connection Conn = null;
 		MemoryFileBuffer buffer = new MemoryFileBuffer();
 		MemoryOutputStream mos = new MemoryOutputStream(buffer);
 		List students = new Vector(business.getSchoolBusiness().findStudentsInClass(((Integer)schoolClass.getPrimaryKey()).intValue()));
@@ -221,7 +219,6 @@ public class SchoolClassWriter implements MediaWritable {
 	}
 	
 	public MemoryFileBuffer writePDF(SchoolClass schoolClass) throws Exception {
-		Connection Conn = null;
 		MemoryFileBuffer buffer = new MemoryFileBuffer();
 		MemoryOutputStream mos = new MemoryOutputStream(buffer);
 		List students = new Vector(business.getSchoolBusiness().findStudentsInClass(((Integer)schoolClass.getPrimaryKey()).intValue()));

@@ -382,7 +382,6 @@ public class SchoolChoiceApprover extends CommuneBlock {
 		T.setColor("#ffffcc");
 		T.setCellpadding(6);
 		T.setWidth(600);
-		int row = 1,col = 1;
 		T.add(tf.format(iwrb.getLocalizedString("school","School"),tf.HEADER),1,1);
 		T.add(tf.format(school.getSchoolName()),1,2);
 		T.add(tf.format(iwrb.getLocalizedString("letter_address","Letter address"),tf.HEADER),2,1);

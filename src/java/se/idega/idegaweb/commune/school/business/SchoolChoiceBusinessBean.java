@@ -190,7 +190,6 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		}
 
 		SchoolChoice choice = null;
-		boolean hasPrevious = false;
 
 		if (season != null) {
 			Collection choices = this.findByStudentAndSeason(childId, ((Integer)season.getPrimaryKey()).intValue());
@@ -200,7 +199,6 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 					SchoolChoice element = (SchoolChoice) iter.next();
 					if (element.getChoiceOrder() == choiceOrder) {
 						choice = element;
-						hasPrevious = true;
 						continue;	
 					}
 				}	
@@ -304,7 +302,6 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 			}
 
 			Iterator iter = parents.iterator();		
-			User otherParent = null;
 			while(iter.hasNext()){
 				User parent = (User) iter.next();
 				if (!getUserBusiness().haveSameAddress(parent, appParent)) {

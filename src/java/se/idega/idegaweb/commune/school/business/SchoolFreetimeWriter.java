@@ -130,7 +130,6 @@ public class SchoolFreetimeWriter implements MediaWritable {
 	}
 	
 	public MemoryFileBuffer writeXLS(List list) throws Exception {
-		boolean returner = false;
 		MemoryFileBuffer buffer = new MemoryFileBuffer();
 		MemoryOutputStream mos = new MemoryOutputStream(buffer);
 
