@@ -356,13 +356,13 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 				returnList.add(choice);
 			}
 			if (useAsAdmin){
-				handleSeparatedParentApplication(userId, returnList, false, true);	
+				handleSeparatedParentApplication(userId, returnList, false, true, true);	
 			}
 			else if (isInSCPeriod){
-				handleSeparatedParentApplication(userId, returnList, false, false);
+				handleSeparatedParentApplication(userId, returnList, false, false, true);
 			}
 			else {
-				handleSeparatedParentApplicationNewlyMovedIn(userId, returnList, false);
+				handleSeparatedParentApplicationNewlyMovedIn(userId, returnList, false, true);
 			}
 			trans.commit();
 
@@ -536,7 +536,12 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		handleSeparatedParentApplication(applicationParentID, choices, isSchoolChangeApplication, false);
 		
 	}
+
 	private void handleSeparatedParentApplication(int applicationParentID, List choices, boolean isSchoolChangeApplication, boolean isAdmin) throws RemoteException {
+		handleSeparatedParentApplication(applicationParentID, choices, isSchoolChangeApplication, isAdmin, false);
+	}
+	
+	private void handleSeparatedParentApplication(int applicationParentID, List choices, boolean isSchoolChangeApplication, boolean isAdmin, boolean sendToAllParents) throws RemoteException {
 		try {
 			if (choices != null) {
 				SchoolChoice choice = (SchoolChoice) choices.get(0);
@@ -569,7 +574,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 					applyingCode = SchoolChoiceMessagePdfHandler.CODE_APPLYING_SINGLEPARENT_APPLICATION_NEW ;
 				}
 
-				sendMessageToParents(choice, nonApplyingSubject, nonApplyingBody,nonApplyingCode,applyingSubject,applyingBody,applyingCode,isSchoolChangeApplication);
+				sendMessageToParents(choice, nonApplyingSubject, nonApplyingBody,nonApplyingCode,applyingSubject,applyingBody,applyingCode,isSchoolChangeApplication, sendToAllParents);
 			}
 		}
 		catch (Exception ex) {
@@ -577,7 +582,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		}
 	}
 	
-	private void handleSeparatedParentApplicationNewlyMovedIn(int applicationParentID, List choices, boolean isSchoolChangeApplication) throws RemoteException {
+	private void handleSeparatedParentApplicationNewlyMovedIn(int applicationParentID, List choices, boolean isSchoolChangeApplication, boolean sendToAllParents) throws RemoteException {
 		try {
 			if (choices != null) {
 				SchoolChoice choice = (SchoolChoice) choices.get(0);
@@ -594,7 +599,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 				applyingBody = getPreliminaryMessageBodyNew(choice);//getApplyingSeparateParentMessageBodyAppl(choices, appParent);
 				applyingCode = SchoolChoiceMessagePdfHandler.CODE_APPLYING_SINGLEPARENT_APPLICATION_NEW ;
 				
-				sendMessageToParents(choice, nonApplyingSubject, nonApplyingBody,nonApplyingCode,applyingSubject,applyingBody,applyingCode,isSchoolChangeApplication);
+				sendMessageToParents(choice, nonApplyingSubject, nonApplyingBody,nonApplyingCode,applyingSubject,applyingBody,applyingCode,isSchoolChangeApplication, sendToAllParents);
 			}
 		}
 		catch (Exception ex) {
@@ -685,6 +690,10 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	}
 
 	public void sendMessageToParents(SchoolChoice application, String nonApplyingSubject, String nonApplyingBody,String nonApplyingCode,String applyingSubject,String applyingBody,String applyingCode,boolean isChangeApplication) {
+		sendMessageToParents(application, nonApplyingSubject, nonApplyingBody, nonApplyingCode, applyingSubject, applyingBody, applyingCode, isChangeApplication, false);
+	}
+	
+	private void sendMessageToParents(SchoolChoice application, String nonApplyingSubject, String nonApplyingBody,String nonApplyingCode,String applyingSubject,String applyingBody,String applyingCode,boolean isChangeApplication, boolean sendToAllParents) {
 		try {
 			User child = application.getChild();
 			//Object[] arguments = {child.getNameLastFirst(true), application.getChosenSchool().getSchoolName()};
@@ -719,9 +728,9 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 						if (!getUserBusiness().haveSameAddress(parent, appParent)) {
 							getMessageBusiness().createUserMessage(application, parent,null,null, nonApplyingSubject, MessageFormat.format(nonApplyingBody, arguments), true,nonApplyingCode);
 						}
-						/*else if (!parent.equals((IDOEntity)appParent)){
-						 getMessageBusiness().createUserMessage(application, parent,null,null, nonApplyingSubject, MessageFormat.format(nonApplyingBody, arguments), false,nonApplyingCode);
-						 }*/
+						else if (sendToAllParents && !parent.equals(appParent)){
+							getMessageBusiness().createUserMessage(application, parent,null,null, nonApplyingSubject, MessageFormat.format(nonApplyingBody, arguments), true,nonApplyingCode);
+						}
 					}
 				}
 				catch (NoCustodianFound ncf) {

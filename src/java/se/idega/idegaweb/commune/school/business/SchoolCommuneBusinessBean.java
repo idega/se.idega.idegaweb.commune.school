@@ -514,7 +514,7 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 			Object[] arguments = { student.getName()};
 			newBody = MessageFormat.format(body, arguments);
 
-			sendMessageToParents(choice, subject, newBody);
+			sendMessageToParents(choice, subject, newBody, true);
 		}
 	}
 
@@ -611,9 +611,30 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 		}
 		else {
 			SchoolClassMember classMember = getSchoolBusiness().findClassMemberInClass(studentID, oldSchoolClassID);
+			SchoolClass oldSchoolClass = classMember.getSchoolClass();
+			User student = classMember.getStudent();
 			classMember.setSchoolClassId(schoolClassID);
 			classMember.setSchoolYear(schoolYearID);
 			classMember.store();
+			
+			try {
+				IWTimestamp startDate = new IWTimestamp();
+				IWTimestamp endDate = new IWTimestamp();
+				
+				IWTimestamp placementDate = new IWTimestamp(classMember.getRegisterDate());
+				if (startDate.isEarlierThan(placementDate)) {
+					startDate = placementDate;
+					endDate = placementDate;
+				}
+				endDate.addDays(-1);
+				
+				SchoolClass newSchoolClass = getSchoolBusiness().getSchoolClassHome().findByPrimaryKey(new Integer(schoolClassID));
+				getSchoolBusiness().addToSchoolClassMemberLog(student, oldSchoolClass, endDate.getDate());
+				getSchoolBusiness().addToSchoolClassMemberLog(student, newSchoolClass, startDate.getDate(), null);
+			}
+			catch (FinderException fe) {
+				log(fe);
+			}
 		}
 	}
 
@@ -1085,6 +1106,10 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 	}
 
 	public void sendMessageToParents(SchoolChoice choice, String subject, String body) {
+		sendMessageToParents(choice, subject, body, false);
+	}
+	
+	private void sendMessageToParents(SchoolChoice choice, String subject, String body, boolean sendToAllParents) {
 		try {
 			User child = choice.getChild();
 			//Object[] arguments = { child.getNameLastFirst(true), choice.getChosenSchool().getSchoolName()};
@@ -1103,7 +1128,7 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 					if (!getUserBusiness().haveSameAddress(parent, appParent)) {
 						getMessageBusiness().createUserMessage(choice, parent, subject, MessageFormat.format(body, arguments), true);
 					}
-					else if (!parent.equals(appParent)) {
+					else if (sendToAllParents && !parent.equals(appParent)) {
 						getMessageBusiness().createUserMessage(choice, parent, subject, MessageFormat.format(body, arguments), false);
 					}
 				}
