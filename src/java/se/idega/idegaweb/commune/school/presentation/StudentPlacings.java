@@ -18,6 +18,8 @@ import com.idega.block.process.business.CaseBusiness;
 import com.idega.block.school.data.School;
 import com.idega.block.school.data.SchoolClass;
 import com.idega.block.school.data.SchoolClassMember;
+import com.idega.block.school.data.SchoolSeason;
+import com.idega.block.school.data.SchoolYear;
 import com.idega.business.IBOLookup;
 import com.idega.core.contact.data.Email;
 import com.idega.core.contact.data.Phone;
@@ -78,19 +80,23 @@ public class StudentPlacings extends SchoolCommuneBlock {
 		table.setWidth(getWidth());
 		table.setCellpadding(getCellpadding());
 		table.setCellspacing(getCellspacing());
-		table.setColumns(4);
+		table.setColumns(6);
 		table.setRowColor(1, getHeaderColor());
 		int column = 1;
 		int row = 1;
 			
+		table.add(getLocalizedSmallHeader("school.season","Season"), column++, row);
 		table.add(getLocalizedSmallHeader("school.school","Provider"), column++, row);
 		table.add(getLocalizedSmallHeader("school.group","Group"), column++, row);
+		table.add(getLocalizedSmallHeader("school.year","Year"), column++, row);
 		table.add(getLocalizedSmallHeader("school.valid_from","Valid from"), column++, row);
 		table.add(getLocalizedSmallHeader("school.removed","Removed"), column++, row++);
 		
 		SchoolClassMember member;
 		SchoolClass group;
 		School provider;
+		SchoolYear year;
+		SchoolSeason season;
 		IWTimestamp validFrom;
 		IWTimestamp terminated = null;
 		
@@ -100,6 +106,8 @@ public class StudentPlacings extends SchoolCommuneBlock {
 			column = 1;
 			member = (SchoolClassMember) iter.next();
 			group = member.getSchoolClass();
+			year = member.getSchoolYear();
+			season = group.getSchoolSeason();
 			provider = group.getSchool();
 			validFrom = new IWTimestamp(member.getRegisterDate());
 			if (member.getRemovedDate() != null)
@@ -110,8 +118,10 @@ public class StudentPlacings extends SchoolCommuneBlock {
 			else
 				table.setRowColor(row, getZebraColor2());
 	
+			table.add(getSmallText(season.getSchoolSeasonName()), column++, row);
 			table.add(getSmallText(provider.getSchoolName()), column++, row);
 			table.add(getSmallText(group.getSchoolClassName()), column++, row);
+			table.add(getSmallText(year.getSchoolYearName()), column++, row);
 			table.add(getSmallText(validFrom.getLocaleDate(iwc.getCurrentLocale(), IWTimestamp.SHORT)), column++, row);
 			if (member.getRemovedDate() != null)
 				table.add(getSmallText(terminated.getLocaleDate(iwc.getCurrentLocale(), IWTimestamp.SHORT)), column++, row++);
@@ -129,7 +139,7 @@ public class StudentPlacings extends SchoolCommuneBlock {
 		table.setWidth(getWidth());
 		table.setCellpadding(getCellpadding());
 		table.setCellspacing(getCellspacing());
-		table.setColumns(6);
+		table.setColumns(7);
 		table.setRowColor(1, getHeaderColor());
 		int column = 1;
 		int row = 1;
@@ -137,6 +147,7 @@ public class StudentPlacings extends SchoolCommuneBlock {
 		CaseBusiness caseBusiness = (CaseBusiness) IBOLookup.getServiceInstance(iwc, CaseBusiness.class);
 		Locale currentLocale = iwc.getCurrentLocale();
 		
+		table.add(getLocalizedSmallHeader("school.season","Season"), column++, row);
 		table.add(getLocalizedSmallHeader("school.school","Provider"), column++, row);
 		table.add(getLocalizedSmallHeader("school.status","Status"), column++, row);
 		table.add(getLocalizedSmallHeader("school.created","Created"), column++, row);
@@ -146,6 +157,7 @@ public class StudentPlacings extends SchoolCommuneBlock {
 		
 		School provider =getSession().getSchool();
 		SchoolChoice choice;
+		SchoolSeason season;
 		Timestamp created;
 		IWTimestamp iwCreated;
 		int grade;
@@ -159,6 +171,7 @@ public class StudentPlacings extends SchoolCommuneBlock {
 			++row;
 			column = 1;
 			choice = (SchoolChoice) iter.next();
+			season = choice.getSchoolSeason();
 			status = caseBusiness.getLocalizedCaseStatusDescription(choice.getCaseStatus(), currentLocale);
 			created = choice.getCreated();
 			if (created != null) {
@@ -185,6 +198,7 @@ public class StudentPlacings extends SchoolCommuneBlock {
 			else
 				table.setRowColor(row, getZebraColor2());
 			
+			table.add(getSmallText(season.getSchoolSeasonName()), column++, row);
 			table.add(getSmallText(provider.getSchoolName()), column++, row);
 			table.add(getSmallText(status), column++, row);
 			if (iwCreated != null) {
