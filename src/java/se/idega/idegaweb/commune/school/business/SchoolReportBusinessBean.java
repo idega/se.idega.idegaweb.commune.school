@@ -344,7 +344,7 @@ public class SchoolReportBusinessBean extends IBOSessionBean implements SchoolRe
 		return reportCollection;
 	}
 	
-	public ReportableCollection getChoicesReport(Collection columnNames) {
+	public ReportableCollection getChoicesReport(Collection columnNames, Boolean showLanguageChoice) {
 		fillColumns(columnNames);
 		initializeBundlesIfNeeded();
 		Locale currentLocale = this.getUserContext().getCurrentLocale();
@@ -459,6 +459,14 @@ public class SchoolReportBusinessBean extends IBOSessionBean implements SchoolRe
 			Iterator iter = applicants.iterator();
 			while (iter.hasNext()) {
 				SchoolChoice choice = (SchoolChoice) iter.next();
+				if (showLanguageChoice != null) {
+					if (showLanguageChoice.booleanValue() && choice.getLanguageChoice() == null) {
+						continue;
+					}
+					else if (!showLanguageChoice.booleanValue() && choice.getLanguageChoice() != null) {
+						continue;
+					}
+				}
 				User user = choice.getChild();
 				Address homeAddress = getUserBusiness().getUsersMainAddress(user);
 				Phone homePhone = getUserBusiness().getChildHomePhone(user);
