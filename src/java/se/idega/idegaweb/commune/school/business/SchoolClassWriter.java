@@ -55,7 +55,7 @@ import com.lowagie.text.pdf.PdfWriter;
  * @author       <a href="mailto:aron@idega.is">aron@idega.is</a>
  * @version 1.0
  */
-public class ClassWriter implements MediaWritable {
+public class SchoolClassWriter implements MediaWritable {
 
 	private String mimeType;
 	private MemoryFileBuffer buffer = null;
@@ -68,7 +68,7 @@ public class ClassWriter implements MediaWritable {
 	public final static String XLS = "xls";
 	public final static String PDF = "pdf";
 	
-	public ClassWriter() {
+	public SchoolClassWriter() {
 	}
 	
 	public void init(HttpServletRequest req, IWMainApplication iwma) {
@@ -241,8 +241,9 @@ public class ClassWriter implements MediaWritable {
 			}
 			document.add(datatable);
 			document.close();
+			writer.setPdfVersion(PdfWriter.VERSION_1_2);
 		}
-
+		
 		buffer.setMimeType("application/pdf");
 		return buffer;
 	}

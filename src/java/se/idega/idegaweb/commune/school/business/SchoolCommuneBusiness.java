@@ -28,4 +28,6 @@ public interface SchoolCommuneBusiness extends com.idega.business.IBOService,com
  public void moveToGroup(int studentID, int newSchoolClassID, int oldSchoolClassID) throws java.rmi.RemoteException;
  public int getChosenSchoolID(java.util.Collection choices) throws java.rmi.RemoteException;
  public void addSchoolAdministrator(User user) throws RemoteException, FinderException, CreateException;
+ public void markSchoolClassReady(com.idega.block.school.data.SchoolClass schoolClass) throws RemoteException;
+ public void markSchoolClassLocked(com.idega.block.school.data.SchoolClass schoolClass) throws RemoteException;
 }

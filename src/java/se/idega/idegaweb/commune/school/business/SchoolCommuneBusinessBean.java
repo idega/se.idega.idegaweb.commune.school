@@ -267,7 +267,15 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 		getUserBusiness().getGroupBusiness().addUser(((Integer)rootAdminGroup.getPrimaryKey()).intValue(), user);
 	}
 	
+	public void markSchoolClassReady(SchoolClass schoolClass) throws RemoteException {
+		schoolClass.setReady(true);
+		schoolClass.store();	
+	}
 	
+	public void markSchoolClassLocked(SchoolClass schoolClass) throws RemoteException {
+		schoolClass.setLocked(true);
+		schoolClass.store();	
+	}
 	
 	public void moveToGroup(int studentID, int schoolClassID, int oldSchoolClassID) throws RemoteException {
 		SchoolClassMember classMember = getSchoolClassMemberBusiness().findClassMemberInClass(studentID, oldSchoolClassID);
