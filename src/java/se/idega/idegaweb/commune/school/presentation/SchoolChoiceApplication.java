@@ -1320,7 +1320,9 @@ public class SchoolChoiceApplication extends CommuneBlock {
 										}
 										String pk = school.getPrimaryKey().toString();
 										//System.err.println("checking school "+pk.toString());
-										if (!hash.containsKey(pk)) {
+										boolean invisibleForCitizen = false;
+										invisibleForCitizen = school.getInvisibleForCitizen();
+										if (!hash.containsKey(pk) && !invisibleForCitizen) {
 											if (!hasRelation)
 												a.append("if (showAll == true)\n\t\t\t");
 											a.append("schoolSelect.options[schoolSelect.options.length] = new Option(\"");
