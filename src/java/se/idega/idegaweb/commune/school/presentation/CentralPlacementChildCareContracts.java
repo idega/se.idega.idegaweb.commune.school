@@ -178,7 +178,7 @@ public class CentralPlacementChildCareContracts extends Window {
 	 * Reload ParentPage and close this window
 	 */
 	private void reloadParentAndClose() {
-		setParentPageFormToSubmitOnUnLoad(CentralPlacementEditor.FORM_NAME);
+		setParentPageFormToSubmitOnUnLoad(CentralPlacementEditorConstants.FORM_NAME);
 		close();
 	}
 

@@ -7,9 +7,7 @@
 package se.idega.idegaweb.commune.school.presentation;
 
 import java.rmi.RemoteException;
-
 import se.idega.idegaweb.commune.presentation.CommuneBlock;
-
 import com.idega.block.school.business.SchoolBusiness;
 import com.idega.block.school.data.SchoolClassMember;
 import com.idega.business.IBOLookup;
@@ -27,8 +25,8 @@ import com.idega.presentation.ui.TextInput;
 /**
  * @author 
  * @author <br><a href="mailto:gobom@wmdata.com">Göran Borgman</a><br>
- * Last modified: $Date: 2003/12/10 16:52:07 $ by $Author: goranb $
- * @version $Revision: 1.2 $
+ * Last modified: $Date: 2004/10/15 15:12:13 $ by $Author: thomas $
+ * @version $Revision: 1.3 $
  */
 public class CentralPlacementEditLatestPlacement extends CommuneBlock {
 	
@@ -111,7 +109,7 @@ public class CentralPlacementEditLatestPlacement extends CommuneBlock {
 		int col = 2;
 		
 		table.add(
-				getSmallHeader(localize(CentralPlacementEditor.KEY_PLACEMENT_PARAGRAPH_LABEL, "Placement paragraph: ")),
+				getSmallHeader(localize(CentralPlacementEditorConstants.KEY_PLACEMENT_PARAGRAPH_LABEL, "Placement paragraph: ")),
 				col++, row);
 		table.add(getPlacementParagraphTextInput(), col, row);
 		row++;

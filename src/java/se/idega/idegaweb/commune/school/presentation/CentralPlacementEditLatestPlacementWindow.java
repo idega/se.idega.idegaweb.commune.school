@@ -120,7 +120,7 @@ public class CentralPlacementEditLatestPlacementWindow extends Window {
 	 * Reload ParentPage and close this window
 	 */
 	private void submitParentAndClose() {
-		this.setParentPageFormToSubmitOnUnLoad(CentralPlacementEditor.FORM_NAME);
+		this.setParentPageFormToSubmitOnUnLoad(CentralPlacementEditorConstants.FORM_NAME);
 		close();
 	}
 
