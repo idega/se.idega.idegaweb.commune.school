@@ -30,6 +30,7 @@ import com.idega.block.school.data.SchoolCategory;
 import com.idega.block.school.data.SchoolCategoryHome;
 import com.idega.block.school.data.SchoolClassMember;
 import com.idega.block.school.data.SchoolClassMemberHome;
+import com.idega.block.school.data.SchoolSeason;
 import com.idega.business.IBOLookup;
 import com.idega.business.IBOServiceBean;
 import com.idega.data.IDOLookup;
@@ -48,6 +49,7 @@ public class CentralPlacementBusinessBean extends IBOServiceBean implements Cent
 	//  Keys for error messages
 	private static final String KP = "central_placement_business.";
 	private static final String KEY_ERROR_CHILD_ID = KP + "error.child_id";
+	private static final String KEY_ERROR_SEASON = KP + "error.no.season.found";
 	private static final String KEY_ERROR_CATEGORY_ID = KP + "error.category_id";
 	private static final String KEY_ERROR_PROVIDER_ID = KP + "error.provider_id";
 	private static final String KEY_ERROR_PLACEMENT_DATE = KP + "error.placement_date";
@@ -57,6 +59,7 @@ public class CentralPlacementBusinessBean extends IBOServiceBean implements Cent
 	private static final String KEY_ERROR_SCHOOL_GROUP = KP + "error.school_group";
 	private static final String KEY_ERROR_STORING_PLACEMENT = KP + "error.saving_placement";
 	private static final String KEY_ERROR_STUDY_PATH = KP + "error.study_path";
+	private static final String KEY_ERROR_PLC_DATE_OUTSIDE_SEASON = KP + "placement_date outside_season";
 
 	/**
 	 * Stores a new placement(SchoolClassMember) with resources and ends the current placement
@@ -80,7 +83,7 @@ public class CentralPlacementBusinessBean extends IBOServiceBean implements Cent
 		SchoolClassMember newPlacement = null;
 		//SchoolClassMember currentPlacement = null;
 		SchoolClassMember latestPlacement = null;
-		//SchoolSeason chosenSeason = null;
+		SchoolSeason chosenSeason = null;
 		int newPlacementID = -1;
 		
 	// *** START - Check in params ***
@@ -93,12 +96,14 @@ public class CentralPlacementBusinessBean extends IBOServiceBean implements Cent
 			if (student == null) 
 				throw new CentralPlacementException(KEY_ERROR_CHILD_ID, "No valid pupil found");
 			
-		/*	try {
+			try {
 				chosenSeason = getSchoolChoiceBusiness().getSchoolSeasonHome().
-								findByPrimaryKey(new Integer(getSchoolCommuneSession(iwc).getSchoolSeasonID()));
-			} catch (FinderException e1) {}
-		*/	
-			latestPlacement = getLatestPlacementLatestFromElemAndHighSchool(student);
+					findByPrimaryKey(new Integer(getSchoolCommuneSession(iwc).getSchoolSeasonID()));
+			} catch (Exception e1) {}
+			if (chosenSeason == null)
+				throw new CentralPlacementException(KEY_ERROR_SEASON, "Error finding chosen season");
+			
+			latestPlacement = getLatestPlacementFromElemAndHighSchool(student, chosenSeason);
 		}
 		
 		// operational field
@@ -185,7 +190,19 @@ public class CentralPlacementBusinessBean extends IBOServiceBean implements Cent
 				placeStamp= new IWTimestamp(placeDateStr);
 				placeStamp.setAsDate();
 				
-				// Check if current season
+				// Check if within chosen season
+				java.sql.Date seasonStartDate = chosenSeason.getSchoolSeasonStart();
+				java.sql.Date seasonEndDate = chosenSeason.getSchoolSeasonEnd();
+				IWTimestamp seasonStartStamp = new IWTimestamp(seasonStartDate.toString());
+				IWTimestamp seasonEndStamp = new IWTimestamp(seasonEndDate.toString());
+				seasonStartStamp.setAsDate();
+				seasonEndStamp.setAsDate();
+				
+				if (placeStamp.isEarlierThan(seasonStartStamp) 
+						|| seasonEndStamp.isEarlierThan(placeStamp)) {
+					throw new CentralPlacementException(KEY_ERROR_PLC_DATE_OUTSIDE_SEASON,
+							"Placement date outside chosen seasons date boundries");
+				}
 			  
 				// Get dayBeforeRegDate for further use
 				IWTimestamp dayBeforeStamp = new IWTimestamp(placeStamp.getDate());
@@ -395,7 +412,7 @@ public class CentralPlacementBusinessBean extends IBOServiceBean implements Cent
 	}
 	
 	
-	public SchoolClassMember getLatestPlacementLatestFromElemAndHighSchool(User pupil) throws RemoteException {
+	public SchoolClassMember getLatestPlacementFromElemAndHighSchool(User pupil) throws RemoteException {
 		SchoolClassMember mbr = null;
 		try {
 			if (pupil != null) {
@@ -405,6 +422,20 @@ public class CentralPlacementBusinessBean extends IBOServiceBean implements Cent
 		
 		return mbr;		
 	}
+
+	public SchoolClassMember getLatestPlacementFromElemAndHighSchool(User pupil, SchoolSeason season)  throws RemoteException {
+		SchoolClassMember mbr = null;
+		try { 
+			if (pupil != null && season != null) {
+				mbr = getSchoolClassMemberHome().findLatestFromElemAndHighSchoolByUserAndSeason(pupil, season);
+			}
+		} catch (FinderException fe) {
+			log(fe);
+		}
+		
+		return mbr;		
+	}
+	
 	
 	public String getDateString(Timestamp stamp, String pattern) {
 		IWTimestamp iwts = null;
@@ -414,6 +445,24 @@ public class CentralPlacementBusinessBean extends IBOServiceBean implements Cent
 			dateStr = iwts.getDateString(pattern);
 		}
 		return dateStr;
+	}
+	
+	public SchoolSeason getCurrentSeason() {
+		SchoolSeason season = null;
+		
+		try {
+			season = getSchoolChoiceBusiness().getSchoolSeasonHome().findSeasonByDate(new IWTimestamp().getDate());
+		} catch (Exception e) {}
+		
+		if (season == null) {
+			try {
+				season = getSchoolChoiceBusiness().getCurrentSeason();
+			} catch (Exception e1) {
+				e1.printStackTrace();
+			} 
+		}
+		
+		return season;
 	}
 	
 	protected SchoolCommuneSession getSchoolCommuneSession(IWContext iwc) throws RemoteException {
