@@ -577,10 +577,9 @@ public class SchoolChoiceApplication extends CommuneBlock {
   private PresentationObject getMessagePart(IWContext iwc)throws java.rmi.RemoteException{
     Table T = new Table();
 
-
-    CheckBox chkSendCatalogue = new CheckBox(prmSendCatalogue,"true");
-    chkSendCatalogue.setChecked(valSendCatalogue);
     TextArea taMessage = new TextArea(prmMessage,65,6);
+    /*CheckBox chkSendCatalogue = new CheckBox(prmSendCatalogue,"true");
+    chkSendCatalogue.setChecked(valSendCatalogue);
     if(showAgree){
     	CheckBox chkCustodiansAgree = new CheckBox(prmCustodiansAgree,"true");
     	chkCustodiansAgree.setChecked(valCustodiansAgree);
@@ -589,7 +588,9 @@ public class SchoolChoiceApplication extends CommuneBlock {
     }
     T.add(chkSendCatalogue,1,2);
     T.add(getSmallText(iwrb.getLocalizedString("school.send_catalogue","Send school catalogue")),1,2);
-    T.add(taMessage,1,3);
+    T.add(taMessage,1,3);*/
+    T.add(taMessage,1,1);
+    
     return T;
   }
 
