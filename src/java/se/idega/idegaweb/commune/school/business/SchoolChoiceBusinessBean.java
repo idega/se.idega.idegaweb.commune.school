@@ -645,10 +645,8 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
         (final String text, final Date eventDate, final Date reminderDate,
          final User user)
         throws CreateException, RemoteException {
-
-        final SchoolChoiceReminderHome home = (SchoolChoiceReminderHome)
-                getIDOHome(SchoolChoiceReminder.class);
-        final SchoolChoiceReminder reminder = home.create ();
+        final SchoolChoiceReminder reminder
+                = getSchoolChoiceReminderHome ().create ();
         reminder.setText (text);
         reminder.setEventDate (eventDate);
         reminder.setReminderDate (reminderDate);
@@ -658,8 +656,18 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 
     public SchoolChoiceReminder [] findAllSchoolChoiceReminders ()
         throws RemoteException, FinderException {
-        final SchoolChoiceReminderHome home = (SchoolChoiceReminderHome)
-                IDOLookup.getHome (SchoolChoiceReminder.class);
-        return home.findAll ();
+        return getSchoolChoiceReminderHome ().findAll ();
+    }
+
+    public SchoolChoiceReminder findSchoolChoiceReminder (final int id)
+        throws RemoteException, FinderException {
+		return (SchoolChoiceReminder) getSchoolChoiceReminderHome ()
+                .findByPrimaryKeyIDO (new Integer (id));
+	}
+
+    private SchoolChoiceReminderHome getSchoolChoiceReminderHome ()
+        throws RemoteException {
+        return (SchoolChoiceReminderHome) IDOLookup.getHome
+                (SchoolChoiceReminder.class);
     }
 }
