@@ -8,5 +8,6 @@ public interface CentralPlacementBusiness extends com.idega.business.IBOService
  public com.idega.block.school.data.SchoolClassMember getLatestPlacementLatestFromElemAndHighSchool(com.idega.user.data.User p0)throws java.rmi.RemoteException, java.rmi.RemoteException;
  public com.idega.block.school.data.SchoolCategoryHome getSchoolCategoryHome()throws java.rmi.RemoteException, java.rmi.RemoteException;
  public com.idega.user.business.UserBusiness getUserBusiness()throws java.rmi.RemoteException, java.rmi.RemoteException;
+ public void removeSchoolClassMember(java.lang.Integer p0) throws java.rmi.RemoteException;
  public com.idega.block.school.data.SchoolClassMember storeSchoolClassMember(com.idega.presentation.IWContext p0,int p1)throws java.rmi.RemoteException,se.idega.idegaweb.commune.school.business.CentralPlacementException, java.rmi.RemoteException;
 }

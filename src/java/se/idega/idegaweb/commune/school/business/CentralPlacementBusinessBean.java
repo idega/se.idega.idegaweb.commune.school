@@ -20,6 +20,7 @@ import se.idega.idegaweb.commune.accounting.invoice.business.RegularPaymentBusin
 import se.idega.idegaweb.commune.accounting.invoice.data.RegularPaymentEntry;
 import se.idega.idegaweb.commune.accounting.resource.business.ResourceBusiness;
 import se.idega.idegaweb.commune.accounting.resource.data.ResourceClassMember;
+import se.idega.idegaweb.commune.accounting.resource.data.ResourceClassMemberHome;
 import se.idega.idegaweb.commune.business.CommuneUserBusiness;
 import se.idega.idegaweb.commune.school.presentation.CentralPlacementEditor;
 
@@ -314,6 +315,49 @@ public class CentralPlacementBusinessBean extends IBOServiceBean implements Cent
 		return newPlacement; 
 		
 	}
+	
+	/**
+	 * Removes a SchoolClassMember(placement) and its attached ResourceClassMembers
+	 * (resource placements)
+	 * 
+	 * @param schoolClassMemberPK
+	 */
+	
+	public void removeSchoolClassMember(Integer schoolClassMemberPK) {
+		UserTransaction trans = null;
+		try {
+			trans = getSessionContext().getUserTransaction();
+			trans.begin();
+			
+			SchoolClassMember schClMember = getSchoolClassMemberHome()
+																					.findByPrimaryKey(schoolClassMemberPK);
+			ResourceClassMemberHome rcmHome = (ResourceClassMemberHome) 
+																		IDOLookup.getHome(ResourceClassMember.class);
+			// Remove resource placements
+			Collection rscPlacements = rcmHome.findAllByClassMemberId(schoolClassMemberPK);
+			for (Iterator iter = rscPlacements.iterator(); iter.hasNext();) {
+				ResourceClassMember element = (ResourceClassMember) iter.next();
+				element.remove();				
+			}
+			
+			// Remove placement
+			schClMember.remove();
+
+			trans.commit();
+		} catch (Exception e) {
+			try {
+				trans.rollback();
+			} catch (IllegalStateException e1) {
+				log(e1);
+			} catch (SecurityException e1) {
+				log(e1);
+			} catch (SystemException e1) {
+				log(e1);
+			}
+
+		}
+	}
+	
 	
 	public SchoolClassMember getLatestPlacementLatestFromElemAndHighSchool(User pupil) throws RemoteException {
 		SchoolClassMember mbr = null;
