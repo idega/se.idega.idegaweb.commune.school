@@ -133,7 +133,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	SchoolType schoolType = null;
 
 	private boolean hasPreviousSchool = false;
-
+	private boolean schoolChange = false;
 	private Age age;
 
 	public void main(IWContext iwc) throws Exception {
@@ -561,8 +561,6 @@ public class SchoolChoiceApplication extends CommuneBlock {
 
 		DropdownMenu typeDrop = getTypeDrop(iwc, prmType);
 		typeDrop.setOnChange(getFilterCallerScript(iwc, prmType, prmFirstArea, prmFirstSchool, 1));
-		typeDrop.setOnChange(getFilterCallerScript(iwc, prmType, prmSecondArea, prmSecondSchool, 1));
-		typeDrop.setOnChange(getFilterCallerScript(iwc, prmType, prmThirdArea, prmThirdSchool, 1));
 
 		CheckBox chkSixYear = getCheckBox(prmSixYearCare, "true");
 		chkSixYear.setChecked(valSixyearCare);
@@ -574,15 +572,8 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		txtLangChoice.addMenuElement("school.language_swedish_english", localize("school.language_swedish_english","Swedish/English"));
 
 		DropdownMenu drpFirstArea = getDropdown(iwc, prmFirstArea, null, prmType, prmFirstArea, prmFirstSchool, 2, iwrb.getLocalizedString("school.area_first", "School Area...................."));
-		DropdownMenu drpSecondArea = getDropdown(iwc, prmSecondArea, null, prmType, prmSecondArea, prmSecondSchool, 2, iwrb.getLocalizedString("school.area_second", "School Area...................."));
-		DropdownMenu drpThirdArea = getDropdown(iwc, prmThirdArea, null, prmType, prmThirdArea, prmThirdSchool, 2, iwrb.getLocalizedString("school.area_third", "School Area...................."));
 		DropdownMenu drpFirstSchool = (DropdownMenu) getStyledInterface(new DropdownMenu(prmFirstSchool));
-		DropdownMenu drpSecondSchool = (DropdownMenu) getStyledInterface(new DropdownMenu(prmSecondSchool));
-		DropdownMenu drpThirdSchool = (DropdownMenu) getStyledInterface(new DropdownMenu(prmThirdSchool));
-
 		drpFirstSchool.addMenuElementFirst("-1", iwrb.getLocalizedString("school.school_first", "School........................."));
-		drpSecondSchool.addMenuElementFirst("-1", iwrb.getLocalizedString("school.school_second", "School........................."));
-		drpThirdSchool.addMenuElementFirst("-1", iwrb.getLocalizedString("school.school_third", "School........................."));
 
 		int row = 2;
 		table.add(getSmallHeader(iwrb.getLocalizedString("school.school_type", "SchoolType")+":"), 1, row);
@@ -592,13 +583,28 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		table.add(drpFirstArea, 3, row);
 		table.add(drpFirstSchool, 5, row++);
 
-		table.add(getSmallHeader(iwrb.getLocalizedString("school.second_choice", "Second choice")+":"), 1, row);
-		table.add(drpSecondArea, 3, row);
-		table.add(drpSecondSchool, 5, row++);
+		if (!this.schoolChange) {
+			typeDrop.setOnChange(getFilterCallerScript(iwc, prmType, prmSecondArea, prmSecondSchool, 1));
+			typeDrop.setOnChange(getFilterCallerScript(iwc, prmType, prmThirdArea, prmThirdSchool, 1));
 
-		table.add(getSmallHeader(iwrb.getLocalizedString("school.third_choice", "Third choice")+":"), 1, row);
-		table.add(drpThirdArea, 3, row);
-		table.add(drpThirdSchool, 5, row++);
+			DropdownMenu drpSecondArea = getDropdown(iwc, prmSecondArea, null, prmType, prmSecondArea, prmSecondSchool, 2, iwrb.getLocalizedString("school.area_second", "School Area...................."));
+			DropdownMenu drpSecondSchool = (DropdownMenu) getStyledInterface(new DropdownMenu(prmSecondSchool));
+			drpSecondSchool.addMenuElementFirst("-1", iwrb.getLocalizedString("school.school_second", "School........................."));
+
+			DropdownMenu drpThirdArea = getDropdown(iwc, prmThirdArea, null, prmType, prmThirdArea, prmThirdSchool, 2, iwrb.getLocalizedString("school.area_third", "School Area...................."));
+			DropdownMenu drpThirdSchool = (DropdownMenu) getStyledInterface(new DropdownMenu(prmThirdSchool));
+			drpThirdSchool.addMenuElementFirst("-1", iwrb.getLocalizedString("school.school_third", "School........................."));
+
+			table.add(getSmallHeader(iwrb.getLocalizedString("school.second_choice", "Second choice")+":"), 1, row);
+			table.add(drpSecondArea, 3, row);
+			table.add(drpSecondSchool, 5, row++);
+	
+			table.add(getSmallHeader(iwrb.getLocalizedString("school.third_choice", "Third choice")+":"), 1, row);
+			table.add(drpThirdArea, 3, row);
+			table.add(drpThirdSchool, 5, row++);
+		}else {
+			/** Add something if needed */
+		}
 
 		if (schoolYear != null && schoolYear.getSchoolYearAge() == 6) {
 			table.setHeight(row++, 5);
@@ -931,6 +937,10 @@ public class SchoolChoiceApplication extends CommuneBlock {
 
 	public void setAsAdminQuickChoice(boolean quick) {
 		this.quickAdmin = quick;
+	}
+	
+	public void setAsSchoolChange(boolean change) {
+		this.schoolChange = change;	
 	}
 
 }
