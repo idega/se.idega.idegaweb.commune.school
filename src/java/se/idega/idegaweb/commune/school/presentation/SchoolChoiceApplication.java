@@ -279,7 +279,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		T.add(getMessagePart(iwc), 1, row++);
 		T.setHeight(row++, 12);
 
-		GenericButton button = (GenericButton) getButton(new GenericButton("submit",localize("save", "Save")));
+		GenericButton button = (GenericButton) getButton(new GenericButton("submit",localize("school_choice.ready", "Ready")));
 		button.setOnClick("javascript:MySubmit(this)");
 		
 		T.add(button, 1, row++);
