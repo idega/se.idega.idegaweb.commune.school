@@ -1,6 +1,6 @@
 package se.idega.idegaweb.commune.school.business;
 
-import com.idega.core.data.Address;
+import com.idega.core.location.data.Address;
 import com.idega.user.business.UserBusiness;
 import com.idega.user.data.User;
 import is.idega.idegaweb.member.business.MemberFamilyLogic;

@@ -16,7 +16,7 @@ import se.idega.idegaweb.commune.school.data.SchoolChoice;
 import com.idega.block.school.business.SchoolBusiness;
 import com.idega.block.school.data.School;
 import com.idega.business.IBOLookup;
-import com.idega.core.data.Address;
+import com.idega.core.location.data.Address;
 //import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;

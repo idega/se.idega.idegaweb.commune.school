@@ -26,8 +26,8 @@ import se.idega.idegaweb.commune.school.data.SchoolChoice;
 
 import com.idega.block.school.data.School;
 import com.idega.business.IBOLookup;
-import com.idega.core.data.Address;
-import com.idega.core.data.Phone;
+import com.idega.core.contact.data.Phone;
+import com.idega.core.location.data.Address;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.io.MediaWritable;

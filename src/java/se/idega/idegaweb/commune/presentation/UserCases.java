@@ -17,8 +17,8 @@ import se.idega.idegaweb.commune.school.data.SchoolChoiceReminder;
 
 import com.idega.block.process.business.CaseBusiness;
 import com.idega.block.process.data.Case;
-import com.idega.builder.data.IBPage;
 import com.idega.business.IBOLookup;
+import com.idega.core.builder.data.ICPage;
 import com.idega.presentation.ExceptionWrapper;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Table;
@@ -426,7 +426,7 @@ public class UserCases extends CommuneBlock {
 		return msg;
 	}*/
 
-	public void setViewpointPage(final IBPage page) {
+	public void setViewpointPage(final ICPage page) {
 		viewpointPageId = ((Integer)page.getPrimaryKey()).intValue();
 	}
 
@@ -434,7 +434,7 @@ public class UserCases extends CommuneBlock {
 		return viewpointPageId;
 	}
 
-	public void setReminderPage(final IBPage page) {
+	public void setReminderPage(final ICPage page) {
 		reminderPageId = ((Integer)page.getPrimaryKey()).intValue();
 	}
 
@@ -442,7 +442,7 @@ public class UserCases extends CommuneBlock {
 		return reminderPageId;
 	}
 
-	public void setManagerPage(IBPage page) {
+	public void setManagerPage(ICPage page) {
 		manager_page_id = ((Integer)page.getPrimaryKey()).intValue();
 	}
 

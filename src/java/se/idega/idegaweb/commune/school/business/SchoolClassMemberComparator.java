@@ -9,7 +9,7 @@ import java.util.Locale;
 import se.idega.util.PIDChecker;
 
 import com.idega.block.school.data.SchoolClassMember;
-import com.idega.core.data.Address;
+import com.idega.core.location.data.Address;
 import com.idega.user.business.UserBusiness;
 import com.idega.user.data.User;
 

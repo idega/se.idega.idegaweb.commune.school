@@ -29,9 +29,9 @@ import com.idega.block.school.data.SchoolClassMember;
 import com.idega.block.school.data.SchoolSeason;
 import com.idega.block.school.data.SchoolType;
 import com.idega.block.school.data.SchoolYear;
-import com.idega.builder.data.IBPage;
+import com.idega.core.builder.data.ICPage;
 import com.idega.business.IBOLookup;
-import com.idega.core.data.Address;
+import com.idega.core.location.data.Address;
 import com.idega.data.IDOEntity;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWPropertyList;
@@ -146,7 +146,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	private Age age;
 	private Form myForm;
 	
-	private IBPage childcarePage = null;
+	private ICPage childcarePage = null;
 	private Integer afterSchoolPageID = null;
 	private Integer checkPageID = null;
 	
@@ -1319,7 +1319,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	 * Sets the childcarePage.
 	 * @param childcarePage The childcarePage to set
 	 */
-	public void setChildcarePage(IBPage childcarePage) {
+	public void setChildcarePage(ICPage childcarePage) {
 		this.childcarePage = childcarePage;
 	}
 	
