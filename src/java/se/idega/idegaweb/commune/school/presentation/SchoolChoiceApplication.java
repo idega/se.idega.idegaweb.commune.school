@@ -594,7 +594,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 			} catch (Exception e) {}
 			if (schoolClassMember == null && _showChildCareTypes) {
 				// No elementary school placement found, look for one in child care
-				schoolClassMember = schBuiz.getSchoolBusiness().getSchoolClassMemberHome().findLatestByUserAndSchCategoryAndSeason(child, schBuiz.getSchoolBusiness().getCategoryChildcare(), previousSeason);
+				schoolClassMember = schBuiz.getSchoolBusiness().getSchoolClassMemberHome().findLatestByUserAndSchCategory(child, schBuiz.getSchoolBusiness().getCategoryChildcare());
 			}
 			
 			//schoolClass = schBuiz.getSchoolBusiness().getSchoolClassHome().findByPrimaryKey(new Integer(schoolClassMember.getSchoolClassId()));
