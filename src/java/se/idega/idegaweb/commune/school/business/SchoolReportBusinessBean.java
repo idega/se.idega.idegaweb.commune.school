@@ -80,6 +80,10 @@ public class SchoolReportBusinessBean extends IBOSessionBean implements SchoolRe
 		}
 		return false;
 	}
+
+	public ReportableCollection getGroupReport(Collection schoolGroups, Collection columnNames, String freeText, Boolean showNativeLanguage, Boolean showTerminated) {
+		return getGroupReport(schoolGroups, columnNames, freeText, showNativeLanguage, null, showTerminated);
+	}
 	
 	public ReportableCollection getGroupReport(Collection schoolGroups, Collection columnNames, String freeText, Boolean showNativeLanguage, Boolean showSecondLanguage, Boolean showTerminated) {
 		fillColumns(columnNames);

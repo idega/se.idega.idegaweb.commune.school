@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE invoke >
+
+<invoke>
+
+	<method_description name="getChoicesReport">
+
+		<class_description class="se.idega.idegaweb.commune.school.business.SchoolReportBusiness" default_display_name="SchoolReportBusiness" type="IBOSessionBean" />
+	
+		<input>
+		
+			<class_description class="java.util.Collection" default_display_name="Columns" name="columns">
+				<localized_name name="Kolumner" locale="sv_SE"/>
+				<class_handler class="se.idega.idegaweb.commune.school.presentation.inputhandler.SchoolChoiceColumnsHandlerAlternate" />
+			</class_description>
+		
+			<class_description class="java.lang.Boolean" default_display_name="Language choice" name="choice_language">
+				<localized_name name="Har spr&#229;kval" locale="sv_SE"/>
+				<class_handler class="se.idega.idegaweb.commune.school.presentation.inputhandler.YesNoDropDownMenu" />
+			</class_description>
+		
+			<class_description class="java.lang.Boolean" default_display_name="Native language" name="native_language">
+				<localized_name name="Har modersm&#229;lsval" locale="sv_SE"/>
+				<class_handler class="se.idega.idegaweb.commune.school.presentation.inputhandler.YesNoDropDownMenu" />
+			</class_description>
+		
+		</input>
+	
+		<output>
+		
+			<class_description class="com.idega.block.datareport.util.ReportableCollection" default_display_name="" />
+		
+		</output>
+
+	</method_description>
+
+</invoke>
