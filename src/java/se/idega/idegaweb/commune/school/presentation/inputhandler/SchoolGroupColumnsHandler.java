@@ -61,6 +61,7 @@ public class SchoolGroupColumnsHandler extends SelectionBox implements InputHand
 		if (stringValue != null) {
 			this.setContent(stringValue);
 		}
+		this.setStyleClass("commune_Interface");
 		return this;
 	}
 

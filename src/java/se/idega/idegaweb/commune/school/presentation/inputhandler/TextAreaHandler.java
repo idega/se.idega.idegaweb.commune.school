@@ -27,6 +27,7 @@ public class TextAreaHandler extends TextArea implements InputHandler {
 		if (stringValue != null) {
 			this.setContent(stringValue);
 		}
+		this.setStyleClass("commune_Interface");
 		return this;
 	}
 

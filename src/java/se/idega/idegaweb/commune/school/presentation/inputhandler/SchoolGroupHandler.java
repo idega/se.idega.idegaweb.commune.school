@@ -59,6 +59,7 @@ public class SchoolGroupHandler extends SelectionBox implements InputHandler {
 		if (stringValue != null) {
 			this.setContent(stringValue);
 		}
+		this.setStyleClass("commune_Interface");
 		this.setAsNotEmpty(iwrb.getLocalizedString("school_report.must_select_group", "You have to select at least one group."));
 		return this;
 	}
