@@ -27,6 +27,7 @@ public interface SchoolChoiceBusiness extends com.idega.business.IBOService,com.
  public se.idega.idegaweb.commune.childcare.business.AfterSchoolBusiness getAfterSchoolBusiness() throws java.rmi.RemoteException;
  public java.util.Collection getApplicantsForSchool(int p0,int p1,int p2,java.lang.String[] p3,java.lang.String p4,int p5,int p6,int p7)throws java.rmi.RemoteException, java.rmi.RemoteException;
  public java.util.Collection getApplicantsForSchool(int p0,int p1,int p2,int[] p3,java.lang.String[] p4,java.lang.String p5,int p6,int p7,int p8)throws java.rmi.RemoteException, java.rmi.RemoteException;
+ public java.util.Collection getApplicantsForSchool(int p0,int p1,int p2,java.lang.String[] p3,java.lang.String p4,int p5,int p6,int p7,int p8)throws java.rmi.RemoteException, java.rmi.RemoteException;
  public java.util.Collection getApplicantsForSchoolAndSeasonAndGrade(int p0,int p1,int p2)throws java.rmi.RemoteException, java.rmi.RemoteException;
  public java.util.Collection getApplicationsInClass(com.idega.block.school.data.SchoolClass p0,boolean p1)throws java.rmi.RemoteException, java.rmi.RemoteException;
  public java.lang.String getApplyingSeparateParentSubjectAppl() throws java.rmi.RemoteException;
@@ -47,6 +48,7 @@ public interface SchoolChoiceBusiness extends com.idega.business.IBOService,com.
  public int getNumberOfApplicants ()throws java.rmi.RemoteException;
  public int getNumberOfApplicants(java.lang.String[] p0)throws java.rmi.RemoteException, java.rmi.RemoteException;
  public int getNumberOfApplicantsForSchool(int p0,int p1,int p2,int[] p3,java.lang.String[] p4,java.lang.String p5)throws java.rmi.RemoteException, java.rmi.RemoteException;
+ public int getNumberOfApplicantsForSchool(int p0,int p1,int p2,int[] p3,java.lang.String[] p4,java.lang.String p5, int p6)throws java.rmi.RemoteException, java.rmi.RemoteException;
  public int getNumberOfApplications(int p0,int p1)throws java.rmi.RemoteException, java.rmi.RemoteException;
  public int getNumberOfApplications(int p0,int p1,int p2)throws java.rmi.RemoteException, java.rmi.RemoteException;
  public int getNumberOfApplicationsByUserAndSchool(int p0,int p1)throws java.rmi.RemoteException, java.rmi.RemoteException;
