@@ -822,8 +822,12 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
         reminder.setEventDate (eventDate);
         reminder.setReminderDate (reminderDate);
         reminder.setUser (user);
-        reminder.setHandler (getUserBusiness().getRootAdministratorGroupID());
-        reminder.store ();
+        try {
+            reminder.setHandler (getUserBusiness().getRootCustomerChoiceGroup ());
+            reminder.store ();
+        } catch (FinderException e) {
+            throw new CreateException (e.getMessage ());
+        }
     }
 
     public SchoolChoiceReminder [] findAllSchoolChoiceReminders ()
