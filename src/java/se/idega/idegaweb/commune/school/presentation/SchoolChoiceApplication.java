@@ -122,6 +122,8 @@ public class SchoolChoiceApplication extends CommuneBlock {
     SchoolClass schoolClass = null;
     School school = null;
     SchoolYear schoolYear = null;
+    SchoolArea schoolArea = null;
+    SchoolType schoolType = null;
 
 
   public void control(IWContext iwc) throws Exception{
@@ -258,6 +260,15 @@ public class SchoolChoiceApplication extends CommuneBlock {
 
       }
       T.add(F,1,T.getColumns());
+      if(school!=null){
+      	Script initScript = new Script();
+      	
+      	String initFunction = (getInitFilterCallerScript(iwc,prmType,prmFirstArea,prmFirstSchool,((Integer)schoolType.getPrimaryKey()).intValue(),
+      		((Integer)schoolArea.getPrimaryKey()).intValue(),((Integer)school.getPrimaryKey()).intValue() ) );
+      		
+      	initScript.addFunction("sch_init",initFunction);
+      	myForm.add(initScript);
+      }
     }
     return myForm;
   }
@@ -337,9 +348,13 @@ public class SchoolChoiceApplication extends CommuneBlock {
       schoolClassMember = schBuiz.getSchoolBusiness().getSchoolClassMemberHome().findByUserAndSeason(child,schBuiz.getCurrentSeason());
       schoolClass = schBuiz.getSchoolBusiness().getSchoolClassHome().findByPrimaryKey(new Integer(schoolClassMember.getSchoolClassId()));
       school = schBuiz.getSchool(schoolClass.getSchoolId());
+      schoolArea = schBuiz.getSchoolBusiness().getSchoolAreaHome().findByPrimaryKey(new Integer(school.getSchoolAreaId()));
+      Collection Stypes = school.findRelatedSchoolTypes();
+      if(!Stypes.isEmpty())
+      	schoolType = (SchoolType)Stypes.iterator().next();
       schoolYear = schBuiz.getSchoolBusiness().getSchoolYearHome().findByPrimaryKey(new Integer(schoolClass.getSchoolYearId()));
     }catch(Exception e){
-      //e.printStackTrace();
+     e.printStackTrace();
     }
   }
 
@@ -383,20 +398,21 @@ public class SchoolChoiceApplication extends CommuneBlock {
       T.add(getSmallHeader(iwrb.getLocalizedString("school.school_class","School class")),3,3);
       T.add(getSmallHeader(iwrb.getLocalizedString("school.school_year","School year")),4,3);
 
+	  if(school!=null)
       T.add(getText(school.getName()),2,4);
+      if(schoolClass !=null)
       T.add(getText(schoolClass.getName()),3,4);
+      if(schoolYear!=null)
       T.add(getText(schoolYear.getName()),4,4);
-      T.add(new HiddenInput(prmPreSchool,school.getPrimaryKey().toString()));
+      T.add(new HiddenInput(prmPreSchool,school.getPrimaryKey().toString()),4,4);
       int year = 0;
       try{
         year = Integer.parseInt(schoolYear.getName());
-
       }
-      catch(NumberFormatException nfe){
-
-      }
+      catch(NumberFormatException nfe){      }
+      catch(NullPointerException nex){}
       year++;
-      T.add(new HiddenInput(prmPreGrade,String.valueOf(year)));
+      T.add(new HiddenInput(prmPreGrade,String.valueOf(year)),4,4);
     }
     else {
       DropdownMenu drpTypes = getTypeDrop(prmPreType);
@@ -776,9 +792,10 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		s.append("\n\t var one = ").append("dropOne.options[dropOne.selectedIndex].value;");
 		s.append("\n\t var two = ").append("dropTwo.options[dropTwo.selectedIndex].value;");
 		s.append("\n\t var  three = ").append("dropThree.options[dropThree.selectedIndex].value;");
-		s.append("\n\t var  year = ").append("gradeDrop.options[gradeDrop.selectedIndex].value;");
-		s.append("\n\t var  school = ").append("currSchool.options[currSchool.selectedIndex].value;");
-
+		s.append("\n\t var  year = gradeDrop.options?").append("gradeDrop.options[gradeDrop.selectedIndex].value").append(":")
+		.append("document.sch_app_the_frm.elements['").append(prmPreGrade).append("'].value;");
+		s.append("\n\t var  school = currSchool.options?").append("currSchool.options[currSchool.selectedIndex].value").append(":")
+		.append("document.sch_app_the_frm.elements['").append(prmPreSchool).append("'].value;");
 		// current school check
 		s.append("\n\t if(school <= 0){");
 		String msg1 = iwrb.getLocalizedString("school_choice.must_set_current_school","You must provide current shool");
