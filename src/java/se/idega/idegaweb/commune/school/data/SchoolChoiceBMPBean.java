@@ -413,7 +413,7 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
   	
   	boolean needAnd = false;
 
-  	IDOQuery query = new IDOQuery();
+  	IDOQuery query = idoQuery();
   	query.appendSelect().append("csc.*").appendFrom().append(getEntityName()).append(" csc");
 
   	if (search) {
@@ -429,7 +429,7 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
   		query.append("csc.").append(getIDColumnName())
   		.appendEqualSign().append("pc.").append(CaseBMPBean.TABLE_NAME+"_ID")
   		.appendAnd().append("pc.").append(CaseBMPBean.COLUMN_CASE_STATUS).appendIn();
-  		query.appendWithinParentheses(new IDOQuery().appendCommaDelimitedWithinSingleQuotes(validStatuses));
+  		query.appendWithinParentheses(idoQuery().appendCommaDelimitedWithinSingleQuotes(validStatuses));
   		query.appendAnd().append("pc.").append(CaseBMPBean.COLUMN_CASE_CODE).appendEqualSign().appendWithinSingleQuotes(this.CASECODE);
   		needAnd = true;
   	}
@@ -496,7 +496,7 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
   }
   
   public Collection ejbFindBySchoolAndSeasonAndGrade(int schoolID, int seasonID, int gradeYear) throws FinderException {
-  	IDOQuery sql = new IDOQuery();
+  	IDOQuery sql = idoQuery();
   	sql.appendSelectAllFrom(getEntityName()).appendWhere()
   	.append(CHOSEN_SCHOOL).appendEqualSign().append(schoolID)
   	.appendAnd().append(SCHOOL_SEASON).appendEqualSign().append(seasonID)
@@ -506,7 +506,7 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
   }
 
 	public int ejbHomeGetNumberOfChoices(int userID, int seasonID) throws IDOException {
-		IDOQuery sql = new IDOQuery();
+		IDOQuery sql = idoQuery();
 		sql.appendSelectCountFrom(this).appendWhereEquals(CHILD, userID).appendAndEquals(SCHOOL_SEASON, seasonID);
 		return super.idoGetNumberOfRecords(sql.toString());
 	}
