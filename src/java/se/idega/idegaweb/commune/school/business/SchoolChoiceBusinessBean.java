@@ -752,9 +752,11 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
             emptyCell.setBorder (0);
             emptyCell.setNoWrap (true);
             final Calendar today = Calendar.getInstance ();
+            final int month = today.get (Calendar.MONTH) + 1;
+            final int day = today.get (Calendar.DATE);
             final String date = today.get (Calendar.YEAR)
-                    + "-" + (today.get (Calendar.MONTH) + 1)
-                    + "-" + today.get (Calendar.DATE);
+                    + (month < 10 ? "-0" : "-") + month
+                    + (day < 10 ? "-0" : "-") + day;
             final Phrase reminderPhrase = new Phrase (mmToPoints (20),
                                                       reminder.getText ());
             final PdfPCell reminderCell = new PdfPCell (reminderPhrase);
@@ -880,7 +882,6 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
         timer.stop ();
         System.err.println ("Found " + choices.size () + " chosedstudents in "
                             + timer.getTime () + " msec");
-        System.err.println (ids.toString ());
         return ids;
 	}
 
@@ -902,20 +903,18 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
         timer.stop ();
         System.err.println ("Found " + students.size () + " finalstudents in "
                             + timer.getTime () + " msec");
-        System.err.println (ids.toString ());
         return ids;        
     }
 
     private Set findSchoolStartingStudents () throws RemoteException,
                                                      FinderException {
-
-        if (true) return Collections.EMPTY_SET;
-
         com.idega.util.Timer timer = new com.idega.util.Timer ();
         timer.start ();
         final int currentYear = Calendar.getInstance ().get (Calendar.YEAR);
+        final int minYear = currentYear - 7;
+        final int maxYear = currentYear - 6;
         final Collection students = getUserHome().findUsersByYearOfBirth
-                (currentYear - 6, currentYear - 7);
+                (minYear, maxYear);
         final Set ids = new HashSet ();
         for (Iterator i = students.iterator (); i.hasNext ();) {
             final User student = (User) i.next ();
@@ -923,8 +922,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
         }
         timer.stop ();
         System.err.println ("Found " + students.size () + " startstudents in "
-                            + timer.getTime () + " msec");
-        System.err.println (ids.toString ());
+                            + timer.getTime () + " msec (" + (currentYear - 6) + " - " + (currentYear - 7) + ")");
         return ids;        
     }
 
