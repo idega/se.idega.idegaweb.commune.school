@@ -19,9 +19,7 @@ import com.idega.block.school.data.SchoolHome;
 import com.idega.block.school.data.SchoolSeason;
 import com.idega.block.school.data.SchoolSeasonHome;
 import com.idega.core.data.Address;
-import com.idega.data.IDOCreateException;
-import com.idega.data.IDOException;
-import com.idega.data.IDOStoreException;
+import com.idega.data.*;
 import com.idega.user.business.UserBusiness;
 import com.idega.user.data.Group;
 import com.idega.user.data.User;
@@ -656,5 +654,12 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
         reminder.setReminderDate (reminderDate);
         reminder.setUser (user);
         reminder.store ();
+    }
+
+    public SchoolChoiceReminder [] findAllSchoolChoiceReminders ()
+        throws RemoteException, FinderException {
+        final SchoolChoiceReminderHome home = (SchoolChoiceReminderHome)
+                IDOLookup.getHome (SchoolChoiceReminder.class);
+        return home.findAll ();
     }
 }

@@ -5,6 +5,7 @@ import java.rmi.RemoteException;
 import java.util.Date;
 import javax.ejb.*;
 import se.idega.idegaweb.commune.business.CommuneUserBusiness;
+import se.idega.idegaweb.commune.school.data.SchoolChoiceReminder;
 
 public interface SchoolChoiceBusiness extends com.idega.business.IBOService,com.idega.block.process.business.CaseBusiness
 {
@@ -51,4 +52,7 @@ public interface SchoolChoiceBusiness extends com.idega.business.IBOService,com.
     void createSchoolChoiceReminder (String text, Date eventDate,
                                      Date remindingDate, User user)
         throws CreateException, RemoteException;
+
+    SchoolChoiceReminder [] findAllSchoolChoiceReminders ()
+        throws RemoteException, FinderException ;
 }

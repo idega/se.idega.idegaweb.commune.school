@@ -8,10 +8,10 @@ import java.util.*;
 import javax.ejb.FinderException;
 
 /**
- * Last modified: $Date: 2002/12/18 11:32:40 $ by $Author: staffan $
+ * Last modified: $Date: 2002/12/18 13:23:07 $ by $Author: staffan $
  *
  * @author <a href="http://www.staffannoteberg.com">Staffan Nöteberg</a>
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class SchoolChoiceReminderBMPBean extends AbstractCaseBMPBean implements SchoolChoiceReminder {
     private static final String ENTITY_NAME = "sch_reminder";
@@ -62,6 +62,23 @@ public class SchoolChoiceReminderBMPBean extends AbstractCaseBMPBean implements 
                       java.sql.Date.class);
     }
 
+    public String getText () {
+        return getStringColumnValue (COLUMN_TEXT);
+    }
+
+    public java.util.Date getEventDate () {
+        return (java.util.Date) getColumnValue (COLUMN_EVENT_DATE);
+    }
+
+    public java.util.Date getReminderDate () {
+        return (java.util.Date) getColumnValue (COLUMN_REMINDER_DATE);
+    }
+
+    public int getUserId () {
+        return getIntegerColumnValue (COLUMN_USER_ID). intValue ();
+    }
+
+
     public void setText (final String text) {
         setColumn (COLUMN_TEXT, text);
     }
@@ -80,6 +97,10 @@ public class SchoolChoiceReminderBMPBean extends AbstractCaseBMPBean implements 
             setColumn (COLUMN_USER_ID,
                        ((Integer) user.getPrimaryKey()).intValue());
         }
+    }
+
+    Collection ejbFindAll () throws FinderException, RemoteException {
+        return idoFindIDsBySQL ("select * from " + ENTITY_NAME);
     }
 
     private synchronized void insertCaseCode () {

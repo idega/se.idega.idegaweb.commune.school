@@ -8,7 +8,7 @@ import com.idega.user.business.UserBusiness;
 import com.idega.user.data.User;
 import java.rmi.RemoteException;
 import java.util.Calendar;
-import javax.ejb.CreateException;
+import javax.ejb.*;
 import se.idega.idegaweb.commune.presentation.CommuneBlock;
 import se.idega.idegaweb.commune.school.business.SchoolChoiceBusiness;
 import se.idega.idegaweb.commune.school.data.SchoolChoiceReminder;
@@ -20,10 +20,10 @@ import se.idega.idegaweb.commune.school.data.SchoolChoiceReminder;
  * and entity ejb classes in {@link se.idega.idegaweb.commune.school.data}.
  * <p>
  * <p>
- * Last modified: $Date: 2002/12/18 11:32:40 $ by $Author: staffan $
+ * Last modified: $Date: 2002/12/18 13:23:07 $ by $Author: staffan $
  *
  * @author <a href="http://www.staffannoteberg.com">Staffan Nöteberg</a>
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  * @see javax.ejb
  */
 public class SchoolChoiceReminderView extends CommuneBlock {
@@ -60,7 +60,8 @@ public class SchoolChoiceReminderView extends CommuneBlock {
 	/**
 	 * @param iwc session data like user info etc.
 	 */
-	public void main(final IWContext iwc) throws RemoteException, CreateException {
+	public void main(final IWContext iwc)
+        throws RemoteException, CreateException, FinderException {
 		setResourceBundle (getResourceBundle(iwc));
         final String action = iwc.getParameter (ACTION_KEY);
 
@@ -72,6 +73,7 @@ public class SchoolChoiceReminderView extends CommuneBlock {
             createReminder (iwc);
         } else {
             showMainMenu (iwc);
+            showAllReminders (iwc);
         }
     }
 
@@ -115,11 +117,6 @@ public class SchoolChoiceReminderView extends CommuneBlock {
         int row = 1;
 		table.add(getLocalizedHeader(REMINDER_TEXT_KEY, REMINDER_TEXT_DEFAULT), 1, row);
 		final RadioGroup radioGroup = new RadioGroup (REMINDER_TEXT_KEY);
-        /*
-        radioGroup.addRadioButton (REMINDER_TEXT1_ID, localize (REMINDER_TEXT1_KEY, REMINDER_TEXT1_DEFAULT));
-        radioGroup.addRadioButton (REMINDER_TEXT2_ID, localize (REMINDER_TEXT2_KEY, REMINDER_TEXT2_DEFAULT));
-        radioGroup.addRadioButton (CUSTOM_REMINDER_TEXT_ID, localize (CUSTOM_REMINDER_TEXT_KEY, CUSTOM_REMINDER_TEXT_DEFAULT));
-        */
         radioGroup.addRadioButton (localize (REMINDER_TEXT1_KEY, REMINDER_TEXT1_DEFAULT));
         radioGroup.addRadioButton (localize (REMINDER_TEXT2_KEY, REMINDER_TEXT2_DEFAULT));
         radioGroup.addRadioButton (localize (CUSTOM_REMINDER_TEXT_KEY, CUSTOM_REMINDER_TEXT_DEFAULT));
@@ -142,11 +139,41 @@ public class SchoolChoiceReminderView extends CommuneBlock {
 		add(form);
     }
 
-    private void showAllReminders (final IWContext iwcontext) {
-        add ("The method showAllReminders is not implemented yet. /<a href=http://www.staffannoteberg.com>Staffan Nöteberg</a>");
+    private void showAllReminders (final IWContext iwc) throws RemoteException,
+                                                               FinderException {
+        add ("This method is not implemented yet. /<a href=http://www.staffannoteberg.com>Staffan Nöteberg</a><br/>");
+
+		Table mainTable = new Table();
+		mainTable.setCellpadding(0);
+		mainTable.setCellspacing(0);
+		mainTable.setWidth(getWidth());
+		add(mainTable);
+		final SchoolChoiceBusiness business = getSchoolChoiceBusiness (iwc);
+        final SchoolChoiceReminder [] reminders
+                = business.findAllSchoolChoiceReminders ();
+        Table table = new Table();
+        table.setCellpadding(getCellpadding());
+        table.setCellspacing(getCellspacing());
+        table.setWidth(Table.HUNDRED_PERCENT);
+        table.setColumns(2);
+        int row = 1;
+        int column = 1;
+        table.mergeCells(1, row, table.getColumns(), row);
+        Form form = new Form();
+        form.add(table);
+        table.setRowColor(row, getHeaderColor());
+        table.add(getSmallHeader("col 1"), column++, row);
+        table.add(getSmallHeader("col 2"), column++, row++);
+        for (int i = 0; i < reminders.length; i++) {
+            table.add("" + reminders [i].getEventDate (), 1, row);
+            table.add(reminders [i].getText (), 2, row);
+            row++;
+        }
+        mainTable.add(form, 1, 1);
     }
 
     private void createReminder (final IWContext iwc) throws RemoteException, CreateException {
+        add ("This method is not implemented yet. /<a href=http://www.staffannoteberg.com>Staffan Nöteberg</a><br/>");
         add ("REMINDER_TEXT_KEY=" + iwc.getParameter (REMINDER_TEXT_KEY) + "<br/>");
         add ("CUSTOM_REMINDER_TEXT_KEY=" + iwc.getParameter (CUSTOM_REMINDER_TEXT_KEY) + "<br/>");
         add ("EVENT_DATE_KEY=" + iwc.getParameter (EVENT_DATE_KEY) + "<br/>");
