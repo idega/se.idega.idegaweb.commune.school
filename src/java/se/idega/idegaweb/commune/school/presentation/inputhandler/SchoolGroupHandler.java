@@ -37,7 +37,7 @@ public class SchoolGroupHandler extends SelectionBox implements InputHandler {
 
 	public void main(IWContext iwc) {
 		try {
-			Collection groups = getSchoolBusiness(iwc).findSchoolClassesBySchoolAndSeasonAndYears(getSchoolSession(iwc).getSchoolID(), getSchoolSession(iwc).getSchoolSeasonID(), getSchoolSession(iwc).getSchoolGroupIDs());
+			Collection groups = getSchoolBusiness(iwc).findSchoolClassesBySchoolAndSeasonAndYears(getSchoolSession(iwc).getSchoolID(), getSchoolSession(iwc).getSchoolSeasonID(), getSchoolSession(iwc).getSchoolGroupIDs(), false);
 		
 			Iterator iter = groups.iterator();
 			while (iter.hasNext()) {
