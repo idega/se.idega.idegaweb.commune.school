@@ -38,6 +38,7 @@ public interface SchoolChoice extends com.idega.data.IDOEntity,com.idega.block.p
  public java.lang.String getCaseStatusQuiet();
  public void setChangeOfSchool(boolean p0);
  public void setChoiceOrder(int p0);
+ public com.idega.user.data.User getChild();
  public int getChildId();
  public void setCustodiansAgree(boolean p0);
  public void initializeAttributes();

@@ -144,6 +144,14 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
   public int getChildId(){
     return getIntColumnValue(CHILD);
   }
+  
+  /**Returns the user (child) that the schoolchoice is done for.
+   * @return User
+   */
+  public User getChild(){
+	return (User)getColumnValue(CHILD);
+  }
+  
   public void setChildId(int id){
     setColumn(CHILD,id);
   }
