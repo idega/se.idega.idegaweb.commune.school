@@ -1,5 +1,5 @@
 /*
- * $Id: ReportModel.java,v 1.10 2004/01/15 10:51:57 anders Exp $
+ * $Id: ReportModel.java,v 1.11 2004/01/15 13:32:39 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -12,6 +12,7 @@ package se.idega.idegaweb.commune.school.report.business;
 import java.rmi.RemoteException;
 import java.sql.Connection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import com.idega.util.database.ConnectionBroker;
@@ -20,10 +21,10 @@ import com.idega.util.database.ConnectionBroker;
  * This abstract class holds cell and header values for school statistics reports.
  * Subclasses implements methods for generating report data and cell value calculations.
  * <p>
- * Last modified: $Date: 2004/01/15 10:51:57 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/15 13:32:39 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.10 $
+ * @version $Revision: 1.11 $
  */
 public abstract class ReportModel {
 
@@ -212,6 +213,11 @@ public abstract class ReportModel {
 	 * Closes used resources for this report model.
 	 */
 	public void close() {
+		Iterator iter = _queryCache.values().iterator();
+		while (iter.hasNext()) {
+			PreparedQuery query = (PreparedQuery) iter.next();
+			query.close();
+		}
 		if (_connection != null) {
 			ConnectionBroker.freeConnection(_connection);
 		}
