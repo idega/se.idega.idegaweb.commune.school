@@ -341,6 +341,19 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		}
 		
 		if (changeOfSchool) {
+			try {
+				// Set native language for child if param is set
+				if (childId != -1 && nativeLangIsChecked && nativeLang != -1) {
+					User child = getUserBusiness().getUser(childId);
+					if (child != null) {
+						child.setNativeLanguage(nativeLang);
+						child.store();
+					}
+				}
+			}
+			catch (Exception ex) {
+				throw new IDOCreateException(ex.getMessage());
+			}
 			SchoolChoice choice = createSchoolChangeChoice(userId, childId, school_type_id, current_school, chosen_school_1, schoolYearID, currentYearID, method, workSituation1, workSituation2, language, message, keepChildrenCare, autoAssign, custodiansAgree, schoolCatalogue, placementDate, season, extraMessages[0]);
 			ArrayList list = new ArrayList(1);
 			list.add(choice);
