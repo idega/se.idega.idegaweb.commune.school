@@ -690,7 +690,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		s.append("\n\t var two = ").append("dropTwo.options[dropTwo.selectedIndex].value;");
 		s.append("\n\t var  three = ").append("dropThree.options[dropThree.selectedIndex].value;");
 		s.append("\n\t var  year = ").append("gradeDrop.options[gradeDrop.selectedIndex].value;");
-		s.append("\n\t var  school = ").append("preSchool.options[preSchool.selectedIndex].value;");
+		s.append("\n\t var  school = ").append("currSchool.options[currSchool.selectedIndex].value;");
 		
 		// current school check
 		s.append("\n\t if(school <= 0){");
