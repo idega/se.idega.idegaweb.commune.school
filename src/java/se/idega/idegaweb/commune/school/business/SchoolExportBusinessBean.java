@@ -1,5 +1,5 @@
 /*
- * $Id: SchoolExportBusinessBean.java,v 1.4 2004/02/12 09:28:59 anders Exp $
+ * $Id: SchoolExportBusinessBean.java,v 1.5 2004/03/01 08:51:00 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -12,9 +12,14 @@ package se.idega.idegaweb.commune.school.business;
 import java.io.ByteArrayInputStream;
 import java.rmi.RemoteException;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import javax.ejb.FinderException;
+
+import se.idega.idegaweb.commune.school.data.ProcapitaSchool;
+import se.idega.idegaweb.commune.school.data.ProcapitaSchoolHome;
 
 import com.idega.block.school.business.SchoolBusiness;
 import com.idega.block.school.data.School;
@@ -28,20 +33,23 @@ import com.idega.business.IBORuntimeException;
 import com.idega.core.file.data.ICFile;
 import com.idega.core.file.data.ICFileBMPBean;
 import com.idega.core.file.data.ICFileHome;
+import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
 import com.idega.user.data.User;
 
 /** 
  * Business logic for exporting student placement text files.
  * <p>
- * Last modified: $Date: 2004/02/12 09:28:59 $ by $Author: anders $
+ * Last modified: $Date: 2004/03/01 08:51:00 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public class SchoolExportBusinessBean extends com.idega.business.IBOServiceBean implements SchoolExportBusiness  {
 	 
 	private final static String EXPORT_FOLDER_NAME = "School Export Files";
+	
+	private Map _procapitaSchoolNames = null;
 	
 	/**
 	 * Returns a school business instance. 
@@ -201,7 +209,7 @@ public class SchoolExportBusinessBean extends com.idega.business.IBOServiceBean 
 			String firstName = student.getFirstName() + s;
 			String givenName = student.getLastName() + ", " + student.getFirstName();
 			String middleName = " ";
-			String schoolName = school.getName();
+			String schoolName = getSchoolName(school);
 			String schoolClassName = schoolClass.getName();
 			String addressProtection = " ";
 			String email = " ";
@@ -237,5 +245,30 @@ public class SchoolExportBusinessBean extends com.idega.business.IBOServiceBean 
 			log(e);
 		}
 		return exportFiles;
+	}
+
+	/*
+	 * Returns the name of school according to the Procapita system.
+	 */
+	private String getSchoolName(School school) {
+		String name = null;
+		if (_procapitaSchoolNames == null) {
+			_procapitaSchoolNames = new HashMap();
+			try {
+				ProcapitaSchoolHome home = (ProcapitaSchoolHome) IDOLookup.getHome(ProcapitaSchool.class);
+				Collection c = home.findAll();
+				Iterator iter = c.iterator();
+				while (iter.hasNext()) {
+					ProcapitaSchool ps = (ProcapitaSchool) iter.next();
+					_procapitaSchoolNames.put(ps.getPrimaryKey(), ps.getSchoolName());
+				}
+			} catch (Exception e) {}
+		}
+		name = (String) _procapitaSchoolNames.get(school.getPrimaryKey());
+		if (name == null) {
+			name = school.getSchoolName();
+		}
+		
+		return name;
 	}
 }
