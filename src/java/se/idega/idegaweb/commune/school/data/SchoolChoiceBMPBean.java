@@ -15,6 +15,7 @@ import com.idega.block.process.data.CaseBMPBean;
 import com.idega.block.school.data.School;
 import com.idega.block.school.data.SchoolSeason;
 import com.idega.block.school.data.SchoolType;
+import com.idega.block.school.data.SchoolYear;
 import com.idega.data.IDOException;
 import com.idega.data.IDOQuery;
 import com.idega.user.data.User;
@@ -417,6 +418,32 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 		sql.append(SCHOOL_SEASON);
 		sql.append(" = ");
 		sql.append(seasonId);
+		sql.append(" order by ");
+		sql.append(CHOICEORDER);
+		return super.idoFindPKsBySQL(sql.toString());
+	}
+
+	/**
+	 * Finds the schoolchoices applied for a specific school year and season.
+	 * It uses the Grade column to compare to the schoolYear (GRADE=SchoolYear.YearAge-1)
+	 * @param season
+	 * @param year
+	 * @return A Collection of SchoolChoices who match the criteria
+	 * @throws javax.ejb.FinderException
+	 */
+	public Collection ejbFindBySeasonAndSchoolYear(SchoolSeason season,SchoolYear year) throws javax.ejb.FinderException {
+		StringBuffer sql = new StringBuffer("select * from ");
+		sql.append(SCHOOLCHOICE);
+		sql.append(" where ");
+		sql.append(SCHOOL_SEASON);
+		sql.append(" = ");
+		int seasonId = ((Integer)season.getPrimaryKey()).intValue();
+		sql.append(seasonId);
+		sql.append(" and ");
+		sql.append(GRADE);
+		sql.append(" = ");
+		int grade = year.getSchoolYearAge()-1;
+		sql.append(grade);
 		sql.append(" order by ");
 		sql.append(CHOICEORDER);
 		return super.idoFindPKsBySQL(sql.toString());

@@ -8,14 +8,14 @@ import java.util.*;
 import javax.ejb.FinderException;
 
 /**
- * Last modified: $Date: 2003/04/02 16:45:53 $ by $Author: laddi $
+ * Last modified: $Date: 2003/09/22 02:12:03 $ by $Author: tryggvil $
  *
  * @author <a href="http://www.staffannoteberg.com">Staffan Nöteberg</a>
- * @version $Revision: 1.11 $
+ * @version $Revision: 1.12 $
  */
-public class SchoolChoiceReminderBMPBean extends AbstractCaseBMPBean implements SchoolChoiceReminder {
+public class SchoolChoiceReminderBMPBean extends AbstractCaseBMPBean implements SchoolChoiceReminder,Case {
     private static final String ENTITY_NAME = "sch_reminder";
-
+    
     private static final String CASE_CODE_DESCRIPTION = "School Choice Reminder";
 	private static final String [] CASE_STATUS_DESCRIPTIONS = { };
 	private static final String [] CASE_STATUS_KEYS = { };
@@ -108,7 +108,7 @@ public class SchoolChoiceReminderBMPBean extends AbstractCaseBMPBean implements 
         }
     }
 
-    Collection ejbFindAll () throws FinderException, RemoteException {
+    public Collection ejbFindAll () throws FinderException, RemoteException {
         final IDOQuery query = idoQuery();
         query.appendSelect().append("scr.*").appendFrom().append(getEntityName()).append(" scr").append(", ").append(CaseBMPBean.TABLE_NAME).append(" pc");
         query.appendWhere().append("scr.").append(getIDColumnName()).appendEqualSign().append("pc.").append(CaseBMPBean.TABLE_NAME+"_ID").appendAnd().append("pc.").append(CaseBMPBean.COLUMN_CASE_STATUS).appendEqualSign().appendWithinSingleQuotes("UBEH").appendAnd().append("pc.").append(CaseBMPBean.COLUMN_CASE_CODE).appendEqualSign().appendWithinSingleQuotes(SchoolChoiceReminder.CASE_CODE_KEY);
@@ -118,7 +118,7 @@ public class SchoolChoiceReminderBMPBean extends AbstractCaseBMPBean implements 
         return primaryKeys;
     }
 
-    Collection ejbFindUnhandled (final Group [] groups)
+    public Collection ejbFindUnhandled (final Group [] groups)
         throws FinderException, RemoteException {
         final IDOQuery query = idoQuery();
         final Calendar today = Calendar.getInstance ();

@@ -1,18 +1,47 @@
 package se.idega.idegaweb.commune.school.presentation;
 
-import com.idega.business.IBOLookup;
-import com.idega.presentation.*;
-import com.idega.presentation.text.*;
-import com.idega.presentation.ui.*;
-import com.idega.user.business.UserBusiness;
-import com.idega.user.data.*;
 import java.rmi.RemoteException;
 import java.text.SimpleDateFormat;
-import java.util.*;
-import javax.ejb.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+
+import javax.ejb.CreateException;
+import javax.ejb.FinderException;
+
 import se.idega.idegaweb.commune.presentation.CommuneBlock;
-import se.idega.idegaweb.commune.school.business.*;
+import se.idega.idegaweb.commune.school.business.SchoolChoiceBusiness;
+import se.idega.idegaweb.commune.school.business.SchoolChoiceReminderReceiver;
 import se.idega.idegaweb.commune.school.data.SchoolChoiceReminder;
+
+import com.idega.block.school.data.SchoolSeason;
+import com.idega.block.school.data.SchoolSeasonHome;
+import com.idega.block.school.data.SchoolYear;
+import com.idega.block.school.data.SchoolYearHome;
+import com.idega.business.IBOLookup;
+import com.idega.business.IBORuntimeException;
+import com.idega.data.IDOLookup;
+import com.idega.data.IDOLookupException;
+import com.idega.presentation.IWContext;
+import com.idega.presentation.PresentationObject;
+import com.idega.presentation.Table;
+import com.idega.presentation.text.Link;
+import com.idega.presentation.text.Text;
+import com.idega.presentation.ui.CheckBox;
+import com.idega.presentation.ui.CheckBoxGroup;
+import com.idega.presentation.ui.DropdownMenu;
+import com.idega.presentation.ui.Form;
+import com.idega.presentation.ui.HiddenInput;
+import com.idega.presentation.ui.InputContainer;
+import com.idega.presentation.ui.RadioGroup;
+import com.idega.presentation.ui.SubmitButton;
+import com.idega.presentation.ui.TextArea;
+import com.idega.presentation.ui.TextInput;
+import com.idega.user.business.UserBusiness;
+import com.idega.user.data.User;
 
 /**
  * SchoolChoiceReminderView is an IdegaWeb block that registers and handles
@@ -21,14 +50,20 @@ import se.idega.idegaweb.commune.school.data.SchoolChoiceReminder;
  * and entity ejb classes in {@link se.idega.idegaweb.commune.school.data}.
  * <p>
  * <p>
- * Last modified: $Date: 2003/04/02 20:47:26 $ by $Author: laddi $
+ * Last modified: $Date: 2003/09/22 02:12:03 $ by $Author: tryggvil $
  *
  * @author <a href="http://www.staffannoteberg.com">Staffan Nöteberg</a>
- * @version $Revision: 1.31 $
+ * @version $Revision: 1.32 $
  * @see javax.ejb
  */
 public class SchoolChoiceReminderView extends CommuneBlock {
-    private static final String PREFIX = "scr_";
+
+	private static final String SCHOOL_YEAR_KEY="sch_school_year";
+	private static final String SCHOOL_SEASON_KEY="sch_school_season";
+	private static final String PREFIX = "scr_";   
+    private String PARAM_SCHOOL_SEASON_ID=PREFIX+"sch_season_id";
+	private String PARAM_SCHOOL_YEAR_ID=PREFIX+"sch_year_id";
+	
     public static final String ACTION_KEY = PREFIX + "action";
 	private final static String CONFIRM_ENTER_DEFAULT = "Din påminnelse är nu registrerad";
 	private final static String GOBACKTOMYPAGE_DEFAULT = "Tillbaka till Min sida";
@@ -103,17 +138,111 @@ public class SchoolChoiceReminderView extends CommuneBlock {
             generateLetter (iwc);
         } else if (action != null && action.equals (DELETE_KEY)) {
             deleteReminder (iwc);
+		} else if (action != null && action.equals (SCHOOL_SEASON_KEY)) {
+			selectSeason (iwc);
+		} else if (action != null && action.equals (SCHOOL_YEAR_KEY)) {
+			selectSchoolYear (iwc);
         } else {
             showAllReminders (iwc);
             showCreateReminderForm (iwc);
         }
     }
 
-    private void showMainMenu () {
+    /**
+	 * @param iwc
+	 */
+	private void selectSchoolYear(IWContext iwc)
+	{
+		Form form = new Form();
+		add(form);
+		
+		Table t = new Table();
+		form.add(t);
+		
+		PresentationObject yearSelector = getSchoolYearsSelector(iwc);
+		InputContainer yearSelectorCont = this.getInputContainer(this.SCHOOL_YEAR_KEY,"Select SchoolYear:",yearSelector);
+		
+		t.add(yearSelectorCont,1,1);
+		form.maintainParameter(this.PARAM_SCHOOL_SEASON_ID);
+		form.maintainParameter(CASE_ID_KEY);
+		t.add(this.getSubmitButton2(this.ACTION_KEY,this.SHOW_DETAILS_KEY),1,2);
+		
+	}
+
+	/**
+	 * @param iwc
+	 */
+	private void selectSeason(IWContext iwc)
+	{
+		Form form = new Form();
+		add(form);
+		
+		Table t = new Table();
+		form.add(t);
+		
+
+	
+		DropdownMenu dropSeasons = getSchoolSeasonsInput(iwc);
+		InputContainer dropSeasonsCont = this.getInputContainer(this.SCHOOL_SEASON_KEY,"Select season:",dropSeasons);
+		form.maintainParameter(CASE_ID_KEY);
+		t.add(dropSeasonsCont,1,1);
+		t.add(this.getSubmitButton2(this.ACTION_KEY,SCHOOL_YEAR_KEY),1,2);
+		
+	}
+
+	/**
+	 * @param iwc
+	 * @return
+	 */
+	private DropdownMenu getSchoolSeasonsInput(IWContext iwc)
+	{
+		DropdownMenu drop = new DropdownMenu(this.PARAM_SCHOOL_SEASON_ID);
+		try{
+			SchoolSeasonHome seasonHome = this.getSchoolSeasonHome();
+			Collection seasons = seasonHome.findAllSchoolSeasons();
+			for (Iterator iterator = seasons.iterator(); iterator.hasNext();)
+			{
+				SchoolSeason season = (SchoolSeason) iterator.next();
+				drop.addMenuElement(season.getPrimaryKey().toString(),season.getSchoolSeasonName());
+			}
+			
+		}
+		catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		return drop;
+	}
+	
+	/**
+	 * @param iwc
+	 * @return
+	 */
+	private PresentationObject getSchoolYearsSelector(IWContext iwc)
+	{
+		CheckBoxGroup group = new CheckBoxGroup(this.PARAM_SCHOOL_YEAR_ID);
+		try{
+			
+			SchoolChoiceBusiness business = this.getSchoolChoiceBusiness(iwc);
+			Collection years = business.getMandatorySchoolChoiceYears();
+			for (Iterator iterator = years.iterator(); iterator.hasNext();)
+			{
+				SchoolYear year = (SchoolYear) iterator.next();
+				group.addOption(year.getPrimaryKey().toString(),year.getSchoolYearName());
+			}
+			
+		}
+		catch(Exception e){
+			e.printStackTrace();
+		}
+		return group;
+	}
+
+	private void showMainMenu () {
 		final Form form = new Form();
 		final DropdownMenu dropdown = (DropdownMenu) getStyledInterface
                 (new DropdownMenu (ACTION_KEY));
-		final SubmitButton submit = getSubmitButton (CONTINUE_KEY,
+		final SubmitButton submit = getMySubmitButton (CONTINUE_KEY,
                                                      CONTINUE_DEFAULT);
 		final Table table = new Table ();
 		table.setWidth (getWidth ());
@@ -162,7 +291,7 @@ public class SchoolChoiceReminderView extends CommuneBlock {
 		table.add(getSingleInput(iwc, REMINDER_DAYS_BEFORE_KEY, 2), 3, row++);
 
         table.setHeight (row++, 12);
-        final SubmitButton submit = getSubmitButton (CREATE_KEY,
+        final SubmitButton submit = getMySubmitButton (CREATE_KEY,
                                                      CREATE_DEFAULT);
 		table.add(submit, 1, row++);
 		form.add(table);
@@ -211,7 +340,9 @@ public class SchoolChoiceReminderView extends CommuneBlock {
             final String id = "" + reminder.getPrimaryKey ();
             final Link idLink = getSmallLink (id);
             idLink.addParameter (CASE_ID_KEY, id);
-            idLink.addParameter (ACTION_KEY, SHOW_DETAILS_KEY);
+            //idLink.addParameter (ACTION_KEY, SHOW_DETAILS_KEY);
+            //Go to select school season when this link is clicked
+			idLink.addParameter (ACTION_KEY, this.SCHOOL_SEASON_KEY);
             messageList.add (idLink, col++, row);
             final String text = reminder.getText ();
             final String message = text.length () > 33
@@ -373,9 +504,11 @@ public class SchoolChoiceReminderView extends CommuneBlock {
                                                  ADDRESS_DEFAULT)), col++,
                         row++);
         try {
+        	SchoolYear[] years = getSchoolYears(iwc);
+        	SchoolSeason season = getSchoolSeason(iwc);;
             //final SchoolChoiceReminder reminder = business.findSchoolChoiceReminder (reminderId);
             final SchoolChoiceReminderReceiver [] receivers
-                    = business.findAllStudentsThatMustDoSchoolChoice ();
+                    = business.findAllStudentsThatMustDoSchoolChoiceButHaveNot(season,years);
             iwc.getSession ().setAttribute (STUDENT_LIST_KEY, receivers);
             for (int i = 0; i < receivers.length; i++) {
                 try {
@@ -419,7 +552,100 @@ public class SchoolChoiceReminderView extends CommuneBlock {
         return studentList;
     }
 
-    private void generateLetter (final IWContext iwc) throws RemoteException,
+    /**
+	 * @param iwc
+	 * @return
+	 */
+	private SchoolSeason getSchoolSeason(IWContext iwc)
+	{
+		SchoolSeason theReturn = null;
+		SchoolSeasonHome ssHome = getSchoolSeasonHome();
+		String seasonId = iwc.getParameter(PARAM_SCHOOL_SEASON_ID);
+		if(seasonId!=null){
+				try
+				{
+					theReturn=ssHome.findByPrimaryKey(Integer.decode(seasonId));
+					return theReturn;
+				}
+				catch (NumberFormatException e)
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				catch (FinderException e)
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+		}
+		throw new RuntimeException("No SchoolSeason Found");
+	}
+
+	/**
+	 * @return
+	 */
+	private SchoolSeasonHome getSchoolSeasonHome()
+	{
+		try
+		{
+			return (SchoolSeasonHome)IDOLookup.getHome(SchoolSeason.class);
+		}
+		catch (IDOLookupException e)
+		{
+			throw new IBORuntimeException(e);
+		}
+	}
+	
+	/**
+	 * @return
+	 */
+	private SchoolYearHome getSchoolYearHome()
+	{
+		try
+		{
+			return (SchoolYearHome)IDOLookup.getHome(SchoolYear.class);
+		}
+		catch (IDOLookupException e)
+		{
+			throw new IBORuntimeException(e);
+		}
+	}
+
+	/**
+	 * @param iwc
+	 * @return
+	 */
+	private SchoolYear[] getSchoolYears(IWContext iwc)
+	{
+		SchoolYear[] theReturn = new SchoolYear[0];
+		SchoolYearHome syHome = getSchoolYearHome();
+		String[] yIds = iwc.getParameterValues(PARAM_SCHOOL_YEAR_ID);
+		if(yIds!=null){
+			theReturn = new SchoolYear[yIds.length];
+			for (int i = 0; i < yIds.length; i++)
+			{
+				String yId = yIds[i];
+				try
+				{
+					theReturn[i]=syHome.findByPrimaryKey(Integer.decode(yId));
+				}
+				catch (NumberFormatException e)
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				catch (FinderException e)
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			
+		}
+		return theReturn;
+	}
+
+	private void generateLetter (final IWContext iwc) throws RemoteException,
                                                              FinderException {
         final SchoolChoiceReminderReceiver [] allReceivers
                 = (SchoolChoiceReminderReceiver [])
@@ -549,7 +775,7 @@ public class SchoolChoiceReminderView extends CommuneBlock {
 		return getSmallHeader(localize(paramId, defaultText));
 	}*/
 
-    private SubmitButton getSubmitButton (final String key,
+    private SubmitButton getMySubmitButton (final String key,
                                           final String defaultName) {
         final String name
                 = getResourceBundle().getLocalizedString (key, defaultName);

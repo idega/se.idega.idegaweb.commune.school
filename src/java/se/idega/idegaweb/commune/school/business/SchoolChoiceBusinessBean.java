@@ -49,6 +49,7 @@ import com.idega.block.school.data.SchoolSeasonHome;
 import com.idega.block.school.data.SchoolUser;
 import com.idega.block.school.data.SchoolYear;
 import com.idega.block.school.data.SchoolYearHome;
+import com.idega.business.IBORuntimeException;
 import com.idega.core.data.ICFile;
 import com.idega.core.data.ICFileHome;
 import com.idega.core.data.Phone;
@@ -80,7 +81,7 @@ import com.lowagie.text.pdf.PdfWriter;
 /**
  * Title:
  * Description:
- * Copyright:    Copyright (c) 2002
+ * Copyright:    Copyright (c) 2002-2003
  * Company:
  * @author <a href="mailto:aron@idega.is">Aron Birkir</a>
  * @author <a href="http://www.staffannoteberg.com">Staffan Nöteberg</a>
@@ -910,18 +911,22 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 
     public SchoolChoiceReminder [] findAllSchoolChoiceReminders ()
         throws RemoteException, FinderException {
-        return getSchoolChoiceReminderHome ().findAll ();
+        //return getSchoolChoiceReminderHome ().findAll ();
+    	Collection reminders = getSchoolChoiceReminderHome().findAll();
+    	return (SchoolChoiceReminder[])reminders.toArray(new SchoolChoiceReminder[0]);
     }
 
     public SchoolChoiceReminder [] findUnhandledSchoolChoiceReminders
         (final Group [] groups) throws RemoteException, FinderException {
-        return getSchoolChoiceReminderHome ().findUnhandled (groups);
+        //return getSchoolChoiceReminderHome ().findUnhandled (groups);
+		Collection reminders = getSchoolChoiceReminderHome().findUnhandled(groups);
+		return (SchoolChoiceReminder[])reminders.toArray(new SchoolChoiceReminder[0]);
     }
 
     public SchoolChoiceReminder findSchoolChoiceReminder (final int id)
         throws RemoteException, FinderException {
 		return (SchoolChoiceReminder) getSchoolChoiceReminderHome ()
-                .findByPrimaryKeyIDO (new Integer (id));
+                .findByPrimaryKey (new Integer (id));
 	}
 
     private SchoolChoiceReminderHome getSchoolChoiceReminderHome ()
@@ -1041,32 +1046,34 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
         }
     }
 
+	public SchoolChoiceReminderReceiver []
+	findAllStudentsThatMustDoSchoolChoiceButHaveNot (SchoolSeason season,SchoolYear[] years){
+			Collection coll = new ArrayList();
+			for (int i = 0; i < years.length; i++)
+			{
+				SchoolYear year = years[i];
+				SchoolChoiceReminderReceiver[] receivers = findAllStudentsThatMustDoSchoolChoiceButHaveNot(season,year);
+				for (int j = 0; j < receivers.length; j++)
+				{
+					SchoolChoiceReminderReceiver receiver = receivers[j];
+					coll.add(receiver);
+				}
+				
+			}
+			return (SchoolChoiceReminderReceiver[])coll.toArray(new SchoolChoiceReminderReceiver[0]);
+		}
+
     public SchoolChoiceReminderReceiver []
-        findAllStudentsThatMustDoSchoolChoice ()
-        throws RemoteException {
+	findAllStudentsThatMustDoSchoolChoiceButHaveNot (SchoolSeason season,SchoolYear year)
+    {
+    	try{
         com.idega.util.Timer timer = new com.idega.util.Timer ();
         timer.start ();
         final Set ids = new HashSet ();
-        try {
-            ids.addAll (findStudentsInFinalClassesThatMustDoSchoolChoice ());
-        } catch (FinderException e) {
-            e.printStackTrace ();
-        }
+        ids.addAll(this.findAllStudentsThatMustDoSchoolChoice(season,year));
         System.err.println ("ids.size=" + ids.size ());
         try {
-            ids.addAll (findSchoolStartersNotInChildCare ());
-        } catch (FinderException e) {
-            e.printStackTrace ();
-        }
-        System.err.println ("ids.size=" + ids.size ());
-        try {
-            ids.addAll (findChildCareStarters ());
-        } catch (FinderException e) {
-            e.printStackTrace ();
-        }
-        System.err.println ("ids.size=" + ids.size ());
-        try {
-            ids.removeAll (findStudentIdsWhoChosedForCurrentSeason ());
+            ids.removeAll (findStudentIdsWhoChosedForSeasonAndYear(season,year));
         } catch (FinderException e) {
             e.printStackTrace ();
         }
@@ -1093,16 +1100,74 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
         return (SchoolChoiceReminderReceiver [])
                 receivers.values ().toArray
                 (new SchoolChoiceReminderReceiver [receivers.size ()]);
+                
+    	}
+    	catch(RemoteException re){
+    		throw new IBORuntimeException(re);
+    	}
     }
 
-	private Set findStudentIdsWhoChosedForCurrentSeason ()
+
+	public Collection
+	findAllStudentsThatMustDoSchoolChoice (SchoolSeason season,SchoolYear year)
+	{
+		com.idega.util.Timer timer = new com.idega.util.Timer ();
+		timer.start ();
+		final Set ids = new HashSet ();
+		//try {
+		//    ids.addAll (findStudentsInFinalClassesThatMustDoSchoolChoice(season.getPreviousSeason()));
+		//} catch (FinderException e) {
+		//    e.printStackTrace ();
+		//}
+		//System.err.println ("ids.size=" + ids.size ());
+		if(year.getSchoolYearName().equals("F")){
+			try {
+				ids.addAll (findChildCareStarters (season.getPreviousSeason()));
+			} catch (FinderException e) {
+				e.printStackTrace ();
+			}
+			System.err.println ("SchoolYearName=F ids.size=" + ids.size ());
+		}
+		else if(year.getSchoolYearName().equals("1")){
+			try {
+				ids.addAll (findSchoolStartersNotInChildCare (season.getPreviousSeason()));
+			} catch (FinderException e) {
+				e.printStackTrace ();
+			}
+			System.err.println ("SchoolYearName=1 ids.size=" + ids.size ());
+		}
+		else{
+			try
+			{
+				ids.addAll(findStudentsInLastYearClassesThatMustDoSchoolChoice(season,year));
+			}
+			catch (FinderException e)
+			{
+				e.printStackTrace();
+			}
+			System.err.println ("SchoolYearName="+year.getSchoolYearName()+" ids.size=" + ids.size ());
+		}
+		timer.stop ();
+		return ids;
+	}
+
+	/**
+	 * Returns the Ids for all the students who made a schoolchoice for the season and year
+	 * @param season
+	 * @param year
+	 * @return Collection of Integer primary keys to Users
+	 * @throws RemoteException
+	 * @throws FinderException
+	 */
+	private Set findStudentIdsWhoChosedForSeasonAndYear (SchoolSeason season,SchoolYear year)
         throws RemoteException, FinderException {
         com.idega.util.Timer timer = new com.idega.util.Timer ();
         timer.start ();
-        final Integer currentSeasonId
-                = (Integer) getCurrentSeason ().getPrimaryKey ();
-        final Collection choices = getSchoolChoiceHome().findBySeason
-                (currentSeasonId.intValue ());
+        //final Integer currentSeasonId
+        //        = (Integer) getCurrentSeason ().getPrimaryKey ();
+        //int currentSeasonId = ((Integer)season.getPrimaryKey()).intValue();
+        final Collection choices = getSchoolChoiceHome().findBySeasonAndSchoolYear
+                (season,year);
         final Set ids = new HashSet ();
         for (Iterator i = choices.iterator (); i.hasNext ();) {
             final SchoolChoice choice = (SchoolChoice) i.next ();
@@ -1113,17 +1178,26 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
                             + timer.getTime () + " msec");
         return ids;
 	}
-
-    private Set findStudentsInFinalClassesThatMustDoSchoolChoice ()
-        throws RemoteException, FinderException {
+	/**
+	 * Find All the Students that have a placement for season season and SchoolYear year and are in 
+	 * the last year of their school
+	 * @param season
+	 * @param year
+	 * @return A Set of primary Keys for students
+	 * @throws FinderException if an error occured during search
+	 */
+    private Set findStudentsInLastYearClassesThatMustDoSchoolChoice (SchoolSeason season,SchoolYear year)
+        throws FinderException {
+        try{
         com.idega.util.Timer timer = new com.idega.util.Timer ();
         timer.start ();
 
-        final int previousSeasonId = getPreviousSeasonId ();
-        System.err.println ("Previous season=" + previousSeasonId);
+        //final int previousSeasonId = getPreviousSeasonId ();
+        final int seasonId = ((Integer)season.getPrimaryKey()).intValue();
+        System.err.println ("findStudentsInFinalClassesThatMustDoSchoolChoice: seasonId=" + seasonId);
         final Collection students
-                = getSchoolClassMemberHome().findAllBySeasonAndMaximumAge
-                (previousSeasonId, 14);
+               // = getSchoolClassMemberHome().findAllBySeasonAndMaximumAge(seasonId, 14);
+			= getSchoolClassMemberHome().findAllLastYearStudentsBySeasonAndYear(season,year);
         final Set ids = new HashSet ();
         for (Iterator i = students.iterator (); i.hasNext ();) {
             final SchoolClassMember student = (SchoolClassMember) i.next ();
@@ -1132,11 +1206,16 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
         timer.stop ();
         System.err.println ("Found " + students.size () + " finalstudents in "
                             + timer.getTime () + " msec");
-        return ids;        
+        return ids;
+        }
+        catch(RemoteException re){
+        	throw new FinderException(re.getMessage());
+        }
+           
     }
 
-    private Set findSchoolStartersNotInChildCare ()throws RemoteException,
-                                                          FinderException {
+    private Set findSchoolStartersNotInChildCare (SchoolSeason season)throws FinderException {
+    	try{
         com.idega.util.Timer timer = new com.idega.util.Timer ();
         timer.start ();
         final SchoolYear childCare = getSchoolYearHome ().findByYearName ("1");
@@ -1147,14 +1226,14 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
         final Set ids = new HashSet ();
         final SchoolClassMemberHome classMemberHome
                 = getSchoolClassMemberHome ();
-        final int previousSeasonId = getPreviousSeasonId ();
+        final int seasonId = ((Integer)season.getPrimaryKey()).intValue();
         for (Iterator i = students.iterator (); i.hasNext ();) {
             final User student = (User) i.next ();
             final Integer studentId = (Integer) student.getPrimaryKey ();
             SchoolClassMember member = null;
             try {
                 member = classMemberHome.findByUserAndSeason
-                        (studentId.intValue (), previousSeasonId);
+                        (studentId.intValue (), seasonId);
             } catch (Exception e) {
                 // not a school class member - handle in 'finally' clause
             } finally {
@@ -1166,11 +1245,15 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
         timer.stop ();
         System.err.println ("Found " + ids.size () + " (" + students.size () + ") schoolstartersnotinchildcare in "
                             + timer.getTime () + " msec (" + yearOfBirth + ")");
-        return ids;        
+        return ids;
+    	}
+    	catch(RemoteException re){
+    		throw new FinderException(re.getMessage());
+    	}
     }
 
-    private Set findChildCareStarters () throws RemoteException,
-                                                FinderException {
+    private Set findChildCareStarters (SchoolSeason season) throws FinderException {
+        try{
         com.idega.util.Timer timer = new com.idega.util.Timer ();
         timer.start ();
         final SchoolYear childCare = getSchoolYearHome ().findByYearName ("F");
@@ -1181,14 +1264,14 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
         final Set ids = new HashSet ();
         final SchoolClassMemberHome classMemberHome
                 = getSchoolClassMemberHome ();
-        final int previousSeasonId = getPreviousSeasonId ();
+        final int seasonId = ((Integer)season.getPrimaryKey()).intValue();
         for (Iterator i = students.iterator (); i.hasNext ();) {
             final User student = (User) i.next ();
             final Integer studentId = (Integer) student.getPrimaryKey ();
             SchoolClassMember member = null;
             try {
                 member = classMemberHome.findByUserAndSeason
-                        (studentId.intValue (), previousSeasonId);
+                        (studentId.intValue (), seasonId);
             } catch (Exception e) {
                 // not a school class member - handle in 'finally' clause
             } finally {
@@ -1200,7 +1283,11 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
         timer.stop ();
         System.err.println ("Found " + students.size () + " childcarestarters in "
                             + timer.getTime () + " msec (" + yearOfBirth + ")");
-        return ids;        
+        return ids;
+        }
+        catch(RemoteException re){
+        	throw new FinderException(re.getMessage());   
+        }
     }
 
     private static PdfPTable getAddressTable
@@ -1272,6 +1359,34 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		c.setLenient(true);
 		c.setTime(new java.util.Date(new java.util.Date().getTime() - person.getDateOfBirth().getTime()));
 		return c.get(Calendar.YEAR) >= 18;
-		    
+	}
+	
+	/**
+	 * Returns the SchoolYears that are mandatory to do a schoolChoice for
+	 * @return A Collection of SchoolYear entities
+	 */
+	public Collection getMandatorySchoolChoiceYears(){
+		//TODO: Move these years to a database table
+		Collection years = new ArrayList();
+		try
+		{
+			SchoolYear preSchoolClass = getSchoolYearHome().findByYearName("F");
+			SchoolYear firstClass = getSchoolYearHome().findByYearName("1");
+			SchoolYear fourthClass = getSchoolYearHome().findByYearName("4");
+			SchoolYear seventhClass = getSchoolYearHome().findByYearName("7");
+
+			years.add(preSchoolClass);
+			years.add(firstClass);
+			years.add(fourthClass);
+			years.add(seventhClass);
+
+		}
+		catch (Exception e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return years;
+		
 	}
 }

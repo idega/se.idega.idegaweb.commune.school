@@ -1,48 +1,36 @@
 package se.idega.idegaweb.commune.school.data;
 
-import com.idega.data.*;
-import com.idega.user.data.Group;
-import java.rmi.RemoteException;
-import java.util.Collection;
-import javax.ejb.*;
 
-/**
- * Last modified: $Date: 2002/12/29 13:49:39 $ by $Author: staffan $
- *
- * @author <a href="http://www.staffannoteberg.com">Staffan Nöteberg</a>
- * @version $Revision: 1.3 $
- */
-public class SchoolChoiceReminderHomeImpl extends IDOFactory
-    implements SchoolChoiceReminderHome {
-    public SchoolChoiceReminder create () throws CreateException{
-        return (SchoolChoiceReminder) createIDO ();
-    }
+public class SchoolChoiceReminderHomeImpl extends com.idega.data.IDOFactory implements SchoolChoiceReminderHome
+{
+ protected Class getEntityInterfaceClass(){
+  return SchoolChoiceReminder.class;
+ }
 
-    protected Class getEntityInterfaceClass() {
-        return SchoolChoiceReminder.class;
-    }
 
-    public SchoolChoiceReminder [] findAll () throws FinderException,
-                                                     RemoteException {
-        final IDOEntity entity = idoCheckOutPooledEntity();
-        final Collection ids
-                = ((SchoolChoiceReminderBMPBean)entity).ejbFindAll ();
-        idoCheckInPooledEntity (entity);
-        return (SchoolChoiceReminder []) getEntityCollectionForPrimaryKeys(ids)
-                .toArray (new SchoolChoiceReminder [0]);
-    }
+ public SchoolChoiceReminder create() throws javax.ejb.CreateException{
+  return (SchoolChoiceReminder) super.createIDO();
+ }
 
-    public SchoolChoiceReminder [] findUnhandled (final Group [] groups)
-        throws FinderException, RemoteException {
-        final IDOEntity entity = idoCheckOutPooledEntity();
-        final Collection ids
-                = ((SchoolChoiceReminderBMPBean)entity).ejbFindUnhandled
-                (groups);
-        idoCheckInPooledEntity (entity);
-        final Collection objs = getEntityCollectionForPrimaryKeys(ids);
-        final SchoolChoiceReminder [] reminders
-                = (SchoolChoiceReminder []) objs.toArray
-                (new SchoolChoiceReminder [objs.size ()]);
-        return reminders;
-    }
+
+public java.util.Collection findAll()throws javax.ejb.FinderException,java.rmi.RemoteException{
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	java.util.Collection ids = ((SchoolChoiceReminderBMPBean)entity).ejbFindAll();
+	this.idoCheckInPooledEntity(entity);
+	return this.getEntityCollectionForPrimaryKeys(ids);
+}
+
+public java.util.Collection findUnhandled(com.idega.user.data.Group[] p0)throws javax.ejb.FinderException,java.rmi.RemoteException{
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	java.util.Collection ids = ((SchoolChoiceReminderBMPBean)entity).ejbFindUnhandled(p0);
+	this.idoCheckInPooledEntity(entity);
+	return this.getEntityCollectionForPrimaryKeys(ids);
+}
+
+ public SchoolChoiceReminder findByPrimaryKey(Object pk) throws javax.ejb.FinderException{
+  return (SchoolChoiceReminder) super.findByPrimaryKeyIDO(pk);
+ }
+
+
+
 }

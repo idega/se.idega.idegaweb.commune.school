@@ -1,6 +1,7 @@
 package se.idega.idegaweb.commune.school.business;
 
 import com.idega.block.school.data.SchoolSeason;
+import com.idega.block.school.data.SchoolYear;
 import com.idega.user.data.*;
 import java.rmi.RemoteException;
 import java.util.*;
@@ -64,7 +65,10 @@ public interface SchoolChoiceBusiness extends com.idega.business.IBOService,com.
     SchoolChoiceReminder [] findUnhandledSchoolChoiceReminders
         (Group [] groups) throws RemoteException, FinderException;
 
-    SchoolChoiceReminderReceiver [] findAllStudentsThatMustDoSchoolChoice ()
+	SchoolChoiceReminderReceiver [] findAllStudentsThatMustDoSchoolChoiceButHaveNot (SchoolSeason season,SchoolYear[] years )
+		throws RemoteException, FinderException; 
+
+    SchoolChoiceReminderReceiver [] findAllStudentsThatMustDoSchoolChoiceButHaveNot (SchoolSeason season,SchoolYear year )
         throws RemoteException, FinderException; 
 
     int generateReminderLetter (int reminderId,
@@ -76,4 +80,5 @@ public interface SchoolChoiceBusiness extends com.idega.business.IBOService,com.
 	public int getNumberOfApplicants(String[] validStatuses) throws RemoteException;
 	public void sendMessageToParentOrChild(User parent, User child, String subject, String body) throws RemoteException;
 	public User getReceiver(User parent, User child);
+	public Collection getMandatorySchoolChoiceYears() throws RemoteException;
 }
