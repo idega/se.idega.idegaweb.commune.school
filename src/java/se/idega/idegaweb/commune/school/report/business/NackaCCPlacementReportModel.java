@@ -1,5 +1,5 @@
 /*
- * $Id: NackaCCPlacementReportModel.java,v 1.6 2004/01/22 11:39:54 anders Exp $
+ * $Id: NackaCCPlacementReportModel.java,v 1.7 2004/01/22 12:55:26 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -16,10 +16,10 @@ import com.idega.util.IWTimestamp;
 /** 
  * Report model for child care placements in Nacka.
  * <p>
- * Last modified: $Date: 2004/01/22 11:39:54 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/22 12:55:26 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  */
 public class NackaCCPlacementReportModel extends ReportModel {
 
@@ -56,13 +56,10 @@ public class NackaCCPlacementReportModel extends ReportModel {
 	
 	private final static int PRE_SCHOOL = 1;
 	private final static int FAMILY_DAYCARE = 2;
-	private final static int PRE_SCHOOL_MANAGEMENT = 3;
-	private final static int AFTER_SCHOOL_6 = 4;
-	private final static int FAMILY_DAYCARE_6 = 5;
-	private final static int SCHOOL_CHILDREN_CARE_6 = 6;
-	private final static int AFTER_SCHOOL_7_9 = 7;
-	private final static int FAMILY_AFTER_SCHOOL_7_9 = 8;
-	private final static int SCHOOL_CHILDREN_CARE_7_9 = 9;
+	private final static int AFTER_SCHOOL_6 = 3;
+	private final static int FAMILY_DAYCARE_6 = 4;
+	private final static int AFTER_SCHOOL_7_9 = 5;
+	private final static int FAMILY_AFTER_SCHOOL_7_9 = 6;
 
 	private final static int COMMUNE = 1;
 	private final static int PRIVATE = 2;
@@ -334,7 +331,7 @@ public class NackaCCPlacementReportModel extends ReportModel {
 				value = getChildCarePlacementCount(FAMILY_AFTER_SCHOOL_7_9, PRIVATE);
 				break;
 			case ROW_METHOD_SUM:
-				for (int i = row - 6; i < row; i++) {
+				for (int i = row - 6; i < row; i += 3) {
 					value += getCell(i, column).getFloatValue();
 				}
 				break;
@@ -379,12 +376,6 @@ public class NackaCCPlacementReportModel extends ReportModel {
 				schoolType3 = schoolType1;
 				schoolType4 = schoolType2;
 				break;
-			case PRE_SCHOOL_MANAGEMENT:
-				schoolType1 = rb.getPreSchoolTypeId(); 
-				schoolType2 = rb.getGeneralPreSchoolTypeId();
-				schoolType3 = rb.getFamilyDayCareSchoolTypeId();
-				schoolType4 = rb.getGeneralFamilyDaycareSchoolTypeId();
-				break;
 			case AFTER_SCHOOL_6:
 				schoolType1 = rb.getAfterSchool6TypeId();
 				schoolType2 = schoolType1;
@@ -397,14 +388,8 @@ public class NackaCCPlacementReportModel extends ReportModel {
 				schoolType3 = schoolType1;
 				schoolType4 = schoolType1;
 				break;
-			case SCHOOL_CHILDREN_CARE_6:
-				schoolType1 = rb.getAfterSchool6TypeId();
-				schoolType2 = rb.getFamilyAfterSchool6TypeId();
-				schoolType3 = schoolType1;
-				schoolType4 = schoolType2;
-				break;
 			case AFTER_SCHOOL_7_9:
-				schoolType1 = rb.getFamilyAfterSchool7_9TypeId();
+				schoolType1 = rb.getAfterSchool7_9TypeId();
 				schoolType2 = schoolType1;
 				schoolType3 = schoolType1;
 				schoolType4 = schoolType1;
@@ -414,12 +399,6 @@ public class NackaCCPlacementReportModel extends ReportModel {
 				schoolType2 = schoolType1;
 				schoolType3 = schoolType1;
 				schoolType4 = schoolType1;
-				break;
-			case SCHOOL_CHILDREN_CARE_7_9:
-				schoolType1 = rb.getAfterSchool7_9TypeId();
-				schoolType2 = rb.getFamilyAfterSchool7_9TypeId();
-				schoolType3 = schoolType1;
-				schoolType4 = schoolType2;
 				break;
 		}
 		
