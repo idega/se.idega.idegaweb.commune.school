@@ -450,27 +450,36 @@ public abstract class SchoolCommuneBlock extends CommuneBlock {
 		_schoolClassID = schoolClassID;
 	}
 	
-	
 	protected Table getLegendTable() {
-		Table table = new Table(11,1);
+		return getLegendTable(false);
+	}
+	
+	protected Table getLegendTable(boolean showWithMoveToSchool) {
+		Table table = new Table(8,1);
 		table.setHeight(1, 12);
 		table.setWidth(1, "12");
 		table.setWidth(3, "12");
 		table.setWidth(4, "12");
 		table.setWidth(6, "12");
 		table.setWidth(7, "12");
-		table.setWidth(9, "12");
-		table.setWidth(10, "12");
 		
-		table.add(getColorTable(HAS_MOVE_CHOICE_COLOR), 1, 1);
+		if (showWithMoveToSchool) {
+			table.add(getColorTable(HAS_MOVE_CHOICE_COLOR_THIS_SCHOOL), 1, 1);
+		}
+		else {
+			table.add(getColorTable(HAS_MOVE_CHOICE_COLOR), 1, 1);
+		}
 		table.add(getColorTable(HAS_SCHOOL_CHOICE_COLOR), 4, 1);
 		table.add(getColorTable(IS_SPECIALLY_PLACED_COLOR), 7, 1);
-		table.add(getColorTable(HAS_MOVE_CHOICE_COLOR_THIS_SCHOOL), 10, 1);
 		
-		table.add(getSmallHeader(localize("school.student_has_move_choice","Student has move choice")), 2, 1);
+		if (showWithMoveToSchool) {
+			table.add(getSmallHeader(localize("school.student_has_move_choice_to_this_school","Student has move choice to this school")), 2, 1);
+		}
+		else {
+			table.add(getSmallHeader(localize("school.student_has_move_choice","Student has move choice")), 2, 1);
+		}
 		table.add(getSmallHeader(localize("school.student_has_school_choice","Student has school choice")), 5, 1);
 		table.add(getSmallHeader(localize("school.student_is_specially_placed","Student is specially placed")), 8, 1);
-		table.add(getSmallHeader(localize("school.student_has_move_choice_this_school","Student has move choice to this school")), 11, 1);
 		
 		return table;
 	}
