@@ -1,5 +1,5 @@
 /*
- * $Id: NackaCCPlacementReportModel.java,v 1.5 2004/01/22 08:10:24 anders Exp $
+ * $Id: NackaCCPlacementReportModel.java,v 1.6 2004/01/22 11:39:54 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -16,10 +16,10 @@ import com.idega.util.IWTimestamp;
 /** 
  * Report model for child care placements in Nacka.
  * <p>
- * Last modified: $Date: 2004/01/22 08:10:24 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/22 11:39:54 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
 public class NackaCCPlacementReportModel extends ReportModel {
 
@@ -75,6 +75,12 @@ public class NackaCCPlacementReportModel extends ReportModel {
 	 */
 	public NackaCCPlacementReportModel(ReportBusiness reportBusiness) {
 		super(reportBusiness);
+	}
+	
+	/**
+	 * @see se.idega.idegaweb.commune.school.report.business.ReportModel#initReportSize()
+	 */
+	protected void initReportSize() {
 		setReportSize(ROW_SIZE, COLUMN_SIZE);
 	}
 	

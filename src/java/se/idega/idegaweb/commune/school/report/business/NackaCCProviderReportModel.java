@@ -1,5 +1,5 @@
 /*
- * $Id: NackaCCProviderReportModel.java,v 1.2 2004/01/22 08:49:49 anders Exp $
+ * $Id: NackaCCProviderReportModel.java,v 1.3 2004/01/22 11:39:54 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -14,10 +14,10 @@ import java.rmi.RemoteException;
 /** 
  * Report model for child care commune and private providers.
  * <p>
- * Last modified: $Date: 2004/01/22 08:49:49 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/22 11:39:54 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class NackaCCProviderReportModel extends ReportModel {
 
@@ -52,6 +52,12 @@ public class NackaCCProviderReportModel extends ReportModel {
 	 */
 	public NackaCCProviderReportModel(ReportBusiness reportBusiness) {
 		super(reportBusiness);
+	}
+	
+	/**
+	 * @see se.idega.idegaweb.commune.school.report.business.ReportModel#initReportSize()
+	 */
+	protected void initReportSize() {
 		setReportSize(ROW_SIZE, COLUMN_SIZE);
 	}
 	

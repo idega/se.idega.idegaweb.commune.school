@@ -1,5 +1,5 @@
 /*
- * $Id: NackaCompulsoryHighSchoolPlacementReportModel.java,v 1.5 2004/01/15 14:53:43 anders Exp $
+ * $Id: NackaCompulsoryHighSchoolPlacementReportModel.java,v 1.6 2004/01/22 11:39:54 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -18,10 +18,10 @@ import com.idega.block.school.data.School;
 /** 
  * Report model for placements in Nacka compulsory high schools.
  * <p>
- * Last modified: $Date: 2004/01/15 14:53:43 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/22 11:39:54 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
 public class NackaCompulsoryHighSchoolPlacementReportModel extends ReportModel {
 
@@ -45,8 +45,14 @@ public class NackaCompulsoryHighSchoolPlacementReportModel extends ReportModel {
 	 */
 	public NackaCompulsoryHighSchoolPlacementReportModel(ReportBusiness reportBusiness) {
 		super(reportBusiness);
+	}
+	
+	/**
+	 * @see se.idega.idegaweb.commune.school.report.business.ReportModel#initReportSize()
+	 */
+	protected void initReportSize() {
 		try {
-			Collection schools = reportBusiness.getCompulsoryHighSchools();
+			Collection schools = getReportBusiness().getCompulsoryHighSchools();
 			int rowSize = 0;
 			rowSize += schools.size() + 1; // Total row
 			setReportSize(rowSize, COLUMN_SIZE);

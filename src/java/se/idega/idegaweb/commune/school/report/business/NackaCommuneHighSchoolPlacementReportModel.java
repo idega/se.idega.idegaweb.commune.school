@@ -1,5 +1,5 @@
 /*
- * $Id: NackaCommuneHighSchoolPlacementReportModel.java,v 1.6 2004/01/21 08:48:23 anders Exp $
+ * $Id: NackaCommuneHighSchoolPlacementReportModel.java,v 1.7 2004/01/22 11:39:53 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -19,10 +19,10 @@ import com.idega.block.school.data.SchoolStudyPath;
 /** 
  * Report model for Nacka high school student placements.
  * <p>
- * Last modified: $Date: 2004/01/21 08:48:23 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/22 11:39:53 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  */
 public class NackaCommuneHighSchoolPlacementReportModel extends ReportModel {
 
@@ -54,8 +54,14 @@ public class NackaCommuneHighSchoolPlacementReportModel extends ReportModel {
 	 */
 	public NackaCommuneHighSchoolPlacementReportModel(ReportBusiness reportBusiness) {
 		super(reportBusiness);
+	}
+	
+	/**
+	 * @see se.idega.idegaweb.commune.school.report.business.ReportModel#initReportSize()
+	 */
+	protected void initReportSize() {
 		try {
-			Collection studyPaths = reportBusiness.getAllStudyPaths();
+			Collection studyPaths = getReportBusiness().getAllStudyPaths();
 			int rowSize = 0;
 			rowSize += studyPaths.size() + 2; 
 			setReportSize(rowSize, COLUMN_SIZE);

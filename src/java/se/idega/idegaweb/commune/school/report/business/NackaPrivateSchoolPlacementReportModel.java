@@ -1,5 +1,5 @@
 /*
- * $Id: NackaPrivateSchoolPlacementReportModel.java,v 1.3 2004/01/20 16:02:53 anders Exp $
+ * $Id: NackaPrivateSchoolPlacementReportModel.java,v 1.4 2004/01/22 11:39:54 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -19,10 +19,10 @@ import com.idega.block.school.data.SchoolArea;
 /** 
  * Report model for placements in Nacka private elementary schools.
  * <p>
- * Last modified: $Date: 2004/01/20 16:02:53 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/22 11:39:54 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class NackaPrivateSchoolPlacementReportModel extends ReportModel {
 
@@ -50,13 +50,19 @@ public class NackaPrivateSchoolPlacementReportModel extends ReportModel {
 	 */
 	public NackaPrivateSchoolPlacementReportModel(ReportBusiness reportBusiness) {
 		super(reportBusiness);
+	}
+	
+	/**
+	 * @see se.idega.idegaweb.commune.school.report.business.ReportModel#initReportSize()
+	 */
+	protected void initReportSize() {
 		try {
-			Collection areas = reportBusiness.getPrivateSchoolAreas();
+			Collection areas = getReportBusiness().getPrivateSchoolAreas();
 			int rowSize = 0;
 			Iterator iter = areas.iterator();
 			while (iter.hasNext()) {
 				SchoolArea area = (SchoolArea) iter.next();
-				Collection schools = reportBusiness.getPrivateSchools(area);
+				Collection schools = getReportBusiness().getPrivateSchools(area);
 				rowSize += schools.size() + 1; // Sum rows
 			}
 			rowSize += 1; // Total row

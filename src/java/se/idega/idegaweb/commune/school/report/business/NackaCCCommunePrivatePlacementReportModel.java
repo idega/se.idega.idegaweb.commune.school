@@ -1,5 +1,5 @@
 /*
- * $Id: NackaCCCommunePrivatePlacementReportModel.java,v 1.6 2004/01/22 08:45:29 anders Exp $
+ * $Id: NackaCCCommunePrivatePlacementReportModel.java,v 1.7 2004/01/22 11:39:53 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -14,10 +14,10 @@ import java.rmi.RemoteException;
 /** 
  * Report model for child care placements in Nacka for commune and private providers.
  * <p>
- * Last modified: $Date: 2004/01/22 08:45:29 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/22 11:39:53 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  */
 public class NackaCCCommunePrivatePlacementReportModel extends ReportModel {
 
@@ -54,6 +54,12 @@ public class NackaCCCommunePrivatePlacementReportModel extends ReportModel {
 	 */
 	public NackaCCCommunePrivatePlacementReportModel(ReportBusiness reportBusiness) {
 		super(reportBusiness);
+	}
+	
+	/**
+	 * @see se.idega.idegaweb.commune.school.report.business.ReportModel#initReportSize()
+	 */
+	protected void initReportSize() {
 		setReportSize(ROW_SIZE, COLUMN_SIZE);
 	}
 	

@@ -1,5 +1,5 @@
 /*
- * $Id: ReportModel.java,v 1.19 2004/01/21 16:01:13 anders Exp $
+ * $Id: ReportModel.java,v 1.20 2004/01/22 11:39:54 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -21,10 +21,10 @@ import com.idega.util.database.ConnectionBroker;
  * This abstract class holds cell and header values for school statistics reports.
  * Subclasses implements methods for generating report data and cell value calculations.
  * <p>
- * Last modified: $Date: 2004/01/21 16:01:13 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/22 11:39:54 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.19 $
+ * @version $Revision: 1.20 $
  */
 public abstract class ReportModel {
 
@@ -146,6 +146,7 @@ public abstract class ReportModel {
 	 */
 	private void init() {
 		if (_cells == null) {
+			initReportSize();
 			_cells = new Cell[_rowSize][_columnSize];
 			_rowHeaders = buildRowHeaders();
 			_columnHeaders = buildColumnHeaders();
@@ -255,6 +256,11 @@ public abstract class ReportModel {
 			ConnectionBroker.freeConnection(_connection);
 		}
 	}
+	
+	/**
+	 * Initializes the report size (rows, columns). 
+	 */
+	abstract protected void initReportSize();
 	
 	/**
 	 * Builds the report model row headers. 

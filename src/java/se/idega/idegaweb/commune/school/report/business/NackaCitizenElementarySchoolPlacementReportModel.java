@@ -1,5 +1,5 @@
 /*
- * $Id: NackaCitizenElementarySchoolPlacementReportModel.java,v 1.5 2004/01/15 10:51:57 anders Exp $
+ * $Id: NackaCitizenElementarySchoolPlacementReportModel.java,v 1.6 2004/01/22 11:39:54 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -14,10 +14,10 @@ import java.rmi.RemoteException;
 /** 
  * Report model for Nacka citizen placement for elementary schools.
  * <p>
- * Last modified: $Date: 2004/01/15 10:51:57 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/22 11:39:54 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
 public class NackaCitizenElementarySchoolPlacementReportModel extends ReportModel {
 
@@ -63,7 +63,14 @@ public class NackaCitizenElementarySchoolPlacementReportModel extends ReportMode
 	 * @param reportBusiness the report business instance for calculating cell values
 	 */
 	public NackaCitizenElementarySchoolPlacementReportModel(ReportBusiness reportBusiness) {
-		super(ROW_SIZE, COLUMN_SIZE, reportBusiness);
+		super(reportBusiness);
+	}
+	
+	/**
+	 * @see se.idega.idegaweb.commune.school.report.business.ReportModel#initReportSize()
+	 */
+	protected void initReportSize() {
+		setReportSize(ROW_SIZE, COLUMN_SIZE);
 	}
 	
 	/**
