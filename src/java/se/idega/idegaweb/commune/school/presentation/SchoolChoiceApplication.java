@@ -1047,6 +1047,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 			DateInput date = (DateInput) getStyledInterface(new DateInput(prmPlacementDate));
 			//date.setDate(stamp.getDate());
 			date.setEarliestPossibleDate(stamp.getDate(), iwrb.getLocalizedString("school.dates_back_in_time_not_allowed", "You can not choose a date back in time."));
+			date.setAsNotEmpty(iwrb.getLocalizedString("school.dates_back_in_time_not_allowed", "You can not choose a date back in time."));
 			table.setHeight(row++, 5);
 			table.add(getSmallHeader(iwrb.getLocalizedString("school.placement_date", "Placement date") + ":"), 1, row);
 			table.add(date, 3, row);
