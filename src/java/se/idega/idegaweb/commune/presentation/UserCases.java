@@ -39,6 +39,8 @@ public class UserCases extends CommuneBlock {
 	private final static String PARAM_MANAGER_ID = ManagerView.PARAM_MANAGER_ID;
 	private int manager_page_id = -1;
 	private int viewpointPageId = -1;
+	
+	private boolean _showName = true;
 
 	public final static String MYCASES_KEY = "usercases.myCases";
 	public final static String MYCASES_DEFAULT = "Mina ärenden";
@@ -82,9 +84,6 @@ public class UserCases extends CommuneBlock {
 		}
 	}
 
-	public void add(PresentationObject po) {
-	}
-
 	private int parseAction(IWContext iwc) {
 		int action = ACTION_VIEW_CASE_LIST;
 		return action;
@@ -103,19 +102,26 @@ public class UserCases extends CommuneBlock {
 				Table table = new Table();
 				table.setCellpadding(getCellpadding());
 				table.setCellspacing(getCellspacing());
-				table.setColumns(6);
+				table.setColumns(5);
+				if (isShowName())
+					table.setColumns(6);
+				else
+					table.setColumns(5);
+					
 				int row = 1;
+				int column = 1;
 
 				Form form = new Form();
 				form.add(table);
 
 				table.setRowColor(row, getHeaderColor());
-				table.add(getSmallHeader(localize(CASENUMBER_KEY, CASENUMBER_DEFAULT)), 1, row);
-				table.add(getSmallHeader(localize(CONCERNING_KEY, CONCERNING_DEFAULT)), 2, row);
-				table.add(getSmallHeader(localize(NAME_KEY, NAME_DEFAULT)), 3, row);
-				table.add(getSmallHeader(localize(DATE_KEY, DATE_DEFAULT)), 4, row);
-				table.add(getSmallHeader(localize(MANAGER_KEY, MANAGER_DEFAULT)), 5, row);
-				table.add(getSmallHeader(localize(STATUS_KEY, STATUS_DEFAULT)), 6, row++);
+				table.add(getSmallHeader(localize(CASENUMBER_KEY, CASENUMBER_DEFAULT)), column++, row);
+				table.add(getSmallHeader(localize(CONCERNING_KEY, CONCERNING_DEFAULT)), column++, row);
+				if (isShowName())
+					table.add(getSmallHeader(localize(NAME_KEY, NAME_DEFAULT)), column++, row);
+				table.add(getSmallHeader(localize(DATE_KEY, DATE_DEFAULT)), column++, row);
+				table.add(getSmallHeader(localize(MANAGER_KEY, MANAGER_DEFAULT)), column++, row);
+				table.add(getSmallHeader(localize(STATUS_KEY, STATUS_DEFAULT)), column, row++);
 
 				Collection messages = getCaseBusiness(iwc).getAllCasesForUser(iwc.getCurrentUser());
 				boolean isRead = false;
@@ -225,12 +231,15 @@ public class UserCases extends CommuneBlock {
 		else
 			messageList.setRowColor(row, getZebraColor2());
 		
-		messageList.add(caseNumber, 1, row);
-		messageList.add(caseType, 2, row);
-		messageList.add(caseOwnerName, 3, row);
-		messageList.add(date, 4, row);
-		messageList.add(manager, 5, row);
-		messageList.add(status, 6, row);
+		int column = 1;
+		
+		messageList.add(caseNumber, column++, row);
+		messageList.add(caseType, column++, row);
+		if (isShowName())
+			messageList.add(caseOwnerName, column++, row);
+		messageList.add(date, column++, row);
+		messageList.add(manager, column++, row);
+		messageList.add(status, column++, row);
 	}
 
 	private void addViewpointToMessageList(final IWContext iwc, final Viewpoint viewpoint, final Table messageList, int row) throws Exception {
@@ -304,4 +313,20 @@ public class UserCases extends CommuneBlock {
 	public int getManagerPage() {
 		return manager_page_id;
 	}
+	/**
+	 * Sets the showName.
+	 * @param showName The showName to set
+	 */
+	public void setShowName(boolean showName) {
+		_showName = showName;
+	}
+
+	/**
+	 * Returns the showName.
+	 * @return boolean
+	 */
+	public boolean isShowName() {
+		return _showName;
+	}
+
 }
