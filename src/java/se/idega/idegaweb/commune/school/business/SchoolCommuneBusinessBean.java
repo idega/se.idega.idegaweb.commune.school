@@ -140,6 +140,22 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 		return coll;		
 	}
 	
+	public Map getUserAddressesMapFromChoices(IDOQuery query) throws RemoteException {
+		HashMap coll = new HashMap();
+			
+		Address address;
+		Collection students = getCommuneUserBusiness().getUsersMainAddresses(query);
+		if (students != null) {
+			Iterator iterator = students.iterator();
+			while (iterator.hasNext()) {
+				address = (Address) iterator.next();
+				coll.put((Integer)address.getPrimaryKey(), address);
+			}
+		}
+		
+		return coll;		
+	}
+	
 	public Map getUserPhoneMapFromChoicesUserIdPK(Collection choices) throws RemoteException {
 		HashMap coll = new HashMap();
 		if (!choices.isEmpty()) {

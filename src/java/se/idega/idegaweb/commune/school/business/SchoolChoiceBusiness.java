@@ -17,8 +17,8 @@ public interface SchoolChoiceBusiness extends com.idega.business.IBOService,com.
  public se.idega.idegaweb.commune.school.data.SchoolChoice findByStudentAndSchoolAndSeason(int p0,int p1,int p2)throws java.rmi.RemoteException, java.rmi.RemoteException;
  public java.util.Collection findByStudentAndSeason(int p0,int p1)throws java.rmi.RemoteException, java.rmi.RemoteException;
  public java.util.Collection findBySchoolAndFreeTime(int p0,int p1,boolean p2)throws java.rmi.RemoteException, java.rmi.RemoteException;
- public java.util.Collection getApplicantsForSchool(int p0,int p1,int p2,int[] p3,java.lang.String[] p4,java.lang.String p5)throws java.rmi.RemoteException, java.rmi.RemoteException;
- public java.util.Collection getApplicantsForSchool(int p0,int p1,int p2,java.lang.String[] p3,java.lang.String p4)throws java.rmi.RemoteException, java.rmi.RemoteException;
+ public java.util.Collection getApplicantsForSchool(int p0,int p1,int p2,int[] p3,java.lang.String[] p4,java.lang.String p5,int p6, int numberOfEntries, int startingEntry)throws java.rmi.RemoteException, java.rmi.RemoteException;
+ public java.util.Collection getApplicantsForSchool(int p0,int p1,int p2,java.lang.String[] p3,java.lang.String p4, int p5, int numberOfEntries, int startingEntry)throws java.rmi.RemoteException, java.rmi.RemoteException;
  public java.util.Collection getApplicantsForSchoolAndSeasonAndGrade(int p0,int p1,int p2)throws java.rmi.RemoteException, java.rmi.RemoteException;
  public java.lang.String getBundleIdentifier() throws java.rmi.RemoteException;
  public se.idega.idegaweb.commune.school.data.CurrentSchoolSeasonHome getCurrentSchoolSeasonHome()throws java.rmi.RemoteException, java.rmi.RemoteException;
@@ -69,6 +69,7 @@ public interface SchoolChoiceBusiness extends com.idega.business.IBOService,com.
     int generateReminderLetter (int reminderId,
                                 SchoolChoiceReminderReceiver [] receivers)
         throws RemoteException;
-	public com.idega.data.IDOQuery getApplicantsForSchoolQuery(int schoolID,int seasonID,int grade, String[] validStatuses, String searchString) throws RemoteException;
-	public com.idega.data.IDOQuery getApplicantsForSchoolQuery(int schoolID,int seasonID,int grade, int[] choiceOrder, String[] validStatuses, String searchString) throws RemoteException;
+	public com.idega.data.IDOQuery getApplicantsForSchoolQuery(int schoolID,int seasonID,int grade, String[] validStatuses, String searchString, int orderBy) throws RemoteException;
+	public com.idega.data.IDOQuery getApplicantsForSchoolQuery(int schoolID,int seasonID,int grade, int[] choiceOrder, String[] validStatuses, String searchString, int orderBy) throws RemoteException;
+	public int getNumberOfApplicantsForSchool(int schoolID,int seasonID,int grade, int[] choiceOrder, String[] validStatuses, String searchString) throws RemoteException;
 }

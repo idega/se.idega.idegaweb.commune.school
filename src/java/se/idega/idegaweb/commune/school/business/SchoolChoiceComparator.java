@@ -34,18 +34,20 @@ public class SchoolChoiceComparator implements Comparator {
   private Locale locale;
   private UserBusiness business;
   private Map studentMap;
+  private Map addressMap;
   private Collator collator;
   private int sortBy = NAME_SORT;
   
-  public SchoolChoiceComparator(Locale locale, UserBusiness business, Map studentMap) {
-  	this(NAME_SORT, locale, business, studentMap);
+  public SchoolChoiceComparator(Locale locale, UserBusiness business, Map studentMap, Map addressMap) {
+  	this(NAME_SORT, locale, business, studentMap, addressMap);
   }
   
-  public SchoolChoiceComparator(int sortBy, Locale locale, UserBusiness business, Map studentMap) {
+  public SchoolChoiceComparator(int sortBy, Locale locale, UserBusiness business, Map studentMap, Map addressMap) {
   	this.sortBy = sortBy;
   	this.locale = locale;
   	this.business = business;
   	this.studentMap = studentMap;
+  	this.addressMap = addressMap;
   }
   
 	/**
@@ -136,9 +138,17 @@ public class SchoolChoiceComparator implements Comparator {
 	}	
 
 	public int addressSort(Object o1, Object o2) throws RemoteException {
-		Address p1 = business.getUserAddress1(((SchoolChoice)o1).getChildId());
-		Address p2 = business.getUserAddress1(((SchoolChoice)o2).getChildId());
+		Address p1 = (Address) addressMap.get(new Integer((((SchoolChoice)o1).getChildId())));
+		Address p2 = (Address) addressMap.get(new Integer((((SchoolChoice)o2).getChildId())));
 		
+		if (p1 == null || p2 == null) {
+			if (p1 == null && p2 != null)
+				return 1;
+			else if (p1 != null && p2 == null)
+				return -1;
+			return 0;
+		}
+			
 		String one = p1.getStreetAddress()!=null?p1.getStreetAddress():"";
 		String two = p2.getStreetAddress()!=null?p2.getStreetAddress():"";
 		int result = collator.compare(one,two);

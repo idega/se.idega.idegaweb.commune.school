@@ -83,9 +83,9 @@ public java.util.Collection findByChildId(int p0)throws javax.ejb.FinderExceptio
 	return this.getEntityCollectionForPrimaryKeys(ids);
 }
 
-public java.util.Collection findChoices(int p0,int p1,int p2,int[] p3,java.lang.String[] p4,java.lang.String p5)throws javax.ejb.FinderException,java.rmi.RemoteException{
+public java.util.Collection findChoices(int p0,int p1,int p2,int[] p3,java.lang.String[] p4,java.lang.String p5,int p6,int p7,int p8)throws javax.ejb.FinderException,java.rmi.RemoteException{
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-	java.util.Collection ids = ((SchoolChoiceBMPBean)entity).ejbFindChoices(p0,p1,p2,p3,p4,p5);
+	java.util.Collection ids = ((SchoolChoiceBMPBean)entity).ejbFindChoices(p0,p1,p2,p3,p4,p5,p6,p7,p8);
 	this.idoCheckInPooledEntity(entity);
 	return this.getEntityCollectionForPrimaryKeys(ids);
 }
@@ -97,9 +97,9 @@ public java.util.Collection findByChildId(int p0,int p1)throws javax.ejb.FinderE
 	return this.getEntityCollectionForPrimaryKeys(ids);
 }
 
-public java.util.Collection findChoices(int p0,int p1,int p2,java.lang.String[] p3,java.lang.String p4)throws javax.ejb.FinderException,java.rmi.RemoteException{
+public java.util.Collection findChoices(int p0,int p1,int p2,java.lang.String[] p3,java.lang.String p4,int p5,int p6,int p7)throws javax.ejb.FinderException,java.rmi.RemoteException{
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-	java.util.Collection ids = ((SchoolChoiceBMPBean)entity).ejbFindChoices(p0,p1,p2,p3,p4);
+	java.util.Collection ids = ((SchoolChoiceBMPBean)entity).ejbFindChoices(p0,p1,p2,p3,p4,p5,p6,p7);
 	this.idoCheckInPooledEntity(entity);
 	return this.getEntityCollectionForPrimaryKeys(ids);
 }
@@ -151,9 +151,9 @@ public int getNumberOfChoices(int p0,int p1)throws com.idega.data.IDOException{
 	return theReturn;
 }
 
-public com.idega.data.IDOQuery getIDOQuery( int schoolID, int seasonID, int gradeYear, int[] choiceOrder, String[] validStatuses, String searchStringForUser, boolean selectCount, boolean selectOnlyChildIDs) {
+public com.idega.data.IDOQuery getIDOQuery( int schoolID, int seasonID, int gradeYear, int[] choiceOrder, String[] validStatuses, String searchStringForUser, boolean selectCount, boolean selectOnlyChildIDs, int orderBy) {
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-	return ((SchoolChoiceBMPBean)entity).getIDOQuery(schoolID, seasonID, gradeYear, choiceOrder, validStatuses, searchStringForUser, selectCount, selectOnlyChildIDs);
+	return ((SchoolChoiceBMPBean)entity).getIDOQuery(schoolID, seasonID, gradeYear, choiceOrder, validStatuses, searchStringForUser, selectCount, selectOnlyChildIDs, orderBy);
 }
 
 }

@@ -67,6 +67,11 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
   public final static String CASE_STATUS_GROUPED     = "GROU";
   public final static String CASE_STATUS_MOVED       = "FLYT";
   
+	public static final int NAME_SORT = 1;
+	public static final int GENDER_SORT = 2;
+	public static final int PERSONAL_ID_SORT = 4;
+	public static final int LANGUAGE_SORT = 5;
+
   private static final String[] CASE_STATUS_KEYS = {"UBEH","TYST","PREL","PLAC","GROU","FLYT"};
   private static final String[] CASE_STATUS_DESCRIPTIONS = {"Case open","Sleep","Preliminary","Placed","Grouped","Moved"};
 
@@ -356,7 +361,8 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
     sql.append(",").append(CaseBMPBean.TABLE_NAME).append(" c ");
     sql.append(" where s.COMM_SCH_CHOICE_ID = c.PROC_CASE_ID ");
     sql.append(" and c.CASE_CODE = '").append(CASECODE).append("'");
-    sql.append(" and s.SCHOOL_ID = ").append(schoolID);
+		if (schoolID != -1)
+    	sql.append(" and s.SCHOOL_ID = ").append(schoolID);
     sql.append(" and s.").append(SCHOOL_SEASON).append(" = ").append(schoolSeasonID);
     sql.append(" and c.CASE_STATUS = '").append(caseStatus).append("'");
     
@@ -369,7 +375,8 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
     sql.append(",").append(CaseBMPBean.TABLE_NAME).append(" c ");
     sql.append(" where s.COMM_SCH_CHOICE_ID = c.PROC_CASE_ID ");
     sql.append(" and c.CASE_CODE = '").append(CASECODE).append("'");
-    sql.append(" and s.SCHOOL_ID = ").append(schoolID);
+    if (schoolID != -1)
+    	sql.append(" and s.SCHOOL_ID = ").append(schoolID);
     sql.append(" and s.").append(SCHOOL_SEASON).append(" = ").append(schoolSeasonID);
     sql.append(" and s.").append(GRADE).append(" = ").append(grade);
     sql.append(" and c.CASE_STATUS = '").append(caseStatus).append("'");
@@ -429,8 +436,8 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 		return this.idoFindIDsBySQL("select * from "+getEntityName());	
 	}
 
-  public Collection ejbFindChoices(int schoolID, int seasonID, int gradeYear, String[] validStatuses, String searchStringForUser) throws FinderException, RemoteException {
-		return ejbFindChoices(schoolID, seasonID, gradeYear, new int[]{}, validStatuses, searchStringForUser);
+  public Collection ejbFindChoices(int schoolID, int seasonID, int gradeYear, String[] validStatuses, String searchStringForUser, int orderBy, int numberOfEntries, int startingEntry) throws FinderException, RemoteException {
+		return ejbFindChoices(schoolID, seasonID, gradeYear, new int[]{}, validStatuses, searchStringForUser, orderBy, numberOfEntries, startingEntry);
   }
 
 	public int  ejbHomeGetCount(String[] validStatuses) throws IDOException{
@@ -464,16 +471,16 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
   	
   }
 	public int ejbHomeGetCount(int schoolID, int seasonID, int gradeYear, int[] choiceOrder ,String[] validStatuses, String searchStringForUser) throws FinderException, RemoteException, IDOException {
-		IDOQuery query = getIDOQuery(schoolID, seasonID, gradeYear, choiceOrder, validStatuses, searchStringForUser, true, false);
+		IDOQuery query = getIDOQuery(schoolID, seasonID, gradeYear, choiceOrder, validStatuses, searchStringForUser, true, false, -1);
   	return this.idoGetNumberOfRecords(query);
 	}
 
-  public Collection ejbFindChoices(int schoolID, int seasonID, int gradeYear, int[] choiceOrder ,String[] validStatuses, String searchStringForUser) throws FinderException, RemoteException {
-		IDOQuery query = getIDOQuery(schoolID, seasonID, gradeYear, choiceOrder, validStatuses, searchStringForUser, false, false);
-  	return this.idoFindPKsByQuery(query);
+  public Collection ejbFindChoices(int schoolID, int seasonID, int gradeYear, int[] choiceOrder ,String[] validStatuses, String searchStringForUser, int orderBy, int numberOfEntries, int startingEntry) throws FinderException, RemoteException {
+		IDOQuery query = getIDOQuery(schoolID, seasonID, gradeYear, choiceOrder, validStatuses, searchStringForUser, false, false, orderBy);
+  	return this.idoFindPKsByQuery(query, numberOfEntries, startingEntry);
   }
   
-	public IDOQuery getIDOQuery( int schoolID, int seasonID, int gradeYear, int[] choiceOrder, String[] validStatuses, String searchStringForUser, boolean selectCount, boolean selectOnlyChildIDs) {
+	public IDOQuery getIDOQuery( int schoolID, int seasonID, int gradeYear, int[] choiceOrder, String[] validStatuses, String searchStringForUser, boolean selectCount, boolean selectOnlyChildIDs, int orderBy) {
 		boolean search = searchStringForUser != null && !searchStringForUser.equals("");
 		boolean statuses = validStatuses != null && validStatuses.length > 0;
 		
@@ -491,29 +498,26 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 		boolean needAnd = false;
 		
 		if (selectOnlyChildIDs) {
-			query.appendSelect().append("csc.child_id").appendFrom().append(getEntityName()).append(" csc");
+			query.appendSelect().append("csc.child_id").appendFrom();
 		}
 		else {
 			if ( selectCount ) {
-				query.appendSelectCountFrom().append(getEntityName()).append(" csc");
+				query.appendSelectCountFrom();
 			}else {
-				query.appendSelect().append("*").appendFrom().append(getEntityName()).append(" csc");
+				query.appendSelect().append("*").appendFrom();
 			}
 		}
 		
-		if (search) {
-			query.append(", ").append(UserBMPBean.TABLE_NAME);
-		}
-		if (statuses) {
-			query.append(", ").append(CaseBMPBean.TABLE_NAME).append(" pc");
-		}
+		query.append(getEntityName()).append(" csc");
+		query.append(", ").append(UserBMPBean.TABLE_NAME).append(" u");
+		query.append(", ").append(CaseBMPBean.TABLE_NAME).append(" pc");
 		
 		query.appendWhere();
+		query.append("u.").append(UserBMPBean.getColumnNameUserID()).appendEqualSign().append("csc.").append(CHILD);
+		query.appendAnd().append("csc.").append(getIDColumnName()).appendEqualSign().append("pc.").append(CaseBMPBean.TABLE_NAME+"_ID");
 		
 		if (statuses) {
-			query.append("csc.").append(getIDColumnName())
-			.appendEqualSign().append("pc.").append(CaseBMPBean.TABLE_NAME+"_ID")
-			.appendAnd().append("pc.").append(CaseBMPBean.COLUMN_CASE_STATUS).appendIn();
+			query.appendAnd().append("pc.").append(CaseBMPBean.COLUMN_CASE_STATUS).appendIn();
 			query.appendWithinParentheses(idoQuery().appendCommaDelimitedWithinSingleQuotes(validStatuses));
 			query.appendAnd().append("pc.").append(CaseBMPBean.COLUMN_CASE_CODE).appendEqualSign().appendWithinSingleQuotes(this.CASECODE);
 			needAnd = true;
@@ -523,16 +527,13 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 			if (needAnd) {
 				query.appendAnd();
 			}
-			query.append("csc.").append(CHILD)
-			.appendEqualSign().append(UserBMPBean.TABLE_NAME).append(".").append(UserBMPBean.getColumnNameUserID())
-			.appendAnd().append("(");
-			query.append(UserBMPBean.TABLE_NAME).append(".").append(UserBMPBean.getColumnNameFirstName())
+			query.append("(").append("u.").append(UserBMPBean.getColumnNameFirstName())
 			.append(" like '%").append(searchStringForUser).append("%'")
-			.appendOr().append(UserBMPBean.TABLE_NAME).append(".").append(UserBMPBean.getColumnNameLastName())
+			.appendOr().append("u.").append(UserBMPBean.getColumnNameLastName())
 			.append(" like '%").append(searchStringForUser).append("%'")
-			.appendOr().append(UserBMPBean.TABLE_NAME).append(".").append(UserBMPBean.getColumnNameMiddleName())
+			.appendOr().append("u.").append(UserBMPBean.getColumnNameMiddleName())
 			.append(" like '%").append(searchStringForUser).append("%'")
-			.appendOr().append(UserBMPBean.TABLE_NAME).append(".").append(UserBMPBean.getColumnNamePersonalID())
+			.appendOr().append("u.").append(UserBMPBean.getColumnNamePersonalID())
 			.append(" like '%").append(searchStringForUser).append("%'");
 			query.append(")");
 			needAnd = true;;
@@ -576,6 +577,18 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 			query.append(")");
 			needAnd = true;
 		}
+		if (orderBy != -1) {
+			if (orderBy == NAME_SORT)
+				query.appendOrderBy("u.last_name,u.first_name,u.middle_name");
+			else if (orderBy == GENDER_SORT)
+				query.appendOrderBy("u.ic_gender_id,u.last_name,u.first_name,u.middle_name");
+			else if (orderBy == PERSONAL_ID_SORT)
+				query.appendOrderBy("u.personal_id,u.last_name,u.first_name,u.middle_name");
+			else if (orderBy == LANGUAGE_SORT)
+				query.appendOrderBy("csc.language_choice,u.last_name,u.first_name,u.middle_name");
+		}
+		
+		//System.out.println(query.toString());
 		return query;
 	}
   

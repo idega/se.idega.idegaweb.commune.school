@@ -94,7 +94,7 @@ public class SchoolFreetimeWriter implements MediaWritable {
 
 				List ordered = new Vector(choices);
 		
-				Collections.sort(ordered,new SchoolChoiceComparator(SchoolChoiceComparator.NAME_SORT,null,null,students));
+				Collections.sort(ordered,new SchoolChoiceComparator(SchoolChoiceComparator.NAME_SORT,null,null,students,addresses));
 		
 				String type = req.getParameter(prmPrintType);
 				if (type.equals(PDF)) {

@@ -697,13 +697,13 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	}
 	
 
-	public Collection getApplicantsForSchool(int schoolID,int seasonID,int grade, String[] validStatuses, String searchString) throws RemoteException {
-		return getApplicantsForSchool(schoolID, seasonID, grade, null, validStatuses, searchString);
+	public Collection getApplicantsForSchool(int schoolID,int seasonID,int grade, String[] validStatuses, String searchString, int orderBy, int numberOfEntries, int startingEntry) throws RemoteException {
+		return getApplicantsForSchool(schoolID, seasonID, grade, null, validStatuses, searchString, orderBy, numberOfEntries, startingEntry);
 	}
 	
-	public Collection getApplicantsForSchool(int schoolID,int seasonID,int grade, int[] choiceOrder, String[] validStatuses, String searchString) throws RemoteException {
+	public Collection getApplicantsForSchool(int schoolID,int seasonID,int grade, int[] choiceOrder, String[] validStatuses, String searchString, int orderBy, int numberOfEntries, int startingEntry) throws RemoteException {
 		try {
-			return getSchoolChoiceHome().findChoices(schoolID, seasonID, grade, choiceOrder, validStatuses, searchString);	
+			return getSchoolChoiceHome().findChoices(schoolID, seasonID, grade, choiceOrder, validStatuses, searchString, orderBy, numberOfEntries, startingEntry);	
 		}
 		catch (FinderException fe) {
 			fe.printStackTrace(System.err);
@@ -712,12 +712,27 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	}
 
 
-	public IDOQuery getApplicantsForSchoolQuery(int schoolID,int seasonID,int grade, String[] validStatuses, String searchString) throws RemoteException {
-		return getApplicantsForSchoolQuery(schoolID, seasonID, grade, null, validStatuses, searchString);
+	public int getNumberOfApplicantsForSchool(int schoolID,int seasonID,int grade, int[] choiceOrder, String[] validStatuses, String searchString) throws RemoteException {
+		try {
+			return getSchoolChoiceHome().getCount(schoolID, seasonID, grade, choiceOrder, validStatuses, searchString);	
+		}
+		catch (IDOException ie) {
+			ie.printStackTrace(System.err);
+			return 0;
+		}
+		catch (FinderException fe) {
+			fe.printStackTrace(System.err);
+			return 0;
+		}
+	}
+
+
+	public IDOQuery getApplicantsForSchoolQuery(int schoolID,int seasonID,int grade, String[] validStatuses, String searchString, int orderBy) throws RemoteException {
+		return getApplicantsForSchoolQuery(schoolID, seasonID, grade, null, validStatuses, searchString, orderBy);
 	}
 	
-	public IDOQuery getApplicantsForSchoolQuery(int schoolID,int seasonID,int grade, int[] choiceOrder, String[] validStatuses, String searchString) throws RemoteException {
-		return getSchoolChoiceHome().getIDOQuery(schoolID, seasonID, grade, choiceOrder, validStatuses, searchString, false, true);	
+	public IDOQuery getApplicantsForSchoolQuery(int schoolID,int seasonID,int grade, int[] choiceOrder, String[] validStatuses, String searchString, int orderBy) throws RemoteException {
+		return getSchoolChoiceHome().getIDOQuery(schoolID, seasonID, grade, choiceOrder, validStatuses, searchString, false, true, orderBy);	
 	}
 
 

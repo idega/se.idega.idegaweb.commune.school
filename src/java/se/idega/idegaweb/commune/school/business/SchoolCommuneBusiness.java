@@ -38,4 +38,5 @@ public interface SchoolCommuneBusiness extends com.idega.business.IBOService,com
  public void resetSchoolClassStatus(int schoolClassID) throws java.rmi.RemoteException;
  public com.idega.block.school.data.SchoolYear getNextSchoolYear(com.idega.block.school.data.SchoolYear schoolYear) throws java.rmi.RemoteException;
  public java.util.Map getUserMapFromChoices(java.util.Collection choices) throws java.rmi.RemoteException;
+ public java.util.Map getUserAddressesMapFromChoices(com.idega.data.IDOQuery query) throws java.rmi.RemoteException;
 }
