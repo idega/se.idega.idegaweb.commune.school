@@ -20,10 +20,10 @@ import se.idega.idegaweb.commune.school.data.SchoolChoiceReminder;
  * and entity ejb classes in {@link se.idega.idegaweb.commune.school.data}.
  * <p>
  * <p>
- * Last modified: $Date: 2003/01/08 12:43:31 $ by $Author: staffan $
+ * Last modified: $Date: 2003/01/08 13:12:22 $ by $Author: staffan $
  *
  * @author <a href="http://www.staffannoteberg.com">Staffan Nöteberg</a>
- * @version $Revision: 1.18 $
+ * @version $Revision: 1.19 $
  * @see javax.ejb
  */
 public class SchoolChoiceReminderView extends CommuneBlock {
@@ -34,6 +34,8 @@ public class SchoolChoiceReminderView extends CommuneBlock {
     private final static String CASE_ID_DEFAULT = "Nr.";
     public final static String CASE_ID_KEY = PREFIX + "case_id";
     private final static String CONFIRM_ENTER_KEY = PREFIX + "confirm_enter_reminder";
+    private final static String CONFIRM_DELETE_KEY = PREFIX + "confirm_delete_reminder";
+    private final static String CONFIRM_DELETE_DEFAULT = "Påminnelsen är nu avaktiverad";
     private final static String GOBACKTOMYPAGE_KEY = PREFIX + "goBackToMyPage";
     private static final String ADDRESS_DEFAULT = "Adress";
     private static final String ADDRESS_KEY = PREFIX + "address";
@@ -69,7 +71,7 @@ public class SchoolChoiceReminderView extends CommuneBlock {
     private static final String STUDENT_LIST_KEY = PREFIX + "student_list";
     private static final String STUDENT_NAME_DEFAULT = "Elev";
     private static final String STUDENT_NAME_KEY = PREFIX + "student_name";
-    private static final String DELETE_DEFAULT = "Radera";
+    private static final String DELETE_DEFAULT = "Ta bort";
     private static final String DELETE_KEY = PREFIX + "delete";
     private static final String CANCEL_DEFAULT = "Avbryt";
     private static final String CANCEL_KEY = PREFIX + "cancel";
@@ -93,6 +95,8 @@ public class SchoolChoiceReminderView extends CommuneBlock {
             showDetails (iwc);
         } else if (action != null && action.equals (GENERATE_LETTER_KEY)) {
             generateLetter (iwc);
+        } else if (action != null && action.equals (DELETE_KEY)) {
+            deleteReminder (iwc);
         } else {
             showAllReminders (iwc);
             showCreateReminderForm (iwc);
@@ -249,6 +253,30 @@ public class SchoolChoiceReminderView extends CommuneBlock {
 		final Text text1
                 = new Text (getLocalizedString (CONFIRM_ENTER_KEY,
                                                 CONFIRM_ENTER_DEFAULT));
+		text1.setWidth (Table.HUNDRED_PERCENT);
+		final Table table = new Table ();
+		int row = 1;
+		table.setWidth (getWidth ());
+		table.setCellspacing (0);
+		table.setCellpadding (0);
+		table.add (text1, 1, row++);
+		table.setHeight (row++, 12);
+		table.add (getUserHomePageLink (iwc), 1, row++);
+		add (table);
+    }
+
+    private void deleteReminder (final IWContext iwc) throws RemoteException,
+                                                             FinderException {
+		final SchoolChoiceBusiness business = getSchoolChoiceBusiness (iwc);
+        final int reminderId = Integer.parseInt (iwc.getParameter
+                                                 (CASE_ID_KEY));
+        final SchoolChoiceReminder  reminder
+                = business .findSchoolChoiceReminder (reminderId);
+        reminder.setCaseStatus (business.getCaseStatusInactive ());
+        reminder.store ();
+		final Text text1
+                = new Text (getLocalizedString (CONFIRM_DELETE_KEY,
+                                                CONFIRM_DELETE_DEFAULT));
 		text1.setWidth (Table.HUNDRED_PERCENT);
 		final Table table = new Table ();
 		int row = 1;

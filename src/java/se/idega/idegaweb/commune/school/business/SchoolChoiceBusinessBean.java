@@ -20,6 +20,8 @@ import com.idega.block.process.data.Case;
 import com.idega.block.process.data.CaseStatus;
 import com.idega.block.school.business.SchoolBusiness;
 import com.idega.block.school.data.School;
+import com.idega.block.school.data.SchoolClassMember;
+import com.idega.block.school.data.SchoolClassMemberHome;
 import com.idega.block.school.data.SchoolHome;
 import com.idega.block.school.data.SchoolSeason;
 import com.idega.block.school.data.SchoolSeasonHome;
@@ -72,6 +74,11 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	public SchoolChoiceHome getSchoolChoiceHome() throws java.rmi.RemoteException {
 		return (SchoolChoiceHome) this.getIDOHome(SchoolChoice.class);
 	}
+
+	public SchoolClassMemberHome getSchoolClassMemberHome () throws RemoteException {
+		return (SchoolClassMemberHome) this.getIDOHome (SchoolClassMember.class);
+	}
+
 	public CurrentSchoolSeasonHome getCurrentSchoolSeasonHome() throws java.rmi.RemoteException {
 		return (CurrentSchoolSeasonHome) this.getIDOHome(CurrentSchoolSeason.class);
 	}
@@ -833,7 +840,24 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
         findAllStudentsThatMustDoSchoolChoice ()
         throws RemoteException, FinderException {
         // this is a fake code - just to get some students - must be replaced!
+        final long start = Calendar.getInstance ().getTimeInMillis ();
+
+        /*
+        final Set ids = findStudentsInFinalClassesThatMustDoSchoolChoice ();
+        System.err.println ((Calendar.getInstance ().getTimeInMillis () - start)
+                            + ": " + ids.toString () + " (" + ids.size () + ")");
+        final Set allreadyChosenIds
+                = findStudentIdsWhoChosedForCurrentSeason ();
+        System.err.println ((Calendar.getInstance ().getTimeInMillis () - start)
+                            + ": " + allreadyChosenIds.toString ());
+        ids.removeAll (allreadyChosenIds);
+        System.err.println ((Calendar.getInstance ().getTimeInMillis () - start)
+                            + ": " + ids.toString () + " (" + ids.size () + ")");
+        */
         final Set ids = findStudentIdsWhoChosedForCurrentSeason ();
+        System.err.println ((Calendar.getInstance ().getTimeInMillis () - start)
+                            + " msec: " + ids.toString () + " (" + ids.size () + ")");
+
         final int idCount = ids.size ();
         final SchoolChoiceReminderReceiver [] receivers
                 = new SchoolChoiceReminderReceiver [idCount];
@@ -845,6 +869,8 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
             receivers [i] = new SchoolChoiceReminderReceiver
                     (familyLogic, userBusiness, id);
         }
+        System.err.println ((Calendar.getInstance ().getTimeInMillis () - start)
+                            + " msec");
         return receivers;
     }
 
@@ -854,10 +880,10 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 
 	private Set findStudentIdsWhoChosedForCurrentSeason ()
         throws RemoteException, FinderException {
-        final Integer currentYearId
+        final Integer currentSeasonId
                 = (Integer) getCurrentSeason ().getPrimaryKey ();
-        final Collection choices
-                = getSchoolChoiceHome().findBySeason(currentYearId.intValue ());
+        final Collection choices = getSchoolChoiceHome().findBySeason
+                (currentSeasonId.intValue ());
         final Set students = new HashSet ();
         for (Iterator i = choices.iterator (); i.hasNext ();) {
             final SchoolChoice choice = (SchoolChoice) i.next ();
@@ -865,4 +891,19 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
         }
         return students;
 	}
- }
+
+    private Set findStudentsInFinalClassesThatMustDoSchoolChoice ()
+        throws RemoteException, FinderException {
+        final Integer currentSeasonId
+                = (Integer) getCurrentSeason ().getPrimaryKey ();
+        final Collection choices
+                = getSchoolClassMemberHome().findAllBySeasonAndMaximumAge
+                (currentSeasonId.intValue (), 15);
+        final Set students = new HashSet ();
+        for (Iterator i = choices.iterator (); i.hasNext ();) {
+            final SchoolClassMember student = (SchoolClassMember) i.next ();
+            students.add (new Integer (student.getClassMemberId ()));
+        }
+        return students;        
+    }
+}
