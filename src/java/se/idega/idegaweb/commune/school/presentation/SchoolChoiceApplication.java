@@ -11,7 +11,6 @@ import java.util.Date;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Vector;
 
 import javax.ejb.FinderException;
 
@@ -180,6 +179,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	
 	private boolean _forwardToCheckPage = true;
 	private int _maxAge;
+	private boolean _useCheckBoxForAfterSchoolCare;
 
 	/**
 	 * @param ongoingSeason
@@ -958,15 +958,22 @@ public class SchoolChoiceApplication extends CommuneBlock {
 			
 			table.mergeCells(1, row, 5, row);
 			//table.setWidth(1, row, Table.HUNDRED_PERCENT);
-			RadioButton rbWantsAfterSchool = new RadioButton(prmAfterschool,Boolean.TRUE.toString());
-			RadioButton rbNotAfterSchool = new RadioButton(prmAfterschool,Boolean.FALSE.toString());
-			rbNotAfterSchool.setMustBeSelected(iwrb.getLocalizedString("school.must_select_after_school_option", "You have to select an after school option"));
-			table.add(rbWantsAfterSchool,1,row);
-			table.add(getSmallHeader(Text.getNonBrakingSpace()+iwrb.getLocalizedString("school.want_after_school_care","I want afterschool care")),1,row++);
-			table.mergeCells(1, row, 5, row);
-			table.add(rbNotAfterSchool,1,row);
-			table.mergeCells(1, row, 5, row);
-			table.add(getSmallHeader(Text.getNonBrakingSpace()+iwrb.getLocalizedString("school.not_want_after_school_care","I do not want afterschool care")),1,row++);
+			if (_useCheckBoxForAfterSchoolCare) {
+				CheckBox wantsAfterSchool = getCheckBox(prmAfterschool, Boolean.TRUE.toString());
+				table.add(wantsAfterSchool,1,row);
+				table.add(getSmallHeader(Text.getNonBrakingSpace()+iwrb.getLocalizedString("school.want_after_school_care","I want afterschool care")),1,row++);
+			}
+			else {
+				RadioButton rbWantsAfterSchool = getRadioButton(prmAfterschool,Boolean.TRUE.toString());
+				RadioButton rbNotAfterSchool = getRadioButton(prmAfterschool,Boolean.FALSE.toString());
+				rbNotAfterSchool.setMustBeSelected(iwrb.getLocalizedString("school.must_select_after_school_option", "You have to select an after school option"));
+				table.add(rbWantsAfterSchool,1,row);
+				table.add(getSmallHeader(Text.getNonBrakingSpace()+iwrb.getLocalizedString("school.want_after_school_care","I want afterschool care")),1,row++);
+				table.mergeCells(1, row, 5, row);
+				table.add(rbNotAfterSchool,1,row);
+				table.mergeCells(1, row, 5, row);
+				table.add(getSmallHeader(Text.getNonBrakingSpace()+iwrb.getLocalizedString("school.not_want_after_school_care","I do not want afterschool care")),1,row++);
+			}
 			table.setHeight(row++, 5);
 			//table.add(chkChildCare, 1, row);
 			//table.add(getSmallHeader(Text.NON_BREAKING_SPACE + iwrb.getLocalizedString("school.child_care_requested", "Interested in after school child care")), 1, row);
@@ -974,14 +981,14 @@ public class SchoolChoiceApplication extends CommuneBlock {
 
 		// School choice message link
 		table.mergeCells(1, row, 5, row);
-		table.add(getHeader(iwrb.getLocalizedString("school.after_school_choice", "Choice of after school care")), 1, row);
+		table.add(getHeader(iwrb.getLocalizedString("school.language_choice", "Choice of language")), 1, row);
 		table.add(Text.getNonBrakingSpace(), 1, row);
 		Link msgLink = new Link(this.getInformationIcon(localize("school_choice.form_message_link_text", "School choice message")));
 		//msgLink.setWindowToOpen(SchoolChoiceFormMessageWindow.class);
 		msgLink.setToOpenAlert(localize("school_choice_form_message.message", "Localized School choice message ... "));
 		table.add(msgLink, 1, row++);
 
-		CheckBox langChecked = new CheckBox(prmNativeLangIsChecked);
+		CheckBox langChecked = getCheckBox(prmNativeLangIsChecked, Boolean.TRUE.toString());
 		table.add(langChecked, 1, row);
 		table.add(getSmallHeader(Text.getNonBrakingSpace()+iwrb.getLocalizedString("school.native_lang_prefix","I would like")),1,row);
 		table.add(Text.getNonBrakingSpace(), 1, row);		
@@ -1064,25 +1071,10 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		return null;
 		*/
 		
-		Vector schYears = null;
+		Collection schYears = null;
 		try {
-			schYears = new Vector();
-			
-			// Add school years for school type "Forskola"
-			Collection tmpVec = schCommBiz.getSchoolBusiness().findAllSchoolYearsBySchoolType(5);
-			for (Iterator iter = tmpVec.iterator(); iter.hasNext();) {
-				SchoolYear element = (SchoolYear) iter.next();
-				schYears.add(element);
-			}
-			
-			// Add school years for school type "Grundskola"
-			tmpVec = schCommBiz.getSchoolBusiness().findAllSchoolYearsBySchoolType(4);
-			for (Iterator iter = tmpVec.iterator(); iter.hasNext();) {
-				SchoolYear element = (SchoolYear) iter.next();
-				schYears.add(element);				
-			}
-			
-			
+			// Add school years for school category "ELEMENTARY_SCHOOL"
+			schYears = schCommBiz.getSchoolBusiness().findSchoolYearsBySchoolCategory(schCommBiz.getSchoolBusiness().getElementarySchoolSchoolCategory());
 			return schYears;
 		}
 		catch (Exception e) {}
@@ -1593,5 +1585,11 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	
 	public void setMaxAfterCareAge(int age) {
 		_maxAge = age;
+	}
+	/**
+	 * @param useCheckBoxForAfterSchoolCare The useCheckBoxForAfterSchoolCare to set.
+	 */
+	public void setUseCheckBoxForAfterSchoolCare(boolean useCheckBoxForAfterSchoolCare) {
+		this._useCheckBoxForAfterSchoolCare = useCheckBoxForAfterSchoolCare;
 	}
 }
