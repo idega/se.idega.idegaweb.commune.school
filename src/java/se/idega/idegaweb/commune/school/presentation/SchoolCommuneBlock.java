@@ -64,8 +64,11 @@ public abstract class SchoolCommuneBlock extends CommuneBlock {
 	public static final String IS_SPECIALLY_PLACED_COLOR = "#EAF1FF";
 	public static final String HAS_SCHOOL_CHOICE_COLOR = "#EAFFEE";
 	public static final String HAS_MOVE_CHOICE_COLOR = "#FFEAEA";
-	public static final String HAS_MOVE_CHOICE_COLOR_THIS_SCHOOL = "#FFEAFF";
-	public static final String HAS_REJECTED_FIRST_CHOICE_COLOR = "#FDFFDD";
+//	public static final String HAS_MOVE_CHOICE_COLOR_THIS_SCHOOL = "#FFEAFF";
+	public static final String HAS_MOVE_CHOICE_COLOR_THIS_SCHOOL = "#FFCCFF";
+//	public static final String HAS_REJECTED_FIRST_CHOICE_COLOR = "#FDFFDD";
+	public static final String HAS_REJECTED_FIRST_CHOICE_COLOR = "#CCFFCC";
+	public static final String HAS_MOVED_TO_COMMUNE_COLOR = "#CCCCFF";
 	
 	
 	public void main(IWContext iwc) throws Exception{
@@ -467,9 +470,11 @@ public abstract class SchoolCommuneBlock extends CommuneBlock {
 		if (showWithMoveToSchool) {
 			table.add(getColorTable(HAS_MOVE_CHOICE_COLOR_THIS_SCHOOL), 1, 1);
 			table.add(getColorTable(HAS_REJECTED_FIRST_CHOICE_COLOR), 4, 1);
+			table.add(getColorTable(HAS_MOVED_TO_COMMUNE_COLOR), 7, 1);
 
 			table.add(getSmallHeader(localize("school.student_has_move_choice_to_this_school","Student has move choice to this school")), 2, 1);
 			table.add(getSmallHeader(localize("school.student_has_rejected_first_choice","Student has rejected first choice")), 5, 1);
+			table.add(getSmallHeader(localize("school.student_has_moved_to_commune","Student has moved to commune")), 8, 1);
 		}
 		else {
 			table.add(getColorTable(HAS_MOVE_CHOICE_COLOR), 1, 1);
