@@ -1,5 +1,5 @@
 /*
- * $Id: ReportBlock.java,v 1.23 2004/01/28 07:49:54 anders Exp $
+ * $Id: ReportBlock.java,v 1.24 2004/01/28 11:58:09 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -29,10 +29,10 @@ import com.idega.presentation.ui.PrintButton;
 /** 
  * This is the base class for school report blocks.
  * <p>
- * Last modified: $Date: 2004/01/28 07:49:54 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/28 11:58:09 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.23 $
+ * @version $Revision: 1.24 $
  */
 public class ReportBlock extends CommuneBlock {
 
@@ -258,7 +258,12 @@ public class ReportBlock extends CommuneBlock {
 				for (int j = 0; j < children.length; j++) {
 					table.setAlignment(column + j, 2, Table.HORIZONTAL_ALIGN_CENTER);
 					Header child = children[j];
-					s = localize(child.getLocalizationKey(), child.getLocalizationKey());
+					s = null;
+					if (child.getHeaderType() == Header.HEADERTYPE_COLUMN_NONLOCALIZED_HEADER) {
+						s = child.getLocalizationKey();
+					} else {
+						s = localize(child.getLocalizationKey(), child.getLocalizationKey());
+					}
 					table.add(getSmallText(s), column + j, 2);
 					table.setVerticalAlignment(column + j, 2, Table.VERTICAL_ALIGN_BOTTOM);
 					table.setNoWrap(column + j, 2);
