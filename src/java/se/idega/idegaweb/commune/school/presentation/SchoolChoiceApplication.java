@@ -48,6 +48,7 @@ import com.idega.presentation.ui.DropdownMenu;
 import com.idega.presentation.ui.Form;
 import com.idega.presentation.ui.GenericButton;
 import com.idega.presentation.ui.HiddenInput;
+import com.idega.presentation.ui.SubmitButton;
 import com.idega.presentation.ui.TextArea;
 import com.idega.presentation.ui.TextInput;
 import com.idega.user.business.UserBusiness;
@@ -261,6 +262,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	public PresentationObject getSchoolChoiceForm(IWContext iwc, User child) throws java.rmi.RemoteException {
 		Form myForm = new Form();
 		myForm.setName(prmForm);
+		myForm.setOnSubmit("return checkApplication()");
 		
 		Table T = new Table();
 		T.setCellpadding(0);
@@ -279,8 +281,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		T.add(getMessagePart(iwc), 1, row++);
 		T.setHeight(row++, 12);
 
-		GenericButton button = (GenericButton) getButton(new GenericButton("submit",localize("school_choice.ready", "Ready")));
-		button.setOnClick("javascript:MySubmit(this)");
+		SubmitButton button = (SubmitButton) getButton(new SubmitButton("submit",localize("school_choice.ready", "Ready")));
 		
 		T.add(button, 1, row++);
 		T.add(new HiddenInput(prmAction, "false"));
@@ -291,7 +292,6 @@ public class SchoolChoiceApplication extends CommuneBlock {
 			Script S = p.getAssociatedScript();
 			Script F = new Script();
 			S.addFunction("initFilter", getInitFilterScript());
-			S.addFunction("submitFunction", getMySubmitScript());
 			S.addFunction("checkApplication", getSchoolCheckScript());
 
 			S.addFunction("changeFilter", getFilterScript(iwc));
@@ -855,17 +855,17 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		s.append("\nfunction checkApplication(){\n\t");
 		//s.append("\n\t\t alert('").append("checking choices").append("');");
 		if (!this.hasPreviousSchool)
-			s.append("\n\t var currSchool = ").append("document.").append(prmForm).append(".elements['").append(prmPreSchool).append("'];");
-		s.append("\n\t var dropOne = ").append("document.").append(prmForm).append(".elements['").append(prmFirstSchool).append("'];");
-		s.append("\n\t var dropTwo = ").append("document.").append(prmForm).append(".elements['").append(prmSecondSchool).append("'];");
-		s.append("\n\t var dropThree = ").append("document.").append(prmForm).append(".elements['").append(prmThirdSchool).append("'];");
+			s.append("\n\t var currSchool = ").append("findObj('").append(prmPreSchool).append("');");
+		s.append("\n\t var dropOne = ").append("findObj('").append(prmFirstSchool).append("');");
+		s.append("\n\t var dropTwo = ").append("findObj('").append(prmSecondSchool).append("');");
+		s.append("\n\t var dropThree = ").append("findObj('").append(prmThirdSchool).append("');");
 		if (!this.hasPreviousSchool)
-			s.append("\n\t var gradeDrop = ").append("document.").append(prmForm).append(".elements['").append(prmPreGrade).append("'];");
-		s.append("\n\t var one = 0;"); //.append("dropOne.options[dropOne.selectedIndex].value;");
-		s.append("\n\t var two = 0;"); //.append("dropTwo.options[dropTwo.selectedIndex].value;");
-		s.append("\n\t var three = 0;"); //.append("dropThree.options[dropThree.selectedIndex].value;");
-		s.append("\n\t var year = 0;"); //.append("gradeDrop.options?").append("gradeDrop.options[gradeDrop.selectedIndex].value").append(":").append("document.sch_app_the_frm.elements['").append(prmPreGrade).append("'].value;");
-		s.append("\n\t var school = 0;"); //.append("currSchool.options?").append("currSchool.options[currSchool.selectedIndex].value").append(":").append("document.sch_app_the_frm.elements['").append(prmPreSchool).append("'].value;");
+			s.append("\n\t var gradeDrop = ").append("findObj('").append(prmPreGrade).append("');");
+		s.append("\n\t var one = 0;");
+		s.append("\n\t var two = 0;");
+		s.append("\n\t var three = 0;");
+		s.append("\n\t var year = 0;");
+		s.append("\n\t var school = 0;");
 
 		s.append("\n\n\t if (dropOne.selectedIndex > 0) one = dropOne.options[dropOne.selectedIndex].value;");
 		s.append("\n\t if (dropTwo.selectedIndex > 0) two = dropTwo.options[dropTwo.selectedIndex].value;");
@@ -906,33 +906,10 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		s.append("\n\t\t alert('").append(msg).append("');");
 		s.append("\n\t\t return false;");
 		s.append("\n\t }");
-		//s.append("\n\t\t alert('").append("nothing wrong").append("');");
+		s.append("\n\t\t findObj('").append(prmAction).append("').value='true';");
 		s.append("\n\t return true;");
 		s.append("\n}\n");
 		return s.toString();
-	}
-
-	private String getMySubmitScript() {
-		StringBuffer s = new StringBuffer();
-		s.append("\n function MySubmit(input){");
-		s.append("\n\t if(checkApplication()) {");
-		s.append("\n\t\t findObj('").append(prmAction).append("').value='true';");
-		s.append("\n\t\t input.form.submit();");
-		s.append("\n\t }");
-		//s.append("\n\t else{");
-		//s.append("\n\t\t alert('").append(iwrb.getLocalizedString("school_choice.unfinished","You have to finish the application")).append("');");
-		//s.append("\n\t }");
-		s.append("\n}\n");
-		return s.toString();
-
-		/*
-		if(checkApplication()){
-			document.
-		}
-		else{
-		
-		}
-		*/
 	}
 
 	public void setAsAdminQuickChoice(boolean quick) {
