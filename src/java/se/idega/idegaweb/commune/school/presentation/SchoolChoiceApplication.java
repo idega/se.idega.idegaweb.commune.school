@@ -126,6 +126,10 @@ public class SchoolChoiceApplication extends CommuneBlock {
     SchoolYear schoolYear = null;
     SchoolArea schoolArea = null;
     SchoolType schoolType = null;
+    
+   private boolean hasPreviousSchool = false;
+
+	private Age age;
 
 
   public void control(IWContext iwc) throws Exception{
@@ -194,7 +198,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
   private void parse(IWContext iwc){
     valSendCatalogue = iwc.isParameterSet(prmSendCatalogue);
     valSixyearCare = iwc.isParameterSet(prmSixYearCare);
-    valAutoAssign = iwc.isParameterSet(prmAutoAssign);
+    valAutoAssign = true;
     valSchoolChange = iwc.isParameterSet(prmSchoolChange);
     valCustodiansAgree = iwc.isParameterSet(prmCustodiansAgree);
     valMessage = iwc.getParameter(prmMessage);
@@ -347,9 +351,20 @@ public class SchoolChoiceApplication extends CommuneBlock {
   private void initSchoolChild(IWContext iwc,User child){
 
     try{
+	    Date d = child.getDateOfBirth();
+	    if(d==null) {
+	     	if ( child.getPersonalID() != null ) {
+	     		d = PIDChecker.getInstance().getDateFromPersonalID(child.getPersonalID());
+	     	}
+	     	if ( d == null )
+	     		d = new Date();
+	    }
+	    age = new Age(d);
       schoolClassMember = schBuiz.getSchoolBusiness().getSchoolClassMemberHome().findByUserAndSeason(child,schBuiz.getCurrentSeason());
       schoolClass = schBuiz.getSchoolBusiness().getSchoolClassHome().findByPrimaryKey(new Integer(schoolClassMember.getSchoolClassId()));
       school = schBuiz.getSchool(schoolClass.getSchoolId());
+      if (school != null)
+	      this.hasPreviousSchool = true;
       schoolArea = schBuiz.getSchoolBusiness().getSchoolAreaHome().findByPrimaryKey(new Integer(school.getSchoolAreaId()));
       Collection Stypes = school.findRelatedSchoolTypes();
       if(!Stypes.isEmpty())
@@ -390,64 +405,68 @@ public class SchoolChoiceApplication extends CommuneBlock {
   }
 
   private PresentationObject getCurrentSchool(IWContext iwc,User child)throws java.rmi.RemoteException{
-    Table T = new Table(4,7);
-    T.mergeCells(1,1,4,1);
+	  if(age.getYears() <= 6) {
+	  	return new HiddenInput(prmPreGrade,String.valueOf(5));
+	  }
+	  else {
+	    Table T = new Table(4,7);
+	    T.mergeCells(1,1,4,1);
+	
+	    T.add(getHeader(iwrb.getLocalizedString("school.child_is_now_in","Child is now in :")),1,1);
+	
+	    if(schoolClassMember!=null){
+	      T.add(getSmallHeader(iwrb.getLocalizedString("school.school_name","School name")),2,3);
+	      T.add(getSmallHeader(iwrb.getLocalizedString("school.school_class","School class")),3,3);
+	      T.add(getSmallHeader(iwrb.getLocalizedString("school.school_year","School year")),4,3);
 
-    T.add(getHeader(iwrb.getLocalizedString("school.child_is_now_in","Child is now in :")),1,1);
-
-    if(schoolClassMember!=null){
-      T.add(getSmallHeader(iwrb.getLocalizedString("school.school_name","School name")),2,3);
-      T.add(getSmallHeader(iwrb.getLocalizedString("school.school_class","School class")),3,3);
-      T.add(getSmallHeader(iwrb.getLocalizedString("school.school_year","School year")),4,3);
-
-	  if(school!=null)
-      T.add(getText(school.getName()),2,4);
-      if(schoolClass !=null)
-      T.add(getText(schoolClass.getName()),3,4);
-      if(schoolYear!=null)
-      T.add(getText(schoolYear.getName()),4,4);
-      T.add(new HiddenInput(prmPreSchool,school.getPrimaryKey().toString()),4,4);
-      int year = 0;
-      try{
-        year = Integer.parseInt(schoolYear.getName());
-      }
-      catch(NumberFormatException nfe){      }
-      catch(NullPointerException nex){}
-      year++;
-      T.add(new HiddenInput(prmPreGrade,String.valueOf(schoolYear.getSchoolYearAge())),4,4);
+		  if(school!=null)
+	      T.add(getText(school.getName()),2,4);
+	      if(schoolClass !=null)
+	      T.add(getText(schoolClass.getName()),3,4);
+	      if(schoolYear!=null)
+	      T.add(getText(schoolYear.getName()),4,4);
+	      T.add(new HiddenInput(prmPreSchool,school.getPrimaryKey().toString()),4,4);
+	      int year = 0;
+	      try{
+	        year = Integer.parseInt(schoolYear.getName());
+	      }
+	      catch(NumberFormatException nfe){      }
+	      catch(NullPointerException nex){}
+	      year++;
+	      T.add(new HiddenInput(prmPreGrade,String.valueOf(schoolYear.getSchoolYearAge())),4,4);
+	    }
+	    else {
+	      DropdownMenu drpTypes = getTypeDrop(prmPreType);
+	      drpTypes.setOnChange(getFilterCallerScript(iwc,prmPreType,prmPreArea,prmPreSchool,1));
+	      drpTypes.setWidth("20");
+	      DropdownMenu drpAreas = new DropdownMenu(prmPreArea);
+	      drpAreas.addMenuElementFirst("-1",iwrb.getLocalizedString("school.area","School area..........."));
+	      drpAreas.setOnChange(getFilterCallerScript(iwc,prmPreType,prmPreArea,prmPreSchool,2));
+	      //drpAreas.setWidth("50");
+	      DropdownMenu drpSchools = new DropdownMenu(prmPreSchool);
+	      drpSchools.addMenuElementFirst("-1",iwrb.getLocalizedString("school.school","School................"));
+	      //drpSchools.setWidth("20");
+	      DropdownMenu drpGrade = new DropdownMenu(prmPreGrade);
+	      drpGrade.addMenuElement("-1","");
+	      Collection coll = getSchoolYears(iwc);
+	      if (coll != null) {
+	      	Iterator iter = coll.iterator();
+					while (iter.hasNext()) {
+						SchoolYear element = (SchoolYear) iter.next();
+						drpGrade.addMenuElement(element.getSchoolYearAge(), element.getName());
+					}
+	      }
+	      drpGrade.setSelectedElement(String.valueOf(valPreGrade));
+	
+	      T.add(getSmallHeader(iwrb.getLocalizedString("school.school_name","School name")),3,3);
+	      T.add(getSmallHeader(iwrb.getLocalizedString("school.grade","Grade")),4,3);
+	      T.add(drpTypes,1,4);
+	      T.add(drpAreas,2,4);
+	      T.add(drpSchools,3,4);
+	      T.add(drpGrade,4,4);
+	    }
+	    return T;
     }
-    else {
-      DropdownMenu drpTypes = getTypeDrop(prmPreType);
-      drpTypes.setOnChange(getFilterCallerScript(iwc,prmPreType,prmPreArea,prmPreSchool,1));
-      drpTypes.setWidth("20");
-      DropdownMenu drpAreas = new DropdownMenu(prmPreArea);
-      drpAreas.addMenuElementFirst("-1",iwrb.getLocalizedString("school.area","School area..........."));
-      drpAreas.setOnChange(getFilterCallerScript(iwc,prmPreType,prmPreArea,prmPreSchool,2));
-      //drpAreas.setWidth("50");
-      DropdownMenu drpSchools = new DropdownMenu(prmPreSchool);
-      drpSchools.addMenuElementFirst("-1",iwrb.getLocalizedString("school.school","School................"));
-      //drpSchools.setWidth("20");
-      DropdownMenu drpGrade = new DropdownMenu(prmPreGrade);
-      drpGrade.addMenuElement("-1","");
-      Collection coll = getSchoolYears(iwc);
-      if (coll != null) {
-      	Iterator iter = coll.iterator();
-				while (iter.hasNext()) {
-					SchoolYear element = (SchoolYear) iter.next();
-					drpGrade.addMenuElement(element.getSchoolYearAge(), element.getName());
-				}
-      }
-      drpGrade.setSelectedElement(String.valueOf(valPreGrade));
-
-      T.add(getSmallHeader(iwrb.getLocalizedString("school.school_name","School name")),3,3);
-      T.add(getSmallHeader(iwrb.getLocalizedString("school.grade","Grade")),4,3);
-      T.add(drpTypes,1,4);
-      T.add(drpAreas,2,4);
-      T.add(drpSchools,3,4);
-      T.add(drpGrade,4,4);
-    }
-
-    return T;
   }
 
   private DropdownMenu getTypeDrop(String name)throws java.rmi.RemoteException{
@@ -470,19 +489,10 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	 * @throws RemoteException
 	 */
   private PresentationObject getChoiceSchool(IWContext iwc,User child)throws java.rmi.RemoteException{
-    Table T = new Table(3,11);
+    Table T = new Table(3,8);
     T.mergeCells(1,1,3,1);
     T.add(getHeader(iwrb.getLocalizedString("school.choice_for_schoolyear","Choice for the schoolyear")),1,1);
-    Date d = child.getDateOfBirth();
-    if(d==null) {
-     	if ( child.getPersonalID() != null ) {
-     		d = PIDChecker.getInstance().getDateFromPersonalID(child.getPersonalID());
-     	}
-     	if ( d == null )
-     		d = new Date();
-    }
-    Age age = new Age(d);
-
+ 
     DropdownMenu typeDrop = getTypeDrop(prmType);
     CheckBox chkSixYear = new CheckBox(prmSixYearCare,"true");
     CheckBox chkAutoAssign = new CheckBox(prmAutoAssign,"true");
@@ -507,10 +517,6 @@ public class SchoolChoiceApplication extends CommuneBlock {
 
 
     T.add(typeDrop,1,3);
-    T.mergeCells(2,3,3,3);
-    T.mergeCells(2,4,3,4);
-    T.mergeCells(2,5,3,5);
-    T.mergeCells(2,6,3,6);
     typeDrop.setOnChange(getFilterCallerScript(iwc,prmType,prmFirstArea,prmFirstSchool,1));
     typeDrop.setOnChange(getFilterCallerScript(iwc,prmType,prmSecondArea,prmSecondSchool,1));
     typeDrop.setOnChange(getFilterCallerScript(iwc,prmType,prmThirdArea,prmThirdSchool,1));
@@ -521,17 +527,13 @@ public class SchoolChoiceApplication extends CommuneBlock {
     if(age.getYears()==6){
       T.add(chkAutoAssign,2,row);
       T.add(getSmallText(iwrb.getLocalizedString("school.six_year_childcare","I want my six years old to be within childcare")),2,row);
+	    T.mergeCells(2,row,3,row);
     }
     row++;
-    T.add(chkAutoAssign,2,row);
-    T.add(getSmallText(iwrb.getLocalizedString("school.assign_school_placing","Assign me a school placing")),2,row);
-    row++;
-    T.add(chkSchoolChange,2,row);
-    T.add(getSmallText(iwrb.getLocalizedString("school.change_of_school","Change of school")),2,row);
-    row++;
-     if(schoolYear != null && schoolYear.getSchoolYearAge() == 5){
+    if(schoolYear != null && schoolYear.getSchoolYearAge() == 5){
       T.add(txtLangChoice,2,row);
       T.add(getSmallText(iwrb.getLocalizedString("school.six_year_language","Language")),2,row);
+	    T.mergeCells(2,row,3,row);
     }
     row++;
     T.add(getSmallText(iwrb.getLocalizedString("school.first_choice","First choice")),1,row);
@@ -589,7 +591,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
   }
 
   private PresentationObject getMessagePart(IWContext iwc)throws java.rmi.RemoteException{
-    Table T = new Table();
+    Table T = new Table(1,2);
 
     TextArea taMessage = new TextArea(prmMessage,65,6);
     /*CheckBox chkSendCatalogue = new CheckBox(prmSendCatalogue,"true");
@@ -603,7 +605,8 @@ public class SchoolChoiceApplication extends CommuneBlock {
     T.add(chkSendCatalogue,1,2);
     T.add(getSmallText(iwrb.getLocalizedString("school.send_catalogue","Send school catalogue")),1,2);
     T.add(taMessage,1,3);*/
-    T.add(taMessage,1,1);
+    T.add(getSmallHeader(localize("school.application_extra_info","Extra info")),1,1);
+    T.add(taMessage,1,2);
     
     return T;
   }
@@ -827,30 +830,37 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	  StringBuffer s = new StringBuffer();
 		s.append("\nfunction checkApplication(){\n\t");
 		//s.append("\n\t\t alert('").append("checking choices").append("');");
-		s.append("\n\t var currSchool = ").append("document.").append(prmForm).append(".elements['").append(prmPreSchool).append("'];");
+		if (!this.hasPreviousSchool)
+			s.append("\n\t var currSchool = ").append("document.").append(prmForm).append(".elements['").append(prmPreSchool).append("'];");
 		s.append("\n\t var dropOne = ").append("document.").append(prmForm).append(".elements['").append(prmFirstSchool).append("'];");
 		s.append("\n\t var dropTwo = ").append("document.").append(prmForm).append(".elements['").append(prmSecondSchool).append("'];");
 		s.append("\n\t var dropThree = ").append("document.").append(prmForm).append(".elements['").append(prmThirdSchool).append("'];");
-		s.append("\n\t var gradeDrop = ").append("document.").append(prmForm).append(".elements['").append(prmPreGrade).append("'];");
+		if (!this.hasPreviousSchool)
+			s.append("\n\t var gradeDrop = ").append("document.").append(prmForm).append(".elements['").append(prmPreGrade).append("'];");
 		s.append("\n\t var one = 0;");//.append("dropOne.options[dropOne.selectedIndex].value;");
 		s.append("\n\t var two = 0;");//.append("dropTwo.options[dropTwo.selectedIndex].value;");
 		s.append("\n\t var three = 0;");//.append("dropThree.options[dropThree.selectedIndex].value;");
 		s.append("\n\t var year = 0;");//.append("gradeDrop.options?").append("gradeDrop.options[gradeDrop.selectedIndex].value").append(":").append("document.sch_app_the_frm.elements['").append(prmPreGrade).append("'].value;");
 		s.append("\n\t var school = 0;");//.append("currSchool.options?").append("currSchool.options[currSchool.selectedIndex].value").append(":").append("document.sch_app_the_frm.elements['").append(prmPreSchool).append("'].value;");
 		
-		s.append("\n\n\t if (dropOne.selectedIndex != null) one = dropOne.options[dropOne.selectedIndex].value;");
-		s.append("\n\t if (dropTwo.selectedIndex != null) two = dropTwo.options[dropTwo.selectedIndex].value;");
-		s.append("\n\t if (dropThree.selectedIndex != null) three = dropThree.options[dropThree.selectedIndex].value;");
-		s.append("\n\t if (gradeDrop.selectedIndex != null) year = gradeDrop.options?gradeDrop.options[gradeDrop.selectedIndex].value:document.sch_app_the_frm.elements['"+prmPreGrade+"'].value;");
-		s.append("\n\t if (currSchool.selectedIndex != null) school = currSchool.options?currSchool.options[currSchool.selectedIndex].value:document.sch_app_the_frm.elements['"+prmPreSchool+"'].value;");
+		
+		s.append("\n\n\t if (dropOne.selectedIndex > 0) one = dropOne.options[dropOne.selectedIndex].value;");
+		s.append("\n\t if (dropTwo.selectedIndex > 0) two = dropTwo.options[dropTwo.selectedIndex].value;");
+		s.append("\n\t if (dropThree.selectedIndex > 0) three = dropThree.options[dropThree.selectedIndex].value;");
+		if (!this.hasPreviousSchool)
+			s.append("\n\t if (gradeDrop.selectedIndex > 0) year = gradeDrop.options?gradeDrop.options[gradeDrop.selectedIndex].value:document.sch_app_the_frm.elements['"+prmPreGrade+"'].value;");
+		if (!this.hasPreviousSchool)
+			s.append("\n\t if (currSchool.selectedIndex > 0) school = currSchool.options?currSchool.options[currSchool.selectedIndex].value:document.sch_app_the_frm.elements['"+prmPreSchool+"'].value;");
 
 		// current school check
-		s.append("\n\n\t if(school <= 0){");
-		String msg1 = iwrb.getLocalizedString("school_choice.must_set_current_school","You must provide current shool");
-		s.append("\n\t\t\t alert('").append(msg1).append("');");
-		s.append("\n\t\t return false;");
-		s.append("\n\t\t ");
-		s.append("\n\t }");
+		if (!this.hasPreviousSchool) {
+			s.append("\n\n\t if(school <= 0){");
+			String msg1 = iwrb.getLocalizedString("school_choice.must_set_current_school","You must provide current shool");
+			s.append("\n\t\t\t alert('").append(msg1).append("');");
+			s.append("\n\t\t return false;");
+			s.append("\n\t\t ");
+			s.append("\n\t }");
+		}
 
 		// year check
 		s.append("\n\t if(year <= 0 && school > 0){");
