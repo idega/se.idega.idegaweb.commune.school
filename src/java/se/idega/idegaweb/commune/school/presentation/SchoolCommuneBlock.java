@@ -26,6 +26,7 @@ import com.idega.presentation.Table;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.DropdownMenu;
+import com.idega.presentation.ui.RadioButton;
 import com.idega.presentation.ui.Window;
 /**
  * @author Laddi
@@ -37,6 +38,8 @@ import com.idega.presentation.ui.Window;
  */
 public abstract class SchoolCommuneBlock extends CommuneBlock {
 
+	private final static String PARAM_BUNADM = "PARAM_BUNADM";
+	
 	private SchoolCommuneBusiness business;
 	protected SchoolCommuneSession session;
 	private SchoolBusiness sBusiness;
@@ -44,6 +47,7 @@ public abstract class SchoolCommuneBlock extends CommuneBlock {
 	private int _schoolSeasonID = -1;
 	private int _schoolYearID = -1;
 	private int _schoolClassID = -1;
+	private boolean _centralAdmin = false;
 	
 	public void main(IWContext iwc) throws Exception{
 		setResourceBundle(getResourceBundle(iwc));
@@ -58,6 +62,7 @@ public abstract class SchoolCommuneBlock extends CommuneBlock {
 	public abstract void init(IWContext iwc) throws Exception;
 	
 	private void initialize(IWContext iwc) throws RemoteException {
+		_centralAdmin = iwc.getParameter(PARAM_BUNADM) != null && iwc.getParameter(PARAM_BUNADM).equals("true"); 
 		_schoolID = session.getSchoolID();	
 		_schoolSeasonID = session.getSchoolSeasonID();
 		_schoolYearID = session.getSchoolYearID();
@@ -74,10 +79,14 @@ public abstract class SchoolCommuneBlock extends CommuneBlock {
 	}
 	
 	protected Table getNavigationTable(boolean showClass) throws RemoteException {
-		return getNavigationTable(showClass, false);
+		return getNavigationTable(showClass, false, false);
+	}
+		
+	protected Table getNavigationTable(boolean showClass, boolean multipleSchools) throws RemoteException {
+		return getNavigationTable(showClass, multipleSchools, false);
 	}
 	
-	protected Table getNavigationTable(boolean showClass, boolean multipleSchools) throws RemoteException {
+	protected Table getNavigationTable(boolean showClass, boolean multipleSchools, boolean centralizedAdminChoice) throws RemoteException {
 		Table table = new Table(8,1);
 		table.setCellpadding(0);
 		table.setCellspacing(0);
@@ -85,10 +94,41 @@ public abstract class SchoolCommuneBlock extends CommuneBlock {
 		int row = 1;
 
 		if (multipleSchools) {
-			table.resize(8, 3);
+			
+			if (centralizedAdminChoice){
+				table.resize(8, row + 2);
+				table.add(getSmallHeader(localize("school.bun_adm","Show only BUN administrated schools")+":"+Text.NON_BREAKING_SPACE),1,row);
+//				table.mergeCells(2, row, 8, row);
+				
+		
+				RadioButton rb1 = new RadioButton(PARAM_BUNADM, ""+true);
+				RadioButton rb2 = new RadioButton(PARAM_BUNADM, ""+false);		
+						
+				if (_centralAdmin){
+					rb1.setSelected();
+				} else{
+					rb2.setSelected();
+				}
+
+				rb1.setToSubmit();
+				rb2.setToSubmit();
+				table.add(rb1,2,row);
+				table.add(getSmallHeader(localize("school.yes","Yes")+Text.NON_BREAKING_SPACE),2,row);
+//				table.add(getSmallHeader(localize("school.yes","Yes")+":"+Text.NON_BREAKING_SPACE),3,row);
+
+				table.add(rb2,3,row);
+				table.add(getSmallHeader(localize("school.no","No")+Text.NON_BREAKING_SPACE),3,row);
+
+				++row;
+				table.setHeight(row, "2");
+				++row;			
+		
+			}
+						
+			table.resize(8, row + 2);
 			table.add(getSmallHeader(localize("school.school_list","School")+":"+Text.NON_BREAKING_SPACE),1,row);
 			table.mergeCells(2, row, 8, row);
-			table.add(getSchools(),2,row);
+			table.add(getSchools(_centralAdmin),2,row);
 			++row;
 			table.setHeight(row, "2");
 			++row;
@@ -112,13 +152,28 @@ public abstract class SchoolCommuneBlock extends CommuneBlock {
 		
 		return table;
 	}
-	
+
 	protected DropdownMenu getSchools() throws RemoteException {
+		return getSchools(true);
+	}		
+	/**
+	 * 
+	 * @param includeCentralizedAdministrated If true, includes schools administrated by BUN in the list
+	 * @return
+	 * @throws RemoteException
+	 */
+	protected DropdownMenu getSchools(boolean onlyCentralizedAdministrated) throws RemoteException {
 		
 		DropdownMenu menu = new DropdownMenu(session.getParameterSchoolID());
 		menu.setToSubmit();
+		Collection schools = null;
 		Collection schoolTypeIds = sBusiness.findAllSchoolTypesForSchool();
-		Collection schools = business.getSchoolBusiness().findAllSchoolsByType(schoolTypeIds);
+				
+		if (onlyCentralizedAdministrated) {
+			schools = business.getSchoolBusiness().findAllCentralizedAdministratedByType(schoolTypeIds);			
+		} else {
+			schools = business.getSchoolBusiness().findAllSchoolsByType(schoolTypeIds);
+		}
 		Iterator iter = schools.iterator();
 		while (iter.hasNext()) {
 			School sCool = (School) iter.next();	
