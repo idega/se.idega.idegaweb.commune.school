@@ -354,11 +354,10 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		int row = 1;
 		T.add(getText(text1), 1, row);
 		T.add(getHeader(child.getName()), 1, row);
-		T.add(getText(text2), 1, row);
-		row++;
-		T.add(getText(text3), 1, row);
-		row++;
-		T.add(getText(text4), 1, row);
+		T.add(getText(text2), 1, row++);
+		T.add(getText(text3), 1, row++);
+		T.add(getText(text4), 1, row++);
+		T.add (getUserHomePageLink (iwc), 1, row++);
 
 		return T;
 	}
@@ -1037,4 +1036,16 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		this.childcarePage = childcarePage;
 	}
 
+	private Link getUserHomePageLink (final IWContext iwc)
+        throws RemoteException {
+		final Text userHomePageText = new Text
+                (iwrb.getLocalizedString (prefix + "go_back_to_my_page",
+                                          "Tillbaka till Min sida"));
+ 		final UserBusiness userBusiness = (UserBusiness)
+                IBOLookup.getServiceInstance (iwc, UserBusiness.class);
+        final User user = iwc.getCurrentUser ();
+		final Link link = new Link (userHomePageText);
+        link.setPage (userBusiness.getHomePageIDForUser (user));
+		return (link);
+	}
 }
