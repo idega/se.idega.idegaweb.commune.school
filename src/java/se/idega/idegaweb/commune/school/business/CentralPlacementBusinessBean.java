@@ -18,6 +18,8 @@ import javax.transaction.UserTransaction;
 
 import se.idega.idegaweb.commune.accounting.resource.business.ResourceBusiness;
 import se.idega.idegaweb.commune.accounting.resource.data.ResourceClassMember;
+import se.idega.idegaweb.commune.business.CommuneUserBusiness;
+//import se.idega.idegaweb.commune.message.business.MessageBusiness;
 import se.idega.idegaweb.commune.school.presentation.CentralPlacementEditor;
 
 import com.idega.block.school.business.SchoolBusiness;
@@ -27,7 +29,7 @@ import com.idega.block.school.data.SchoolClassMember;
 import com.idega.block.school.data.SchoolClassMemberHome;
 import com.idega.block.school.data.SchoolSeason;
 //import com.idega.block.school.data.SchoolType;
-import com.idega.business.IBOLookup;
+//import com.idega.business.IBOLookup;
 import com.idega.business.IBOServiceBean;
 import com.idega.data.IDOLookup;
 import com.idega.presentation.IWContext;
@@ -50,6 +52,7 @@ public class CentralPlacementBusinessBean extends IBOServiceBean
 	private static final String KEY_ERROR_SCHOOL_TYPE = KP + "error.school_type";
 	private static final String KEY_ERROR_SCHOOL_YEAR = KP + "error.school_year";
 	private static final String KEY_ERROR_SCHOOL_GROUP = KP + "error.school_group";
+	private static final String KEY_ERROR_STORING_PLACEMENT = KP + "error.saving_placement";
 
 	/**
 	 * Stores a new placement(SchoolClassMember) with resources and ends the current placement
@@ -174,7 +177,7 @@ public class CentralPlacementBusinessBean extends IBOServiceBean
 			// Start transaction
 			trans.begin();
 			// Create new placement
-			newPlacement = getSchoolBusiness(iwc).storeSchoolClassMember(studentID, schoolClassID, 
+			newPlacement = getSchoolBusiness().storeNewSchoolClassMember(studentID, schoolClassID, 
 														schoolYearID, schoolTypeID, registerDate, registrator, notes);
 			if (newPlacement != null) {
 			// *** START - Store the rest of the parameters ***
@@ -211,12 +214,20 @@ public class CentralPlacementBusinessBean extends IBOServiceBean
 						newPlacement.setStudyPathId(pK);
 					}
 				}
+				
+				// Latest invoice date
+				if (iwc.isParameterSet(CentralPlacementEditor.PARAM_LATEST_INVOICE_DATE)) {
+					IWTimestamp stamp = new IWTimestamp(iwc.getParameter(
+																CentralPlacementEditor.PARAM_LATEST_INVOICE_DATE));
+					newPlacement.setLatestInvoiceDate(stamp.getTimestamp());
+				}
+				
 				// Resources				
 				if (iwc.isParameterSet(CentralPlacementEditor.PARAM_RESOURCES)) {
 					String [] arr = iwc.getParameterValues(CentralPlacementEditor.PARAM_RESOURCES);
 					for (int i = 0; i < arr.length; i++) {
 						int rscPK = Integer.parseInt(arr[i]);
-						/*ResourceClassMember rscPlace =*/ getResourceBusiness(iwc)
+						/*ResourceClassMember rscPlace =*/ getResourceBusiness()
 											.createResourcePlacement(rscPK, newPlacementID, placementDateStr);						
 //						Integer rscPlPK = (Integer) rscPlace.getPrimaryKey();
 //						int intPK = rscPlPK.intValue();
@@ -233,7 +244,7 @@ public class CentralPlacementBusinessBean extends IBOServiceBean
 				latestPlacement.setRemovedDate(dayBeforeRegStamp);
 				latestPlacement.store();
 				// finish old placements
-				Collection rscPlaces = getResourceBusiness(iwc).getResourcePlacementsByMemberId(
+				Collection rscPlaces = getResourceBusiness().getResourcePlacementsByMemberId(
 																				(Integer) latestPlacement.getPrimaryKey());
 				for (Iterator iter = rscPlaces.iterator(); iter.hasNext();) {
 					ResourceClassMember rscPlace = (ResourceClassMember) iter.next();
@@ -243,10 +254,14 @@ public class CentralPlacementBusinessBean extends IBOServiceBean
 				}
 			}
 			trans.commit();
+			
+
 		} catch (Exception e) {
 			try {
-				trans.rollback();					
+				trans.rollback();
 				e.printStackTrace();
+				throw new CentralPlacementException(KEY_ERROR_STORING_PLACEMENT,
+															"Error storing new placement. Transaction is rolled back.");					
 			} catch (IllegalStateException e1) {
 				e1.printStackTrace();
 			} catch (SecurityException e1) {
@@ -266,13 +281,13 @@ public class CentralPlacementBusinessBean extends IBOServiceBean
 	public SchoolClassMember getCurrentSchoolClassMembership(User user, IWContext iwc)
 		throws RemoteException {
 		try {
-			final SchoolSeason season = getSchoolChoiceBusiness(iwc).getCurrentSeason();
+			final SchoolSeason season = getSchoolChoiceBusiness().getCurrentSeason();
 
 			//int childID = ((Integer) child.getPrimaryKey()).intValue();
 			//final SchoolClassMember placement = 
 			//    getSchoolBusiness(iwc).getSchoolClassMemberHome().findByUserAndSeason(childID, 2);
 
-			final SchoolClassMember placement = getSchoolBusiness(iwc).getSchoolClassMemberHome()
+			final SchoolClassMember placement = getSchoolBusiness().getSchoolClassMemberHome()
 																							.findByUserAndSeason(user, season);
 			//Integer PK = (Integer) placement.getPrimaryKey();
 			Date removedDate = placement.getRemovedDate();
@@ -307,28 +322,21 @@ public class CentralPlacementBusinessBean extends IBOServiceBean
 		}
 		return mbr;		
 	}
-
 	
-	private SchoolBusiness getSchoolBusiness(IWContext iwc) throws RemoteException {
-		return (SchoolBusiness) IBOLookup.getServiceInstance(iwc, SchoolBusiness.class);
+	public CommuneUserBusiness getCommuneUserBusiness() throws RemoteException {
+		return (CommuneUserBusiness) getServiceInstance(CommuneUserBusiness.class);
+	}
+	
+	private SchoolBusiness getSchoolBusiness() throws RemoteException {
+		return (SchoolBusiness) getServiceInstance(SchoolBusiness.class);
 	}
 
-	private ResourceBusiness getResourceBusiness(IWContext iwc) throws RemoteException {
-		return (ResourceBusiness) IBOLookup.getServiceInstance(iwc, ResourceBusiness.class);
+	private ResourceBusiness getResourceBusiness() throws RemoteException {
+		return (ResourceBusiness) getServiceInstance(ResourceBusiness.class);
 	}
 
-/*	private UserBusiness getUserBusiness(IWContext iwc) throws RemoteException {
-		return (UserBusiness) IBOLookup.getServiceInstance(iwc, UserBusiness.class);
-	}*/
-
-/*	private SchoolCommuneBusiness getSchoolCommuneBusiness(IWContext iwc) 
-																											throws RemoteException {
-			return (SchoolCommuneBusiness) IBOLookup.getServiceInstance(iwc, 
-																									SchoolCommuneBusiness.class);
-	}
-*/	
-	private SchoolChoiceBusiness getSchoolChoiceBusiness(IWContext iwc) throws RemoteException {
-		return (SchoolChoiceBusiness) IBOLookup.getServiceInstance(iwc, SchoolChoiceBusiness.class);
+	private SchoolChoiceBusiness getSchoolChoiceBusiness() throws RemoteException {
+		return (SchoolChoiceBusiness) getServiceInstance(SchoolChoiceBusiness.class);
 	}
 	
 	private SchoolClassMemberHome getSchoolClassMemberHome() throws RemoteException {
