@@ -35,6 +35,11 @@ public class SchoolUserEditor extends com.idega.block.school.presentation.School
 	private final String CATEGORY_CHILDCARE = "CHILDCARE";
 
 	private GroupBusiness groupBusiness = null;
+
+	public SchoolUserEditor(IWContext iwc) throws RemoteException{
+		super(iwc);
+		groupBusiness = (GroupBusiness) IBOLookup.getServiceInstance(iwc, GroupBusiness.class);
+	}
 	
 	public String getBundleIdentifier(){
 		return CommuneBlock.IW_BUNDLE_IDENTIFIER;
