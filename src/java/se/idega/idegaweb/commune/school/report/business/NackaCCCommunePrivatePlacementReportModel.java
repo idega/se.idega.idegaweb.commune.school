@@ -1,5 +1,5 @@
 /*
- * $Id: NackaCCCommunePrivatePlacementReportModel.java,v 1.7 2004/01/22 11:39:53 anders Exp $
+ * $Id: NackaCCCommunePrivatePlacementReportModel.java,v 1.8 2004/02/23 13:40:03 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -14,10 +14,10 @@ import java.rmi.RemoteException;
 /** 
  * Report model for child care placements in Nacka for commune and private providers.
  * <p>
- * Last modified: $Date: 2004/01/22 11:39:53 $ by $Author: anders $
+ * Last modified: $Date: 2004/02/23 13:40:03 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.8 $
  */
 public class NackaCCCommunePrivatePlacementReportModel extends ReportModel {
 
@@ -68,14 +68,16 @@ public class NackaCCCommunePrivatePlacementReportModel extends ReportModel {
 	 */
 	protected Header[] buildRowHeaders() {
 		
-		Header[] headers = new Header[7];
+		Header[] headers = new Header[9];
 
 		headers[0] = new Header(KEY_COMMUNE_PRE_SCHOOL_OPERATION, Header.HEADERTYPE_ROW_HEADER);
 		headers[1] = new Header(KEY_PRIVATE_COOPERATIVE_PRE_SCHOOL_OPERATION, Header.HEADERTYPE_ROW_HEADER);
-		headers[2] = new Header(KEY_COMMUNE_SCHOOL_CHILDREN_CARE_6, Header.HEADERTYPE_ROW_HEADER);
-		headers[3] = new Header(KEY_PRIVATE_COOPERATIVE_SCHOOL_CHILDREN_CARE_6, Header.HEADERTYPE_ROW_HEADER);
-		headers[4] = new Header(KEY_COMMUNE_SCHOOL_CHILDREN_CARE_7_9, Header.HEADERTYPE_ROW_HEADER);
-		headers[5] = new Header(KEY_PRIVATE_SCHOOL_CHILDREN_CARE_7_9, Header.HEADERTYPE_ROW_HEADER);
+		headers[2] = new Header(null, Header.HEADERTYPE_ROW_SPACER);
+		headers[3] = new Header(KEY_COMMUNE_SCHOOL_CHILDREN_CARE_6, Header.HEADERTYPE_ROW_HEADER);
+		headers[4] = new Header(KEY_PRIVATE_COOPERATIVE_SCHOOL_CHILDREN_CARE_6, Header.HEADERTYPE_ROW_HEADER);
+		headers[5] = new Header(null, Header.HEADERTYPE_ROW_SPACER);
+		headers[6] = new Header(KEY_COMMUNE_SCHOOL_CHILDREN_CARE_7_9, Header.HEADERTYPE_ROW_HEADER);
+		headers[7] = new Header(KEY_PRIVATE_SCHOOL_CHILDREN_CARE_7_9, Header.HEADERTYPE_ROW_HEADER);
 		
 		Header h = new Header(KEY_TOTAL, Header.HEADERTYPE_ROW_HEADER, 3);
 		Header child0 = new Header(KEY_COMMUNE_SUM, Header.HEADERTYPE_ROW_NORMAL);
@@ -84,7 +86,7 @@ public class NackaCCCommunePrivatePlacementReportModel extends ReportModel {
 		h.setChild(0, child0);
 		h.setChild(1, child1);
 		h.setChild(2, child2);
-		headers[6] = h;
+		headers[8] = h;
 		
 		return headers;
 	}
