@@ -6,6 +6,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
+import javax.ejb.FinderException;
+
+import se.idega.idegaweb.commune.accounting.business.AccountingSession;
 import se.idega.idegaweb.commune.presentation.CommuneBlock;
 import se.idega.idegaweb.commune.school.business.SchoolClassWriter;
 import se.idega.idegaweb.commune.school.business.SchoolCommuneBusiness;
@@ -14,12 +17,17 @@ import se.idega.idegaweb.commune.school.business.SchoolCommuneSession;
 import com.idega.block.school.business.SchoolBusiness;
 import com.idega.block.school.business.SchoolYearComparator;
 import com.idega.block.school.data.School;
+import com.idega.block.school.data.SchoolCategory;
+import com.idega.block.school.data.SchoolCategoryHome;
 import com.idega.block.school.data.SchoolClass;
 import com.idega.block.school.data.SchoolSeason;
 import com.idega.block.school.data.SchoolYear;
 import com.idega.business.IBOLookup;
+import com.idega.business.IBOLookupException;
+import com.idega.data.IDOLookup;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWMainApplication;
+import com.idega.idegaweb.UnavailableIWContext;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
 import com.idega.presentation.Table;
@@ -42,6 +50,7 @@ public abstract class SchoolCommuneBlock extends CommuneBlock {
 	
 	private SchoolCommuneBusiness business;
 	protected SchoolCommuneSession session;
+	private AccountingSession accountingSession;
 	private SchoolBusiness sBusiness;
 	private int _schoolID = -1;
 	private int _schoolSeasonID = -1;
@@ -78,6 +87,31 @@ public abstract class SchoolCommuneBlock extends CommuneBlock {
 		}
 	}
 	
+	/**
+	 * AccountingSession is used to get the school category value stored by the OperatingFieldsMenu block
+	 * @see OperatingFieldsMeny
+	 * @return AccountingSession
+	 */
+	public AccountingSession getAccountingSession() {
+		if(accountingSession==null){
+			try
+			{
+				accountingSession = (AccountingSession)IBOLookup.getSessionInstance(IWContext.getInstance(),AccountingSession.class);
+			}
+			catch (IBOLookupException e)
+			{
+				System.err.print("AccountingBlock.getSession(): Error looking up AccountingSession");
+				e.printStackTrace();
+			}
+			catch (UnavailableIWContext e)
+			{
+				System.err.print("AccountingBlock.getSession(): Error getting IWContext");
+				e.printStackTrace();
+			}
+		}
+		return accountingSession;
+	}
+		
 	protected Table getNavigationTable(boolean showClass) throws RemoteException {
 		return getNavigationTable(showClass, false, false);
 	}
@@ -85,8 +119,11 @@ public abstract class SchoolCommuneBlock extends CommuneBlock {
 	protected Table getNavigationTable(boolean showClass, boolean multipleSchools) throws RemoteException {
 		return getNavigationTable(showClass, multipleSchools, false);
 	}
-	
 	protected Table getNavigationTable(boolean showClass, boolean multipleSchools, boolean centralizedAdminChoice) throws RemoteException {
+		return getNavigationTable(showClass, multipleSchools, centralizedAdminChoice, getAccountingSession().getOperationalField());
+	}
+	
+	protected Table getNavigationTable(boolean showClass, boolean multipleSchools, boolean centralizedAdminChoice, String category) throws RemoteException {
 		Table table = new Table(9,1);
 		table.setCellpadding(0);
 		table.setCellspacing(0);
@@ -128,7 +165,7 @@ public abstract class SchoolCommuneBlock extends CommuneBlock {
 			table.resize(9, row + 2);
 			table.add(getSmallHeader(localize("school.school_list","School")+":"+Text.NON_BREAKING_SPACE),1,row);
 			table.mergeCells(2, row, 8, row);
-			table.add(getSchools(_centralAdmin),2,row);
+			table.add(getSchools(_centralAdmin, category),2,row);
 			++row;
 			table.setHeight(row, "2");
 			++row;
@@ -154,22 +191,25 @@ public abstract class SchoolCommuneBlock extends CommuneBlock {
 		
 		return table;
 	}
+	
+
 
 	protected DropdownMenu getSchools() throws RemoteException {
 		return getSchools(true);
-	}		
+	}	
+		
 	/**
 	 * 
 	 * @param includeCentralizedAdministrated If true, includes schools administrated by BUN in the list
 	 * @return
 	 * @throws RemoteException
 	 */
-	protected DropdownMenu getSchools(boolean onlyCentralizedAdministrated) throws RemoteException {
+	protected DropdownMenu getSchools(boolean onlyCentralizedAdministrated, String category) throws RemoteException {
 		
 		DropdownMenu menu = new DropdownMenu(session.getParameterSchoolID());
 		menu.setToSubmit();
 		Collection schools = null;
-		Collection schoolTypeIds = sBusiness.findAllSchoolTypesForSchool();
+		Collection schoolTypeIds = sBusiness.findAllSchoolTypesInCategory(category);
 		if (schoolTypeIds == null){
 			schoolTypeIds = new java.util.HashSet();
 		}
@@ -183,7 +223,7 @@ public abstract class SchoolCommuneBlock extends CommuneBlock {
 		while (iter.hasNext()) {
 			School sCool = (School) iter.next();	
 			menu.addMenuElement(sCool.getPrimaryKey().toString(), sCool.getName());
-		}	
+		}
 		menu.addMenuElementFirst("-1", localize("school.all_schools", "All schools"));
 		
 		if (getSchoolID() != -1) {
@@ -192,6 +232,26 @@ public abstract class SchoolCommuneBlock extends CommuneBlock {
 		
 		return (DropdownMenu) getStyledInterface(menu);	
 	}
+	
+	/**
+	 * 
+	 * @param onlyCentralizedAdministrated
+	 * @return
+	 * @throws RemoteException
+	 */
+	protected DropdownMenu getSchools(boolean onlyCentralizedAdministrated) throws RemoteException{
+		try{
+			return getSchools(onlyCentralizedAdministrated, getSchoolCategoryHome().findElementarySchoolCategory().getCategory());		
+		}catch(FinderException ex){
+			System.err.println("Could not find Elementary school category.");	
+			return null;		
+		}
+	}
+	
+	public SchoolCategoryHome getSchoolCategoryHome() throws RemoteException {
+		return (SchoolCategoryHome) IDOLookup.getHome(SchoolCategory.class);
+	}
+		
 	
 	protected DropdownMenu getSchoolSeasons() throws RemoteException {
 		DropdownMenu menu = new DropdownMenu(session.getParameterSchoolSeasonID());
