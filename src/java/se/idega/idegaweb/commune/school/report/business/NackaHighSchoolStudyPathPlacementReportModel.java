@@ -1,5 +1,5 @@
 /*
- * $Id: NackaHighSchoolStudyPathPlacementReportModel.java,v 1.12 2004/02/23 10:42:23 anders Exp $
+ * $Id: NackaHighSchoolStudyPathPlacementReportModel.java,v 1.13 2004/02/23 12:24:07 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -13,16 +13,17 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.TreeMap;
 
 import com.idega.block.school.data.SchoolStudyPath;
 
 /** 
  * Report model for high school placements for all study paths.
  * <p>
- * Last modified: $Date: 2004/02/23 10:42:23 $ by $Author: anders $
+ * Last modified: $Date: 2004/02/23 12:24:07 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.12 $
+ * @version $Revision: 1.13 $
  */
 public class NackaHighSchoolStudyPathPlacementReportModel extends ReportModel {
 
@@ -320,8 +321,14 @@ public class NackaHighSchoolStudyPathPlacementReportModel extends ReportModel {
 			_studyPaths = new ArrayList();
 			ReportBusiness rb = getReportBusiness();
 			Collection c = rb.getAllStudyPathsIncludingDirections();
+			TreeMap map = new TreeMap();
 			_subtractRow = new int[c.size()];
 			Iterator iter = c.iterator();
+			while (iter.hasNext()) {
+				SchoolStudyPath sp = (SchoolStudyPath) iter.next();
+				map.put(sp.getCode(), sp);
+			}
+			iter = map.values().iterator();
 			int studyPathAmount = 0;
 			int row = 0;
 			int studyPathRow = 0;
@@ -344,7 +351,6 @@ public class NackaHighSchoolStudyPathPlacementReportModel extends ReportModel {
 							row++;
 						}
 					}
-//					_placements.put(code, new Integer(count));
 				}
 			}			
 		}
