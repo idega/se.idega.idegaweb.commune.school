@@ -530,6 +530,14 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 		}
 		return null;
 	}
+	
+	public SchoolYear getSchoolYear(int schoolYear, int test) throws RemoteException {
+		SchoolYear schYear = getSchoolBusiness().getSchoolYear(new Integer(schoolYear));
+		if (schYear != null) {
+			return schYear;
+		}
+		return null;
+	}
 
 	public int getPreviousSchoolYear(int schoolYearID) throws RemoteException {
 		SchoolYear year = getSchoolBusiness().getSchoolYear(new Integer(schoolYearID));
