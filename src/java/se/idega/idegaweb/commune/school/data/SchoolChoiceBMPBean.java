@@ -1,7 +1,6 @@
 package se.idega.idegaweb.commune.school.data;
 
-import com.idega.block.process.data.AbstractCaseBMPBean;
-import com.idega.block.process.data.Case;
+import com.idega.block.process.data.*;
 import com.idega.block.school.data.School;
 import com.idega.user.data.User;
 import java.sql.Timestamp;
@@ -44,6 +43,18 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
   private static final String[] CASE_STATUS_KEYS = {"UBEH","TYST","PREL","PLAC"};
   private static final String[] CASE_STATUS_DESCRIPTIONS = {"Case open","Sleep","Preliminary","Placed"};
 
+  public String getCaseStatusCreated(){
+    return "UBEH";
+  }
+  public String getCaseStatusQuiet(){
+    return "TYST";
+  }
+  public String getCaseStatusPreliminary(){
+    return "PREL";
+  }
+  public String getCaseStatusPlaced(){
+    return "PLAC";
+  }
 
   public void initializeAttributes() {
     addGeneralCaseRelation();
@@ -193,6 +204,32 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 
   public Collection ejbFindByChildId(int childId)throws javax.ejb.FinderException{
     return idoFindIDsBySQL("select * from "+getEntityName()+" where "+CHILD+" = "+childId);
+  }
+
+  public Collection ejbFindByCodeAndStatus(String caseCode,String[] caseStatus, int schoolId)throws javax.ejb.FinderException{
+
+    StringBuffer sql = new StringBuffer("select s.* from ");
+    sql.append(getEntityName()).append( " s ");
+    sql.append(",").append(CaseBMPBean.TABLE_NAME).append(" c ");
+    sql.append(" where s.COMM_SCH_CHOICE_ID = c.PROC_CASE_ID ");
+    //try{
+
+    sql.append(" and c.CASE_CODE = '").append(caseCode).append("' ");
+    sql.append(" and s.SCHOOL_ID = ").append(schoolId);
+    sql.append(" and c.CASE_STATUS in (");
+    for (int i = 0; i < caseStatus.length; i++) {
+      if(i>0)
+        sql.append(",");
+      sql.append("'");
+      sql.append(caseStatus[i]);
+      sql.append("'");
+    }
+    sql.append(" ) ");
+    /*}
+    catch(java.rmi.RemoteException ex){}*/
+    //System.err.println(" \n "+sql.toString()+" \n");
+    return (Collection)super.idoFindPKsBySQL(sql.toString());
+
   }
 
 }

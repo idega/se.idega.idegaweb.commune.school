@@ -27,6 +27,13 @@ public java.util.Collection findByChosenSchoolId(int p0)throws javax.ejb.FinderE
 	return this.getEntityCollectionForPrimaryKeys(ids);
 }
 
+public java.util.Collection findByCodeAndStatus(String caseCode,String[] caseStatus,int schoolId)throws javax.ejb.FinderException{
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	java.util.Collection ids = ((SchoolChoiceBMPBean)entity).ejbFindByCodeAndStatus(caseCode,caseStatus,schoolId);
+	this.idoCheckInPooledEntity(entity);
+	return this.getEntityCollectionForPrimaryKeys(ids);
+}
+
  public SchoolChoice findByPrimaryKey(Object pk) throws javax.ejb.FinderException{
   return (SchoolChoice) super.findByPrimaryKeyIDO(pk);
  }
