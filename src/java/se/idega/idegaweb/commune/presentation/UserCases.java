@@ -52,7 +52,6 @@ public class UserCases extends CommuneBlock {
 	private boolean _showName = false;
 
 	private int _startCase = -1;
-	private int _endCase = -1;
 	private int _numberOfCases = 10;
 
 	public final static String MYCASES_KEY = "usercases.myCases";
@@ -105,11 +104,6 @@ public class UserCases extends CommuneBlock {
 			_startCase = Integer.parseInt(iwc.getParameter(PARAMETER_START_CASE));
 		else
 			_startCase = 1;
-
-		if (iwc.isParameterSet(PARAMETER_END_CASE))
-			_endCase = Integer.parseInt(iwc.getParameter(PARAMETER_END_CASE));
-		else
-			_endCase = _numberOfCases;
 
 		int action = ACTION_VIEW_CASE_LIST;
 		return action;
@@ -351,7 +345,6 @@ public class UserCases extends CommuneBlock {
 		if (_startCase > 1) {
 			Link previous = getSmallLink(localize("usercases.previous", "<< previous"));
 			previous.addParameter(PARAMETER_START_CASE, (_startCase - _numberOfCases));
-			previous.addParameter(PARAMETER_END_CASE, (_endCase - _numberOfCases));
 			navigationTable.add(previous, 1, 1);
 		}
 		else {
@@ -359,10 +352,9 @@ public class UserCases extends CommuneBlock {
 			navigationTable.add(previous, 1, 1);
 		}
 
-		if (_endCase < caseSize) {
+		if (_startCase + _numberOfCases <= caseSize) {
 			Link next = getSmallLink(localize("usercases.next", "next >>"));
 			next.addParameter(PARAMETER_START_CASE, (_startCase + _numberOfCases));
-			next.addParameter(PARAMETER_END_CASE, (_endCase + _numberOfCases));
 			navigationTable.add(next, 2, 1);
 		}
 		else {
