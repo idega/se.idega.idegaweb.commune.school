@@ -1,5 +1,5 @@
 /*
- * $Id: NackaCC7_9YearPlacementReportModel.java,v 1.1 2004/01/27 09:48:40 anders Exp $
+ * $Id: NackaCC7_9YearPlacementReportModel.java,v 1.2 2004/01/27 12:41:55 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -23,10 +23,10 @@ import com.idega.block.school.data.SchoolArea;
  * Report model for child care after school and daycare placements 
  * for 7-9 years children in Nacka.
  * <p>
- * Last modified: $Date: 2004/01/27 09:48:40 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/27 12:41:55 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class NackaCC7_9YearPlacementReportModel extends ReportModel {
 
@@ -335,10 +335,7 @@ public class NackaCC7_9YearPlacementReportModel extends ReportModel {
 	protected int getFamilyDaycarePlacementCount(int areaId, int managementType) throws RemoteException {
 		ReportBusiness rb = getReportBusiness();
 		
-		int schoolType1 = rb.getAfterSchool7_9TypeId();
-		int schoolType2 = rb.getFamilyAfterSchool7_9TypeId();
-		int schoolType3 = schoolType2;
-		int schoolType4 = schoolType2;
+		int schoolType = rb.getFamilyAfterSchool7_9TypeId();
 				
 		String managementType1 = null;
 		String managementType2 = null;
@@ -366,23 +363,20 @@ public class NackaCC7_9YearPlacementReportModel extends ReportModel {
 			query = new PreparedQuery(getConnection());
 			query.setSelectCount();
 			query.setChildCarePlacements();
-			query.setFourSchoolTypesForProviders(); // parameter 1-4
-			query.setFourManagementTypes(); // parameter 5-8
-			query.setSchoolArea(); // parameter 9
+			query.setSchoolTypeForProvider(); // parameter 1
+			query.setFourManagementTypes(); // parameter 2-5
+			query.setSchoolArea(); // parameter 6
 			query.prepare();
 			setQuery(QUERY_FAMILY_DAYCARE_PLACEMENTS, query);
 		}
-		query.setInt(1, schoolType1);
-		query.setInt(2, schoolType2);
-		query.setInt(3, schoolType3);
-		query.setInt(4, schoolType4);
+		query.setInt(1, schoolType);
 		
-		query.setString(5, managementType1);
-		query.setString(6, managementType2);
-		query.setString(7, managementType3);
-		query.setString(8, managementType4);
+		query.setString(2, managementType1);
+		query.setString(3, managementType2);
+		query.setString(4, managementType3);
+		query.setString(5, managementType4);
 		
-		query.setInt(9, areaId);
+		query.setInt(6, areaId);
 		
 		return query.execute();
 	}
@@ -392,10 +386,7 @@ public class NackaCC7_9YearPlacementReportModel extends ReportModel {
 	 */
 	protected int getProviderPlacementCount(int schoolId) throws RemoteException {
 		ReportBusiness rb = getReportBusiness();
-		int schoolType1 = rb.getAfterSchool7_9TypeId();
-		int schoolType2 = rb.getFamilyAfterSchool7_9TypeId();
-		int schoolType3 = schoolType2;
-		int schoolType4 = schoolType2;
+		int schoolType = rb.getAfterSchool7_9TypeId();
 
 		PreparedQuery query = null;
 		query = getQuery(QUERY_PROVIDER_PLACEMENTS);
@@ -404,15 +395,12 @@ public class NackaCC7_9YearPlacementReportModel extends ReportModel {
 			query.setSelectCount();
 			query.setChildCarePlacements();
 			query.setSchool(); // parameter 1
-			query.setFourSchoolTypesForProviders(); // parameter 2-5
+			query.setSchoolTypeForProvider(); // parameter 2
 			query.prepare();
 			setQuery(QUERY_PROVIDER_PLACEMENTS, query);
 		}
 		query.setInt(1, schoolId);
-		query.setInt(2, schoolType1);
-		query.setInt(3, schoolType2);
-		query.setInt(4, schoolType3);
-		query.setInt(5, schoolType4);
+		query.setInt(2, schoolType);
 		
 		return query.execute();
 	}
@@ -423,10 +411,7 @@ public class NackaCC7_9YearPlacementReportModel extends ReportModel {
 	protected float getFamilyDaycareMeanHours(int areaId, int managementType) throws RemoteException {
 		ReportBusiness rb = getReportBusiness();
 		
-		int schoolType1 = rb.getAfterSchool7_9TypeId();
-		int schoolType2 = rb.getFamilyAfterSchool7_9TypeId();
-		int schoolType3 = schoolType2;
-		int schoolType4 = schoolType2;
+		int schoolType = rb.getFamilyAfterSchool7_9TypeId();
 				
 		String managementType1 = null;
 		String managementType2 = null;
@@ -454,23 +439,20 @@ public class NackaCC7_9YearPlacementReportModel extends ReportModel {
 			query = new PreparedQuery(getConnection());
 			query.setSelectMeanChildCareWeekHours();
 			query.setChildCarePlacements();
-			query.setFourSchoolTypesForProviders(); // parameter 1-4
-			query.setFourManagementTypes(); // parameter 5-8
-			query.setSchoolArea(); // parameter 9
+			query.setSchoolTypeForProvider(); // parameter 1
+			query.setFourManagementTypes(); // parameter 2-5
+			query.setSchoolArea(); // parameter 6
 			query.prepare();
 			setQuery(QUERY_FAMILY_DAYCARE_MEAN_HOURS, query);
 		}
-		query.setInt(1, schoolType1);
-		query.setInt(2, schoolType2);
-		query.setInt(3, schoolType3);
-		query.setInt(4, schoolType4);
+		query.setInt(1, schoolType);
 		
-		query.setString(5, managementType1);
-		query.setString(6, managementType2);
-		query.setString(7, managementType3);
-		query.setString(8, managementType4);
+		query.setString(2, managementType1);
+		query.setString(3, managementType2);
+		query.setString(4, managementType3);
+		query.setString(5, managementType4);
 		
-		query.setInt(9, areaId);
+		query.setInt(6, areaId);
 		
 		return query.executeFloat();
 	}
@@ -480,10 +462,7 @@ public class NackaCC7_9YearPlacementReportModel extends ReportModel {
 	 */
 	protected int getProviderMeanHours(int schoolId) throws RemoteException {
 		ReportBusiness rb = getReportBusiness();
-		int schoolType1 = rb.getAfterSchool7_9TypeId();
-		int schoolType2 = rb.getFamilyAfterSchool7_9TypeId();
-		int schoolType3 = schoolType2;
-		int schoolType4 = schoolType2;
+		int schoolType = rb.getAfterSchool7_9TypeId();
 
 		PreparedQuery query = null;
 		query = getQuery(QUERY_PROVIDER_MEAN_HOURS);
@@ -492,15 +471,12 @@ public class NackaCC7_9YearPlacementReportModel extends ReportModel {
 			query.setSelectMeanChildCareWeekHours();
 			query.setChildCarePlacements();
 			query.setSchool(); // parameter 1
-			query.setFourSchoolTypesForProviders(); // parameter 2-5
+			query.setSchoolTypeForProvider(); // parameter 2
 			query.prepare();
 			setQuery(QUERY_PROVIDER_MEAN_HOURS, query);
 		}
 		query.setInt(1, schoolId);
-		query.setInt(2, schoolType1);
-		query.setInt(3, schoolType2);
-		query.setInt(4, schoolType3);
-		query.setInt(5, schoolType4);
+		query.setInt(2, schoolType);
 		
 		return query.execute();
 	}
