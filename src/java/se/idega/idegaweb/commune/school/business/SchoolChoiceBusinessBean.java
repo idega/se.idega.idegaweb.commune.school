@@ -382,18 +382,21 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	public void rejectApplication(int applicationID, int seasonID, User performer, String messageSubject, String messageBody) throws RemoteException {
 		try {
 			SchoolChoice choice = this.getSchoolChoiceHome().findByPrimaryKey(new Integer(applicationID));
+			String status = choice.getCaseStatus().toString();
 			super.changeCaseStatus(choice, getCaseStatusInactive().getPrimaryKey().toString(), performer);
 			choice.store();
 			
-			Collection coll = findByStudentAndSeason(choice.getChildId(), seasonID);
-			Iterator iter = coll.iterator();
-			while (iter.hasNext()) {
-				SchoolChoice element = (SchoolChoice) iter.next();
-				if (element.getChoiceOrder() == (choice.getChoiceOrder() + 1)) {
-					super.changeCaseStatus(element, "PREL", performer);
-					continue;
-				}
-			}			
+			if (!status.equalsIgnoreCase("FLYT")) {
+				Collection coll = findByStudentAndSeason(choice.getChildId(), seasonID);
+				Iterator iter = coll.iterator();
+				while (iter.hasNext()) {
+					SchoolChoice element = (SchoolChoice) iter.next();
+					if (element.getChoiceOrder() == (choice.getChoiceOrder() + 1)) {
+						super.changeCaseStatus(element, "PREL", performer);
+						continue;
+					}
+				}			
+			}
 
 			User child = choice.getChild();
 			Collection parents = getUserBusiness().getMemberFamilyLogic().getCustodiansFor(child);
