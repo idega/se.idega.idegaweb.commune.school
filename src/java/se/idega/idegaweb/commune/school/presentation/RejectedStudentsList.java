@@ -30,7 +30,7 @@ public class RejectedStudentsList extends SchoolCommuneBlock {
 
 	Collection schoolChoices;
 	int totalChoices;
-	String tableWidth = "600";
+	String tableWidth;
 	int currentStartEntry = 0;
 	int ENTRIES_PER_PAGE = 10;
 	IWResourceBundle iwrb;
@@ -59,7 +59,11 @@ public class RejectedStudentsList extends SchoolCommuneBlock {
 		Table table = new Table();
 		table.setCellpaddingAndCellspacing(0);
 		table.add(getPagesTable(), 1, 1);
-		table.setWidth(tableWidth);
+		if (tableWidth == null) {
+			table.setWidth(getWidth());
+		} else {
+			table.setWidth(tableWidth);
+		}
 		table.add(getStudentList(iwc), 1, 2);
 		add(table);
 	}
