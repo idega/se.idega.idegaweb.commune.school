@@ -127,6 +127,11 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 			choices.add(choice);
 			handleSeparatedParentApplication(childId,userId,choices,true);
 			handleSchoolChangeHeadMasters(getUser(childId),current_school,chosen_school);
+
+			int previousSeasonID = getCommuneSchoolBusiness().getPreviousSchoolSeasonID(getCommuneSchoolBusiness().getCurrentSchoolSeasonID());
+			if (previousSeasonID != -1)
+				getCommuneSchoolBusiness().setNeedsSpecialAttention(childId, previousSeasonID,true);
+				
 			return choice;
 		}
 		catch (Exception ex) {
@@ -257,12 +262,12 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	
 	private void handleSchoolChangeHeadMasters(User child,int oldSchoolID,int newSchoolID)throws RemoteException{
 		try {
-			getMessageBusiness().createUserMessage(getSchoolBusiness().getHeadmaster(oldSchoolID),getOldHeadmasterSubject(),getOldHeadmasterBody(child));
+			getMessageBusiness().createUserMessage(getSchoolBusiness().getHeadmaster(oldSchoolID),getOldHeadmasterSubject(),getOldHeadmasterBody(child, getSchool(newSchoolID)));
 		}
 		catch(Exception ex){
 		}
 		try{
-			getMessageBusiness().createUserMessage(getSchoolBusiness().getHeadmaster(newSchoolID),getNewHeadMasterSubject(),getNewHeadmasterBody(child));
+			getMessageBusiness().createUserMessage(getSchoolBusiness().getHeadmaster(newSchoolID),getNewHeadMasterSubject(),getNewHeadmasterBody(child, getSchool(oldSchoolID)));
 		}
 		catch(Exception ex){
 		}
@@ -561,18 +566,22 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		return body;
 	}
 	
-	protected String getOldHeadmasterBody(User student) throws RemoteException, FinderException {
-		StringBuffer body = new StringBuffer(this.getLocalizedString("school_choice.old_headmaster_body1", "Dear headmaster "));
+	protected String getOldHeadmasterBody(User student, School newSchool) throws RemoteException, FinderException {
+		Object[] arguments = { student.getNameLastFirst(true), newSchool.getSchoolName() };
+		String body = MessageFormat.format(getLocalizedString("school_choice.old_headmaster_body", "Dear headmaster"), arguments);
+		/*StringBuffer body = new StringBuffer(this.getLocalizedString("school_choice.old_headmaster_body1", "Dear headmaster "));
 		body.append(student.getName()).append("\n");
-		body.append(this.getLocalizedString("school_choice.old_headmaster_body2", "Wishes to change to another school."));
-		return body.toString();
+		body.append(this.getLocalizedString("school_choice.old_headmaster_body2", "Wishes to change to another school."));*/
+		return body;
 	}
 	
-	protected String getNewHeadmasterBody(User student) throws RemoteException, FinderException {
-		StringBuffer body = new StringBuffer(this.getLocalizedString("school_choice.old_headmaster_body1", "Dear headmaster "));
+	protected String getNewHeadmasterBody(User student, School oldSchool) throws RemoteException, FinderException {
+		Object[] arguments = { student.getNameLastFirst(true), oldSchool.getSchoolName() };
+		String body = MessageFormat.format(getLocalizedString("school_choice.new_headmaster_body", "Dear headmaster"), arguments);
+		/*StringBuffer body = new StringBuffer(this.getLocalizedString("school_choice.old_headmaster_body1", "Dear headmaster "));
 		body.append(student.getName()).append("\n");
-		body.append(this.getLocalizedString("school_choice.old_headmaster_body2", "Wishes to change to your school."));
-		return body.toString();
+		body.append(this.getLocalizedString("school_choice.old_headmaster_body2", "Wishes to change to your school."));*/
+		return body;
 	}
 	
 	public String getPreliminaryMessageSubject() {
