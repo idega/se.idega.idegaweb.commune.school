@@ -1,5 +1,5 @@
 /*
- * $Id: NackaCompulsoryHighSchoolPlacementReportModel.java,v 1.2 2004/01/12 13:17:12 anders Exp $
+ * $Id: NackaCompulsoryHighSchoolPlacementReportModel.java,v 1.3 2004/01/12 16:21:33 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -18,10 +18,10 @@ import com.idega.block.school.data.School;
 /** 
  * Report model for placements in Nacka compulsory high schools.
  * <p>
- * Last modified: $Date: 2004/01/12 13:17:12 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/12 16:21:33 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class NackaCompulsoryHighSchoolPlacementReportModel extends ReportModel {
 
@@ -192,9 +192,9 @@ public class NackaCompulsoryHighSchoolPlacementReportModel extends ReportModel {
 		} else {
 			switch (cell.getColumnMethod()) {
 				case COLUMN_METHOD_TOTAL_1_4:
-					value = getCell(cell.getRow(), 3).getFloatValue() +
-							getCell(cell.getRow(), 4).getFloatValue() +
-							getCell(cell.getRow(), 12).getFloatValue();
+					value = getCell(cell.getRow(), 0).getFloatValue() +
+							getCell(cell.getRow(), 1).getFloatValue() +
+							getCell(cell.getRow(), 2).getFloatValue();
 					break;
 				case COLUMN_METHOD_OTHER_COMMUNE_CITIZENS:
 					value = getCompulsoryHighSchoolOCCPlacementCount(schoolId);
