@@ -42,6 +42,31 @@ public class UserCases extends CommuneBlock {
 	private int manager_page_id = -1;
     private int viewpointPageId = -1;    
 
+    public final static String MYCASES_KEY = "usercases.myCases";
+    public final static String MYCASES_DEFAULT = "Mina ärenden";
+    public final static String CASENUMBER_KEY = "usercases.caseNumber";
+    public final static String CASENUMBER_DEFAULT = "Ärendenummer";
+    public final static String CONCERNING_KEY = "usercases.concerning";
+    public final static String CONCERNING_DEFAULT = "Avser";
+    public final static String NAME_KEY = "usercases.name";
+    public final static String NAME_DEFAULT = "Namn";
+    public final static String DATE_KEY = "usercases.date";
+    public final static String DATE_DEFAULT = "Datum";
+    public final static String MANAGER_KEY = "usercases.manager";
+    public final static String MANAGER_DEFAULT = "Handläggare";
+    public final static String STATUS_KEY = "usercases.status";
+    public final static String STATUS_DEFAULT = "Status";
+    public final static String NOONGOINGCASES_KEY = "usercases.noOngoingCases";
+    public final static String NOONGOINGCASES_DEFAULT = "Inga pågående ärenden";
+    public final static String UNHANDLEDCASESINMYGROUPS_KEY
+        = "usercases.unhandledCasesInMyGroups";
+    public final static String UNHANDLEDCASESINMYGROUPS_DEFAULT
+        = "Pågående ärenden i mina grupper";
+    public final static String SUBJECT_KEY = "usercases.subject";
+    public final static String SUBJECT_DEFAULT = "Rubrik";
+    public final static String HANDLERGROUP_KEY = "usercases.handlerGroup";
+    public final static String HANDLERGROUP_DEFAULT = "Handläggargrupp";
+
 	public String getBundleIdentifier() {
 		return IW_BUNDLE_IDENTIFIER;
 	}
@@ -79,7 +104,7 @@ public class UserCases extends CommuneBlock {
     
 	private void viewCaseList (IWContext iwc) throws Exception {
 		add(new Break(2));
-		add(getLocalizedHeader("usercases.my_cases", "My cases"));
+		add(getLocalizedHeader(MYCASES_KEY, MYCASES_DEFAULT));
 		add(new Break(2));
 		if (iwc.isLoggedOn()) {
 			Collection cases = getCommuneCaseBusiness(iwc)
@@ -89,16 +114,15 @@ public class UserCases extends CommuneBlock {
 				Form f = new Form();
 				f.add(messageList);
 				messageList.setBackroundColor("#e0e0e0");
-				messageList.setHeader(localize("usercases.case_number",
-                                               "Case number"), 1);
-				messageList.setHeader(localize("usercases.concerning",
-                                               "Concerning"), 2);
-				messageList.setHeader(localize("usercases.name", "Name"), 3);
-				messageList.setHeader(localize("usercases.date", "Date"), 4);
-				messageList.setHeader(localize("usercases.manager", "Manager"),
+				messageList.setHeader(localize(CASENUMBER_KEY,
+                                               CASENUMBER_DEFAULT), 1);
+				messageList.setHeader(localize(CONCERNING_KEY,
+                                               CONCERNING_DEFAULT), 2);
+				messageList.setHeader(localize(NAME_KEY, NAME_DEFAULT), 3);
+				messageList.setHeader(localize(DATE_KEY, DATE_DEFAULT), 4);
+				messageList.setHeader(localize(MANAGER_KEY, MANAGER_DEFAULT),
                                       5);
-				messageList.setHeader(localize("usercases.status", "Status"),
-                                      6);
+				messageList.setHeader(localize(STATUS_KEY, STATUS_DEFAULT), 6);
 				Collection messages = getCaseBusiness(iwc).getAllCasesForUser
                         (Converter.convertToNewUser(iwc.getUser()));
 				boolean isRead = false;
@@ -116,9 +140,9 @@ public class UserCases extends CommuneBlock {
 				// messageList.skip(6);
 				add(f);
 			} else {
-				add(getSmallText(localize("usercases.no_ongoing_cases",
-                                          "No ongoing cases")));
-			}
+				add(getSmallText(localize(NOONGOINGCASES_KEY,
+                                          NOONGOINGCASES_DEFAULT)));
+            }
         
             // 1. find my groups
             final GroupBusiness groupBusiness =
@@ -143,24 +167,24 @@ public class UserCases extends CommuneBlock {
             if (viewpoints != null && viewpoints.length > 0) {
                 add(new Break(2));
                 add(getLocalizedHeader
-                    ("usercases.unhandledCasesInMyGroups",
-                     "Unhandled cases in my groups"));
+                    (UNHANDLEDCASESINMYGROUPS_KEY,
+                     UNHANDLEDCASESINMYGROUPS_DEFAULT));
                 add(new Break(2));
                 ColumnList messageList = new ColumnList(5);
 				Form f = new Form();
 				f.add(messageList);
 				messageList.setBackroundColor("#e0e0e0");
                 int col = 1;
-				messageList.setHeader(localize("usercases.case_number",
-                                               "Case number"), col++);
-				messageList.setHeader(localize("usercases.concerning",
-                                               "Concerning"), col++);
-				messageList.setHeader(localize("usercases.subject", "Subject"),
+				messageList.setHeader(localize(CASENUMBER_KEY,
+                                               CASENUMBER_DEFAULT), col++);
+				messageList.setHeader(localize(CONCERNING_KEY,
+                                               CONCERNING_DEFAULT), col++);
+				messageList.setHeader(localize(SUBJECT_KEY, SUBJECT_DEFAULT),
                                       col++);
-				messageList.setHeader(localize("usercases.date", "Date"),
+				messageList.setHeader(localize(DATE_KEY, DATE_DEFAULT),
                                       col++);
-				messageList.setHeader(localize("usercases.handlerGroup",
-                                               "Handler Group"), col++);
+				messageList.setHeader(localize(HANDLERGROUP_KEY,
+                                               HANDLERGROUP_DEFAULT), col++);
 
                 for (int i = 0; i < viewpoints.length; i++) {
                     addViewpointToMessageList (iwc, viewpoints [i],
@@ -181,7 +205,7 @@ public class UserCases extends CommuneBlock {
                 = new Date(useCase.getCreated().getTime());
         Text caseNumber = getSmallText
                 (useCase.getPrimaryKey().toString());
-        if (useCase.getCode().equalsIgnoreCase ("SYMESYN") &&
+        if (useCase.getCode().equalsIgnoreCase (Viewpoint.CASE_CODE_KEY) &&
             getViewpointPage() != -1) {
             Link viewpointLink = new Link (caseNumber);
             viewpointLink.setPage(getViewpointPage());
@@ -267,6 +291,10 @@ public class UserCases extends CommuneBlock {
                     (ViewpointForm.PARAM_VIEWPOINT_ID,
                      viewpoint.getPrimaryKey().toString());
             caseNumber = viewpointLink;
+        } else {
+            System.err.println ("[" + this.getClass ().getName () + "] Property"
+                                + " 'Viewpoint Page' not set in IdegaWeb"
+                                + " Builder. Can't create links to viewpoints.");
         }
 
         messageList.add(caseNumber);
