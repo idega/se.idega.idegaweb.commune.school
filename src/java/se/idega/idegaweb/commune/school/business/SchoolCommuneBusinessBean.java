@@ -44,7 +44,6 @@ import com.idega.core.data.Phone;
 import com.idega.data.IDOEntityDefinition;
 import com.idega.data.IDOException;
 import com.idega.data.IDOLookup;
-import com.idega.data.IDOLookupException;
 import com.idega.data.IDOQuery;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWPropertyList;
@@ -684,7 +683,9 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 		ReportableCollection reportData = new ReportableCollection();
 		
 		SchoolBusiness sBusiness =  (SchoolBusiness)IBOLookup.getServiceInstance(this.getIWApplicationContext(),SchoolBusiness.class);
-	
+		
+		SchoolClassMemberHome scmHome = sBusiness.getSchoolClassMemberHome();		
+		
 		Collection schoolyears = sBusiness.getSchoolYearHome().findAllSchoolYears();
 		IWTimestamp seasonStartDate = new IWTimestamp(currentSeason.getSchoolSeasonStart());
 		int currentYear = seasonStartDate.getYear();
@@ -856,8 +857,24 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 			
 			
 			//lastPlacementField
-			//
-			//data.addData(lastPlacementField,);
+			
+			
+			try {
+				SchoolClassMember latestSCM = scmHome.findLatestByUser(child);
+				if(latestSCM != null){
+					SchoolClass sc = latestSCM.getSchoolClass();
+					School school = sc.getSchool();
+					data.addData(lastPlacementField,school.getSchoolName()+" "+ sc.getSchoolClassName()+" / "+dateFormat.format(latestSCM.getRegisterDate()));
+				} else {
+					data.addData(lastPlacementField,_iwrb.getLocalizedString("no_history","No history"));
+				}
+			} catch (FinderException e1) {
+				//e1.printStackTrace();
+				data.addData(lastPlacementField,_iwrb.getLocalizedString("no_history","No history"));
+			}
+			
+			
+			
 			
 			
 			try {
