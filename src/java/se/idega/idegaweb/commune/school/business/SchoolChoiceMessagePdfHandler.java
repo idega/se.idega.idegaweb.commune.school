@@ -49,8 +49,12 @@ public class SchoolChoiceMessagePdfHandler implements MessagePdfHandler,BundleRe
 	public final static String CODE_NEW_SCHOOL_CHANGE ="NSCCHNG";
 	public final static String CODE_SCHOOL_MOVEAWAY ="SCHMVAW";
 	//public final static String CODE_SEPERATED_CHANGE ="SPPCHNG";
-	public final static String CODE_SINGLEPARENT_APPLICATION_NEW ="PRAPNEW";
-	public final static String CODE_SINGLEPARENT_APPLICATION_CHANGE = "PAPCHNG";
+	public final static String CODE_APPLYING_SINGLEPARENT_APPLICATION_NEW ="APAPNEW";
+	public final static String CODE_APPLYING_SINGLEPARENT_APPLICATION_CHANGE = "APAPCHG";
+	public final static String CODE_NONAPPLYING_SINGLEPARENT_APPLICATION_NEW ="PRAPNEW";
+	public final static String CODE_NONAPPLYING_SINGLEPARENT_APPLICATION_CHANGE = "PAPCHNG";
+	public final static String CODE_CHILD_SELF_APPLICATION_CHANGE = "CHLDCHG";
+	public final static String CODE_CHILD_SELF_APPLICATION_NEW = "CHLDNEW";
 	public final static String CODE_APPLICATION_REJECT ="APREJCT";
 	public final static String CODE_PRELIMINARY ="PRELIMI";
 	/* (non-Javadoc)
@@ -62,11 +66,23 @@ public class SchoolChoiceMessagePdfHandler implements MessagePdfHandler,BundleRe
 		if(CODE_PRELIMINARY.equals(code)){
 			createPreliminaryContent(dpc,code);
 		}
-		else if(CODE_SINGLEPARENT_APPLICATION_NEW.equals(code)){
-			createSeparateParentApplicationContent(dpc,code);
+		else if(CODE_APPLYING_SINGLEPARENT_APPLICATION_NEW.equals(code)){
+			createApplyingSeparateParentApplicationContent(dpc,code);
 		}
-		else if(CODE_SINGLEPARENT_APPLICATION_CHANGE.equals(code)){
-			createSeparateParentChangeContent(dpc,code);
+		else if(CODE_APPLYING_SINGLEPARENT_APPLICATION_CHANGE.equals(code)){
+			createApplyingSeparateParentChangeContent(dpc,code);
+		}
+		else if(CODE_NONAPPLYING_SINGLEPARENT_APPLICATION_NEW.equals(code)){
+			createNonApplyingSeparateParentApplicationContent(dpc,code);
+		}
+		else if(CODE_NONAPPLYING_SINGLEPARENT_APPLICATION_CHANGE.equals(code)){
+			createNonApplyingSeparateParentChangeContent(dpc,code);
+		}
+		else if(CODE_CHILD_SELF_APPLICATION_CHANGE.equals(code)){
+			createChildSelfApplicationContent(dpc,code);
+		}
+		else if(CODE_CHILD_SELF_APPLICATION_NEW.equals(code)){
+			createChildSelfChangeContent(dpc,code);
 		}
 		else if(CODE_OLD_SCHOOL_CHANGE.equals(code)){
 			createOldHeadmasterContent(dpc,code);
@@ -86,11 +102,19 @@ public class SchoolChoiceMessagePdfHandler implements MessagePdfHandler,BundleRe
 		createContent( dpc, getHandlerCode()+"_"+code+"_letter.xml");
 	}
 	
-	private void createSeparateParentApplicationContent(DocumentPrintContext dpc,String code)throws ContentCreationException{
+	private void createApplyingSeparateParentApplicationContent(DocumentPrintContext dpc,String code)throws ContentCreationException{
 		createContent( dpc, getHandlerCode()+"_"+code+"_letter.xml");
 	}
 	
-	private void createSeparateParentChangeContent(DocumentPrintContext dpc,String code)throws ContentCreationException{
+	private void createApplyingSeparateParentChangeContent(DocumentPrintContext dpc,String code)throws ContentCreationException{
+		createContent( dpc, getHandlerCode()+"_"+code+"_letter.xml");
+	}
+	
+	private void createNonApplyingSeparateParentApplicationContent(DocumentPrintContext dpc,String code)throws ContentCreationException{
+		createContent( dpc, getHandlerCode()+"_"+code+"_letter.xml");
+	}
+	
+	private void createNonApplyingSeparateParentChangeContent(DocumentPrintContext dpc,String code)throws ContentCreationException{
 		createContent( dpc, getHandlerCode()+"_"+code+"_letter.xml");
 	}
 	
@@ -99,6 +123,14 @@ public class SchoolChoiceMessagePdfHandler implements MessagePdfHandler,BundleRe
 	}
 	
 	private void createNewHeadmasterContent(DocumentPrintContext dpc,String code)throws ContentCreationException{
+		createContent( dpc, getHandlerCode()+"_"+code+"_letter.xml");
+	}
+	
+	private void createChildSelfApplicationContent(DocumentPrintContext dpc,String code)throws ContentCreationException{
+		createContent( dpc, getHandlerCode()+"_"+code+"_letter.xml");
+	}
+	
+	private void createChildSelfChangeContent(DocumentPrintContext dpc,String code)throws ContentCreationException{
 		createContent( dpc, getHandlerCode()+"_"+code+"_letter.xml");
 	}
 	
