@@ -369,6 +369,8 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
   		.append(" like '%").append(searchStringForUser).append("%'")
   		.appendOr().append(UserBMPBean.TABLE_NAME).append(".").append(UserBMPBean.getColumnNameLastName())
   		.append(" like '%").append(searchStringForUser).append("%'")
+  		.appendOr().append(UserBMPBean.TABLE_NAME).append(".").append(UserBMPBean.getColumnNameMiddleName())
+  		.append(" like '%").append(searchStringForUser).append("%'")
   		.appendOr().append(UserBMPBean.TABLE_NAME).append(".").append(UserBMPBean.getColumnNamePersonalID())
   		.append(" like '%").append(searchStringForUser).append("%'");
   		query.append(")").appendAnd();
@@ -397,7 +399,7 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
   		needAnd = true;
   	}
   	
-  	System.out.println("[SchoolChoiceBean] sql : "+query.toString());
+//  	System.out.println("[SchoolChoiceBean] sql : "+query.toString());
   	return this.idoFindPKsByQuery(query);
   }
   

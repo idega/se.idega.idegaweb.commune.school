@@ -81,20 +81,24 @@ public abstract class SchoolCommuneBlock extends CommuneBlock {
 		}
 
 		table.add(getSmallHeader(localize("school.season","Season")+":"+Text.NON_BREAKING_SPACE),1,row);
-		table.add(getSchoolSeasons(),2,row);
+		DropdownMenu schSeas = getSchoolSeasons();
+		table.add(schSeas,2,row);
 		table.add(getSmallHeader(localize("school.year","Year")+":"+Text.NON_BREAKING_SPACE),4,row);
-		table.add(getSchoolYears(),5,row);
+		DropdownMenu schYears = getSchoolYears();
+			schYears.addMenuElementFirst("-1","");
+		table.add(schYears,5,row);
 		if (showClass) {
 //			table.resize(8, row);
 			table.setWidth(6, "8");
 			table.add(getSmallHeader(localize("school.class","Class")+":"+Text.NON_BREAKING_SPACE),7,row);
-			table.add(getSchoolClasses(),8,row);
+			DropdownMenu schClasses = getSchoolClasses();
+			schClasses.addMenuElementFirst("-1","");
+			table.add(schClasses, 8, row);
 		}
 		
 		return table;
 	}
 	
-
 	protected DropdownMenu getSchools() throws RemoteException {
 		
 		DropdownMenu menu = new DropdownMenu(session.getParameterSchoolID());
@@ -124,12 +128,13 @@ public abstract class SchoolCommuneBlock extends CommuneBlock {
 			while (iter.hasNext()) {
 				SchoolSeason element = (SchoolSeason) iter.next();
 				menu.addMenuElement(element.getPrimaryKey().toString(), element.getSchoolSeasonName());
-				if (_schoolSeasonID == -1)
-					_schoolSeasonID = ((Integer)element.getPrimaryKey()).intValue();
+				// Gimmi 13.11.2002
+//				if (_schoolSeasonID == -1)
+//					_schoolSeasonID = ((Integer)element.getPrimaryKey()).intValue();
 			}
 		}
 		else {
-			menu.addMenuElement(-1, "");	
+//			menu.addMenuElement(-1, "");	
 		}
 		
 		if ( _schoolSeasonID != -1 )
@@ -137,7 +142,6 @@ public abstract class SchoolCommuneBlock extends CommuneBlock {
 		
 		return (DropdownMenu) getStyledInterface(menu);	
 	}
-		
 	protected DropdownMenu getSchoolYears() throws RemoteException {
 		DropdownMenu menu = new DropdownMenu(session.getParameterSchoolYearID());
 		menu.setToSubmit();
@@ -150,17 +154,19 @@ public abstract class SchoolCommuneBlock extends CommuneBlock {
 				while (iter.hasNext()) {
 					SchoolYear element = (SchoolYear) iter.next();
 					menu.addMenuElement(element.getPrimaryKey().toString(), element.getSchoolYearName());
-					if ( _schoolYearID == -1 )
-						_schoolYearID = ((Integer)element.getPrimaryKey()).intValue();
+					if ( _schoolYearID == -1 ) {
+						// Gimmi 13.11.2002
+						//_schoolYearID = ((Integer)element.getPrimaryKey()).intValue();
+					}
 				}
 			}
 			else {
 				_schoolYearID = -1;
-				menu.addMenuElement(-1, "");	
+//				menu.addMenuElement(-1, "");	
 			}
 		}
 		else {
-			menu.addMenuElement(-1, "");	
+//			menu.addMenuElement(-1, "");	
 		}
 		
 		if ( _schoolYearID != -1 )
@@ -168,7 +174,7 @@ public abstract class SchoolCommuneBlock extends CommuneBlock {
 		
 		return (DropdownMenu) getStyledInterface(menu);
 	}
-	
+
 	protected DropdownMenu getSchoolClasses() throws RemoteException {
 		DropdownMenu menu = new DropdownMenu(session.getParameterSchoolClassID());
 		menu.setToSubmit();
@@ -180,17 +186,18 @@ public abstract class SchoolCommuneBlock extends CommuneBlock {
 				while (iter.hasNext()) {
 					SchoolClass element = (SchoolClass) iter.next();
 					menu.addMenuElement(element.getPrimaryKey().toString(), element.getName());
-					if ( _schoolClassID == -1 )
-						_schoolClassID = ((Integer)element.getPrimaryKey()).intValue();
+					//if ( _schoolClassID == -1 )
+						// Gimmi 13.11.2002
+						//_schoolClassID = ((Integer)element.getPrimaryKey()).intValue();
 				}
 			}
 			else {
 				_schoolClassID = -1;
-				menu.addMenuElement(-1, "");	
+//				menu.addMenuElement(-1, "");	
 			}
 		}
 		else {
-			menu.addMenuElement(-1, "");	
+//			menu.addMenuElement(-1, "");	
 		}
 		
 		if ( _schoolClassID != -1 )
