@@ -357,6 +357,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		T.add(getText(text2), 1, row++);
 		T.add(getText(text3), 1, row++);
 		T.add(getText(text4), 1, row++);
+		T.setHeight (row++, 12);
 		T.add (getUserHomePageLink (iwc), 1, row++);
 
 		return T;
