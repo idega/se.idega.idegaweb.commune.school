@@ -354,7 +354,8 @@ public class SchoolChoiceApplication extends CommuneBlock {
 									choiceDate = element.getCreated();
 									isOwner = ((IDOEntity) iwc.getCurrentUser()).equals(owner);
 									custodiansAgree = element.getCustodiansAgree();
-									valType = element.getSchoolTypeId();
+									if (valType == -1)
+										valType = element.getSchoolTypeId();
 									valTypeFirstTime = element.getSchoolTypeId();
 									valYear = element.getSchoolYearID();
 								}
