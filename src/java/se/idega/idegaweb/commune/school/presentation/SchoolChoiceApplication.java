@@ -942,7 +942,6 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		try {
 			RemoteScriptHandler rsh = new RemoteScriptHandler(typeDrop, drpGrade);
 			rsh.setRemoteScriptCollectionClass(SchoolYearSelectorCollectionHandler.class);
-			rsh.setToClear(drpGrade, iwrb.getLocalizedString("school.select_year", "Select year"));
 			add(rsh);
 		}
 		catch (IllegalAccessException iae) {
