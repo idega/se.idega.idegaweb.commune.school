@@ -586,22 +586,22 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 		schoolClass.store();
 	}
 		
-    // The method getCurrentMembersWithFactoringInterval is specified in the
+    // The method getCurrentMembersWithInvoiceInterval is specified in the
     // interface SchoolCommuneBusiness.  /Staffan
-    public SchoolClassMember [] getCurrentMembersWithFactoringInterval
+    public SchoolClassMember [] getCurrentMembersWithInvoiceInterval
         () throws RemoteException {
         final Map result = new TreeMap ();
-        final String [] factoringIntervals = { "Månad", "Kvartal", "Termin",
+        final String [] invoiceIntervals = { "Månad", "Kvartal", "Termin",
                                                "År" };
         final SchoolBusiness business = getSchoolBusiness ();
         final SchoolClassMemberHome home = business.getSchoolClassMemberHome ();
         final int currentSeasonId = getCurrentSchoolSeasonID ();
-        for (int i = 0; i < factoringIntervals.length; i++) {
-            // retreive members for a factoring interval value
+        for (int i = 0; i < invoiceIntervals.length; i++) {
+            // retreive members for a invoice interval value
             final Collection members = java.util.Collections.EMPTY_LIST;
             // -- replace above with following when method is implemented --
-            //final Collection members = home.findBySeasonAndFactoringInterval
-            //        (currentSeasonId, factoringIntervals [i]);
+            //final Collection members = home.findBySeasonAndInvoiceInterval
+            //        (currentSeasonId, invoiceIntervals [i]);
             for (Iterator m = members.iterator (); m.hasNext ();) {
                 // sort retreived members
                 final SchoolClassMember member = (SchoolClassMember) m.next ();

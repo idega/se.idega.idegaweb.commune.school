@@ -46,13 +46,13 @@ public interface SchoolCommuneBusiness extends com.idega.business.IBOService,com
  public boolean hasChoiceToThisSchool(int userID, int schoolID, int seasonID);
 
     /**
-     * Retreive all school members in current season, where factoring interval
+     * Retreive all school members in current season, where invoice interval
      * is in { Månad, Kvartal, Termin, År }. The result should be sorted by
      * ssn.
      *
      * @return SchoolClassMember objects that follows the method spec
      * @author <a href="http://www.staffannoteberg.com">Staffan Nöteberg</a>
      */
-    public SchoolClassMember [] getCurrentMembersWithFactoringInterval
+    public SchoolClassMember [] getCurrentMembersWithInvoiceInterval
         () throws RemoteException;
 }
