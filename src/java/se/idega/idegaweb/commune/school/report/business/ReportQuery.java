@@ -1,5 +1,5 @@
 /*
- * $Id: ReportQuery.java,v 1.10 2003/12/16 14:41:32 anders Exp $
+ * $Id: ReportQuery.java,v 1.11 2003/12/17 11:07:44 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -19,10 +19,10 @@ import com.idega.util.database.ConnectionBroker;
 /** 
  * Handles the SQL logic for school report calculations.
  * <p>
- * Last modified: $Date: 2003/12/16 14:41:32 $ by $Author: anders $
+ * Last modified: $Date: 2003/12/17 11:07:44 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.10 $
+ * @version $Revision: 1.11 $
  */
 public class ReportQuery {
 
@@ -120,6 +120,14 @@ public class ReportQuery {
 	}
 	
 	/**
+	 * Set select only citizens outside Nacka.
+	 */
+	public void setNotNackaCitizens() {
+		sql += " and ua.ic_user_id = u.ic_user_id and a.ic_address_id = ua.ic_address_id" +
+				" and a.ic_address_type_id <> 1 and a.ic_commune_id = 1 and cm.ic_user_id = u.ic_user_id";
+	}
+	
+	/**
 	 * Set select only the specified school type.
 	 */
 	public void setSchoolType(int schoolTypeId) {
@@ -148,10 +156,17 @@ public class ReportQuery {
 	}
 	
 	/**
-	 * Set select only high school.
+	 * Set select only high schools.
 	 */
 	public void setSchoolTypeHighSchool() {
 		sql += " and cm.sch_school_type_id = 26";
+	}
+	
+	/**
+	 * Set select only compulsory high schools.
+	 */
+	public void setSchoolTypeCompulsoryHighSchool() {
+		sql += " and cm.sch_school_type_id = 27";
 	}
 	
 	/**

@@ -1,5 +1,5 @@
 /*
- * $Id: ReportBusinessBean.java,v 1.9 2003/12/16 14:41:32 anders Exp $
+ * $Id: ReportBusinessBean.java,v 1.10 2003/12/17 11:07:45 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -29,10 +29,10 @@ import com.idega.block.school.data.SchoolStudyPathHome;
 /** 
  * Business logic for school reports.
  * <p>
- * Last modified: $Date: 2003/12/16 14:41:32 $ by $Author: anders $
+ * Last modified: $Date: 2003/12/17 11:07:45 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.9 $
+ * @version $Revision: 1.10 $
  */
 public class ReportBusinessBean extends com.idega.business.IBOServiceBean implements ReportBusiness  {
 
@@ -292,7 +292,6 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 		}
 		return query.execute();
 	}
-
 	
 	/**
 	 * Returns the number of student placements for high schools
@@ -303,11 +302,72 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 		ReportQuery query = new ReportQuery();
 		query.setSelectCountStudyPathPlacements(getSchoolSeasonId(), studyPathPrefix);
 		query.setOnlyNackaCitizens();
-		query.setOnlyNackaSchools();
-		query.setSchoolTypeHighSchool();
+		if (schoolYearName.substring(0, 2).equals("GS")) {
+			query.setSchoolTypeCompulsoryHighSchool();
+		} else {
+			query.setSchoolTypeHighSchool();
+		}
 		query.setSchoolYear(schoolYearName);			
 		query.setNotPrivateSchools();
 		query.setNotCountyCouncilSchools();
+		return query.execute();
+	}
+	
+	/**
+	 * Returns the number of student placements for high schools
+	 * in Nacka commune for the specified school year.
+	 * Only students outside Nacka commune are counted. 
+	 */
+	public int getHighSchoolOtherCommunesPlacementCount(String schoolYearName, String studyPathPrefix) {
+		ReportQuery query = new ReportQuery();
+		query.setSelectCountStudyPathPlacements(getSchoolSeasonId(), studyPathPrefix);
+		query.setNotNackaCitizens();
+		if (schoolYearName.substring(0, 2).equals("GS")) {
+			query.setSchoolTypeCompulsoryHighSchool();
+		} else {
+			query.setSchoolTypeHighSchool();
+		}
+		query.setSchoolYear(schoolYearName);			
+		query.setNotPrivateSchools();
+		query.setNotCountyCouncilSchools();
+		return query.execute();
+	}
+	
+	/**
+	 * Returns the number of student placements for county council high schools
+	 * in Nacka commune for the specified school year.
+	 * Only students outside Nacka commune are counted. 
+	 */
+	public int getHighSchoolCountyCouncilPlacementCount(String schoolYearName, String studyPathPrefix) {
+		ReportQuery query = new ReportQuery();
+		query.setSelectCountStudyPathPlacements(getSchoolSeasonId(), studyPathPrefix);
+		query.setNotNackaCitizens();
+		if (schoolYearName.substring(0, 2).equals("GS")) {
+			query.setSchoolTypeCompulsoryHighSchool();
+		} else {
+			query.setSchoolTypeHighSchool();
+		}
+		query.setSchoolYear(schoolYearName);			
+		query.setOnlyCountyCouncilSchools();
+		return query.execute();
+	}
+	
+	/**
+	 * Returns the number of student placements for private high schools
+	 * in Nacka commune for the specified school year.
+	 * Only students outside Nacka commune are counted. 
+	 */
+	public int getHighSchoolPrivatePlacementCount(String schoolYearName, String studyPathPrefix) {
+		ReportQuery query = new ReportQuery();
+		query.setSelectCountStudyPathPlacements(getSchoolSeasonId(), studyPathPrefix);
+		query.setNotNackaCitizens();
+		if (schoolYearName.substring(0, 2).equals("GS")) {
+			query.setSchoolTypeCompulsoryHighSchool();
+		} else {
+			query.setSchoolTypeHighSchool();
+		}
+		query.setSchoolYear(schoolYearName);			
+		query.setOnlyPrivateSchools();
 		return query.execute();
 	}
 	

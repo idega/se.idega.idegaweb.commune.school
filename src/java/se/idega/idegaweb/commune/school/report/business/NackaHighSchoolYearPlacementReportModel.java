@@ -1,5 +1,5 @@
 /*
- * $Id: NackaHighSchoolYearPlacementReportModel.java,v 1.4 2003/12/16 14:41:32 anders Exp $
+ * $Id: NackaHighSchoolYearPlacementReportModel.java,v 1.5 2003/12/17 11:07:45 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -18,10 +18,10 @@ import com.idega.block.school.data.SchoolStudyPath;
 /** 
  * Report model for high school placements per year for students in Nacka.
  * <p>
- * Last modified: $Date: 2003/12/16 14:41:32 $ by $Author: anders $
+ * Last modified: $Date: 2003/12/17 11:07:45 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public class NackaHighSchoolYearPlacementReportModel extends ReportModel {
 
@@ -52,7 +52,7 @@ public class NackaHighSchoolYearPlacementReportModel extends ReportModel {
 		try {
 			Collection studyPaths = reportBusiness.getAllStudyPaths();
 			int rowSize = 0;
-			rowSize += studyPaths.size() + 2; 
+			rowSize += studyPaths.size() + 3; 
 			setReportSize(rowSize, COLUMN_SIZE);
 		} catch (RemoteException e) {
 			log(e.getMessage());
@@ -68,7 +68,7 @@ public class NackaHighSchoolYearPlacementReportModel extends ReportModel {
 		try {
 			ReportBusiness rb = getReportBusiness();
 			Collection studyPaths = rb.getAllStudyPaths();
-			headers = new Header[studyPaths.size() + 2];
+			headers = new Header[studyPaths.size() + 3];
 			Iterator iter = studyPaths.iterator();
 			int headerIndex = 0;
 			while (iter.hasNext()) {
@@ -78,9 +78,16 @@ public class NackaHighSchoolYearPlacementReportModel extends ReportModel {
 				headers[headerIndex].setChild(0, child);
 				headerIndex++;
 			}
-			Header header = new Header(KEY_TOTAL, Header.HEADERTYPE_ROW_TOTAL);
+			Header header = new Header(KEY_COMPULSORY_HIGH_SCHOOLS, Header.HEADERTYPE_ROW_HEADER, 1);
+			Header child = new Header(KEY_STUDY_PATH_CODE_COMPULSORY_HIGH_SCHOOL, Header.HEADERTYPE_ROW_NORMAL);
+			header.setChild(0, child);
 			headers[headerIndex] = header;
 			headerIndex++;
+			
+			header = new Header(KEY_TOTAL, Header.HEADERTYPE_ROW_TOTAL);
+			headers[headerIndex] = header;
+			headerIndex++;
+			
 			header = new Header(KEY_SHARE, Header.HEADERTYPE_ROW_NORMAL);
 			headers[headerIndex] = header;
 		} catch (RemoteException e) {
@@ -169,7 +176,7 @@ public class NackaHighSchoolYearPlacementReportModel extends ReportModel {
 		for (int column = 0; column < getColumnSize(); column++) {
 			int row = 0;
 			int columnMethod = 0;
-			Object columnParameter = null;
+			String columnParameter = null;
 			switch (column) {
 				case 0:
 					columnMethod = COLUMN_METHOD_NACKA_COMMUNE;
@@ -268,11 +275,6 @@ public class NackaHighSchoolYearPlacementReportModel extends ReportModel {
 					columnParameter = null;
 					break;
 			}
-
-			if (columnParameter != null) {
-				columnParameter = "G" + columnParameter;
-				// Fixa särskola oxo (en extra rad för GYSÄR)
-			}
 			
 			try {
 				ReportBusiness rb = getReportBusiness();
@@ -282,11 +284,15 @@ public class NackaHighSchoolYearPlacementReportModel extends ReportModel {
 					SchoolStudyPath studyPath = (SchoolStudyPath) iter.next();
 					Object rowParameter = studyPath.getCode();
 					Cell cell = new Cell(this, row, column, ROW_METHOD_STUDY_PATH,
-							columnMethod, rowParameter, columnParameter, Cell.CELLTYPE_NORMAL);
+							columnMethod, rowParameter, "G" + columnParameter, Cell.CELLTYPE_NORMAL);
 					setCell(row, column, cell);
 					row++;
 				}
-				Cell cell = new Cell(this, row, column, ROW_METHOD_TOTAL,
+				Cell cell = new Cell(this, row, column, ROW_METHOD_STUDY_PATH,
+						columnMethod, "GY", "GS" + columnParameter, Cell.CELLTYPE_NORMAL);
+				setCell(row, column, cell);
+				row++;
+				cell = new Cell(this, row, column, ROW_METHOD_TOTAL,
 						columnMethod, null, columnParameter, Cell.CELLTYPE_TOTAL);
 				setCell(row, column, cell);
 				row++;
@@ -333,7 +339,7 @@ public class NackaHighSchoolYearPlacementReportModel extends ReportModel {
 							value += getCell(row, 7).getFloatValue();
 							value += getCell(row, 8).getFloatValue();
 						} else {
-							//
+							value = reportBusiness.getHighSchoolOtherCommunesPlacementCount(schoolYearName, studyPathPrefix);
 						}
 						break;
 					case COLUMN_METHOD_COUNTY_COUNCIL:
@@ -342,7 +348,7 @@ public class NackaHighSchoolYearPlacementReportModel extends ReportModel {
 							value += getCell(row, 11).getFloatValue();
 							value += getCell(row, 12).getFloatValue();
 						} else {
-							//
+							value = reportBusiness.getHighSchoolCountyCouncilPlacementCount(schoolYearName, studyPathPrefix);
 						}
 						break;
 					case COLUMN_METHOD_FREE_STANDING:
@@ -352,7 +358,7 @@ public class NackaHighSchoolYearPlacementReportModel extends ReportModel {
 							value += getCell(row, 16).getFloatValue();
 							value += getCell(row, 17).getFloatValue();
 						} else {
-							//
+							value = reportBusiness.getHighSchoolPrivatePlacementCount(schoolYearName, studyPathPrefix);
 						}
 						break;
 					case COLUMN_METHOD_TOTAL:
@@ -362,13 +368,16 @@ public class NackaHighSchoolYearPlacementReportModel extends ReportModel {
 							value += getCell(row, 21).getFloatValue();
 							value += getCell(row, 22).getFloatValue();
 						} else {
-							//
+							for (int i = row - 1; i >= 0; i--) {
+								Cell c = getCell(i, column);
+								value += c.getFloatValue();
+							}
 						}
 						break;
 				}
 				break;
 			case ROW_METHOD_TOTAL:
-				for (int i = 0; i < cell.getRow(); i++) {
+				for (int i = 0; i < row; i++) {
 					Cell c = getCell(i, column);
 					value += c.getFloatValue();
 				}
