@@ -1,5 +1,5 @@
 /*
- * $Id: NackaProviderSummaryReportModel.java,v 1.4 2004/01/30 18:24:53 anders Exp $
+ * $Id: NackaProviderSummaryReportModel.java,v 1.5 2004/02/12 11:40:45 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -14,10 +14,10 @@ import java.rmi.RemoteException;
 /** 
  * Report model that shows a summary of Nacka providers (child care and schools).
  * <p>
- * Last modified: $Date: 2004/01/30 18:24:53 $ by $Author: anders $
+ * Last modified: $Date: 2004/02/12 11:40:45 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public class NackaProviderSummaryReportModel extends ReportModel {
 
@@ -558,9 +558,9 @@ public class NackaProviderSummaryReportModel extends ReportModel {
 			if (query == null) {
 				query = new PreparedQuery(getConnection());
 				query.setSelectCount();
+				query.setPlacements(rb.getSchoolSeasonId());
 				query.setOnlyNackaSchools();
 				query.setNotNackaCitizens();
-				query.setPlacements(rb.getSchoolSeasonId());
 				query.setFourSchoolTypesForProviders(); // parameter 1-4
 				query.setFourManagementTypes(); // parameter 5-8
 				query.prepare();
