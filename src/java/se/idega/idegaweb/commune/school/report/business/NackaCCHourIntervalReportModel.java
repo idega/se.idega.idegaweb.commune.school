@@ -1,5 +1,5 @@
 /*
- * $Id: NackaCCHourIntervalReportModel.java,v 1.1 2004/01/28 09:43:12 anders Exp $
+ * $Id: NackaCCHourIntervalReportModel.java,v 1.2 2004/02/23 15:54:49 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -9,20 +9,25 @@
  */
 package se.idega.idegaweb.commune.school.report.business;
 
+import java.rmi.RemoteException;
+
 /** 
  * Report model for total number of child care placements per child care hour interval.
  * <p>
- * Last modified: $Date: 2004/01/28 09:43:12 $ by $Author: anders $
+ * Last modified: $Date: 2004/02/23 15:54:49 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class NackaCCHourIntervalReportModel extends ReportModel {
 
-	private final static int ROW_SIZE = 1;
+	private final static int ROW_SIZE = 7;
 	private final static int COLUMN_SIZE = 4;
 	
-	private final static int ROW_METHOD_SUM_PLACEMENTS = 1;
+	private final static int ROW_METHOD_SUM_HOURS = 1;
+	private final static int ROW_METHOD_TOTAL_PRE_SCHOOL_OPERATION = 2;
+	private final static int ROW_METHOD_TOTAL_AFTER_SCHOOL_OPERATION = 3;
+	private final static int ROW_METHOD_TOTAL = 4;
 
 	private final static int COLUMN_METHOD_HOURS_1_15 = 101;
 	private final static int COLUMN_METHOD_HOURS_16_25 = 102;
@@ -32,7 +37,12 @@ public class NackaCCHourIntervalReportModel extends ReportModel {
 	private final static String QUERY_HOUR_INTERVAL_PLACEMENTS = "hour_interval_placements";
 	
 	private final static String KEY_REPORT_TITLE = KP + "title_nacka_child_care_hour_interval_placements";
-	
+
+	private final static int SCHOOL_TYPE_PRE_SCHOOL = 1;
+	private final static int SCHOOL_TYPE_FAMILY_DAYCARE = 2;
+	private final static int SCHOOL_TYPE_AFTER_SCHOOL = 3;
+	private final static int SCHOOL_TYPE_FAMILY_AFTER_SCHOOL = 4;
+
 	/**
 	 * Constructs this report model.
 	 * @param reportBusiness the report business instance for calculating cell values
@@ -52,10 +62,18 @@ public class NackaCCHourIntervalReportModel extends ReportModel {
 	 * @see se.idega.idegaweb.commune.school.report.business.ReportModel#buildRowHeaders()
 	 */
 	protected Header[] buildRowHeaders() {
-		Header[] headers = new Header[1];
+		Header[] headers = new Header[9];
 		
-		headers[0] = new Header(KEY_CHILDREN_TOTAL, Header.HEADERTYPE_ROW_HEADER);
-				
+		headers[0] = new Header(KEY_PRE_SCHOOL, Header.HEADERTYPE_ROW_HEADER);
+		headers[1] = new Header(KEY_FAMILY_DAYCARE, Header.HEADERTYPE_ROW_HEADER);
+		headers[2] = new Header(KEY_TOTAL_PRE_SCHOOL_OPERATION, Header.HEADERTYPE_ROW_HEADER);
+		headers[3] = new Header(null, Header.HEADERTYPE_ROW_SPACER);
+		headers[4] = new Header(KEY_AFTER_SCHOOL, Header.HEADERTYPE_ROW_HEADER);
+		headers[5] = new Header(KEY_FAMILY_AFTER_SCHOOL, Header.HEADERTYPE_ROW_HEADER);
+		headers[6] = new Header(KEY_TOTAL_AFTER_SCHOOL_OPERATION, Header.HEADERTYPE_ROW_HEADER);
+		headers[7] = new Header(null, Header.HEADERTYPE_ROW_SPACER);
+		headers[8] = new Header(KEY_TOTAL, Header.HEADERTYPE_ROW_HEADER);
+
 		return headers;
 	}
 	
@@ -104,30 +122,69 @@ public class NackaCCHourIntervalReportModel extends ReportModel {
 
 			Object columnParameter = null;	
 			Object rowParameter = null;
-			Cell cell = new Cell(this, row, column, ROW_METHOD_SUM_PLACEMENTS, 
+			Cell cell = new Cell(this, row, column, ROW_METHOD_SUM_HOURS, 
+					columnMethod, new Integer(SCHOOL_TYPE_PRE_SCHOOL), columnParameter, Cell.CELLTYPE_NORMAL);
+			setCell(row++, column, cell);
+
+			cell = new Cell(this, row, column, ROW_METHOD_SUM_HOURS, 
+					columnMethod, new Integer(SCHOOL_TYPE_FAMILY_DAYCARE), columnParameter, Cell.CELLTYPE_NORMAL);
+			setCell(row++, column, cell);
+			
+			cell = new Cell(this, row, column, ROW_METHOD_TOTAL_PRE_SCHOOL_OPERATION, 
 					columnMethod, rowParameter, columnParameter, Cell.CELLTYPE_NORMAL);
-			setCell(row, column, cell);
+			setCell(row++, column, cell);
+			
+			cell = new Cell(this, row, column, ROW_METHOD_SUM_HOURS, 
+					columnMethod, new Integer(SCHOOL_TYPE_AFTER_SCHOOL), columnParameter, Cell.CELLTYPE_NORMAL);
+			setCell(row++, column, cell);
+
+			cell = new Cell(this, row, column, ROW_METHOD_SUM_HOURS, 
+					columnMethod, new Integer(SCHOOL_TYPE_FAMILY_AFTER_SCHOOL), columnParameter, Cell.CELLTYPE_NORMAL);
+			setCell(row++, column, cell);
+			
+			cell = new Cell(this, row, column, ROW_METHOD_TOTAL_AFTER_SCHOOL_OPERATION, 
+					columnMethod, rowParameter, columnParameter, Cell.CELLTYPE_NORMAL);
+			setCell(row++, column, cell);
+
+			cell = new Cell(this, row, column, ROW_METHOD_TOTAL, 
+					columnMethod, rowParameter, columnParameter, Cell.CELLTYPE_NORMAL);
+			setCell(row++, column, cell);
 		}
 	}
 	
 	/**
 	 * @see se.idega.idegaweb.commune.school.report.business.ReportModel#calculate()
 	 */
-	protected float calculate(Cell cell) {
+	protected float calculate(Cell cell) throws RemoteException {
 		float value = 0f;
-
-		switch (cell.getColumnMethod()) {
-			case COLUMN_METHOD_HOURS_1_15:
-				value = getChildCareHoursPlacementCount(1, 15);
+		int column = cell.getColumn();
+		
+		switch (cell.getRowMethod()) {
+			case ROW_METHOD_SUM_HOURS:
+				int schoolType = ((Integer) cell.getRowParameter()).intValue();
+				switch (cell.getColumnMethod()) {
+					case COLUMN_METHOD_HOURS_1_15:
+						value = getChildCareHoursPlacementCount(1, 15, schoolType);
+						break;
+					case COLUMN_METHOD_HOURS_16_25:
+						value = getChildCareHoursPlacementCount(16, 25, schoolType);
+						break;
+					case COLUMN_METHOD_HOURS_26_35:
+						value = getChildCareHoursPlacementCount(26, 35, schoolType);
+						break;
+					case COLUMN_METHOD_HOURS_36_:
+						value = getChildCareHoursPlacementCount(36, 168, schoolType);
+						break;
+				}
 				break;
-			case COLUMN_METHOD_HOURS_16_25:
-				value = getChildCareHoursPlacementCount(16, 25);
+			case ROW_METHOD_TOTAL_PRE_SCHOOL_OPERATION:
+				value = getCell(0, column).getFloatValue() + getCell(1, column).getFloatValue();
 				break;
-			case COLUMN_METHOD_HOURS_26_35:
-				value = getChildCareHoursPlacementCount(26, 35);
+			case ROW_METHOD_TOTAL_AFTER_SCHOOL_OPERATION:
+				value = getCell(3, column).getFloatValue() + getCell(4, column).getFloatValue();
 				break;
-			case COLUMN_METHOD_HOURS_36_:
-				value = getChildCareHoursPlacementCount(36, 168);
+			case ROW_METHOD_TOTAL:
+				value = getCell(2, column).getFloatValue() + getCell(5, column).getFloatValue();
 				break;
 		}
 		
@@ -144,7 +201,41 @@ public class NackaCCHourIntervalReportModel extends ReportModel {
 	/**
 	 * Returns the number of total child placements for the specified hours per week interval.
 	 */
-	protected int getChildCareHoursPlacementCount(int fromHours, int toHours) {
+	protected int getChildCareHoursPlacementCount(int fromHours, int toHours, int schoolType) 
+			throws RemoteException {
+		ReportBusiness rb = getReportBusiness();
+		int schoolType1 = 0;
+		int schoolType2 = 0;
+		int schoolType3 = 0;
+		int schoolType4 = 0;
+
+		switch (schoolType) {
+			case SCHOOL_TYPE_PRE_SCHOOL:
+				schoolType1 = rb.getPreSchoolTypeId(); 
+				schoolType2 = rb.getGeneralPreSchoolTypeId();
+				schoolType3 = schoolType2;
+				schoolType4 = schoolType2;
+				break;
+			case SCHOOL_TYPE_FAMILY_DAYCARE:
+				schoolType1 = rb.getFamilyDayCareSchoolTypeId();
+				schoolType2 = rb.getGeneralFamilyDaycareSchoolTypeId();
+				schoolType3 = schoolType2;
+				schoolType4 = schoolType2;
+				break;
+			case SCHOOL_TYPE_AFTER_SCHOOL:
+				schoolType1 = rb.getAfterSchool6TypeId();
+				schoolType2 = rb.getAfterSchool7_9TypeId();
+				schoolType3 = schoolType2;
+				schoolType4 = schoolType2;
+				break;
+			case SCHOOL_TYPE_FAMILY_AFTER_SCHOOL:
+				schoolType1 = rb.getFamilyAfterSchool6TypeId();
+				schoolType2 = rb.getFamilyAfterSchool7_9TypeId();
+				schoolType3 = schoolType2;
+				schoolType4 = schoolType2;
+				break;
+		}
+
 		PreparedQuery query = null;
 		query = getQuery(QUERY_HOUR_INTERVAL_PLACEMENTS);
 		if (query == null) {
@@ -152,11 +243,17 @@ public class NackaCCHourIntervalReportModel extends ReportModel {
 			query.setSelectCount();
 			query.setChildCarePlacements();
 			query.setChildCareWeekHours(); // parameter 1-2
+			query.setFourSchoolTypes(); // parameter 3-6
 			query.prepare();
 			setQuery(QUERY_HOUR_INTERVAL_PLACEMENTS, query);
 		}
 		query.setInt(1, fromHours);
 		query.setInt(2, toHours);
+		
+		query.setInt(3, schoolType1);
+		query.setInt(4, schoolType2);
+		query.setInt(5, schoolType3);
+		query.setInt(6, schoolType4);
 		
 		return query.execute();
 	}
