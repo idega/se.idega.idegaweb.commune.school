@@ -1177,7 +1177,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	public int getNumberOfApplicants () {
 		try {
 			final Date startDate = getSchoolChoiceStartDate ().getDate ();
-			final Date endDate = getSchoolChoiceCriticalDate ().getDate ();
+			final Date endDate = getSchoolChoiceEndDate ().getDate ();
 			return getSchoolChoiceHome ().getCount
 					(getCurrentSeason (), startDate, endDate);
 		}	catch (Exception e) {
