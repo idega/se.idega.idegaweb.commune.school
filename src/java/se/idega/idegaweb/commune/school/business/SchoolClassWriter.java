@@ -244,7 +244,7 @@ public class SchoolClassWriter implements MediaWritable {
 			SchoolClassMember studentMember;
 			Cell cell;
 			
-			String[] headers = {"Name", "PersonalID", "Address", "Postal code", "Phone"};
+			String[] headers = {iwrb.getLocalizedString("school.name","Name"), iwrb.getLocalizedString("school.personal_id","Personal ID"), iwrb.getLocalizedString("school.address","Address"), iwrb.getLocalizedString("school.postal_code","Postal code"), iwrb.getLocalizedString("school.phone","Phone")};
 			int[] sizes = { 35, 20, 25, 10, 10 };
 
 			Table datatable = getTable(headers, sizes);

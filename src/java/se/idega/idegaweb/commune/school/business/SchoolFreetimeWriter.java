@@ -22,6 +22,7 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 import se.idega.idegaweb.commune.business.CommuneUserBusiness;
+import se.idega.idegaweb.commune.presentation.CommuneBlock;
 import se.idega.idegaweb.commune.school.data.SchoolChoice;
 
 import com.idega.block.school.data.School;
@@ -30,6 +31,7 @@ import com.idega.core.contact.data.Phone;
 import com.idega.core.location.data.Address;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWMainApplication;
+import com.idega.idegaweb.IWResourceBundle;
 import com.idega.io.MediaWritable;
 import com.idega.io.MemoryFileBuffer;
 import com.idega.io.MemoryInputStream;
@@ -64,6 +66,7 @@ public class SchoolFreetimeWriter implements MediaWritable {
 	private Map students;
 	private Map addresses;
 	private Map phones;
+	private IWResourceBundle iwrb;
 
 	public final static String prmSchoolId = "school_id";
 	public final static String prmSchoolSeasonID = "school_season_id";
@@ -80,6 +83,7 @@ public class SchoolFreetimeWriter implements MediaWritable {
 			locale = iwma.getIWApplicationContext().getApplicationSettings().getApplicationLocale();
 			business = getSchoolCommuneBusiness(iwma.getIWApplicationContext());
 			//userBusiness = getCommuneUserBusiness(iwma.getIWApplicationContext());
+			iwrb = iwma.getBundle(CommuneBlock.IW_BUNDLE_IDENTIFIER).getResourceBundle(locale);
 			
 			if (req.getParameter(prmSchoolId) != null && req.getParameter(prmSchoolSeasonID) != null) {
 				school = business.getSchoolBusiness().getSchool(new Integer(req.getParameter(prmSchoolId)));
@@ -143,16 +147,16 @@ public class SchoolFreetimeWriter implements MediaWritable {
 
 	    HSSFRow row = sheet.createRow((short)0);
 	    HSSFCell cell = row.createCell((short)0);
-	    cell.setCellValue("Name");
+	    cell.setCellValue(iwrb.getLocalizedString("school.name","Name"));
 	    cell.setCellStyle(style);
 	    cell = row.createCell((short)1);
-	    cell.setCellValue("PersonalID");
+	    cell.setCellValue(iwrb.getLocalizedString("school.personal_id","Personal ID"));
 	    cell.setCellStyle(style);
 	    cell = row.createCell((short)2);
-	    cell.setCellValue("Address");
+	    cell.setCellValue(iwrb.getLocalizedString("school.address","Address"));
 	    cell.setCellStyle(style);
 	    cell = row.createCell((short)3);
-	    cell.setCellValue("Phone");
+	    cell.setCellValue(iwrb.getLocalizedString("school.phone","Phone"));
 	    cell.setCellStyle(style);
 
 			User student;
@@ -201,7 +205,7 @@ public class SchoolFreetimeWriter implements MediaWritable {
 			SchoolChoice studentMember;
 			Cell cell;
 			
-			String[] headers = {"Name", "PersonalID", "Address", "Phone"};
+			String[] headers = {iwrb.getLocalizedString("school.name","Name"), iwrb.getLocalizedString("school.personal_id","Personal ID"), iwrb.getLocalizedString("school.address","Address"), iwrb.getLocalizedString("school.phone","Phone")};
 			int[] sizes = { 35, 20, 35, 10 };
 
 			Table datatable = getTable(headers, sizes);
