@@ -504,7 +504,14 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 			throw new IDOCreateException(idos);
 		}
 		
-		if (IWTimestamp.RightNow().isBetween(new IWTimestamp(season.getSchoolSeasonStart()), new IWTimestamp(season.getSchoolSeasonEnd()))) {
+		boolean isSCPeriod = false; 
+		try {
+			isSCPeriod = IWTimestamp.RightNow().isBetween(new IWTimestamp(getSchoolChoiceStartDate()), new IWTimestamp(getSchoolChoiceEndDate()));
+		} catch (Exception fe) {
+			log(fe);
+		}
+		
+		if (IWTimestamp.RightNow().isBetween(new IWTimestamp(season.getSchoolSeasonStart()), new IWTimestamp(season.getSchoolSeasonEnd())) || !isSCPeriod) {
 			try {
 				User student = getUser(childId);
 				Object[] arguments = {student.getNameLastFirst(true), PersonalIDFormatter.format(student.getPersonalID(), this.getIWApplicationContext().getApplicationSettings().getDefaultLocale()), choice.getPlacementDate() != null ? new IWTimestamp(choice.getPlacementDate()).getLocaleDate(this.getIWApplicationContext().getApplicationSettings().getDefaultLocale(), IWTimestamp.SHORT) : "" };
@@ -517,7 +524,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 				log(fe);
 			}
 		}
-		
+				
 		return choice;
 	}
 
