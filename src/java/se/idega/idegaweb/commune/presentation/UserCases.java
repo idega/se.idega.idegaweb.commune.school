@@ -215,15 +215,8 @@ public class UserCases extends CommuneBlock {
 		DateFormat dateFormat = CustomDateFormat.getDateTimeInstance(iwc.getCurrentLocale());
 		Date caseDate = new Date(useCase.getCreated().getTime());
 		Text caseNumber = getSmallText(useCase.getPrimaryKey().toString());
-		if (useCase.getCode().equalsIgnoreCase(Viewpoint.CASE_CODE_KEY) && getViewpointPage() != -1) {
-			final Link viewpointLink = getSmallLink(useCase.getPrimaryKey().toString());
-			viewpointLink.setPage(getViewpointPage());
-			viewpointLink.addParameter(ViewpointForm.PARAM_ACTION, ViewpointForm.SHOWVIEWPOINT_ACTION + "");
-			viewpointLink.addParameter(ViewpointForm.PARAM_VIEWPOINT_ID, useCase.getPrimaryKey().toString());
-			caseNumber = viewpointLink;
-		}
+		Text caseType = getSmallText(getCaseBusiness(iwc).getCaseBusiness(useCase.getCaseCode()).getLocalizedCaseDescription(useCase, iwc.getCurrentLocale()));
 
-		final Text caseType = getSmallText(getCaseBusiness(iwc).getCaseBusiness(useCase.getCaseCode()).getLocalizedCaseDescription(useCase, iwc.getCurrentLocale()));
 		final Text date = getSmallText(dateFormat.format(caseDate));
 		Text manager = null;
 		String managerName = "";
@@ -255,6 +248,27 @@ public class UserCases extends CommuneBlock {
 		final Text caseOwnerName = getSmallText(useCase.getOwner().getFirstName());
 		final Text status = getSmallText(getCaseBusiness(iwc).getLocalizedCaseStatusDescription(useCase.getCaseStatus(), iwc.getCurrentLocale()));
 		
+		if (useCase.getCode().equalsIgnoreCase(Viewpoint.CASE_CODE_KEY)) {
+			final ViewpointBusiness viewpointBusiness
+                    = (ViewpointBusiness) IBOLookup.getServiceInstance
+                    (iwc, ViewpointBusiness.class);
+            final Viewpoint viewpoint
+                    = viewpointBusiness.findViewpoint
+                    (Integer.parseInt (useCase.getPrimaryKey().toString ()));
+            caseType = getSmallText (viewpoint.getCategory ());
+            if (getViewpointPage() != -1) {
+                final Link viewpointLink
+                        = getSmallLink(useCase.getPrimaryKey().toString());
+                viewpointLink.setPage(getViewpointPage());
+                viewpointLink.addParameter (ViewpointForm.PARAM_ACTION,
+                                            ViewpointForm.SHOWVIEWPOINT_ACTION
+                                            + "");
+                viewpointLink.addParameter(ViewpointForm.PARAM_VIEWPOINT_ID,
+                                           useCase.getPrimaryKey().toString());
+                caseNumber = viewpointLink;
+            }
+		}
+        
 		if (row % 2 == 0)
 			messageList.setRowColor(row, getZebraColor1());
 		else
