@@ -25,6 +25,7 @@ import com.idega.block.process.data.Case;
 import com.idega.block.process.data.CaseStatus;
 import com.idega.business.IBOLookup;
 import com.idega.core.builder.data.ICPage;
+import com.idega.presentation.CollectionNavigator;
 import com.idega.presentation.ExceptionWrapper;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Table;
@@ -94,7 +95,7 @@ public class UserCases extends CommuneBlock {
 	public void main(IWContext iwc) {
 		//this.setResourceBundle(getResourceBundle(iwc));
 		try {
-			int action = parseAction(iwc);
+			int action = parseAction();
 			switch (action) {
 				case ACTION_VIEW_CASE_LIST :
 					viewCaseList(iwc, new Table());
@@ -106,12 +107,7 @@ public class UserCases extends CommuneBlock {
 		}
 	}
 
-	private int parseAction(IWContext iwc) {
-		if (iwc.isParameterSet(PARAMETER_START_CASE))
-			_startCase = Integer.parseInt(iwc.getParameter(PARAMETER_START_CASE));
-		else
-			_startCase = 0;
-
+	private int parseAction() {
 		int action = ACTION_VIEW_CASE_LIST;
 		return action;
 	}
@@ -129,9 +125,10 @@ public class UserCases extends CommuneBlock {
 			User user = iwc.getCurrentUser();
 			final int userId = ((Integer) user.getPrimaryKey()).intValue();
 			
+			CollectionNavigator navigator = getNavigator(iwc, user);
+
 			//Finding cases
 			List cases = getCases(iwc, user, _startCase, _numberOfCases);
-			int numberOfCases = getNumberOfCases(iwc, user);
 					
 			if (cases != null & !cases.isEmpty()) {
 				Table table = new Table();
@@ -140,8 +137,23 @@ public class UserCases extends CommuneBlock {
 				table.setWidth(Table.HUNDRED_PERCENT);
 				table.setColumns(getLastColumn());
 
-				table.mergeCells(1, 1, table.getColumns(), 1);
-				table.add(getNavigationTable(numberOfCases), 1, 1);
+				if (useStyleNames) {
+					table.setRowStyleClass(1, getHeadingRowClass());
+					table.mergeCells(1, 1, table.getColumns() - 2, 1);
+					table.add(localize("case.cases", "Cases"), 1, 1);
+					table.mergeCells(table.getColumns() - 1, 1, table.getColumns(), 1);
+					table.setAlignment(table.getColumns() - 1, 1, Table.HORIZONTAL_ALIGN_RIGHT);
+
+					navigator.setUseShortText(true);
+					navigator.setWidth(50);
+					navigator.setLinkStyle(getStyleName(STYLENAME_SMALL_HEADER_LINK));
+					navigator.setTextStyle(getStyleName(STYLENAME_SMALL_HEADER));
+					table.add(navigator, table.getColumns() - 1, 1);
+				}
+				else {
+					table.mergeCells(1, 1, table.getColumns(), 1);
+					table.add(navigator, 1, 1);
+				}
 
 				Form form = new Form();
 				form.add(table);
@@ -157,6 +169,7 @@ public class UserCases extends CommuneBlock {
 					catch (Exception e) {
 						add(e);
 						e.printStackTrace();
+						row--;
 					}
 				}
 
@@ -312,7 +325,7 @@ public class UserCases extends CommuneBlock {
 		}
 
 		if (useStyleNames) {
-			messageList.setCellpaddingLeft(getNumberColumn(), row, 12);
+			messageList.setCellpaddingLeft(getNumberColumn(), row, firstColumnPadding);
 			if (row % 2 == 0) {
 				messageList.setRowStyleClass(row++, getStyleName(STYLENAME_LIGHT_ROW));
 			}
@@ -387,9 +400,18 @@ public class UserCases extends CommuneBlock {
 		return getStatusColumn();
 	}		
 	
-
-
-	private Table getNavigationTable(int caseSize) {
+	private CollectionNavigator getNavigator(IWContext iwc, User user) {
+		CollectionNavigator navigator = new CollectionNavigator(getNumberOfCases(iwc, user));
+		navigator.setTextStyle(STYLENAME_SMALL_TEXT);
+		navigator.setLinkStyle(STYLENAME_SMALL_LINK);
+		navigator.setNumberOfEntriesPerPage(_numberOfCases);
+		navigator.setPadding(getCellpadding());
+		_startCase = navigator.getStart(iwc);
+		
+		return navigator;
+	}
+	
+	/*private Table getNavigationTable(int caseSize) {
 		Table navigationTable = new Table(2, 1);
 		navigationTable.setCellpadding(0);
 		navigationTable.setCellspacing(0);
@@ -417,7 +439,7 @@ public class UserCases extends CommuneBlock {
 		}
 
 		return navigationTable;
-	}
+	}*/
 
 	protected CaseBusiness getCaseBusiness(IWContext iwc) throws Exception {
 		return (CaseBusiness) IBOLookup.getServiceInstance(iwc, CaseBusiness.class);
