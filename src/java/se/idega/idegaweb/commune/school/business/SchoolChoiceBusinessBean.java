@@ -96,7 +96,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	
 	private final static int REMINDER_FONTSIZE = 12;
 	private final static Font SERIF_FONT = FontFactory.getFont(FontFactory.TIMES, REMINDER_FONTSIZE);
-	private final static Font SANSSERIF_FONT = FontFactory.getFont(FontFactory.HELVETICA, REMINDER_FONTSIZE - 1);
+	//private final static Font SANSSERIF_FONT = FontFactory.getFont(FontFactory.HELVETICA, REMINDER_FONTSIZE - 1);
 
 	private Font defaultParagraphFont;
 	private Font defaultTextFont;
@@ -125,9 +125,9 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 			return defaultParagraphFont;
 		}
 
-		private Font getTextFont() {
+		/*private Font getTextFont() {
 			return getDefaultTextFont();
-		}
+		}*/
 
 	public String getBundleIdentifier() {
 		return se.idega.idegaweb.commune.presentation.CommuneBlock.IW_BUNDLE_IDENTIFIER;
