@@ -1,7 +1,9 @@
 package se.idega.idegaweb.commune.school.business;
 
+import com.idega.block.process.business.CaseBusiness;
 
-public interface SchoolChoiceBusiness extends com.idega.business.IBOService 
+
+public interface SchoolChoiceBusiness extends CaseBusiness
 {
  public void changeSchoolYearForChoice(int p0,int p1,int p2)throws java.rmi.RemoteException, java.rmi.RemoteException;
  public void createCurrentSchoolSeason(java.lang.Integer p0,java.lang.Integer p1)throws java.rmi.RemoteException, java.rmi.RemoteException;
