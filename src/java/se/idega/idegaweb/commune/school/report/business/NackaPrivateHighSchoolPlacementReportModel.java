@@ -1,5 +1,5 @@
 /*
- * $Id: NackaPrivateHighSchoolPlacementReportModel.java,v 1.2 2004/01/15 14:53:43 anders Exp $
+ * $Id: NackaPrivateHighSchoolPlacementReportModel.java,v 1.3 2004/01/19 08:42:46 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -19,10 +19,10 @@ import com.idega.block.school.data.SchoolStudyPath;
 /** 
  * Report model for private high school placements in Nacka.
  * <p>
- * Last modified: $Date: 2004/01/15 14:53:43 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/19 08:42:46 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class NackaPrivateHighSchoolPlacementReportModel extends ReportModel {
 
@@ -55,7 +55,7 @@ public class NackaPrivateHighSchoolPlacementReportModel extends ReportModel {
 		try {
 			Collection studyPaths = reportBusiness.getAllStudyPaths();
 			int rowSize = 0;
-			rowSize += studyPaths.size() + 3; 
+			rowSize += studyPaths.size() + 2; 
 			setReportSize(rowSize, COLUMN_SIZE);
 		} catch (RemoteException e) {
 			log(e.getMessage());
@@ -90,9 +90,6 @@ public class NackaPrivateHighSchoolPlacementReportModel extends ReportModel {
 			header = new Header(KEY_TOTAL, Header.HEADERTYPE_ROW_TOTAL);
 			headers[headerIndex] = header;
 			headerIndex++;
-			
-			header = new Header(KEY_SHARE, Header.HEADERTYPE_ROW_NORMAL);
-			headers[headerIndex] = header;
 		} catch (RemoteException e) {
 			log(e.getMessage());
 		}
@@ -332,7 +329,6 @@ public class NackaPrivateHighSchoolPlacementReportModel extends ReportModel {
 	/**
 	 * Returns the number of student placements for high schools
 	 * in Nacka commune for the specified school year.
-	 * Only students in Nacka commune are counted. 
 	 */
 	protected int getHighSchoolNackaCommunePlacementCount(School school, String schoolYearName, String studyPathPrefix) throws RemoteException {
 		PreparedQuery query = null;
@@ -342,7 +338,6 @@ public class NackaPrivateHighSchoolPlacementReportModel extends ReportModel {
 			query = new PreparedQuery(getConnection());
 			query.setSelectCount();
 			query.setPlacements(rb.getSchoolSeasonId());
-			query.setNotNackaCitizens();
 			query.setSchoolTypeHighSchool();
 			query.setSchool(); // parameter 1
 			query.setSchoolYearName(); // parameter 2
@@ -359,7 +354,6 @@ public class NackaPrivateHighSchoolPlacementReportModel extends ReportModel {
 	/**
 	 * Returns the number of student placements for private high schools
 	 * for the specified study path prefix.
-	 * Only citizens outside Nacka commune are counted. 
 	 */
 	protected int getHighSchoolOCCPlacementCount(String studyPathPrefix) throws RemoteException{
 		PreparedQuery query = null;
@@ -371,6 +365,7 @@ public class NackaPrivateHighSchoolPlacementReportModel extends ReportModel {
 			query.setPlacements(rb.getSchoolSeasonId());
 			query.setNotNackaCitizens();
 			query.setSchoolTypeHighSchool();
+			query.setSchools(rb.getPrivateHighSchools());
 			query.setStudyPathPrefix(); // parameter 1
 			query.prepare();
 			setQuery(QUERY_OTHER_COMMUNES, query);
@@ -394,6 +389,7 @@ public class NackaPrivateHighSchoolPlacementReportModel extends ReportModel {
 			query.setPlacements(rb.getSchoolSeasonId());
 			query.setOnlyNackaCitizens();
 			query.setSchoolTypeHighSchool();
+			query.setSchools(rb.getPrivateHighSchools());
 			query.setStudyPathPrefix(); // parameter 1
 			query.prepare();
 			setQuery(QUERY_NACKA_COMMUNE, query);
