@@ -1,5 +1,5 @@
 /*
- * $Id: NackaCCPreSchoolPlacementReportModel.java,v 1.11 2004/01/26 10:19:53 anders Exp $
+ * $Id: NackaCCPreSchoolPlacementReportModel.java,v 1.12 2004/01/26 10:21:45 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -22,10 +22,10 @@ import com.idega.block.school.data.SchoolArea;
 /** 
  * Report model for child care pre school placements in Nacka.
  * <p>
- * Last modified: $Date: 2004/01/26 10:19:53 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/26 10:21:45 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.11 $
+ * @version $Revision: 1.12 $
  */
 public class NackaCCPreSchoolPlacementReportModel extends ReportModel {
 
@@ -134,7 +134,7 @@ public class NackaCCPreSchoolPlacementReportModel extends ReportModel {
 				Iterator communeSchoolIter = communeSchools.iterator();
 				while (communeSchoolIter.hasNext()) {
 					School school = (School) communeSchoolIter.next();
-					child = new Header(school.getName(), Header.HEADERTYPE_ROW_NORMAL);
+					child = new Header(school.getName(), Header.HEADERTYPE_ROW_NONLOCALIZED_NORMAL);
 					areaHeader.setChild(childIndex++, child);
 				}
 
