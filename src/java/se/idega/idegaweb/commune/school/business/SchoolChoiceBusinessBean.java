@@ -441,8 +441,16 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 				while (iter.hasNext()) {
 					SchoolChoice element = (SchoolChoice) iter.next();
 					if (element.getChoiceOrder() == choiceOrder) {
-						choice = element;
-						continue;
+						if (changeOfSchool) {
+							if (element.getStatus().equals(this.getCaseStatusMoved().getStatus())) {
+								choice = element;
+								continue;
+							}
+						}
+						else {
+							choice = element;
+							continue;
+						}
 					}
 				}
 			}
