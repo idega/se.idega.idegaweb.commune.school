@@ -1001,7 +1001,8 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	
 	public int getNumberOfApplicationsByUserAndSchool(int userID, int schoolID) throws RemoteException {
 		try {
-			return getSchoolChoiceHome().getCountByChildAndSchool(userID, schoolID);
+			String[] statuses = { getCaseStatusPreliminary().getStatus(), getCaseStatusPlaced().getStatus() };
+			return getSchoolChoiceHome().getCountByChildAndSchoolAndStatus(userID, schoolID, statuses);
 		} catch (IDOException e) {
 			return 0;
 		}
