@@ -851,6 +851,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 			RadioButton rbNotAfterSchool = new RadioButton(prmAfterschool,Boolean.FALSE.toString());
 			table.add(rbWantsAfterSchool,1,row);
 			table.add(getSmallHeader(Text.getNonBrakingSpace()+iwrb.getLocalizedString("school.want_after_school_care","I want afterschool care")),1,row++);
+			table.mergeCells(1, row, 5, row);
 			table.add(rbNotAfterSchool,1,row);
 			table.add(getSmallHeader(Text.getNonBrakingSpace()+iwrb.getLocalizedString("school.not_want_after_school_care","I do not want afterschool care")),1,row++);
 			//table.add(chkChildCare, 1, row);
