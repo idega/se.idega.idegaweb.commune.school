@@ -52,6 +52,7 @@ import com.idega.presentation.Page;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.Script;
 import com.idega.presentation.Table;
+import com.idega.presentation.text.Break;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.CheckBox;
@@ -872,11 +873,15 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		table.add(drpFirstSchool, 5, row++);
 		
 		if (this._showChoiceMessage) {
+			table.setHeight(row++, 2);
 			TextInput choiceMessage = (TextInput) getStyledInterface(new TextInput(prmExtraChoiceMessage));
 			if (valExtraChoiceMessages[0] != null) {
 				choiceMessage.setContent(valExtraChoiceMessages[0]);
 			}
-			table.add(getSmallHeader(iwrb.getLocalizedString("school.extra_message", "Extra message")+":"), 1, row);
+			choiceMessage.setLength(50);
+			table.mergeCells(3, row, 5, row);
+			table.add(getSmallHeader(iwrb.getLocalizedString("school.extra_message", "Extra message")+":"), 3, row);
+			table.add(new Break(), 3, row);
 			table.add(choiceMessage, 3, row++);
 			table.setHeight(row++, 6);
 		}
@@ -900,11 +905,15 @@ public class SchoolChoiceApplication extends CommuneBlock {
 			table.add(drpSecondSchool, 5, row++);
 	
 			if (this._showChoiceMessage) {
+				table.setHeight(row++, 2);
 				TextInput choiceMessage = (TextInput) getStyledInterface(new TextInput(prmExtraChoiceMessage));
 				if (valExtraChoiceMessages[1] != null) {
 					choiceMessage.setContent(valExtraChoiceMessages[1]);
 				}
-				table.add(getSmallHeader(iwrb.getLocalizedString("school.extra_message", "Extra message")+":"), 1, row);
+				choiceMessage.setLength(50);
+				table.mergeCells(3, row, 5, row);
+				table.add(getSmallHeader(iwrb.getLocalizedString("school.extra_message", "Extra message")+":"), 3, row);
+				table.add(new Break(), 3, row);
 				table.add(choiceMessage, 3, row++);
 				table.setHeight(row++, 6);
 			}
@@ -914,11 +923,15 @@ public class SchoolChoiceApplication extends CommuneBlock {
 			table.add(drpThirdSchool, 5, row++);
 			
 			if (this._showChoiceMessage) {
+				table.setHeight(row++, 2);
 				TextInput choiceMessage = (TextInput) getStyledInterface(new TextInput(prmExtraChoiceMessage));
 				if (valExtraChoiceMessages[2] != null) {
 					choiceMessage.setContent(valExtraChoiceMessages[2]);
 				}
-				table.add(getSmallHeader(iwrb.getLocalizedString("school.extra_message", "Extra message")+":"), 1, row);
+				choiceMessage.setLength(50);
+				table.mergeCells(3, row, 5, row);
+				table.add(getSmallHeader(iwrb.getLocalizedString("school.extra_message", "Extra message")+":"), 3, row);
+				table.add(new Break(), 3, row);
 				table.add(choiceMessage, 3, row++);
 				table.setHeight(row++, 6);
 			}
