@@ -15,7 +15,6 @@ import se.idega.idegaweb.commune.school.data.CurrentSchoolSeason;
 import se.idega.idegaweb.commune.school.data.CurrentSchoolSeasonHome;
 import se.idega.idegaweb.commune.school.data.SchoolChoice;
 import se.idega.idegaweb.commune.school.data.SchoolChoiceHome;
-import sun.security.krb5.internal.crypto.c;
 
 import com.idega.block.process.data.Case;
 import com.idega.block.process.data.CaseStatus;
