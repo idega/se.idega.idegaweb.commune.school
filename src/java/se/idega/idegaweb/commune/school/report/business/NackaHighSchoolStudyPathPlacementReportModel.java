@@ -1,5 +1,5 @@
 /*
- * $Id: NackaHighSchoolStudyPathPlacementReportModel.java,v 1.5 2004/01/22 11:39:53 anders Exp $
+ * $Id: NackaHighSchoolStudyPathPlacementReportModel.java,v 1.6 2004/01/23 08:37:35 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -21,19 +21,22 @@ import com.idega.block.school.data.SchoolStudyPath;
 /** 
  * Report model for high school placements for all study paths.
  * <p>
- * Last modified: $Date: 2004/01/22 11:39:53 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/23 08:37:35 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
 public class NackaHighSchoolStudyPathPlacementReportModel extends ReportModel {
 
-	private final static int COLUMN_SIZE = 1;
+	private final static int COLUMN_SIZE = 6;
 	
 	private final static int ROW_METHOD_STUDY_PATH = 1;
 	private final static int ROW_METHOD_TOTAL = 2;
 
-	private final static int COLUMN_METHOD_COUNT = 101;
+	private final static int COLUMN_METHOD_STUDY_PATH_CODE = 101;
+	private final static int COLUMN_METHOD_SCHOOL_YEAR = 102;
+	private final static int COLUMN_METHOD_COMPULSORY_SCHOOL_YEAR = 103;
+	private final static int COLUMN_METHOD_SUM_1_4 = 104;
 
 	private final static String QUERY_STUDY_PATH = "study_path";
 	
@@ -98,9 +101,23 @@ public class NackaHighSchoolStudyPathPlacementReportModel extends ReportModel {
 	 * @see se.idega.idegaweb.commune.school.report.business.ReportModel#buildColumnHeaders()
 	 */
 	protected Header[] buildColumnHeaders() {
-		Header[] headers = new Header[1];
+		Header[] headers = new Header[2];
 		
-		headers[0] = new Header(KEY_NUMBER_OF_STUDENTS, Header.HEADERTYPE_COLUMN_HEADER);
+		Header h = new Header(KEY_STUDY_PATH_CODE, Header.HEADERTYPE_COLUMN_HEADER);
+		headers[0] = h;
+		
+		h = new Header(KEY_SCHOOL_YEAR, Header.HEADERTYPE_COLUMN_HEADER, 5);
+		Header child0 = new Header(KEY_SCHOOL_YEAR_1, Header.HEADERTYPE_COLUMN_NORMAL);
+		Header child1 = new Header(KEY_SCHOOL_YEAR_2, Header.HEADERTYPE_COLUMN_NORMAL);
+		Header child2 = new Header(KEY_SCHOOL_YEAR_3, Header.HEADERTYPE_COLUMN_NORMAL);
+		Header child3 = new Header(KEY_SCHOOL_YEAR_4, Header.HEADERTYPE_COLUMN_NORMAL);
+		Header child4 = new Header(KEY_SUM_1_4, Header.HEADERTYPE_COLUMN_NORMAL);
+		h.setChild(0, child0);
+		h.setChild(1, child1);
+		h.setChild(2, child2);
+		h.setChild(3, child3);
+		h.setChild(4, child4);
+		headers[1] = h;
 				
 		return headers;
 	}
@@ -112,10 +129,29 @@ public class NackaHighSchoolStudyPathPlacementReportModel extends ReportModel {
 		for (int column = 0; column < getColumnSize(); column++) {
 			int row = 0;
 			int columnMethod = 0;
-			Integer columnParameter = null;
+			String columnParameter = null;
 			switch (column) {
 				case 0:
-					columnMethod = COLUMN_METHOD_COUNT;
+					columnMethod = COLUMN_METHOD_STUDY_PATH_CODE;
+					break;
+				case 1:
+					columnMethod = COLUMN_METHOD_SCHOOL_YEAR;
+					columnParameter = "1";
+					break;
+				case 2:
+					columnMethod = COLUMN_METHOD_SCHOOL_YEAR;
+					columnParameter = "2";
+					break;
+				case 3:
+					columnMethod = COLUMN_METHOD_SCHOOL_YEAR;
+					columnParameter = "3";
+					break;
+				case 4:
+					columnMethod = COLUMN_METHOD_SCHOOL_YEAR;
+					columnParameter = "4";
+					break;
+				case 5:
+					columnMethod = COLUMN_METHOD_SUM_1_4;
 					break;
 			}
 			
@@ -124,15 +160,32 @@ public class NackaHighSchoolStudyPathPlacementReportModel extends ReportModel {
 				Iterator iter = studyPaths.iterator();
 				while (iter.hasNext()) {
 					SchoolStudyPath studyPath = (SchoolStudyPath) iter.next();
-					Object rowParameter = studyPath.getCode();
+					String studyPathCode = studyPath.getCode();
+					Object rowParameter = studyPathCode;
+					if (columnMethod == COLUMN_METHOD_SCHOOL_YEAR) {
+						if (studyPathCode.length() > 3 && studyPathCode.substring(0, 3).equals("GYS")) {
+							columnMethod = COLUMN_METHOD_COMPULSORY_SCHOOL_YEAR;
+							columnParameter = "GS" + columnParameter; 
+						} else {
+							columnParameter = "G" + columnParameter;
+						}
+					}
+					int cellType = Cell.CELLTYPE_NORMAL;
+					if (columnMethod == COLUMN_METHOD_STUDY_PATH_CODE) {
+						cellType = Cell.CELLTYPE_ROW_HEADER;
+					}
 					Cell cell = new Cell(this, row, column, ROW_METHOD_STUDY_PATH,
-							columnMethod, rowParameter, columnParameter, Cell.CELLTYPE_NORMAL);
+							columnMethod, rowParameter, columnParameter, cellType);
 					setCell(row, column, cell);
 					row++;
 				}
 
+				int cellType = Cell.CELLTYPE_TOTAL;
+				if (columnMethod == COLUMN_METHOD_STUDY_PATH_CODE) {
+					cellType = Cell.CELLTYPE_ROW_HEADER;
+				}
 				Cell cell = new Cell(this, row, column, ROW_METHOD_TOTAL,
-						columnMethod, null, columnParameter, Cell.CELLTYPE_TOTAL);
+						columnMethod, "", columnParameter, cellType);
 				setCell(row, column, cell);
 				row++;
 				
@@ -145,7 +198,7 @@ public class NackaHighSchoolStudyPathPlacementReportModel extends ReportModel {
 	/**
 	 * @see se.idega.idegaweb.commune.school.report.business.ReportModel#calculate()
 	 */
-	protected float calculate(Cell cell) {
+	protected float calculate(Cell cell) throws RemoteException {
 		float value = 0f;
 		String studyPathCode = null;
 		if (cell.getRowParameter() != null) {
@@ -154,10 +207,24 @@ public class NackaHighSchoolStudyPathPlacementReportModel extends ReportModel {
 		int row = cell.getRow();
 		int column = cell.getColumn();
 		
+		String schoolYearName = (String) cell.getColumnParameter();
+		
 		switch (cell.getRowMethod()) {
 			case ROW_METHOD_STUDY_PATH:
-				Integer count = (Integer) _placements.get(studyPathCode);
-				value = count.intValue();
+				switch (cell.getColumnMethod()) {
+					case COLUMN_METHOD_SCHOOL_YEAR:
+						value = getHighSchoolPlacementCount(studyPathCode, schoolYearName, false);
+						break;
+					case COLUMN_METHOD_COMPULSORY_SCHOOL_YEAR:
+						value = getHighSchoolPlacementCount(studyPathCode, schoolYearName, true);
+						break;
+					case COLUMN_METHOD_SUM_1_4:
+						value = getCell(row, 1).getFloatValue() +
+								getCell(row, 2).getFloatValue() +
+								getCell(row, 3).getFloatValue() +
+								getCell(row, 4).getFloatValue();
+						break;
+				}
 				break;
 			case ROW_METHOD_TOTAL:
 				for (int i = 0; i < row; i++) {
@@ -175,6 +242,35 @@ public class NackaHighSchoolStudyPathPlacementReportModel extends ReportModel {
 	 */
 	public String getReportTitleLocalizationKey() {
 		return KEY_REPORT_TITLE;
+	}
+	
+	/**
+	 * Returns the number of student placements for the specified study path code and school year.
+	 */
+	protected int getHighSchoolPlacementCount(String studyPathCode, String schoolYearName, boolean isCompulsory) 
+			throws RemoteException {
+		PreparedQuery query = null;
+		ReportBusiness rb = getReportBusiness();
+		query = getQuery(QUERY_STUDY_PATH);
+		if (query == null) {
+			query = new PreparedQuery(getConnection());
+			query.setSelectCount();
+			query.setPlacements(rb.getSchoolSeasonId());
+			query.setOnlyNackaCitizens();
+			query.setStudyPathPrefix(); // parameter 1
+			query.setSchoolYearName(); // parameter 2
+			query.setSchoolType(); // parameter 3
+			query.prepare();
+			setQuery(QUERY_STUDY_PATH, query);
+		}
+		query.setString(1, studyPathCode);
+		query.setString(2, schoolYearName);
+		if (isCompulsory) {
+			query.setInt(3, rb.getCompulsoryHighSchoolTypeId());
+		} else {
+			query.setInt(3, rb.getHighSchoolTypeId());
+		}
+		return query.execute();
 	}
 	
 	/**
