@@ -1,5 +1,5 @@
 /*
- * $Id: NackaCCProviderCareTimeReportModel.java,v 1.1 2004/01/27 16:05:47 anders Exp $
+ * $Id: NackaCCProviderCareTimeReportModel.java,v 1.2 2004/01/28 08:11:41 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -17,10 +17,10 @@ import com.idega.block.school.data.School;
 /** 
  * Report model for total number of child care hours in Nacka.
  * <p>
- * Last modified: $Date: 2004/01/27 16:05:47 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/28 08:11:41 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class NackaCCProviderCareTimeReportModel extends ReportModel {
 
@@ -70,7 +70,7 @@ public class NackaCCProviderCareTimeReportModel extends ReportModel {
 			while (iter.hasNext()) {
 				School school = (School) iter.next();
 				String providerName = school.getName(); 
-				headers[headerIndex] = new Header(providerName, Header.HEADERTYPE_ROW_HEADER);
+				headers[headerIndex] = new Header(providerName, Header.HEADERTYPE_ROW_NONLOCALIZED_HEADER);
 				headerIndex++;
 			}
 			headers[headerIndex] = new Header(KEY_TOTAL, Header.HEADERTYPE_ROW_HEADER);
@@ -85,7 +85,7 @@ public class NackaCCProviderCareTimeReportModel extends ReportModel {
 	protected Header[] buildColumnHeaders() {
 		Header[] headers = new Header[1];
 		
-		headers[0] = new Header(KEY_NUMBER_OF_CHILDREN, Header.HEADERTYPE_COLUMN_HEADER);
+		headers[0] = new Header(KEY_SUM_CHILD_CARE_HOURS, Header.HEADERTYPE_COLUMN_HEADER);
 		
 		return headers;
 	}
@@ -105,7 +105,7 @@ public class NackaCCProviderCareTimeReportModel extends ReportModel {
 				Iterator iter = providers.iterator();
 				while (iter.hasNext()) {
 					School school = (School) iter.next();
-					columnParameter = school.getPrimaryKey();
+					rowParameter = school.getPrimaryKey();
 					Cell cell = new Cell(this, row, column, ROW_METHOD_PROVIDER, 
 							columnMethod, rowParameter, columnParameter, Cell.CELLTYPE_NORMAL);
 					setCell(row++, column, cell);
