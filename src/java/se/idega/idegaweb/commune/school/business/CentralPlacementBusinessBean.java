@@ -30,6 +30,8 @@ import com.idega.block.school.data.SchoolCategory;
 import com.idega.block.school.data.SchoolCategoryHome;
 import com.idega.block.school.data.SchoolClassMember;
 import com.idega.block.school.data.SchoolClassMemberHome;
+import com.idega.block.school.data.SchoolSeason;
+import com.idega.business.IBOLookup;
 import com.idega.business.IBOServiceBean;
 import com.idega.data.IDOLookup;
 import com.idega.presentation.IWContext;
@@ -79,7 +81,9 @@ public class CentralPlacementBusinessBean extends IBOServiceBean implements Cent
 		SchoolClassMember newPlacement = null;
 		//SchoolClassMember currentPlacement = null;
 		SchoolClassMember latestPlacement = null;
+		SchoolSeason chosenSeason = null;
 		int newPlacementID = -1;
+		int registratorID = -1;
 		
 	// *** START - Check in params ***
 		// pupil
@@ -90,6 +94,12 @@ public class CentralPlacementBusinessBean extends IBOServiceBean implements Cent
 			student = getUserBusiness().getUser(studentID);
 			if (student == null) 
 				throw new CentralPlacementException(KEY_ERROR_CHILD_ID, "No valid pupil found");
+			
+			try {
+				chosenSeason = getSchoolChoiceBusiness().getSchoolSeasonHome().
+								findByPrimaryKey(new Integer(getSchoolCommuneSession(iwc).getSchoolSeasonID()));
+			} catch (FinderException e1) {}
+			
 			latestPlacement = getLatestPlacementLatestFromElemAndHighSchool(student);
 		}
 		
@@ -280,12 +290,11 @@ public class CentralPlacementBusinessBean extends IBOServiceBean implements Cent
 				// Resources				
 				if (iwc.isParameterSet(CentralPlacementEditor.PARAM_RESOURCES)) {
 					String [] arr = iwc.getParameterValues(CentralPlacementEditor.PARAM_RESOURCES);
+
 					for (int i = 0; i < arr.length; i++) {
 						int rscPK = Integer.parseInt(arr[i]);
-						/*ResourceClassMember rscPlace =*/ getResourceBusiness()
-											.createResourcePlacement(rscPK, newPlacementID, placementDateStr);						
-//						Integer rscPlPK = (Integer) rscPlace.getPrimaryKey();
-//						int intPK = rscPlPK.intValue();
+						getResourceBusiness()
+							.createResourcePlacement(rscPK, newPlacementID, placementDateStr, registrator);						
 					}					
 				}
 				// Store newPlacement
@@ -409,13 +418,18 @@ public class CentralPlacementBusinessBean extends IBOServiceBean implements Cent
 		return dateStr;
 	}
 	
-
-
+	protected SchoolCommuneSession getSchoolCommuneSession(IWContext iwc) throws RemoteException {
+		return (SchoolCommuneSession) IBOLookup.getSessionInstance(iwc, SchoolCommuneSession.class);	
+	}
 	
 	public CommuneUserBusiness getCommuneUserBusiness() throws RemoteException {
 		return (CommuneUserBusiness) getServiceInstance(CommuneUserBusiness.class);
 	}
 
+	public SchoolChoiceBusiness getSchoolChoiceBusiness() throws RemoteException {
+		return (SchoolChoiceBusiness) getServiceInstance(SchoolChoiceBusiness.class);
+	}
+	
 	public UserBusiness getUserBusiness() throws RemoteException {
 		return (UserBusiness) getServiceInstance(UserBusiness.class);
 	}
