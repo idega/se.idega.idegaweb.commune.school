@@ -401,29 +401,23 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
   	boolean needAnd = false;
 
   	IDOQuery query = new IDOQuery();
-  	query.appendSelectAllFrom(getEntityName());
+  	query.appendSelect().append("csc.*").appendFrom().append(getEntityName()).append(" csc");
 
   	if (search) {
   		query.append(", ").append(UserBMPBean.TABLE_NAME);
   	}
   	if (statuses) {
-  		query.append(", ").append(CaseBMPBean.TABLE_NAME);
+  		query.append(", ").append(CaseBMPBean.TABLE_NAME).append(" pc");
   	}
   	
   	query.appendWhere();
   	
   	if (statuses) {
-  		query.append(getEntityName()).append(".").append(getIDColumnName())
-  		.appendEqualSign().append(CaseBMPBean.TABLE_NAME).append(".").append(CaseBMPBean.TABLE_NAME+"_ID")
-  		.appendAnd().append("(");
-  		for (int i = 0; i < validStatuses.length; i++) {
-  			if (i != 0) {
-  				query.appendOr();	
-  			}
-	  		query.append(CaseBMPBean.TABLE_NAME).append(".").append(CaseBMPBean.COLUMN_CASE_STATUS)
-	  		.append(" like '").append(validStatuses[i]).append("'");
-  		}
-  		query.append(")");
+  		query.append("csc.").append(getIDColumnName())
+  		.appendEqualSign().append("pc.").append(CaseBMPBean.TABLE_NAME+"_ID")
+  		.appendAnd().append("pc.").append(CaseBMPBean.COLUMN_CASE_STATUS).appendIn();
+  		query.appendWithinParentheses(new IDOQuery().appendCommaDelimitedWithinSingleQuotes(validStatuses));
+  		query.appendAnd().append("pc.").append(CaseBMPBean.COLUMN_CASE_CODE).appendEqualSign().appendWithinSingleQuotes(this.CASECODE);
   		needAnd = true;
   	}
   	
@@ -450,7 +444,7 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 			if (needAnd) {
 				query.appendAnd();
 			}
-  		query.append(SCHOOL_SEASON).appendEqualSign().append(seasonID);
+  		query.append("csc.").append(SCHOOL_SEASON).appendEqualSign().append(seasonID);
   		needAnd = true;
   	}
 
@@ -458,7 +452,7 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 			if (needAnd) {
 				query.appendAnd();
 			}
-  		query.append(CHOSEN_SCHOOL).appendEqualSign().append(schoolID);	
+  		query.append("csc.").append(CHOSEN_SCHOOL).appendEqualSign().append(schoolID);	
   		needAnd = true;
   	}
 
@@ -466,7 +460,7 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 			if (needAnd) {
 				query.appendAnd();
 			}
-  		query.append(GRADE).appendEqualSign().append(gradeYear);	
+  		query.append("csc.").append(GRADE).appendEqualSign().append(gradeYear);	
   		needAnd = true;
   	}
   	
@@ -474,7 +468,7 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
   		if (needAnd) {
   			query.appendAnd();	
   		}
-  		query.append(CHOICEORDER).append(" in (");
+  		query.append("csc.").append(CHOICEORDER).append(" in (");
   		for (int i = 0; i < choiceOrder.length; i++) {
   			if (	i != 0 ) {
   				query.append(", ");	
@@ -485,7 +479,6 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
   		needAnd = true;
   	}
   	
-  	//System.out.println("[SchoolChoiceBean] sql : "+query.toString());
   	return this.idoFindPKsByQuery(query);
   }
   
