@@ -778,6 +778,9 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		try {
 			SchoolChoice choice = getSchoolChoiceHome().findByPrimaryKey(pk);
 			if (choice.getCaseStatus().equals(getCaseStatusMoved())) {
+				if (choice.getPlacementDate() != null && choice.getCurrentSchoolId() != -1) {
+					terminateOldPlacement(choice);
+				}
 				User child = choice.getChild();
 				Object[] arguments = {child.getNameLastFirst(true), choice.getChosenSchool().getSchoolName(), PersonalIDFormatter.format(child.getPersonalID(), this.getIWApplicationContext().getApplicationSettings().getDefaultLocale())};
 				String body = MessageFormat.format(getLocalizedString("school_choice.student_moved_from_school_body", "Dear headmaster, {0} has been moved from your school and placed at {1}."), arguments);
@@ -789,6 +792,23 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		catch (Exception e) {
 		}
 		return null;
+	}
+	
+	private void terminateOldPlacement(SchoolChoice choice) {
+		try {
+			IWTimestamp stamp = new IWTimestamp(choice.getPlacementDate());
+			stamp.addDays(-1);
+
+			SchoolClassMember member = getSchoolBusiness().getSchoolClassMemberHome().findLatestByUserAndSchool(choice.getChildId(), choice.getCurrentSchoolId());
+			member.setRemovedDate(stamp.getTimestamp());
+			member.store();
+		}
+		catch (FinderException fe) {
+			log(fe);
+		}
+		catch (RemoteException re) {
+			log(re);
+		}
 	}
 
 	protected String getPreliminaryMessageBody(SchoolChoice theCase) throws RemoteException {
