@@ -313,32 +313,47 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 		return new Vector();
 	}
 	
-	public void finalizeGroup(SchoolClass schoolClass, String subject, String body) throws RemoteException {
+	public void finalizeGroup(SchoolClass schoolClass, String subject, String body, boolean confirmation) throws RemoteException {
 		School school = getSchoolBusiness().getSchool(new Integer(schoolClass.getSchoolId()));
-
+		SchoolChoice choice; 
 		Map students = getStudentList(getSchoolBusiness().findStudentsInClass(((Integer)schoolClass.getPrimaryKey()).intValue()));
 		Iterator iter = students.values().iterator();
 		while (iter.hasNext()) {
 			User student = (User) iter.next();
-			System.out.println("Doing student: "+student.getPrimaryKey());
-			if (hasSchoolChoices(((Integer)student.getPrimaryKey()).intValue(), schoolClass.getSchoolSeasonId())[0]) {
-				System.out.println("Sending message...");
+			choice = getSchoolChoiceBusiness().findByStudentAndSchoolAndSeason(((Integer)student.getPrimaryKey()).intValue(),schoolClass.getSchoolId(),schoolClass.getSchoolSeasonId());
+			boolean sendMessage = false;
+			boolean updateChoice = false;
+			
+			if (choice != null) {
+				sendMessage = true;
+				if (confirmation) {
+					if (choice.getHasReceivedConfirmationMessage())
+						sendMessage = false;
+					else
+						choice.setHasReceivedConfirmationMessage(true);
+				}
+				else {
+					if (choice.getHasReceivedPlacementMessage())
+						sendMessage = false;
+					else
+						choice.setHasReceivedPlacementMessage(true);
+				}
+			}
+			
+			if (sendMessage) {
+				choice.store();
 				try {
 					Collection parents = getMemberFamilyLogic().getCustodiansFor(student);
 					if (!parents.isEmpty()) {
 						Iterator iterator = parents.iterator();
 						while (iterator.hasNext()) {
 							User parent = (User) iterator.next();
-							List emails = new Vector(parent.getEmails());
-							if (!emails.isEmpty()) {
-								Email email = (Email) emails.get(0);
-								try {
-									Object[] arguments = { school.getName(), parent.getNameLastFirst(true), schoolClass.getName(), student.getNameLastFirst(true) };
-									getMessageBusiness().createUserMessage(parent, subject, MessageFormat.format(body, arguments));
-								}
-								catch (CreateException ce) {
-									ce.printStackTrace();
-								}
+							try {
+								Object[] arguments = { school.getName(), parent.getNameLastFirst(true), schoolClass.getName(), student.getNameLastFirst(true) };
+								getMessageBusiness().createUserMessage(parent, subject, MessageFormat.format(body, arguments));
+							}
+							catch (CreateException ce) {
+								ce.printStackTrace();
 							}
 						}	
 					}
@@ -450,6 +465,13 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 		if (key == null || key.length() == 0)
 			key = "school.school_type_" + type.getSchoolTypeName();
 		return key;
+	}
+	
+	public void resetSchoolClassStatus(int schoolClassID) throws RemoteException {
+		SchoolClass schoolClass = getSchoolBusiness().findSchoolClass(new Integer(schoolClassID));
+		schoolClass.setLocked(false);
+		schoolClass.setReady(false);
+		schoolClass.store();
 	}
 		
 }

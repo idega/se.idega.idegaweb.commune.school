@@ -6,7 +6,7 @@ public interface SchoolCommuneBusiness extends com.idega.business.IBOService,com
 {
  public void addSchoolAdministrator(com.idega.user.data.User p0)throws java.rmi.RemoteException,javax.ejb.FinderException,javax.ejb.CreateException, java.rmi.RemoteException;
  public boolean canMarkSchoolClass(com.idega.block.school.data.SchoolClass p0,java.lang.String p1)throws java.rmi.RemoteException, java.rmi.RemoteException;
- public void finalizeGroup(com.idega.block.school.data.SchoolClass p0,java.lang.String p1,java.lang.String p2)throws java.rmi.RemoteException, java.rmi.RemoteException;
+ public void finalizeGroup(com.idega.block.school.data.SchoolClass p0,java.lang.String p1,java.lang.String p2, boolean confirmation)throws java.rmi.RemoteException, java.rmi.RemoteException;
  public int getChosenSchoolID(java.util.Collection p0)throws java.rmi.RemoteException, java.rmi.RemoteException;
  public int getCurrentSchoolSeasonID()throws java.rmi.RemoteException, java.rmi.RemoteException;
  public int getGradeForYear(int p0)throws java.rmi.RemoteException, java.rmi.RemoteException;
@@ -33,4 +33,5 @@ public interface SchoolCommuneBusiness extends com.idega.business.IBOService,com
  public void setStudentAsSpeciallyPlaced(com.idega.block.school.data.SchoolClassMember p0)throws java.rmi.RemoteException, java.rmi.RemoteException;
  public boolean[] hasSchoolChoices(int userID, int seasonID) throws java.rmi.RemoteException;
  public String getLocalizedSchoolTypeKey(com.idega.block.school.data.SchoolType type);
+ public void resetSchoolClassStatus(int schoolClassID) throws java.rmi.RemoteException;
 }

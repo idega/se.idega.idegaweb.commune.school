@@ -57,6 +57,9 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
   public final static String WORK_SITUATION_2 = "work_situation_2";
   public final static String GROUP_PLACE = "group_place";
   
+  public final static String HAS_RECEIVED_PLACEMENT_MESSAGE = "placement_message";
+  public final static String HAS_RECEIVED_CONFIRMATION_MESSAGE = "confirmation_message";
+  
   public final static String CASE_STATUS_CREATED     = "UBEH";
   public final static String CASE_STATUS_QUIET       = "TYST";
   public final static String CASE_STATUS_PRELIMINARY = "PREL";
@@ -112,6 +115,8 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
     this.addAttribute(FREETIMETHISSCHOOL,"School catalogue",Boolean.class);
     this.addAttribute(FREETIMEOTHER,"School catalogue",String.class,255);
 
+	this.addAttribute(HAS_RECEIVED_PLACEMENT_MESSAGE,"Placement message",Boolean.class);
+	this.addAttribute(HAS_RECEIVED_CONFIRMATION_MESSAGE,"Confirmation message",Boolean.class);
 
     //this.addManyToOneRelationship(CURRENT_SCHOOL,School.class);
     //this.addManyToOneRelationship(CHOSEN_SCHOOL,School.class);
@@ -274,6 +279,22 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
   public void setFreetimeOther(String other){
     setColumn(FREETIMEOTHER,other);
   }
+  
+  public void setHasReceivedPlacementMessage(boolean hasReceivedMessage) {
+  	setColumn(HAS_RECEIVED_PLACEMENT_MESSAGE, hasReceivedMessage);
+  }
+
+  public void setHasReceivedConfirmationMessage(boolean hasReceivedMessage) {
+	setColumn(HAS_RECEIVED_CONFIRMATION_MESSAGE, hasReceivedMessage);
+  }
+  
+  public boolean getHasReceivedPlacementMessage() {
+  	return getBooleanColumnValue(HAS_RECEIVED_PLACEMENT_MESSAGE, false);
+  }
+  
+  public boolean getHasReceivedConfirmationMessage() {
+  	return getBooleanColumnValue(HAS_RECEIVED_CONFIRMATION_MESSAGE, false);
+  }
 
   public Collection ejbFindByChosenSchoolId(int chosenSchoolId,int schoolSeasonId)throws javax.ejb.FinderException{
     return idoFindPKsBySQL("select * from "+getEntityName()+" where "+CHOSEN_SCHOOL+" = "+chosenSchoolId+" and "+SCHOOL_SEASON+" = "+schoolSeasonId);
@@ -392,6 +413,7 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
     sql.append(CHOSEN_SCHOOL);
     sql.append(" = ");
     sql.append(schoolID);
+    //System.out.println(sql.toString());
     return super.idoFindPKsBySQL(sql.toString());
   }
 

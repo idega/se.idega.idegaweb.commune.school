@@ -59,4 +59,9 @@ public interface SchoolChoice extends com.idega.data.IDOEntity,com.idega.block.p
  public void setSchoolTypeId(int p0);
  public void setWorksituation1(int p0);
  public void setWorksituation2(int p0);
+ public void setHasReceivedPlacementMessage(boolean hasReceivedMessage);
+ public void setHasReceivedConfirmationMessage(boolean hasReceivedMessage);
+ public boolean getHasReceivedPlacementMessage();
+ public boolean getHasReceivedConfirmationMessage();
+
 }
