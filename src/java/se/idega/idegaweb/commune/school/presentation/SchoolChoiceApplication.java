@@ -212,7 +212,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	private java.sql.Date valPlacementDate = null;
 	private boolean _isForTesting = false;
 	private boolean _showChoiceMessage = false;
-	
+	private ICPage _outsideCommunePage=null;
 	
 	private boolean _forwardToCheckPage = true;
 	private int _maxAge = 0;
@@ -1058,8 +1058,20 @@ public class SchoolChoiceApplication extends CommuneBlock {
 				table.add(choiceMessage, 3, row++);
 				table.setHeight(row++, 6);
 			}
+			if (_outsideCommunePage != null){
+				Link outsideCommune = new Link();
+				outsideCommune.setPage(_outsideCommunePage);
+				outsideCommune.setText(iwrb.getLocalizedString("school.outside_commune_link", "For you who choose school outside of the municipality"));
+				outsideCommune.setTarget(Link.TARGET_NEW_WINDOW);
+				table.setHeight(row++, 6);
+				table.mergeCells(1, row, 5, row);
+				table.add(outsideCommune, 1, row++);
+				table.setHeight(row++, 6);
+			}
+			
 		}
-
+		
+	
 		if ((schoolYear != null && schoolYear.getSchoolYearAge() >= 12) || age.getYears() >= 11) {
 			table.setHeight(row++, 5);
 			table.add(getSmallHeader(iwrb.getLocalizedString("school.six_year_language", "Language") + ":"), 1, row);
@@ -2019,5 +2031,13 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	 */
 	public void setShowChildCareTypes(boolean showChildCareTypes) {
 		this._showChildCareTypes = showChildCareTypes;
+	}
+	
+	/**
+	 * @param OutsideOfCommunePage
+	 *          The OutsideOfCommunePage to set.
+	 */
+	public void setOutsideOfCommunePage(ICPage page) {
+		this._outsideCommunePage = page;
 	}
 }
