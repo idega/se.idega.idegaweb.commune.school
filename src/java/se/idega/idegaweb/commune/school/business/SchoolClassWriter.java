@@ -38,6 +38,7 @@ import com.idega.io.MemoryOutputStream;
 import com.idega.presentation.IWContext;
 import com.idega.user.data.User;
 import com.idega.util.PersonalIDFormatter;
+import com.idega.util.text.Name;
 import com.lowagie.text.BadElementException;
 import com.lowagie.text.Cell;
 import com.lowagie.text.Document;
@@ -201,7 +202,8 @@ public class SchoolClassWriter implements MediaWritable {
 					postalCode = address.getPostalCode();
 				phone = userBusiness.getChildHomePhone(student);
 
-		    row.createCell((short)0).setCellValue(student.getNameLastFirst(true));
+				Name name = new Name(student.getFirstName(), student.getMiddleName(), student.getLastName());
+		    row.createCell((short)0).setCellValue(name.getName(locale, true));
 		    row.createCell((short)1).setCellValue(PersonalIDFormatter.format(student.getPersonalID(), locale));
 		    if (address != null) {
 			    row.createCell((short)2).setCellValue(address.getStreetAddress());
@@ -258,7 +260,8 @@ public class SchoolClassWriter implements MediaWritable {
 					postalCode = address.getPostalCode();
 				phone = userBusiness.getChildHomePhone(student);
 
-				cell = new Cell(new Phrase(student.getNameLastFirst(true), new Font(Font.HELVETICA, 9, Font.NORMAL)));
+				Name name = new Name(student.getFirstName(), student.getMiddleName(), student.getLastName());
+				cell = new Cell(new Phrase(name.getName(locale, true), new Font(Font.HELVETICA, 9, Font.NORMAL)));
 				cell.setBorder(Rectangle.NO_BORDER);
 				datatable.addCell(cell);
 

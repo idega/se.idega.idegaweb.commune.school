@@ -73,6 +73,7 @@ import com.idega.user.data.User;
 import com.idega.util.Age;
 import com.idega.util.IWTimestamp;
 import com.idega.util.PersonalIDFormatter;
+import com.idega.util.text.Name;
 import com.lowagie.text.Chunk;
 import com.lowagie.text.Document;
 import com.lowagie.text.Element;
@@ -1097,7 +1098,11 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	
 	protected String getGroupedMessageBody(SchoolChoice theCase) throws RemoteException {
 		StringBuffer body = new StringBuffer(this.getLocalizedString("acc.app.acc.body1", "Dear mr./ms./mrs. "));
-		body.append(theCase.getOwner().getNameLastFirst()).append("\n");
+
+		User owner = theCase.getOwner();
+		Name name = new Name(owner.getFirstName(), owner.getMiddleName(), owner.getLastName());
+		body.append(name.getName(this.getIWMainApplication().getSettings().getDefaultLocale())).append("\n");
+		
 		body.append(this.getLocalizedString("school_choice.group_mesg_body2", "Your child has been grouped  in ."));
 		body.append(theCase.getGroupPlace()).append("\n");
 		body.append(this.getLocalizedString("school_choice.group_mesg_body3", "in school ."));

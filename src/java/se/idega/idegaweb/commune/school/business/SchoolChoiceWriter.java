@@ -36,6 +36,7 @@ import com.idega.presentation.IWContext;
 import com.idega.user.data.User;
 import com.idega.util.IWTimestamp;
 import com.idega.util.PersonalIDFormatter;
+import com.idega.util.text.Name;
 
 /**
  * Title:
@@ -171,7 +172,8 @@ public class SchoolChoiceWriter implements MediaWritable {
 				school = business.getSchoolBusiness().getSchool(new Integer(choice.getCurrentSchoolId()));
 				address = userBusiness.getUsersMainAddress(applicant);
 				
-				row.createCell((short)cellColumn++).setCellValue(applicant.getNameLastFirst(true));
+				Name name = new Name(applicant.getFirstName(), applicant.getMiddleName(), applicant.getLastName());
+				row.createCell((short)cellColumn++).setCellValue(name.getName(locale, true));
 		    row.createCell((short)cellColumn++).setCellValue(PersonalIDFormatter.format(applicant.getPersonalID(), locale));
 		    if (address != null)
 			    row.createCell((short)cellColumn).setCellValue(address.getStreetAddress());

@@ -37,6 +37,7 @@ import com.idega.idegaweb.IWResourceBundle;
 import com.idega.user.data.User;
 import com.idega.util.IWTimestamp;
 import com.idega.util.PersonalIDFormatter;
+import com.idega.util.text.Name;
 
 /**
  * @author laddi
@@ -89,6 +90,7 @@ public class SchoolReportBusinessBean extends IBOSessionBean implements SchoolRe
 		fillColumns(columnNames);
 		initializeBundlesIfNeeded();
 		Locale currentLocale = this.getUserContext().getCurrentLocale();
+		Locale defaultLocale = this.getIWMainApplication().getSettings().getDefaultLocale();
 		String nativeLanguageIDs = _iwb.getProperty(SchoolReportBusiness.PROPERTY_RESOURCE_IDS_NATIVE_LANGUAGE, "");
 		String secondLanguageIDs = _iwb.getProperty(SchoolReportBusiness.PROPERTY_RESOURCE_IDS_SECOND_LANGUAGE, "");
 		
@@ -240,7 +242,8 @@ public class SchoolReportBusinessBean extends IBOSessionBean implements SchoolRe
 					data.addData(personalID, PersonalIDFormatter.format(user.getPersonalID(), currentLocale));
 				}
 				if (displayColumn(FIELD_NAME)) {
-					data.addData(name, user.getNameLastFirst(true));
+					Name userName = new Name(user.getFirstName(), user.getMiddleName(), user.getLastName());
+					data.addData(name, userName.getName(defaultLocale, true));
 				}
 
 				if (homeAddress != null) {
@@ -309,7 +312,8 @@ public class SchoolReportBusinessBean extends IBOSessionBean implements SchoolRe
 				
 				if (parent != null) {
 					if (displayColumn(FIELD_CUSTODIAN)) {
-						data.addData(custodian, parent.getNameLastFirst(true));
+						Name parentName = new Name(parent.getFirstName(), parent.getMiddleName(), parent.getLastName());
+						data.addData(custodian, parentName.getName(defaultLocale, true));
 					}
 
 					if (displayColumn(FIELD_ALTERNATE_ADDRESS)) {
@@ -356,6 +360,7 @@ public class SchoolReportBusinessBean extends IBOSessionBean implements SchoolRe
 		fillColumns(columnNames);
 		initializeBundlesIfNeeded();
 		Locale currentLocale = this.getUserContext().getCurrentLocale();
+		Locale defaultLocale = getIWMainApplication().getSettings().getDefaultLocale();
 		
 		ReportableCollection reportCollection = new ReportableCollection();
 		
@@ -502,7 +507,8 @@ public class SchoolReportBusinessBean extends IBOSessionBean implements SchoolRe
 					data.addData(personalID, PersonalIDFormatter.format(user.getPersonalID(), currentLocale));
 				}
 				if (displayColumn(FIELD_NAME)) {
-					data.addData(name, user.getNameLastFirst(true));
+					Name userName = new Name(user.getFirstName(), user.getMiddleName(), user.getLastName());
+					data.addData(name, userName.getName(defaultLocale, true));
 				}
 
 				if (homeAddress != null) {
@@ -573,7 +579,8 @@ public class SchoolReportBusinessBean extends IBOSessionBean implements SchoolRe
 				
 				if (parent != null) {
 					if (displayColumn(FIELD_CUSTODIAN)) {
-						data.addData(custodian, parent.getNameLastFirst(true));
+						Name parentName = new Name(parent.getFirstName(), parent.getMiddleName(), parent.getLastName());
+						data.addData(custodian, parentName.getName(defaultLocale, true));
 					}
 
 					if (displayColumn(FIELD_ALTERNATE_ADDRESS)) {
