@@ -179,6 +179,7 @@ public class UserCases extends CommuneBlock {
 				mainTable.add(form, 1, 1);
 			}
 			else {
+				mainTable.setCellpaddingLeft(1, 1, firstColumnPadding);
 				mainTable.add(getSmallHeader(localize(NOONGOINGCASES_KEY, NOONGOINGCASES_DEFAULT)), 1, 1);
 			}
 
