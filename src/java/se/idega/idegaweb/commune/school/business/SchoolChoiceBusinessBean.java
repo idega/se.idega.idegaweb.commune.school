@@ -722,7 +722,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	
 	public void reactivateApplication(int applicationID, int removedSchoolID, boolean hasReceivedPlacementMessage) throws RemoteException {
 		//change PDF-handler to a new for reactivation		
-		reactivateApplication(applicationID,removedSchoolID,hasReceivedPlacementMessage,SchoolChoiceMessagePdfHandler.CODE_APPLICATION_REJECT);
+		reactivateApplication(applicationID,removedSchoolID,hasReceivedPlacementMessage,SchoolChoiceMessagePdfHandler.CODE_APPLICATION_REACTIVATE);
 	}
 	public void reactivateApplication(int applicationID, int removedSchoolID, boolean hasReceivedPlacementMessage, String code) throws RemoteException {
 		try {
