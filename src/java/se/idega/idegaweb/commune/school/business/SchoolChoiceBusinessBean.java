@@ -768,6 +768,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
                                                       reminder.getText ());
             final PdfPCell reminderCell = new PdfPCell (reminderPhrase);
             reminderCell.setBorder (0);
+            reminderCell.setVerticalAlignment (Element.ALIGN_MIDDLE);
             reminderCell.setMinimumHeight (mmToPoints (205));
             final PdfPTable reminderText = new PdfPTable (1);
             reminderText.setWidthPercentage (100f);
