@@ -1,5 +1,5 @@
 /*
- * $Id: NackaElementarySchoolPlacementReportModel.java,v 1.11 2004/02/26 07:56:06 anders Exp $
+ * $Id: NackaElementarySchoolPlacementReportModel.java,v 1.12 2004/02/26 08:02:03 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -22,10 +22,10 @@ import com.idega.block.school.data.SchoolArea;
 /** 
  * Report model for placements in Nacka elementary schools.
  * <p>
- * Last modified: $Date: 2004/02/26 07:56:06 $ by $Author: anders $
+ * Last modified: $Date: 2004/02/26 08:02:03 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.11 $
+ * @version $Revision: 1.12 $
  */
 public class NackaElementarySchoolPlacementReportModel extends ReportModel {
 
@@ -44,6 +44,7 @@ public class NackaElementarySchoolPlacementReportModel extends ReportModel {
 
 	private final static String QUERY_ELEMENTARY = "elementary";
 	private final static String QUERY_ELEMENTARY_6_YEAR_STUDENTS = "elementary_6";	
+	private final static String QUERY_COUNT = "count";
 	
 	private final static String KEY_REPORT_TITLE = KP + "title_nacka_elementary_school_placements";
 
@@ -419,7 +420,7 @@ public class NackaElementarySchoolPlacementReportModel extends ReportModel {
 	protected int getCount(int schoolId) throws RemoteException {
 		PreparedQuery query = null;
 		ReportBusiness rb = getReportBusiness();
-		query = getQuery(QUERY_ELEMENTARY);
+		query = getQuery(QUERY_COUNT);
 		if (query == null) {
 			query = new PreparedQuery(getConnection());
 			query.setSelectCountDistinctUsers();
@@ -428,7 +429,7 @@ public class NackaElementarySchoolPlacementReportModel extends ReportModel {
 			query.setSchoolYearName(); // parameter 2
 			query.setSchool(); // parameter 3
 			query.prepare();
-			setQuery(QUERY_ELEMENTARY, query);
+			setQuery(QUERY_COUNT, query);
 		}
 
 		int schoolTypeId = rb.getPreSchoolClassTypeId(); 
