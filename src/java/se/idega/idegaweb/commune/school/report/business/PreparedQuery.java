@@ -1,5 +1,5 @@
 /*
- * $Id: PreparedQuery.java,v 1.5 2004/01/19 12:32:36 anders Exp $
+ * $Id: PreparedQuery.java,v 1.6 2004/01/20 13:19:16 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -27,10 +27,10 @@ import com.idega.block.school.data.SchoolSeason;
 /** 
  * Handles the SQL logic for school report calculations.
  * <p>
- * Last modified: $Date: 2004/01/19 12:32:36 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/20 13:19:16 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
 public class PreparedQuery {
 
@@ -42,7 +42,9 @@ public class PreparedQuery {
 	private final static String TABLE_UA = "ic_user_address";
 	private final static String TABLE_A = "ic_address";
 	private final static String TABLE_U = "ic_user";
-
+	private final static String TABLE_CA = "comm_childcare_archive";
+	private final static String TABLE_C = "comm_childcare";
+	
 	private final static String CM = "cm";
 	private final static String SC = "sc";
 	private final static String S = "s";
@@ -51,6 +53,8 @@ public class PreparedQuery {
 	private final static String UA = "ua";
 	private final static String A = "a";	
 	private final static String U = "u";	
+	private final static String CA = "ca";	
+	private final static String C = "c";	
 	
 	private String _sqlSelect = null;
 	private Map _sqlFrom = null;
@@ -88,7 +92,7 @@ public class PreparedQuery {
 	}
 	
 	/**
-	 * Sets the query to select number of placements.
+	 * Sets the query to select student placements.
 	 * @param schoolSeasonId the school season id for the placements to count
 	 */
 	public void setPlacements(int schoolSeasonId) {
@@ -100,6 +104,23 @@ public class PreparedQuery {
 		
 		_sqlFrom.put(CM, TABLE_CM);
 		_sqlFrom.put(SC, TABLE_SC);
+	}
+	
+	/**
+	 * Sets the query to select child care placements.
+	 * @param schoolSeasonId the school season id for the placements to count
+	 */
+	public void setChildCarePlacements() {
+		String sql = "ca.sch_class_member_id = m.sch_class_member_id and ca.application_id = c.comm_childcare_id" +
+				" and c.provider_id = s.sch_school_id" +
+				" and (ca.terminated_date is null or ca.terminated_date >= '" + _currentDate + "')" +
+				" and c.application_status in ('F', 'V') AND ca.VALID_FROM_DATE < '" + _currentDate + "'";
+		_sqlWhere.add(sql);
+		
+		_sqlFrom.put(CA, TABLE_CA);
+		_sqlFrom.put(C, TABLE_C);
+		_sqlFrom.put(CM, TABLE_CM);
+		_sqlFrom.put(S, TABLE_S);
 	}
 	
 	/**
@@ -183,6 +204,21 @@ public class PreparedQuery {
 		
 		int index = _parameterIndex;
 		_parameterIndex++;
+		return index;
+	}
+	
+	/**
+	 * Set select only the specified four school types.
+	 * @return the index for the first school type id
+	 */
+	public int setFourSchoolTypes() {
+		String sql = "(cm.sch_school_type_id = ? or cm.sch_school_type_id = ? or cm.sch_school_type_id = ? or cm.sch_school_type_id = ?)";
+		_sqlWhere.add(sql);
+		
+		_sqlFrom.put(CM, TABLE_CM);
+		
+		int index = _parameterIndex;
+		_parameterIndex += 4;
 		return index;
 	}
 	
@@ -287,7 +323,7 @@ public class PreparedQuery {
 	 * Set select only private schools.
 	 */
 	public void setOnlyPrivateSchools() {
-		String sql = "(s.management_type = 'COMPANY' or s.management_type = 'PRIVATE' or s.management_type = 'FOUNDATION' or s.management_type = 'OTHER')";
+		String sql = "(s.management_type = 'COMPANY' or s.management_type = 'FOUNDATION' or s.management_type = 'OTHER')";
 		_sqlWhere.add(sql);
 		
 		_sqlFrom.put(S, TABLE_S);		
@@ -297,7 +333,7 @@ public class PreparedQuery {
 	 * Set select only other than private schools.
 	 */
 	public void setNotPrivateSchools() {
-		String sql = "s.management_type <> 'COMPANY' and s.management_type <> 'PRIVATE' and s.management_type <> 'FOUNDATION' and s.management_type <> 'OTHER'";
+		String sql = "s.management_type <> 'COMPANY' and s.management_type <> 'FOUNDATION' and s.management_type <> 'OTHER'";
 		_sqlWhere.add(sql);
 		
 		_sqlFrom.put(S, TABLE_S);
@@ -426,6 +462,21 @@ public class PreparedQuery {
 		_sqlWhere.add(sql);
 		
 		_sqlFrom.put(U, TABLE_U);
+	}
+	
+	/**
+	 * Set select only the specified three management types.
+	 * @return the index for the first school type id
+	 */
+	public int setThreeManagementTypes() {
+		String sql = "(s.management_type = ? or s.management_type = ? or s.management_type = ?)";
+		_sqlWhere.add(sql);
+		
+		_sqlFrom.put(S, TABLE_S);
+		
+		int index = _parameterIndex;
+		_parameterIndex += 4;
+		return index;
 	}
 
 	/**
