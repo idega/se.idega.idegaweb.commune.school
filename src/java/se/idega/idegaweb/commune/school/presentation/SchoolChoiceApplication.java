@@ -179,7 +179,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	private boolean _showChoiceMessage = false;
 	
 	private boolean _forwardToCheckPage = true;
-	private int _maxAge;
+	private int _maxAge = 0;
 	private boolean _useCheckBoxForAfterSchoolCare;
 
 	/**
@@ -956,7 +956,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 			table.mergeCells(3, row, 5, row++);
 		}
 		
-		if (_maxAge == -1) {
+		if (_maxAge <= 0) {
 			_maxAge = 10;
 		}
 		
