@@ -610,7 +610,7 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 	}
 	
 	public int ejbHomeGetCount (final SchoolSeason schoolSeason)
-		throws FinderException, IDOException {
+		throws IDOException {
 		IDOQuery sql = idoQuery();
 		sql.appendSelect ().append (" count (distinct " + CHILD + ") ");
 		sql.appendFrom ().append (getEntityName());
