@@ -393,8 +393,8 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		//button.setToDisableOnClick(button, true);
 		
 		T.add(button, 1, row++);
-		T.add(new HiddenInput(prmAction, "true"));
-		T.add(new HiddenInput(prmChildId, child.getPrimaryKey().toString()));
+		T.add(new HiddenInput(prmAction, "true"), 1, 1);
+		T.add(new HiddenInput(prmChildId, child.getPrimaryKey().toString()), 1, 1);
 
 		Page p = this.getParentPage();
 		if (p != null) {
@@ -616,7 +616,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 				}
 			}
 			if (valCaseOwner != -1)
-				table.add(new HiddenInput(prmParentId, String.valueOf(valCaseOwner)));
+				table.add(new HiddenInput(prmParentId, String.valueOf(valCaseOwner)), 1, 1);
 			showAgree = parentsSeparated;
 		}
 		catch (NoCustodianFound ex) {
@@ -941,7 +941,6 @@ public class SchoolChoiceApplication extends CommuneBlock {
 					return sBuiz.findAllSchoolsByAreaAndTypeAndYear(area, type, ((Integer)yearAppliedFor.getPrimaryKey()).intValue());
 			}*/
 			Collection c = sBuiz.findAllSchoolsByAreaAndType(area, type);
-//			return sBuiz.getHomeCommuneSchools(c);
 			return c;
 
 		}
