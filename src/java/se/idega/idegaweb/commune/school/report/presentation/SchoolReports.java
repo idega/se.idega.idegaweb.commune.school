@@ -1,5 +1,5 @@
 /*
- * $Id: SchoolReports.java,v 1.22 2004/01/27 16:09:14 anders Exp $
+ * $Id: SchoolReports.java,v 1.23 2004/01/28 09:44:44 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -16,6 +16,7 @@ import se.idega.idegaweb.commune.school.report.business.NackaCC15HoursPlacementR
 import se.idega.idegaweb.commune.school.report.business.NackaCC6YearPlacementReportModel;
 import se.idega.idegaweb.commune.school.report.business.NackaCC7_9YearPlacementReportModel;
 import se.idega.idegaweb.commune.school.report.business.NackaCCCommunePrivatePlacementReportModel;
+import se.idega.idegaweb.commune.school.report.business.NackaCCHourIntervalReportModel;
 import se.idega.idegaweb.commune.school.report.business.NackaCCPlacementReportModel;
 import se.idega.idegaweb.commune.school.report.business.NackaCCPreSchoolPlacementReportModel;
 import se.idega.idegaweb.commune.school.report.business.NackaCCProviderCareTimeReportModel;
@@ -48,10 +49,10 @@ import com.idega.presentation.ui.SubmitButton;
 /** 
  * This block handles selecting and presenting school reports.
  * <p>
- * Last modified: $Date: 2004/01/27 16:09:14 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/28 09:44:44 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.22 $
+ * @version $Revision: 1.23 $
  */
 public class SchoolReports extends CommuneBlock {
 
@@ -96,7 +97,8 @@ public class SchoolReports extends CommuneBlock {
 				NackaCC7_9YearPlacementReportModel.class,
 				NackaCC15HoursPlacementReportModel.class,
 				NackaCCTotalPlacementReportModel.class,
-				NackaCCProviderCareTimeReportModel.class		
+				NackaCCProviderCareTimeReportModel.class,
+				NackaCCHourIntervalReportModel.class
 	};
 
 	private ReportModel[] _reportModels = null;
