@@ -416,12 +416,12 @@ public class MandatorySchoolReminder extends CommuneBlock {
 		if(obj instanceof Text){
 			this.setStyle((Text)obj);
 		} else {
-			obj.setAttribute("style",STYLE);
+			obj.setMarkupAttribute("style",STYLE);
 		}
 	}
 
 	public void setStyle(Text obj){
-		obj.setAttribute("style",STYLE_2);
+		obj.setMarkupAttribute("style",STYLE_2);
 	}
 	
 	public void setReportName(String name){
