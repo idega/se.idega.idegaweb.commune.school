@@ -1,5 +1,5 @@
 /*
- * $Id: ReportBlock.java,v 1.29 2004/02/27 11:44:50 anders Exp $
+ * $Id: ReportBlock.java,v 1.30 2004/03/17 09:10:27 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -29,10 +29,10 @@ import com.idega.presentation.ui.PrintButton;
 /** 
  * This is the base class for school report blocks.
  * <p>
- * Last modified: $Date: 2004/02/27 11:44:50 $ by $Author: anders $
+ * Last modified: $Date: 2004/03/17 09:10:27 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.29 $
+ * @version $Revision: 1.30 $
  */
 public class ReportBlock extends CommuneBlock {
 
@@ -298,6 +298,9 @@ public class ReportBlock extends CommuneBlock {
 				}
 				table.add(getSmallHeader(s), 1, row);
 				table.setNoWrap(1, row);
+				if (headerType == Header.HEADERTYPE_ROW_LABEL) {
+					table.setColor(1, row, "#e0e0e0");
+				}
 				row++;
 			} else {
 				table.mergeCells(1, row, _reportModel.getColumnSize() + 1, row);
@@ -327,6 +330,9 @@ public class ReportBlock extends CommuneBlock {
 					}
 					table.add(getSmallHeader(s), 1, row);
 					table.setNoWrap(1, row);
+					if (headerType == Header.HEADERTYPE_ROW_LABEL) {
+						table.setColor(1, row, "#e0e0e0");
+					}
 					row++;
 				}
 			}

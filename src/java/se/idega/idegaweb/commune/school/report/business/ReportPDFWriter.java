@@ -1,5 +1,5 @@
 /*
- * $Id: ReportPDFWriter.java,v 1.13 2004/03/03 12:33:55 anders Exp $
+ * $Id: ReportPDFWriter.java,v 1.14 2004/03/17 09:10:47 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -37,10 +37,10 @@ import com.lowagie.text.pdf.PdfWriter;
 /** 
  * Creates report files in Adobe PDF format.
  * <p>
- * Last modified: $Date: 2004/03/03 12:33:55 $ by $Author: anders $
+ * Last modified: $Date: 2004/03/17 09:10:47 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.13 $
+ * @version $Revision: 1.14 $
  */
 public class ReportPDFWriter {
 
@@ -259,7 +259,10 @@ public class ReportPDFWriter {
 					cell.setColspan(_reportModel.getColumnSize() + 1);
 				}
 				cell.setNoWrap(true);
-				cell.setVerticalAlignment(Element.ALIGN_MIDDLE); 
+				cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+				if (headerType == Header.HEADERTYPE_ROW_LABEL) {
+					cell.setBackgroundColor(new java.awt.Color(0xe0, 0xe0, 0xe0));
+				}
 				table.addCell(cell, new Point(row, 0));
 				setColSize(s, 0, false);
 				row++;
@@ -292,6 +295,9 @@ public class ReportPDFWriter {
 					}
 					cell.setNoWrap(true);
 					cell.setVerticalAlignment(Element.ALIGN_MIDDLE); 
+					if (headerType == Header.HEADERTYPE_ROW_LABEL) {
+						cell.setBackgroundColor(new java.awt.Color(0xe0, 0xe0, 0xe0));
+					}
 					table.addCell(cell, row, 0);
 					setColSize(s, 0, false);
 					row++;
