@@ -212,6 +212,27 @@ public class SearchUserModule extends CommuneBlock {
 		String middle = iwc.getParameter("usrch_search_mname" + uniqueIdentifier);
 		String last = iwc.getParameter("usrch_search_lname" + uniqueIdentifier);
 		String pid = iwc.getParameter("usrch_search_pid" + uniqueIdentifier);
+		
+		
+		if (pid != null && pid.length() > 0) {
+			try {
+				String temp = pid;
+				temp = TextSoap.findAndCut(temp, "-");
+				Long.parseLong(temp);
+				if (temp.length() == 10 ) {
+					int firstTwo = Integer.parseInt(temp.substring(0, 2));
+					if (firstTwo < 04) {
+						temp = "20"+temp;
+					}	else {
+						temp = "19"+temp;
+					}
+				}
+				pid = temp;
+			}
+			catch (NumberFormatException nfe) {}
+		}
+		
+		
 		if (firstLetterCaseInsensitive) {
 			if (first != null)
 				first = TextSoap.capitalize(first);
