@@ -1,5 +1,5 @@
 /*
- * $Id: NackaCCPlacementReportModel.java,v 1.4 2004/01/21 15:26:43 anders Exp $
+ * $Id: NackaCCPlacementReportModel.java,v 1.5 2004/01/22 08:10:24 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -16,10 +16,10 @@ import com.idega.util.IWTimestamp;
 /** 
  * Report model for child care placements in Nacka.
  * <p>
- * Last modified: $Date: 2004/01/21 15:26:43 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/22 08:10:24 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public class NackaCCPlacementReportModel extends ReportModel {
 
@@ -292,7 +292,7 @@ public class NackaCCPlacementReportModel extends ReportModel {
 				value = getChildCarePlacementCount(FAMILY_DAYCARE, PRIVATE);
 				break;
 			case ROW_METHOD_SCHOOL_CHILDREN_CARE_6_AFTER_SCHOOL:
-				value = getCell(9, column).getFloatValue() + getCell(10, column).getFloatValue();
+				value = getCell(8, column).getFloatValue() + getCell(9, column).getFloatValue();
 				break;
 			case ROW_METHOD_SCHOOL_CHILDREN_CARE_6_AFTER_SCHOOL_COMMUNE:
 				value = getChildCarePlacementCount(AFTER_SCHOOL_6, COMMUNE);
@@ -301,7 +301,7 @@ public class NackaCCPlacementReportModel extends ReportModel {
 				value = getChildCarePlacementCount(AFTER_SCHOOL_6, PRIVATE);
 				break;
 			case ROW_METHOD_SCHOOL_CHILDREN_CARE_6_FAMILY_DAYCARE:
-				value = getCell(12, column).getFloatValue() + getCell(13, column).getFloatValue();
+				value = getCell(11, column).getFloatValue() + getCell(12, column).getFloatValue();
 				break;
 			case ROW_METHOD_SCHOOL_CHILDREN_CARE_6_FAMILY_DAYCARE_COMMUNE:
 				value = getChildCarePlacementCount(FAMILY_DAYCARE_6, COMMUNE);
@@ -310,7 +310,7 @@ public class NackaCCPlacementReportModel extends ReportModel {
 				value = getChildCarePlacementCount(FAMILY_DAYCARE_6, PRIVATE);
 				break;
 			case ROW_METHOD_SCHOOL_CHILDREN_CARE_7_9_AFTER_SCHOOL:
-				value = getCell(17, column).getFloatValue() + getCell(18, column).getFloatValue();
+				value = getCell(15, column).getFloatValue() + getCell(16, column).getFloatValue();
 				break;
 			case ROW_METHOD_SCHOOL_CHILDREN_CARE_7_9_AFTER_SCHOOL_COMMUNE:
 				value = getChildCarePlacementCount(AFTER_SCHOOL_7_9, COMMUNE);
@@ -319,7 +319,7 @@ public class NackaCCPlacementReportModel extends ReportModel {
 				value = getChildCarePlacementCount(AFTER_SCHOOL_7_9, PRIVATE);
 				break;
 			case ROW_METHOD_SCHOOL_CHILDREN_CARE_7_9_FAMILY_AFTER_SCHOOL:
-				value = getCell(20, column).getFloatValue() + getCell(21, column).getFloatValue();
+				value = getCell(18, column).getFloatValue() + getCell(19, column).getFloatValue();
 				break;
 			case ROW_METHOD_SCHOOL_CHILDREN_CARE_7_9_FAMILY_AFTER_SCHOOL_COMMUNE:
 				value = getChildCarePlacementCount(FAMILY_AFTER_SCHOOL_7_9, COMMUNE);
@@ -333,7 +333,7 @@ public class NackaCCPlacementReportModel extends ReportModel {
 				}
 				break;
 			case ROW_METHOD_TOTAL:
-				value = getCell(7, column).getFloatValue() + 
+				value = getCell(6, column).getFloatValue() + 
 						getCell(13, column).getFloatValue() +
 						getCell(20, column).getFloatValue();
 				break;
