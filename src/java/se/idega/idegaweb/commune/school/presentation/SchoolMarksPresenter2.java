@@ -20,7 +20,7 @@ import se.idega.idegaweb.commune.presentation.CommuneBlock;
 /**
  * Presents school marks statistics in a formatted table (approved by Nacka)
  * <p>
- * $Id: SchoolMarksPresenter2.java,v 1.6 2003/12/02 11:36:39 kjell Exp $
+ * $Id: SchoolMarksPresenter2.java,v 1.7 2003/12/02 11:39:35 kjell Exp $
  *
  * This block presents School Marks Statistics according to the specifications made my 
  * Jill Salander
@@ -147,8 +147,6 @@ public class SchoolMarksPresenter2  extends CommuneBlock {
 					if(count++  > 0) {
 						table = insertTotals(iwrb.getLocalizedString("school_marks_stats.header1", "Totalt kommunala skolor"), table, row, roundAbout(mValue, mNumber));
 						row +=9;
-	//					mValue = 0;
-	//					mNumber = 0;
 					}
 				}
 				table.add(getSmallText(iwrb.getLocalizedString("school_marks_stats.eg", "Ej godkänt")), 2, row);			
@@ -441,6 +439,7 @@ public class SchoolMarksPresenter2  extends CommuneBlock {
 		table.add(getHeader(formatPct(tallyMean(_tallyTotal.tot.percent, _tallyTotal.ctot))), 11, row);
 		row++;
 		table.add(getHeader(iwrb.getLocalizedString("school_marks_stats.merite_value", "Meritvärde")+ ": "+meanMerite), 1, row);
+		table.setRowColor(row, "#e0e0e0");
 		row++;
 
 		table.mergeCells(1, row, 11, row);
