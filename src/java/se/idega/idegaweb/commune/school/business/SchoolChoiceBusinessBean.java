@@ -415,7 +415,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 					nonApplyingCode = SchoolChoiceMessagePdfHandler.CODE_NONAPPLYING_SINGLEPARENT_APPLICATION_CHANGE ;
 					applyingSubject = getApplyingSeparateParentSubjectChange();
 					applyingBody = getApplyingSeparateParentMessageBodyChange(choice, appParent);
-					applyingCode = SchoolChoiceMessagePdfHandler.CODE_NONAPPLYING_SINGLEPARENT_APPLICATION_CHANGE ;
+					applyingCode = SchoolChoiceMessagePdfHandler.CODE_APPLYING_SINGLEPARENT_APPLICATION_CHANGE ;
 				}
 				else {
 					nonApplyingSubject = getNonApplyingSeparateParentSubjectAppl();
