@@ -726,10 +726,15 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 					Iterator iter = parents.iterator();
 					while (iter.hasNext()) {
 						User parent = (User) iter.next();
-						if (!getUserBusiness().haveSameAddress(parent, appParent)) {
+						if (parent.equals(appParent)) {
+							continue;
+						}
+						if (!getUserBusiness().haveSameAddress(parent, appParent) && 
+								!getMemberFamilyLogic().isSpouseOf(parent, appParent) &&
+								!getMemberFamilyLogic().isCohabitantOf(parent, appParent)) {
 							getMessageBusiness().createUserMessage(application, parent,null,null, nonApplyingSubject, MessageFormat.format(nonApplyingBody, arguments), true,nonApplyingCode);
 						}
-						else if (sendToAllParents && !parent.equals(appParent)){
+						else if (sendToAllParents){
 							getMessageBusiness().createUserMessage(application, parent,null,null, applyingSubject, MessageFormat.format(applyingBody, arguments), true,applyingCode);
 						}
 					}
