@@ -1181,7 +1181,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 			final PdfPCell spaceCell = new PdfPCell(new Phrase(" "));
 			spaceCell.setBorder(0);
 			spaceCell.setNoWrap(true);
-			spaceCell.setMinimumHeight(mmToPoints(65));
+			spaceCell.setMinimumHeight(mmToPoints(50));
 			PdfPTable spaceTable = new PdfPTable(1);
 			spaceTable.addCell(spaceCell);
 			final PdfPTable footer = new PdfPTable(new float[]{1, 1, 1.5f, 1});
@@ -1224,7 +1224,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 			PdfPCell logoCell;
 			try {
 				final Image logo = Image.getInstance(logoPath);
-				logo.scaleToFit(mmToPoints(30), mmToPoints(15));
+				logo.scaleToFit(mmToPoints(40), mmToPoints(20));
 				logoCell = new PdfPCell(logo);
 				logoCell.setVerticalAlignment(Element.ALIGN_MIDDLE);
 				logoCell.setHorizontalAlignment(Element.ALIGN_LEFT);
@@ -1237,7 +1237,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 			header.setWidthPercentage(100f);
 			final PdfPCell defaultCell = header.getDefaultCell();
 			defaultCell.setBorder(0);
-			defaultCell.setFixedHeight(mmToPoints(30));
+			defaultCell.setFixedHeight(mmToPoints(40));
 			defaultCell.setPadding(0);
 			defaultCell.setNoWrap(true);
 			defaultCell.setVerticalAlignment(Element.ALIGN_MIDDLE);
@@ -1253,8 +1253,8 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 				document.add(spaceTable);
 				final PdfContentByte cb = writer.getDirectContent();
 				cb.setLineWidth(1);
-				cb.moveTo(mmToPoints(30), mmToPoints(22));
-				cb.lineTo(mmToPoints(180), mmToPoints(22));
+				cb.moveTo(mmToPoints(30), mmToPoints(28));
+				cb.lineTo(mmToPoints(180), mmToPoints(28));
 				cb.stroke();
 				document.add(footer);
 			}
