@@ -29,6 +29,7 @@ public class SchoolCommuneSessionBean extends IBOSessionBean implements SchoolCo
 	protected static final String PARAMETER_GROUP_IDS = "sch_group_ids";
 	
 	protected int _schoolID = -1;
+	protected School _school = null;
 	protected int _schoolYearID = -1;
 	protected int _schoolSeasonID = -1;
 	protected int _schoolClassID = -1;
@@ -80,10 +81,12 @@ public class SchoolCommuneSessionBean extends IBOSessionBean implements SchoolCo
 			try {
 				School school = getCommuneUserBusiness().getFirstManagingSchoolForUser(user);
 				if (school != null) {
+					_school = school;
 					_schoolID = ((Integer) school.getPrimaryKey()).intValue();
 				}
 			}
 			catch (FinderException fe) {
+				_school = null;
 				_schoolID = -1;
 			}
 		}
@@ -225,5 +228,12 @@ public class SchoolCommuneSessionBean extends IBOSessionBean implements SchoolCo
 	 */
 	public void setSchoolGroupIDs(String[] schoolGroupIDs) {
 		this._schoolGroupIDs = schoolGroupIDs;
+	}
+
+	/**
+	 * @return Returns the school.
+	 */
+	public School getSchool() {
+		return this._school;
 	}
 }
