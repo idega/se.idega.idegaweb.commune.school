@@ -9,9 +9,6 @@ package se.idega.idegaweb.commune.message.presentation;
 import java.rmi.RemoteException;
 import java.text.DateFormat;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 
 import javax.ejb.FinderException;
 
@@ -24,7 +21,6 @@ import com.idega.business.IBOLookup;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Table;
 import com.idega.user.business.UserBusiness;
-import com.idega.user.data.Group;
 import com.idega.user.data.User;
 
 /**
@@ -35,50 +31,38 @@ import com.idega.user.data.User;
  */
 public class AdminMessageBox extends MessageBox {
 
-	/**
-	 * @see MessageBox
-	 */
-	Collection getMessages(IWContext iwc, User user) throws Exception{
-		// get my messages
-		Collection messages = super.getMessages(iwc, user);	
-
-		// add messages belonging to my groups 
-		UserBusiness userBusiness = (UserBusiness) IBOLookup.getServiceInstance(iwc, UserBusiness.class);
-		Collection groupCollection = userBusiness.getUserGroups(user);
-						
-		Iterator g = groupCollection.iterator();
-		while(g.hasNext()){
-			messages.addAll(getMessageBusiness(iwc).findMessages((Group) g.next()));
-		}
-		
-		//removing duplicates
-		Iterator m = messages.iterator();
-		Map map = new HashMap();
-		while (m.hasNext()){
-			Integer id = new Integer(((Message) m.next()).getNodeID());
-			if (map.containsKey(id)){
-				m.remove();
-			} else {
-				map.put(id, null);
-			}
-		}
-		
-		return messages;
-	}
+	private Collection _groups;
 	
 	/**
 	 * @see MessageBox
 	 */
-	void addTableHeader(Table messageTable) {
-		super.addTableHeader(messageTable);
-		messageTable.add(getSmallHeader(localize("message.provider", "Provider")), 3, 1);
+	Collection getMessages(IWContext iwc, User user, int numberOfEntries, int startingEntry) throws Exception{
+		return getMessageBusiness(iwc).findMessages(user, _groups, numberOfEntries, startingEntry);
+	}
+	
+	int getNumberOfMessages(IWContext iwc, User user) {
+		try {
+			UserBusiness userBusiness = (UserBusiness) IBOLookup.getServiceInstance(iwc, UserBusiness.class);
+			_groups = userBusiness.getUserGroups(user);
+			return getMessageBusiness(iwc).getNumberOfMessages(user, _groups);
+		}
+		catch (Exception e) {
+			return 0;
+		}
+	}
+	/**
+	 * @see MessageBox
+	 */
+	void addTableHeader(Table messageTable, int row) {
+		super.addTableHeader(messageTable, row);
+		messageTable.add(getSmallHeader(localize("message.provider", "Provider")), 3, row);
 	}	
 	
 	/**
 	 * @see MessageBox
 	 */	
-	void addMessageToTable(IWContext iwc, Table messageTable, Message msg, int row, DateFormat dateFormat) throws Exception{
-		super.addMessageToTable(iwc, messageTable, msg, row, dateFormat);
+	void addMessageToTable(IWContext iwc, Table messageTable, Message msg, int row, DateFormat dateFormat, int messageNumber) throws Exception{
+		super.addMessageToTable(iwc, messageTable, msg, row, dateFormat, messageNumber);
 		SchoolChoice sc = null;
 		try{
 			sc = getSchoolChoiceBusiness().getSchoolChoice(msg.getNodeID());
