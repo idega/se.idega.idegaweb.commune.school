@@ -590,7 +590,7 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 		return true;
 	}
 
-	public void moveToGroup(int studentID, int schoolClassID, int oldSchoolClassID, int schoolYearID) throws RemoteException {
+	public void moveToGroup(int studentID, int schoolClassID, int oldSchoolClassID, int schoolYearID, User performer) throws RemoteException {
 		SchoolClass group = getSchoolBusiness().findSchoolClass(new Integer(oldSchoolClassID));
 		if (group.getIsSubGroup()) {
 			try {
@@ -612,7 +612,6 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 		else {
 			SchoolClassMember classMember = getSchoolBusiness().findClassMemberInClass(studentID, oldSchoolClassID);
 			SchoolClass oldSchoolClass = classMember.getSchoolClass();
-			User student = classMember.getStudent();
 			classMember.setSchoolClassId(schoolClassID);
 			classMember.setSchoolYear(schoolYearID);
 			classMember.store();
@@ -629,8 +628,8 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 				endDate.addDays(-1);
 				
 				SchoolClass newSchoolClass = getSchoolBusiness().getSchoolClassHome().findByPrimaryKey(new Integer(schoolClassID));
-				getSchoolBusiness().addToSchoolClassMemberLog(student, oldSchoolClass, endDate.getDate());
-				getSchoolBusiness().addToSchoolClassMemberLog(student, newSchoolClass, startDate.getDate(), null);
+				getSchoolBusiness().addToSchoolClassMemberLog(classMember, oldSchoolClass, endDate.getDate(), performer);
+				getSchoolBusiness().addToSchoolClassMemberLog(classMember, newSchoolClass, startDate.getDate(), null, performer);
 			}
 			catch (FinderException fe) {
 				log(fe);
