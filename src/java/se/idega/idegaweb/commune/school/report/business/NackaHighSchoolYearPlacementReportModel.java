@@ -1,5 +1,5 @@
 /*
- * $Id: NackaHighSchoolYearPlacementReportModel.java,v 1.9 2004/01/08 14:54:49 anders Exp $
+ * $Id: NackaHighSchoolYearPlacementReportModel.java,v 1.10 2004/01/09 08:43:03 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -18,10 +18,10 @@ import com.idega.block.school.data.SchoolStudyPath;
 /** 
  * Report model for high school placements per year for students in Nacka.
  * <p>
- * Last modified: $Date: 2004/01/08 14:54:49 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/09 08:43:03 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.9 $
+ * @version $Revision: 1.10 $
  */
 public class NackaHighSchoolYearPlacementReportModel extends ReportModel {
 
@@ -279,21 +279,29 @@ public class NackaHighSchoolYearPlacementReportModel extends ReportModel {
 				while (iter.hasNext()) {
 					SchoolStudyPath studyPath = (SchoolStudyPath) iter.next();
 					Object rowParameter = studyPath.getCode();
+					String schoolYear = null;
+					if (columnParameter != null) {
+						schoolYear = "G" + columnParameter; 
+					}
 					Cell cell = new Cell(this, row, column, ROW_METHOD_STUDY_PATH,
-							columnMethod, rowParameter, "G" + columnParameter, Cell.CELLTYPE_NORMAL);
+							columnMethod, rowParameter, schoolYear, Cell.CELLTYPE_NORMAL);
 					setCell(row, column, cell);
 					row++;
 				}
+				String schoolYear = null;
+				if (columnParameter != null) {
+					schoolYear = "GS" + columnParameter; 
+				}
 				Cell cell = new Cell(this, row, column, ROW_METHOD_STUDY_PATH,
-						columnMethod, "GY", "GS" + columnParameter, Cell.CELLTYPE_NORMAL);
+						columnMethod, "GY", schoolYear, Cell.CELLTYPE_NORMAL);
 				setCell(row, column, cell);
 				row++;
 				cell = new Cell(this, row, column, ROW_METHOD_TOTAL,
-						columnMethod, null, columnParameter, Cell.CELLTYPE_TOTAL);
+						columnMethod, null, schoolYear, Cell.CELLTYPE_TOTAL);
 				setCell(row, column, cell);
 				row++;
 				cell = new Cell(this, row, column, ROW_METHOD_SHARE,
-						columnMethod, null, columnParameter, Cell.CELLTYPE_PERCENT);
+						columnMethod, null, schoolYear, Cell.CELLTYPE_PERCENT);
 				setCell(row, column, cell);				
 			} catch (RemoteException e) {
 				log(e.getMessage());
@@ -311,9 +319,6 @@ public class NackaHighSchoolYearPlacementReportModel extends ReportModel {
 			studyPathPrefix = (String) cell.getRowParameter();
 		}
 		String schoolYearName = (String) cell.getColumnParameter();
-		if (schoolYearName.equals("G") || schoolYearName.equals("GS")) {
-			schoolYearName = null;
-		}
 		int row = cell.getRow();
 		int column = cell.getColumn();
 		
