@@ -1,5 +1,5 @@
 /*
- * $Id: NackaProviderSummaryReportModel.java,v 1.2 2004/01/30 15:29:26 anders Exp $
+ * $Id: NackaProviderSummaryReportModel.java,v 1.3 2004/01/30 16:48:55 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -14,10 +14,10 @@ import java.rmi.RemoteException;
 /** 
  * Report model that shows a summary of Nacka providers (child care and schools).
  * <p>
- * Last modified: $Date: 2004/01/30 15:29:26 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/30 16:48:55 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class NackaProviderSummaryReportModel extends ReportModel {
 
@@ -546,6 +546,7 @@ public class NackaProviderSummaryReportModel extends ReportModel {
 				query = new PreparedQuery(getConnection());
 				query.setSelectCount();
 				query.setPlacements(rb.getSchoolSeasonId());
+				query.setOnlyNackaSchools();
 				query.setFourSchoolTypesForProviders(); // parameter 1-4
 				query.setFourManagementTypes(); // parameter 5-8
 				query.prepare();
@@ -556,6 +557,7 @@ public class NackaProviderSummaryReportModel extends ReportModel {
 			if (query == null) {
 				query = new PreparedQuery(getConnection());
 				query.setSelectCount();
+				query.setOnlyNackaSchools();
 				query.setNotNackaCitizens();
 				query.setPlacements(rb.getSchoolSeasonId());
 				query.setFourSchoolTypesForProviders(); // parameter 1-4
@@ -569,6 +571,7 @@ public class NackaProviderSummaryReportModel extends ReportModel {
 				query = new PreparedQuery(getConnection());
 				query.setSelectCount();
 				query.setChildCarePlacements();
+				query.setOnlyNackaSchools();
 				query.setFourSchoolTypesForProviders(); // parameter 1-4
 				query.setFourManagementTypes(); // parameter 5-8
 				query.prepare();
@@ -579,8 +582,9 @@ public class NackaProviderSummaryReportModel extends ReportModel {
 			if (query == null) {
 				query = new PreparedQuery(getConnection());
 				query.setSelectCount();
-				query.setNotNackaCitizens();
 				query.setChildCarePlacements();
+				query.setOnlyNackaSchools();
+				query.setNotNackaCitizens();
 				query.setFourSchoolTypesForProviders(); // parameter 1-4
 				query.setFourManagementTypes(); // parameter 5-8
 				query.prepare();
