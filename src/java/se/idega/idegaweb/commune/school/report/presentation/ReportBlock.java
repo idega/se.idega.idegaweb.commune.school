@@ -1,5 +1,5 @@
 /*
- * $Id: ReportBlock.java,v 1.30 2004/03/17 09:10:27 anders Exp $
+ * $Id: ReportBlock.java,v 1.31 2004/03/22 07:50:32 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -29,10 +29,10 @@ import com.idega.presentation.ui.PrintButton;
 /** 
  * This is the base class for school report blocks.
  * <p>
- * Last modified: $Date: 2004/03/17 09:10:27 $ by $Author: anders $
+ * Last modified: $Date: 2004/03/22 07:50:32 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.30 $
+ * @version $Revision: 1.31 $
  */
 public class ReportBlock extends CommuneBlock {
 
@@ -167,6 +167,13 @@ public class ReportBlock extends CommuneBlock {
 			add(getErrorText(localize(KEY_SESSION_TIMEOUT, "You session has timed out. Please login again.")));
 			return;
 		}
+		if (_showPrintButton) {
+			PrintButton pb = new PrintButton(localize(KEY_PRINT, "Print"));
+			pb = (PrintButton) getButton(pb);
+			add(pb);
+			add(new Break());
+			add(new Break());
+		}
 		if (getShowTitle() || getShowDate()) {
 			Table table = new Table();
 			table.setCellspacing(getCellspacing());
@@ -192,13 +199,6 @@ public class ReportBlock extends CommuneBlock {
 		buildReportTable(table);
 		add(table);
 		
-		if (_showPrintButton) {
-			add(new Break());
-			PrintButton pb = new PrintButton(localize(KEY_PRINT, "Print"));
-			pb = (PrintButton) getButton(pb);
-			add(pb);
-		}
-
 		iwc.getSession().setAttribute(PARAMETER_REPORT_MODEL, getReportModel());
 	}
 
