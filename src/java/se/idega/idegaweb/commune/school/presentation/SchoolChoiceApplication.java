@@ -561,47 +561,49 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		}
 
 		try {
-			/*SchoolSeason previousSeason = null;
+			SchoolSeason previousSeason = null;
 			if (_useOngoingSeason)
 				previousSeason = season;
 			else
 				previousSeason = schCommBiz.getPreviousSchoolSeason(season);
-				*/
 			
-			//schoolClassMember = schBuiz.getSchoolBusiness().getSchoolClassMemberHome().findByUserAndSeason(child, previousSeason);
+			
+			schoolClassMember = schBuiz.getSchoolBusiness().getSchoolClassMemberHome().findByUserAndSeason(child, previousSeason);
 			
 			// Get current elementary school placement
-			schoolClassMember = schBuiz.getSchoolBusiness().getSchoolClassMemberHome().findLatestByUserAndSchCategory(
+			/*schoolClassMember = schBuiz.getSchoolBusiness().getSchoolClassMemberHome().findLatestByUserAndSchCategory(
 																										child, 
 																										schBuiz.getSchoolBusiness().getCategoryElementarySchool());
+			*/
 			
 			// if no current elementary school placement, get one from child care
-			if (schoolClassMember == null) {
+			/*if (schoolClassMember == null) {
 				schoolClassMember = schBuiz.getSchoolBusiness().getSchoolClassMemberHome().findLatestByUserAndSchCategory(
 																										child, 
 																										schBuiz.getSchoolBusiness().getCategoryChildcare());
 				valPreGrade = 5; 
 			}
+			*/
 			
-			schoolClass = schoolClassMember.getSchoolClass();
-			school = schoolClass.getSchool();
+			//schoolClass = schoolClassMember.getSchoolClass();
+			//school = schoolClass.getSchool();
 					
-			//schoolClass = schBuiz.getSchoolBusiness().getSchoolClassHome().findByPrimaryKey(new Integer(schoolClassMember.getSchoolClassId()));
-			//school = schBuiz.getSchool(schoolClass.getSchoolId());
+			schoolClass = schBuiz.getSchoolBusiness().getSchoolClassHome().findByPrimaryKey(new Integer(schoolClassMember.getSchoolClassId()));
+			school = schBuiz.getSchool(schoolClass.getSchoolId());
 			if (school != null)
 				this.hasPreviousSchool = true;
 			
-			//schoolArea = schBuiz.getSchoolBusiness().getSchoolAreaHome().findByPrimaryKey(new Integer(school.getSchoolAreaId()));
-			schoolArea = school.getSchoolArea();
+			schoolArea = schBuiz.getSchoolBusiness().getSchoolAreaHome().findByPrimaryKey(new Integer(school.getSchoolAreaId()));
+			//schoolArea = school.getSchoolArea();
 			
-			/*Collection Stypes = school.findRelatedSchoolTypes();
+			Collection Stypes = school.findRelatedSchoolTypes();
 			if (!Stypes.isEmpty())
 				schoolType = (SchoolType) Stypes.iterator().next();
-			*/
-			schoolType = schoolClassMember.getSchoolType();
 			
-			//schoolYear = schBuiz.getSchoolBusiness().getSchoolYearHome().findByPrimaryKey(new Integer(schoolClassMember.getSchoolYearId()));
-			schoolYear = schoolClassMember.getSchoolYear();
+			//schoolType = schoolClassMember.getSchoolType();
+			
+			schoolYear = schBuiz.getSchoolBusiness().getSchoolYearHome().findByPrimaryKey(new Integer(schoolClassMember.getSchoolYearId()));
+			//schoolYear = schoolClassMember.getSchoolYear();
 		}
 		catch (Exception e) {
 			hasPreviousSchool = false;
