@@ -497,17 +497,22 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	}
 	
 	protected String getSeparateParentMessageBodyAppl(List choices,User parent) throws RemoteException, FinderException {
-		Object[] arguments = new Object[4];
+		Object[] arguments = new Object[5];
 		arguments[0] = parent.getNameLastFirst(true);
 		Iterator iter = choices.iterator();
 		int count = 1;
+		boolean addedChildName=false;
 		while(iter.hasNext()){
 			SchoolChoice choice = (SchoolChoice) iter.next();
+			if(!addedChildName){
+				arguments[count++] = choice.getChild().getName();
+				addedChildName=true;
+			}
 			arguments[count++] = getSchool(choice.getChosenSchoolId()).getSchoolName();
 		}
 		if (choices.size() == 1) {
-			arguments[2] = "";
 			arguments[3] = "";
+			arguments[4] = "";
 		}
 		
 		String body = MessageFormat.format(getLocalizedString("school_choice.sep_parent_appl_mesg_body", "Dear mr./ms./mrs. "), arguments);
