@@ -172,9 +172,7 @@ public class UserCases extends CommuneBlock {
 
 			
 			// 1. find my groups
-			final GroupBusiness groupBusiness = (GroupBusiness) IBOLookup.getServiceInstance(iwc, GroupBusiness.class);
 			final UserBusiness userBusiness = (UserBusiness) IBOLookup.getServiceInstance(iwc, UserBusiness.class);
-
 			final Collection groups = userBusiness.getUserGroups(userId);
 
 			// 2. find unhandled viewpoints
@@ -220,7 +218,7 @@ public class UserCases extends CommuneBlock {
 		if (useCase.getCode().equalsIgnoreCase(Viewpoint.CASE_CODE_KEY) && getViewpointPage() != -1) {
 			final Link viewpointLink = getSmallLink(useCase.getPrimaryKey().toString());
 			viewpointLink.setPage(getViewpointPage());
-			viewpointLink.addParameter(ViewpointForm.PARAM_ACTION, ViewpointForm.SHOWANSWERFORM_ACTION + "");
+			viewpointLink.addParameter(ViewpointForm.PARAM_ACTION, ViewpointForm.SHOWVIEWPOINT_ACTION + "");
 			viewpointLink.addParameter(ViewpointForm.PARAM_VIEWPOINT_ID, useCase.getPrimaryKey().toString());
 			caseNumber = viewpointLink;
 		}
@@ -287,7 +285,7 @@ public class UserCases extends CommuneBlock {
 		if (getViewpointPage() != -1) {
 			Link viewpointLink = getSmallLink(viewpoint.getPrimaryKey().toString());
 			viewpointLink.setPage(getViewpointPage());
-			viewpointLink.addParameter(ViewpointForm.PARAM_ACTION, ViewpointForm.SHOWACCEPTFORM_ACTION + "");
+			viewpointLink.addParameter(ViewpointForm.PARAM_ACTION, ViewpointForm.SHOWVIEWPOINT_ACTION + "");
 			viewpointLink.addParameter(ViewpointForm.PARAM_VIEWPOINT_ID, viewpoint.getPrimaryKey().toString());
 			caseNumber = viewpointLink;
 		}
