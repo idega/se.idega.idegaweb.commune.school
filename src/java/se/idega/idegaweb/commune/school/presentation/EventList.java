@@ -26,16 +26,11 @@ import com.idega.presentation.ExceptionWrapper;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.Table;
-import com.idega.presentation.text.HorizontalRule;
 import com.idega.presentation.text.Link;
-import com.idega.presentation.text.Text;
-import com.idega.presentation.ui.BackButton;
 import com.idega.presentation.ui.CheckBox;
 import com.idega.presentation.ui.DateInput;
 import com.idega.presentation.ui.DropdownMenu;
 import com.idega.presentation.ui.Form;
-import com.idega.presentation.ui.GenericButton;
-import com.idega.presentation.ui.PrintButton;
 import com.idega.presentation.ui.SubmitButton;
 import com.idega.presentation.ui.TextInput;
 import com.idega.util.IWTimestamp;
@@ -46,7 +41,7 @@ import com.idega.util.IWTimestamp;
  * Copyright:    Copyright idega Software (c) 2002
  * Company:	idega Software
  * @author <a href="mailto:roar@idega.is">roar</a>
- * @version $Id: EventList.java,v 1.15 2004/01/13 17:39:43 jonas Exp $
+ * @version $Id: EventList.java,v 1.16 2004/01/13 20:57:26 laddi Exp $
  * @since 17.3.2003 
  */
 
@@ -264,7 +259,7 @@ public class EventList extends CommuneBlock {
 	private int createPrintableMessage(PrintMessage msg) {
 		try {
 			DocumentBusiness docBiz = getDocumentBusiness();
-			String userName = _iwc.getCurrentUser().getName();
+			//String userName = _iwc.getCurrentUser().getName();
 			String fileName = "EventListLetter-" + msg.getNodeID() + "-" + _iwc.getCurrentLocaleId() + ".pdf";
 			ICFile file = null;
 			try {
@@ -301,14 +296,14 @@ public class EventList extends CommuneBlock {
 		}
 	}
 
-	private void addField(Table layout, String label, String value, int row) {
+	/*private void addField(Table layout, String label, String value, int row) {
 		Text lbl = getSmallText(label + ":");
 		lbl.setStyleAttribute("font-weight:bold");
 		layout.add(lbl, 1, row);
 		layout.add(getSmallText(value), 2, row);
 		layout.setColor(1, row, "grey");
 		layout.setColor(2, row, "grey");
-	}
+	}*/
 
 	public Collection getPrintedMessagesByPrimaryKeys(
 		String[] primaryKeys)
