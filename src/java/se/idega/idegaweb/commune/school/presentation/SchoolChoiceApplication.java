@@ -35,6 +35,7 @@ import com.idega.block.school.data.SchoolSeason;
 import com.idega.block.school.data.SchoolType;
 import com.idega.block.school.data.SchoolTypeHome;
 import com.idega.block.school.data.SchoolYear;
+import com.idega.block.school.data.SchoolYearHome;
 import com.idega.business.IBOLookup;
 import com.idega.business.IBOLookupException;
 import com.idega.business.IBORuntimeException;
@@ -766,6 +767,11 @@ public class SchoolChoiceApplication extends CommuneBlock {
 						drpGrade.addMenuElement(element.getSchoolYearAge(), element.getName());
 					}
 				}
+				// Add special school year 10 with name hard coded
+				if (getSpecialSchoolYear10() != null) {
+					drpGrade.addMenuElement(getSpecialSchoolYear10().getSchoolYearAge(), "10");
+				}
+			
 				drpGrade.setSelectedElement(String.valueOf(valPreGrade));
 
 				Script script = myForm.getAssociatedFormScript();
@@ -1105,14 +1111,6 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	}
 
 	private Collection getSchoolYears() {
-		/*try {
-			return schCommBiz.getSchoolBusiness().findAllSchoolYears();
-		}
-		catch (Exception e) {
-		}
-		return null;
-		*/
-		
 		Collection tmpVec;
 		Vector schYears = null;		
 		schYears = new Vector();
@@ -1145,13 +1143,26 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		}
 		catch (Exception e) {
 			logWarning("Error loading school years for school type elementary school");
-			log(e);
-			
+			log(e);			
 		}
-		
+				
 		return schYears;
 	}
-
+	
+	private SchoolYear getSpecialSchoolYear10() {
+		SchoolYear s10 = null;
+		try {
+			// Add school year S10 for with 10 shown in dropdown
+			SchoolYearHome syHome = (SchoolYearHome) IDOLookup.getHome(SchoolYear.class);
+			s10 = syHome.findByYearName("S10");
+			
+		} catch (Exception e) {
+			logWarning("Error loading school year for special school, year S10");
+			log(e);			
+		}
+		return s10;
+	}
+		
 	/* Commented out since it is never used...
 	private Collection getSchools(IWContext iwc, int area, int type) {
 		try {
