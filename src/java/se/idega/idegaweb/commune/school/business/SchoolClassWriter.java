@@ -177,10 +177,10 @@ public class SchoolClassWriter implements MediaWritable {
 	    cell = row.createCell((short)2);
 	    cell.setCellValue(iwrb.getLocalizedString("school.address","Address"));
 	    cell.setCellStyle(style);
-			cell = row.createCell((short)2);
+			cell = row.createCell((short)3);
 			cell.setCellValue(iwrb.getLocalizedString("school.postal_code","Postal code"));
 			cell.setCellStyle(style);
-	    cell = row.createCell((short)3);
+	    cell = row.createCell((short)4);
 	    cell.setCellValue(iwrb.getLocalizedString("school.phone","Phone"));
 	    cell.setCellStyle(style);
 
