@@ -32,6 +32,7 @@ import com.idega.block.school.data.SchoolYear;
 import com.idega.builder.data.IBPage;
 import com.idega.business.IBOLookup;
 import com.idega.core.data.Address;
+import com.idega.data.IDOEntity;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWPropertyList;
 import com.idega.idegaweb.IWResourceBundle;
@@ -209,7 +210,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 									}
 									owner = element.getOwner();
 									choiceDate = element.getCreated();
-									isOwner = iwc.getCurrentUser().equals(owner);
+									isOwner = ((IDOEntity)iwc.getCurrentUser()).equals(owner);
 									custodiansAgree = element.getCustodiansAgree();
 									valType = element.getSchoolTypeId();
 								}
