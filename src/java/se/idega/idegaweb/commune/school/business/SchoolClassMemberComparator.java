@@ -127,6 +127,14 @@ public class SchoolClassMemberComparator implements Comparator {
 		Address p1 = business.getUserAddress1(((SchoolClassMember)o1).getClassMemberId());
 		Address p2 = business.getUserAddress1(((SchoolClassMember)o2).getClassMemberId());
 		
+		if (p1 == null || p2 == null) {
+			if (p1 == null && p2 != null)
+				return 1;
+			else if (p1 != null && p2 == null)
+				return -1;
+			return 0;
+		}
+			
 		String one = p1.getStreetAddress()!=null?p1.getStreetAddress():"";
 		String two = p2.getStreetAddress()!=null?p2.getStreetAddress():"";
 		int result = collator.compare(one,two);
