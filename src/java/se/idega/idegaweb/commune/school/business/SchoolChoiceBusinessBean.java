@@ -695,6 +695,11 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	public SchoolChoice groupPlaceAction(Integer pk, User performer) {
 		try {
 			SchoolChoice choice = getSchoolChoiceHome().findByPrimaryKey(pk);
+			if (choice.getCaseStatus().equals(getCaseStatusMoved())) {
+				Object[] arguments = { choice.getChild().getNameLastFirst(true), choice.getChosenSchool().getSchoolName() };
+				String body = MessageFormat.format(getLocalizedString("school_choice.student_moved_from_school_body", "Dear headmaster, {0} has been moved from your school and placed at {1}."), arguments);
+				this.sendMessageToSchool(choice.getCurrentSchoolId(), getLocalizedString("school_choice.student_moved_from_school_subject", "Student moved from your school"), body);
+			}
 			super.changeCaseStatus(choice, getCaseStatusPlaced().getStatus(), performer);
 			return choice;
 		}
