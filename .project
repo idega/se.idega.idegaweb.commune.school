@@ -15,9 +15,8 @@
     <project>is.idega.block.family</project>
     <project>se.idega.util</project>
     <project>se.idega.idegaweb.commune</project>
+    <project>se.idega.idegaweb.commune.care</project>
     <project>se.cubecon.bun24.viewpoint</project>
-    <project>se.idega.idegaweb.commune.accounting</project>
-    <project>se.idega.idegaweb.commune.provider</project>
   </projects>
   <buildSpec>
     <buildCommand>

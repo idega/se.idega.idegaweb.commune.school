@@ -41,11 +41,9 @@
   </classpathentry>
   <classpathentry kind="src" path="/se.idega.idegaweb.commune">
   </classpathentry>
+  <classpathentry kind="src" path="/se.idega.idegaweb.commune.care">
+  </classpathentry>
   <classpathentry kind="src" path="/se.cubecon.bun24.viewpoint">
-  </classpathentry>
-  <classpathentry kind="src" path="/se.idega.idegaweb.commune.accounting">
-  </classpathentry>
-  <classpathentry kind="src" path="/se.idega.idegaweb.commune.provider">
   </classpathentry>
   <classpathentry kind="output" path="target/classes">
   </classpathentry>
