@@ -668,7 +668,8 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		s.append("\n\t var  three = ").append("dropOne.options[dropThree.selectedIndex].value;");
 		s.append("\n\t if(one && two && three){");
 		s.append("\n\t if(one == two || two == three || three == one){");
-		s.append("\n\t\t\t alert('").append("some choices the same").append("');");
+		String msg = iwrb.getLocalizedString("school_school.must_not_be_the_same","Please do not choose the same school more than once");
+		s.append("\n\t\t\t alert('").append(msg).append("');");
 		s.append("\n\t\t\t return false;");
 		s.append("\n\t\t }");
 		s.append("\n\t }");
