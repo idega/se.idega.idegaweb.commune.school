@@ -426,11 +426,11 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
   }
   
   public int  ejbHomeGetCount(String[] validStatuses) throws IDOException{
-		IDOQuery query = new IDOQuery();
-			query.appendSelectCountFrom(this);
 		
   	if (validStatuses != null && validStatuses.length > 0) {
-			query.append("csc, ").append(CaseBMPBean.TABLE_NAME).append(" pc");
+			IDOQuery query = new IDOQuery();
+				query.appendSelectCountFrom().append(getEntityName()).append(" csc");
+			query.append(", ").append(CaseBMPBean.TABLE_NAME).append(" pc");
 			query.append(" where ");
 			query.append("csc.").append(getIDColumnName())
 			.appendEqualSign().append("pc.").append(CaseBMPBean.TABLE_NAME+"_ID")
@@ -438,9 +438,14 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 			query.appendWithinParentheses(idoQuery().appendCommaDelimitedWithinSingleQuotes(validStatuses));
 			query.appendAnd().append("pc.").append(CaseBMPBean.COLUMN_CASE_CODE).appendEqualSign().appendWithinSingleQuotes(this.CASECODE);
 
+			return this.idoGetNumberOfRecords(query);
+  	} else {
+			IDOQuery query = new IDOQuery();
+				query.appendSelectCountFrom(this);
+			return this.idoGetNumberOfRecords(query);
+  		
   	}
   	
-		return this.idoGetNumberOfRecords(query);
   }
   
   public Collection ejbFindChoices(int schoolID, int seasonID, int gradeYear, int[] choiceOrder ,String[] validStatuses, String searchStringForUser) throws FinderException, RemoteException {
@@ -478,7 +483,7 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
   		if (needAnd) {
 				query.appendAnd();
   		}
-  		query.append(getEntityName()).append(".").append(CHILD)
+  		query.append("csc.").append(CHILD)
   		.appendEqualSign().append(UserBMPBean.TABLE_NAME).append(".").append(UserBMPBean.getColumnNameUserID())
   		.appendAnd().append("(");
   		query.append(UserBMPBean.TABLE_NAME).append(".").append(UserBMPBean.getColumnNameFirstName())
