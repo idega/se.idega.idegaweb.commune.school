@@ -1,5 +1,5 @@
 /*
- * $Id: NackaCCPlacementReportModel.java,v 1.3 2004/01/21 14:02:32 anders Exp $
+ * $Id: NackaCCPlacementReportModel.java,v 1.4 2004/01/21 15:26:43 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -16,10 +16,10 @@ import com.idega.util.IWTimestamp;
 /** 
  * Report model for child care placements in Nacka.
  * <p>
- * Last modified: $Date: 2004/01/21 14:02:32 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/21 15:26:43 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class NackaCCPlacementReportModel extends ReportModel {
 
@@ -84,7 +84,7 @@ public class NackaCCPlacementReportModel extends ReportModel {
 	protected Header[] buildRowHeaders() {
 		Header[] headers = new Header[4];
 		
-		Header h = new Header(KEY_PRE_SCHOOL_OPERATION, Header.HEADERTYPE_ROW_HEADER, 8);
+		Header h = new Header(KEY_PRE_SCHOOL_OPERATION, Header.HEADERTYPE_ROW_HEADER, 7);
 		Header child0 = new Header(KEY_PRE_SCHOOL, Header.HEADERTYPE_ROW_NORMAL);
 		Header child1 = new Header(KEY_OF_WHICH_COMMUNE_MANAGEMENT, Header.HEADERTYPE_ROW_NORMAL);
 		Header child2 = new Header(KEY_OF_WHICH_PRIVATE_MANAGEMENT, Header.HEADERTYPE_ROW_NORMAL);
@@ -101,7 +101,7 @@ public class NackaCCPlacementReportModel extends ReportModel {
 		h.setChild(6, child6);
 		headers[0] = h;
 		
-		h = new Header(KEY_SCHOOL_CHILDREN_CARE_6_YEAR, Header.HEADERTYPE_ROW_HEADER, 8);
+		h = new Header(KEY_SCHOOL_CHILDREN_CARE_6_YEAR, Header.HEADERTYPE_ROW_HEADER, 7);
 		child0 = new Header(KEY_AFTER_SCHOOL_CENTRE, Header.HEADERTYPE_ROW_NORMAL);
 		child1 = new Header(KEY_OF_WHICH_COMMUNE_MANAGEMENT, Header.HEADERTYPE_ROW_NORMAL);
 		child2 = new Header(KEY_OF_WHICH_PRIVATE_MANAGEMENT, Header.HEADERTYPE_ROW_NORMAL);
@@ -118,7 +118,7 @@ public class NackaCCPlacementReportModel extends ReportModel {
 		h.setChild(6, child6);
 		headers[1] = h;
 		
-		h = new Header(KEY_SCHOOL_CHILDREN_CARE_7_9_YEAR, Header.HEADERTYPE_ROW_HEADER, 8);
+		h = new Header(KEY_SCHOOL_CHILDREN_CARE_7_9_YEAR, Header.HEADERTYPE_ROW_HEADER, 7);
 		child0 = new Header(KEY_AFTER_SCHOOL_CENTRE, Header.HEADERTYPE_ROW_NORMAL);
 		child1 = new Header(KEY_OF_WHICH_COMMUNE_MANAGEMENT, Header.HEADERTYPE_ROW_NORMAL);
 		child2 = new Header(KEY_OF_WHICH_PRIVATE_MANAGEMENT, Header.HEADERTYPE_ROW_NORMAL);

@@ -1,5 +1,5 @@
 /*
- * $Id: NackaCCCommunePrivatePlacementReportModel.java,v 1.3 2004/01/21 13:50:14 anders Exp $
+ * $Id: NackaCCCommunePrivatePlacementReportModel.java,v 1.4 2004/01/21 15:24:51 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -14,10 +14,10 @@ import java.rmi.RemoteException;
 /** 
  * Report model for child care placements in Nacka for commune and private providers.
  * <p>
- * Last modified: $Date: 2004/01/21 13:50:14 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/21 15:24:51 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class NackaCCCommunePrivatePlacementReportModel extends ReportModel {
 
@@ -71,7 +71,7 @@ public class NackaCCCommunePrivatePlacementReportModel extends ReportModel {
 		headers[4] = new Header(KEY_COMMUNE_SCHOOL_CHILDREN_CARE_7_9, Header.HEADERTYPE_ROW_HEADER);
 		headers[5] = new Header(KEY_PRIVATE_SCHOOL_CHILDREN_CARE_7_9, Header.HEADERTYPE_ROW_HEADER);
 		
-		Header h = new Header(KEY_TOTAL, Header.HEADERTYPE_ROW_HEADER, 2);
+		Header h = new Header(KEY_TOTAL, Header.HEADERTYPE_ROW_HEADER, 3);
 		Header child0 = new Header(KEY_COMMUNE_SUM, Header.HEADERTYPE_ROW_NORMAL);
 		Header child1 = new Header(KEY_PRIVATE_SUM, Header.HEADERTYPE_ROW_NORMAL);
 		Header child2 = new Header(KEY_CHILDREN_TOTAL, Header.HEADERTYPE_ROW_NORMAL);
