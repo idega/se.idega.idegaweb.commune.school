@@ -1,5 +1,5 @@
 /*
- * $Id: NackaHighSchoolStudyPathPlacementReportModel.java,v 1.2 2004/01/22 07:58:46 anders Exp $
+ * $Id: NackaHighSchoolStudyPathPlacementReportModel.java,v 1.3 2004/01/22 08:17:35 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -18,10 +18,10 @@ import com.idega.block.school.data.SchoolStudyPath;
 /** 
  * Report model for high school placements for all study paths.
  * <p>
- * Last modified: $Date: 2004/01/22 07:58:46 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/22 08:17:35 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class NackaHighSchoolStudyPathPlacementReportModel extends ReportModel {
 
@@ -67,7 +67,7 @@ public class NackaHighSchoolStudyPathPlacementReportModel extends ReportModel {
 			while (iter.hasNext()) {
 				SchoolStudyPath studyPath = (SchoolStudyPath) iter.next();
 				String label = studyPath.getDescription() + " (" + studyPath.getCode() + ")";
-				headers[headerIndex] = new Header(label, Header.HEADERTYPE_ROW_NONLOCALIZED_HEADER, 1);
+				headers[headerIndex] = new Header(label, Header.HEADERTYPE_ROW_NONLOCALIZED_HEADER);
 				headerIndex++;
 			}
 			
