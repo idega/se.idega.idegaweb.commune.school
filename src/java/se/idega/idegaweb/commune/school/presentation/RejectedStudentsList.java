@@ -30,6 +30,7 @@ public class RejectedStudentsList extends SchoolCommuneBlock {
 
 	Collection schoolChoices;
 	int totalChoices;
+	String tableWidth = "600";
 	int currentStartEntry = 0;
 	int ENTRIES_PER_PAGE = 10;
 	IWResourceBundle iwrb;
@@ -58,6 +59,7 @@ public class RejectedStudentsList extends SchoolCommuneBlock {
 		Table table = new Table();
 		table.setCellpaddingAndCellspacing(0);
 		table.add(getPagesTable(), 1, 1);
+		table.setWidth(tableWidth);
 		table.add(getStudentList(iwc), 1, 2);
 		add(table);
 	}
@@ -69,15 +71,16 @@ public class RejectedStudentsList extends SchoolCommuneBlock {
 		table.setWidth("100%");
 		table.setWidth(1, "33%");
 		table.setWidth(3, "33%");
-		
 		Link lNext = getSmallLink(localize("next", "Next"));
 		Link lPrev = getSmallLink(localize("previous", "Previous"));
 		
 		if (currentStartEntry != 0) {
 			lPrev.addParameter(PARAMETER_NEXT_START_ENTRY, Integer.toString(currentStartEntry - ENTRIES_PER_PAGE));
 			table.add(lPrev, 1, 1);
-			table.setAlignment(1, 1, Table.HORIZONTAL_ALIGN_LEFT);
+		} else {
+			table.add(getSmallText(localize("previous", "Previous")), 1, 1);
 		}
+		table.setAlignment(1, 1, Table.HORIZONTAL_ALIGN_LEFT);
 		
 		table.setAlignment(2, 1, Table.HORIZONTAL_ALIGN_CENTER);
 		if (totalChoices == 0) {
@@ -90,8 +93,10 @@ public class RejectedStudentsList extends SchoolCommuneBlock {
 		if (currentStartEntry < (totalChoices - ENTRIES_PER_PAGE)) {
 			lNext.addParameter(PARAMETER_NEXT_START_ENTRY, Integer.toString(currentStartEntry + ENTRIES_PER_PAGE));
 			table.add(lNext, 3, 1);
-			table.setAlignment(3, 1, Table.HORIZONTAL_ALIGN_RIGHT);
+		} else {
+			table.add(getSmallText(localize("next", "Next")), 3, 1);
 		}
+		table.setAlignment(3, 1, Table.HORIZONTAL_ALIGN_RIGHT);
 		
 		return table;
 	}
@@ -114,10 +119,10 @@ public class RejectedStudentsList extends SchoolCommuneBlock {
 		Address address;
 		SchoolChoice choice;
 		Locale locale = iwc.getCurrentLocale();
-		for (Iterator iter = schoolChoices.iterator(); iter.hasNext(); ++row) {
+		for (Iterator iter = schoolChoices.iterator(); iter.hasNext(); ) {
 			choice = (SchoolChoice) iter.next();
 			column = 1;
-			row++;
+			++row;
 			try {
 				applicant = getUserBusiness(iwc).getUser(choice.getChildId());
 				school = getBusiness().getSchoolBusiness().getSchool(new Integer(choice.getCurrentSchoolId()));
@@ -156,6 +161,9 @@ public class RejectedStudentsList extends SchoolCommuneBlock {
 		return table;
 	}
 
+	public void setWidth(String width) {
+		//this.tableWidth = width;
+	}
 	
 	private SchoolChoiceBusiness getSchoolChoiceBusiness(IWApplicationContext iwac) throws RemoteException {
 		return (SchoolChoiceBusiness) IBOLookup.getServiceInstance(iwac, SchoolChoiceBusiness.class);
