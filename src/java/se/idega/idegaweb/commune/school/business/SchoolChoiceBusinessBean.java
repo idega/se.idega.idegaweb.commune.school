@@ -268,7 +268,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 				Iterator iter = coll.iterator();
 				while (iter.hasNext()) {
 					User user = (User) iter.next();
-					getMessageBusiness().createUserMessage(user,getOldHeadmasterSubject(),getOldHeadmasterBody(child, getSchool(newSchoolID)));
+					getMessageBusiness().createUserMessage(user,getOldHeadmasterSubject(),getOldHeadmasterBody(child, getSchool(newSchoolID)), false);
 				}
 			}
 		}
@@ -281,7 +281,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 				Iterator iter = coll.iterator();
 				while (iter.hasNext()) {
 					User user = (User) iter.next();
-					getMessageBusiness().createUserMessage(user,getNewHeadMasterSubject(),getNewHeadmasterBody(child, getSchool(oldSchoolID)));
+					getMessageBusiness().createUserMessage(user,getNewHeadMasterSubject(),getNewHeadmasterBody(child, getSchool(oldSchoolID)), false);
 				}
 			}
 		}
