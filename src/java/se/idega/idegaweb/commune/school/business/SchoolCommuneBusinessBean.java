@@ -105,7 +105,7 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 			if (schoolYears != null) {
 				Iterator iter = schoolYears.iterator();
 				while (iter.hasNext()) {
-					SortedMap groupMap = new TreeMap();
+					Map groupMap = new HashMap();
 					if (emptyString != null) {
 						groupMap.put("-1", emptyString);
 					}
