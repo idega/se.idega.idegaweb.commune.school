@@ -1062,6 +1062,23 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 			return (SchoolChoiceReminderReceiver[])coll.toArray(new SchoolChoiceReminderReceiver[0]);
 		}
 
+	/**
+	 * Gets The number of students who should make a schoolchoice for the SchoolYear year and SchoolSeason season
+	 */
+	public int getNumberOfStudentsThatMustDoSchoolChoiceButHaveNot (SchoolSeason season,SchoolYear year)
+	{
+		SchoolChoiceReminderReceiver[] students = findAllStudentsThatMustDoSchoolChoiceButHaveNot(season,year);
+		if(students!=null){
+			return students.length;
+		}
+		else{
+			return 0;
+		}
+		
+	}
+	/**
+	 * Gets an array of SchoolChoiceReminderReceiver for all students who should make a schoolchoice for the SchoolYear year and SchoolSeason season
+	 */
     public SchoolChoiceReminderReceiver []
 	findAllStudentsThatMustDoSchoolChoiceButHaveNot (SchoolSeason season,SchoolYear year)
     {

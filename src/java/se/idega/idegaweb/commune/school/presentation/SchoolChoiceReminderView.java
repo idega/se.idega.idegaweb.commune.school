@@ -50,10 +50,10 @@ import com.idega.user.data.User;
  * and entity ejb classes in {@link se.idega.idegaweb.commune.school.data}.
  * <p>
  * <p>
- * Last modified: $Date: 2003/09/22 13:52:23 $ by $Author: laddi $
+ * Last modified: $Date: 2003/10/07 11:25:51 $ by $Author: tryggvil $
  *
  * @author <a href="http://www.staffannoteberg.com">Staffan Nöteberg</a>
- * @version $Revision: 1.33 $
+ * @version $Revision: 1.34 $
  * @see javax.ejb
  */
 public class SchoolChoiceReminderView extends CommuneBlock {
@@ -228,7 +228,13 @@ public class SchoolChoiceReminderView extends CommuneBlock {
 			for (Iterator iterator = years.iterator(); iterator.hasNext();)
 			{
 				SchoolYear year = (SchoolYear) iterator.next();
-				group.addOption(year.getPrimaryKey().toString(),year.getSchoolYearName());
+				SchoolSeason season = this.getSchoolSeason(iwc);
+				
+				String yearPK = year.getPrimaryKey().toString();
+				String yearName = year.getSchoolYearName();
+				int numberOfNotDoneSchoolChoices = this.getSchoolChoiceBusiness(iwc).getNumberOfStudentsThatMustDoSchoolChoiceButHaveNot(season,year);
+				String yearString = yearName+" ("+numberOfNotDoneSchoolChoices+")";
+				group.addOption(yearPK,yearString);
 			}
 			
 		}

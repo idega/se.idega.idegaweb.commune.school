@@ -81,4 +81,9 @@ public interface SchoolChoiceBusiness extends com.idega.business.IBOService,com.
 	public void sendMessageToParentOrChild(User parent, User child, String subject, String body) throws RemoteException;
 	public User getReceiver(User parent, User child);
 	public Collection getMandatorySchoolChoiceYears() throws RemoteException;
+	/**
+	 * Gets The number of students who should make a schoolchoice for the SchoolYear year and SchoolSeason season
+	 */
+	public int getNumberOfStudentsThatMustDoSchoolChoiceButHaveNot (SchoolSeason season,SchoolYear year) throws RemoteException;
+	
 }
