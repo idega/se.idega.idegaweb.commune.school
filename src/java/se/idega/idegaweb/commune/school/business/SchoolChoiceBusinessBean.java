@@ -867,20 +867,23 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
         System.err.println ("Total search time=" + timer.getTime () + " msec");
         timer.start ();
         final int idCount = ids.size ();
-        final SchoolChoiceReminderReceiver [] receivers
-                = new SchoolChoiceReminderReceiver [idCount];
+        final Map receivers = new TreeMap ();
         final Iterator iter = ids.iterator ();
         final MemberFamilyLogic familyLogic = getMemberFamilyLogic();
         final UserBusiness userBusiness = getUserBusiness();
         for (int i = 0; i < idCount; i++) {
             final Integer id = (Integer) iter.next ();
-            receivers [i] = new SchoolChoiceReminderReceiver
-                    (familyLogic, userBusiness, id);
+            final SchoolChoiceReminderReceiver receiver
+                    = new SchoolChoiceReminderReceiver (familyLogic,
+                                                        userBusiness, id);
+            receivers.put (receiver.getSsn (), receiver);
         }
         timer.stop ();
         System.err.println ("Found parents and addresses in "
                             + timer.getTime () + " msec");
-        return receivers;
+        return (SchoolChoiceReminderReceiver [])
+                receivers.values ().toArray
+                (new SchoolChoiceReminderReceiver [receivers.size ()]);
     }
 
 	private Set findStudentIdsWhoChosedForCurrentSeason ()
@@ -899,7 +902,6 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
         timer.stop ();
         System.err.println ("Found " + choices.size () + " chosedstudents in "
                             + timer.getTime () + " msec");
-        System.err.println (ids.toString ());
         return ids;
 	}
 
@@ -921,7 +923,6 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
         timer.stop ();
         System.err.println ("Found " + students.size () + " finalstudents in "
                             + timer.getTime () + " msec");
-        System.err.println (ids.toString ());
         return ids;        
     }
 
@@ -956,7 +957,6 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
         timer.stop ();
         System.err.println ("Found " + ids.size () + " (" + students.size () + ") schoolstartersnotinchildcare in "
                             + timer.getTime () + " msec (" + yearOfBirth + ")");
-        System.err.println (ids.toString ());
         return ids;        
     }
 
@@ -977,7 +977,6 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
         timer.stop ();
         System.err.println ("Found " + students.size () + " childcarestarters in "
                             + timer.getTime () + " msec (" + yearOfBirth + ")");
-        System.err.println (ids.toString ());
         return ids;        
     }
 
