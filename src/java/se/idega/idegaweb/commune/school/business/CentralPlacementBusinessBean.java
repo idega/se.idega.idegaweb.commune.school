@@ -45,7 +45,7 @@ public class CentralPlacementBusinessBean extends IBOServiceBean
 	 * Stores a new placement(SchoolClassMember) with resources and ends the current placement
 	 */
 	public SchoolClassMember storeSchoolClassMember(IWContext iwc, int childID) 
-																	throws RemoteException, CentralPlacementException {
+																throws RemoteException, CentralPlacementException {
 		int studentID = -1;
 		int schoolClassID = -1;
 		int registrator = -1;
@@ -177,8 +177,7 @@ public class CentralPlacementBusinessBean extends IBOServiceBean
 					for (int i = 0; i < arr.length; i++) {
 						int rscPK = Integer.parseInt(arr[i]);
 						getResourceBusiness(iwc).createResourcePlacement(rscPK, studentID, 
-																									placementDateStr, null);
-						
+																									placementDateStr);						
 					}					
 				}
 				
@@ -197,7 +196,7 @@ public class CentralPlacementBusinessBean extends IBOServiceBean
 			trans.commit();
 		} catch (Exception e) {
 			try {
-				trans.rollback();
+				trans.rollback();					
 				e.printStackTrace();
 			} catch (IllegalStateException e1) {
 				e1.printStackTrace();
