@@ -578,12 +578,21 @@ public class SchoolChoiceApplication extends CommuneBlock {
 			if (_useOngoingSeason)
 				previousSeason = season;
 			else
-				previousSeason = schCommBiz.getPreviousSchoolSeason(season);
+				previousSeason = season; //schCommBiz.getPreviousSchoolSeason(season);
 			
 			//schoolClassMember = schBuiz.getSchoolBusiness().getSchoolClassMemberHome().findByUserAndSeason(child, previousSeason);
-			schoolClassMember = schBuiz.getSchoolBusiness().getSchoolClassMemberHome().findLatestByUserAndSchCategoryAndSeason(child, schBuiz.getSchoolBusiness().getCategoryElementarySchool(), season);
+
+			try {
+				schoolClassMember = schBuiz.getSchoolBusiness().getSchoolClassMemberHome().findLatestByUserAndSchCategoryAndSeason(child, schBuiz.getSchoolBusiness().getCategoryElementarySchool(), previousSeason);
+			} catch (Exception e) {}
+			if (schoolClassMember == null) {
+				// No elementary school placement found, look for one in child care
+				schoolClassMember = schBuiz.getSchoolBusiness().getSchoolClassMemberHome().findLatestByUserAndSchCategoryAndSeason(child, schBuiz.getSchoolBusiness().getCategoryChildcare(), previousSeason);
+			}
 			
-			schoolClass = schBuiz.getSchoolBusiness().getSchoolClassHome().findByPrimaryKey(new Integer(schoolClassMember.getSchoolClassId()));
+			//schoolClass = schBuiz.getSchoolBusiness().getSchoolClassHome().findByPrimaryKey(new Integer(schoolClassMember.getSchoolClassId()));
+			schoolClass = schoolClassMember.getSchoolClass();
+			
 			school = schBuiz.getSchool(schoolClass.getSchoolId());
 			if (school != null)
 				this.hasPreviousSchool = true;
