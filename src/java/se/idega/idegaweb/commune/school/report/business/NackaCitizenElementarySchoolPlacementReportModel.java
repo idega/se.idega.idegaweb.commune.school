@@ -1,5 +1,5 @@
 /*
- * $Id: NackaCitizenElementarySchoolPlacementReportModel.java,v 1.6 2004/01/22 11:39:54 anders Exp $
+ * $Id: NackaCitizenElementarySchoolPlacementReportModel.java,v 1.7 2004/01/30 16:34:31 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -14,10 +14,10 @@ import java.rmi.RemoteException;
 /** 
  * Report model for Nacka citizen placement for elementary schools.
  * <p>
- * Last modified: $Date: 2004/01/22 11:39:54 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/30 16:34:31 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  */
 public class NackaCitizenElementarySchoolPlacementReportModel extends ReportModel {
 
@@ -264,7 +264,7 @@ public class NackaCitizenElementarySchoolPlacementReportModel extends ReportMode
 			setCell(row, column, cell);
 			row++;
 			cell = new Cell(this, row, column, ROW_METHOD_ELEMENTARY_SUM,
-					columnMethod, null, columnParameter, Cell.CELLTYPE_NORMAL);
+					columnMethod, null, columnParameter, Cell.CELLTYPE_SUM);
 			setCell(row, column, cell);
 			
 			if (columnParameter != null) {
