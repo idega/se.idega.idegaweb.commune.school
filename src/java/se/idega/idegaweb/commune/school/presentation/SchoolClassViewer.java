@@ -54,8 +54,12 @@ public class SchoolClassViewer extends SchoolCommuneBlock {
 		if (!schoolYears.isEmpty())
 			Collections.sort(schoolYears, new SchoolYearComparator());
 		
-		table.add(getSmallHeader(localize("school_years", "Years") + ":"), 1, row);
-		table.setNoWrap(1, row);
+		table.add(getSmallHeader(localize("school.school_season", "Season") + ":"), 1, row);
+		table.add(Text.getNonBrakingSpace(), 1, row);
+		table.add(getSchoolSeasons(false), 1, row++);
+		table.setHeight(row++, 8);
+		
+		table.add(getSmallHeader(localize("school.school_years", "Years") + ":"), 1, row++);
 		
 		Iterator iter = schoolYears.iterator();
 		while (iter.hasNext()) {

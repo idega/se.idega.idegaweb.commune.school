@@ -263,10 +263,15 @@ public abstract class SchoolCommuneBlock extends CommuneBlock {
 		return (SchoolCategoryHome) IDOLookup.getHome(SchoolCategory.class);
 	}
 		
-	
 	protected DropdownMenu getSchoolSeasons() throws RemoteException {
+		return getSchoolSeasons(true);
+	}
+	
+	protected DropdownMenu getSchoolSeasons(boolean setToSubmit) throws RemoteException {
 		DropdownMenu menu = new DropdownMenu(session.getParameterSchoolSeasonID());
-		menu.setToSubmit();
+		if (setToSubmit) {
+			menu.setToSubmit();
+		}
 		
 		Collection seasons = business.getSchoolBusiness().findAllSchoolSeasons();
 		if ( !seasons.isEmpty() ) {
