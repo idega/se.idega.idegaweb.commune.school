@@ -61,7 +61,6 @@ public class SchoolUserEditor extends com.idega.block.school.presentation.School
 						}else if (category != null && category.equals(CATEGORY_CHILDCARE)) {
 							groupId = getChildCareAdminGroupId();	
 						}
-						System.out.println("[SchoolUserEditor (se)] : userType = "+userType+", groupId = "+groupId);
 						if (userType != SchoolUserBusinessBean.USER_TYPE_TEACHER && groupId > 0) {
 							groupBusiness.addUser(groupId, user);
 						} 
@@ -82,7 +81,6 @@ public class SchoolUserEditor extends com.idega.block.school.presentation.School
 	
 	private int getSchoolAdminGroupId() {
 		String groupId = getCommuneBundle().getProperty(SCHOOL_ADMINISTATION_GROUP_PARAMETER_NAME);
-		System.out.println("[SchoolUserEditor (se)] : getGroupId for category SCHOOL = '"+groupId+"'");
 		if (groupId != null) {
 				return Integer.parseInt(groupId);
 		}	
@@ -91,7 +89,6 @@ public class SchoolUserEditor extends com.idega.block.school.presentation.School
 	
 	private int getChildCareAdminGroupId() {
 			String groupId = getCommuneBundle().getProperty(CHILDCARE_ADMINISTATION_GROUP_PARAMETER_NAME);
-			System.out.println("[SchoolUserEditor (se)] : getGroupId for category CHILDCARE = '"+groupId+"'");
 			if (groupId != null) {
 					return Integer.parseInt(groupId);
 			}	
