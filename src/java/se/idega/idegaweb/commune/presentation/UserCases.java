@@ -5,8 +5,8 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
@@ -53,6 +53,7 @@ public class UserCases extends CommuneBlock {
 
 	private int _startCase = -1;
 	private int _endCase = -1;
+	private int _numberOfCases = 10;
 
 	public final static String MYCASES_KEY = "usercases.myCases";
 	public final static String MYCASES_DEFAULT = "Mina ärenden";
@@ -108,7 +109,7 @@ public class UserCases extends CommuneBlock {
 		if (iwc.isParameterSet(PARAMETER_END_CASE))
 			_endCase = Integer.parseInt(iwc.getParameter(PARAMETER_END_CASE));
 		else
-			_endCase = 10;
+			_endCase = _numberOfCases;
 
 		int action = ACTION_VIEW_CASE_LIST;
 		return action;
@@ -128,11 +129,10 @@ public class UserCases extends CommuneBlock {
 			final int userId = ((Integer) user.getPrimaryKey()).intValue();
 			
 			//Finding cases
-			List cases = getCases(iwc, user);
+			List cases = getCases(iwc, user, _startCase, _numberOfCases);
 					
 			if (cases != null & !cases.isEmpty()) {
 				int casesSize = cases.size();
-
 				Table table = new Table();
 				table.setCellpadding(getCellpadding());
 				table.setCellspacing(getCellspacing());
@@ -147,14 +147,10 @@ public class UserCases extends CommuneBlock {
 
 				int row = addTableHeader(table, 2); 
 
-				//Collection messages = getCaseBusiness(iwc).getAllCasesForUser(iwc.getCurrentUser());
-
-				if (_endCase > casesSize)
-					_endCase = casesSize;
-				
-				for (int a = _startCase - 1; a < _endCase; a++) {
+				Iterator iter = cases.iterator();
+				while (iter.hasNext()) {
 					try {
-						final Case useCase = (Case) cases.get(a);
+						final Case useCase = (Case) iter.next();
 						addCaseToMessageList(iwc, userId, useCase, table, row++);
 					}
 					catch (Exception e) {
@@ -187,10 +183,8 @@ public class UserCases extends CommuneBlock {
 		return row + 1;
 	}
 
-	protected List getCases(IWContext iwc, User user) throws RemoteException, FinderException, Exception {
-		List cases = new Vector(getCommuneCaseBusiness(iwc).getAllCasesDefaultVisibleForUser(user));
-		Collections.reverse(cases);
-		return cases;
+	protected List getCases(IWContext iwc, User user, int startingCase, int numberOfCases) throws RemoteException, FinderException, Exception {
+		return new Vector(getCommuneCaseBusiness(iwc).getAllCasesDefaultVisibleForUser(user, startingCase, numberOfCases));
 	}
 
 	protected Collection getGroups(IWContext iwc, final int userId)	throws RemoteException {
@@ -339,8 +333,8 @@ public class UserCases extends CommuneBlock {
 
 		if (_startCase > 1) {
 			Link previous = getSmallLink(localize("usercases.previous", "<< previous"));
-			previous.addParameter(PARAMETER_START_CASE, (_startCase - 10));
-			previous.addParameter(PARAMETER_END_CASE, (_endCase - 10));
+			previous.addParameter(PARAMETER_START_CASE, (_startCase - _numberOfCases));
+			previous.addParameter(PARAMETER_END_CASE, (_endCase - _numberOfCases));
 			navigationTable.add(previous, 1, 1);
 		}
 		else {
@@ -350,8 +344,8 @@ public class UserCases extends CommuneBlock {
 
 		if (_endCase < caseSize) {
 			Link next = getSmallLink(localize("usercases.next", "next >>"));
-			next.addParameter(PARAMETER_START_CASE, (_startCase + 10));
-			next.addParameter(PARAMETER_END_CASE, (_endCase + 10));
+			next.addParameter(PARAMETER_START_CASE, (_startCase + _numberOfCases));
+			next.addParameter(PARAMETER_END_CASE, (_endCase + _numberOfCases));
 			navigationTable.add(next, 2, 1);
 		}
 		else {

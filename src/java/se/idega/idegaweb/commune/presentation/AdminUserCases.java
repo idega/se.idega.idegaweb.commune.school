@@ -56,8 +56,8 @@ public class AdminUserCases extends UserCases {
 	 * Returns a list of all the cases for a user, including the cases handled by any of the users groups.
 	 * The method does not return viewpoints.
 	 */
-	protected List getCases(IWContext iwc, User user) throws RemoteException, FinderException, Exception {
-		List cases = super.getCases(iwc, user);
+	protected List getCases(IWContext iwc, User user, int startingCase, int numberOfCases) throws RemoteException, FinderException, Exception {
+		List cases = super.getCases(iwc, user, startingCase, numberOfCases);
 		
 		// add cases belonging to my group 
 		CaseBusiness caseBusiness = (CaseBusiness) IBOLookup.getServiceInstance(iwc, CaseBusiness.class);
