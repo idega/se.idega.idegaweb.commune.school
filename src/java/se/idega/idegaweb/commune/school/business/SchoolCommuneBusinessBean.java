@@ -635,22 +635,22 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 	}
 		
     /**
-     * Retreive all school members in current season, where invoice interval
-     * is in { Månad, Kvartal, Termin, År }. The result should be sorted by
-     * ssn.
+     * Retreive all currently placed school members with invoice interval set
+     * and school type as given in parameter.
      *
      * @return SchoolClassMember objects that follows the method spec
+     * @param schoolTypeId only serac for schools of this type
      * @exception RemoteException when methods in data layer fails
      * @author <a href="http://www.staffannoteberg.com">Staffan Nöteberg</a>
      */
-    public SchoolClassMember [] getCurrentMembersWithInvoiceInterval ()
-        throws RemoteException {
+    public SchoolClassMember [] getCurrentMembersWithInvoiceInterval
+        (final int schoolTypeId) throws RemoteException {
         final SchoolBusiness business = getSchoolBusiness ();
         final SchoolClassMemberHome home = business.getSchoolClassMemberHome ();
-        final int currentSeasonId = getCurrentSchoolSeasonID ();
         try {
             final Collection result = home
-                    .findAllBySeasonAndInvoiceCompensation (currentSeasonId);
+                    .findAllCurrentInvoiceCompensationBySchoolType
+                    (schoolTypeId);
             return (SchoolClassMember []) result.toArray (new SchoolClassMember
                                                           [result.size ()]);
         } catch (FinderException fe) {
