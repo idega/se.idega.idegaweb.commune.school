@@ -848,7 +848,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 			IWTimestamp stamp = new IWTimestamp();
 			DateInput date = (DateInput) getStyledInterface(new DateInput(prmPlacementDate));
 			date.setDate(stamp.getDate());
-			date.setEarliestPossibleDate(stamp.getDate(), iwrb.getLocalizedString("school.dates_back_in_time_not_allowed", "You can not choose a date back in time."));
+			//date.setEarliestPossibleDate(stamp.getDate(), iwrb.getLocalizedString("school.dates_back_in_time_not_allowed", "You can not choose a date back in time."));
 			table.setHeight(row++, 5);
 			table.add(getSmallHeader(iwrb.getLocalizedString("school.placement_date", "Placement date")+":"), 1, row);
 			table.add(date, 3, row);
@@ -1218,7 +1218,14 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		}
 		s.append("\n\t var year = 0;");
 		s.append("\n\t var school = 0;");
-
+		
+		if (age.getYears() <= 10) {
+			s.append("\n\t var afterSchool = findObj(';").append(prmAfterschool).append("').value;");
+			s.append("\n\n\t if (afterSchool.length <= 0) {");
+			s.append("\n\t\t alert('"+localize("school.must_select_after_school_option","You have to select an after school option.")+"');");
+			s.append("\n\t\t return false; \n}");
+		}
+		
 		s.append("\n\n\t if (dropOne.selectedIndex > 0) one = dropOne.options[dropOne.selectedIndex].value;");
 		if(!schoolChange){
 			s.append("\n\t if (dropTwo.selectedIndex > 0) two = dropTwo.options[dropTwo.selectedIndex].value;");
