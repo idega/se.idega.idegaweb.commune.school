@@ -49,8 +49,8 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
   public final static String WORK_SITUATION_2 = "work_situation_2";
   public final static String GROUP_PLACE = "group_place";
 
-  private static final String[] CASE_STATUS_KEYS = {"UBEH","TYST","PREL","PLAC"};
-  private static final String[] CASE_STATUS_DESCRIPTIONS = {"Case open","Sleep","Preliminary","Placed"};
+  private static final String[] CASE_STATUS_KEYS = {"UBEH","TYST","PREL","PLAC","GROU","FLYT"};
+  private static final String[] CASE_STATUS_DESCRIPTIONS = {"Case open","Sleep","Preliminary","Placed","Grouped","Moved"};
 
   public String getCaseStatusCreated(){
     return "UBEH";
@@ -63,6 +63,12 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
   }
   public String getCaseStatusPlaced(){
     return "PLAC";
+  }
+  public String getCaseStatusGrouped(){
+    return "GROU";
+  }
+  public String getCaseStatusMoved(){
+    return "FLYT";
   }
 
   public void initializeAttributes() {

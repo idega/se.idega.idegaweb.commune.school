@@ -1,5 +1,8 @@
 package se.idega.idegaweb.commune.school.business;
 
+import is.idega.idegaweb.member.business.MemberFamilyLogic;
+import is.idega.idegaweb.member.business.NoCustodianFound;
+
 import java.rmi.RemoteException;
 import java.util.Collection;
 import java.util.HashMap;
@@ -8,7 +11,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
+import javax.ejb.CreateException;
 import javax.ejb.FinderException;
+
+import se.idega.idegaweb.commune.message.business.MessageBusiness;
+import se.idega.idegaweb.commune.school.data.SchoolChoice;
 
 import com.idega.block.process.business.CaseBusiness;
 import com.idega.block.process.business.CaseBusinessBean;
@@ -23,6 +30,7 @@ import com.idega.block.school.data.SchoolClassMember;
 import com.idega.block.school.data.SchoolSeason;
 import com.idega.block.school.data.SchoolYear;
 import com.idega.business.IBOLookup;
+import com.idega.core.data.Email;
 import com.idega.user.business.UserBusiness;
 import com.idega.user.data.User;
 
@@ -93,6 +101,38 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 		}
 		
 		return coll;		
+	}
+	
+	public Map getStudentChoices(Collection students, int seasonID) throws RemoteException {
+		HashMap coll = new HashMap();
+			
+		if ( !students.isEmpty() ) {
+			Collection choices;
+			SchoolClassMember member;
+			
+			Iterator iter = students.iterator();
+			while (iter.hasNext()) {
+				member = (SchoolClassMember) iter.next();
+				choices = getSchoolChoiceBusiness().findByStudentAndSeason(member.getClassMemberId(), seasonID);
+				coll.put(new Integer(member.getClassMemberId()), choices);
+			}
+		}
+		
+		return coll;		
+	}
+	
+	public boolean hasChosenOtherSchool(Collection choices, int schoolID) throws RemoteException {
+		if (choices != null && !choices.isEmpty()) {
+			Iterator iter = choices.iterator();
+			while (iter.hasNext()) {
+				SchoolChoice element = (SchoolChoice) iter.next();
+				String caseStatus = element.getCaseStatus().toString();
+				if ((caseStatus.equalsIgnoreCase("PREL") || caseStatus.equalsIgnoreCase("PLAC")) && element.getChosenSchoolId() != schoolID)
+					return true;
+			}
+		}
+		
+		return false;	
 	}
 	
 	public SchoolSeason getPreviousSchoolSeason(SchoolSeason schoolSeason) throws RemoteException {
@@ -172,5 +212,45 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 			}
 		}
 		return new Vector();
+	}
+	
+	public void finalizeGroup(int schoolClassID, String subject, String body) throws RemoteException {
+		SchoolClass schoolClass = getSchoolClassBusiness().findSchoolClass(new Integer(schoolClassID));
+
+		Map students = getStudentList(getSchoolClassMemberBusiness().findStudentsInClass(schoolClassID));
+		Iterator iter = students.values().iterator();
+		while (iter.hasNext()) {
+			User student = (User) iter.next();
+			try {
+				Collection parents = getMemberFamilyLogic().getCustodiansFor(student);
+				if (!parents.isEmpty()) {
+					Iterator iterator = parents.iterator();
+					while (iterator.hasNext()) {
+						User parent = (User) iterator.next();
+						List emails = new Vector(parent.getEmails());
+						if (!emails.isEmpty()) {
+							Email email = (Email) emails.get(0);
+							try {
+								getMessageBusiness().createUserMessage(parent, subject, body);
+							}
+							catch (CreateException ce) {
+								ce.printStackTrace();
+							}
+						}
+					}	
+				}
+			}
+			catch (NoCustodianFound ncd) {
+				ncd.printStackTrace();
+			}
+		}
+	}
+
+	private MemberFamilyLogic getMemberFamilyLogic() throws RemoteException {
+		return (MemberFamilyLogic) com.idega.business.IBOLookup.getServiceInstance(getIWApplicationContext(), MemberFamilyLogic.class);
+	}
+
+	private MessageBusiness getMessageBusiness() throws RemoteException {
+		return (MessageBusiness) com.idega.business.IBOLookup.getServiceInstance(getIWApplicationContext(), MessageBusiness.class);
 	}
 }

@@ -1,6 +1,14 @@
 package se.idega.idegaweb.commune.school.business;
 
-import javax.ejb.*;
+import java.rmi.RemoteException;
+
+import javax.ejb.CreateException;
+import javax.ejb.FinderException;
+
+import se.idega.idegaweb.commune.school.data.SchoolChoice;
+
+import com.idega.block.process.data.Case;
+import com.idega.block.process.data.CaseStatus;
 
 public interface SchoolChoiceBusiness extends com.idega.business.IBOService,com.idega.block.process.business.CaseBusiness
 {
@@ -31,4 +39,5 @@ public interface SchoolChoiceBusiness extends com.idega.business.IBOService,com.
  public void setAsPreliminary(se.idega.idegaweb.commune.school.data.SchoolChoice choice, com.idega.user.data.User performer) throws java.rmi.RemoteException;
  public java.util.Collection findByStudentAndSeason(int studentID, int seasonID) throws java.rmi.RemoteException;
  public void rejectApplication(int applicationID, int seasonID, com.idega.user.data.User performer, String messageSubject, String messageBody) throws java.rmi.RemoteException;
+ public SchoolChoice createSchoolChoice(int userId, int childId, int current_school, int chosen_school, int grade, int choiceOrder, int method, int workSituation1, int workSituation2, String language, String message, java.sql.Timestamp choiceDate, boolean changeOfSchool, boolean keepChildrenCare, boolean autoAssign, boolean custodiansAgree, boolean schoolCatalogue, CaseStatus caseStatus, Case parentCase) throws CreateException, RemoteException, FinderException;
 }
