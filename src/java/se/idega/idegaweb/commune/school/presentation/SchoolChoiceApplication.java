@@ -16,6 +16,7 @@ import javax.ejb.FinderException;
 import se.idega.idegaweb.commune.presentation.CitizenChildren;
 import se.idega.idegaweb.commune.presentation.CommuneBlock;
 import se.idega.idegaweb.commune.school.business.SchoolChoiceBusiness;
+import se.idega.idegaweb.commune.school.business.SchoolCommuneBusiness;
 import se.idega.util.PIDChecker;
 
 import com.idega.block.school.business.SchoolAreaBusiness;
@@ -121,6 +122,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
   protected boolean quickAdmin = false;
   SchoolChoiceBusiness schBuiz;
   SchoolClassMember schoolClassMember = null;
+  SchoolCommuneBusiness schCommBiz;
     SchoolClass schoolClass = null;
     School school = null;
     SchoolYear schoolYear = null;
@@ -139,6 +141,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 			if(ID!=null){
 				childId = Integer.parseInt(ID);
 				userbuiz = (UserBusiness) IBOLookup.getServiceInstance(iwc,UserBusiness.class);
+				schCommBiz = (SchoolCommuneBusiness) IBOLookup.getServiceInstance(iwc, SchoolCommuneBusiness.class);
 
 				User child = userbuiz.getUser(childId);
 				if(child!=null){
@@ -360,7 +363,8 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	     		d = new Date();
 	    }
 	    age = new Age(d);
-      schoolClassMember = schBuiz.getSchoolBusiness().getSchoolClassMemberHome().findByUserAndSeason(child,schBuiz.getCurrentSeason());
+	    SchoolSeason previousSeason = schCommBiz.getPreviousSchoolSeason(schBuiz.getCurrentSeason());
+      schoolClassMember = schBuiz.getSchoolBusiness().getSchoolClassMemberHome().findByUserAndSeason(child,previousSeason);
       schoolClass = schBuiz.getSchoolBusiness().getSchoolClassHome().findByPrimaryKey(new Integer(schoolClassMember.getSchoolClassId()));
       school = schBuiz.getSchool(schoolClass.getSchoolId());
       if (school != null)
