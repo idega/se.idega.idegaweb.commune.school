@@ -28,6 +28,8 @@ public class TextAreaHandler extends TextArea implements InputHandler {
 			this.setContent(stringValue);
 		}
 		this.setStyleClass("commune_Interface");
+		this.setRows(6);
+		this.setWidth("200");
 		return this;
 	}
 
