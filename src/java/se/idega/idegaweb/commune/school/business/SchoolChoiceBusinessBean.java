@@ -667,7 +667,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 			SchoolChoice choice = this.getSchoolChoiceHome().findByPrimaryKey(pk);
 			super.changeCaseStatus(choice, getCaseStatusDenied().getStatus(), performer);
 			choice.store();
-			Iterator children = choice.getChildren();
+			Iterator children = choice.getChildrenIterator();
 			if (children.hasNext()) {
 				Case child = (Case) children.next();
 				super.changeCaseStatus(child, getCaseStatusPreliminary().getStatus(), performer);

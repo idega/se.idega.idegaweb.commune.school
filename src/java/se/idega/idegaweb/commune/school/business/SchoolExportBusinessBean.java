@@ -1,5 +1,5 @@
 /*
- * $Id: SchoolExportBusinessBean.java,v 1.6 2004/03/16 16:23:35 anders Exp $
+ * $Id: SchoolExportBusinessBean.java,v 1.7 2004/09/06 19:45:28 sigtryggur Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -40,10 +40,10 @@ import com.idega.user.data.User;
 /** 
  * Business logic for exporting student placement text files.
  * <p>
- * Last modified: $Date: 2004/03/16 16:23:35 $ by $Author: anders $
+ * Last modified: $Date: 2004/09/06 19:45:28 $ by $Author: sigtryggur $
  *
  * @author Anders Lindman
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  */
 public class SchoolExportBusinessBean extends com.idega.business.IBOServiceBean implements SchoolExportBusiness  {
 	 
@@ -241,7 +241,7 @@ public class SchoolExportBusinessBean extends com.idega.business.IBOServiceBean 
 		try {
 			ICFileHome fileHome = (ICFileHome) com.idega.data.IDOLookup.getHome(ICFile.class);
 			ICFile exportFolder = fileHome.findByFileName(EXPORT_FOLDER_NAME);
-			exportFiles = exportFolder.getChildren();
+			exportFiles = exportFolder.getChildrenIterator();
 		} catch (Exception e) {
 			log(e);
 		}
