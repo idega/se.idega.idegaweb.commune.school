@@ -1,5 +1,5 @@
 /*
- * $Id: NackaCompulsoryHighSchoolPlacementReportModel.java,v 1.1 2004/01/12 10:27:39 anders Exp $
+ * $Id: NackaCompulsoryHighSchoolPlacementReportModel.java,v 1.2 2004/01/12 13:17:12 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -18,10 +18,10 @@ import com.idega.block.school.data.School;
 /** 
  * Report model for placements in Nacka compulsory high schools.
  * <p>
- * Last modified: $Date: 2004/01/12 10:27:39 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/12 13:17:12 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class NackaCompulsoryHighSchoolPlacementReportModel extends ReportModel {
 
@@ -84,7 +84,7 @@ public class NackaCompulsoryHighSchoolPlacementReportModel extends ReportModel {
 	protected Header[] buildColumnHeaders() {
 		Header[] headers = new Header[3];
 		
-		Header h = new Header(KEY_SCHOOL_YEAR, Header.HEADERTYPE_COLUMN_HEADER, 3);
+		Header h = new Header(KEY_SCHOOL_YEAR, Header.HEADERTYPE_COLUMN_HEADER, 4);
 		Header child0 = new Header(KEY_SCHOOL_YEAR_1, Header.HEADERTYPE_COLUMN_NORMAL);
 		Header child1 = new Header(KEY_SCHOOL_YEAR_2, Header.HEADERTYPE_COLUMN_NORMAL);
 		Header child2 = new Header(KEY_SCHOOL_YEAR_3, Header.HEADERTYPE_COLUMN_NORMAL);
