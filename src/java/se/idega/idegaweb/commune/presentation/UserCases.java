@@ -16,9 +16,14 @@ import se.cubecon.bun24.viewpoint.data.Viewpoint;
 import se.cubecon.bun24.viewpoint.presentation.ViewpointForm;
 import se.idega.idegaweb.commune.business.CommuneCaseBusiness;
 import se.idega.idegaweb.commune.childcare.data.AfterSchoolChoiceBMPBean;
+import se.idega.idegaweb.commune.school.business.SchoolChoiceBusiness;
+import se.idega.idegaweb.commune.school.business.SchoolChoiceBusinessBean;
+import se.idega.idegaweb.commune.school.data.SchoolChoice;
+import se.idega.idegaweb.commune.school.data.SchoolChoiceBMPBean;
 
 import com.idega.block.process.business.CaseBusiness;
 import com.idega.block.process.data.Case;
+import com.idega.block.process.data.CaseStatus;
 import com.idega.business.IBOLookup;
 import com.idega.core.builder.data.ICPage;
 import com.idega.presentation.ExceptionWrapper;
@@ -258,13 +263,30 @@ public class UserCases extends CommuneBlock {
 		String caseCode = useCase.getCode(); //Malin
 		
 		String caseCodeAS = new AfterSchoolChoiceBMPBean().getCaseCodeKey();
+		String caseCodeSc = new SchoolChoiceBMPBean().getCaseCodeKey();
+		
+		//String caseStatusOpen = caseBusiness.getCaseStatusOpen().toString();
+		CaseStatus caseStatusOpen = caseBusiness.getCaseStatusOpen();
+		CaseStatus caseStatusPlaced = caseBusiness.getCaseStatusPlaced();
+		SchoolChoiceBusiness schBuiz;
+		schBuiz = (SchoolChoiceBusiness) IBOLookup.getServiceInstance(iwc, SchoolChoiceBusiness.class);
+		
+		
 		final Text status;
 		
 			if (caseCode.equals(caseCodeAS) && !getShowStatusAfterSchoolCare()) {
 				status = getSmallText("-");
 			}
-			else {
-				status = getSmallText(getCaseBusiness(iwc).getLocalizedCaseStatusDescription(useCase.getCaseStatus(), iwc.getCurrentLocale()));
+			else if (caseCode.equals(caseCodeSc) && useCase.getCaseStatus().equals(caseStatusPlaced)) {
+				SchoolChoice choice = schBuiz.getSchoolChoice(((Integer) useCase.getPrimaryKey()).intValue());
+				if (choice != null && !choice.getHasReceivedPlacementMessage())
+					status = getSmallText(getCaseBusiness(iwc).getLocalizedCaseStatusDescription(caseStatusOpen, iwc.getCurrentLocale()));
+				else
+					status = getSmallText(getCaseBusiness(iwc).getLocalizedCaseStatusDescription(useCase.getCaseStatus(), iwc.getCurrentLocale()));
+				
+			}
+			else {			
+					status = getSmallText(getCaseBusiness(iwc).getLocalizedCaseStatusDescription(useCase.getCaseStatus(), iwc.getCurrentLocale()));
 			}
 		
 		
