@@ -26,13 +26,15 @@ public class SchoolCommuneSessionBean extends IBOSessionBean implements SchoolCo
 	protected static final String PARAMETER_SCHOOL_SEASON_ID = "sch_s_s_id";
 	protected static final String PARAMETER_SCHOOL_CLASS_ID = "sch_s_c_id";
 	protected static final String PARAMETER_STUDENT_ID = "sch_st_id";
-
+	protected static final String PARAMETER_GROUP_IDS = "sch_group_ids";
+	
 	protected int _schoolID = -1;
 	protected int _schoolYearID = -1;
 	protected int _schoolSeasonID = -1;
 	protected int _schoolClassID = -1;
 	protected int _studentID = -1;
 	private int _userID = -1;
+	private String[] _schoolGroupIDs = null;
 
 	public CommuneUserBusiness getCommuneUserBusiness() throws RemoteException {
 		return (CommuneUserBusiness) IBOLookup.getServiceInstance(getIWApplicationContext(), CommuneUserBusiness.class);
@@ -190,6 +192,14 @@ public class SchoolCommuneSessionBean extends IBOSessionBean implements SchoolCo
 	}
 	
 	/**
+	 * Returns the GroupIDs parameter.
+	 * @return String
+	 */
+	public String getParameterSchoolGroupIDs() {
+		return PARAMETER_GROUP_IDS;
+	}
+	
+	/**
 	 * @return Returns the studentID.
 	 */
 	public int getStudentID() {
@@ -201,5 +211,19 @@ public class SchoolCommuneSessionBean extends IBOSessionBean implements SchoolCo
 	 */
 	public void setStudentID(int studentID) {
 		this._studentID = studentID;
+	}
+	
+	/**
+	 * @return Returns the schoolGroupIDs.
+	 */
+	public String[] getSchoolGroupIDs() {
+		return this._schoolGroupIDs;
+	}
+	
+	/**
+	 * @param schoolGroupIDs The schoolGroupIDs to set.
+	 */
+	public void setSchoolGroupIDs(String[] schoolGroupIDs) {
+		this._schoolGroupIDs = schoolGroupIDs;
 	}
 }
