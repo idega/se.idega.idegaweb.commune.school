@@ -1,5 +1,5 @@
 /*
- * $Id: PreparedQuery.java,v 1.14 2004/01/27 12:30:14 anders Exp $
+ * $Id: PreparedQuery.java,v 1.15 2004/01/27 13:04:46 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -27,10 +27,10 @@ import com.idega.block.school.data.SchoolSeason;
 /** 
  * Handles the SQL logic for school report calculations.
  * <p>
- * Last modified: $Date: 2004/01/27 12:30:14 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/27 13:04:46 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.14 $
+ * @version $Revision: 1.15 $
  */
 public class PreparedQuery {
 
@@ -262,7 +262,7 @@ public class PreparedQuery {
 		_sqlFrom.put(ST, TABLE_ST);
 		
 		int index = _parameterIndex;
-		_parameterIndex += 4;
+		_parameterIndex++;
 		return index;
 	}
 	
@@ -535,7 +535,7 @@ public class PreparedQuery {
 		_sqlFrom.put(S, TABLE_S);
 		
 		int index = _parameterIndex;
-		_parameterIndex += 4;
+		_parameterIndex += 3;
 		return index;
 	}
 	
@@ -551,6 +551,21 @@ public class PreparedQuery {
 		
 		int index = _parameterIndex;
 		_parameterIndex += 4;
+		return index;
+	}
+	
+	/**
+	 * Set select only the specified work situation.
+	 * @return the index for the work situation (employer type id)
+	 */
+	public int setWorkSituation() {
+		String sql = "ca.work_situation = ?";
+		_sqlWhere.add(sql);
+		
+		_sqlFrom.put(CA, TABLE_CA);
+		
+		int index = _parameterIndex;
+		_parameterIndex++;
 		return index;
 	}
 
