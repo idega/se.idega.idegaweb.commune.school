@@ -621,8 +621,9 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		
 		table.setHeight(row++, 5);
 		table.mergeCells(1, row, 5, row);
+		table.setWidth(1, row, Table.HUNDRED_PERCENT);
 		table.add(chkChildCare, 1, row);
-		table.add(getSmallHeader(iwrb.getLocalizedString("school.child_care_requested", "Interested in after school child care")), 1, row);
+		table.add(getSmallHeader(Text.NON_BREAKING_SPACE + iwrb.getLocalizedString("school.child_care_requested", "Interested in after school child care")), 1, row);
 		
 		table.setWidth(1, "100");
 		table.setWidth(2, "8");
