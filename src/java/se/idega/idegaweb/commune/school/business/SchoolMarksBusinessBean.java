@@ -26,7 +26,7 @@ import se.idega.idegaweb.commune.school.business.SchoolMarkValues;
 /**
  * School marks business
  * <p>
- * $Id: SchoolMarksBusinessBean.java,v 1.6 2003/10/06 13:24:42 laddi Exp $
+ * $Id: SchoolMarksBusinessBean.java,v 1.7 2003/12/02 11:36:39 kjell Exp $
  *
  * I will add some comments on the school marks calculation technique here later.
  * However I am waiting for Nacka to present me that specification.
@@ -190,13 +190,15 @@ public class SchoolMarksBusinessBean extends com.idega.business.IBOServiceBean i
 			resetSchoolValues(); 
 			
 			while (iter.hasNext()) {
-				System.out.println("SCHOOL MARKS SCB:"+ scbCode+" g:"+_gNumber+" vg:"+_vgNumber+" mvg:"+_mvgNumber);
 				SchoolMarks marks = null;
 				Object o = iter.next();
 				if (o != null) {
 					marks = (SchoolMarks) o;
-					meritCount++;
-					totalMerit += getStudentMeritValue(marks);
+					int tmc = getStudentMeritValue(marks);
+					if (tmc > 0) {
+						meritCount++;
+					}
+					totalMerit += tmc;
 				}
 			}
 			float mg = Float.parseFloat(""+MERITE_G);
@@ -1115,7 +1117,6 @@ public class SchoolMarksBusinessBean extends com.idega.business.IBOServiceBean i
 		}	
 		int totalScore = mvgCount * MERITE_MVG;
 		maxCount -= mvgCount;
-
 		// VG
 		if (vgCount > maxCount) {
 			vgCount = maxCount;
@@ -1127,6 +1128,7 @@ public class SchoolMarksBusinessBean extends com.idega.business.IBOServiceBean i
 		if (gCount > maxCount) {
 			gCount = maxCount;
 		}
+		
 		totalScore += gCount * MERITE_G;
 		
 		return totalScore;

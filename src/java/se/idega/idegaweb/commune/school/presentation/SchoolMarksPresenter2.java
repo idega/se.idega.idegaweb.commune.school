@@ -2,6 +2,7 @@ package se.idega.idegaweb.commune.school.presentation;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.lang.Math;
 import java.rmi.RemoteException;
 
 import com.idega.idegaweb.IWResourceBundle;
@@ -19,7 +20,7 @@ import se.idega.idegaweb.commune.presentation.CommuneBlock;
 /**
  * Presents school marks statistics in a formatted table (approved by Nacka)
  * <p>
- * $Id: SchoolMarksPresenter2.java,v 1.5 2003/10/06 19:03:29 kjell Exp $
+ * $Id: SchoolMarksPresenter2.java,v 1.6 2003/12/02 11:36:39 kjell Exp $
  *
  * This block presents School Marks Statistics according to the specifications made my 
  * Jill Salander
@@ -136,14 +137,18 @@ public class SchoolMarksPresenter2  extends CommuneBlock {
 			String smtOld = "";
 			String smtNew = "";
 			int count = 0;
+			int mValue = 0;
+			int mNumber = 0;
 			while (iter.hasNext()) {
 				SchoolStatistics stat = (SchoolStatistics) iter.next();
 				smtNew = stat.getSchoolManagementType();
 				if(smtOld.compareTo(smtNew) != 0) {
 					smtOld = stat.getSchoolManagementType();
 					if(count++  > 0) {
-						table = insertTotals(iwrb.getLocalizedString("school_marks_stats.header1", "Totalt kommunala skolor"), table, row);
+						table = insertTotals(iwrb.getLocalizedString("school_marks_stats.header1", "Totalt kommunala skolor"), table, row, roundAbout(mValue, mNumber));
 						row +=9;
+	//					mValue = 0;
+	//					mNumber = 0;
 					}
 				}
 				table.add(getSmallText(iwrb.getLocalizedString("school_marks_stats.eg", "Ej godkänt")), 2, row);			
@@ -278,12 +283,15 @@ public class SchoolMarksPresenter2  extends CommuneBlock {
 				table.add(getHeader(formatPct(stat.getTotalMarks().tot.percent)), 11, row);
 				row++;
 				table.add(getHeader(iwrb.getLocalizedString("school_marks_stats.merite_value", "Meritvärde")+ ": " +stat.getMeriteValue().number), 1, row);
+				mValue += Integer.parseInt(stat.getMeriteValue().number);
+				mNumber++;
+				
 				row++;
 
 				table.mergeCells(1, row, 11, row);
 				row++;
 			}
-			table = insertTotals(iwrb.getLocalizedString("school_marks_stats.header2", "Totalt Nacka skolor"), table, row);
+			table = insertTotals(iwrb.getLocalizedString("school_marks_stats.header2", "Totalt Nacka skolor"), table, row, roundAbout(mValue, mNumber));
 		} catch (RemoteException e) {
 			e.printStackTrace();		
 			} catch (Exception e) {
@@ -293,7 +301,7 @@ public class SchoolMarksPresenter2  extends CommuneBlock {
 
 	}
 
-	private Table insertTotals(String header, Table table, int row) {	
+	private Table insertTotals(String header, Table table, int row, String meanMerite) {	
 		table.add(getSmallText(iwrb.getLocalizedString("school_marks_stats.eg", "Ej godkänt")), 2, row);			
 		table.add(getSmallText(iwrb.getLocalizedString("school_marks_stats.g", "Godkänt")), 4, row);			
 		table.add(getSmallText(iwrb.getLocalizedString("school_marks_stats.vg", "Väl godkänt")), 6, row);
@@ -431,6 +439,8 @@ public class SchoolMarksPresenter2  extends CommuneBlock {
 		table.add(getHeader(formatPct(tallyMean(_tallyTotal.mvg.percent, _tallyTotal.cmvg))), 9, row);
 		table.add(getHeader(_tallyTotal.tot.number), 10, row);
 		table.add(getHeader(formatPct(tallyMean(_tallyTotal.tot.percent, _tallyTotal.ctot))), 11, row);
+		row++;
+		table.add(getHeader(iwrb.getLocalizedString("school_marks_stats.merite_value", "Meritvärde")+ ": "+meanMerite), 1, row);
 		row++;
 
 		table.mergeCells(1, row, 11, row);
@@ -672,6 +682,13 @@ public class SchoolMarksPresenter2  extends CommuneBlock {
 			e.printStackTrace();		
 		}
 	}
+
+	private String roundAbout(int t, int n) { 
+		float x = (float) (Math.rint(((t/n) * 100)) / 100);
+		int y = (int) x;
+		return ""+y;
+	}
+
 
 	private SchoolMarksBusiness getSchoolMarksBusiness(IWContext iwc) throws Exception {
 		return (SchoolMarksBusiness) com.idega.business.IBOLookup.getServiceInstance(iwc, SchoolMarksBusiness.class);
