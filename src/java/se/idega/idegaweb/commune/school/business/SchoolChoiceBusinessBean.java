@@ -840,7 +840,8 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
         findAllStudentsThatMustDoSchoolChoice ()
         throws RemoteException, FinderException {
         // this is a fake code - just to get some students - must be replaced!
-        final long start = Calendar.getInstance ().getTimeInMillis ();
+        //com.idega.util.Timer works like this.
+        //final long start = Calendar.getInstance ().getTimeInMillis ();
 
         /*
         final Set ids = findStudentsInFinalClassesThatMustDoSchoolChoice ();
@@ -855,8 +856,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
                             + ": " + ids.toString () + " (" + ids.size () + ")");
         */
         final Set ids = findStudentIdsWhoChosedForCurrentSeason ();
-        System.err.println ((Calendar.getInstance ().getTimeInMillis () - start)
-                            + " msec: " + ids.toString () + " (" + ids.size () + ")");
+        //System.err.println ((Calendar.getInstance ().getTimeInMillis () - start)+ " msec: " + ids.toString () + " (" + ids.size () + ")");
 
         final int idCount = ids.size ();
         final SchoolChoiceReminderReceiver [] receivers
@@ -869,8 +869,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
             receivers [i] = new SchoolChoiceReminderReceiver
                     (familyLogic, userBusiness, id);
         }
-        System.err.println ((Calendar.getInstance ().getTimeInMillis () - start)
-                            + " msec");
+        //System.err.println ((Calendar.getInstance ().getTimeInMillis () - start)  + " msec");
         return receivers;
     }
 
