@@ -40,7 +40,7 @@ import com.idega.util.IWTimestamp;
  * Business object with helper methods for CentralPlacingEditor
  */
 public class CentralPlacementBusinessBean extends IBOServiceBean 
-																					implements CentralPlacementBusiness {
+																					{
 																							
 	//  Keys for error messages
 	private static final String KP = "central_placement_business.";
@@ -60,7 +60,9 @@ public class CentralPlacementBusinessBean extends IBOServiceBean
 		int registrator = -1;
 		String placementDateStr = "-1";
 		Timestamp registerDate = null;
-		Timestamp dayBeforeRegDate = null;
+		Timestamp dayBeforeRegStamp = null;
+		Date dayBeforeRegDate = null;
+		//String seeDayBeforeDate = null;
 		String notes = null;
 		SchoolClassMember newPlacement = null;
 		//SchoolClassMember currentPlacement = null;
@@ -130,8 +132,10 @@ public class CentralPlacementBusinessBean extends IBOServiceBean
 				// Get dayBeforeRegDate for further use
 				IWTimestamp dayBeforeStamp = new IWTimestamp(placeStamp.getDate());
 				dayBeforeStamp.addDays(-1);
-				dayBeforeRegDate = dayBeforeStamp.getTimestamp();
-				//String seeDate = dayBeforeStamp.getDateString("yyyyMMdd"); // test
+				dayBeforeRegStamp = dayBeforeStamp.getTimestamp();
+				dayBeforeRegDate = dayBeforeStamp.getDate();
+				
+//				seeDayBeforeDate = dayBeforeStamp.getDateString("yyyyMMdd"); // test
 				//int seeDayInt = dayBeforeRegDate.getDay();  // test
 			  
 				if (placeStamp.isEarlierThan(today)) {
@@ -203,8 +207,8 @@ public class CentralPlacementBusinessBean extends IBOServiceBean
 						int rscPK = Integer.parseInt(arr[i]);
 						/*ResourceClassMember rscPlace =*/ getResourceBusiness(iwc)
 											.createResourcePlacement(rscPK, newPlacementID, placementDateStr);						
-						//Integer rscPlPK = (Integer) rscPlace.getPrimaryKey();
-						//int intPK = rscPlPK.intValue();
+//						Integer rscPlPK = (Integer) rscPlace.getPrimaryKey();
+//						int intPK = rscPlPK.intValue();
 					}					
 				}
 				// Store newPlacement
@@ -215,7 +219,7 @@ public class CentralPlacementBusinessBean extends IBOServiceBean
 			
 			// End old placement
 			if (latestPlacement != null) {
-				latestPlacement.setRemovedDate(dayBeforeRegDate);
+				latestPlacement.setRemovedDate(dayBeforeRegStamp);
 				latestPlacement.store();
 				// finish old placements
 				Collection rscPlaces = getResourceBusiness(iwc).getResourcePlacementsByMemberId(
@@ -223,6 +227,8 @@ public class CentralPlacementBusinessBean extends IBOServiceBean
 				for (Iterator iter = rscPlaces.iterator(); iter.hasNext();) {
 					ResourceClassMember rscPlace = (ResourceClassMember) iter.next();
 					rscPlace.setEndDate(dayBeforeRegDate);
+					//String seeDate = seeDayBeforeDate;
+					rscPlace.store();
 				}
 			}
 			trans.commit();
