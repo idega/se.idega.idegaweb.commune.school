@@ -293,8 +293,10 @@ public class SchoolChoiceApplication extends CommuneBlock {
 			Script F = new Script();
 			S.addFunction("initFilter", getInitFilterScript());
 			S.addFunction("checkApplication", getSchoolCheckScript());
+			S.addFunction("setSelected", getSetSelectedScript());
 
 			S.addFunction("changeFilter", getFilterScript(iwc));
+			S.addFunction("changeFilter2", getFilterScript2(iwc));
 			if (valPreType > 0 || valPreArea > 0 || valPreSchool > 0) {
 				p.setOnLoad(getInitFilterCallerScript(iwc, prmPreType, prmPreArea, prmPreSchool, valPreType, valPreArea, valPreSchool));
 			}
@@ -731,6 +733,13 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	private String getFilterScript(IWContext iwc) throws java.rmi.RemoteException {
 		StringBuffer s = new StringBuffer();
 		s.append("function changeFilter(index,type,area,school){").append(" \n\t");
+		s.append("changeFilter2(index,type,area,school,-1);").append("\n").append("}");
+		return s.toString();
+	}
+ 	
+ 	private String getFilterScript2(IWContext iwc) throws java.rmi.RemoteException {
+		StringBuffer s = new StringBuffer();
+		s.append("function changeFilter2(index,type,area,school,selectedValue){").append(" \n\t");
 		s.append("var typeSelect = type;").append(" \n\t");
 		s.append("var areaSelect = area;").append(" \n\t");
 		s.append("var schoolSelect = school;").append(" \n\t");
@@ -744,11 +753,13 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		//s.append("schoolSelect.options[schoolSelect.options.length] = new Option(\"Veldu skóla\",\"-1\",true,true);").append("\n\t");
 		s.append("}else if(index == 2){").append(" \n\t\t");
 		s.append("selected = areaSelect.options[areaSelect.selectedIndex].value;").append("\n\t\t");
+		s.append("if (selectedValue > -1) \n\t\t\tselected = selectedValue;").append("\n\t\t");
 		s.append("schoolSelect.options.length = 0;").append("\n\t\t");
 		s.append("schoolSelect.options[schoolSelect.options.length] = new Option(\"");
 		s.append(iwrb.getLocalizedString("choose_school", "Choose School")).append("\",\"-1\",true,true);").append("\n\t");
 		s.append("} else if(index == 3){").append("\n\t\t");
 		s.append("selected = schoolSelect.options[schoolSelect.selectedIndex].value;").append("\n\t");
+		s.append("if (selectedValue > -1) \n\t\t\tselected = selectedValue;").append("\n\t\t");
 		s.append("}").append("\n\t\t\t");
 
 		// Data Filling ::
@@ -841,12 +852,24 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	public String getInitFilterScript() {
 		StringBuffer s = new StringBuffer();
 		s.append("function initFilter(type,area,school,type_sel,area_sel,school_sel){ \n  ");
-		s.append("changeFilter( 1 ,type,area,school); \n  ");
-		s.append("type.selectedIndex = type_sel; \n  ");
-		s.append("changeFilter(2,type,area,school); \n  ");
-		s.append("area.selectedIndex = area_sel; \n  ");
-		s.append("changeFilter(3,type,area,school); \n ");
-		s.append("school.selectedIndex = school_sel; \n}");
+		s.append("changeFilter2(1,type,area,school,type_sel); \n  ");
+		s.append("setSelected(type,type_sel); \n  ");
+		s.append("changeFilter2(2,type,area,school,area_sel); \n  ");
+		s.append("setSelected(area,area_sel); \n  ");
+		s.append("changeFilter2(3,type,area,school,school_sel); \n ");
+		s.append("setSelected(school,school_sel); \n}");
+		return s.toString();
+	}
+
+	public String getSetSelectedScript() {
+		StringBuffer s = new StringBuffer();
+		s.append("function setSelected(input,selectedValue) { \n");
+		s.append("\tif (input.length > 1) { \n");
+		s.append("\t\tfor (var a = 0; a < input.length; a++) { \n");
+		s.append("\t\t\tif (input.options[a].value == selectedValue) \n");
+		s.append("\t\t\t\tinput.options[a].selected = true; \n");
+		s.append("\t\t} \n ");
+		s.append("\t} \n}");
 		return s.toString();
 	}
 
