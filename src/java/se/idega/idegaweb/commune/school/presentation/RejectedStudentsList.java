@@ -61,6 +61,10 @@ public class RejectedStudentsList extends SchoolCommuneBlock {
 		Table table = new Table();
 		table.setCellpaddingAndCellspacing(0);
 		table.add(getPagesTable(), 1, 1);
+		if (useStyleNames()) {
+			table.setCellpaddingLeft(1, 1, 12);
+			table.setCellpaddingRight(1, 1, 12);
+		}
 		if (tableWidth == null) {
 			table.setWidth(getWidth());
 		} else {
@@ -106,6 +110,7 @@ public class RejectedStudentsList extends SchoolCommuneBlock {
 		
 		return table;
 	}
+	
 	private Table getStudentList(IWContext iwc) {
 		Table table = new Table();
 		table.setCellpadding(getCellpadding());
@@ -118,8 +123,14 @@ public class RejectedStudentsList extends SchoolCommuneBlock {
 		table.add(getSmallHeader(localize("school.personal_id", "Personal ID")), column++, row);
 		table.add(getSmallHeader(localize("school.address", "Address")), column++, row);
 		table.add(getSmallHeader(localize("school.phone", "Phone")), column++, row);
-		table.add(getSmallHeader(localize("school.gender", "Gender")), column++, row);
+		if (!useStyleNames()) {
+			table.add(getSmallHeader(localize("school.gender", "Gender")), column++, row);
+		}
 		table.add(getSmallHeader(localize("school.from_school", "From School")), column++, row);
+		if (useStyleNames()) {
+			table.setCellpaddingLeft(1, row, 12);
+			table.setCellpaddingRight(table.getColumns(), row, 12);
+		}
 		
 		User applicant;
 		School school;
@@ -137,6 +148,16 @@ public class RejectedStudentsList extends SchoolCommuneBlock {
 				school = getBusiness().getSchoolBusiness().getSchool(new Integer(choice.getCurrentSchoolId()));
 				address = getUserBusiness(iwc).getUsersMainAddress(applicant);
 				
+				if (useStyleNames()) {
+					if (row % 2 == 0) {
+						table.setRowStyleClass(row, getDarkRowClass());
+					}
+					else {
+						table.setRowStyleClass(row, getLightRowClass());
+					}
+					table.setCellpaddingLeft(1, row, 12);
+					table.setCellpaddingRight(table.getColumns(), row, 12);
+				}
 				
 				name = getBusiness().getUserBusiness().getNameLastFirst(applicant, true);
 				table.add(getSmallText(name), column++, row);
@@ -158,10 +179,13 @@ public class RejectedStudentsList extends SchoolCommuneBlock {
 				
 				
 				column++;
-				if (PIDChecker.getInstance().isFemale(applicant.getPersonalID())) {
-					table.add(getSmallText(localize("school.girl", "Girl")), column++, row);
-				}	else {
-					table.add(getSmallText(localize("school.boy", "Boy")), column++, row);
+				if (!useStyleNames()) {
+					if (PIDChecker.getInstance().isFemale(applicant.getPersonalID())) {
+						table.add(getSmallText(localize("school.girl", "Girl")), column++, row);
+					}
+					else {
+						table.add(getSmallText(localize("school.boy", "Boy")), column++, row);
+					}
 				}
 				if (school != null) {
 					String schoolName = school.getName();
@@ -176,11 +200,19 @@ public class RejectedStudentsList extends SchoolCommuneBlock {
 		}
 		
 		
-		table.setHorizontalZebraColored(getZebraColor1(), getZebraColor2());
-		table.setRowColor(1, getHeaderColor());
+		if (!useStyleNames()) {
+			table.setHorizontalZebraColored(getZebraColor1(), getZebraColor2());
+			table.setRowColor(1, getHeaderColor());
+		}
+		else {
+			table.setRowStyleClass(1, getHeaderRowClass());
+		}
 		++row;
 		table.add(getSmallText(localize("school.total_students","Total students")+" : "+totalChoices), 1, row);
 		table.mergeCells(1, row, 4, row);
+		if (useStyleNames()) {
+			table.setCellpaddingLeft(1, row, 12);
+		}
 		return table;
 	}
 

@@ -54,21 +54,41 @@ public class StudentPlacings extends SchoolCommuneBlock {
 			back.setPageToOpen(getResponsePage());
 
 		if (getSession().getStudentID() != -1) {
+			if (useStyleNames()) {
+				table.setCellpaddingLeft(1, row, 12);
+				table.setCellpaddingRight(1, row, 12);
+			}
 			table.add(getInformationTable(iwc), 1, row++);
 			table.setRowHeight(row++, "16");
+			if (useStyleNames()) {
+				table.setCellpaddingLeft(1, row, 12);
+				table.setCellpaddingRight(1, row, 12);
+			}
 			table.add(getSmallHeader(localize("school.placements", "Placements")), 1, row++);
 			table.setRowHeight(row++, "3");
 			table.add(getPlacingsTable(iwc), 1, row++);
 			if (showChoicesTable) {
 				table.setRowHeight(row++, "16");
+				if (useStyleNames()) {
+					table.setCellpaddingLeft(1, row, 12);
+					table.setCellpaddingRight(1, row, 12);
+				}
 				table.add(getSmallHeader(localize("school.choices", "Choices")), 1, row++);
 				table.setRowHeight(row++, "3");
 				table.add(getChoicesTable(iwc), 1, row++);
 			}
 			table.setRowHeight(row++, "16");
+			if (useStyleNames()) {
+				table.setCellpaddingLeft(1, row, 12);
+				table.setCellpaddingRight(1, row, 12);
+			}
 			table.add(back, 1, row++);
 		}
 		else {
+			if (useStyleNames()) {
+				table.setCellpaddingLeft(1, 1, 12);
+				table.setCellpaddingLeft(1, 3, 12);
+			}
 			table.add(getLocalizedHeader("school.no_student_found","No student found."), 1, 1);
 			table.add(back, 1, 3);
 		}
@@ -82,10 +102,19 @@ public class StudentPlacings extends SchoolCommuneBlock {
 		table.setCellpadding(getCellpadding());
 		table.setCellspacing(getCellspacing());
 		table.setColumns(7);
-		table.setRowColor(1, getHeaderColor());
+		if (useStyleNames()) {
+			table.setRowStyleClass(1, getHeaderRowClass());
+		}
+		else {
+			table.setRowColor(1, getHeaderColor());
+		}
 		int column = 1;
 		int row = 1;
 			
+		if (useStyleNames()) {
+			table.setCellpaddingLeft(1, row, 12);
+			table.setCellpaddingRight(table.getColumns(), row, 12);
+		}
 		table.add(getLocalizedSmallHeader("school.season","Season"), column++, row);
 		table.add(getLocalizedSmallHeader("school.school","Provider"), column++, row);
 		table.add(getLocalizedSmallHeader("school.group","Group"), column++, row);
@@ -117,10 +146,22 @@ public class StudentPlacings extends SchoolCommuneBlock {
 			if (member.getRemovedDate() != null)
 				terminated = new IWTimestamp(member.getRemovedDate());
 
-			if (row % 2 == 0)
-				table.setRowColor(row, getZebraColor1());
-			else
-				table.setRowColor(row, getZebraColor2());
+			if (useStyleNames()) {
+				if (row % 2 == 0) {
+					table.setRowStyleClass(row, getDarkRowClass());
+				}
+				else {
+					table.setRowStyleClass(row, getLightRowClass());
+				}
+				table.setCellpaddingLeft(1, row, 12);
+				table.setCellpaddingRight(table.getColumns(), row, 12);
+			}
+			else  {
+				if (row % 2 == 0)
+					table.setRowColor(row, getZebraColor1());
+				else
+					table.setRowColor(row, getZebraColor2());
+			}
 	
 			table.add(getSmallText(season.getSchoolSeasonName()), column++, row);
 			table.add(getSmallText(provider.getSchoolName()), column++, row);
@@ -155,13 +196,22 @@ public class StudentPlacings extends SchoolCommuneBlock {
 		table.setCellpadding(getCellpadding());
 		table.setCellspacing(getCellspacing());
 		table.setColumns(7);
-		table.setRowColor(1, getHeaderColor());
+		if (useStyleNames()) {
+			table.setRowStyleClass(1, getHeaderRowClass());
+		}
+		else {
+			table.setRowColor(1, getHeaderColor());
+		}
 		int column = 1;
 		int row = 1;
 		
 		CaseBusiness caseBusiness = (CaseBusiness) IBOLookup.getServiceInstance(iwc, CaseBusiness.class);
 		Locale currentLocale = iwc.getCurrentLocale();
 		
+		if (useStyleNames()) {
+			table.setCellpaddingLeft(1, row, 12);
+			table.setCellpaddingRight(table.getColumns(), row, 12);
+		}
 		table.add(getLocalizedSmallHeader("school.season","Season"), column++, row);
 		table.add(getLocalizedSmallHeader("school.school","Provider"), column++, row);
 		table.add(getLocalizedSmallHeader("school.status","Status"), column++, row);
@@ -202,10 +252,22 @@ public class StudentPlacings extends SchoolCommuneBlock {
 			orderChoice = choice.getChoiceOrder();
 			langChoice = choice.getLanguageChoice();
 			
-			if (row % 2 == 0)
-				table.setRowColor(row, getZebraColor1());
-			else
-				table.setRowColor(row, getZebraColor2());
+			if (useStyleNames()) {
+				if (row % 2 == 0) {
+					table.setRowStyleClass(row, getDarkRowClass());
+				}
+				else {
+					table.setRowStyleClass(row, getLightRowClass());
+				}
+				table.setCellpaddingLeft(1, row, 12);
+				table.setCellpaddingRight(table.getColumns(), row, 12);
+			}
+			else {
+				if (row % 2 == 0)
+					table.setRowColor(row, getZebraColor1());
+				else
+					table.setRowColor(row, getZebraColor2());
+			}
 			
 			table.add(getSmallText(season.getSchoolSeasonName()), column++, row);
 			table.add(getSmallText(provider.getSchoolName()), column++, row);
