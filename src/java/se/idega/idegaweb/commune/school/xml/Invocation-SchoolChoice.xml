@@ -7,7 +7,7 @@
 <input>
 <class_description class="java.util.Collection" default_display_name="Columns" name="columns">
 <localized_name name="Kolumner" locale="sv_SE"/>
-<class_handler class="se.idega.idegaweb.commune.school.presentation.inputhandler.SchoolGroupColumnsHandler" />
+<class_handler class="se.idega.idegaweb.commune.school.presentation.inputhandler.SchoolChoiceColumnsHandler" />
 </class_description>
 </input>
 <output>
