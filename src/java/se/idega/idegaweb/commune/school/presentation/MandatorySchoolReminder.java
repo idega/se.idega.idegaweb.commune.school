@@ -41,11 +41,11 @@ import com.idega.presentation.Table;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.BackButton;
+import com.idega.presentation.ui.DateInput;
 import com.idega.presentation.ui.Form;
 import com.idega.presentation.ui.HiddenInput;
 import com.idega.presentation.ui.InterfaceObject;
 import com.idega.presentation.ui.SubmitButton;
-import com.idega.presentation.ui.TextInput;
 import com.idega.user.data.Group;
 import com.idega.util.IWTimestamp;
 import com.idega.util.datastructures.QueueMap;
@@ -80,10 +80,15 @@ public class MandatorySchoolReminder extends CommuneBlock {
 	
 	public static final String PRM_SEASON = "season";
 	public static final String PRM_DATE = "date";
+	public static final String PRM_DATE_STRING = "date_string";
+	
+//	private static String PREFIX="cacc_removepi_";
+//	private static String PARAM_MONTH=PREFIX+"month";
 	
 	private Table _fieldTable;
 	
 	public Date _selectedDate = null;
+	private DateInput dateInputDD = null;
 	
 	public String _reportName = "Mandatory school";
 	
@@ -105,21 +110,38 @@ public class MandatorySchoolReminder extends CommuneBlock {
 		}
 	}
 	
-	public void lineUpSeasonSelection(IWContext iwc, IWResourceBundle iwrb){
+	public void lineUpSeasonSelection(IWResourceBundle iwrb){
 //		IWMainApplication iwma = iwc.getApplicationContext().getApplication();		
 //		IWBundle coreBundle = iwma.getBundle(this.IW_CORE_BUNDLE_IDENTIFIER);
-		DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT,iwc.getCurrentLocale()); 
-		Date date = IWTimestamp.getTimestampRightNow();
+//		DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT,iwc.getCurrentLocale()); 
+//		Date date = IWTimestamp.getTimestampRightNow();
 		
 		_fieldTable = new Table(2,2);
 		//_fieldTable.setBorder(1);
 		
 		//
 		_fieldTable.add(getFieldLabel(iwrb.getLocalizedString("MandatorySchoolReminder.date", "Date:")),1,1);		
-		TextInput dateInput = new TextInput(PRM_DATE);
-		dateInput.setContent(df.format(date));
-		setStyle(dateInput);
-		_fieldTable.add(dateInput,2,1);
+//		TextInput dateInput = new TextInput(PRM_DATE);
+//		dateInput.setContent(df.format(date));
+//		setStyle(dateInput);
+//		_fieldTable.add(dateInput,2,1);
+		
+		dateInputDD = new DateInput(PRM_DATE_STRING);
+		dateInputDD.setToCurrentDate();	
+//			monthInput.setToShowDay(false);
+		dateInputDD.setToDisplayDayLast(true);
+		
+		int currentYear = java.util.Calendar.getInstance ().get (java.util.Calendar.YEAR);
+		dateInputDD.setYearRange(currentYear - 1, currentYear + 1);	
+
+//		String date = iwc.getParameter(PARAM_DATE);
+//		if(date!=null){
+//			dateInputDD.setDate(new IWTimestamp(date).getDate());
+//		}
+
+//		InputContainer dateDD = getInputContainer(PARAM_DATE,"Month", dateInputDD);
+		_fieldTable.add(dateInputDD,1,1);
+
 		
 		//choose schoolseason
 //		_fieldTable.add(getFieldLabel(iwrb.getLocalizedString("school_season", "School season:")),1,1);		
@@ -143,15 +165,16 @@ public class MandatorySchoolReminder extends CommuneBlock {
 			parseDate(iwc);
 				
 			if(_action.equals(ACTION_INITIALIZE)){
-				lineUpSeasonSelection(iwc,iwrb);
+				lineUpSeasonSelection(iwrb);
 				Form form = new Form();
 				form.add(_fieldTable);
 				this.add(form);
 			} else if(_action.equals(ACTION_SELECT_SCHOOL_SEASON)){
-				DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT,iwc.getCurrentLocale()); 
+//				DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT,iwc.getCurrentLocale()); 
 				
 				this.add(getFieldLabel(iwrb.getLocalizedString("MandatorySchoolReminder.date", "Date:")));		
-				this.add(getText(df.format(_selectedDate)));
+//				this.add(getText(df.format(_selectedDate)));
+				this.add(getText(iwc.getParameter(PRM_DATE_STRING)));
 				this.add(Text.getBreak());
 				this.add(getText(iwrb.getLocalizedString("number_of_students_not_registered_in_any_class","Number of students not registered in any class")));
 				this.add(Text.getBreak());
@@ -162,7 +185,7 @@ public class MandatorySchoolReminder extends CommuneBlock {
 				
 				Form form = new Form();
 				form.add(generateButton);
-				form.add(new HiddenInput(PRM_DATE,iwc.getParameter(PRM_DATE)));
+				form.add(new HiddenInput(PRM_DATE_STRING,iwc.getParameter(PRM_DATE_STRING)));
 				this.add(form);
 				
 			} else if(_action.equals(ACTION_GET_REPORT)){
@@ -170,7 +193,7 @@ public class MandatorySchoolReminder extends CommuneBlock {
 				presentResultAsReport(iwc,iwrb);
 				
 			} else if(_action.equals(ACTION_CANCEL)){
-				lineUpSeasonSelection(iwc,iwrb);
+				lineUpSeasonSelection(iwrb);
 				Form form = new Form();
 				form.add(_fieldTable);
 				this.add(form);
@@ -218,7 +241,7 @@ public class MandatorySchoolReminder extends CommuneBlock {
 	 */
 	private void parseDate(IWContext iwc) throws ParseException {
 
-		String date = iwc.getParameter(PRM_DATE);
+		String date = iwc.getParameter(PRM_DATE_STRING);
 		if(date != null){
 			DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT,iwc.getCurrentLocale()); 
 			_selectedDate = df.parse(date);
@@ -247,9 +270,11 @@ public class MandatorySchoolReminder extends CommuneBlock {
 			countTable.setCellpadding(0);
 			int index = 1;
 			String labelCourse = iwrb.getLocalizedString("MandatorySchoolReminder.course","Course");
-			Iterator iter = schoolyears.iterator();
-			while (iter.hasNext()) {
-				SchoolYear schoolYear = (SchoolYear)iter.next();
+			for(int i=1; i<=9; i++){
+				SchoolYear schoolYear = sBusiness.getSchoolYearHome().findByYearName(""+i);
+//			Iterator iter = schoolyears.iterator();
+//			while (iter.hasNext()) {
+//				SchoolYear schoolYear = (SchoolYear)iter.next();
 				int schoolYearAge = schoolYear.getSchoolYearAge();
 				int yearOfBirth = currentYear-schoolYearAge;
 				IWTimestamp firstDateOfBirth = new IWTimestamp(1,1,yearOfBirth);
@@ -258,7 +283,10 @@ public class MandatorySchoolReminder extends CommuneBlock {
 				int countResult = -1;
 				
 				try {
-					countResult	= sBusiness.getSchoolClassMemberHome().getNumberOfUsersNotAssignedToClassOnGivenDateNew(communeGroup,new java.sql.Date(_selectedDate.getTime()),currentSeason,firstDateOfBirth.getDate(),lastDateOfBirth.getDate());
+					countResult	= sBusiness.getSchoolClassMemberHome().
+					getNumberOfUsersNotAssignedToClassOnGivenDateNew(
+							communeGroup,new java.sql.Date(_selectedDate.getTime()),currentSeason,
+							firstDateOfBirth.getDate(),lastDateOfBirth.getDate());
 				} catch (IDOException e) {
 					e.printStackTrace();
 				}
@@ -287,7 +315,6 @@ public class MandatorySchoolReminder extends CommuneBlock {
 		JasperReportBusiness jasperBusiness =  (JasperReportBusiness)IBOLookup.getServiceInstance(iwc,JasperReportBusiness.class);
 		DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT,iwc.getCurrentLocale()); 
 		
-		
 		SchoolSeason currentSeason;
 		try {
 			currentSeason = scBusiness.getCurrentSeason();
@@ -298,24 +325,17 @@ public class MandatorySchoolReminder extends CommuneBlock {
 //			Collection schoolyears = sBusiness.getSchoolYearHome().findAllSchoolYears();
 //			IWTimestamp seasonStartDate = new IWTimestamp(currentSeason.getSchoolSeasonStart());
 //			int currentYear = seasonStartDate.getYear();
-			
+		
 		Collection classes = sBusiness.getSchoolClassHome().findBySeason(currentSeason);
 
+		System.out.println("Date is "+_selectedDate);
 		JRDataSource dataSource = getDataSource(iwc,currentSeason,classes);
 		Map parameterMap = getParameterMap(iwrb,df,dataSource,iwc.getCurrentLocale());
 		JasperDesign design = getReportDesign(jasperBusiness,dataSource);
 		String reportPath = generateReport(jasperBusiness,dataSource,parameterMap,design);
 		
 		this.add(getReportLink(iwrb.getLocalizedString("MandatorySchoolReminder.report_name","Mandatory school reminder report"),reportPath));
-
-
 		
-
-
-
-
-
-
 	}
 
 
