@@ -1,5 +1,5 @@
 /*
- * $Id: NackaElementarySchoolPlacementReportModel.java,v 1.10 2004/02/18 15:47:08 anders Exp $
+ * $Id: NackaElementarySchoolPlacementReportModel.java,v 1.11 2004/02/26 07:56:06 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -10,8 +10,11 @@
 package se.idega.idegaweb.commune.school.report.business;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import com.idega.block.school.data.School;
 import com.idega.block.school.data.SchoolArea;
@@ -19,10 +22,10 @@ import com.idega.block.school.data.SchoolArea;
 /** 
  * Report model for placements in Nacka elementary schools.
  * <p>
- * Last modified: $Date: 2004/02/18 15:47:08 $ by $Author: anders $
+ * Last modified: $Date: 2004/02/26 07:56:06 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.10 $
+ * @version $Revision: 1.11 $
  */
 public class NackaElementarySchoolPlacementReportModel extends ReportModel {
 
@@ -44,12 +47,15 @@ public class NackaElementarySchoolPlacementReportModel extends ReportModel {
 	
 	private final static String KEY_REPORT_TITLE = KP + "title_nacka_elementary_school_placements";
 
+	private Map _schools = null;
+	
 	/**
 	 * Constructs this report model.
 	 * @param reportBusiness the report business instance for calculating cell values
 	 */
 	public NackaElementarySchoolPlacementReportModel(ReportBusiness reportBusiness) {
 		super(reportBusiness);
+		_schools = new HashMap();
 	}
 	
 	/**
@@ -63,6 +69,7 @@ public class NackaElementarySchoolPlacementReportModel extends ReportModel {
 			while (iter.hasNext()) {
 				SchoolArea area = (SchoolArea) iter.next();
 				Collection schools = getReportBusiness().getElementarySchools(area);
+				schools = removeEmptySchools(schools, area);
 				rowSize += schools.size() + 1; // Sum rows
 			}
 			rowSize += 1; // Total row
@@ -87,6 +94,7 @@ public class NackaElementarySchoolPlacementReportModel extends ReportModel {
 			while (areaIter.hasNext()) {
 				SchoolArea area = (SchoolArea) areaIter.next();
 				Collection schools = getReportBusiness().getElementarySchools(area);
+				schools = removeEmptySchools(schools, area);
 				headers[headerIndex] = new Header(area.getName(), Header.HEADERTYPE_ROW_NONLOCALIZED_HEADER, schools.size() + 1);
 				Iterator schoolIter = schools.iterator();
 				int childIndex = 0;
@@ -258,6 +266,7 @@ public class NackaElementarySchoolPlacementReportModel extends ReportModel {
 				while (areaIter.hasNext()) {
 					SchoolArea area = (SchoolArea) areaIter.next();
 					Collection schools = getReportBusiness().getElementarySchools(area);
+					schools = removeEmptySchools(schools, area);
 					Iterator schoolIter = schools.iterator();
 					while (schoolIter.hasNext()) {
 						School school = (School) schoolIter.next();
@@ -386,9 +395,6 @@ public class NackaElementarySchoolPlacementReportModel extends ReportModel {
 			}
 			query.setString(2, schoolYearName);
 			query.setInt(3, schoolId);
-			if (schoolId == 43 && schoolYearName.equals("2")) {
-				System.out.println("sql = " + query);
-			}
 		} else { // 6 years old students
 			query = getQuery(QUERY_ELEMENTARY_6_YEAR_STUDENTS);
 			if (query == null) {
@@ -405,5 +411,55 @@ public class NackaElementarySchoolPlacementReportModel extends ReportModel {
 			query.setInt(1, schoolId);
 		}
 		return query.execute();
+	}
+	
+	/**
+	 * Returns the number of student placements for the specified school.
+	 */
+	protected int getCount(int schoolId) throws RemoteException {
+		PreparedQuery query = null;
+		ReportBusiness rb = getReportBusiness();
+		query = getQuery(QUERY_ELEMENTARY);
+		if (query == null) {
+			query = new PreparedQuery(getConnection());
+			query.setSelectCountDistinctUsers();
+			query.setPlacements(rb.getSchoolSeasonId());
+			query.setFourSchoolTypes(); // parameter 1
+			query.setSchoolYearName(); // parameter 2
+			query.setSchool(); // parameter 3
+			query.prepare();
+			setQuery(QUERY_ELEMENTARY, query);
+		}
+
+		int schoolTypeId = rb.getPreSchoolClassTypeId(); 
+		query.setInt(1, schoolTypeId);
+		query.setInt(2, rb.getElementarySchoolTypeId());
+		query.setInt(3, schoolTypeId);
+		query.setInt(4, schoolTypeId);
+
+		query.setInt(5, schoolId);
+
+		return query.execute();
+	}
+	
+	/*
+	 * Remove schools with no placements.
+	 */
+	Collection removeEmptySchools(Collection schools, SchoolArea area) throws RemoteException {
+		Collection c = (Collection) _schools.get(area);
+		if (c == null) {
+			c = new ArrayList();
+			Iterator iter = schools.iterator();
+			while (iter.hasNext()) {
+				School school = (School) iter.next();
+				int id = ((Integer) school.getPrimaryKey()).intValue();
+				int count = getCount(id);
+				if (count > 0) {
+					c.add(school);
+				}
+			}
+			_schools.put(area, c);
+		}
+		return c;
 	}
 }
