@@ -168,6 +168,9 @@ public abstract class SchoolCommuneBlock extends CommuneBlock {
 		menu.setToSubmit();
 		Collection schools = null;
 		Collection schoolTypeIds = sBusiness.findAllSchoolTypesForSchool();
+		if (schoolTypeIds == null){
+			schoolTypeIds = new java.util.HashSet();
+		}
 				
 		if (onlyCentralizedAdministrated) {
 			schools = business.getSchoolBusiness().findAllCentralizedAdministratedByType(schoolTypeIds);			
