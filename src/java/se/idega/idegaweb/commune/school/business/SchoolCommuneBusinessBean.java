@@ -608,9 +608,10 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 		return true;	
 	}
 	
-	public void moveToGroup(int studentID, int schoolClassID, int oldSchoolClassID) throws RemoteException {
+	public void moveToGroup(int studentID, int schoolClassID, int oldSchoolClassID, int schoolYearID) throws RemoteException {
 		SchoolClassMember classMember = getSchoolBusiness().findClassMemberInClass(studentID, oldSchoolClassID);
 		classMember.setSchoolClassId(schoolClassID);
+		classMember.setSchoolYear(schoolYearID);
 		classMember.store();
 	}
 

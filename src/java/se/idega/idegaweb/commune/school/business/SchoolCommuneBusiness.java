@@ -40,7 +40,7 @@ public interface SchoolCommuneBusiness extends com.idega.business.IBOService,com
  public void importStudentInformationToNewClass(com.idega.block.school.data.SchoolClassMember p0,com.idega.block.school.data.SchoolSeason p1)throws java.rmi.RemoteException, java.rmi.RemoteException;
  public void markSchoolClassLocked(com.idega.block.school.data.SchoolClass p0)throws java.rmi.RemoteException, java.rmi.RemoteException;
  public void markSchoolClassReady(com.idega.block.school.data.SchoolClass p0)throws java.rmi.RemoteException, java.rmi.RemoteException;
- public void moveToGroup(int p0,int p1,int p2)throws java.rmi.RemoteException, java.rmi.RemoteException;
+ public void moveToGroup(int p0,int p1,int p2,int p3)throws java.rmi.RemoteException, java.rmi.RemoteException;
  public void setNeedsSpecialAttention(int p0,int p1,boolean p2)throws java.rmi.RemoteException, java.rmi.RemoteException;
  public void setNeedsSpecialAttention(com.idega.block.school.data.SchoolClassMember p0,boolean p2) throws java.rmi.RemoteException;
  public void setNeedsSpecialAttention(com.idega.block.school.data.SchoolClassMember p0,com.idega.block.school.data.SchoolSeason p1,boolean p2)throws java.rmi.RemoteException, java.rmi.RemoteException;
