@@ -1,5 +1,5 @@
 /*
- * $Id: NackaPrivateHighSchoolPlacementReportModel.java,v 1.8 2004/01/21 13:32:50 anders Exp $
+ * $Id: NackaPrivateHighSchoolPlacementReportModel.java,v 1.9 2004/01/21 15:15:05 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -20,10 +20,10 @@ import com.idega.block.school.data.SchoolStudyPath;
 /** 
  * Report model for private high school placements in Nacka.
  * <p>
- * Last modified: $Date: 2004/01/21 13:32:50 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/21 15:15:05 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.8 $
+ * @version $Revision: 1.9 $
  */
 public class NackaPrivateHighSchoolPlacementReportModel extends ReportModel {
 
@@ -77,13 +77,11 @@ public class NackaPrivateHighSchoolPlacementReportModel extends ReportModel {
 			Header child = new Header(studyPath.getCode(), Header.HEADERTYPE_ROW_NONLOCALIZED_NORMAL);
 			headers[headerIndex].setChild(0, child);
 			headerIndex++;
-			if (studyPath.getCode().equals("IB")) {
-				headers[headerIndex] = new Header(KEY_PROVISIONS_PROGRAM, Header.HEADERTYPE_ROW_HEADER, 1);
-				child = new Header("LP", Header.HEADERTYPE_ROW_NONLOCALIZED_NORMAL);
-				headers[headerIndex].setChild(0, child);
-				headerIndex++;
-			}
 		}
+		headers[headerIndex] = new Header(KEY_PROVISIONS_PROGRAM, Header.HEADERTYPE_ROW_HEADER, 1);
+		Header child = new Header("LP", Header.HEADERTYPE_ROW_NONLOCALIZED_NORMAL);
+		headers[headerIndex].setChild(0, child);
+		headerIndex++;
 		
 		Header header = new Header(KEY_TOTAL, Header.HEADERTYPE_ROW_TOTAL);
 		headers[headerIndex] = header;
