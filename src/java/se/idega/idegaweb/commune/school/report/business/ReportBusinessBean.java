@@ -1,5 +1,5 @@
 /*
- * $Id: ReportBusinessBean.java,v 1.20 2004/01/19 08:33:21 anders Exp $
+ * $Id: ReportBusinessBean.java,v 1.21 2004/01/19 09:30:20 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -29,10 +29,10 @@ import com.idega.block.school.data.SchoolStudyPathHome;
 /** 
  * Business logic for school reports.
  * <p>
- * Last modified: $Date: 2004/01/19 08:33:21 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/19 09:30:20 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.20 $
+ * @version $Revision: 1.21 $
  */
 public class ReportBusinessBean extends com.idega.business.IBOServiceBean implements ReportBusiness  {
 
@@ -358,12 +358,14 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 				_schools = new ArrayList();
 				SchoolHome home = getSchoolBusiness().getSchoolHome();
 				School s1 = home.findBySchoolName("Cybergymnasiet");
-				School s2 = home.findBySchoolName("Kunskapsgymnasiet");
+				School s2 = home.findBySchoolName("Kunskapsgymnasiet i Orminge");
 				School s3 = home.findBySchoolName("Mediagymnasiet");
 				_schools.add(s1);
 				_schools.add(s2);
 				_schools.add(s3);
-			} catch (Exception e) {}
+			} catch (Exception e) {
+				log(e);
+			}
 		}
 		return _schools;
 	}
@@ -380,13 +382,15 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 				School s2 = home.findBySchoolName("Nacka Gymnasium A-enheten");
 				School s3 = home.findBySchoolName("Nacka Gymnasium B-enheten");
 				School s4 = home.findBySchoolName("Nacka Gymnasium C-enheten");
-				School s5 = home.findBySchoolName("Samskolan");
+				School s5 = home.findByPrimaryKey(new Integer(26)); // Saltsjobadens Samskola
 				_schools.add(s1);
 				_schools.add(s2);
 				_schools.add(s3);
 				_schools.add(s4);
 				_schools.add(s5);
-			} catch (Exception e) {}
+			} catch (Exception e) {
+				log(e);
+			}
 		}
 		return _schools;
 	}
