@@ -292,11 +292,10 @@ public class UserCases extends CommuneBlock {
                      viewpoint.getPrimaryKey().toString());
             caseNumber = viewpointLink;
         } else {
-            System.err.println ("[" + this.getClass ().getName () + "] Property"
-                                + " 'Viewpoint Page' not set in IdegaWeb"
-                                + " Builder. Can't create links to viewpoints.");
+            System.out.println ("[" + this.getClass ().getName () + "] Property"
+                                + " 'Viewpoint Page' not set in IdegaWeb "
+                                + "Builder. Can't create links to viewpoints.");
         }
-
         messageList.add(caseNumber);
         messageList.add(category);
         messageList.add(subject);
