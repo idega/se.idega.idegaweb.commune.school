@@ -679,7 +679,7 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 		initializeBundlesIfNeeded(currentLocale);
 		CommuneUserBusiness _communeUserService = (CommuneUserBusiness)IBOLookup.getServiceInstance(this.getIWApplicationContext(),CommuneUserBusiness.class);
 		MemberFamilyLogic _familyLogic = (MemberFamilyLogic)IBOLookup.getServiceInstance(this.getIWApplicationContext(),MemberFamilyLogic.class);
-		Group communeGroup = _communeUserService.getRootCitizenGroup(); //((GroupHome)IDOLookup.getHome(Group.class)).findByPrimaryKey(new Integer(3));
+		Group communeGroup = _communeUserService.getRootCitizenGroup();
 
 		ReportableCollection reportData = new ReportableCollection();
 		
@@ -710,7 +710,7 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 
 		CitizenHome citizenHome = (CitizenHome)IDOLookup.getHome(Citizen.class);
 		//maindata
-		Collection students = citizenHome.findCitizensNotAssignedToClassOnGivenDate(new java.sql.Date(selectedDate.getTime()),classes,firstDateOfBirth.getDate(),lastDateOfBirth.getDate());
+		Collection students = citizenHome.findCitizensNotAssignedToClassOnGivenDate(communeGroup,new java.sql.Date(selectedDate.getTime()),classes,firstDateOfBirth.getDate(),lastDateOfBirth.getDate());
 
 
 		
@@ -834,7 +834,7 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 				data.addData(childAddress,childAddressString);
 			}
 			
-			Collection coll = gRelationHome.findGroupsRelationshipsContaining(communeGroup,child);
+			Collection coll = gRelationHome.findGroupsRelationshipsContainingGroupsAndStatus(communeGroup,child,GroupRelation.STATUS_ACTIVE);
 			Iterator iterator = coll.iterator();
 			if(iterator.hasNext()){
 				GroupRelation rel = (GroupRelation)iterator.next();
@@ -872,9 +872,9 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 						String parent1AddressString = stName+((number==null)?"":(" "+number));
 						data.addData(parent1Address,parent1AddressString);
 					}			
-					Collection pColl = gRelationHome.findGroupsRelationshipsContaining(communeGroup,parent);
+					Collection pColl = gRelationHome.findGroupsRelationshipsContainingGroupsAndStatus(communeGroup,parent,GroupRelation.STATUS_ACTIVE);
 					Iterator pIterator = pColl.iterator();
-					if(pIterator.hasNext()){
+					while(pIterator.hasNext()){
 						GroupRelation rel = (GroupRelation)pIterator.next();
 						Timestamp time = rel.getInitiationDate();
 						if(time != null){
@@ -882,7 +882,6 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 						} else {
 							data.addData(parent1GroupInvitationDate,_iwrb.getLocalizedString("CommuneReportBusiness.no_time_specified","No time specified"));
 						}
-				
 					}
 				}
 				
@@ -904,7 +903,7 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 						data.addData(parent2Address,parent2AddressString);
 					}
 								
-					Collection pColl = gRelationHome.findGroupsRelationshipsContaining(communeGroup,parent);
+					Collection pColl = gRelationHome.findGroupsRelationshipsContainingGroupsAndStatus(communeGroup,parent,GroupRelation.STATUS_ACTIVE);
 					Iterator pIterator = pColl.iterator();
 					if(pIterator.hasNext()){
 						GroupRelation rel = (GroupRelation)pIterator.next();

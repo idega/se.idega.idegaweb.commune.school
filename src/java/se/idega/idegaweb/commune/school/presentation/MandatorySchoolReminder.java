@@ -274,7 +274,7 @@ public class MandatorySchoolReminder extends CommuneBlock {
 	/**
 	 * 
 	 */
-	private void presentResultAsReport(IWContext iwc,IWResourceBundle iwrb) throws MandatorySchoolReminderException, IOException, JRException, IDOLookupException, RemoteException, IDOException, CreateException{
+	private void presentResultAsReport(IWContext iwc,IWResourceBundle iwrb) throws MandatorySchoolReminderException, IOException, JRException, IDOException, CreateException, RemoteException, FinderException{
 
 		SchoolBusiness sBusiness =  (SchoolBusiness)IBOLookup.getServiceInstance(iwc,SchoolBusiness.class);
 		SchoolChoiceBusiness scBusiness = (SchoolChoiceBusiness)IBOLookup.getServiceInstance(iwc,SchoolChoiceBusiness.class);
@@ -282,27 +282,29 @@ public class MandatorySchoolReminder extends CommuneBlock {
 		DateFormat df = SimpleDateFormat.getDateInstance(SimpleDateFormat.SHORT,iwc.getCurrentLocale()); 
 		
 		
-		
+		SchoolSeason currentSeason;
 		try {
-			SchoolSeason currentSeason = scBusiness.getCurrentSeason();
+			currentSeason = scBusiness.getCurrentSeason();
+		} catch (FinderException e) {
+			throw new MandatorySchoolReminderException("No current schoolseason found in database",e,iwrb.getLocalizedString("could_not_find_current_school_season","Could not find current school season"));
+		}
+
 //			Collection schoolyears = sBusiness.getSchoolYearHome().findAllSchoolYears();
 //			IWTimestamp seasonStartDate = new IWTimestamp(currentSeason.getSchoolSeasonStart());
 //			int currentYear = seasonStartDate.getYear();
 			
-			Collection classes = sBusiness.getSchoolClassHome().findBySeason(currentSeason);
-	
-			JRDataSource dataSource = getDataSource(iwc,currentSeason,classes);
-			Map parameterMap = getParameterMap(iwrb,df,dataSource);
-			JasperDesign design = getReportDesign(jasperBusiness,dataSource,parameterMap);
-			String reportPath = generateReport(jasperBusiness,dataSource,parameterMap,design);
-			
-			this.add(getReportLink(iwrb.getLocalizedString("MandatorySchoolReminder.report_name","Mandatory school reminder report"),reportPath));
+		Collection classes = sBusiness.getSchoolClassHome().findBySeason(currentSeason);
+
+		JRDataSource dataSource = getDataSource(iwc,currentSeason,classes);
+		Map parameterMap = getParameterMap(iwrb,df,dataSource,iwc.getCurrentLocale());
+		JasperDesign design = getReportDesign(jasperBusiness,dataSource);
+		String reportPath = generateReport(jasperBusiness,dataSource,parameterMap,design);
+		
+		this.add(getReportLink(iwrb.getLocalizedString("MandatorySchoolReminder.report_name","Mandatory school reminder report"),reportPath));
 
 
 		
-		} catch (FinderException e) {
-			throw new MandatorySchoolReminderException("No current schoolseason found in database",e,iwrb.getLocalizedString("could_not_find_current_school_season","Could not find current school season"));
-		}
+
 
 
 
@@ -330,30 +332,38 @@ public class MandatorySchoolReminder extends CommuneBlock {
 	 * @param dataSource
 	 * @return
 	 */
-	private JasperDesign getReportDesign(JasperReportBusiness jasperBusiness,JRDataSource dataSource, Map parameters) throws IOException, JRException {
-		return jasperBusiness.generateLayout(dataSource,parameters);
+	private JasperDesign getReportDesign(JasperReportBusiness jasperBusiness,JRDataSource dataSource) throws IOException, JRException {
+		return jasperBusiness.generateLayout(dataSource);
 	}
 
 	/**
 	 * @param dataSource
 	 * @return
 	 */
-	private Map getParameterMap(IWResourceBundle iwrb,DateFormat dateFormat, JRDataSource _dataSource) {
-		Map _parameterMap = new QueueMap();
+	private Map getParameterMap(IWResourceBundle iwrb,DateFormat dateFormat, JRDataSource _dataSource, Locale currentLocale) {
+		Map parameterMap = new QueueMap();
 		Map extraParameters = null;
 				
 		if(_dataSource != null && _dataSource instanceof ReportableCollection){
 			ReportableCollection reportData = ((ReportableCollection)_dataSource);
+			
+			Iterator iter = reportData.getListOfFields().iterator();
+			while (iter.hasNext()) {
+				ReportableField field = (ReportableField)iter.next();
+				String name = field.getName();
+				parameterMap.put(name,field.getLocalizedName(currentLocale));
+			}
+			
+			reportData.addExtraHeaderParameterAtBeginning("label_selected_date",iwrb.getLocalizedString("MandatorySchoolReminder.label_selected_date","Date"),"selected_date",dateFormat.format(_selectedDate));
+
 			extraParameters = reportData.getExtraHeaderParameters();
 			
-			reportData.addExtraHeaderParameter("label_selected_date",iwrb.getLocalizedString("MandatorySchoolReminder.label_selected_date","Date"),"selected_date",dateFormat.format(_selectedDate));
-
 			if(extraParameters!= null){
-				_parameterMap.putAll(extraParameters);
+				parameterMap.putAll(extraParameters);
 			}
 				
 		}
-		return _parameterMap;
+		return parameterMap;
 	}
 
 	/**
