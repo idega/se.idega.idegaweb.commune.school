@@ -460,8 +460,13 @@ public class SchoolChoiceApplication extends CommuneBlock {
     T.mergeCells(1,1,3,1);
     T.add(getHeader(iwrb.getLocalizedString("school.choice_for_schoolyear","Choice for the schoolyear")),1,1);
     Date d = child.getDateOfBirth();
-    if(d==null)
-      d = new Date();
+    if(d==null) {
+     	if ( child.getPersonalID() != null ) {
+     		d = PersonalIDFormatter.getDateFromPersonalID(child.getPersonalID());
+     	}
+     	if ( d == null )
+     		d = new Date();
+    }
     Age age = new Age(d);
 
     DropdownMenu typeDrop = getTypeDrop(prmType);
@@ -510,7 +515,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
     T.add(chkSchoolChange,2,row);
     T.add(getSmallText(iwrb.getLocalizedString("school.change_of_school","Change of school")),2,row);
     row++;
-     if(age.getYears()==6){
+     if(schoolYear != null && schoolYear.getSchoolYearAge() == 5){
       T.add(txtLangChoice,2,row);
       T.add(getSmallText(iwrb.getLocalizedString("school.six_year_language","Language")),2,row);
     }
@@ -797,34 +802,42 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	  StringBuffer s = new StringBuffer();
 		s.append("\nfunction checkApplication(){\n\t");
 		//s.append("\n\t\t alert('").append("checking choices").append("');");
-		s.append("\n\t var currSchool = ").append("document.").append(prmForm).append(".elements['").append(prmPreSchool).append("'];");
+		/*s.append("\n\t var currSchool = ").append("document.").append(prmForm).append(".elements['").append(prmPreSchool).append("'];");
 		s.append("\n\t var dropOne = ").append("document.").append(prmForm).append(".elements['").append(prmFirstSchool).append("'];");
 		s.append("\n\t var dropTwo = ").append("document.").append(prmForm).append(".elements['").append(prmSecondSchool).append("'];");
 		s.append("\n\t var dropThree = ").append("document.").append(prmForm).append(".elements['").append(prmThirdSchool).append("'];");
 		s.append("\n\t var gradeDrop = ").append("document.").append(prmForm).append(".elements['").append(prmPreGrade).append("'];");
-		s.append("\n\t var one = ").append("dropOne.options[dropOne.selectedIndex].value;");
-		s.append("\n\t var two = ").append("dropTwo.options[dropTwo.selectedIndex].value;");
-		s.append("\n\t var  three = ").append("dropThree.options[dropThree.selectedIndex].value;");
-		s.append("\n\t var  year = gradeDrop.options?").append("gradeDrop.options[gradeDrop.selectedIndex].value").append(":")
-		.append("document.sch_app_the_frm.elements['").append(prmPreGrade).append("'].value;");
-		s.append("\n\t var  school = currSchool.options?").append("currSchool.options[currSchool.selectedIndex].value").append(":")
-		.append("document.sch_app_the_frm.elements['").append(prmPreSchool).append("'].value;");
+		*/
+		s.append("\n\t var one = 0;");//.append("dropOne.options[dropOne.selectedIndex].value;");
+		s.append("\n\t var two = 0;");//.append("dropTwo.options[dropTwo.selectedIndex].value;");
+		s.append("\n\t var three = 0;");//.append("dropThree.options[dropThree.selectedIndex].value;");
+		s.append("\n\t var year = 0;");//.append("gradeDrop.options?").append("gradeDrop.options[gradeDrop.selectedIndex].value").append(":").append("document.sch_app_the_frm.elements['").append(prmPreGrade).append("'].value;");
+		s.append("\n\t var school = 0;");//.append("currSchool.options?").append("currSchool.options[currSchool.selectedIndex].value").append(":").append("document.sch_app_the_frm.elements['").append(prmPreSchool).append("'].value;");
+		
+		s.append("\n\n\t if (dropOne.selectedIndex != null) one = dropOne.options[dropOne.selectedIndex].value;");
+		s.append("\n\t if (dropTwo.selectedIndex != null) two = dropTwo.options[dropTwo.selectedIndex].value;");
+		s.append("\n\t if (dropThree.selectedIndex != null) three = dropThree.options[dropThree.selectedIndex].value;");
+		s.append("\n\t if (gradeDrop != null) year = gradeDrop.options?gradeDrop.options[gradeDrop.selectedIndex].value:document.sch_app_the_frm.elements['"+prmPreGrade+"'].value;");
+		s.append("\n\t if (currSchool != null) school = currSchool.options?currSchool.options[currSchool.selectedIndex].value:document.sch_app_the_frm.elements['"+prmPreSchool+"'].value;");
+
 		// current school check
-		s.append("\n\t if(school <= 0){");
+		s.append("\n\n\t if(school <= 0){");
 		String msg1 = iwrb.getLocalizedString("school_choice.must_set_current_school","You must provide current shool");
 		s.append("\n\t\t\t alert('").append(msg1).append("');");
+		s.append("\n\t\t return false;");
 		s.append("\n\t\t ");
 		s.append("\n\t }");
 
 		// year check
-		s.append("\n\t else if(year <= 0 && school > 0){");
+		s.append("\n\t if(year <= 0 && school > 0){");
 		String msg2 = iwrb.getLocalizedString("school_choice.must_set_grade","You must provide current shool year");
 		s.append("\n\t\t\t alert('").append(msg2).append("');");
+		s.append("\n\t\t return false;");
 		s.append("\n\t\t ");
 		s.append("\n\t }");
 
 		// schoolchoices checked
-		s.append("\n\t else if(one && two && three){");
+		s.append("\n\t if(one > 0 && two > 0 && three > 0){");
 		s.append("\n\t if(one == two || two == three || three == one){");
 		String msg = iwrb.getLocalizedString("school_school.must_not_be_the_same","Please do not choose the same school more than once");
 		s.append("\n\t\t\t alert('").append(msg).append("');");
@@ -832,7 +845,8 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		s.append("\n\t\t }");
 		s.append("\n\t }");
 		s.append("\n\t else{");
-		s.append("\n\t\t alert('").append("no choices").append("');");
+		msg = iwrb.getLocalizedString("school_school.must_fill_out","Please fill out all choices");
+		s.append("\n\t\t alert('").append(msg).append("');");
 		s.append("\n\t\t return false;");
 		s.append("\n\t }");
 		//s.append("\n\t\t alert('").append("nothing wrong").append("');");
