@@ -59,6 +59,12 @@ public interface SchoolChoiceBusiness extends com.idega.business.IBOService,com.
     SchoolChoiceReminder [] findAllSchoolChoiceReminders ()
         throws RemoteException, FinderException;
 
+    Collection findAllChildrenThatMustDoSchoolChoice ()
+        throws RemoteException, FinderException; 
+
 	Set findAllChildSsnsInCurrentSeason ()
         throws RemoteException, FinderException;
+
+    int generateReminderLetter (int reminderId, Collection children)
+        throws RemoteException;
 }

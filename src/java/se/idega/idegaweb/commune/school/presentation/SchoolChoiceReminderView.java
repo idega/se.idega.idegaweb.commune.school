@@ -7,7 +7,7 @@ import com.idega.presentation.ui.*;
 import com.idega.user.business.UserBusiness;
 import com.idega.user.data.User;
 import java.rmi.RemoteException;
-import java.util.Calendar;
+import java.util.*;
 import javax.ejb.*;
 import se.idega.idegaweb.commune.presentation.CommuneBlock;
 import se.idega.idegaweb.commune.school.business.SchoolChoiceBusiness;
@@ -20,10 +20,10 @@ import se.idega.idegaweb.commune.school.data.SchoolChoiceReminder;
  * and entity ejb classes in {@link se.idega.idegaweb.commune.school.data}.
  * <p>
  * <p>
- * Last modified: $Date: 2002/12/19 15:50:50 $ by $Author: staffan $
+ * Last modified: $Date: 2002/12/20 12:05:48 $ by $Author: staffan $
  *
  * @author <a href="http://www.staffannoteberg.com">Staffan Nöteberg</a>
- * @version $Revision: 1.9 $
+ * @version $Revision: 1.10 $
  * @see javax.ejb
  */
 public class SchoolChoiceReminderView extends CommuneBlock {
@@ -59,6 +59,10 @@ public class SchoolChoiceReminderView extends CommuneBlock {
     private static final String SCHOOLCHOICEREMINDER_KEY = PREFIX + "schoolchoicereminder";
     private static final String SHOW_CREATE_FORM_KEY = PREFIX + "show_create_form";
     private static final String SHOW_DETAILS_KEY = PREFIX + "show_details";
+    private static final String SHOW_CHOSE_RECEIVERS_FORM_KEY = PREFIX + "show_chose_receivers_form";
+    private static final String GENERATE_LETTER_KEY = PREFIX + "generate_letter";
+    private static final String CHILDREN_COUNT_KEY = PREFIX + "children_count";
+
 
 	/**
 	 * @param iwc session data like user info etc.
@@ -78,6 +82,11 @@ public class SchoolChoiceReminderView extends CommuneBlock {
             createReminder (iwc);
         } else if (action != null && action.equals (SHOW_DETAILS_KEY)) {
             showDetails (iwc);
+        } else if (action != null
+                   && action.equals (SHOW_CHOSE_RECEIVERS_FORM_KEY)) {
+            showChoseReceiversForm (iwc);
+        } else if (action != null && action.equals (GENERATE_LETTER_KEY)) {
+            generateLetter (iwc);
         } else {
             showAllReminders (iwc);
             showMainMenu (iwc);
@@ -214,17 +223,18 @@ public class SchoolChoiceReminderView extends CommuneBlock {
 		add (table);
     }
 
-    private void showDetails (final IWContext iwc) throws RemoteException,
-                                                          FinderException {
+    private void showDetails (final IWContext iwc)
+        throws RemoteException, CreateException, FinderException {
 		final Table table = new Table();
 		table.setCellpadding(0);
 		table.setCellspacing(0);
 		table.setWidth(getWidth());
 		add(table);
 		final SchoolChoiceBusiness business = getSchoolChoiceBusiness (iwc);
+        final int reminderId = Integer.parseInt (iwc.getParameter
+                                                 (CASE_ID_KEY));
         final SchoolChoiceReminder  reminder
-                = business .findSchoolChoiceReminder
-                (Integer.parseInt (iwc.getParameter (CASE_ID_KEY)));
+                = business .findSchoolChoiceReminder (reminderId);
         int row = 1;
         table.add(getSmallHeader(localize (REMINDER_TEXT_KEY,
                                            REMINDER_TEXT_DEFAULT)), 1, row++);
@@ -240,12 +250,71 @@ public class SchoolChoiceReminderView extends CommuneBlock {
                                            REMINDER_DATE_DEFAULT)), 1, row++);
 		table.setHeight (row++, 6);
         table.add("" + reminder.getReminderDate (), 1, row++);
+		table.setHeight (row++, 24);
+        final Table submitTable = new Table ();
+        final Form form = new Form ();
+        form.add (submitTable);
+        submitTable.add (getStyledInterface(new SubmitButton("Skriv ut nu", ACTION_KEY, SHOW_CHOSE_RECEIVERS_FORM_KEY)), 1, 1);
+        submitTable.add (getStyledInterface(new SubmitButton("Radera")), 2, 1);
+        submitTable.add (getStyledInterface(new SubmitButton("Avbryt")), 3, 1);
+		form.maintainParameter(CASE_ID_KEY);
+        table.add (form, 1, row++);
+    }
 
-		table.setHeight (row++, 12);
-        table.add ("[Radera] [Skriv ut nu] [Avbryt]", 1, row++);
-		table.setHeight (row++, 12);
-        table.add ("Lista med checkboxar och alla som ska få påminnelse", 1, row++);
-        table.add (business.findAllChildSsnsInCurrentSeason ().toString (), 1, row++);
+    private void showChoseReceiversForm (final IWContext iwc)
+        throws RemoteException {
+
+        Form form = new Form();
+		final Table table = new Table();
+        form.add (table);
+		table.setCellpadding(0);
+		table.setCellspacing(0);
+		table.setWidth(getWidth());
+        int row = 1;
+		add(form);
+		final SchoolChoiceBusiness business = getSchoolChoiceBusiness (iwc);
+        final int reminderId = Integer.parseInt (iwc.getParameter
+                                                 (CASE_ID_KEY));
+        try {
+            final SchoolChoiceReminder  reminder
+                    = business .findSchoolChoiceReminder (reminderId);
+            final Collection c = business.findAllChildSsnsInCurrentSeason ();
+            form.add (new HiddenInput (CHILDREN_COUNT_KEY, "" + c.size ()));
+            int j = 0;
+            for (Iterator i = c.iterator (); i.hasNext ();) {
+                final String ssn = i.next ().toString ();
+                final CheckBox checkBox = new CheckBox (CHILDREN_COUNT_KEY + j++, ssn);
+                checkBox.setChecked (true);
+                table.add (checkBox, 1, row);
+                table.add (ssn, 2, row++);
+            }
+        } catch (FinderException e) {
+            e.printStackTrace ();
+        }
+		table.setHeight (row++, 24);
+        table.add (getStyledInterface(new SubmitButton("Generera dokument", ACTION_KEY, GENERATE_LETTER_KEY)), 1, row);
+        /*
+        logTime (table, row++);
+        table.add (c.toString (), 1, row++);
+        logTime (table, row++);
+        final int docId = business.generateReminderLetter (reminderId, c);
+        logTime (table, row++);
+        Link viewLink = new Link("BRA LÄNK");
+        viewLink.setFile(docId);
+        table.add (viewLink, 1, row++);
+        */
+    }
+
+    private void generateLetter (final IWContext iwc) throws RemoteException {
+        int count = Integer.parseInt (iwc.getParameter (CHILDREN_COUNT_KEY));
+        for (int i = 0; i < count; i++) {
+            add (iwc.getParameter (CHILDREN_COUNT_KEY + i));
+        }
+    }
+
+    private static void logTime (final Table table, final int row) {
+        System.err.println (Calendar.getInstance ().getTime ().toString ());
+        table.add (Calendar.getInstance ().getTime ().toString (), 1, row);
     }
 
 	private TextInput getSingleInput (IWContext iwc, final String paramId, final int maxLength) {
@@ -264,16 +333,19 @@ public class SchoolChoiceReminderView extends CommuneBlock {
 		return textInput;
 	}
 
-	private Link getUserHomePageLink (final IWContext iwc)
-        throws RemoteException {
+	private Link getUserHomePageLink (final IWContext iwc) {
 		final Text userHomePageText
                 = new Text (getLocalizedString (GOBACKTOMYPAGE_KEY,
                                                 GOBACKTOMYPAGE_DEFAULT));
- 		final UserBusiness userBusiness = (UserBusiness)
-                IBOLookup.getServiceInstance (iwc, UserBusiness.class);
-        final User user = iwc.getCurrentUser ();
 		final Link link = new Link (userHomePageText);
-        link.setPage (userBusiness.getHomePageIDForUser (user));
+        try {
+            final UserBusiness userBusiness = (UserBusiness)
+                    IBOLookup.getServiceInstance (iwc, UserBusiness.class);
+            final User user = iwc.getCurrentUser ();
+            link.setPage (userBusiness.getHomePageIDForUser (user));
+        } catch (RemoteException e) {
+            e.printStackTrace ();
+        }
 		return link;
 	}
 

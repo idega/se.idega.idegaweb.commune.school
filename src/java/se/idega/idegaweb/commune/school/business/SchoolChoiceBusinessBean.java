@@ -24,6 +24,18 @@ import com.idega.user.business.UserBusiness;
 import com.idega.user.data.Group;
 import com.idega.user.data.User;
 import com.idega.util.IWTimestamp;
+
+
+import com.idega.io.MemoryFileBuffer;
+import com.idega.io.MemoryInputStream;
+import com.idega.io.MemoryOutputStream;
+import com.idega.core.data.ICFile;
+import com.idega.core.data.ICFileHome;
+import com.lowagie.text.Document;
+import com.lowagie.text.Paragraph;
+import com.lowagie.text.pdf.PdfWriter;
+import java.io.OutputStream;
+import java.io.InputStream;
 /**
  * Title:
  * Description:
@@ -519,23 +531,6 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		return MessageFormat.format(desc, arguments);
 	}
 	
-	public Set findAllChildSsnsInCurrentSeason() throws RemoteException,
-                                                        FinderException {
-        final Integer currentYearId
-                = (Integer) getCurrentSeason ().getPrimaryKey ();
-        final Collection choices
-                = getSchoolChoiceHome().findBySeason(currentYearId.intValue ());
-        final Set childSsns = new HashSet ();
-        for (Iterator i = choices.iterator (); i.hasNext ();) {
-            final SchoolChoice choice = (SchoolChoice) i.next ();
-            final int childId = choice.getChildId();
-            final User child = getUserBusiness().getUser(childId);
-            final String childSsn = child.getPersonalID();
-            childSsns.add (childSsn);
-        }
-        return childSsns;
-	}
-	
 	public SchoolChoice findByStudentAndSchoolAndSeason(int studentID, int schoolID, int seasonID) throws RemoteException {
 		try {
 			Collection coll = getSchoolChoiceHome().findByChildAndSchoolAndSeason(studentID, schoolID, seasonID);
@@ -671,6 +666,10 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
         reminder.store ();
     }
 
+    public Collection findAllChildrenThatMustDoSchoolChoice () {
+        throw new UnsupportedOperationException ();
+    }
+
     public SchoolChoiceReminder [] findAllSchoolChoiceReminders ()
         throws RemoteException, FinderException {
         return getSchoolChoiceReminderHome ().findAll ();
@@ -687,4 +686,54 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
         return (SchoolChoiceReminderHome) IDOLookup.getHome
                 (SchoolChoiceReminder.class);
     }
-}
+
+	/**
+	 * @param children --
+	 * @return int id of document
+	 */
+    public int generateReminderLetter
+        (final int reminderId, final Collection children)
+        throws RemoteException {
+        try{
+            MemoryFileBuffer buffer = new MemoryFileBuffer();
+            OutputStream mos = new MemoryOutputStream(buffer);
+            InputStream mis = new MemoryInputStream(buffer);
+            Document document = new Document();
+            PdfWriter.getInstance(document, mos);
+            document.open();
+            document.add(new Paragraph("Hello World"));
+            document.add(new Paragraph(children.toString ()));
+            document.close();
+            ICFileHome icFileHome = (ICFileHome) getIDOHome(ICFile.class);
+            ICFile file = icFileHome.create();
+            file.setFileValue(mis);
+            file.setMimeType("application/x-pdf");
+            file.setName("reminder_" + reminderId + ".pdf");
+            file.setFileSize(buffer.length());
+            file.store();
+            System.err.println ("docid=" + file.getID ());
+            return file.getID ();
+        } catch (Exception e) {
+            e.printStackTrace ();
+            throw new RemoteException ("Couldn't generate reminder "
+                                       + reminderId, e);
+        }
+    }
+        
+	public Set findAllChildSsnsInCurrentSeason() throws RemoteException,
+                                                        FinderException {
+        final Integer currentYearId
+                = (Integer) getCurrentSeason ().getPrimaryKey ();
+        final Collection choices
+                = getSchoolChoiceHome().findBySeason(currentYearId.intValue ());
+        final Set childSsns = new HashSet ();
+        for (Iterator i = choices.iterator (); i.hasNext ();) {
+            final SchoolChoice choice = (SchoolChoice) i.next ();
+            final int childId = choice.getChildId();
+            final User child = getUserBusiness().getUser(childId);
+            final String childSsn = child.getPersonalID();
+            childSsns.add (childSsn);
+        }
+        return childSsns;
+	}
+ }
