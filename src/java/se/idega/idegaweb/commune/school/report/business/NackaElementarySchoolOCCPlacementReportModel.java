@@ -1,5 +1,5 @@
 /*
- * $Id: NackaElementarySchoolOCCPlacementReportModel.java,v 1.6 2004/01/22 11:39:53 anders Exp $
+ * $Id: NackaElementarySchoolOCCPlacementReportModel.java,v 1.7 2004/02/17 18:23:35 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -19,10 +19,10 @@ import com.idega.block.school.data.SchoolArea;
 /** 
  * Report model for placements in Nacka elementary schools for commune citizens outside Nacka.
  * <p>
- * Last modified: $Date: 2004/01/22 11:39:53 $ by $Author: anders $
+ * Last modified: $Date: 2004/02/17 18:23:35 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  */
 public class NackaElementarySchoolOCCPlacementReportModel extends ReportModel {
 
@@ -372,7 +372,7 @@ public class NackaElementarySchoolOCCPlacementReportModel extends ReportModel {
 			query = getQuery(QUERY_ELEMENTARY);
 			if (query == null) {
 				query = new PreparedQuery(getConnection());
-				query.setSelectCount();
+				query.setSelectCountDistinctUsers();
 				query.setPlacements(rb.getSchoolSeasonId());
 				query.setNotNackaCitizens();
 				query.setSchoolType(); // parameter 1
@@ -392,7 +392,7 @@ public class NackaElementarySchoolOCCPlacementReportModel extends ReportModel {
 			query = getQuery(QUERY_ELEMENTARY_6_YEAR_STUDENTS);
 			if (query == null) {
 				query = new PreparedQuery(getConnection());
-				query.setSelectCount();
+				query.setSelectCountDistinctUsers();
 				query.setPlacements(getReportBusiness().getSchoolSeasonId());
 				query.setNotNackaCitizens();
 				query.setOnlyStudentsBorn(getReportBusiness().getSchoolSeasonStartYear() - 6);

@@ -1,5 +1,5 @@
 /*
- * $Id: NackaElementarySchoolPlacementReportModel.java,v 1.8 2004/01/22 11:39:53 anders Exp $
+ * $Id: NackaElementarySchoolPlacementReportModel.java,v 1.9 2004/02/17 18:23:35 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -19,10 +19,10 @@ import com.idega.block.school.data.SchoolArea;
 /** 
  * Report model for placements in Nacka elementary schools.
  * <p>
- * Last modified: $Date: 2004/01/22 11:39:53 $ by $Author: anders $
+ * Last modified: $Date: 2004/02/17 18:23:35 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.8 $
+ * @version $Revision: 1.9 $
  */
 public class NackaElementarySchoolPlacementReportModel extends ReportModel {
 
@@ -371,7 +371,7 @@ public class NackaElementarySchoolPlacementReportModel extends ReportModel {
 			query = getQuery(QUERY_ELEMENTARY);
 			if (query == null) {
 				query = new PreparedQuery(getConnection());
-				query.setSelectCount();
+				query.setSelectCountDistinctUsers();
 				query.setPlacements(rb.getSchoolSeasonId());
 				query.setSchoolType(); // parameter 1
 				query.setSchoolYearName(); // parameter 2
@@ -390,7 +390,7 @@ public class NackaElementarySchoolPlacementReportModel extends ReportModel {
 			query = getQuery(QUERY_ELEMENTARY_6_YEAR_STUDENTS);
 			if (query == null) {
 				query = new PreparedQuery(getConnection());
-				query.setSelectCount();
+				query.setSelectCountDistinctUsers();
 				query.setPlacements(getReportBusiness().getSchoolSeasonId());
 				query.setOnlyStudentsBorn(getReportBusiness().getSchoolSeasonStartYear() - 6);
 				query.setSchoolYearName("1");
