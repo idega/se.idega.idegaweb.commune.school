@@ -1,5 +1,5 @@
 /*
- * $Id: NackaCommuneHighSchoolStudyPathReportModel.java,v 1.2 2004/02/17 21:24:52 anders Exp $
+ * $Id: NackaCommuneHighSchoolStudyPathReportModel.java,v 1.3 2004/02/24 07:40:48 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -13,6 +13,7 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.TreeMap;
 
 import com.idega.block.school.data.School;
 import com.idega.block.school.data.SchoolStudyPath;
@@ -20,10 +21,10 @@ import com.idega.block.school.data.SchoolStudyPath;
 /** 
  * Report model for Nacka high school student placements with all study paths listed.
  * <p>
- * Last modified: $Date: 2004/02/17 21:24:52 $ by $Author: anders $
+ * Last modified: $Date: 2004/02/24 07:40:48 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class NackaCommuneHighSchoolStudyPathReportModel extends ReportModel {
 
@@ -44,12 +45,14 @@ public class NackaCommuneHighSchoolStudyPathReportModel extends ReportModel {
 	private final static String QUERY_OTHER_COMMUNES = "other_communes";
 	private final static String QUERY_NACKA_COMMUNE = "nacka_commune";
 	private final static String QUERY_STUDY_PATH = "study_path";
+	private final static String QUERY_STUDY_PATH_AMOUNT = "study_path_amount";
 
 	private final static String KEY_REPORT_TITLE = KP + "title_nacka_commune_high_school_all_study_paths";
 	
 	private Collection _studyPaths = null;
 	private School[] _schools = null;
 	private School[] _nackaGymnasium = null;
+	private int[] _subtractRow = null;
 
 	/**
 	 * Constructs this report model.
@@ -299,6 +302,7 @@ public class NackaCommuneHighSchoolStudyPathReportModel extends ReportModel {
 							value += getCell(row, 2).getFloatValue();
 						} else {
 							value = getHighSchoolNackaCommunePlacementCount(_schools[0], schoolYearName, studyPathPrefix);
+							value -= subtractRows(row, column);
 						}
 						break;
 					case COLUMN_METHOD_SCHOOL_2:
@@ -308,6 +312,7 @@ public class NackaCommuneHighSchoolStudyPathReportModel extends ReportModel {
 							value += getCell(row, 6).getFloatValue();
 						} else {
 							value = getNackaGymnasiumPlacementCount(schoolYearName, studyPathPrefix);
+							value -= subtractRows(row, column);
 						}
 						break;
 					case COLUMN_METHOD_SCHOOL_3:
@@ -317,6 +322,7 @@ public class NackaCommuneHighSchoolStudyPathReportModel extends ReportModel {
 							value += getCell(row, 10).getFloatValue();
 						} else {
 							value = getHighSchoolNackaCommunePlacementCount(_schools[2], schoolYearName, studyPathPrefix);
+							value -= subtractRows(row, column);
 						}
 						break;
 					case COLUMN_METHOD_TOTAL:
@@ -326,9 +332,11 @@ public class NackaCommuneHighSchoolStudyPathReportModel extends ReportModel {
 						break;
 					case COLUMN_METHOD_OTHER_COMMUNE_CITIZENS:
 						value = getHighSchoolOCCPlacementCount(studyPathPrefix);
+						value -= subtractRows(row, column);
 						break;
 					case COLUMN_METHOD_NACKA_CITIZENS:
 						value = getHighSchoolNackaCitizenPlacementCount(studyPathPrefix);
+						value -= subtractRows(row, column);
 						break;
 				}
 				break;
@@ -341,6 +349,22 @@ public class NackaCommuneHighSchoolStudyPathReportModel extends ReportModel {
 		}
 		
 		return value;
+	}
+
+	/*
+	 * Subtract sub study path rows. 
+	 */
+	private int subtractRows(int row, int column) {
+		int subtract = 0;
+		for (int i = 0; i < _subtractRow.length; i++) {
+			int subtractRow = _subtractRow[i];
+			if (row == subtractRow) {
+				Cell cell = getCell(row, column);
+				subtract += cell.getValue();
+			}
+			
+		}
+		return subtract;
 	}
 
 	/**
@@ -480,16 +504,56 @@ public class NackaCommuneHighSchoolStudyPathReportModel extends ReportModel {
 			_studyPaths = new ArrayList();
 			ReportBusiness rb = getReportBusiness();
 			Collection c = rb.getAllStudyPathsIncludingDirections();
+			TreeMap map = new TreeMap();
+			_subtractRow = new int[c.size()];
 			Iterator iter = c.iterator();
+			while (iter.hasNext()) {
+				SchoolStudyPath sp = (SchoolStudyPath) iter.next();
+				map.put(sp.getCode(), sp);
+			}
+			iter = map.values().iterator();
+			int studyPathAmount = 0;
+			int row = 0;
+			int studyPathRow = 0;
 			while (iter.hasNext()) {
 				SchoolStudyPath sp = (SchoolStudyPath) iter.next();
 				String code = sp.getCode();
 				int count = getHighSchoolPlacementCount(code);
 				if (count > 0) {
-					_studyPaths.add(sp);
+					if (code.length() == 2) {
+						studyPathAmount = getStudyPathAmount(code);
+						_studyPaths.add(sp);
+						studyPathRow = row;
+						row++;
+					} else {
+						int subStudyPathAmount = getStudyPathAmount(code);
+						String description = sp.getDescription();
+						if (studyPathAmount != subStudyPathAmount || description.matches("lokal inriktning")) {
+							_studyPaths.add(sp);
+							_subtractRow[row] = studyPathRow;
+							row++;
+						}
+					}
 				}
 			}			
 		}
 		return _studyPaths;
+	}
+	
+	/**
+	 * Returns the amount for the specified study path code.
+	 */
+	protected int getStudyPathAmount(String studyPathCode) {
+		PreparedQuery query = null;
+		query = getQuery(QUERY_STUDY_PATH_AMOUNT);
+		if (query == null) {
+			query = new PreparedQuery(getConnection());
+			query.setSelectMaxStudyPathAmount();
+			query.setStudyPathAmount(); // parameter 1
+			query.prepare();
+			setQuery(QUERY_STUDY_PATH_AMOUNT, query);
+		}
+		query.setString(1, studyPathCode);
+		return query.execute();
 	}
 }
