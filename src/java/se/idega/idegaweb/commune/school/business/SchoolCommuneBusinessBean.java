@@ -478,8 +478,10 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 	public void finalizeGroup(SchoolClass schoolClass, String subject, String body, boolean confirmation) throws RemoteException {
 		SchoolChoice choice;
 		User student;
+		body = TextSoap.findAndReplace(body, "$barn$", "{0}");
 		Collection choices = getSchoolChoiceBusiness().getApplicationsInClass(schoolClass, confirmation);
 		Iterator iter = choices.iterator();
+		String newBody;
 		
 		while (iter.hasNext()) {
 			choice = (SchoolChoice) iter.next();
@@ -493,18 +495,18 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 			}
 			choice.store();
 			
-			body = TextSoap.findAndReplace(body, "$barn$", "{0}");
 			Object[] arguments = { student.getNameLastFirst(true) };
-			body = MessageFormat.format(body, arguments);
+			newBody = MessageFormat.format(body, arguments);
 			
 			User parent = choice.getOwner();
 			User child = choice.getChild();	
 					
 			if (getSchoolChoiceBusiness().getReceiver(parent, child) == child){
-				getMessageBusiness().createUserMessage(child, subject, body);	
+				getMessageBusiness().createUserMessage(child, subject, newBody);	
 							
-			} else {
-				getMessageBusiness().createUserMessage(parent, subject, body);
+			}
+			else {
+				getMessageBusiness().createUserMessage(parent, subject, newBody);
 	
 				try {
 					Collection parents = getMemberFamilyLogic().getCustodiansFor(student);
@@ -513,7 +515,7 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 						while (iterator.hasNext()) {
 							User otherParent = (User) iterator.next();
 							if (!getUserBusiness().haveSameAddress(parent, otherParent)) {
-								getMessageBusiness().createUserMessage(otherParent, subject, body);
+								getMessageBusiness().createUserMessage(otherParent, subject, newBody);
 							}
 						}	
 					}
