@@ -477,7 +477,9 @@ public class SchoolChoiceApplication extends CommuneBlock {
 					String initFunction2 = getInitFilterCallerScript(prmType, prmSecondArea, prmSecondSchool, valType, valSecondArea, valSecondSchool, false);
 					String initFunction3 = getInitFilterCallerScript(prmType, prmThirdArea, prmThirdSchool, valType, valThirdArea, valThirdSchool, false);
 					initScript.addFunction("sch_init3", initFunction3);
+					getParentPage().setOnLoad(initFunction3);
 					initScript.addFunction("sch_init2", initFunction2);
+					getParentPage().setOnLoad(initFunction2);
 				}
 
 				String initFunction = getInitFilterCallerScript(prmType, prmFirstArea, prmFirstSchool, valType, valFirstArea, valFirstSchool, false);
