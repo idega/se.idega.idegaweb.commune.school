@@ -86,7 +86,7 @@ public interface SchoolChoiceBusiness extends com.idega.business.IBOService,com.
 	IWTimestamp getSchoolChoiceEndDate () throws RemoteException, FinderException;
 	IWTimestamp getSchoolChoiceCriticalDate () throws RemoteException, FinderException;
 	
-	public se.idega.idegaweb.commune.school.data.AfterSchoolChoice findChoicesByChildAndProviderAndSeason(int p0,int p1,int p2)throws javax.ejb.FinderException, java.rmi.RemoteException;
+	public se.idega.idegaweb.commune.care.data.AfterSchoolChoice findChoicesByChildAndProviderAndSeason(int p0,int p1,int p2)throws javax.ejb.FinderException, java.rmi.RemoteException;
 
     public boolean rejectApplication(ChildCareApplication application,
             String subject, String message, User user)
