@@ -1,5 +1,5 @@
 /*
- * $Id: ReportPDFWriter.java,v 1.10 2004/03/02 09:41:48 laddi Exp $
+ * $Id: ReportPDFWriter.java,v 1.11 2004/03/03 08:18:38 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -37,10 +37,10 @@ import com.lowagie.text.pdf.PdfWriter;
 /** 
  * Creates report files in Adobe PDF format.
  * <p>
- * Last modified: $Date: 2004/03/02 09:41:48 $ by $Author: laddi $
+ * Last modified: $Date: 2004/03/03 08:18:38 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.10 $
+ * @version $Revision: 1.11 $
  */
 public class ReportPDFWriter {
 
@@ -124,13 +124,13 @@ public class ReportPDFWriter {
 		MemoryFileBuffer buffer = new MemoryFileBuffer();
 		MemoryOutputStream mos = new MemoryOutputStream(buffer);
 		
-		Document document = new Document(PageSize.A4.rotate(), 50, 50, 50, 50);
+		Document document = new Document(PageSize.A4, 50, 50, 50, 50);
 		PdfWriter writer = PdfWriter.getInstance(document, mos);
 		
 		String titleKey = _reportModel.getReportTitleLocalizationKey();
 		String title = localize(titleKey, titleKey);
-		_normalFont = new Font(Font.HELVETICA, 8, Font.NORMAL);
-		_boldFont = new Font(Font.HELVETICA, 8, Font.BOLD);
+		_normalFont = new Font(Font.HELVETICA, 7, Font.NORMAL);
+		_boldFont = new Font(Font.HELVETICA, 7, Font.BOLD);
 		
 		document.addTitle(title);
 		document.addAuthor("Agura IT Reports");
@@ -140,7 +140,7 @@ public class ReportPDFWriter {
 		String dateString = new Date(System.currentTimeMillis()).toString();
 		
 		document.add(new Phrase(title + " " + dateString + "\n\n", _boldFont));
-		document.add(new Phrase("\n\n", _boldFont));
+		document.add(new Phrase("\n", _boldFont));
 
 		int cols = _reportModel.getColumnSize() + 1;
 		Table table = new Table(cols);
@@ -160,7 +160,7 @@ public class ReportPDFWriter {
 			_widths[i] += 1;
 			totalWidth += _widths[i];
 		}
-		int width = (100 * totalWidth) / 140;
+		int width = (100 * totalWidth) / 95;
 		if (width > 100) {
 			width = 100;
 		}
