@@ -1328,7 +1328,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 						checkCanApply[1] = true;
 						
 					//temporary, for testing only...
-					if (_isForTesting = false) {
+					if (_isForTesting) {
 						checkCanApply[0] = true;
 						checkCanApply[1] = false;
 					}
