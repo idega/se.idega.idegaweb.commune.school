@@ -1,5 +1,5 @@
 /*
- * $Id: ReportBlock.java,v 1.25 2004/01/30 13:42:19 anders Exp $
+ * $Id: ReportBlock.java,v 1.26 2004/01/30 14:39:23 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -29,10 +29,10 @@ import com.idega.presentation.ui.PrintButton;
 /** 
  * This is the base class for school report blocks.
  * <p>
- * Last modified: $Date: 2004/01/30 13:42:19 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/30 14:39:23 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.25 $
+ * @version $Revision: 1.26 $
  */
 public class ReportBlock extends CommuneBlock {
 
@@ -406,7 +406,7 @@ public class ReportBlock extends CommuneBlock {
 	String formatNumber(String s) {
 		int length = s.length();
 		if (length > 3) {
-			s = s.substring(0, (length - 3)) + " " + s.substring(3);
+			s = s.substring(0, (length - 3)) + " " + s.substring(length - 3);
 		}
 		return s;
 	}
