@@ -169,7 +169,8 @@ public abstract class SchoolCommuneBlock extends CommuneBlock {
 				rb2.setToSubmit();
 				table.add(rb1,2,row);
 				table.add(getSmallHeader(localize("school.yes","Yes")+Text.NON_BREAKING_SPACE),2,row);
-
+					
+				table.setNoWrap(3, row);
 				table.add(rb2,3,row);
 				table.add(getSmallHeader(localize("school.no","No")+Text.NON_BREAKING_SPACE),3,row);
 

@@ -50,10 +50,10 @@ import com.idega.user.data.User;
  * and entity ejb classes in {@link se.idega.idegaweb.commune.school.data}.
  * <p>
  * <p>
- * Last modified: $Date: 2004/01/28 12:06:54 $ by $Author: staffan $
+ * Last modified: $Date: 2004/02/06 15:21:39 $ by $Author: malin $
  *
  * @author <a href="http://www.staffannoteberg.com">Staffan Nöteberg</a>
- * @version $Revision: 1.40 $
+ * @version $Revision: 1.41 $
  * @see javax.ejb
  */
 public class SchoolChoiceReminderView extends CommuneBlock {
@@ -272,6 +272,7 @@ public class SchoolChoiceReminderView extends CommuneBlock {
 		table.add (dropdown, 1, row++);
 		table.add (submit, 1, row++);
 		form.add (table);
+		
 		add (form);        
     }
 
@@ -310,6 +311,7 @@ public class SchoolChoiceReminderView extends CommuneBlock {
                                                      CREATE_DEFAULT);
 		table.add(submit, 1, row++);
 		form.add(table);
+		
 		add(form);
     }
 
@@ -389,6 +391,7 @@ public class SchoolChoiceReminderView extends CommuneBlock {
         } else {
             table.add (new Text(localize ("scr_no_active", "Det finns inga aktiva påminnelser just nu.")), 1, row++);
         }
+	
 		add(table);
     }
 
