@@ -1,24 +1,24 @@
 package se.idega.idegaweb.commune.presentation;
 
+import java.rmi.RemoteException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
+
+import javax.ejb.FinderException;
 
 import se.cubecon.bun24.viewpoint.business.ViewpointBusiness;
 import se.cubecon.bun24.viewpoint.data.Viewpoint;
 import se.cubecon.bun24.viewpoint.presentation.ViewpointForm;
 import se.idega.idegaweb.commune.business.CommuneCaseBusiness;
-import se.idega.idegaweb.commune.school.business.SchoolChoiceBusiness;
-import se.idega.idegaweb.commune.school.data.SchoolChoiceReminder;
 
 import com.idega.block.process.business.CaseBusiness;
 import com.idega.block.process.data.Case;
-import com.idega.block.process.data.CaseCode;
 import com.idega.business.IBOLookup;
 import com.idega.core.builder.data.ICPage;
 import com.idega.presentation.ExceptionWrapper;
@@ -90,7 +90,7 @@ public class UserCases extends CommuneBlock {
 			int action = parseAction(iwc);
 			switch (action) {
 				case ACTION_VIEW_CASE_LIST :
-					viewCaseList(iwc);
+					viewCaseList(iwc, new Table());
 					break;
 			}
 		}
@@ -114,36 +114,22 @@ public class UserCases extends CommuneBlock {
 		return action;
 	}
 
-	private void viewCaseList(IWContext iwc) throws Exception {
-		Table mainTable = new Table();
+	protected void viewCaseList(IWContext iwc, Table mainTable) throws Exception {
 		mainTable.setCellpadding(0);
 		mainTable.setCellspacing(0);
 		mainTable.setWidth(getWidth());
 		add(mainTable); 
-
+		
 		
 		if (iwc.isLoggedOn()) {
 		
 						
 			User user = iwc.getCurrentUser();
 			final int userId = ((Integer) user.getPrimaryKey()).intValue();
-			List cases = new Vector(getCommuneCaseBusiness(iwc).getAllCasesDefaultVisibleForUser(user));
-			Collections.reverse(cases);
 			
-			// 1. find my groups
-			final UserBusiness userBusiness = (UserBusiness) IBOLookup.getServiceInstance(iwc, UserBusiness.class);
-			final Collection groupCollection = userBusiness.getUserGroups(userId);
-			final Group[] groups = (Group[]) groupCollection.toArray(new Group[0]);
-						
-			// add cases belonging to my group 
-			final CaseBusiness caseBusiness = (CaseBusiness) IBOLookup.getServiceInstance(iwc, CaseBusiness.class);
-			Iterator g = groupCollection.iterator();
-			CaseCode [] hiddenCases = getCommuneCaseBusiness(iwc).getUserHiddenCaseCodes();
-			while(g.hasNext()){
-				cases.addAll(caseBusiness.getAllCasesForGroupExceptCodes((Group) g.next(), hiddenCases));
-			}
-			
-						
+			//Finding cases
+			List cases = getCases(iwc, user);
+					
 			if (cases != null & !cases.isEmpty()) {
 				int casesSize = cases.size();
 
@@ -151,35 +137,21 @@ public class UserCases extends CommuneBlock {
 				table.setCellpadding(getCellpadding());
 				table.setCellspacing(getCellspacing());
 				table.setWidth(Table.HUNDRED_PERCENT);
-				table.setColumns(5);
-				if (isShowName())
-					table.setColumns(6);
-				else
-					table.setColumns(5);
+				table.setColumns(getLastColumn());
 
-				int row = 1;
-				int column = 1;
-
-				table.mergeCells(1, row, table.getColumns(), row);
-				table.add(getNavigationTable(casesSize), column, row++);
+				table.mergeCells(1, 1, table.getColumns(), 1);
+				table.add(getNavigationTable(casesSize), 1, 1);
 
 				Form form = new Form();
 				form.add(table);
 
-				table.setRowColor(row, getHeaderColor());
-				table.add(getSmallHeader(localize(CASENUMBER_KEY, CASENUMBER_DEFAULT)), column++, row);
-				table.add(getSmallHeader(localize(CONCERNING_KEY, CONCERNING_DEFAULT)), column++, row);
-				if (isShowName())
-					table.add(getSmallHeader(localize(NAME_KEY, NAME_DEFAULT)), column++, row);
-				table.add(getSmallHeader(localize(DATE_KEY, DATE_DEFAULT)), column++, row);
-				table.add(getSmallHeader(localize(MANAGER_KEY, MANAGER_DEFAULT)), column++, row);
-				table.add(getSmallHeader(localize(STATUS_KEY, STATUS_DEFAULT)), column, row++);
+				int row = addTableHeader(table, 2); 
 
 				//Collection messages = getCaseBusiness(iwc).getAllCasesForUser(iwc.getCurrentUser());
 
 				if (_endCase > casesSize)
 					_endCase = casesSize;
-
+				
 				for (int a = _startCase - 1; a < _endCase; a++) {
 					try {
 						final Case useCase = (Case) cases.get(a);
@@ -197,59 +169,54 @@ public class UserCases extends CommuneBlock {
 				mainTable.add(getSmallHeader(localize(NOONGOINGCASES_KEY, NOONGOINGCASES_DEFAULT)), 1, 1);
 			}
 
-			
-		
 
-			// 2. find unhandled cases
-			final SchoolChoiceBusiness schoolChoiceBusiness = (SchoolChoiceBusiness) IBOLookup.getServiceInstance(iwc, SchoolChoiceBusiness.class);
-			final SchoolChoiceReminder[] reminders = schoolChoiceBusiness.findUnhandledSchoolChoiceReminders(groups);
-			final ViewpointBusiness viewpointBusiness = (ViewpointBusiness) IBOLookup.getServiceInstance(iwc, ViewpointBusiness.class);
-			final Viewpoint[] viewpoints = viewpointBusiness.findUnhandledViewpointsInGroups(groups);
-
-			// 3. display unhandled cases
-			if ((viewpoints != null && viewpoints.length > 0) || (reminders != null && reminders.length > 0)) {
-				mainTable.setHeight(2, 12);
-				mainTable.add(getLocalizedSmallHeader(UNHANDLEDCASESINMYGROUPS_KEY, UNHANDLEDCASESINMYGROUPS_DEFAULT), 1, 3);
-				mainTable.setHeight(4, 6);
-
-				Table messageList = new Table();
-				messageList.setColumns(5);
-				messageList.setCellpadding(getCellpadding());
-				messageList.setCellspacing(getCellspacing());
-				messageList.setWidth(Table.HUNDRED_PERCENT);
-				int row = 1;
-
-				Form form = new Form();
-				form.add(messageList);
-
-				messageList.setRowColor(row, getHeaderColor());
-				messageList.add(getSmallHeader(localize(CASENUMBER_KEY, CASENUMBER_DEFAULT)), 1, row);
-				messageList.add(getSmallHeader(localize(CONCERNING_KEY, CONCERNING_DEFAULT)), 2, row);
-				messageList.add(getSmallHeader(localize(SUBJECT_KEY, SUBJECT_DEFAULT)), 3, row);
-				messageList.add(getSmallHeader(localize(DATE_KEY, DATE_DEFAULT)), 4, row);
-				messageList.add(getSmallHeader(localize(HANDLERGROUP_KEY, HANDLERGROUP_DEFAULT)), 5, row++);
-
-				if (viewpoints != null) {
-					for (int i = 0; i < viewpoints.length; i++) {
-						addViewpointToMessageList(iwc, viewpoints[i], messageList, row++);
-					}
-				}
-				if (reminders != null) {
-					for (int i = 0; i < reminders.length; i++) {
-						addReminderToMessageList(iwc, reminders[i], messageList, row++);
-					}
-				}
-				mainTable.add(form, 1, 5);
-			}
 		}
 	}
 
-	private void addCaseToMessageList(final IWContext iwc, final int userId, final Case useCase, final Table messageList, int row) throws Exception {
+
+	protected int addTableHeader(Table table, int row) {
+		table.setRowColor(row, getHeaderColor());
+		table.add(getSmallHeader(localize(CASENUMBER_KEY, CASENUMBER_DEFAULT)), getNumberColumn(), row);
+		table.add(getSmallHeader(localize(CONCERNING_KEY, CONCERNING_DEFAULT)), getTypeColumn(), row);
+		if (isShowName()){
+			table.add(getSmallHeader(localize(NAME_KEY, NAME_DEFAULT)), getNameColumn(), row);
+		}
+		table.add(getSmallHeader(localize(DATE_KEY, DATE_DEFAULT)), getDateColumn(), row);
+		table.add(getSmallHeader(localize(MANAGER_KEY, MANAGER_DEFAULT)), getManagerColumn(), row);
+		table.add(getSmallHeader(localize(STATUS_KEY, STATUS_DEFAULT)), getStatusColumn(), row);
+		return row + 1;
+	}
+
+	protected List getCases(IWContext iwc, User user) throws RemoteException, FinderException, Exception {
+		List cases = new Vector(getCommuneCaseBusiness(iwc).getAllCasesDefaultVisibleForUser(user));
+		Collections.reverse(cases);
+		return cases;
+	}
+
+	protected Collection getGroups(IWContext iwc, final int userId)	throws RemoteException {
+		UserBusiness userBusiness = (UserBusiness) IBOLookup.getServiceInstance(iwc, UserBusiness.class);
+		Collection groupCollection = userBusiness.getUserGroups(userId);
+		if (groupCollection == null){
+			groupCollection = new ArrayList(); //empty collection
+		}
+		return groupCollection;
+	}
+
+	protected void addCaseToMessageList(final IWContext iwc, final int userId, final Case useCase, final Table messageList, int row) throws Exception {
 
 		DateFormat dateFormat = SimpleDateFormat.getDateInstance(SimpleDateFormat.SHORT, iwc.getCurrentLocale());
 		Date caseDate = new Date(useCase.getCreated().getTime());
 		Text caseNumber = getSmallText(useCase.getPrimaryKey().toString());
-		Text caseType = getSmallText(getCaseBusiness(iwc).getCaseBusiness(useCase.getCaseCode()).getLocalizedCaseDescription(useCase, iwc.getCurrentLocale()));
+		CaseBusiness caseBusiness = getCaseBusiness(iwc).getCaseBusiness(useCase.getCaseCode());
+		
+		String localizedCaseDescription = null;
+		try{
+			localizedCaseDescription = caseBusiness.getLocalizedCaseDescription(useCase, iwc.getCurrentLocale());
+		} catch(Exception ex){
+			localizedCaseDescription =localize("usercases.localised_description_missing","[ERROR: Localized description missing]");
+		}
+		
+		Text caseType = getSmallText(localizedCaseDescription);
 
 		final Text date = getSmallText(dateFormat.format(caseDate));
 		Text manager = null;
@@ -279,7 +246,8 @@ public class UserCases extends CommuneBlock {
 				manager = managerLink;
 			}
 		}
-		final Text caseOwnerName = getSmallText(useCase.getOwner().getFirstName());
+		
+		
 		final Text status = getSmallText(getCaseBusiness(iwc).getLocalizedCaseStatusDescription(useCase.getCaseStatus(), iwc.getCurrentLocale()));
 
 		if (useCase.getCode().equalsIgnoreCase(Viewpoint.CASE_CODE_KEY)) {
@@ -295,103 +263,72 @@ public class UserCases extends CommuneBlock {
 			}
 		}
 
-		if (row % 2 == 0)
-			messageList.setRowColor(row, getZebraColor1());
-		else
+		if (row % 2 == 0) {
+			messageList.setRowColor(row, getZebraColor1()); 
+		} else {
 			messageList.setRowColor(row, getZebraColor2());
+		}
 
-		int column = 1;
+		int column = getNumberColumn();
 
 		messageList.setNoWrap(column, row);
-		messageList.add(caseNumber, column++, row);
+		messageList.add(caseNumber, column, row);
 
-		messageList.add(caseType, column++, row);
+		column = getTypeColumn();
+		messageList.add(caseType, column, row);
 		if (isShowName()) {
+			Text caseOwnerName = new Text(localize("usercases.owner_not_available","No name"));
+			try{
+				User owner = useCase.getOwner();
+				caseOwnerName = getSmallText(owner.getFirstName() + " " + owner.getLastName());
+			} catch (NullPointerException ex){
+				ex.printStackTrace();
+			}
+						
+			column = getNameColumn();			
 			messageList.setNoWrap(column, row);
-			messageList.add(caseOwnerName, column++, row);
+			messageList.add(caseOwnerName, column, row);
 		}
 
-		if (_dateWidth != null)
+		column = getDateColumn();
+		if (_dateWidth != null) {
 			messageList.setWidth(column, _dateWidth);
-		messageList.setNoWrap(column, row);
-		messageList.add(date, column++, row);
-
-		messageList.setNoWrap(column, row);
-		messageList.add(manager, column++, row);
-
-		messageList.setNoWrap(column, row);
-		messageList.add(status, column++, row);
-	}
-
-	private void addViewpointToMessageList(final IWContext iwc, final Viewpoint viewpoint, final Table messageList, int row) throws Exception {
-
-		final DateFormat dateFormat = SimpleDateFormat.getDateInstance(SimpleDateFormat.SHORT, iwc.getCurrentLocale());
-		final Text caseDate = getSmallText(dateFormat.format(new Date(viewpoint.getCreated().getTime())));
-		Text caseNumber = getSmallText(viewpoint.getPrimaryKey().toString());
-		final Text category = getSmallText(viewpoint.getCategory());
-		final Text subject = getSmallText(viewpoint.getSubject());
-		final Group handlerGroup = viewpoint.getHandlerGroup();
-		final Text group = getSmallText(handlerGroup != null ? handlerGroup.getName() : "-");
-
-		if (getViewpointPage() != -1) {
-			Link viewpointLink = getSmallLink(viewpoint.getPrimaryKey().toString());
-			viewpointLink.setPage(getViewpointPage());
-			viewpointLink.addParameter(ViewpointForm.PARAM_ACTION, ViewpointForm.SHOWVIEWPOINT_ACTION + "");
-			viewpointLink.addParameter(ViewpointForm.PARAM_VIEWPOINT_ID, viewpoint.getPrimaryKey().toString());
-			caseNumber = viewpointLink;
 		}
+		messageList.setNoWrap(column, row);
+		messageList.add(date, column, row);
 
-		if (row % 2 == 0)
-			messageList.setRowColor(row, getZebraColor1());
-		else
-			messageList.setRowColor(row, getZebraColor2());
+		column = getManagerColumn();
+		messageList.setNoWrap(column, row);
+		messageList.add(manager, column, row);
 
-		messageList.add(caseNumber, 1, row);
-		messageList.add(category, 2, row);
-		messageList.add(subject, 3, row);
-		if (_dateWidth != null)
-			messageList.setWidth(4, _dateWidth);
-		messageList.add(caseDate, 4, row);
-		messageList.add(group, 5, row);
+		column = getStatusColumn();
+		messageList.setNoWrap(column, row);
+		messageList.add(status, column, row);
 	}
-
-	private void addReminderToMessageList(final IWContext iwc, final SchoolChoiceReminder reminder, final Table messageList, int row) throws Exception {
-
-		final DateFormat dateFormat = SimpleDateFormat.getDateInstance(SimpleDateFormat.SHORT, iwc.getCurrentLocale());
-		final Text caseDate = getSmallText(dateFormat.format(new Date(reminder.getCreated().getTime())));
-		Text caseNumber = getSmallText(reminder.getPrimaryKey().toString());
-		Text caseType = getSmallText(getCaseBusiness(iwc).getCaseBusiness(reminder.getCaseCode()).getLocalizedCaseDescription(reminder, iwc.getCurrentLocale()));
-		final Group handlerGroup = reminder.getHandler();
-		final Text group = getSmallText(handlerGroup != null ? handlerGroup.getName() : "-");
-
-		if (getReminderPage() != -1) {
-			Link reminderLink = getSmallLink(reminder.getPrimaryKey().toString());
-			reminderLink.setPage(getReminderPage());
-			caseNumber = reminderLink;
-		}
-
-		if (row % 2 == 0)
-			messageList.setRowColor(row, getZebraColor1());
-		else
-			messageList.setRowColor(row, getZebraColor2());
-
-		messageList.setNoWrap(1, row);
-		messageList.add(caseNumber, 1, row);
-
-		messageList.add(caseType, 2, row);
-
-		final String reminderText = reminder.getText();
-		messageList.setNoWrap(3, row);
-		messageList.add(reminderText.length() < 25 ? new Text(reminderText) : new Text((reminderText.substring(0, 20) + "...")), 3, row);
-
-		if (_dateWidth != null)
-			messageList.setWidth(4, _dateWidth);
-		messageList.setNoWrap(4, row);
-		messageList.add(caseDate, 4, row);
-
-		messageList.setNoWrap(5, row);
-		messageList.add(group, 5, row);
+	
+	int getNumberColumn(){
+		return 1;
 	}
+	int getTypeColumn(){
+		return 2;
+	}		
+	int getNameColumn(){
+		return 3;
+	}	
+	int getDateColumn(){
+		return (isShowName() ? getNameColumn() : getTypeColumn()) + 1;
+	}	
+	int getManagerColumn(){
+		return getDateColumn() + 1;
+	}	
+	int getStatusColumn(){
+		return getDateColumn() + 2;
+	}	
+	int getLastColumn(){
+		return getStatusColumn();
+	}		
+	
+
 
 	private Table getNavigationTable(int caseSize) {
 		Table navigationTable = new Table(2, 1);
@@ -425,11 +362,11 @@ public class UserCases extends CommuneBlock {
 		return navigationTable;
 	}
 
-	private CaseBusiness getCaseBusiness(IWContext iwc) throws Exception {
+	protected CaseBusiness getCaseBusiness(IWContext iwc) throws Exception {
 		return (CaseBusiness) IBOLookup.getServiceInstance(iwc, CaseBusiness.class);
 	}
 
-	private CommuneCaseBusiness getCommuneCaseBusiness(IWContext iwc) throws Exception {
+	protected CommuneCaseBusiness getCommuneCaseBusiness(IWContext iwc) throws Exception {
 		return (CommuneCaseBusiness) IBOLookup.getServiceInstance(iwc, CommuneCaseBusiness.class);
 	}
 
@@ -493,6 +430,10 @@ public class UserCases extends CommuneBlock {
 	public void setDateWidth(String width) {
 		_dateWidth = width;
 	}
+	
+	public String getDateWidth() {
+		return _dateWidth;
+	}	
 
 	/**
 	 * @param width
