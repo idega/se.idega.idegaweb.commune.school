@@ -800,7 +800,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
                     = new PdfPTable (new float [] {1, 1, 1.5f, 1});
             footer.getDefaultCell ().setBorder (0);
             footer.setWidthPercentage (100f);
-            footer.addCell (new Phrase (new Chunk ("Postadress:\nNacka Kommun\n131 81 Nacka", SANSSERIF_FONT)));
+            footer.addCell (new Phrase (new Chunk ("Postadress:\nNacka kommun\n131 81 Nacka", SANSSERIF_FONT)));
             footer.addCell (new Phrase (new Chunk ("Besöksadress:\nStadshuset\nGranitvägen 15\nNacka", SANSSERIF_FONT)));
             footer.addCell (new Phrase (new Chunk ("Tel växel:\n718 80 00\n"
                             + "Hemsida:\nwww.nacka24.nacka.se", SANSSERIF_FONT)));
