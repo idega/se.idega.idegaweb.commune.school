@@ -179,7 +179,7 @@ public class SchoolChoiceApprover extends CommuneBlock {
 			choice = (SchoolChoice) iter.next();
 			String sid = choice.getPrimaryKey().toString();
 			child = userBean.getUser(choice.getChildId());
-			T.add(getPupilInfoLink(child), 1, row);
+			T.add(getPupilInfoLink(child,choice), 1, row);
 			T.add(tf.format(choice.getGrade()), 2, row);
 			T.add(tf.format(df.format(choice.getSchoolChoiceDate())), 3, row);
 			if (choice.getChangeOfSchool()) {
@@ -246,7 +246,7 @@ public class SchoolChoiceApprover extends CommuneBlock {
 			child = userBean.getUser(choice.getChildId());
 			String status = choice.getCaseStatus().getStatus();
 			if (status.equals(choice.getCaseStatusPlaced())) {
-				T.add(getPupilInfoLink(choice), 1, row);
+				T.add(getPupilInfoLink(child,choice), 1, row);
 				T.add(tf.format(choice.getGroupPlace()), 2, row);
 				T.add(tf.format(df.format(choice.getSchoolChoiceDate())), 3, row);
 				if (choice.getChangeOfSchool()) {
@@ -370,7 +370,7 @@ public class SchoolChoiceApprover extends CommuneBlock {
 		return T;
 	}
 	
-	private Link getPupilInfoLink(SchoolChoice choice) throws  RemoteException{
+	private Link getPupilInfoLink(User child,SchoolChoice choice) throws  RemoteException{
 		Link L = new Link(tf.format(child.getNameLastFirst()));
 		L.addParameter(prmPupilInfo,choice.getPrimaryKey().toString());
 		return L;
