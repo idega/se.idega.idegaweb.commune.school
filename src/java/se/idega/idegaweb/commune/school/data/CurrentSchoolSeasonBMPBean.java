@@ -15,8 +15,8 @@ import com.idega.block.school.data.SchoolSeason;
 public class CurrentSchoolSeasonBMPBean extends GenericEntity implements CurrentSchoolSeason {
 
 
-  private static String ENTITY = "comm_sch_current_season";
-  private static String CURRENT = "sid";
+  private static String ENTITY = "COMM_SCH_CURRENT_SEASON";
+  private static String CURRENT = "SID";
 
   public void initializeAttributes() {
     addAttribute(CURRENT,"Current season",true,true,Integer.class,ONE_TO_ONE,SchoolSeason.class);
