@@ -20,10 +20,10 @@ import se.idega.idegaweb.commune.school.data.SchoolChoiceReminder;
  * and entity ejb classes in {@link se.idega.idegaweb.commune.school.data}.
  * <p>
  * <p>
- * Last modified: $Date: 2002/12/28 08:46:16 $ by $Author: staffan $
+ * Last modified: $Date: 2002/12/29 09:35:03 $ by $Author: staffan $
  *
  * @author <a href="http://www.staffannoteberg.com">Staffan Nöteberg</a>
- * @version $Revision: 1.14 $
+ * @version $Revision: 1.15 $
  * @see javax.ejb
  */
 public class SchoolChoiceReminderView extends CommuneBlock {
@@ -35,6 +35,8 @@ public class SchoolChoiceReminderView extends CommuneBlock {
     private final static String CASE_ID_KEY = PREFIX + "case_id";
     private final static String CONFIRM_ENTER_KEY = PREFIX + "confirm_enter_reminder";
     private final static String GOBACKTOMYPAGE_KEY = PREFIX + "goBackToMyPage";
+    private static final String ADDRESS_DEFAULT = "Adress";
+    private static final String ADDRESS_KEY = PREFIX + "address";
     private static final String CHILDREN_COUNT_KEY = PREFIX + "children_count";
     private static final String CONTINUE_DEFAULT = "Fortsätt";
     private static final String CONTINUE_KEY = PREFIX + "continue";
@@ -47,8 +49,6 @@ public class SchoolChoiceReminderView extends CommuneBlock {
     private static final String EVENT_DATE_DEFAULT = "Utskicksdatum";
     private static final String EVENT_DATE_KEY = PREFIX + "event_date";
     private static final String GENERATE_LETTER_KEY = PREFIX + "generate_letter";
-    private static final String LIST_ALL_DEFAULT = "Visa alla registrerade påminnelser";
-    private static final String LIST_ALL_KEY = PREFIX + "list_all";
     private static final String PARENT_NAME_DEFAULT = "Vårdnadshavare";
     private static final String PARENT_NAME_KEY = PREFIX + "parent_name";
     private static final String REMINDER_DATE_DEFAULT = "Visa som ärende";
@@ -61,15 +61,20 @@ public class SchoolChoiceReminderView extends CommuneBlock {
     private static final String REMINDER_TEXT_KEY = PREFIX + "reminder_text";
     private static final String SCHOOLCHOICEREMINDER_DEFAULT = "Påminnelse om skolval";
     private static final String SCHOOLCHOICEREMINDER_KEY = PREFIX + "schoolchoicereminder";
-    private static final String SHOW_CREATE_FORM_KEY = PREFIX + "show_create_form";
     private static final String SHOW_DETAILS_KEY = PREFIX + "show_details";
     private static final String SSN_DEFAULT = "Personnummer";
     private static final String SSN_KEY = PREFIX + "ssn";
+    private static final String STUDENT_LIST_KEY = PREFIX + "student_list";
     private static final String STUDENT_NAME_DEFAULT = "Elev";
     private static final String STUDENT_NAME_KEY = PREFIX + "student_name";
-    private static final String ADDRESS_DEFAULT = "Adress";
-    private static final String ADDRESS_KEY = PREFIX + "address";
-    private static final String STUDENT_LIST_KEY = PREFIX + "student_list";
+    private static final String DELETE_DEFAULT = "Radera";
+    private static final String DELETE_KEY = PREFIX + "delete";
+    private static final String CANCEL_DEFAULT = "Avbryt";
+    private static final String CANCEL_KEY = PREFIX + "cancel";
+    private static final String ACTIVE_REMINDERS_DEFAULT = "Aktiva påminnelser";
+    private static final String ACTIVE_REMINDERS_KEY = PREFIX + "active_reminders";
+    private static final String NEW_REMINDER_DEFAULT = "Skapa ny påminnelse";
+    private static final String NEW_REMINDER_KEY = PREFIX + "new_reminder";
 
 
 	/**
@@ -80,13 +85,7 @@ public class SchoolChoiceReminderView extends CommuneBlock {
 		setResourceBundle (getResourceBundle(iwc));
         final String action = iwc.getParameter (ACTION_KEY);
 
-        add ("<p>Den här funktionen är inte färdig!</p><p>/<a href=http://www.staffannoteberg.com>Staffan Nöteberg</a></p>");
-
-        if (action != null && action.equals (SHOW_CREATE_FORM_KEY))  {
-            showCreateReminderForm (iwc);
-        } else if (action != null && action.equals (LIST_ALL_KEY)) {
-            showAllReminders (iwc);
-        } else if (action != null && action.equals (CREATE_KEY)) {
+        if (action != null && action.equals (CREATE_KEY)) {
             createReminder (iwc);
         } else if (action != null && action.equals (SHOW_DETAILS_KEY)) {
             showDetails (iwc);
@@ -94,7 +93,7 @@ public class SchoolChoiceReminderView extends CommuneBlock {
             generateLetter (iwc);
         } else {
             showAllReminders (iwc);
-            showMainMenu (iwc);
+            showCreateReminderForm (iwc);
         }
     }
 
@@ -102,11 +101,13 @@ public class SchoolChoiceReminderView extends CommuneBlock {
 		final Form form = new Form();
 		final DropdownMenu dropdown = (DropdownMenu) getStyledInterface
                 (new DropdownMenu (ACTION_KEY));
+        /*
         dropdown.addMenuElement (SHOW_CREATE_FORM_KEY,
                                  localize (CREATE_KEY,
                                            CREATE_DEFAULT));
         dropdown.addMenuElement (LIST_ALL_KEY,
                                  localize (LIST_ALL_KEY, LIST_ALL_DEFAULT));
+        */
 		final SubmitButton submit = getSubmitButton (CONTINUE_KEY,
                                                      CONTINUE_DEFAULT);
 		final Table table = new Table ();
@@ -135,7 +136,10 @@ public class SchoolChoiceReminderView extends CommuneBlock {
 		table.setCellspacing (0);
 		table.setCellpadding (getCellpadding ());
         int row = 1;
-		table.add(getLocalizedHeader(REMINDER_TEXT_KEY, REMINDER_TEXT_DEFAULT), 1, row);
+        table.add (getHeader(localize (NEW_REMINDER_KEY,
+                                       NEW_REMINDER_DEFAULT)), 1, row++);
+        table.setHeight (row++, 12);
+		table.add(getSmallHeader (localize(REMINDER_TEXT_KEY, REMINDER_TEXT_DEFAULT)), 1, row);
 		final RadioGroup radioGroup = new RadioGroup (REMINDER_TEXT_KEY);
         radioGroup.addRadioButton (localize (REMINDER_TEXT1_KEY, REMINDER_TEXT1_DEFAULT));
         radioGroup.addRadioButton (localize (REMINDER_TEXT2_KEY, REMINDER_TEXT2_DEFAULT));
@@ -147,9 +151,9 @@ public class SchoolChoiceReminderView extends CommuneBlock {
 		textArea.setRows (10);
 		table.add (textArea, 1, row++);
 
-		table.add(getHeader(EVENT_DATE_KEY, EVENT_DATE_DEFAULT), 1, row);
+		table.add(getSmallHeader(localize (EVENT_DATE_KEY, EVENT_DATE_DEFAULT)), 1, row);
 		table.add(getSingleInput(iwc, EVENT_DATE_KEY, 8), 3, row++);
-		table.add(getHeader(REMINDER_DATE_KEY, REMINDER_DATE_DEFAULT), 1, row);
+		table.add(getSmallHeader(localize (REMINDER_DATE_KEY, REMINDER_DATE_DEFAULT)), 1, row);
 		table.add(getSingleInput(iwc, REMINDER_DATE_KEY, 8), 3, row++);
 
         final SubmitButton submit = getSubmitButton (CREATE_KEY,
@@ -180,14 +184,18 @@ public class SchoolChoiceReminderView extends CommuneBlock {
         form.add(messageList);
         messageList.setRowColor(row, getHeaderColor());
         messageList.add(getSmallHeader(localize (CASE_ID_KEY,
-                                           CASE_ID_DEFAULT)), col++, row);
+                                                 CASE_ID_DEFAULT)), col++, row);
         messageList.add(getSmallHeader(localize (REMINDER_TEXT_KEY,
-                                           REMINDER_TEXT_DEFAULT)), col++, row);
+                                                 REMINDER_TEXT_DEFAULT)), col++,
+                        row);
         messageList.add(getSmallHeader(localize (EVENT_DATE_KEY,
-                                           EVENT_DATE_DEFAULT)), col++, row);
+                                                 EVENT_DATE_DEFAULT)), col++,
+                        row);
         messageList.add(getSmallHeader(localize (REMINDER_DATE_KEY,
-                                           REMINDER_DATE_DEFAULT)),
-                  col++, row++);
+                                                 REMINDER_DATE_DEFAULT)), col++,
+                        row);
+        messageList.add(getSmallHeader(localize (DELETE_KEY, DELETE_DEFAULT)),
+                        col++, row++);
         for (int i = 0; i < reminders.length; i++) {
             col = 1;
             messageList.setRowColor(row, (row % 2 == 0) ? getZebraColor1()
@@ -206,7 +214,10 @@ public class SchoolChoiceReminderView extends CommuneBlock {
             messageList.add("" + reminder.getReminderDate (), col++, row);
             row++;
         }
-        table.add(form, 1, 1);
+        table.add (getHeader(localize (ACTIVE_REMINDERS_KEY,
+                                       ACTIVE_REMINDERS_DEFAULT)), 1, 1);
+        table.setHeight (2, 12);
+        table.add(form, 1, 3);
     }
 
     private void createReminder (final IWContext iwc) throws RemoteException,
@@ -264,8 +275,8 @@ public class SchoolChoiceReminderView extends CommuneBlock {
                          (new SubmitButton("Skriv ut till adresser nedan",
                                            ACTION_KEY, GENERATE_LETTER_KEY)),
                          1, 1);
-        submitTable.add (getStyledInterface(new SubmitButton("Radera")), 2, 1);
-        submitTable.add (getStyledInterface(new SubmitButton("Avbryt")), 3, 1);
+        submitTable.add (getStyledInterface(new SubmitButton(localize (DELETE_KEY, DELETE_DEFAULT))), 2, 1);
+        submitTable.add (getStyledInterface(new SubmitButton(localize (CANCEL_KEY, CANCEL_DEFAULT))), 3, 1);
         table.add (submitTable, 1, row++);
 		table.setHeight (row++, 24);
         table.add (getStudentList (iwc, business, reminderId), 1, row++);

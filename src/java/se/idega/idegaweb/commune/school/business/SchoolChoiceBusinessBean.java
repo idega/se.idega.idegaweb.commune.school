@@ -752,13 +752,6 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
                     = new PdfPTable (new float [] {1, 1, 1.5f, 1});
             footer.getDefaultCell ().setBorder (0);
             footer.setWidthPercentage (100f);
-            final PdfPCell footerLine = new PdfPCell (new Phrase (""));
-            footerLine.setFixedHeight (mmToPoints (0.5f));
-            footerLine.setMinimumHeight (mmToPoints (0.5f));
-            footerLine.setColspan (4);
-            footerLine.setBorder (0);
-            footerLine.setBackgroundColor (java.awt.Color.black);
-            footer.addCell (footerLine);
             footer.addCell ("Postadress:\nNacka Kommun\n131 81 Nacka");
             footer.addCell ("Besöksadress:\nStadshuset\nGranitvägen 15\nNacka");
             footer.addCell ("Tel växel:\n718 80 00\n"
@@ -791,7 +784,12 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
                 header.addCell (emptyCell);
                 document.add (header);
                 document.add(reminderText);
-                document.add(footer);
+                final PdfContentByte cb = writer.getDirectContent();
+                cb.setLineWidth (1);
+                cb.moveTo (mmToPoints(30), mmToPoints(32));
+                cb.lineTo (mmToPoints(180), mmToPoints(32));
+                cb.stroke (); 
+                document.add (footer);
             }
             document.close();
             final ICFileHome icFileHome
