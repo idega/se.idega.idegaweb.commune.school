@@ -339,7 +339,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
       school = schBuiz.getSchool(schoolClass.getSchoolId());
       schoolYear = schBuiz.getSchoolBusiness().getSchoolYearHome().findByPrimaryKey(new Integer(schoolClass.getSchoolYearId()));
     }catch(Exception e){
-      e.printStackTrace();
+      //e.printStackTrace();
     }
   }
 
