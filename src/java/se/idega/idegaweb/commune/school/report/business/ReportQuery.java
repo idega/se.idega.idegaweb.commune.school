@@ -1,5 +1,5 @@
 /*
- * $Id: ReportQuery.java,v 1.11 2003/12/17 11:07:44 anders Exp $
+ * $Id: ReportQuery.java,v 1.12 2003/12/17 12:35:36 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -19,10 +19,10 @@ import com.idega.util.database.ConnectionBroker;
 /** 
  * Handles the SQL logic for school report calculations.
  * <p>
- * Last modified: $Date: 2003/12/17 11:07:44 $ by $Author: anders $
+ * Last modified: $Date: 2003/12/17 12:35:36 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.11 $
+ * @version $Revision: 1.12 $
  */
 public class ReportQuery {
 
@@ -78,7 +78,7 @@ public class ReportQuery {
 				" and sc.sch_school_season_id = " + schoolSeasonId +
 				" and s.sch_school_id = " + schoolId + 
 				" and ua.ic_user_id = u.ic_user_id and a.ic_address_id = ua.ic_address_id" +
-				" and a.ic_address_type_id <> 1 and a.ic_commune_id = 1 and cm.ic_user_id = u.ic_user_id";
+				" and a.ic_address_type_id = 1 and a.ic_commune_id <> 1 and cm.ic_user_id = u.ic_user_id";
 	}
 	
 	/**
