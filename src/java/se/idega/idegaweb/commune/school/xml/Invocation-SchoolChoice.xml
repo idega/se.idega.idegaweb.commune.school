@@ -14,7 +14,7 @@
 				<class_handler class="se.idega.idegaweb.commune.school.presentation.inputhandler.SchoolChoiceColumnsHandler" />
 			</class_description>
 		
-			<class_description class="java.lang.Boolean" default_display_name="Language choice" name="language_choice">
+			<class_description class="java.lang.Boolean" default_display_name="Language choice" name="choice_language">
 				<localized_name name="Har spr&#229;kval" locale="sv_SE"/>
 				<class_handler class="se.idega.idegaweb.commune.school.presentation.inputhandler.YesNoDropDownMenu" />
 			</class_description>
