@@ -375,7 +375,7 @@ public abstract class SchoolCommuneBlock extends CommuneBlock {
 	}
 
 	public Window getFileWindow() {
-		Window w = new Window(localize("school.class", "School class"), getIWApplicationContext().getApplication().getMediaServletURI());
+		Window w = new Window(localize("school.class", "School class"), getIWApplicationContext().getIWMainApplication().getMediaServletURI());
 		w.setResizable(true);
 		w.setMenubar(true);
 		w.setHeight(400);

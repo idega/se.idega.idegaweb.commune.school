@@ -102,7 +102,7 @@ public class SchoolUserEditor extends com.idega.block.school.presentation.School
 		}
 
 	protected IWBundle getCommuneBundle() {
-		return this.getIWApplicationContext().getApplication().getBundle(CommuneBlock.IW_BUNDLE_IDENTIFIER);
+		return this.getIWApplicationContext().getIWMainApplication().getBundle(CommuneBlock.IW_BUNDLE_IDENTIFIER);
 	}
 	
 	public void main(IWContext iwc) throws RemoteException {

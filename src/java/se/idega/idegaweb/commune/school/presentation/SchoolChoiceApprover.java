@@ -343,7 +343,7 @@ public class SchoolChoiceApprover extends CommuneBlock {
 		T.setCellpadding(3);
 		int row = 1;
 		T.add(tf.format(iwrb.getLocalizedString("personal_id","Personal ID"),TextFormat.HEADER),1,row);
-			String personalID = PersonalIDFormatter.format(child.getPersonalID(),iwc.getApplication().getSettings().getApplicationLocale());
+			String personalID = PersonalIDFormatter.format(child.getPersonalID(),iwc.getIWMainApplication().getSettings().getApplicationLocale());
 			T.add(tf.format(personalID),2,row);
 			row++;
 			if(choice!=null){

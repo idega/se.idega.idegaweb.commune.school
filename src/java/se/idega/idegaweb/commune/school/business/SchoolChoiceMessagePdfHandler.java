@@ -149,7 +149,7 @@ public class SchoolChoiceMessagePdfHandler implements MessagePdfHandler,BundleRe
 			User owner = msg.getOwner();
 			Locale locale = dpc.getLocale();
 			docBuiz.createDefaultLetterHeader(dpc.getDocument(),docBuiz.getAddressString(owner),dpc.getPdfWriter());
-			IWBundle iwb = dpc.getIWApplicationContext().getApplication().getBundle(CommuneBlock.IW_BUNDLE_IDENTIFIER);
+			IWBundle iwb = dpc.getIWApplicationContext().getIWMainApplication().getBundle(CommuneBlock.IW_BUNDLE_IDENTIFIER);
 			//document.add(new Paragraph("\n\n\n\n\n\n\n\n"));
 			
 			

@@ -822,7 +822,7 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 
 	private void initializeBundlesIfNeeded(Locale currentLocale){
 		if(_iwb==null){
-			_iwb = this.getIWApplicationContext().getApplication().getBundle(IW_BUNDLE_IDENTIFIER);
+			_iwb = this.getIWApplicationContext().getIWMainApplication().getBundle(IW_BUNDLE_IDENTIFIER);
 		}
 		_iwrb = _iwb.getResourceBundle(currentLocale);
 	}
