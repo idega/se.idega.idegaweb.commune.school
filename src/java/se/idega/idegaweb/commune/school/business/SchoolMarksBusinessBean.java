@@ -1,7 +1,6 @@
 
 package se.idega.idegaweb.commune.school.business;
 
-import java.lang.Math;
 import java.util.Collection;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -26,7 +25,7 @@ import se.idega.idegaweb.commune.school.business.SchoolMarkValues;
 /**
  * School marks business
  * <p>
- * $Id: SchoolMarksBusinessBean.java,v 1.10 2003/12/17 18:53:11 kjell Exp $
+ * $Id: SchoolMarksBusinessBean.java,v 1.11 2004/01/28 13:36:49 staffan Exp $
  *
  * I will add some comments on the school marks calculation technique here later.
  * However I am waiting for Nacka to present me that specification.

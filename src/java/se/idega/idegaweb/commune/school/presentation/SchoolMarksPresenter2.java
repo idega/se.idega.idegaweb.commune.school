@@ -2,7 +2,6 @@ package se.idega.idegaweb.commune.school.presentation;
 
 import java.util.Collection;
 import java.util.Iterator;
-import java.lang.Math;
 import java.rmi.RemoteException;
 
 import com.idega.idegaweb.IWResourceBundle;
@@ -20,7 +19,7 @@ import se.idega.idegaweb.commune.presentation.CommuneBlock;
 /**
  * Presents school marks statistics in a formatted table (approved by Nacka)
  * <p>
- * $Id: SchoolMarksPresenter2.java,v 1.9 2003/12/13 16:51:48 kjell Exp $
+ * $Id: SchoolMarksPresenter2.java,v 1.10 2004/01/28 13:36:49 staffan Exp $
  *
  * This block presents School Marks Statistics according to the specifications made my 
  * Jill Salander
