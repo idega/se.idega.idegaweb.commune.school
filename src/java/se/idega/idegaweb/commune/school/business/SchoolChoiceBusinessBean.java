@@ -1047,7 +1047,8 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 
 	public Collection findByStudentAndSeason(int studentID, int seasonID) throws RemoteException {
 		try {
-			return getSchoolChoiceHome().findByChildAndSeason(studentID, seasonID);
+			String[] statuses = { getCaseStatusDeleted().getStatus() };
+			return getSchoolChoiceHome().findByChildAndSeason(studentID, seasonID, statuses);
 		}
 		catch (FinderException fe) {
 			return new Vector();
@@ -1083,7 +1084,8 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 
 	public int getNumberOfApplicationsForStudents(int userID, int schoolSeasonID) throws RemoteException {
 		try {
-			return getSchoolChoiceHome().getNumberOfChoices(userID, schoolSeasonID);
+			String[] statuses = { getCaseStatusDeleted().getStatus(), getCaseStatusInactive().getStatus() };
+			return getSchoolChoiceHome().getNumberOfChoices(userID, schoolSeasonID, statuses);
 		}
 		catch (IDOException ie) {
 			return 0;

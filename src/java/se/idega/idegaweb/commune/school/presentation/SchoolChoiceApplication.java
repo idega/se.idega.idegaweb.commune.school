@@ -242,7 +242,8 @@ public class SchoolChoiceApplication extends CommuneBlock {
 					}
 					else {
 						int seasonID = ((Integer) season.getPrimaryKey()).intValue();
-						currentChildChoices = schBuiz.getSchoolChoiceHome().findByChildAndSeason(childId, seasonID);
+						String[] statuses = { schBuiz.getCaseStatusDeleted().getStatus() };
+						currentChildChoices = schBuiz.getSchoolChoiceHome().findByChildAndSeason(childId, seasonID, statuses);
 						if (!currentChildChoices.isEmpty()) {
 							hasChosen = true;
 							Iterator iter = currentChildChoices.iterator();

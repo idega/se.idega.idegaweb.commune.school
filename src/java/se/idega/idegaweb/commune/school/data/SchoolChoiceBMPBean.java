@@ -488,19 +488,14 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 	}
 
 
-	public Collection ejbFindByChildAndSeason(int childID, int seasonID) throws javax.ejb.FinderException {
-		StringBuffer sql = new StringBuffer("select * from ");
-		sql.append(SCHOOLCHOICE);
-		sql.append(" where ");
-		sql.append(CHILD);
-		sql.append(" = ");
-		sql.append(childID);
-		sql.append(" and ");
-		sql.append(SCHOOL_SEASON);
-		sql.append(" = ");
-		sql.append(seasonID);
-		sql.append(" order by ");
-		sql.append(CHOICEORDER);
+	public Collection ejbFindByChildAndSeason(int childID, int seasonID, String[] notInStatuses) throws javax.ejb.FinderException {
+		IDOQuery sql = idoQuery();
+		sql.appendSelectAllFrom(this).append(" sc, ").append("PROC_CASE pc ");
+		sql.appendWhereEquals(CHILD, childID).appendAndEquals(SCHOOL_SEASON, seasonID);
+		sql.appendAndEquals("sc." + getIDColumnName(), "pc.proc_case_id");
+		if (notInStatuses == null) {
+			sql.appendAnd().append("pc.case_status").appendNotInArrayWithSingleQuotes(notInStatuses);
+		}
 		return super.idoFindPKsBySQL(sql.toString());
 	}
 	
@@ -841,8 +836,17 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 	}
 
 	public int ejbHomeGetNumberOfChoices(int userID, int seasonID) throws IDOException {
+		return ejbHomeGetNumberOfChoices(userID, seasonID, null);
+	}
+	
+	public int ejbHomeGetNumberOfChoices(int userID, int seasonID, String[] notInStatuses) throws IDOException {
 		IDOQuery sql = idoQuery();
-		sql.appendSelectCountFrom(this).appendWhereEquals(CHILD, userID).appendAndEquals(SCHOOL_SEASON, seasonID);
+		sql.appendSelectCountFrom(this).append(" sc, ").append("PROC_CASE pc ");
+		sql.appendWhereEquals(CHILD, userID).appendAndEquals(SCHOOL_SEASON, seasonID);
+		sql.appendAndEquals("sc." + getIDColumnName(), "pc.proc_case_id");
+		if (notInStatuses == null) {
+			sql.appendAnd().append("pc.case_status").appendNotInArrayWithSingleQuotes(notInStatuses);
+		}
 		return super.idoGetNumberOfRecords(sql.toString());
 	}
 
