@@ -30,7 +30,7 @@ public class YesNoDropDownMenu extends DropdownMenu implements InputHandler {
 	public void main(IWContext iwc) throws Exception {
 		IWResourceBundle rb = this.getResourceBundle(iwc);
 
-		addMenuElement("", "");
+		addMenuElement("-1", "");
 		addMenuElement(YES, rb.getLocalizedString(LOCALIZED_YES, "Yes"));
 		addMenuElement(NO, rb.getLocalizedString(LOCALIZED_NO, "No"));
 	}
@@ -52,7 +52,7 @@ public class YesNoDropDownMenu extends DropdownMenu implements InputHandler {
 	 * @see com.idega.business.InputHandler#getResultingObject(java.lang.String[], com.idega.presentation.IWContext)
 	 */
 	public Object getResultingObject(String[] value, IWContext iwc) throws Exception {
-		if (value != null && value.length > 0) {
+		if (value != null && value[0].length() > 0) {
 			return new Boolean(value[0]);
 		} else {
 			return null;
