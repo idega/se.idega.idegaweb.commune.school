@@ -12,7 +12,7 @@ import java.util.Iterator;
 
 import se.idega.idegaweb.commune.school.business.SchoolReportBusiness;
 
-import com.idega.business.InputHandler;
+import com.idega.business.HiddenInputHandler;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObject;
@@ -24,7 +24,7 @@ import com.idega.presentation.ui.SelectionBox;
  * To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Generation - Code and Comments
  */
-public class SchoolGroupColumnsHandler extends SelectionBox implements InputHandler {
+public class SchoolGroupColumnsHandler extends SelectionBox implements HiddenInputHandler {
 
 	private final static String IW_BUNDLE_IDENTIFIER = "se.idega.idegaweb.commune";
 	private static final String PREFIX = SchoolReportBusiness.PREFIX;
