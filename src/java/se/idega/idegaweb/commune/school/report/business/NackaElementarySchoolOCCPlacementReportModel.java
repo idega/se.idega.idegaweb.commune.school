@@ -1,5 +1,5 @@
 /*
- * $Id: NackaElementarySchoolOCCPlacementReportModel.java,v 1.1 2003/12/15 12:21:29 anders Exp $
+ * $Id: NackaElementarySchoolOCCPlacementReportModel.java,v 1.2 2003/12/16 11:29:04 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -19,10 +19,10 @@ import com.idega.block.school.data.SchoolArea;
 /** 
  * Report model for placements in Nacka elementary schools for commune citizens outside Nacka.
  * <p>
- * Last modified: $Date: 2003/12/15 12:21:29 $ by $Author: anders $
+ * Last modified: $Date: 2003/12/16 11:29:04 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class NackaElementarySchoolOCCPlacementReportModel extends ReportModel {
 
@@ -287,7 +287,7 @@ public class NackaElementarySchoolOCCPlacementReportModel extends ReportModel {
 		if (cell.getColumnMethod() == COLUMN_METHOD_SCHOOL_YEAR) {
 			switch (cell.getRowMethod()) {
 				case ROW_METHOD_SCHOOL:
-					value = reportBusiness.getElementarySchoolPlacementCount(schoolId, schoolYearName);
+					value = reportBusiness.getElementarySchoolOCCPlacementCount(schoolId, schoolYearName);
 					break;
 				case ROW_METHOD_SUM:
 					int rowIndex = cell.getRow() - 1;
