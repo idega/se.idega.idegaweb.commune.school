@@ -52,7 +52,7 @@ public class YesNoDropDownMenu extends DropdownMenu implements InputHandler {
 	 * @see com.idega.business.InputHandler#getResultingObject(java.lang.String[], com.idega.presentation.IWContext)
 	 */
 	public Object getResultingObject(String[] value, IWContext iwc) throws Exception {
-		if (value != null && value[0].length() > 0) {
+		if (value != null && !value[0].equals("-1")) {
 			return new Boolean(value[0]);
 		} else {
 			return null;
