@@ -1,5 +1,5 @@
 /*
- * $Id: NackaCommuneHighSchoolStudyPathReportModel.java,v 1.4 2004/02/24 07:48:16 anders Exp $
+ * $Id: NackaCommuneHighSchoolStudyPathReportModel.java,v 1.5 2004/02/24 08:46:18 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -21,10 +21,10 @@ import com.idega.block.school.data.SchoolStudyPath;
 /** 
  * Report model for Nacka high school student placements with all study paths listed.
  * <p>
- * Last modified: $Date: 2004/02/24 07:48:16 $ by $Author: anders $
+ * Last modified: $Date: 2004/02/24 08:46:18 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public class NackaCommuneHighSchoolStudyPathReportModel extends ReportModel {
 
@@ -359,7 +359,7 @@ public class NackaCommuneHighSchoolStudyPathReportModel extends ReportModel {
 		for (int i = 0; i < _subtractRow.length; i++) {
 			int subtractRow = _subtractRow[i];
 			if (row == subtractRow) {
-				Cell cell = getCell(row, column);
+				Cell cell = getCell(i, column);
 				subtract += cell.getValue();
 			}
 			
@@ -529,7 +529,7 @@ public class NackaCommuneHighSchoolStudyPathReportModel extends ReportModel {
 					} else {
 						int subStudyPathAmount = getStudyPathAmount(studyPathId);
 						String description = sp.getDescription();
-						if (((studyPathAmount != subStudyPathAmount) && (studyPathAmount != -1)) 
+						if (((studyPathAmount != subStudyPathAmount) && (subStudyPathAmount != -1)) 
 								|| description.matches("lokal inriktning")) {
 							_studyPaths.add(sp);
 							_subtractRow[row] = studyPathRow;
