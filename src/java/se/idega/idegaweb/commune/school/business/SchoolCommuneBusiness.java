@@ -1,8 +1,18 @@
 package se.idega.idegaweb.commune.school.business;
 
+import com.idega.block.datareport.util.ReportableCollection;
 import com.idega.block.school.data.SchoolClassMember;
+import com.idega.block.school.data.SchoolSeason;
+import com.idega.data.IDOException;
+import com.idega.data.IDOLookupException;
 import com.idega.user.data.User;
 import java.rmi.RemoteException;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Locale;
+
+import javax.ejb.CreateException;
+import javax.ejb.FinderException;
 
 public interface SchoolCommuneBusiness extends com.idega.business.IBOService,com.idega.block.process.business.CaseBusiness
 {
@@ -68,4 +78,7 @@ public interface SchoolCommuneBusiness extends com.idega.business.IBOService,com
      */
     SchoolClassMember getCurrentSchoolClassMembership (User user)
         throws RemoteException;
+        
+	public ReportableCollection getReportOfUsersNotRegisteredInAnyClass(Locale currentLocale, Date selectedDate, SchoolSeason currentSeason, Collection classes) throws RemoteException, IDOLookupException, IDOException, FinderException, CreateException;
+
 }
