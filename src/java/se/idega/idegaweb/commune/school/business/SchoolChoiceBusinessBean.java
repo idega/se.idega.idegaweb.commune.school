@@ -976,8 +976,9 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 				}
 				User child = choice.getChild();
 				//Object[] arguments = {child.getNameLastFirst(true), choice.getChosenSchool().getSchoolName(), PersonalIDFormatter.format(child.getPersonalID(), this.getIWApplicationContext().getApplicationSettings().getDefaultLocale())};
-				Object[] arguments = {child.getName(), choice.getChosenSchool().getSchoolName(), PersonalIDFormatter.format(child.getPersonalID(), this.getIWApplicationContext().getApplicationSettings().getDefaultLocale())};
-				String body = MessageFormat.format(getLocalizedString("school_choice.student_moved_from_school_body", "Dear headmaster, {0} has been moved from your school and placed at {1}."), arguments);
+				String placementDate = choice.getPlacementDate() != null ? new IWTimestamp(choice.getPlacementDate()).getLocaleDate(this.getIWApplicationContext().getApplicationSettings().getDefaultLocale(), IWTimestamp.SHORT) : "";
+				Object[] arguments = {child.getName(), choice.getChosenSchool().getSchoolName(), PersonalIDFormatter.format(child.getPersonalID(), this.getIWApplicationContext().getApplicationSettings().getDefaultLocale()), placementDate};				
+				String body = MessageFormat.format(getLocalizedString("school_choice.student_moved_from_school_body", "Dear headmaster, {0} has been moved from your school and placed at {1} from {3}."), arguments);
 				this.sendMessageToSchool(choice.getCurrentSchoolId(), getLocalizedString("school_choice.student_moved_from_school_subject", "Student moved from your school"), body,SchoolChoiceMessagePdfHandler.CODE_SCHOOL_MOVEAWAY);
 			}
 			super.changeCaseStatus(choice, getCaseStatusPlaced().getStatus(), performer);
