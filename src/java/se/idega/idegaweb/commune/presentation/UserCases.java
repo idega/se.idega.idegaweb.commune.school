@@ -179,27 +179,17 @@ public class UserCases extends CommuneBlock {
 
 			// 1. find my groups
 			final UserBusiness userBusiness = (UserBusiness) IBOLookup.getServiceInstance(iwc, UserBusiness.class);
-			final Collection groupCollection
-                    = userBusiness.getUserGroups(userId);
-            final Group [] groups
-                    = (Group[]) groupCollection.toArray(new Group[0]);
+			final Collection groupCollection = userBusiness.getUserGroups(userId);
+			final Group[] groups = (Group[]) groupCollection.toArray(new Group[0]);
 
 			// 2. find unhandled cases
-			final SchoolChoiceBusiness schoolChoiceBusiness
-                    = (SchoolChoiceBusiness) IBOLookup.getServiceInstance
-                    (iwc, SchoolChoiceBusiness.class);
-			final SchoolChoiceReminder [] reminders
-                    = schoolChoiceBusiness.findUnhandledSchoolChoiceReminders
-                    (groups);
-			final ViewpointBusiness viewpointBusiness
-                    = (ViewpointBusiness) IBOLookup.getServiceInstance
-                    (iwc, ViewpointBusiness.class);
-			final Viewpoint[] viewpoints
-                    = viewpointBusiness.findUnhandledViewpointsInGroups(groups);
+			final SchoolChoiceBusiness schoolChoiceBusiness = (SchoolChoiceBusiness) IBOLookup.getServiceInstance(iwc, SchoolChoiceBusiness.class);
+			final SchoolChoiceReminder[] reminders = schoolChoiceBusiness.findUnhandledSchoolChoiceReminders(groups);
+			final ViewpointBusiness viewpointBusiness = (ViewpointBusiness) IBOLookup.getServiceInstance(iwc, ViewpointBusiness.class);
+			final Viewpoint[] viewpoints = viewpointBusiness.findUnhandledViewpointsInGroups(groups);
 
 			// 3. display unhandled cases
-			if ((viewpoints != null && viewpoints.length > 0) ||
-                (reminders != null && reminders.length > 0)) {
+			if ((viewpoints != null && viewpoints.length > 0) || (reminders != null && reminders.length > 0)) {
 				mainTable.setHeight(2, 12);
 				mainTable.add(getLocalizedSmallHeader(UNHANDLEDCASESINMYGROUPS_KEY, UNHANDLEDCASESINMYGROUPS_DEFAULT), 1, 3);
 				mainTable.setHeight(4, 6);
@@ -221,18 +211,16 @@ public class UserCases extends CommuneBlock {
 				messageList.add(getSmallHeader(localize(DATE_KEY, DATE_DEFAULT)), 4, row);
 				messageList.add(getSmallHeader(localize(HANDLERGROUP_KEY, HANDLERGROUP_DEFAULT)), 5, row++);
 
-                if (viewpoints != null) {
-                    for (int i = 0; i < viewpoints.length; i++) {
-                        addViewpointToMessageList(iwc, viewpoints[i],
-                                                  messageList, row++);
-                    }
-                }
-                if (reminders != null) {
-                    for (int i = 0; i < reminders.length; i++) {
-                        addReminderToMessageList(iwc, reminders[i], messageList,
-                                                 row++);
-                    }
-                }
+				if (viewpoints != null) {
+					for (int i = 0; i < viewpoints.length; i++) {
+						addViewpointToMessageList(iwc, viewpoints[i], messageList, row++);
+					}
+				}
+				if (reminders != null) {
+					for (int i = 0; i < reminders.length; i++) {
+						addReminderToMessageList(iwc, reminders[i], messageList, row++);
+					}
+				}
 				mainTable.add(form, 1, 5);
 			}
 		}
@@ -296,14 +284,24 @@ public class UserCases extends CommuneBlock {
 
 		int column = 1;
 
+		messageList.setNoWrap(column, row);
 		messageList.add(caseNumber, column++, row);
+
 		messageList.add(caseType, column++, row);
-		if (isShowName())
+		if (isShowName()) {
+			messageList.setNoWrap(column, row);
 			messageList.add(caseOwnerName, column++, row);
+		}
+
 		if (_dateWidth != null)
 			messageList.setWidth(column, _dateWidth);
+		messageList.setNoWrap(column, row);
 		messageList.add(date, column++, row);
+
+		messageList.setNoWrap(column, row);
 		messageList.add(manager, column++, row);
+
+		messageList.setNoWrap(column, row);
 		messageList.add(status, column++, row);
 	}
 
@@ -355,19 +353,26 @@ public class UserCases extends CommuneBlock {
 		}
 
 		if (row % 2 == 0)
-			messageList.setRowColor (row, getZebraColor1());
+			messageList.setRowColor(row, getZebraColor1());
 		else
-			messageList.setRowColor (row, getZebraColor2());
+			messageList.setRowColor(row, getZebraColor2());
 
-		messageList.add (caseNumber, 1, row);
-		messageList.add (caseType, 2, row);
-        final String reminderText = reminder.getText ();
-        messageList.add (reminderText.length () < 25 ? new Text(reminderText)
-                         : new Text((reminderText.substring (0, 20) + "...")), 3, row);
+		messageList.setNoWrap(1, row);
+		messageList.add(caseNumber, 1, row);
+
+		messageList.add(caseType, 2, row);
+
+		final String reminderText = reminder.getText();
+		messageList.setNoWrap(3, row);
+		messageList.add(reminderText.length() < 25 ? new Text(reminderText) : new Text((reminderText.substring(0, 20) + "...")), 3, row);
+
 		if (_dateWidth != null)
 			messageList.setWidth(4, _dateWidth);
-		messageList.add (caseDate, 4, row);
-		messageList.add (group, 5, row);
+		messageList.setNoWrap(4, row);
+		messageList.add(caseDate, 4, row);
+
+		messageList.setNoWrap(5, row);
+		messageList.add(group, 5, row);
 	}
 
 	private Table getNavigationTable(int caseSize) {
