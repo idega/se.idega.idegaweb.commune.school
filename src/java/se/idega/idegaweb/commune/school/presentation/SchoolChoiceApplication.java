@@ -638,6 +638,9 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		message.setRows(6);
 		message.setColumns(65);
 		
+		if(schoolChange)
+			table.add(getSmallHeader(localize("school.application_change_required_reason", "Reason for schoolchange (Required)")), 1, 1);
+		else
 		table.add(getSmallHeader(localize("school.application_extra_info", "Extra info")), 1, 1);
 		table.add(message, 1, 2);
 
@@ -750,7 +753,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		s.append("schoolSelect.options.length = 0;").append("\n\t\t");
 		s.append("areaSelect.options[areaSelect.options.length] = new Option(\"");
 		s.append(iwrb.getLocalizedString("choose_area", "Choose Area")).append("\",\"-1\",true,true);").append("\n\t\t");
-		//s.append("schoolSelect.options[schoolSelect.options.length] = new Option(\"Veldu skóla\",\"-1\",true,true);").append("\n\t");
+		//s.append("schoolSelect.options[schoolSelect.options.length] = new Option(\"Veldu sk?la\",\"-1\",true,true);").append("\n\t");
 		s.append("}else if(index == 2){").append(" \n\t\t");
 		s.append("selected = areaSelect.options[areaSelect.selectedIndex].value;").append("\n\t\t");
 		s.append("if (selectedValue > -1) \n\t\t\tselected = selectedValue;").append("\n\t\t");
@@ -880,19 +883,25 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		if (!this.hasPreviousSchool)
 			s.append("\n\t var currSchool = ").append("findObj('").append(prmPreSchool).append("');");
 		s.append("\n\t var dropOne = ").append("findObj('").append(prmFirstSchool).append("');");
-		s.append("\n\t var dropTwo = ").append("findObj('").append(prmSecondSchool).append("');");
-		s.append("\n\t var dropThree = ").append("findObj('").append(prmThirdSchool).append("');");
+		if(!schoolChange){
+			s.append("\n\t var dropTwo = ").append("findObj('").append(prmSecondSchool).append("');");
+			s.append("\n\t var dropThree = ").append("findObj('").append(prmThirdSchool).append("');");
+		}
 		if (!this.hasPreviousSchool)
 			s.append("\n\t var gradeDrop = ").append("findObj('").append(prmPreGrade).append("');");
 		s.append("\n\t var one = 0;");
-		s.append("\n\t var two = 0;");
-		s.append("\n\t var three = 0;");
+		if(!schoolChange){
+			s.append("\n\t var two = 0;");
+			s.append("\n\t var three = 0;");
+		}
 		s.append("\n\t var year = 0;");
 		s.append("\n\t var school = 0;");
 
 		s.append("\n\n\t if (dropOne.selectedIndex > 0) one = dropOne.options[dropOne.selectedIndex].value;");
-		s.append("\n\t if (dropTwo.selectedIndex > 0) two = dropTwo.options[dropTwo.selectedIndex].value;");
-		s.append("\n\t if (dropThree.selectedIndex > 0) three = dropThree.options[dropThree.selectedIndex].value;");
+		if(!schoolChange){
+			s.append("\n\t if (dropTwo.selectedIndex > 0) two = dropTwo.options[dropTwo.selectedIndex].value;");
+			s.append("\n\t if (dropThree.selectedIndex > 0) three = dropThree.options[dropThree.selectedIndex].value;");
+		}
 		if (!this.hasPreviousSchool)
 			s.append("\n\t if (gradeDrop.selectedIndex > 0) year = gradeDrop.options?gradeDrop.options[gradeDrop.selectedIndex].value:document.sch_app_the_frm.elements['" + prmPreGrade + "'].value;");
 		if (!this.hasPreviousSchool)
@@ -917,18 +926,29 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		s.append("\n\t }");
 
 		// schoolchoices checked
-		s.append("\n\t if(one > 0 && two > 0 && three > 0){");
-		s.append("\n\t if(one == two || two == three || three == one){");
-		String msg = iwrb.getLocalizedString("school_school.must_not_be_the_same", "Please do not choose the same school more than once");
-		s.append("\n\t\t\t alert('").append(msg).append("');");
-		s.append("\n\t\t\t return false;");
-		s.append("\n\t\t }");
-		s.append("\n\t }");
-		s.append("\n\t else{");
-		msg = iwrb.getLocalizedString("school_school.must_fill_out", "Please fill out all choices");
-		s.append("\n\t\t alert('").append(msg).append("');");
-		s.append("\n\t\t return false;");
-		s.append("\n\t }");
+		
+		if(!schoolChange){
+			s.append("\n\t if(one > 0 && two > 0 && three > 0){");
+			s.append("\n\t if(one == two || two == three || three == one){");
+			String msg = iwrb.getLocalizedString("school_school.must_not_be_the_same", "Please do not choose the same school more than once");
+			s.append("\n\t\t\t alert('").append(msg).append("');");
+			s.append("\n\t\t\t return false;");
+			s.append("\n\t\t }");
+			s.append("\n\t }");
+			s.append("\n\t else{");
+			msg = iwrb.getLocalizedString("school_school.must_fill_out", "Please fill out all choices");
+			s.append("\n\t\t alert('").append(msg).append("');");
+			s.append("\n\t\t return false;");
+			s.append("\n\t }");
+		}
+		else{
+			s.append("\n\t var reason =  findObj('").append(prmMessage).append("';");
+			s.append("\n\t if(reason.value.length<=10){");
+			String msg = iwrb.getLocalizedString("school_school.change_must_give_reason", "You must give a reason for  the change !");
+			s.append("\n\t\t alert('").append(msg).append("');");
+			s.append("\n\t\t return false;");
+			s.append("\n\t }");
+		}
 		s.append("\n\t\t findObj('").append(prmAction).append("').value='true';");
 		s.append("\n\t return true;");
 		s.append("\n}\n");
