@@ -425,6 +425,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
       while(iter.hasNext()){
 				User parent = (User) iter.next();
 				T.add(getSmallText(parent.getNameLastFirst()),1,row++);
+				T.add(userbuiz.getUsersMainAddress(parent).toString());
       }
     }
     catch(NoCustodianFound ex){

@@ -363,7 +363,7 @@ public class SchoolChoiceApprover extends CommuneBlock {
 		T.add(tf.format(iwrb.getLocalizedString("school","School"),tf.HEADER),1,1);
 		T.add(tf.format(school.getSchoolName()),1,2);
 		T.add(tf.format(iwrb.getLocalizedString("address","Address"),tf.HEADER),2,1);
-		T.add(tf.format(school.getSchoolName()),2,2);
+		T.add(tf.format(school.getSchoolAddress()),2,2);
 		T.add(tf.format(iwrb.getLocalizedString("phone","Phone"),tf.HEADER),3,1);
 		T.add(tf.format(school.getSchoolPhone()),3,2);
 		
@@ -374,6 +374,10 @@ public class SchoolChoiceApprover extends CommuneBlock {
 		Link L = new Link(tf.format(child.getNameLastFirst()));
 		L.addParameter(prmPupilInfo,choice.getPrimaryKey().toString());
 		return L;
+	}
+	
+	public String getBundleIdentifier(){
+		return IW_BUNDLE_IDENTIFIER;
 	}
 	
 	
