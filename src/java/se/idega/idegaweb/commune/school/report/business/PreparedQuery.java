@@ -1,5 +1,5 @@
 /*
- * $Id: PreparedQuery.java,v 1.7 2004/01/20 15:10:52 anders Exp $
+ * $Id: PreparedQuery.java,v 1.8 2004/01/21 10:35:31 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -27,10 +27,10 @@ import com.idega.block.school.data.SchoolSeason;
 /** 
  * Handles the SQL logic for school report calculations.
  * <p>
- * Last modified: $Date: 2004/01/20 15:10:52 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/21 10:35:31 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.8 $
  */
 public class PreparedQuery {
 
@@ -466,10 +466,25 @@ public class PreparedQuery {
 	
 	/**
 	 * Set select only the specified three management types.
-	 * @return the index for the first school type id
+	 * @return the index for the first management type id
 	 */
 	public int setThreeManagementTypes() {
 		String sql = "(s.management_type = ? or s.management_type = ? or s.management_type = ?)";
+		_sqlWhere.add(sql);
+		
+		_sqlFrom.put(S, TABLE_S);
+		
+		int index = _parameterIndex;
+		_parameterIndex += 4;
+		return index;
+	}
+	
+	/**
+	 * Set select only the specified four management types.
+	 * @return the index for the first management type id
+	 */
+	public int setFourManagementTypes() {
+		String sql = "(s.management_type = ? or s.management_type = ? or s.management_type = ? or s.management_type = ?)";
 		_sqlWhere.add(sql);
 		
 		_sqlFrom.put(S, TABLE_S);
