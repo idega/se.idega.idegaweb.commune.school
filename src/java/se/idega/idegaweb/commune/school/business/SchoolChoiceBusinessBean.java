@@ -644,7 +644,8 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	}
 
     public void createSchoolChoiceReminder
-        (final String text, final Date eventDate, final Date reminderDate)
+        (final String text, final Date eventDate, final Date reminderDate,
+         final User user)
         throws CreateException, RemoteException {
 
         final SchoolChoiceReminderHome home = (SchoolChoiceReminderHome)
@@ -653,6 +654,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
         reminder.setText (text);
         reminder.setEventDate (eventDate);
         reminder.setReminderDate (reminderDate);
+        reminder.setUser (user);
         reminder.store ();
     }
 }

@@ -20,10 +20,10 @@ import se.idega.idegaweb.commune.school.data.SchoolChoiceReminder;
  * and entity ejb classes in {@link se.idega.idegaweb.commune.school.data}.
  * <p>
  * <p>
- * Last modified: $Date: 2002/12/17 14:56:47 $ by $Author: staffan $
+ * Last modified: $Date: 2002/12/18 11:32:40 $ by $Author: staffan $
  *
  * @author <a href="http://www.staffannoteberg.com">Staffan Nöteberg</a>
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  * @see javax.ejb
  */
 public class SchoolChoiceReminderView extends CommuneBlock {
@@ -152,7 +152,7 @@ public class SchoolChoiceReminderView extends CommuneBlock {
         add ("EVENT_DATE_KEY=" + iwc.getParameter (EVENT_DATE_KEY) + "<br/>");
         add ("REMINDER_DATE_KEY=" + iwc.getParameter (REMINDER_DATE_KEY) + "<br/>");
 		final SchoolChoiceBusiness business = getSchoolChoiceBusiness (iwc);
-		business.createSchoolChoiceReminder (iwc.getParameter (REMINDER_TEXT_KEY), Calendar.getInstance ().getTime (), Calendar.getInstance ().getTime ());
+		business.createSchoolChoiceReminder (iwc.getParameter (REMINDER_TEXT_KEY), Calendar.getInstance ().getTime (), Calendar.getInstance ().getTime (), iwc.getCurrentUser ());
 
 		final Text text1
                 = new Text (getLocalizedString (CONFIRMENTERREMINDER_KEY,

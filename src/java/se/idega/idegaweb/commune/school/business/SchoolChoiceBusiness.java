@@ -1,9 +1,9 @@
 package se.idega.idegaweb.commune.school.business;
 
-import javax.ejb.*;
+import com.idega.user.data.User;
 import java.rmi.RemoteException;
 import java.util.Date;
-
+import javax.ejb.*;
 import se.idega.idegaweb.commune.business.CommuneUserBusiness;
 
 public interface SchoolChoiceBusiness extends com.idega.business.IBOService,com.idega.block.process.business.CaseBusiness
@@ -49,6 +49,6 @@ public interface SchoolChoiceBusiness extends com.idega.business.IBOService,com.
  public void setChildcarePreferences(int p0,boolean p1,java.lang.String p2)throws java.rmi.RemoteException, java.rmi.RemoteException;
 
     void createSchoolChoiceReminder (String text, Date eventDate,
-                                     Date remindingDate)
+                                     Date remindingDate, User user)
         throws CreateException, RemoteException;
 }
