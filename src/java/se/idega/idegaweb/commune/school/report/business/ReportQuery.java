@@ -1,5 +1,5 @@
 /*
- * $Id: ReportQuery.java,v 1.17 2004/01/13 12:24:04 anders Exp $
+ * $Id: ReportQuery.java,v 1.18 2004/01/14 13:22:55 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -13,17 +13,20 @@ import java.sql.Connection;
 import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.Collection;
+import java.util.Iterator;
 
+import com.idega.block.school.data.School;
 import com.idega.block.school.data.SchoolSeason;
 import com.idega.util.database.ConnectionBroker;
 
 /** 
  * Handles the SQL logic for school report calculations.
  * <p>
- * Last modified: $Date: 2004/01/13 12:24:04 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/14 13:22:55 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.17 $
+ * @version $Revision: 1.18 $
  */
 public class ReportQuery {
 
@@ -120,6 +123,22 @@ public class ReportQuery {
 	 * @param studyPathPrefix the two letter study path prefix
 	 */
 	public void setSelectCountStudyPathPlacementsAge(int schoolSeasonId, String studyPathPrefix) {
+		sql = "select count(*) from ic_user u, ic_address a, ic_user_address ua, sch_class_member cm," +
+				" sch_school_class sc, sch_school s, sch_study_path sp where" +
+				" cm.register_date <= '" + currentDate + 
+				"' and (cm. removed_date is null or cm.removed_date > '" + currentDate + "')" + 
+				" and sc.school_id = s.sch_school_id and sc.sch_school_class_id = cm.sch_school_class_id" +
+				" and sc.sch_school_season_id = " + schoolSeasonId +
+				" and cm.study_path = sp.sch_study_path_id and sp.study_path_code like '" + studyPathPrefix +"%'";
+	}
+
+	/**
+	 * Sets the query to select number of placements for the specified study path prefix (2 chars)
+	 * for all school years.
+	 * @param schoolSeasonId the school season id for the placements to count
+	 * @param studyPathPrefix the two letter study path prefix
+	 */
+	public void setSelectCountStudyPathPlacementsForAllSchoolYears(int schoolSeasonId, String studyPathPrefix) {
 		sql = "select count(*) from ic_user u, ic_address a, ic_user_address ua, sch_class_member cm," +
 				" sch_school_class sc, sch_school s, sch_study_path sp where" +
 				" cm.register_date <= '" + currentDate + 
@@ -281,7 +300,23 @@ public class ReportQuery {
 	public void setSchool(int schoolId) {
 		sql += " and s.sch_school_id = " + schoolId;
 	}
-	
+
+	/**
+	 * Set select only the specified schools.
+	 */
+	public void setSchools(Collection schools) {
+		sql += " and s.sch_school_id in (";
+		Iterator iter = schools.iterator();
+		while (iter.hasNext()) {
+			School school = (School) iter.next();
+			sql += school.getPrimaryKey();
+			if (iter.hasNext()) {
+				sql += ", ";
+			}
+		}
+		sql += ")";
+	}
+
 	/**
 	 * Set select only students in the specified age interval.
 	 */
