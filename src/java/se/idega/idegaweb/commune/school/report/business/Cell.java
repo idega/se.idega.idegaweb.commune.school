@@ -1,5 +1,5 @@
 /*
- * $Id: Cell.java,v 1.3 2004/01/23 08:24:24 anders Exp $
+ * $Id: Cell.java,v 1.4 2004/01/23 08:36:03 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -15,10 +15,10 @@ import java.rmi.RemoteException;
  * Holder for report cell values. A report cell holds methods, parameters, type and
  * the parent report model for calculating the cell's value.
  * <p>
- * Last modified: $Date: 2004/01/23 08:24:24 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/23 08:36:03 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class Cell {
 
@@ -136,5 +136,16 @@ public class Cell {
 			}
 		}
 		return _value;
+	}
+	
+	/**
+	 * Returns the string value for this cell.
+	 */
+	public String getStringValue() {
+		String s = null;
+		if (_cellType == CELLTYPE_ROW_HEADER) {
+			s = _rowParameter.toString();
+		}
+		return s;
 	}
 }
