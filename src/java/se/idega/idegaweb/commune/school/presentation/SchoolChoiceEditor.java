@@ -705,7 +705,7 @@ public class SchoolChoiceEditor extends SchoolCommuneBlock {
 			
 				if (choice.getStatus().equalsIgnoreCase("PLAC")){
 					//delete school class member and change status to TYST
-					SchoolClassMember schCMember = getBusiness().getSchoolBusiness().findByStudentAndSeason(choice.getChild().getID(), choice.getSchoolSeasonId());
+					SchoolClassMember schCMember = getBusiness().getSchoolBusiness().findByStudentAndSeason(((Integer)choice.getChild().getPrimaryKey()).intValue(), choice.getSchoolSeasonId());
 					//schoolRemovedFrom = schCMember.getSchoolClass().getSchool().getSchoolName();
 					removedSchoolID = schCMember.getSchoolClass().getSchoolId();
 					hasReceivedPlacementMessage = choice.getHasReceivedPlacementMessage();
