@@ -503,7 +503,7 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 		sql.appendSelectAllFrom(this).append(" sc, ").append("PROC_CASE pc ");
 		sql.appendWhereEquals(SCHOOL_SEASON, seasonID);
 		sql.appendAndEquals("sc." + getIDColumnName(), "pc.proc_case_id");
-		sql.appendAndEqualsQuoted("pc.case_satus", CASE_STATUS_PLACED);
+		sql.appendAndEqualsQuoted("pc.case_status", CASE_STATUS_PLACED);
 		return super.idoFindPKsBySQL(sql.toString());
 	}
 	
