@@ -34,11 +34,10 @@ public class SchoolUserEditor extends com.idega.block.school.presentation.School
 	private final String CATEGORY_SCHOOL = "SCHOOL";
 	private final String CATEGORY_CHILDCARE = "CHILDCARE";
 
-
 	private GroupBusiness groupBusiness = null;
 	
 	public String getBundleIdentifier(){
-		return IW_BUNDLE_IDENTIFIER;
+		return CommuneBlock.IW_BUNDLE_IDENTIFIER;
 	}	
 
 	protected void postSaveNew(School school, User user, int userType) throws RemoteException {
@@ -62,7 +61,7 @@ public class SchoolUserEditor extends com.idega.block.school.presentation.School
 						}else if (category != null && category.equals(CATEGORY_CHILDCARE)) {
 							groupId = getChildCareAdminGroupId();	
 						}
-				
+						System.out.println("[SchoolUserEditor (se)] : userType = "+userType+", groupId = "+groupId);
 						if (userType != SchoolUserBusinessBean.USER_TYPE_TEACHER && groupId > 0) {
 							groupBusiness.addUser(groupId, user);
 						} 
