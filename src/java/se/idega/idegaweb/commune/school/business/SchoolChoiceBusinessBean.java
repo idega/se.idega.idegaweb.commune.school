@@ -66,6 +66,7 @@ import com.idega.user.data.User;
 import com.idega.user.data.UserHome;
 import com.idega.util.Age;
 import com.idega.util.IWTimestamp;
+import com.idega.util.PersonalIDFormatter;
 import com.lowagie.text.Chunk;
 import com.lowagie.text.Document;
 import com.lowagie.text.Element;
@@ -696,7 +697,8 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		try {
 			SchoolChoice choice = getSchoolChoiceHome().findByPrimaryKey(pk);
 			if (choice.getCaseStatus().equals(getCaseStatusMoved())) {
-				Object[] arguments = { choice.getChild().getNameLastFirst(true), choice.getChosenSchool().getSchoolName() };
+				User child = choice.getChild();
+				Object[] arguments = { child.getNameLastFirst(true), choice.getChosenSchool().getSchoolName(), PersonalIDFormatter.format(child.getPersonalID(), this.getIWApplicationContext().getApplicationSettings().getDefaultLocale() };
 				String body = MessageFormat.format(getLocalizedString("school_choice.student_moved_from_school_body", "Dear headmaster, {0} has been moved from your school and placed at {1}."), arguments);
 				this.sendMessageToSchool(choice.getCurrentSchoolId(), getLocalizedString("school_choice.student_moved_from_school_subject", "Student moved from your school"), body);
 			}
@@ -771,7 +773,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	}
 	
 	protected String getNewHeadmasterBody(User student, School oldSchool) throws RemoteException, FinderException {
-		Object[] arguments = { student.getNameLastFirst(true), oldSchool.getSchoolName() };
+		Object[] arguments = { student.getNameLastFirst(true), oldSchool.getSchoolName(), PersonalIDFormatter.format(student.getPersonalID(), this.getIWApplicationContext().getApplicationSettings().getDefaultLocale()) };
 		String body = MessageFormat.format(getLocalizedString("school_choice.new_headmaster_body", "Dear headmaster"), arguments);
 		/*StringBuffer body = new StringBuffer(this.getLocalizedString("school_choice.old_headmaster_body1", "Dear headmaster "));
 		body.append(student.getName()).append("\n");
