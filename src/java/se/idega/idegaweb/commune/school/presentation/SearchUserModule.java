@@ -253,7 +253,8 @@ public class SearchUserModule extends CommuneBlock {
 			input.setStyleClass(interfaceStyleName);
 			input.setLength(personalIDLength);
 			if (user != null && user.getPersonalID() != null)
-				input.setContent(user.getPersonalID());
+// Empty user fields after search
+//				input.setContent(user.getPersonalID());
 			if (stacked)
 				searchTable.add(input, col++, row + 1);
 			else
@@ -269,7 +270,8 @@ public class SearchUserModule extends CommuneBlock {
 			input.setStyleClass(interfaceStyleName);
 			input.setLength(lastNameLength);
 			if (user != null && user.getLastName() != null)
-				input.setContent(user.getLastName());
+// Empty user fields after search
+//				input.setContent(user.getLastName());
 			if (stacked)
 				searchTable.add(input, col++, row + 1);
 			else
@@ -286,7 +288,8 @@ public class SearchUserModule extends CommuneBlock {
 			input.setStyleClass(interfaceStyleName);
 			input.setLength(middleNameLength);
 			if (user != null && user.getMiddleName() != null)
-				input.setContent(user.getMiddleName());
+// Empty user fields after search
+//				input.setContent(user.getMiddleName());
 			if (stacked)
 				searchTable.add(input, col++, row + 1);
 			else
@@ -302,7 +305,8 @@ public class SearchUserModule extends CommuneBlock {
 			input.setStyleClass(interfaceStyleName);
 			input.setLength(firstNameLength);
 			if (user != null)
-				input.setContent(user.getFirstName());
+// Empty user fields after search
+//				input.setContent(user.getFirstName());
 			if (stacked)
 				searchTable.add(input, col++, row + 1);
 			else
