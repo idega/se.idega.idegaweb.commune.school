@@ -43,11 +43,13 @@ import com.idega.block.school.data.SchoolYear;
 import com.idega.business.IBOLookup;
 import com.idega.core.data.Address;
 import com.idega.core.data.Phone;
+import com.idega.data.IDOAddRelationshipException;
 import com.idega.data.IDOEntityDefinition;
 import com.idega.data.IDOException;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
 import com.idega.data.IDOQuery;
+import com.idega.data.IDORemoveRelationshipException;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWPropertyList;
 import com.idega.idegaweb.IWResourceBundle;
@@ -685,6 +687,55 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
             return null;
         }
     }    
+
+    public SchoolStudyPath [] getAllStudyPaths () {
+        SchoolStudyPath [] result = new SchoolStudyPath [0];
+        try {
+            final SchoolStudyPathHome home = (SchoolStudyPathHome)
+                    IDOLookup.getHome(SchoolStudyPath.class);
+            final Collection studyPathCollection = home.findAllStudyPaths ();
+            if (null != studyPathCollection) {
+                result = (SchoolStudyPath []) studyPathCollection.toArray
+                        (new SchoolStudyPath [studyPathCollection.size ()]);
+            }
+            return result;
+        }catch (FinderException e) {
+            return result;
+        } catch (IDOLookupException e) {
+            e.printStackTrace ();
+            return result;
+        }
+    }
+
+    public void setStudyPath (final SchoolClassMember student,
+                              final int studyPathId) throws RemoteException {
+        try {
+            final SchoolStudyPath oldPath = getStudyPath (student);
+            if (null != oldPath) {
+                oldPath.removeSchoolClassMember (student);
+                oldPath.store ();
+            }
+            final SchoolStudyPathHome home = (SchoolStudyPathHome)
+                    IDOLookup.getHome(SchoolStudyPath.class);
+            final SchoolStudyPath newPath = (SchoolStudyPath)
+                    home.findByPrimaryKey (new Integer (studyPathId));
+            newPath.addSchoolClassMember (student);
+            newPath.store ();
+        } catch (FinderException e) {
+            e.printStackTrace ();
+            throw new RemoteException (e.getMessage ());
+        } catch (IDORemoveRelationshipException e) {
+            e.printStackTrace ();
+            throw new RemoteException (e.getMessage ());
+        } catch (IDOLookupException e) {
+            e.printStackTrace ();
+            throw new RemoteException (e.getMessage ());
+        } catch (IDOAddRelationshipException e) {
+            e.printStackTrace ();
+            throw new RemoteException (e.getMessage ());
+        }
+    }
+
 
 	private void initializeBundlesIfNeeded(Locale currentLocale){
 		if(_iwb==null){

@@ -87,6 +87,11 @@ public interface SchoolCommuneBusiness extends com.idega.business.IBOService,com
      */
     SchoolStudyPath getStudyPath (SchoolClassMember student);
         
+    SchoolStudyPath [] getAllStudyPaths ();
+
+    void setStudyPath (SchoolClassMember student, int studyPathId)
+        throws RemoteException ;
+
 	public ReportableCollection getReportOfUsersNotRegisteredInAnyClass(Locale currentLocale, Date selectedDate, SchoolSeason currentSeason, Collection classes) throws RemoteException, IDOLookupException, IDOException, FinderException, CreateException;
 
 }
