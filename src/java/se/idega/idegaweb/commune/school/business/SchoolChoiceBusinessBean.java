@@ -158,7 +158,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	public SchoolChoice createSchoolChangeChoice(int userId, int childId, int school_type_id, int current_school, int chosen_school, int grade, int method, int workSituation1, int workSituation2, String language, String message, boolean keepChildrenCare, boolean autoAssign, boolean custodiansAgree, boolean schoolCatalogue, SchoolSeason season)throws IDOCreateException{
 		try {
 			java.sql.Timestamp time = new java.sql.Timestamp(System.currentTimeMillis());
-			CaseStatus unHandledStatus = getCaseStatus("FLYT");
+			CaseStatus unHandledStatus = getCaseStatus(getCaseStatusMoved().getStatus());
 			SchoolChoice choice = createSchoolChoice(userId, childId, school_type_id, current_school,chosen_school, grade, 1, method, workSituation1, workSituation2, language, message, time, true, keepChildrenCare, autoAssign, custodiansAgree, schoolCatalogue, unHandledStatus, null, null, season);
 			ArrayList choices = new ArrayList(1);
 			choices.add(choice);
@@ -189,8 +189,8 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 			javax.transaction.UserTransaction trans = this.getSessionContext().getUserTransaction();
 			try {
 				trans.begin();
-				CaseStatus first = getCaseStatus("PREL");
-				CaseStatus other = getCaseStatus(super.getCaseStatusInactive().getStatus());
+				CaseStatus first = getCaseStatusPreliminary();
+				CaseStatus other = getCaseStatusInactive();
 				int[] schoolIds = { chosen_school_1, chosen_school_2, chosen_school_3 };
 				SchoolChoice choice = null;
 				for (int i = 0; i < caseCount; i++) {
@@ -259,8 +259,8 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 			javax.transaction.UserTransaction trans = this.getSessionContext().getUserTransaction();
 			try {
 				trans.begin();
-				CaseStatus first = getCaseStatus("PREL");
-				CaseStatus other = getCaseStatus(super.getCaseStatusInactive().getStatus());
+				CaseStatus first = getCaseStatusPreliminary();
+				CaseStatus other = getCaseStatusInactive();
 				int[] schoolIds = { chosen_school_1, chosen_school_2, chosen_school_3 };
 				SchoolChoice choice = null;
 				for (int i = 0; i < caseCount; i++) {
@@ -372,7 +372,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 			choice.setHandler(getBunGroup());
 		}
 		
-		if (caseStatus.getStatus().equalsIgnoreCase("PREL")) {
+		if (caseStatus.getStatus().equalsIgnoreCase(getCaseStatusPreliminary().getStatus())) {
 			sendMessageToParentOrChild(choice, choice.getOwner(), choice.getChild(), getPreliminaryMessageSubject(), getPreliminaryMessageBody(choice));
 //			getMessageBusiness().createUserMessage(choice.getOwner(), getPreliminaryMessageSubject(), getPreliminaryMessageBody(choice));
 		}
@@ -478,12 +478,12 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		try {
 			trans.begin();
 			SchoolChoice choice = this.getSchoolChoiceHome().findByPrimaryKey(pk);
-			super.changeCaseStatus(choice, getCaseStatusInactive().getPrimaryKey().toString(), performer);
+			super.changeCaseStatus(choice, getCaseStatusDenied().getStatus(), performer);
 			choice.store();
 			Iterator children = choice.getChildren();
 			if (children.hasNext()) {
 				Case child = (Case) children.next();
-				super.changeCaseStatus(child, "PREL", performer);
+				super.changeCaseStatus(child, getCaseStatusPreliminary().getStatus(), performer);
 				child.store();
 			}
 			trans.commit();
@@ -582,16 +582,16 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 			SchoolChoice choice = this.getSchoolChoiceHome().findByPrimaryKey(new Integer(applicationID));
 			User child = choice.getChild();
 			String status = choice.getCaseStatus().toString();
-			super.changeCaseStatus(choice, getCaseStatusInactive().getPrimaryKey().toString(), performer);
+			super.changeCaseStatus(choice, getCaseStatusDenied().getStatus(), performer);
 			choice.store();
 			
-			if (!status.equalsIgnoreCase("FLYT")) {
+			if (!status.equalsIgnoreCase(getCaseStatusMoved().getStatus())) {
 				Collection coll = findByStudentAndSeason(choice.getChildId(), seasonID);
 				Iterator iter = coll.iterator();
 				while (iter.hasNext()) {
 					SchoolChoice element = (SchoolChoice) iter.next();
 					if (element.getChoiceOrder() == (choice.getChoiceOrder() + 1)) {
-						super.changeCaseStatus(element, "PREL", performer);
+						super.changeCaseStatus(element, getCaseStatusPreliminary().getStatus(), performer);
 						sendMessageToParents(element, getPreliminaryMessageSubject(), getPreliminaryMessageBody(element));
 						continue;
 					}
@@ -627,7 +627,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	public boolean preliminaryAction(Integer pk, User performer) {
 		try {
 			SchoolChoice choice = getSchoolChoiceHome().findByPrimaryKey(pk);
-			super.changeCaseStatus(choice, "PREL", performer);
+			super.changeCaseStatus(choice, getCaseStatusPreliminary().getStatus(), performer);
 			choice.store();
 			sendMessageToParentOrChild(choice, choice.getOwner(), choice.getChild(), getPreliminaryMessageSubject(), getPreliminaryMessageBody(choice));
 			return true;
@@ -639,7 +639,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 
 	public void setAsPreliminary(SchoolChoice choice, User performer) throws RemoteException {
 		try {
-			super.changeCaseStatus(choice, "PREL", performer);
+			super.changeCaseStatus(choice, getCaseStatusPreliminary().getStatus(), performer);
 		}
 		catch (Exception e) {
 		}
@@ -694,7 +694,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	public SchoolChoice groupPlaceAction(Integer pk, User performer) {
 		try {
 			SchoolChoice choice = getSchoolChoiceHome().findByPrimaryKey(pk);
-			super.changeCaseStatus(choice, "PLAC", performer);
+			super.changeCaseStatus(choice, getCaseStatusPlaced().getStatus(), performer);
 			return choice;
 		}
 		catch (Exception e) {
@@ -853,7 +853,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	
 	public int getNumberOfApplications(int schoolID, int schoolSeasonID) throws RemoteException {
 		try {
-			return getSchoolChoiceHome().getNumberOfApplications("PREL", schoolID, schoolSeasonID);
+			return getSchoolChoiceHome().getNumberOfApplications(getCaseStatusPreliminary().getStatus(), schoolID, schoolSeasonID);
 		}
 		catch (IDOException ie) {
 			return 0;
@@ -874,7 +874,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 
 	public int getNumberOfApplications(int schoolID, int schoolSeasonID, int grade) throws RemoteException {
 		try {
-			return getSchoolChoiceHome().getNumberOfApplications("PREL", schoolID, schoolSeasonID, grade);
+			return getSchoolChoiceHome().getNumberOfApplications(getCaseStatusPreliminary().getStatus(), schoolID, schoolSeasonID, grade);
 		}
 		catch (IDOException ie) {
 			return 0;
