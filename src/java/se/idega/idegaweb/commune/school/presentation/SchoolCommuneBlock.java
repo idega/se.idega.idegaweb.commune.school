@@ -62,6 +62,10 @@ public abstract class SchoolCommuneBlock extends CommuneBlock {
 			_schoolSeasonID = getSchoolCommuneBusiness(iwc).getCurrentSchoolSeasonID();
 			session.setSchoolSeasonID(_schoolSeasonID);
 		}
+		
+		if (_schoolYearID == -1) {
+			_schoolClassID = -1;
+		}
 	}
 	
 	protected Table getNavigationTable(boolean showClass) throws RemoteException {
