@@ -1,11 +1,9 @@
 package se.idega.idegaweb.commune.school.business;
 
-import com.idega.block.process.data.Case;
-import com.idega.user.data.User;
-import com.idega.util.IWTimestamp;
 import java.rmi.RemoteException;
 import javax.ejb.FinderException;
-import se.idega.idegaweb.commune.care.data.ChildCareApplication;
+import se.idega.idegaweb.commune.school.data.SchoolChoice;
+import com.idega.util.IWTimestamp;
 
 public interface SchoolChoiceBusiness extends com.idega.business.IBOService,com.idega.block.process.business.CaseBusiness
 {
@@ -73,8 +71,6 @@ public interface SchoolChoiceBusiness extends com.idega.business.IBOService,com.
 	public se.idega.idegaweb.commune.school.data.SchoolChoice groupPlaceAction(java.lang.Integer p0,com.idega.user.data.User p1) throws java.rmi.RemoteException;
 	public boolean noRoomAction(java.lang.Integer p0,com.idega.user.data.User p1) throws java.rmi.RemoteException;
 	public boolean preliminaryAction(java.lang.Integer p0,com.idega.user.data.User p1) throws java.rmi.RemoteException;
-	public void rejectApplication(int p0,int p1,com.idega.user.data.User p2,java.lang.String p3,java.lang.String p4)throws java.rmi.RemoteException, java.rmi.RemoteException;
-	public void rejectApplication(int p0,int p1,com.idega.user.data.User p2,java.lang.String p3,java.lang.String p4,java.lang.String p5)throws java.rmi.RemoteException, java.rmi.RemoteException;
 	public void reactivateApplication(int p0,int p1,boolean p2)throws java.rmi.RemoteException, java.rmi.RemoteException;
 	public void reactivateApplication(int p0,int p1,boolean p2,java.lang.String p3)throws java.rmi.RemoteException, java.rmi.RemoteException;
 	public void sendMessageToParentOrChild(se.idega.idegaweb.commune.school.data.SchoolChoice p0,com.idega.user.data.User p1,com.idega.user.data.User p2,java.lang.String p3,java.lang.String p4,java.lang.String p5)throws java.rmi.RemoteException, java.rmi.RemoteException;
@@ -85,28 +81,8 @@ public interface SchoolChoiceBusiness extends com.idega.business.IBOService,com.
 	IWTimestamp getSchoolChoiceStartDate () throws RemoteException,	FinderException;
 	IWTimestamp getSchoolChoiceEndDate () throws RemoteException, FinderException;
 	IWTimestamp getSchoolChoiceCriticalDate () throws RemoteException, FinderException;
-	
-	public se.idega.idegaweb.commune.care.data.AfterSchoolChoice findChoicesByChildAndProviderAndSeason(int p0,int p1,int p2)throws javax.ejb.FinderException, java.rmi.RemoteException;
-
-    public boolean rejectApplication(ChildCareApplication application,
-            String subject, String message, User user)
-            throws java.rmi.RemoteException;
-
-    public boolean rejectApplication(int applicationId, String subject,
-            String body, User user) throws java.rmi.RemoteException;
-    
-    public void sendMessageToParents(ChildCareApplication application,
-            String subject, String body) throws java.rmi.RemoteException;
-    
-	public void sendMessageToParents(ChildCareApplication application, String subject, String body, boolean alwaysSendLetter) throws java.rmi.RemoteException;
-	
-	public void sendMessageToParents(ChildCareApplication application, String subject, String body, String letterBody, boolean alwaysSendLetter)  throws java.rmi.RemoteException;
-
-    public boolean isAfterSchoolApplication(Case application)
-            throws java.rmi.RemoteException;
-
-    public ChildCareApplication getApplication(int applicationID)
-            throws java.rmi.RemoteException;
+	public String getPreliminaryMessageBody(SchoolChoice theCase) throws java.rmi.RemoteException;
+	public void sendMessageToParents(SchoolChoice application, String nonApplyingSubject, String nonApplyingBody,String nonApplyingCode,String applyingSubject,String applyingBody,String applyingCode,boolean isChangeApplication) throws java.rmi.RemoteException;
 
 
 }

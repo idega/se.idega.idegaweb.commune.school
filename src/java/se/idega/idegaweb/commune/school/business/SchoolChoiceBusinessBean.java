@@ -21,19 +21,14 @@ import java.util.TreeMap;
 import java.util.Vector;
 import javax.ejb.CreateException;
 import javax.ejb.FinderException;
-import javax.transaction.SystemException;
-import javax.transaction.UserTransaction;
 import se.cubecon.bun24.viewpoint.business.ViewpointBusiness;
 import se.cubecon.bun24.viewpoint.data.SubCategory;
 import se.idega.idegaweb.commune.business.CommuneUserBusiness;
 import se.idega.idegaweb.commune.care.data.AfterSchoolChoice;
 import se.idega.idegaweb.commune.care.data.AfterSchoolChoiceHome;
-import se.idega.idegaweb.commune.care.data.ChildCareApplication;
-import se.idega.idegaweb.commune.care.data.ChildCareApplicationHome;
 import se.idega.idegaweb.commune.care.resource.business.ResourceBusiness;
 import se.idega.idegaweb.commune.care.resource.data.ResourceClassMember;
 import se.idega.idegaweb.commune.message.business.MessageBusiness;
-import se.idega.idegaweb.commune.message.data.Message;
 import se.idega.idegaweb.commune.printing.business.DocumentBusiness;
 import se.idega.idegaweb.commune.school.data.CurrentSchoolSeason;
 import se.idega.idegaweb.commune.school.data.CurrentSchoolSeasonHome;
@@ -41,7 +36,6 @@ import se.idega.idegaweb.commune.school.data.SchoolChoice;
 import se.idega.idegaweb.commune.school.data.SchoolChoiceHome;
 import se.idega.idegaweb.commune.school.data.SchoolChoiceReminder;
 import se.idega.idegaweb.commune.school.data.SchoolChoiceReminderHome;
-import com.idega.block.process.business.CaseBusiness;
 import com.idega.block.process.data.Case;
 import com.idega.block.process.data.CaseStatus;
 import com.idega.block.school.business.SchoolBusiness;
@@ -92,7 +86,7 @@ import com.lowagie.text.pdf.PdfWriter;
  * Title: Description: Copyright: Copyright (c) 2002-2003 Company:
  * 
  * @author <a href="mailto:aron@idega.is">Aron Birkir</a>
- * @author <a href="http://www.staffannoteberg.com">Staffan Nöteberg</a>
+ * @author <a href="http://www.staffannoteberg.com">Staffan Nöteberg</a> 
  * @version 1.0
  */
 public class SchoolChoiceBusinessBean extends com.idega.block.process.business.CaseBusinessBean implements SchoolChoiceBusiness, com.idega.block.process.business.CaseBusiness {
@@ -693,7 +687,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		return false;
 	}
 
-	private void sendMessageToParents(SchoolChoice application, String nonApplyingSubject, String nonApplyingBody,String nonApplyingCode,String applyingSubject,String applyingBody,String applyingCode,boolean isChangeApplication) {
+	public void sendMessageToParents(SchoolChoice application, String nonApplyingSubject, String nonApplyingBody,String nonApplyingCode,String applyingSubject,String applyingBody,String applyingCode,boolean isChangeApplication) {
 		try {
 			User child = application.getChild();
 			//Object[] arguments = {child.getNameLastFirst(true), application.getChosenSchool().getSchoolName()};
@@ -827,74 +821,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		}
 		
 	}
-	public void rejectApplication(int applicationID, int seasonID, User performer, String messageSubject, String messageBody) throws RemoteException {
-		rejectApplication(applicationID,seasonID,performer,messageSubject,messageBody,SchoolChoiceMessagePdfHandler.CODE_APPLICATION_REJECT);
-	}
-	
-	
-	public void rejectApplication(int applicationID, int seasonID, User performer, String messageSubject, String messageBody,String code) throws RemoteException {
-		try {
-			SchoolChoice choice = this.getSchoolChoiceHome().findByPrimaryKey(new Integer(applicationID));
-			User child = choice.getChild();
-			String status = choice.getCaseStatus().toString();
-			super.changeCaseStatus(choice, getCaseStatusDenied().getStatus(), performer);
-			choice.store();
 
-			if (!status.equalsIgnoreCase(getCaseStatusMoved().getStatus())) {
-				Collection coll = findByStudentAndSeason(choice.getChildId(), seasonID);
-				Iterator iter = coll.iterator();
-				while (iter.hasNext()) {
-					SchoolChoice element = (SchoolChoice) iter.next();
-					if (element.getChoiceOrder() == (choice.getChoiceOrder() + 1) && !element.getCaseStatus().equals("AVSL")) {
-						super.changeCaseStatus(element, getCaseStatusPreliminary().getStatus(), performer);
-						sendMessageToParents(element, getPreliminaryMessageSubject(), getPreliminaryMessageBody(element),code,getPreliminaryMessageSubject(),getPreliminaryMessageBody(element),code,false);
-						continue;						
-					}
-				}
-			}
-
-			sendMessageToParents(choice, messageSubject, messageBody,code,messageSubject, messageBody,code,false);
-			rejectAfterSchoolApplication(choice.getChildId(), choice.getChosenSchoolId(), seasonID, performer);
-
-			if (choice.getChoiceOrder() == 3) {
-				ViewpointBusiness vpb = (ViewpointBusiness) getServiceInstance(ViewpointBusiness.class);
-				SubCategory subCategory = vpb.findSubCategory("Skolval");
-				if (subCategory != null) {
-					try {
-						Phone phone = getUserBusiness().getChildHomePhone(child);
-
-						StringBuffer body = new StringBuffer();
-						//body.append(child.getNameLastFirst(true)).append(" - ").append(child.getPersonalID());
-						body.append(child.getName()).append(" - ").append(child.getPersonalID());
-						if (phone != null) {
-							body.append("\ntel: ").append(phone.getNumber());
-						}
-						vpb.createViewpoint(performer, messageSubject, body.toString(), subCategory.getName(), getUserBusiness().getRootAdministratorGroupID(), -1);
-					}
-					catch (CreateException ce) {
-						ce.printStackTrace();
-					}
-				}
-			}
-		}
-		catch (FinderException fe) {
-		}
-	}
-	
-	private boolean rejectAfterSchoolApplication(int childID, int providerID, int seasonID, User user) {
-		try {
-			AfterSchoolChoice choice = findChoicesByChildAndProviderAndSeason(childID, providerID, seasonID);
-			if (choice != null) {
-				String subject = this.getLocalizedString("after_school.application_rejected_subject", "After school application rejected");
-				String message = this.getLocalizedString("after_school.application_rejected_body", "Your after school application for {0}, {2}, to provider {1} has been rejected. Your next selected will be made active.");
-				rejectApplication(choice, subject, message, user);
-			}
-			return true;
-		}
-		catch (FinderException e) {
-			return false;
-		}
-	}
 
 	public boolean preliminaryAction(Integer pk, User performer) {
 		try {
@@ -1072,7 +999,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		return body;
 	}
 	
-	protected String getPreliminaryMessageBody(SchoolChoice theCase) {
+	public String getPreliminaryMessageBody(SchoolChoice theCase) {
 		SchoolYear year = theCase.getSchoolYear();
 		
 		//Object[] arguments = {theCase.getChosenSchool().getName(), theCase.getOwner().getNameLastFirst(true), theCase.getChild().getNameLastFirst(true), year != null ? year.getSchoolYearName() : "" };
@@ -2037,144 +1964,5 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		}
 	}
 
-// -----------------------------------------------------
-	public AfterSchoolChoice findChoicesByChildAndProviderAndSeason(int childID, int providerID, int seasonID) throws FinderException {
-		String[] caseStatus = { getCaseStatusPreliminary().getStatus() };
-		return getAfterSchoolChoiceHome().findByChildAndProviderAndSeason(childID, providerID, seasonID, caseStatus);
-	}
-	
-	private AfterSchoolChoiceHome getAfterSchoolChoiceHome() {
-		try {
-			return (AfterSchoolChoiceHome) IDOLookup.getHome(AfterSchoolChoice.class);
-		}
-		catch (IDOLookupException e) {
-			throw new IBORuntimeException(e.getMessage());
-		}
-	}
-	
-	public boolean rejectApplication(ChildCareApplication application, String subject, String message, User user) {
-		UserTransaction t = getSessionContext().getUserTransaction();
-		try {
-			t.begin();
-			CaseBusiness caseBiz = (CaseBusiness) getServiceInstance(CaseBusiness.class);
-			IWTimestamp now = new IWTimestamp();
-			application.setRejectionDate(now.getDate());
-			application.setApplicationStatus(SchoolConstants.STATUS_DENIED);
-			caseBiz.changeCaseStatus(application, getCaseStatusDenied().getStatus(), user);
-			sendMessageToParents(application, subject, message);
-
-			if (isAfterSchoolApplication(application)) {
-				Iterator iter = application.getChildrenIterator();
-				if (iter != null) {
-					while (iter.hasNext()) {
-						Case element = (Case) iter.next();
-						if (isAfterSchoolApplication(element) && element.getCaseStatus().equals(getCaseStatusInactive())) {
-							application = getApplication(((Integer) element.getPrimaryKey()).intValue());
-							application.setApplicationStatus(SchoolConstants.STATUS_SENT_IN);
-							caseBiz.changeCaseStatus(application, getCaseStatusPreliminary().getStatus(), user);
-
-							subject = this.getLocalizedString("after_school.application_received_subject", "After school care application received.");
-							message = this.getLocalizedString("after_school.application_received_body", "We have received you application for {0}, {2}, to {1}.");
-							sendMessageToParents(application, subject, message);
-						}
-					}
-				}
-			}
-
-			t.commit();
-
-			return true;
-		}
-		catch (Exception e) {
-			try {
-				t.rollback();
-			}
-			catch (SystemException ex) {
-				ex.printStackTrace();
-			}
-			e.printStackTrace();
-		}
-
-		return false;
-	}
-
-	public boolean rejectApplication(int applicationId, String subject, String body, User user) {
-		try {
-			ChildCareApplicationHome home = (ChildCareApplicationHome) IDOLookup.getHome(ChildCareApplication.class);
-			ChildCareApplication appl = home.findByPrimaryKey(new Integer(applicationId));
-			return rejectApplication(appl, subject, body, user);
-		}
-		catch (RemoteException e) {
-			e.printStackTrace();
-		}
-		catch (FinderException e) {
-			e.printStackTrace();
-		}
-
-		return false;
-	}
-	
-	public void sendMessageToParents(ChildCareApplication application, String subject, String body) {
-		sendMessageToParents(application, subject, body, false);
-	}
-
-	public void sendMessageToParents(ChildCareApplication application, String subject, String body, boolean alwaysSendLetter) {
-		sendMessageToParents(application, subject, body, body, alwaysSendLetter);
-	}
-
-	public void sendMessageToParents(ChildCareApplication application, String subject, String body, String letterBody, boolean alwaysSendLetter) {
-		try {
-			User child = application.getChild();
-			//Object[] arguments = { child.getNameLastFirst(true), application.getProvider().getSchoolName(), PersonalIDFormatter.format(child.getPersonalID(), getIWApplicationContext().getApplicationSettings().getDefaultLocale()), application.getLastReplyDate() != null ? new IWTimestamp(application.getLastReplyDate()).getLocaleDate(getIWApplicationContext().getApplicationSettings().getDefaultLocale(), IWTimestamp.SHORT) : "xxx", application.getOfferValidUntil() != null ? new IWTimestamp(application.getOfferValidUntil()).getLocaleDate(getIWApplicationContext().getApplicationSettings().getDefaultLocale(), IWTimestamp.SHORT) : ""};
-			Object[] arguments = { child.getName(), application.getProvider().getSchoolName(), PersonalIDFormatter.format(child.getPersonalID(), getIWApplicationContext().getApplicationSettings().getDefaultLocale()), application.getLastReplyDate() != null ? new IWTimestamp(application.getLastReplyDate()).getLocaleDate(getIWApplicationContext().getApplicationSettings().getDefaultLocale(), IWTimestamp.SHORT) : "xxx", application.getOfferValidUntil() != null ? new IWTimestamp(application.getOfferValidUntil()).getLocaleDate(getIWApplicationContext().getApplicationSettings().getDefaultLocale(), IWTimestamp.SHORT) : ""};
-
-			User appParent = application.getOwner();
-			if (getUserBusiness().getMemberFamilyLogic().isChildInCustodyOf(child, appParent)) {
-				Message message = getMessageBusiness().createUserMessage(application, appParent, subject, MessageFormat.format(body, arguments), MessageFormat.format(letterBody, arguments), true, alwaysSendLetter);
-				message.setParentCase(application);
-				message.store();
-			}
-
-			try {
-				Collection parents = getUserBusiness().getMemberFamilyLogic().getCustodiansFor(child);
-				Iterator iter = parents.iterator();
-				while (iter.hasNext()) {
-					User parent = (User) iter.next();
-					if (!getUserBusiness().haveSameAddress(parent, appParent)) {
-						getMessageBusiness().createUserMessage(application, parent, subject, MessageFormat.format(body, arguments), MessageFormat.format(letterBody, arguments), true, alwaysSendLetter);
-					}
-				}
-			}
-			catch (NoCustodianFound ncf) {
-				ncf.printStackTrace();
-			}
-		}
-		catch (RemoteException re) {
-			re.printStackTrace();
-		}
-	}
-
-	public boolean isAfterSchoolApplication(Case application) {
-		if (application.getCode().equals(SchoolConstants.AFTER_SCHOOL_CASE_CODE_KEY)) return true;
-		return false;
-	}
-
-	public ChildCareApplication getApplication(int applicationID) {
-		try {
-			return getChildCareApplicationHome().findByPrimaryKey(new Integer(applicationID));
-		}
-		catch (FinderException e) {
-			return null;
-		}
-	}
-	
-	private ChildCareApplicationHome getChildCareApplicationHome() {
-		try {
-			return (ChildCareApplicationHome) IDOLookup.getHome(ChildCareApplication.class);
-		}
-		catch (IDOLookupException ile) {
-			throw new IBORuntimeException(ile);
-		}
-	}
-
+		
 }
