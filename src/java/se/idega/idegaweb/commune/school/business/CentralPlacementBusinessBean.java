@@ -13,6 +13,7 @@ import javax.ejb.FinderException;
 import javax.transaction.SystemException;
 import javax.transaction.UserTransaction;
 
+import se.idega.idegaweb.commune.accounting.resource.business.ResourceBusiness;
 import se.idega.idegaweb.commune.school.presentation.CentralPlacementEditor;
 
 import com.idega.block.school.business.SchoolBusiness;
@@ -48,6 +49,7 @@ public class CentralPlacementBusinessBean extends IBOServiceBean
 		int studentID = -1;
 		int schoolClassID = -1;
 		int registrator = -1;
+		String placementDateStr = "-1";
 		Timestamp registerDate = null;
 		Timestamp dayBeforeRegDate = null;
 		String notes = null;
@@ -121,6 +123,7 @@ public class CentralPlacementBusinessBean extends IBOServiceBean
 				throw new CentralPlacementException(KEY_ERROR_PLACEMENT_DATE, 
 														"Placement date must be set and cannot be earlier than today");
 			}
+			placementDateStr = placeDateStr;
 		}
 		
 		// registrator
@@ -129,8 +132,6 @@ public class CentralPlacementBusinessBean extends IBOServiceBean
 						
 	// *** END - Check in params ***
 																											 	
-						// int studentID, int schoolClassID, Timestamp registerDate, int registrator, String notes)		
-
 	// *** START - Store new placement and end current placement ***
 		UserTransaction trans = getSessionContext().getUserTransaction();
 		try {
@@ -169,6 +170,16 @@ public class CentralPlacementBusinessBean extends IBOServiceBean
 					int pK = Integer.parseInt(
 													iwc.getParameter(CentralPlacementEditor.PARAM_STUDY_PATH));
 					placement.setStudyPathId(pK);
+				}
+				// Resources				
+				if (iwc.isParameterSet(CentralPlacementEditor.PARAM_RESOURCES)) {
+					String [] arr = iwc.getParameterValues(CentralPlacementEditor.PARAM_RESOURCES);
+					for (int i = 0; i < arr.length; i++) {
+						int rscPK = Integer.parseInt(arr[i]);
+						getResourceBusiness(iwc).createResourcePlacement(rscPK, studentID, 
+																									placementDateStr, null);
+						
+					}					
 				}
 				
 			//	*** END - Store the rest of the parameters ***	
@@ -222,6 +233,10 @@ public class CentralPlacementBusinessBean extends IBOServiceBean
 	
 	private SchoolBusiness getSchoolBusiness(IWContext iwc) throws RemoteException {
 		return (SchoolBusiness) IBOLookup.getServiceInstance(iwc, SchoolBusiness.class);
+	}
+
+	private ResourceBusiness getResourceBusiness(IWContext iwc) throws RemoteException {
+		return (ResourceBusiness) IBOLookup.getServiceInstance(iwc, ResourceBusiness.class);
 	}
 
 /*	private UserBusiness getUserBusiness(IWContext iwc) throws RemoteException {
