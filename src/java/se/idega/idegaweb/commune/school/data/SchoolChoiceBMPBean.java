@@ -428,7 +428,7 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
   public int  ejbHomeGetCount(String[] validStatuses) throws IDOException{
 		
   	if (validStatuses != null && validStatuses.length > 0) {
-			IDOQuery query = new IDOQuery();
+			IDOQuery query = idoQuery();
 				query.appendSelectCountFrom().append(getEntityName()).append(" csc");
 			query.append(", ").append(CaseBMPBean.TABLE_NAME).append(" pc");
 			query.append(" where ");
@@ -440,7 +440,7 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 
 			return this.idoGetNumberOfRecords(query);
   	} else {
-			IDOQuery query = new IDOQuery();
+			IDOQuery query = idoQuery();
 				query.appendSelectCountFrom(this);
 			return this.idoGetNumberOfRecords(query);
   		
