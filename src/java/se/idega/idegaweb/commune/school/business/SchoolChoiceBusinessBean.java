@@ -1,5 +1,8 @@
 package se.idega.idegaweb.commune.school.business;
+import is.idega.idegaweb.golf.entity.Family;
+import is.idega.idegaweb.member.business.MemberFamilyLogic;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -23,9 +26,11 @@ import com.idega.block.school.data.School;
 import com.idega.block.school.data.SchoolHome;
 import com.idega.block.school.data.SchoolSeason;
 import com.idega.block.school.data.SchoolSeasonHome;
+import com.idega.core.data.Address;
 import com.idega.data.IDOCreateException;
 import com.idega.data.IDOException;
 import com.idega.data.IDOStoreException;
+import com.idega.user.business.UserBusiness;
 import com.idega.user.data.Group;
 import com.idega.user.data.User;
 /**
@@ -46,6 +51,13 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	}
 	public MessageBusiness getMessageBusiness() throws RemoteException {
 		return (MessageBusiness) this.getServiceInstance(MessageBusiness.class);
+	}
+	
+	public MemberFamilyLogic  getMemberFamilyLogic() throws RemoteException {
+		return (MemberFamilyLogic) this.getServiceInstance(MemberFamilyLogic.class);
+	}
+	public UserBusiness  getUserBusiness() throws RemoteException {
+		return (UserBusiness) this.getServiceInstance(UserBusiness.class);
 	}
 	public SchoolHome getSchoolHome() throws java.rmi.RemoteException {
 		return getSchoolBusiness().getSchoolHome();
@@ -69,31 +81,56 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	public School getSchool(int school) throws RemoteException {
 		return getSchoolBusiness().getSchool(new Integer(school));
 	}
-	public List createSchoolChoices(int userId, int childId, int current_school, int chosen_school_1, int chosen_school_2, int chosen_school_3, int grade, int method, int workSituation1, int workSituation2, String language, String message, boolean changeOfSchool, boolean keepChildrenCare, boolean autoAssign, boolean custodiansAgree, boolean schoolCatalogue) throws IDOCreateException {
-		int caseCount = 3;
-		java.sql.Timestamp time = new java.sql.Timestamp(System.currentTimeMillis());
-		List returnList = new Vector(3);
-		javax.transaction.UserTransaction trans = this.getSessionContext().getUserTransaction();
+	
+	public SchoolChoice createSchoolChangeChoice(int userId, int childId, int current_school, int chosen_school, int grade, int method, int workSituation1, int workSituation2, String language, String message, boolean keepChildrenCare, boolean autoAssign, boolean custodiansAgree, boolean schoolCatalogue)throws IDOCreateException{
 		try {
-			trans.begin();
-			CaseStatus first = getCaseStatus("PREL");
-			CaseStatus other = getCaseStatus(super.getCaseStatusInactive().getStatus());
-			int[] schoolIds = { chosen_school_1, chosen_school_2, chosen_school_3 };
-			SchoolChoice choice = null;
-			for (int i = 0; i < caseCount; i++) {
-				choice = createSchoolChoice(userId, childId, current_school, schoolIds[i], grade, i + 1, method, workSituation1, workSituation2, language, message, time, changeOfSchool, keepChildrenCare, autoAssign, custodiansAgree, schoolCatalogue, i == 0 ? first : other, choice);
-			}
-			trans.commit();
-			return returnList;
+			java.sql.Timestamp time = new java.sql.Timestamp(System.currentTimeMillis());
+			CaseStatus unHandledStatus = getCaseStatus(super.getCaseStatusInactive().getStatus());
+			SchoolChoice choice = createSchoolChoice(userId, childId, current_school,chosen_school, grade, 1, method, workSituation1, workSituation2, language, message, time, true, keepChildrenCare, autoAssign, custodiansAgree, schoolCatalogue, unHandledStatus, null);
+			ArrayList choices = new ArrayList(1);
+			choices.add(choice);
+			handleSeparatedParentApplication(childId,userId,choices,true);
+			handleSchoolChangeHeadMasters(getUser(childId),current_school,chosen_school);
+			return choice;
 		}
 		catch (Exception ex) {
-			try {
-				trans.rollback();
-			}
-			catch (javax.transaction.SystemException e) {
-				throw new IDOCreateException(e.getMessage());
-			}
 			throw new IDOCreateException(ex.getMessage());
+		}
+	}
+	public List createSchoolChoices(int userId, int childId, int current_school, int chosen_school_1, int chosen_school_2, int chosen_school_3, int grade, int method, int workSituation1, int workSituation2, String language, String message, boolean changeOfSchool, boolean keepChildrenCare, boolean autoAssign, boolean custodiansAgree, boolean schoolCatalogue) throws IDOCreateException {
+		if(changeOfSchool){
+			SchoolChoice choice = createSchoolChangeChoice(userId,childId,current_school,chosen_school_1,grade,method,workSituation1,workSituation2,language,message,keepChildrenCare,autoAssign,custodiansAgree,schoolCatalogue);
+			ArrayList list = new ArrayList(1);
+			list.add(choice);
+			return list;
+		}else{
+			int caseCount = 3;
+			java.sql.Timestamp time = new java.sql.Timestamp(System.currentTimeMillis());
+			List returnList = new Vector(3);
+			javax.transaction.UserTransaction trans = this.getSessionContext().getUserTransaction();
+			try {
+				trans.begin();
+				CaseStatus first = getCaseStatus("PREL");
+				CaseStatus other = getCaseStatus(super.getCaseStatusInactive().getStatus());
+				int[] schoolIds = { chosen_school_1, chosen_school_2, chosen_school_3 };
+				SchoolChoice choice = null;
+				for (int i = 0; i < caseCount; i++) {
+					choice = createSchoolChoice(userId, childId, current_school, schoolIds[i], grade, i + 1, method, workSituation1, workSituation2, language, message, time, changeOfSchool, keepChildrenCare, autoAssign, custodiansAgree, schoolCatalogue, i == 0 ? first : other, choice);
+					returnList.add(choice);
+				}
+				handleSeparatedParentApplication(childId,userId,returnList,false);
+				trans.commit();
+				return returnList;
+			}
+			catch (Exception ex) {
+				try {
+					trans.rollback();
+				}
+				catch (javax.transaction.SystemException e) {
+					throw new IDOCreateException(e.getMessage());
+				}
+				throw new IDOCreateException(ex.getMessage());
+			}
 		}
 	}
 	
@@ -144,6 +181,62 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		}
 		return choice;
 	}
+	
+	private void handleSchoolChangeHeadMasters(User child,int oldSchoolID,int newSchoolID)throws RemoteException{
+		try{
+		getMessageBusiness().createUserMessage(getSchoolBusiness().getHeadmaster(oldSchoolID),getOldHeadmasterSubject(),getOldHeadmasterBody(child));
+		getMessageBusiness().createUserMessage(getSchoolBusiness().getHeadmaster(newSchoolID),getNewHeadMasterSubject(),getNewHeadmasterBody(child));
+		}
+		catch(Exception ex){throw new RemoteException(ex.getMessage());}
+	}
+	
+	private void handleSeparatedParentApplication(int childID,int applicationParentID,List choices,boolean isSchoolChangeApplication)throws RemoteException{
+		try{
+		if(choices!=null){
+			SchoolChoice choice = (SchoolChoice)choices.get(0);
+			MemberFamilyLogic familyLogic = getMemberFamilyLogic();
+			Collection parents = familyLogic.getCustodiansFor(getUser(childID));
+			User appParent = getUser(applicationParentID);
+			Iterator iter = parents.iterator();		
+			User otherParent = null;
+			while(iter.hasNext()){
+				User parent = (User) iter.next();
+				if( !parent.getPrimaryKey().equals(appParent.getPrimaryKey() )){
+					otherParent = parent;
+					break;
+				}
+			}
+			if(otherParent != null){
+				Address appAddress = getUserBusiness().getUsersMainAddress(appParent);
+				Address otherAddress = getUserBusiness().getUsersMainAddress(otherParent);
+				if(!appAddress.getStreetAddress().equalsIgnoreCase(otherAddress.getStreetAddress() )){
+					// We need to let the other parent know about the application
+					// If the parent has an Citizen Account we can send a message 
+					// else we senda a letter
+					
+					// send message
+					
+						if(getUserBusiness().hasUserLogin(otherParent)){
+							if(isSchoolChangeApplication)
+								getMessageBusiness().createUserMessage(otherParent,getSeparateParentSubjectChange(),getSeparateParentMessageBodyChange(choice)); 
+							else
+								getMessageBusiness().createUserMessage(otherParent,getSeparateParentSubjectAppl(),getSeparateParentMessageBodyAppl(choices,otherParent)); 
+						}
+						// send letter
+						else{
+							if(isSchoolChangeApplication)
+								getMessageBusiness().createPrintedLetterMessage(otherParent,getSeparateParentSubjectChange(),getSeparateParentMessageBodyChange(choice));
+							else
+								getMessageBusiness().createPrintedLetterMessage(otherParent,getSeparateParentSubjectAppl(),getSeparateParentMessageBodyAppl(choices,otherParent));
+						}
+					
+					
+				}
+			}
+		}
+		}catch(Exception ex){throw new RemoteException(ex.getMessage());}
+	}
+	
 	public void createCurrentSchoolSeason(Integer newKey, Integer oldKey) throws java.rmi.RemoteException {
 		CurrentSchoolSeasonHome shome = getCurrentSchoolSeasonHome();
 		CurrentSchoolSeason season;
@@ -180,11 +273,11 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 			com.idega.user.data.User[] familyMembers = new com.idega.user.data.User[5];
 			is.idega.idegaweb.member.business.MemberFamilyLogic ml = (is.idega.idegaweb.member.business.MemberFamilyLogic) getServiceInstance(is.idega.idegaweb.member.business.MemberFamilyLogic.class);
 			se.idega.idegaweb.commune.business.CommuneUserBusiness ub = (se.idega.idegaweb.commune.business.CommuneUserBusiness) getServiceInstance(se.idega.idegaweb.commune.business.CommuneUserBusiness.class);
-			familyMembers[0] = ub.createCitizenByPersonalIDIfDoesNotExist("Gunnar", "Páll", "Daníelsson", "0101");
-			familyMembers[1] = ub.createCitizenByPersonalIDIfDoesNotExist("Páll", "", "Helgason", "0202");
-			familyMembers[2] = ub.createCitizenByPersonalIDIfDoesNotExist("Tryggvi", "", "Lárusson", "0303");
-			familyMembers[3] = ub.createCitizenByPersonalIDIfDoesNotExist("Þórhallur", "", "Daníelsson", "0404");
-			familyMembers[4] = ub.createCitizenByPersonalIDIfDoesNotExist("Jón", "Karl", "Jónsson", "0505");
+			familyMembers[0] = ub.createCitizenByPersonalIDIfDoesNotExist("Gunnar", "P?ll", "Dan?elsson", "0101");
+			familyMembers[1] = ub.createCitizenByPersonalIDIfDoesNotExist("P?ll", "", "Helgason", "0202");
+			familyMembers[2] = ub.createCitizenByPersonalIDIfDoesNotExist("Tryggvi", "", "L?russon", "0303");
+			familyMembers[3] = ub.createCitizenByPersonalIDIfDoesNotExist("??rhallur", "", "Dan?elsson", "0404");
+			familyMembers[4] = ub.createCitizenByPersonalIDIfDoesNotExist("J?n", "Karl", "J?nsson", "0505");
 			ml.setAsChildFor(familyMembers[1], familyMembers[0]);
 			ml.setAsChildFor(familyMembers[2], familyMembers[0]);
 			ml.setAsChildFor(familyMembers[3], familyMembers[1]);
@@ -294,12 +387,65 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		body.append(getSchool(theCase.getChosenSchoolId()).getSchoolName()).append("\n");
 		return body.toString();
 	}
+	
+	protected String getSeparateParentMessageBodyAppl(List choices,User parent) throws RemoteException, FinderException {
+		StringBuffer body = new StringBuffer(this.getLocalizedString("school_choice.sep_parent_appl_mesg_body1", "Dear mr./ms./mrs. "));
+		body.append(parent.getNameLastFirst()).append("\n");
+		body.append(this.getLocalizedString("school_choice.separate_parent_appl_mesg_body2", "School application for your child has been received \n The schools are: "));
+		Iterator iter = choices.iterator();
+		while(iter.hasNext()){
+			SchoolChoice choice = (SchoolChoice) iter.next();
+			body.append(getSchool(choice.getChosenSchoolId()).getSchoolName()).append("\n");
+		}
+		body.append(this.getLocalizedString("school_choice.separate_parent_appl_mesg_body3", "You can comment on this within 14 days from now."));
+		return body.toString();
+	}
+	
+	protected String getSeparateParentMessageBodyChange(SchoolChoice theCase) throws RemoteException, FinderException {
+		StringBuffer body = new StringBuffer(this.getLocalizedString("school_choice.sep_parent_change_mesg_body1", "Dear mr./ms./mrs. "));
+		body.append(theCase.getOwner().getNameLastFirst()).append("\n");
+		body.append(this.getLocalizedString("school_choice.sep_parent_change_mesg_body2", "School change application for your child has been received"));
+		body.append(getSchool(theCase.getChosenSchoolId()).getSchoolName()).append("\n");
+		body.append(this.getLocalizedString("school_choice.sep_parent_change_mesg_body3", "You can comment on this within 14 days from now."));
+		return body.toString();
+	}
+	
+	protected String getOldHeadmasterBody(User student) throws RemoteException, FinderException {
+		StringBuffer body = new StringBuffer(this.getLocalizedString("school_choice.old_headmaster_body1", "Dear headmaster "));
+		body.append(student.getName()).append("\n");
+		body.append(this.getLocalizedString("school_choice.old_headmaster_body2", "Wishes to change to another school."));
+		return body.toString();
+	}
+	
+	protected String getNewHeadmasterBody(User student) throws RemoteException, FinderException {
+		StringBuffer body = new StringBuffer(this.getLocalizedString("school_choice.old_headmaster_body1", "Dear headmaster "));
+		body.append(student.getName()).append("\n");
+		body.append(this.getLocalizedString("school_choice.old_headmaster_body2", "Wishes to change to your school."));
+		return body.toString();
+	}
+	
 	public String getPreliminaryMessageSubject() {
 		return this.getLocalizedString("school_choice.prelim_mesg_subj", "Prelimininary school acceptance");
 	}
 	public String getGroupedMessageSubject() {
 		return this.getLocalizedString("school_choice.group_mesg_subj", "School grouping");
 	}
+	
+	public String getSeparateParentSubjectAppl() {
+		return this.getLocalizedString("school_choice.sep_parent_appl_subj", "School application received for your child");
+	}
+	public String getSeparateParentSubjectChange() {
+		return this.getLocalizedString("school_choice.sep_parent_change_subj", "School change application received for your child");
+	}
+	
+	public String getOldHeadmasterSubject() {
+		return this.getLocalizedString("school_choice.old_headmaster_subj", "School change request");
+	}
+	
+	public String getNewHeadMasterSubject() {
+		return this.getLocalizedString("school_choice.new_headmaster_subj", "School change request");
+	}
+	
 	protected SchoolChoice getSchoolChoiceInstance(Case theCase) throws RuntimeException {
 		String caseCode = "unreachable";
 		try {
