@@ -87,13 +87,13 @@ import com.lowagie.text.pdf.PdfWriter;
  * @author <a href="http://www.staffannoteberg.com">Staffan Nöteberg</a>
  * @version 1.0
  */
-public class SchoolChoiceBusinessBean extends com.idega.block.process.business.CaseBusinessBean implements SchoolChoiceBusiness, com.idega.block.process.business.CaseBusiness {
+public class SchoolChoiceBusinessBean extends com.idega.block.process.business.CaseBusinessBean {
 	public final static String SCHOOL_CHOICE_CASECODE = "MBSKOLV";
-    private final static int REMINDER_FONTSIZE = 12;
-    private final static Font SERIF_FONT
-        = FontFactory.getFont (FontFactory.TIMES, REMINDER_FONTSIZE);
-    private final static Font SANSSERIF_FONT
-        = FontFactory.getFont (FontFactory.HELVETICA, REMINDER_FONTSIZE - 1);
+	private final static int REMINDER_FONTSIZE = 12;
+	private final static Font SERIF_FONT
+		= FontFactory.getFont (FontFactory.TIMES, REMINDER_FONTSIZE);
+	private final static Font SANSSERIF_FONT
+		= FontFactory.getFont (FontFactory.HELVETICA, REMINDER_FONTSIZE - 1);
 
 	public String getBundleIdentifier() {
 		return se.idega.idegaweb.commune.presentation.CommuneBlock.IW_BUNDLE_IDENTIFIER;
@@ -142,10 +142,10 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	}
 
 	public int getPreviousSeasonId () throws RemoteException, FinderException {
-        final int currentSeasonId
-                = getCommuneSchoolBusiness().getCurrentSchoolSeasonID();
-        return getCommuneSchoolBusiness() .getPreviousSchoolSeasonID
-                (currentSeasonId);
+		final int currentSeasonId
+				= getCommuneSchoolBusiness().getCurrentSchoolSeasonID();
+		return getCommuneSchoolBusiness() .getPreviousSchoolSeasonID
+				(currentSeasonId);
 	}
 
 	public SchoolChoice getSchoolChoice(int schoolChoiceId) throws FinderException, RemoteException {
@@ -175,6 +175,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 			throw new IDOCreateException(ex.getMessage());
 		}
 	}
+	
 	public List createSchoolChoices(int userId, int childId, int school_type_id, int current_school, int chosen_school_1, int chosen_school_2, int chosen_school_3, int grade, int method, int workSituation1, int workSituation2, String language, String message, boolean changeOfSchool, boolean keepChildrenCare, boolean autoAssign, boolean custodiansAgree, boolean schoolCatalogue, Date placementDate, SchoolSeason season) throws IDOCreateException {
 		if(changeOfSchool){
 			SchoolChoice choice = createSchoolChangeChoice(userId,childId,school_type_id,current_school,chosen_school_1,grade,method,workSituation1,workSituation2,language,message,keepChildrenCare,autoAssign,custodiansAgree,schoolCatalogue, season);
@@ -203,6 +204,84 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 				if (previousSeasonID != -1)
 					getCommuneSchoolBusiness().setNeedsSpecialAttention(childId, previousSeasonID,true);
 				
+				return returnList;
+			}
+			catch (Exception ex) {
+				try {
+					trans.rollback();
+				}
+				catch (javax.transaction.SystemException e) {
+					throw new IDOCreateException(e.getMessage());
+				}
+				throw new IDOCreateException(ex.getMessage());
+			}
+		}
+	}
+	
+	/** 
+	 * Same as above method only Native laguage is added
+	 * 
+	 * @param userId
+	 * @param childId
+	 * @param school_type_id
+	 * @param current_school
+	 * @param chosen_school_1
+	 * @param chosen_school_2
+	 * @param chosen_school_3
+	 * @param grade
+	 * @param method
+	 * @param workSituation1
+	 * @param workSituation2
+	 * @param language
+	 * @param message
+	 * @param changeOfSchool
+	 * @param keepChildrenCare
+	 * @param autoAssign
+	 * @param custodiansAgree
+	 * @param schoolCatalogue
+	 * @param placementDate
+	 * @param season
+	 * @param nativeLangIsChecked
+	 * @param NativeLang
+	 * @return
+	 * @throws IDOCreateException
+	 */
+	public List createSchoolChoices(int userId, int childId, int school_type_id, int current_school, int chosen_school_1, int chosen_school_2, int chosen_school_3, int grade, int method, int workSituation1, int workSituation2, String language, String message, boolean changeOfSchool, boolean keepChildrenCare, boolean autoAssign, boolean custodiansAgree, boolean schoolCatalogue, Date placementDate, SchoolSeason season, boolean nativeLangIsChecked, int nativeLang) throws IDOCreateException {
+		if(changeOfSchool){
+			SchoolChoice choice = createSchoolChangeChoice(userId,childId,school_type_id,current_school,chosen_school_1,grade,method,workSituation1,workSituation2,language,message,keepChildrenCare,autoAssign,custodiansAgree,schoolCatalogue, season);
+			ArrayList list = new ArrayList(1);
+			list.add(choice);
+			return list;
+		}else{
+			int caseCount = 3;
+			java.sql.Timestamp time = new java.sql.Timestamp(System.currentTimeMillis());
+			List returnList = new Vector(3);
+			javax.transaction.UserTransaction trans = this.getSessionContext().getUserTransaction();
+			try {
+				trans.begin();
+				CaseStatus first = getCaseStatus("PREL");
+				CaseStatus other = getCaseStatus(super.getCaseStatusInactive().getStatus());
+				int[] schoolIds = { chosen_school_1, chosen_school_2, chosen_school_3 };
+				SchoolChoice choice = null;
+				for (int i = 0; i < caseCount; i++) {
+					choice = createSchoolChoice(userId, childId, school_type_id, current_school, schoolIds[i], grade, i + 1, method, workSituation1, workSituation2, language, message, time, changeOfSchool, keepChildrenCare, autoAssign, custodiansAgree, schoolCatalogue, i == 0 ? first : other, choice, placementDate, season);
+					returnList.add(choice);
+				}
+				handleSeparatedParentApplication(childId,userId,returnList,false);
+				trans.commit();
+				
+				int previousSeasonID = getCommuneSchoolBusiness().getPreviousSchoolSeasonID(getCommuneSchoolBusiness().getCurrentSchoolSeasonID());
+				if (previousSeasonID != -1)
+					getCommuneSchoolBusiness().setNeedsSpecialAttention(childId, previousSeasonID,true);
+
+				// Set native language for child if param is set
+				if (childId != -1 && nativeLangIsChecked && nativeLang != -1) {
+					User child = getUserBusiness().getUser(childId);
+					if (child != null) {
+						child.setNativeLanguage(nativeLang);
+					}					
+				}
+					
 				return returnList;
 			}
 			catch (Exception ex) {
@@ -924,159 +1003,159 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		}
 	}
 
-    public void createSchoolChoiceReminder
-        (final String text, final java.util.Date eventDate, final java.util.Date reminderDate,
-         final User user)
-        throws CreateException, RemoteException {
-        final SchoolChoiceReminder reminder
-                = getSchoolChoiceReminderHome ().create ();
-        reminder.setText (text);
-        reminder.setEventDate (eventDate);
-        reminder.setReminderDate (reminderDate);
-        reminder.setUser (user);
-        try {
-            reminder.setHandler (getUserBusiness().getRootCustomerChoiceGroup ());
-            reminder.store ();
-        } catch (FinderException e) {
-            throw new CreateException (e.getMessage ());
-        }
-    }
+	public void createSchoolChoiceReminder
+		(final String text, final java.util.Date eventDate, final java.util.Date reminderDate,
+		 final User user)
+		throws CreateException, RemoteException {
+		final SchoolChoiceReminder reminder
+				= getSchoolChoiceReminderHome ().create ();
+		reminder.setText (text);
+		reminder.setEventDate (eventDate);
+		reminder.setReminderDate (reminderDate);
+		reminder.setUser (user);
+		try {
+			reminder.setHandler (getUserBusiness().getRootCustomerChoiceGroup ());
+			reminder.store ();
+		} catch (FinderException e) {
+			throw new CreateException (e.getMessage ());
+		}
+	}
 
-    public SchoolChoiceReminder [] findAllSchoolChoiceReminders ()
-        throws RemoteException, FinderException {
-        //return getSchoolChoiceReminderHome ().findAll ();
-    	Collection reminders = getSchoolChoiceReminderHome().findAll();
-    	return (SchoolChoiceReminder[])reminders.toArray(new SchoolChoiceReminder[0]);
-    }
+	public SchoolChoiceReminder [] findAllSchoolChoiceReminders ()
+		throws RemoteException, FinderException {
+		//return getSchoolChoiceReminderHome ().findAll ();
+		Collection reminders = getSchoolChoiceReminderHome().findAll();
+		return (SchoolChoiceReminder[])reminders.toArray(new SchoolChoiceReminder[0]);
+	}
 
-    public SchoolChoiceReminder [] findUnhandledSchoolChoiceReminders
-        (final Group [] groups) throws RemoteException, FinderException {
-        //return getSchoolChoiceReminderHome ().findUnhandled (groups);
+	public SchoolChoiceReminder [] findUnhandledSchoolChoiceReminders
+		(final Group [] groups) throws RemoteException, FinderException {
+		//return getSchoolChoiceReminderHome ().findUnhandled (groups);
 		Collection reminders = getSchoolChoiceReminderHome().findUnhandled(groups);
 		return (SchoolChoiceReminder[])reminders.toArray(new SchoolChoiceReminder[0]);
-    }
+	}
 
-    public SchoolChoiceReminder findSchoolChoiceReminder (final int id)
-        throws RemoteException, FinderException {
+	public SchoolChoiceReminder findSchoolChoiceReminder (final int id)
+		throws RemoteException, FinderException {
 		return getSchoolChoiceReminderHome().findByPrimaryKey (new Integer (id));
 	}
 
-    private SchoolChoiceReminderHome getSchoolChoiceReminderHome ()
-        throws RemoteException {
-        return (SchoolChoiceReminderHome) IDOLookup.getHome
-                (SchoolChoiceReminder.class);
-    }
+	private SchoolChoiceReminderHome getSchoolChoiceReminderHome ()
+		throws RemoteException {
+		return (SchoolChoiceReminderHome) IDOLookup.getHome
+				(SchoolChoiceReminder.class);
+	}
 
 	/**
 	 * @return int id of document
 	 */
-    public int generateReminderLetter
-        (final int reminderId, final SchoolChoiceReminderReceiver [] receivers)
-        throws RemoteException {
-        try{
-            final MemoryFileBuffer buffer = new MemoryFileBuffer ();
-            final OutputStream outStream = new MemoryOutputStream (buffer);
-            final Document document = new Document
-                    (PageSize.A4, mmToPoints (30), mmToPoints (30),
-                     mmToPoints (0), mmToPoints (0));
-            final PdfWriter writer = PdfWriter.getInstance(document, outStream);
-            writer.setViewerPreferences
-                    (PdfWriter.PageModeUseThumbs | PdfWriter.HideMenubar
-                     | PdfWriter.PageLayoutOneColumn |PdfWriter.FitWindow
-                     |PdfWriter.CenterWindow);
-            document.addTitle("Påminnelse " + reminderId);
-            document.addCreationDate();
-            document.open();
-            final SchoolChoiceReminder reminder
-                    = findSchoolChoiceReminder (reminderId);
-            final PdfPCell emptyCell = new PdfPCell (new Phrase (""));
-            emptyCell.setBorder (0);
-            emptyCell.setNoWrap (true);
-            final String rawReminderString = reminder.getText ();
-            final Chunk subjectChunk = getSubjectChunk (rawReminderString);
-            final Chunk bodyChunk = getBodyChunk (rawReminderString);
-            final Phrase reminderPhrase = new Phrase (mmToPoints (20),
-                                                      subjectChunk);
-            reminderPhrase.add (bodyChunk);
-            final PdfPCell reminderCell = new PdfPCell (reminderPhrase);
-            reminderCell.setBorder (0);
-            reminderCell.setVerticalAlignment (Element.ALIGN_MIDDLE);
-            reminderCell.setMinimumHeight (mmToPoints (125));
-            final PdfPTable reminderText = new PdfPTable (1);
-            reminderText.setWidthPercentage (100f);
-            reminderText.addCell (reminderCell);
-            final PdfPCell spaceCell = new PdfPCell (new Phrase (" "));
-            spaceCell.setBorder (0);
-            spaceCell.setNoWrap (true);
-            spaceCell.setMinimumHeight (mmToPoints (65));
-            PdfPTable spaceTable = new PdfPTable (1);
-            spaceTable.addCell (spaceCell);
-            final PdfPTable footer
-                    = new PdfPTable (new float [] {1, 1, 1.5f, 1});
-            footer.getDefaultCell ().setBorder (0);
-            footer.setWidthPercentage (100f);
-            footer.addCell (new Phrase (new Chunk ("Postadress:\nNacka kommun\n131 81 Nacka", SANSSERIF_FONT)));
-            footer.addCell (new Phrase (new Chunk ("Besöksadress:\nStadshuset\nGranitvägen 15\nNacka", SANSSERIF_FONT)));
-            footer.addCell (new Phrase (new Chunk ("Tel växel:\n08-718 80 00\n"
-                            + "Hemsida:\nwww.nacka24.nacka.se", SANSSERIF_FONT)));
-            footer.addCell (new Phrase (new Chunk ("Organisationsnr:\n212000-0167", SANSSERIF_FONT)));
-            final String logoPath = getIWApplicationContext().getApplication()
-                    .getBundle("se.idega.idegaweb.commune")
-                    .getResourcesRealPath() + "/shared/nacka_logo.jpg";
-            PdfPCell logoCell;
-            try {
-                final Image logo = Image.getInstance (logoPath);
-                logo.scaleToFit (mmToPoints (30), mmToPoints (15));
-                logoCell = new PdfPCell (logo);
-                logoCell.setVerticalAlignment (logoCell.ALIGN_MIDDLE);
-                logoCell.setHorizontalAlignment (logoCell.ALIGN_LEFT);
-            } catch (Exception e) {
-                logoCell = new PdfPCell
-                        (new Phrase ("The file '" + logoPath
-                                     + "' is missing. Please contact the system"
-                                     + " administartor."));
-            }
-            logoCell.setBorder (0);
-            final PdfPTable header = new PdfPTable (new float [] {1, 1});
-            header.setWidthPercentage (100f);
-            final PdfPCell defaultCell = header.getDefaultCell ();
-            defaultCell.setBorder (0);
-            defaultCell.setFixedHeight (mmToPoints (30));
-            defaultCell.setPadding (0);
-            defaultCell.setNoWrap (true);
-            defaultCell.setVerticalAlignment (Element.ALIGN_MIDDLE);
-            header.addCell (logoCell);
-            header.addCell (new Phrase (getDateChunk ()));
-            for (int i = 0; i < receivers.length; i++) {
-                if (i != 0) { document.newPage (); }
-                document.add (header);
-                document.add (getAddressTable (receivers [i]));
-                document.add (reminderText);
-                document.add (spaceTable);
-                final PdfContentByte cb = writer.getDirectContent();
-                cb.setLineWidth (1);
-                cb.moveTo (mmToPoints(30), mmToPoints(22));
-                cb.lineTo (mmToPoints(180), mmToPoints(22));
-                cb.stroke (); 
-                document.add (footer);
-            }
-            document.close();
-            final ICFileHome icFileHome
-                    = (ICFileHome) getIDOHome(ICFile.class);
-            final ICFile file = icFileHome.create();
-            final InputStream inStream = new MemoryInputStream (buffer);
-            file.setFileValue(inStream);
-            file.setMimeType("application/x-pdf");
-            file.setName("reminder_" + reminderId + ".pdf");
-            file.setFileSize(buffer.length());
-            file.store();
-            return ((Integer)file.getPrimaryKey()).intValue();
-        } catch (Exception e) {
-            e.printStackTrace ();
-            throw new RemoteException ("Couldn't generate reminder "
-                                       + reminderId, e);
-        }
-    }
+	public int generateReminderLetter
+		(final int reminderId, final SchoolChoiceReminderReceiver [] receivers)
+		throws RemoteException {
+		try{
+			final MemoryFileBuffer buffer = new MemoryFileBuffer ();
+			final OutputStream outStream = new MemoryOutputStream (buffer);
+			final Document document = new Document
+					(PageSize.A4, mmToPoints (30), mmToPoints (30),
+					 mmToPoints (0), mmToPoints (0));
+			final PdfWriter writer = PdfWriter.getInstance(document, outStream);
+			writer.setViewerPreferences
+					(PdfWriter.PageModeUseThumbs | PdfWriter.HideMenubar
+					 | PdfWriter.PageLayoutOneColumn |PdfWriter.FitWindow
+					 |PdfWriter.CenterWindow);
+			document.addTitle("Påminnelse " + reminderId);
+			document.addCreationDate();
+			document.open();
+			final SchoolChoiceReminder reminder
+					= findSchoolChoiceReminder (reminderId);
+			final PdfPCell emptyCell = new PdfPCell (new Phrase (""));
+			emptyCell.setBorder (0);
+			emptyCell.setNoWrap (true);
+			final String rawReminderString = reminder.getText ();
+			final Chunk subjectChunk = getSubjectChunk (rawReminderString);
+			final Chunk bodyChunk = getBodyChunk (rawReminderString);
+			final Phrase reminderPhrase = new Phrase (mmToPoints (20),
+													  subjectChunk);
+			reminderPhrase.add (bodyChunk);
+			final PdfPCell reminderCell = new PdfPCell (reminderPhrase);
+			reminderCell.setBorder (0);
+			reminderCell.setVerticalAlignment (Element.ALIGN_MIDDLE);
+			reminderCell.setMinimumHeight (mmToPoints (125));
+			final PdfPTable reminderText = new PdfPTable (1);
+			reminderText.setWidthPercentage (100f);
+			reminderText.addCell (reminderCell);
+			final PdfPCell spaceCell = new PdfPCell (new Phrase (" "));
+			spaceCell.setBorder (0);
+			spaceCell.setNoWrap (true);
+			spaceCell.setMinimumHeight (mmToPoints (65));
+			PdfPTable spaceTable = new PdfPTable (1);
+			spaceTable.addCell (spaceCell);
+			final PdfPTable footer
+					= new PdfPTable (new float [] {1, 1, 1.5f, 1});
+			footer.getDefaultCell ().setBorder (0);
+			footer.setWidthPercentage (100f);
+			footer.addCell (new Phrase (new Chunk ("Postadress:\nNacka kommun\n131 81 Nacka", SANSSERIF_FONT)));
+			footer.addCell (new Phrase (new Chunk ("Besöksadress:\nStadshuset\nGranitvägen 15\nNacka", SANSSERIF_FONT)));
+			footer.addCell (new Phrase (new Chunk ("Tel växel:\n08-718 80 00\n"
+							+ "Hemsida:\nwww.nacka24.nacka.se", SANSSERIF_FONT)));
+			footer.addCell (new Phrase (new Chunk ("Organisationsnr:\n212000-0167", SANSSERIF_FONT)));
+			final String logoPath = getIWApplicationContext().getApplication()
+					.getBundle("se.idega.idegaweb.commune")
+					.getResourcesRealPath() + "/shared/nacka_logo.jpg";
+			PdfPCell logoCell;
+			try {
+				final Image logo = Image.getInstance (logoPath);
+				logo.scaleToFit (mmToPoints (30), mmToPoints (15));
+				logoCell = new PdfPCell (logo);
+				logoCell.setVerticalAlignment (logoCell.ALIGN_MIDDLE);
+				logoCell.setHorizontalAlignment (logoCell.ALIGN_LEFT);
+			} catch (Exception e) {
+				logoCell = new PdfPCell
+						(new Phrase ("The file '" + logoPath
+									 + "' is missing. Please contact the system"
+									 + " administartor."));
+			}
+			logoCell.setBorder (0);
+			final PdfPTable header = new PdfPTable (new float [] {1, 1});
+			header.setWidthPercentage (100f);
+			final PdfPCell defaultCell = header.getDefaultCell ();
+			defaultCell.setBorder (0);
+			defaultCell.setFixedHeight (mmToPoints (30));
+			defaultCell.setPadding (0);
+			defaultCell.setNoWrap (true);
+			defaultCell.setVerticalAlignment (Element.ALIGN_MIDDLE);
+			header.addCell (logoCell);
+			header.addCell (new Phrase (getDateChunk ()));
+			for (int i = 0; i < receivers.length; i++) {
+				if (i != 0) { document.newPage (); }
+				document.add (header);
+				document.add (getAddressTable (receivers [i]));
+				document.add (reminderText);
+				document.add (spaceTable);
+				final PdfContentByte cb = writer.getDirectContent();
+				cb.setLineWidth (1);
+				cb.moveTo (mmToPoints(30), mmToPoints(22));
+				cb.lineTo (mmToPoints(180), mmToPoints(22));
+				cb.stroke (); 
+				document.add (footer);
+			}
+			document.close();
+			final ICFileHome icFileHome
+					= (ICFileHome) getIDOHome(ICFile.class);
+			final ICFile file = icFileHome.create();
+			final InputStream inStream = new MemoryInputStream (buffer);
+			file.setFileValue(inStream);
+			file.setMimeType("application/x-pdf");
+			file.setName("reminder_" + reminderId + ".pdf");
+			file.setFileSize(buffer.length());
+			file.store();
+			return ((Integer)file.getPrimaryKey()).intValue();
+		} catch (Exception e) {
+			e.printStackTrace ();
+			throw new RemoteException ("Couldn't generate reminder "
+									   + reminderId, e);
+		}
+	}
 
 	public SchoolChoiceReminderReceiver []
 	findAllStudentsThatMustDoSchoolChoiceButHaveNot (SchoolSeason season,SchoolYear[] years){
@@ -1112,49 +1191,49 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	/**
 	 * Gets an array of SchoolChoiceReminderReceiver for all students who should make a schoolchoice for the SchoolYear year and SchoolSeason season
 	 */
-    public SchoolChoiceReminderReceiver []
+	public SchoolChoiceReminderReceiver []
 	findAllStudentsThatMustDoSchoolChoiceButHaveNot (SchoolSeason season,SchoolYear year)
-    {
-    	try{
-        com.idega.util.Timer timer = new com.idega.util.Timer ();
-        timer.start ();
-        final Set ids = new HashSet ();
-        ids.addAll(this.findAllStudentsThatMustDoSchoolChoice(season,year));
-        System.err.println ("ids.size=" + ids.size ());
-        try {
-            ids.removeAll (findStudentIdsWhoChosedForSeasonAndYear(season,year));
-        } catch (FinderException e) {
-            e.printStackTrace ();
-        }
-        System.err.println ("ids.size=" + ids.size ());
-        timer.stop ();
-        System.err.println ("Total search time=" + timer.getTime () + " msec");
-        timer.start ();
+	{
+		try{
+		com.idega.util.Timer timer = new com.idega.util.Timer ();
+		timer.start ();
+		final Set ids = new HashSet ();
+		ids.addAll(this.findAllStudentsThatMustDoSchoolChoice(season,year));
+		System.err.println ("ids.size=" + ids.size ());
+		try {
+			ids.removeAll (findStudentIdsWhoChosedForSeasonAndYear(season,year));
+		} catch (FinderException e) {
+			e.printStackTrace ();
+		}
+		System.err.println ("ids.size=" + ids.size ());
+		timer.stop ();
+		System.err.println ("Total search time=" + timer.getTime () + " msec");
+		timer.start ();
         
-        final int idCount = ids.size ();
-        final Map receivers = new TreeMap ();
-        final Iterator iter = ids.iterator ();
-        final MemberFamilyLogic familyLogic = getMemberFamilyLogic();
-        final UserBusiness userBusiness = getUserBusiness();
-        for (int i = 0; i < idCount; i++) {
-            final Integer id = (Integer) iter.next ();
-            final SchoolChoiceReminderReceiver receiver
-                    = new SchoolChoiceReminderReceiver (familyLogic,
-                                                        userBusiness, id);
-            receivers.put (receiver.getSsn (), receiver);
-        }
-        timer.stop ();
-        System.err.println ("Found parents and addresses in "
-                            + timer.getTime () + " msec");
-        return (SchoolChoiceReminderReceiver [])
-                receivers.values ().toArray
-                (new SchoolChoiceReminderReceiver [receivers.size ()]);
+		final int idCount = ids.size ();
+		final Map receivers = new TreeMap ();
+		final Iterator iter = ids.iterator ();
+		final MemberFamilyLogic familyLogic = getMemberFamilyLogic();
+		final UserBusiness userBusiness = getUserBusiness();
+		for (int i = 0; i < idCount; i++) {
+			final Integer id = (Integer) iter.next ();
+			final SchoolChoiceReminderReceiver receiver
+					= new SchoolChoiceReminderReceiver (familyLogic,
+														userBusiness, id);
+			receivers.put (receiver.getSsn (), receiver);
+		}
+		timer.stop ();
+		System.err.println ("Found parents and addresses in "
+							+ timer.getTime () + " msec");
+		return (SchoolChoiceReminderReceiver [])
+				receivers.values ().toArray
+				(new SchoolChoiceReminderReceiver [receivers.size ()]);
                 
-    	}
-    	catch(RemoteException re){
-    		throw new IBORuntimeException(re);
-    	}
-    }
+		}
+		catch(RemoteException re){
+			throw new IBORuntimeException(re);
+		}
+	}
 
 
 	public Collection
@@ -1209,23 +1288,23 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	 * @throws FinderException
 	 */
 	private Set findStudentIdsWhoChosedForSeasonAndYear (SchoolSeason season,SchoolYear year)
-        throws RemoteException, FinderException {
-        com.idega.util.Timer timer = new com.idega.util.Timer ();
-        timer.start ();
-        //final Integer currentSeasonId
-        //        = (Integer) getCurrentSeason ().getPrimaryKey ();
-        //int currentSeasonId = ((Integer)season.getPrimaryKey()).intValue();
-        final Collection choices = getSchoolChoiceHome().findBySeasonAndSchoolYear
-                (season,year);
-        final Set ids = new HashSet ();
-        for (Iterator i = choices.iterator (); i.hasNext ();) {
-            final SchoolChoice choice = (SchoolChoice) i.next ();
-            ids.add (new Integer (choice.getChildId ()));
-        }
-        timer.stop ();
-        System.err.println ("Found " + choices.size () + " chosedstudents in "
-                            + timer.getTime () + " msec");
-        return ids;
+		throws RemoteException, FinderException {
+		com.idega.util.Timer timer = new com.idega.util.Timer ();
+		timer.start ();
+		//final Integer currentSeasonId
+		//        = (Integer) getCurrentSeason ().getPrimaryKey ();
+		//int currentSeasonId = ((Integer)season.getPrimaryKey()).intValue();
+		final Collection choices = getSchoolChoiceHome().findBySeasonAndSchoolYear
+				(season,year);
+		final Set ids = new HashSet ();
+		for (Iterator i = choices.iterator (); i.hasNext ();) {
+			final SchoolChoice choice = (SchoolChoice) i.next ();
+			ids.add (new Integer (choice.getChildId ()));
+		}
+		timer.stop ();
+		System.err.println ("Found " + choices.size () + " chosedstudents in "
+							+ timer.getTime () + " msec");
+		return ids;
 	}
 	/**
 	 * Find All the Students that have a placement for season season and SchoolYear year and are in 
@@ -1235,161 +1314,161 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	 * @return A Set of primary Keys for students
 	 * @throws FinderException if an error occured during search
 	 */
-    private Set findStudentsInLastYearClassesThatMustDoSchoolChoice (SchoolSeason season,SchoolYear year)
-        throws FinderException {
-        try{
-        com.idega.util.Timer timer = new com.idega.util.Timer ();
-        timer.start ();
+	private Set findStudentsInLastYearClassesThatMustDoSchoolChoice (SchoolSeason season,SchoolYear year)
+		throws FinderException {
+		try{
+		com.idega.util.Timer timer = new com.idega.util.Timer ();
+		timer.start ();
 
-        //final int previousSeasonId = getPreviousSeasonId ();
-        final int seasonId = ((Integer)season.getPrimaryKey()).intValue();
-        System.err.println ("findStudentsInFinalClassesThatMustDoSchoolChoice: seasonId=" + seasonId);
-        final Collection students
-               // = getSchoolClassMemberHome().findAllBySeasonAndMaximumAge(seasonId, 14);
+		//final int previousSeasonId = getPreviousSeasonId ();
+		final int seasonId = ((Integer)season.getPrimaryKey()).intValue();
+		System.err.println ("findStudentsInFinalClassesThatMustDoSchoolChoice: seasonId=" + seasonId);
+		final Collection students
+			   // = getSchoolClassMemberHome().findAllBySeasonAndMaximumAge(seasonId, 14);
 			= getSchoolClassMemberHome().findAllLastYearStudentsBySeasonAndYear(season,year);
-        final Set ids = new HashSet ();
-        for (Iterator i = students.iterator (); i.hasNext ();) {
-            final SchoolClassMember student = (SchoolClassMember) i.next ();
-            ids.add (new Integer (student.getClassMemberId ()));
-        }
-        timer.stop ();
-        System.err.println ("Found " + students.size () + " finalstudents in "
-                            + timer.getTime () + " msec");
-        return ids;
-        }
-        catch(RemoteException re){
-        	throw new FinderException(re.getMessage());
-        }
+		final Set ids = new HashSet ();
+		for (Iterator i = students.iterator (); i.hasNext ();) {
+			final SchoolClassMember student = (SchoolClassMember) i.next ();
+			ids.add (new Integer (student.getClassMemberId ()));
+		}
+		timer.stop ();
+		System.err.println ("Found " + students.size () + " finalstudents in "
+							+ timer.getTime () + " msec");
+		return ids;
+		}
+		catch(RemoteException re){
+			throw new FinderException(re.getMessage());
+		}
            
-    }
+	}
 
-    private Set findSchoolStartersNotInChildCare (SchoolSeason season)throws FinderException {
-    	try{
-        com.idega.util.Timer timer = new com.idega.util.Timer ();
-        timer.start ();
-        final SchoolYear childCare = getSchoolYearHome ().findByYearName ("1");
-        final int currentYear = Calendar.getInstance ().get (Calendar.YEAR);
-        final int yearOfBirth = currentYear - childCare.getSchoolYearAge();
-        final Collection students = getUserHome().findUsersByYearOfBirth
-                (yearOfBirth, yearOfBirth);
-        final Set ids = new HashSet ();
-        final SchoolClassMemberHome classMemberHome
-                = getSchoolClassMemberHome ();
-        final int seasonId = ((Integer)season.getPrimaryKey()).intValue();
-        for (Iterator i = students.iterator (); i.hasNext ();) {
-            final User student = (User) i.next ();
-            final Integer studentId = (Integer) student.getPrimaryKey ();
-            SchoolClassMember member = null;
-            try {
-                member = classMemberHome.findByUserAndSeason
-                        (studentId.intValue (), seasonId);
-            } catch (Exception e) {
-                // not a school class member - handle in 'finally' clause
-            } finally {
-                if (null == member) {
-                    ids.add (studentId);
-                }
-            }
-        }
-        timer.stop ();
-        System.err.println ("Found " + ids.size () + " (" + students.size () + ") schoolstartersnotinchildcare in "
-                            + timer.getTime () + " msec (" + yearOfBirth + ")");
-        return ids;
-    	}
-    	catch(RemoteException re){
-    		throw new FinderException(re.getMessage());
-    	}
-    }
+	private Set findSchoolStartersNotInChildCare (SchoolSeason season)throws FinderException {
+		try{
+		com.idega.util.Timer timer = new com.idega.util.Timer ();
+		timer.start ();
+		final SchoolYear childCare = getSchoolYearHome ().findByYearName ("1");
+		final int currentYear = Calendar.getInstance ().get (Calendar.YEAR);
+		final int yearOfBirth = currentYear - childCare.getSchoolYearAge();
+		final Collection students = getUserHome().findUsersByYearOfBirth
+				(yearOfBirth, yearOfBirth);
+		final Set ids = new HashSet ();
+		final SchoolClassMemberHome classMemberHome
+				= getSchoolClassMemberHome ();
+		final int seasonId = ((Integer)season.getPrimaryKey()).intValue();
+		for (Iterator i = students.iterator (); i.hasNext ();) {
+			final User student = (User) i.next ();
+			final Integer studentId = (Integer) student.getPrimaryKey ();
+			SchoolClassMember member = null;
+			try {
+				member = classMemberHome.findByUserAndSeason
+						(studentId.intValue (), seasonId);
+			} catch (Exception e) {
+				// not a school Class member - handle in 'finally' clause
+			} finally {
+				if (null == member) {
+					ids.add (studentId);
+				}
+			}
+		}
+		timer.stop ();
+		System.err.println ("Found " + ids.size () + " (" + students.size () + ") schoolstartersnotinchildcare in "
+							+ timer.getTime () + " msec (" + yearOfBirth + ")");
+		return ids;
+		}
+		catch(RemoteException re){
+			throw new FinderException(re.getMessage());
+		}
+	}
 
-    private Set findChildCareStarters (SchoolSeason season) throws FinderException {
-        try{
-        com.idega.util.Timer timer = new com.idega.util.Timer ();
-        timer.start ();
-        final SchoolYear childCare = getSchoolYearHome ().findByYearName ("F");
-        final int currentYear = Calendar.getInstance ().get (Calendar.YEAR);
-        final int yearOfBirth = currentYear - childCare.getSchoolYearAge();
-        final Collection students = getUserHome().findUsersByYearOfBirth
-                (yearOfBirth, yearOfBirth);
-        final Set ids = new HashSet ();
-        final SchoolClassMemberHome classMemberHome
-                = getSchoolClassMemberHome ();
-        final int seasonId = ((Integer)season.getPrimaryKey()).intValue();
-        for (Iterator i = students.iterator (); i.hasNext ();) {
-            final User student = (User) i.next ();
-            final Integer studentId = (Integer) student.getPrimaryKey ();
-            SchoolClassMember member = null;
-            try {
-                member = classMemberHome.findByUserAndSeason
-                        (studentId.intValue (), seasonId);
-            } catch (Exception e) {
-                // not a school class member - handle in 'finally' clause
-            } finally {
-                if (null == member) {
-                    ids.add (studentId);
-                }
-            }
-        }
-        timer.stop ();
-        System.err.println ("Found " + students.size () + " childcarestarters in "
-                            + timer.getTime () + " msec (" + yearOfBirth + ")");
-        return ids;
-        }
-        catch(RemoteException re){
-        	throw new FinderException(re.getMessage());   
-        }
-    }
+	private Set findChildCareStarters (SchoolSeason season) throws FinderException {
+		try{
+		com.idega.util.Timer timer = new com.idega.util.Timer ();
+		timer.start ();
+		final SchoolYear childCare = getSchoolYearHome ().findByYearName ("F");
+		final int currentYear = Calendar.getInstance ().get (Calendar.YEAR);
+		final int yearOfBirth = currentYear - childCare.getSchoolYearAge();
+		final Collection students = getUserHome().findUsersByYearOfBirth
+				(yearOfBirth, yearOfBirth);
+		final Set ids = new HashSet ();
+		final SchoolClassMemberHome classMemberHome
+				= getSchoolClassMemberHome ();
+		final int seasonId = ((Integer)season.getPrimaryKey()).intValue();
+		for (Iterator i = students.iterator (); i.hasNext ();) {
+			final User student = (User) i.next ();
+			final Integer studentId = (Integer) student.getPrimaryKey ();
+			SchoolClassMember member = null;
+			try {
+				member = classMemberHome.findByUserAndSeason
+						(studentId.intValue (), seasonId);
+			} catch (Exception e) {
+				// not a school Class member - handle in 'finally' clause
+			} finally {
+				if (null == member) {
+					ids.add (studentId);
+				}
+			}
+		}
+		timer.stop ();
+		System.err.println ("Found " + students.size () + " childcarestarters in "
+							+ timer.getTime () + " msec (" + yearOfBirth + ")");
+		return ids;
+		}
+		catch(RemoteException re){
+			throw new FinderException(re.getMessage());   
+		}
+	}
 
-    private static PdfPTable getAddressTable
-        (final SchoolChoiceReminderReceiver receiver) {
-        final PdfPTable address = new PdfPTable (new float [] {1, 1});
-        address.setWidthPercentage (100f);
-        final PdfPCell defaultCell = address.getDefaultCell ();
-        defaultCell.setBorder (0);
-        defaultCell.setFixedHeight (mmToPoints (55));
-        defaultCell.setPadding (0);
-        defaultCell.setNoWrap (true);
-        defaultCell.setVerticalAlignment (Element.ALIGN_MIDDLE);
-        address.addCell (new Phrase (""));
-        address.addCell (new Phrase (getReceiverChunk (receiver)));
-        return address;
-    }
+	private static PdfPTable getAddressTable
+		(final SchoolChoiceReminderReceiver receiver) {
+		final PdfPTable address = new PdfPTable (new float [] {1, 1});
+		address.setWidthPercentage (100f);
+		final PdfPCell defaultCell = address.getDefaultCell ();
+		defaultCell.setBorder (0);
+		defaultCell.setFixedHeight (mmToPoints (55));
+		defaultCell.setPadding (0);
+		defaultCell.setNoWrap (true);
+		defaultCell.setVerticalAlignment (Element.ALIGN_MIDDLE);
+		address.addCell (new Phrase (""));
+		address.addCell (new Phrase (getReceiverChunk (receiver)));
+		return address;
+	}
 
-    private static Chunk getSubjectChunk (final String rawString) {
-        final int newlineIndex = rawString.indexOf ('\n');
-        final Font font = FontFactory.getFont (FontFactory.HELVETICA_BOLD,
-                                               REMINDER_FONTSIZE);
-        return new Chunk (newlineIndex != -1 ? rawString.substring
-                          (0, newlineIndex) : "", font);
-    }
+	private static Chunk getSubjectChunk (final String rawString) {
+		final int newlineIndex = rawString.indexOf ('\n');
+		final Font font = FontFactory.getFont (FontFactory.HELVETICA_BOLD,
+											   REMINDER_FONTSIZE);
+		return new Chunk (newlineIndex != -1 ? rawString.substring
+						  (0, newlineIndex) : "", font);
+	}
 
-    private static Chunk getBodyChunk (final String rawString) {
-        final int newlineIndex = rawString.indexOf ('\n');
-        final String bodyString
-                = rawString.substring (newlineIndex != -1 ? newlineIndex : 0);
-        return new Chunk (bodyString, SERIF_FONT);
-    }
+	private static Chunk getBodyChunk (final String rawString) {
+		final int newlineIndex = rawString.indexOf ('\n');
+		final String bodyString
+				= rawString.substring (newlineIndex != -1 ? newlineIndex : 0);
+		return new Chunk (bodyString, SERIF_FONT);
+	}
 
-    private static Chunk getReceiverChunk
-        (final SchoolChoiceReminderReceiver receiver) {
-        final String longSsn = receiver.getSsn ();
-        final String ssn = longSsn.substring (2, 8) + "-"
-                + longSsn.substring (8);
-        final String address = receiver.getParentName () + "\n"
-                + receiver.getStreetAddress () + "\n"
-                + receiver.getPostalAddress () + "\n"
-                + "\n\n\n\n\n\n\nVårdnadshavare för:\n" + ssn + " "
-                + receiver.getStudentName ();
-        return new Chunk (address, SERIF_FONT);
-    }
+	private static Chunk getReceiverChunk
+		(final SchoolChoiceReminderReceiver receiver) {
+		final String longSsn = receiver.getSsn ();
+		final String ssn = longSsn.substring (2, 8) + "-"
+				+ longSsn.substring (8);
+		final String address = receiver.getParentName () + "\n"
+				+ receiver.getStreetAddress () + "\n"
+				+ receiver.getPostalAddress () + "\n"
+				+ "\n\n\n\n\n\n\nVårdnadshavare för:\n" + ssn + " "
+				+ receiver.getStudentName ();
+		return new Chunk (address, SERIF_FONT);
+	}
 
-    private static Chunk getDateChunk () {
-        final SimpleDateFormat formatter = new SimpleDateFormat ("yyyy-MM-dd");
-        return new Chunk (formatter.format(new java.util.Date ()), SERIF_FONT);
-    }
+	private static Chunk getDateChunk () {
+		final SimpleDateFormat formatter = new SimpleDateFormat ("yyyy-MM-dd");
+		return new Chunk (formatter.format(new java.util.Date ()), SERIF_FONT);
+	}
 
-    private static float mmToPoints (final float mm) {
-        return mm*72/25.4f;
-    }
+	private static float mmToPoints (final float mm) {
+		return mm*72/25.4f;
+	}
     
 	public void sendMessageToParentOrChild(User parent, User child, String subject, String body) throws RemoteException{
 		getMessageBusiness().createUserMessage(getReceiver(parent, child), subject, body);
