@@ -65,6 +65,7 @@ public class SchoolChoiceApprover extends CommuneBlock {
 	public String prmSave = "appr_save";
 	private String prmPupilView = "ppl_vw";
 	private boolean pupilList = false;
+	private School school;
 
 	public void control(IWContext iwc) throws RemoteException {
 		debugParameters(iwc);
@@ -80,7 +81,7 @@ public class SchoolChoiceApprover extends CommuneBlock {
 			else{
 				try {
 					seasonId = ((Integer)choiceBean.getCurrentSeason().getPrimaryKey()).intValue();
-					
+					school = schoolBean.getSchool(new Integer(schoolId));
 					if (pupilList)
 						cases = choiceBean.getSchoolChoiceHome().findByCodeAndStatus(code, statusToSearch, schoolId,seasonId,"group_place");
 					else
@@ -218,6 +219,7 @@ public class SchoolChoiceApprover extends CommuneBlock {
 		T.add(new HiddenInput(prmSchoolId,String.valueOf( this.schoolId) ) );
 		T.addButton(save);
 		T.addButton(L);
+		F.add(getSchoolInfo());
 		F.add(T);
 		return F;
 	}
@@ -283,83 +285,87 @@ public class SchoolChoiceApprover extends CommuneBlock {
 		}
 		catch (FinderException e) {
 		}
-		
-		User child = userBean.getUser(choice.getChildId());
 		Table T = new Table();
-		int row = 1;
-		T.add(tf.format(iwrb.getLocalizedString("child","Child"),tf.HEADER),1,row);		
-		T.add(tf.format(iwrb.getLocalizedString("address","Address"),tf.HEADER),2,row);
-		row++;
-		T.add(tf.format(child.getNameLastFirst()),1,row);
-		Collection addresses  = child.getAddresses();
-		if(!addresses.isEmpty()){
-			Iterator iter = addresses.iterator();
-			if(iter.hasNext()){
-				Address addr = (Address) iter.next();
-				T.add(tf.format(addr.toString()),2,row);
-			}
-		}
-		row++;
-		MemberFamilyLogic ml = (MemberFamilyLogic) IBOLookup.getServiceInstance(iwc,MemberFamilyLogic.class);
-       
-		Collection parents = null;
-		try {
-			parents = ml.getCustodiansFor(child);
-			if(!parents.isEmpty()){
-        		Iterator piter = parents.iterator();
-        		int count = 1;
-        		while(piter.hasNext()){
-        			User p = (User) piter.next();
-        			T.add(tf.format(iwrb.getLocalizedString( "custodian","Custodian")+" "+count,tf.HEADER),1,row);
-        			T.add(tf.format(iwrb.getLocalizedString("phone","Phone"),tf.HEADER),2,row);
-        			row++;
-        			T.add(tf.format(p.getNameLastFirst()),1,row);
-        			row++;
-        		}
-        	}
-			
-		}
-		catch (Exception e) {
-		}
-		
-		T.add(tf.format(iwrb.getLocalizedString("personal_id","Personal ID"),tf.HEADER),1,row);
-		T.add(tf.format(child.getPersonalID()),2,row);
-		row++;
 		if(choice!=null){
-			T.add(tf.format(iwrb.getLocalizedString("school_choice.grade","Grade"),tf.HEADER),1,row);
-			T.add(tf.format(choice.getGrade()),2,row);
-			row++;
-			T.add(tf.format(iwrb.getLocalizedString("school_choice.choice_date", "Choice date"),tf.HEADER),1,row);
-			T.add(tf.format(df.format( choice.getSchoolChoiceDate() ) ),2,row);
-			row++;
+			User child = userBean.getUser(choice.getChildId());
 			
-			T.add(tf.format(iwrb.getLocalizedString("school_choice.change_from", "Change from"),tf.HEADER),1,row);
-			if (choice.getChangeOfSchool()) {
-					School changeFromSchool = schoolBean.getSchool(new Integer(choice.getCurrentSchoolId()));
-					T.add(tf.format(changeFromSchool.getSchoolName()), 2, row);
-	
+			int row = 1;
+			T.add(tf.format(iwrb.getLocalizedString("child","Child"),tf.HEADER),1,row);		
+			T.add(tf.format(iwrb.getLocalizedString("address","Address"),tf.HEADER),2,row);
+			row++;
+			T.add(tf.format(child.getNameLastFirst()),1,row);
+			Collection addresses  = child.getAddresses();
+			if(!addresses.isEmpty()){
+				Iterator iter = addresses.iterator();
+				if(iter.hasNext()){
+					Address addr = (Address) iter.next();
+					T.add(tf.format(addr.toString()),2,row);
+				}
 			}
 			row++;
-			T.add(tf.format(iwrb.getLocalizedString("school_choice.language", "Language"),tf.HEADER),1,row);
-			String language = choice.getLanguageChoice();
-			if(language!=null)
-				T.add(tf.format(language),2,row);
+			MemberFamilyLogic ml = (MemberFamilyLogic) IBOLookup.getServiceInstance(iwc,MemberFamilyLogic.class);
+	       
+			Collection parents = null;
+			try {
+				parents = ml.getCustodiansFor(child);
+				if(!parents.isEmpty()){
+	        		Iterator piter = parents.iterator();
+	        		int count = 1;
+	        		while(piter.hasNext()){
+	        			User p = (User) piter.next();
+	        			T.add(tf.format(iwrb.getLocalizedString( "custodian","Custodian")+" "+count,tf.HEADER),1,row);
+	        			T.add(tf.format(iwrb.getLocalizedString("phone","Phone"),tf.HEADER),2,row);
+	        			row++;
+	        			T.add(tf.format(p.getNameLastFirst()),1,row);
+	        			row++;
+	        		}
+	        	}
+				
+			}
+			catch (Exception e) {
+			}
+			
+			T.add(tf.format(iwrb.getLocalizedString("personal_id","Personal ID"),tf.HEADER),1,row);
+			T.add(tf.format(child.getPersonalID()),2,row);
 			row++;
-		}
+			if(choice!=null){
+				T.add(tf.format(iwrb.getLocalizedString("school_choice.grade","Grade"),tf.HEADER),1,row);
+				T.add(tf.format(choice.getGrade()),2,row);
+				row++;
+				T.add(tf.format(iwrb.getLocalizedString("school_choice.choice_date", "Choice date"),tf.HEADER),1,row);
+				T.add(tf.format(df.format( choice.getSchoolChoiceDate() ) ),2,row);
+				row++;
+				
+				T.add(tf.format(iwrb.getLocalizedString("school_choice.change_from", "Change from"),tf.HEADER),1,row);
+				if (choice.getChangeOfSchool()) {
+						School changeFromSchool = schoolBean.getSchool(new Integer(choice.getCurrentSchoolId()));
+						T.add(tf.format(changeFromSchool.getSchoolName()), 2, row);
 		
-		Link back = new Link(tf.format(iwrb.getLocalizedString("back","Back")));
-		back.addParameter(prmSchoolId,this.schoolId);
-		T.add(back,1,row);
-       
+				}
+				row++;
+				T.add(tf.format(iwrb.getLocalizedString("school_choice.language", "Language"),tf.HEADER),1,row);
+				String language = choice.getLanguageChoice();
+				if(language!=null)
+					T.add(tf.format(language),2,row);
+				row++;
+			}
+			
+			Link back = new Link(tf.format(iwrb.getLocalizedString("back","Back")));
+			back.addParameter(prmSchoolId,this.schoolId);
+			T.add(back,1,row);
+		}
 		return T;
 	}
 	
-	private PresentationObject getSchoolInfo(School school){
+	private PresentationObject getSchoolInfo()throws RemoteException{
 		Table T = new Table();
 		int row = 1,col = 1;
-		T.add(iwrb.getLocalizedString("school","School"),col,row);
-		T.add(iwrb.getLocalizedString("address","Address"),col,row);
-		T.add(iwrb.getLocalizedString("phone","Phone"),col,row);
+		T.add(tf.format(iwrb.getLocalizedString("school","School"),tf.HEADER),1,1);
+		T.add(tf.format(school.getSchoolName()),1,2);
+		T.add(tf.format(iwrb.getLocalizedString("address","Address"),tf.HEADER),2,1);
+		T.add(tf.format(school.getSchoolName()),2,2);
+		T.add(tf.format(iwrb.getLocalizedString("phone","Phone"),tf.HEADER),3,1);
+		T.add(tf.format(school.getSchoolPhone()),3,2);
 		
 		return T;
 	}
