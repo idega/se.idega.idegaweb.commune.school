@@ -925,8 +925,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 
     public SchoolChoiceReminder findSchoolChoiceReminder (final int id)
         throws RemoteException, FinderException {
-		return (SchoolChoiceReminder) getSchoolChoiceReminderHome ()
-                .findByPrimaryKey (new Integer (id));
+		return getSchoolChoiceReminderHome().findByPrimaryKey (new Integer (id));
 	}
 
     private SchoolChoiceReminderHome getSchoolChoiceReminderHome ()
