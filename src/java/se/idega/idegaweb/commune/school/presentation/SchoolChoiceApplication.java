@@ -269,7 +269,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		valSixyearCare = iwc.isParameterSet(prmSixYearCare);
 		valAutoAssign = true;
 		valSchoolChange = iwc.isParameterSet(prmSchoolChange);
-		valCustodiansAgree = iwc.isParameterSet(prmFirstSchool) ? Boolean.valueOf(iwc.isParameterSet(prmCustodiansAgree)).booleanValue() : false;
+		valCustodiansAgree = iwc.isParameterSet(prmFirstSchool) ? Boolean.valueOf(iwc.getParameter(prmCustodiansAgree)).booleanValue() : false;
 		valMessage = iwc.getParameter(prmMessage);
 		valLanguage = iwc.getParameter(prmLanguage);
 		valFirstSchool = iwc.isParameterSet(prmFirstSchool) ? Integer.parseInt(iwc.getParameter(prmFirstSchool)) : -1;
