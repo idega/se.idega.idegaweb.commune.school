@@ -409,8 +409,18 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		T.add(getMessagePart(), 1, row++);
 		T.setHeight(row++, 12);
 
+
 		SubmitButton button = (SubmitButton) getButton(new SubmitButton("submit",localize("school_choice.ready", "Ready")));
 		button.setOnSubmitFunction("checkApplication", getSchoolCheckScript());
+		
+		// Add msg to button, if new schoolchoice for sports or music class exist
+		if (true) {
+			String passedTestRequiredMsg =
+				iwrb.getLocalizedString("school_choice.passed_test_required_msg",
+							"Information: An approved applicationtest is required for sports and music classes.");		
+	
+			button.setSubmitConfirm(passedTestRequiredMsg);
+		}
 		//button.setToDisableOnClick(button, true);
 		
 		T.add(button, 1, row++);
@@ -421,6 +431,12 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		if (p != null) {
 			Script S = p.getAssociatedScript();
 			Script F = new Script();
+			
+			/* *** Borgman addings *** */
+			S.addVariable("sportOrMusicSchools", "new Array('2', '3', '4')");
+			S.addFunction("getAlertIfSportsOrMusicSchool", getAlertIfSportsOrMusicSchool());					
+			/* *** */
+			
 			S.addFunction("initFilter", getInitFilterScript());
 			S.addFunction("setSelected", getSetSelectedScript());
 
@@ -832,6 +848,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		DropdownMenu drpFirstArea = getDropdown(prmFirstArea, prmType, prmFirstArea, prmFirstSchool, 2, iwrb.getLocalizedString("school.area_first", "School Area...................."));
 		DropdownMenu drpFirstSchool = (DropdownMenu) getStyledInterface(new DropdownMenu(prmFirstSchool));
 		drpFirstSchool.addMenuElementFirst("-1", iwrb.getLocalizedString("school.school_first", "School........................."));
+		drpFirstSchool.setOnChange("alertIfSportsOrMusicSchool(this)");
 
 		int row = 2;
 		table.add(getSmallHeader(iwrb.getLocalizedString("school.school_type", "SchoolType")+":"), 1, row);
@@ -848,10 +865,12 @@ public class SchoolChoiceApplication extends CommuneBlock {
 			DropdownMenu drpSecondArea = getDropdown(prmSecondArea, prmType, prmSecondArea, prmSecondSchool, 2, iwrb.getLocalizedString("school.area_second", "School Area...................."));
 			DropdownMenu drpSecondSchool = (DropdownMenu) getStyledInterface(new DropdownMenu(prmSecondSchool));
 			drpSecondSchool.addMenuElementFirst("-1", iwrb.getLocalizedString("school.school_second", "School........................."));
+			drpSecondSchool.setOnChange("alertIfSportsOrMusicSchool(this)");
 
 			DropdownMenu drpThirdArea = getDropdown(prmThirdArea, prmType, prmThirdArea, prmThirdSchool, 2, iwrb.getLocalizedString("school.area_third", "School Area...................."));
 			DropdownMenu drpThirdSchool = (DropdownMenu) getStyledInterface(new DropdownMenu(prmThirdSchool));
 			drpThirdSchool.addMenuElementFirst("-1", iwrb.getLocalizedString("school.school_third", "School........................."));
+			drpThirdSchool.setOnChange("alertIfSportsOrMusicSchool(this)");
 
 			table.add(getSmallHeader(iwrb.getLocalizedString("school.second_choice", "Second choice")+":"), 1, row);
 			table.add(drpSecondArea, 3, row);
@@ -1313,6 +1332,29 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		s.append("\n\t return true;");
 		s.append("\n}\n");
 		return s.toString();
+	}
+	
+	/*
+	 * We hard code the schools for which an alert message is shown, until further notice, 
+	 * since this applies only for the nacka24 site.
+	 */
+	private String getAlertIfSportsOrMusicSchool() {
+		StringBuffer sb = new StringBuffer();
+		sb.append("function alertIfSportsOrMusicSchool(thisObject) {\n")
+		.append("\t var schools = new Array('Eklidens skola - Idrottsklass', 'Järla skola - Musikklass');\n")
+		.append("\t for (loop=0; loop < schools.length; loop++) {\n")
+		.append("\t\t tmpSchool = schools[loop];")
+		.append("\t\t if (tmpSchool == thisObject.options[thisObject.selectedIndex].text) {\n")		
+		.append("\t\t\t alert('")
+		.append(iwrb.getLocalizedString("school_choice.alert_if_sports_or_music_school_msg",
+					"Information: An approved application test is required for"))		
+		.append("' + ' ' + tmpSchool);\n")
+		.append("\t\t\t return false;\n")		
+		.append("\t\t }\n")
+		.append("\t }\n")
+		.append("}\n");
+		
+		return sb.toString();
 	}
 
 	private boolean[] checkCanApply(IWContext iwc) throws RemoteException {
