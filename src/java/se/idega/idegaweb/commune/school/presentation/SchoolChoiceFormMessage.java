@@ -15,8 +15,8 @@ import com.idega.presentation.Table;
 /**
  * @author 
  * @author <br><a href="mailto:gobom@wmdata.com">Göran Borgman</a><br>
- * Last modified: $Date: 2003/11/30 11:57:28 $ by $Author: laddi $
- * @version $Revision: 1.2 $
+ * Last modified: $Date: 2003/11/30 14:10:48 $ by $Author: laddi $
+ * @version $Revision: 1.3 $
  */
 public class SchoolChoiceFormMessage extends CommuneBlock {
 	// *** Localization keys ***
@@ -25,12 +25,10 @@ public class SchoolChoiceFormMessage extends CommuneBlock {
 	private static final String KEY_MESSAGE = KP + "message";
 
 	// Instance variables
-	//private IWResourceBundle iwrb;
 	private Table mainTable;
 	private int mainTableRow;
 
 	public void main(IWContext iwc) throws Exception {
-		//iwrb = getResourceBundle(iwc);
 		mainTable = getMainTable();		
 		setMainTableContent(getMessageTable());
 		add(mainTable);
