@@ -592,7 +592,8 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 			}
 			choice.store();
 
-			Object[] arguments = { student.getNameLastFirst(true)};
+			//Object[] arguments = { student.getNameLastFirst(true)};
+			Object[] arguments = { student.getName()};
 			newBody = MessageFormat.format(body, arguments);
 
 			sendMessageToParents(choice, subject, newBody);
@@ -1163,7 +1164,8 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 	public void sendMessageToParents(SchoolChoice choice, String subject, String body) {
 		try {
 			User child = choice.getChild();
-			Object[] arguments = { child.getNameLastFirst(true), choice.getChosenSchool().getSchoolName()};
+			//Object[] arguments = { child.getNameLastFirst(true), choice.getChosenSchool().getSchoolName()};
+			Object[] arguments = { child.getName(), choice.getChosenSchool().getSchoolName()};
 
 			User appParent = choice.getOwner();
 			if (getUserBusiness().getMemberFamilyLogic().isChildInCustodyOf(child, appParent)) {

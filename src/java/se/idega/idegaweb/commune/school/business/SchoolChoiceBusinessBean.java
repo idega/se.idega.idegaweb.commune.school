@@ -518,7 +518,8 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 				if (choiceOrder <= 1){
 					try {
 						User student = getUser(childId);
-						Object[] arguments = {student.getNameLastFirst(true), PersonalIDFormatter.format(student.getPersonalID(), this.getIWApplicationContext().getApplicationSettings().getDefaultLocale()), choice.getPlacementDate() != null ? new IWTimestamp(choice.getPlacementDate()).getLocaleDate(this.getIWApplicationContext().getApplicationSettings().getDefaultLocale(), IWTimestamp.SHORT) : "" };
+						//Object[] arguments = {student.getNameLastFirst(true), PersonalIDFormatter.format(student.getPersonalID(), this.getIWApplicationContext().getApplicationSettings().getDefaultLocale()), choice.getPlacementDate() != null ? new IWTimestamp(choice.getPlacementDate()).getLocaleDate(this.getIWApplicationContext().getApplicationSettings().getDefaultLocale(), IWTimestamp.SHORT) : "" };
+						Object[] arguments = {student.getName(), PersonalIDFormatter.format(student.getPersonalID(), this.getIWApplicationContext().getApplicationSettings().getDefaultLocale()), choice.getPlacementDate() != null ? new IWTimestamp(choice.getPlacementDate()).getLocaleDate(this.getIWApplicationContext().getApplicationSettings().getDefaultLocale(), IWTimestamp.SHORT) : "" };
 	
 						String subject = getLocalizedString("school_choice.newly_moved_in_choice_subject", "Newly moved in student seeks placement");
 						String body = MessageFormat.format(getLocalizedString("school_choice.newly_moved_in_choice_body", "{0}, {1}, wants a placement in your school from {2}."), arguments);
@@ -689,7 +690,8 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	private void sendMessageToParents(SchoolChoice application, String nonApplyingSubject, String nonApplyingBody,String nonApplyingCode,String applyingSubject,String applyingBody,String applyingCode,boolean isChangeApplication) {
 		try {
 			User child = application.getChild();
-			Object[] arguments = {child.getNameLastFirst(true), application.getChosenSchool().getSchoolName()};
+			//Object[] arguments = {child.getNameLastFirst(true), application.getChosenSchool().getSchoolName()};
+			Object[] arguments = {child.getName(), application.getChosenSchool().getSchoolName()};
 
 			if (isOfAge(child)) {
 				String subject,body,code;
@@ -856,7 +858,8 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 						Phone phone = getUserBusiness().getChildHomePhone(child);
 
 						StringBuffer body = new StringBuffer();
-						body.append(child.getNameLastFirst(true)).append(" - ").append(child.getPersonalID());
+						//body.append(child.getNameLastFirst(true)).append(" - ").append(child.getPersonalID());
+						body.append(child.getName()).append(" - ").append(child.getPersonalID());
 						if (phone != null) {
 							body.append("\ntel: ").append(phone.getNumber());
 						}
@@ -972,7 +975,8 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 					terminateOldPlacement(choice);
 				}
 				User child = choice.getChild();
-				Object[] arguments = {child.getNameLastFirst(true), choice.getChosenSchool().getSchoolName(), PersonalIDFormatter.format(child.getPersonalID(), this.getIWApplicationContext().getApplicationSettings().getDefaultLocale())};
+				//Object[] arguments = {child.getNameLastFirst(true), choice.getChosenSchool().getSchoolName(), PersonalIDFormatter.format(child.getPersonalID(), this.getIWApplicationContext().getApplicationSettings().getDefaultLocale())};
+				Object[] arguments = {child.getName(), choice.getChosenSchool().getSchoolName(), PersonalIDFormatter.format(child.getPersonalID(), this.getIWApplicationContext().getApplicationSettings().getDefaultLocale())};
 				String body = MessageFormat.format(getLocalizedString("school_choice.student_moved_from_school_body", "Dear headmaster, {0} has been moved from your school and placed at {1}."), arguments);
 				this.sendMessageToSchool(choice.getCurrentSchoolId(), getLocalizedString("school_choice.student_moved_from_school_subject", "Student moved from your school"), body,SchoolChoiceMessagePdfHandler.CODE_SCHOOL_MOVEAWAY);
 			}
@@ -1023,7 +1027,8 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 
 	protected String getReactivatedMessageBody(SchoolChoice theCase) {
 		SchoolYear year = theCase.getSchoolYear();
-		Object[] arguments = {theCase.getChosenSchool().getName(), theCase.getChild().getNameLastFirst(true), theCase.getChild().getPersonalID(), year != null ? year.getSchoolYearName() : "" };
+		//Object[] arguments = {theCase.getChosenSchool().getName(), theCase.getChild().getNameLastFirst(true), theCase.getChild().getPersonalID(), year != null ? year.getSchoolYearName() : "" };
+		Object[] arguments = {theCase.getChosenSchool().getName(), theCase.getChild().getName(), theCase.getChild().getPersonalID(), year != null ? year.getSchoolYearName() : "" };
 		String body = MessageFormat.format(getLocalizedString(KEY_REACTIVATE_BODY1, "The school choice for child {1}, {2}, has been reactivated in {0} in year {3}"), arguments);
 		
 		/*
@@ -1042,7 +1047,8 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 			return null;
 		}
 		
-		Object[] arguments = {theCase.getChosenSchool().getName(), theCase.getChild().getNameLastFirst(true), theCase.getChild().getPersonalID(), removedSchool.getName(), year != null ? year.getSchoolYearName() : "" };
+		//Object[] arguments = {theCase.getChosenSchool().getName(), theCase.getChild().getNameLastFirst(true), theCase.getChild().getPersonalID(), removedSchool.getName(), year != null ? year.getSchoolYearName() : "" };
+		Object[] arguments = {theCase.getChosenSchool().getName(), theCase.getChild().getName(), theCase.getChild().getPersonalID(), removedSchool.getName(), year != null ? year.getSchoolYearName() : "" };
 		String body = MessageFormat.format(getLocalizedString(KEY_REACTIVATE_BODY2, "The placement for child {1}, {2}, in school {3} has been removed since school choice in {0}:  for year {4}, has been reactivated."), arguments);
 		/*
 		 * StringBuffer body = new StringBuffer(this.getLocalizedString("school_choice.prelim_mesg_body1", "Dear mr./ms./mrs. ")); body.append().append("\n"); body.append(this.getLocalizedString("school_choice.prelim_mesg_body2", "Your child has been preliminary accepted in: ."));
@@ -1052,7 +1058,8 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	
 	protected String getPlacemReactivatedMessageBody(SchoolChoice theCase) {
 		SchoolYear year = theCase.getSchoolYear();
-		Object[] arguments = {theCase.getChosenSchool().getName(), theCase.getOwner().getNameLastFirst(true), theCase.getChild().getNameLastFirst(true), year != null ? year.getSchoolYearName() : "" };
+		//Object[] arguments = {theCase.getChosenSchool().getName(), theCase.getOwner().getNameLastFirst(true), theCase.getChild().getNameLastFirst(true), year != null ? year.getSchoolYearName() : "" };
+		Object[] arguments = {theCase.getChosenSchool().getName(), theCase.getOwner().getName(), theCase.getChild().getName(), year != null ? year.getSchoolYearName() : "" };
 		String body = MessageFormat.format(getLocalizedString("school_choice.prelim_mesg_body", "Dear mr./ms./mrs. {1}\n Your child, {2} has been preliminary accepted in: {0} for year {3}"), arguments);
 
 		/*
@@ -1064,7 +1071,8 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	protected String getPreliminaryMessageBody(SchoolChoice theCase) {
 		SchoolYear year = theCase.getSchoolYear();
 		
-		Object[] arguments = {theCase.getChosenSchool().getName(), theCase.getOwner().getNameLastFirst(true), theCase.getChild().getNameLastFirst(true), year != null ? year.getSchoolYearName() : "" };
+		//Object[] arguments = {theCase.getChosenSchool().getName(), theCase.getOwner().getNameLastFirst(true), theCase.getChild().getNameLastFirst(true), year != null ? year.getSchoolYearName() : "" };
+		Object[] arguments = {theCase.getChosenSchool().getName(), theCase.getOwner().getName(), theCase.getChild().getName(), year != null ? year.getSchoolYearName() : "" };
 		String body = MessageFormat.format(getLocalizedString("school_choice.prelim_mesg_body", "Dear mr./ms./mrs. {1}\n Your child, {2} has been preliminary accepted in: {0} for year {3}"), arguments);
 
 		/*
@@ -1076,7 +1084,8 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		SchoolYear year = theCase.getSchoolYear();
 		String placementDate = theCase.getPlacementDate() != null ? new IWTimestamp(theCase.getPlacementDate()).getLocaleDate(this.getIWApplicationContext().getApplicationSettings().getDefaultLocale(), IWTimestamp.SHORT) : "";
 		
-		Object[] arguments = {theCase.getChosenSchool().getName(), theCase.getOwner().getNameLastFirst(true), theCase.getChild().getNameLastFirst(true), year != null ? year.getSchoolYearName() : "", placementDate };
+		//Object[] arguments = {theCase.getChosenSchool().getName(), theCase.getOwner().getNameLastFirst(true), theCase.getChild().getNameLastFirst(true), year != null ? year.getSchoolYearName() : "", placementDate };
+		Object[] arguments = {theCase.getChosenSchool().getName(), theCase.getOwner().getName(), theCase.getChild().getName(), year != null ? year.getSchoolYearName() : "", placementDate };
 		String body = MessageFormat.format(getLocalizedString("school_choice.prelim_mesg_body_new", "Dear mr./ms./mrs. {1}\n Your child, {2} has been preliminary accepted in: {0} for year {3} with placement date {4}"), arguments);
 
 		/*
@@ -1106,7 +1115,8 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	}
 	private String getSeparateParentMessageBodyAppl(String text,List choices, User parent) throws RemoteException {
 		Object[] arguments = new Object[5];
-		arguments[0] = parent.getNameLastFirst(true);
+		//arguments[0] = parent.getNameLastFirst(true);
+		arguments[0] = parent.getName();
 		Iterator iter = choices.iterator();
 		int count = 1;
 		boolean addedChildName = false;
@@ -1131,20 +1141,23 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	}
 
 	protected String getNonApplyingSeparateParentMessageBodyChange(SchoolChoice theCase, User parent) throws RemoteException {
-		Object[] arguments = {parent.getNameLastFirst(true), theCase.getChild().getNameLastFirst(true), getSchool(theCase.getChosenSchoolId()).getSchoolName(), theCase.getPlacementDate() != null ? new IWTimestamp(theCase.getPlacementDate()).getLocaleDate(this.getIWApplicationContext().getApplicationSettings().getDefaultLocale(), IWTimestamp.SHORT) : "", PersonalIDFormatter.format(theCase.getChild().getPersonalID(), this.getIWApplicationContext().getApplicationSettings().getDefaultLocale()) };
+		//Object[] arguments = {parent.getNameLastFirst(true), theCase.getChild().getNameLastFirst(true), getSchool(theCase.getChosenSchoolId()).getSchoolName(), theCase.getPlacementDate() != null ? new IWTimestamp(theCase.getPlacementDate()).getLocaleDate(this.getIWApplicationContext().getApplicationSettings().getDefaultLocale(), IWTimestamp.SHORT) : "", PersonalIDFormatter.format(theCase.getChild().getPersonalID(), this.getIWApplicationContext().getApplicationSettings().getDefaultLocale()) };
+		Object[] arguments = {parent.getName(), theCase.getChild().getName(), getSchool(theCase.getChosenSchoolId()).getSchoolName(), theCase.getPlacementDate() != null ? new IWTimestamp(theCase.getPlacementDate()).getLocaleDate(this.getIWApplicationContext().getApplicationSettings().getDefaultLocale(), IWTimestamp.SHORT) : "", PersonalIDFormatter.format(theCase.getChild().getPersonalID(), this.getIWApplicationContext().getApplicationSettings().getDefaultLocale()) };
 		String body = MessageFormat.format(getLocalizedString("school_choice.sep_parent_change_mesg_body", "Dear mr./ms./mrs. "), arguments);
 		return body;
 	}
 	
 	protected String getApplyingSeparateParentMessageBodyChange(SchoolChoice theCase, User parent) throws RemoteException {
-		Object[] arguments = {parent.getNameLastFirst(true), theCase.getChild().getNameLastFirst(true), getSchool(theCase.getChosenSchoolId()).getSchoolName(), theCase.getPlacementDate() != null ? new IWTimestamp(theCase.getPlacementDate()).getLocaleDate(this.getIWApplicationContext().getApplicationSettings().getDefaultLocale(), IWTimestamp.SHORT) : "", PersonalIDFormatter.format(theCase.getChild().getPersonalID(), this.getIWApplicationContext().getApplicationSettings().getDefaultLocale()) };
+		//Object[] arguments = {parent.getNameLastFirst(true), theCase.getChild().getNameLastFirst(true), getSchool(theCase.getChosenSchoolId()).getSchoolName(), theCase.getPlacementDate() != null ? new IWTimestamp(theCase.getPlacementDate()).getLocaleDate(this.getIWApplicationContext().getApplicationSettings().getDefaultLocale(), IWTimestamp.SHORT) : "", PersonalIDFormatter.format(theCase.getChild().getPersonalID(), this.getIWApplicationContext().getApplicationSettings().getDefaultLocale()) };
+		Object[] arguments = {parent.getName(), theCase.getChild().getName(), getSchool(theCase.getChosenSchoolId()).getSchoolName(), theCase.getPlacementDate() != null ? new IWTimestamp(theCase.getPlacementDate()).getLocaleDate(this.getIWApplicationContext().getApplicationSettings().getDefaultLocale(), IWTimestamp.SHORT) : "", PersonalIDFormatter.format(theCase.getChild().getPersonalID(), this.getIWApplicationContext().getApplicationSettings().getDefaultLocale()) };
 		String body = MessageFormat.format(getLocalizedString("school_choice.applying_sep_parent_change_mesg_body", "Dear mr./ms./mrs. "), arguments);
 		return body;
 	}
 	
 
 	protected String getOldHeadmasterBody(SchoolChoice choice, User student, School newSchool) {
-		Object[] arguments = {student.getNameLastFirst(true), newSchool.getSchoolName(), PersonalIDFormatter.format(student.getPersonalID(), this.getIWApplicationContext().getApplicationSettings().getDefaultLocale()), choice.getPlacementDate() != null ? new IWTimestamp(choice.getPlacementDate()).getLocaleDate(this.getIWApplicationContext().getApplicationSettings().getDefaultLocale(), IWTimestamp.SHORT) : "" };
+		//Object[] arguments = {student.getNameLastFirst(true), newSchool.getSchoolName(), PersonalIDFormatter.format(student.getPersonalID(), this.getIWApplicationContext().getApplicationSettings().getDefaultLocale()), choice.getPlacementDate() != null ? new IWTimestamp(choice.getPlacementDate()).getLocaleDate(this.getIWApplicationContext().getApplicationSettings().getDefaultLocale(), IWTimestamp.SHORT) : "" };
+		Object[] arguments = {student.getName(), newSchool.getSchoolName(), PersonalIDFormatter.format(student.getPersonalID(), this.getIWApplicationContext().getApplicationSettings().getDefaultLocale()), choice.getPlacementDate() != null ? new IWTimestamp(choice.getPlacementDate()).getLocaleDate(this.getIWApplicationContext().getApplicationSettings().getDefaultLocale(), IWTimestamp.SHORT) : "" };
 		String body = MessageFormat.format(getLocalizedString("school_choice.old_headmaster_body", "Dear headmaster"), arguments);
 		/*
 		 * StringBuffer body = new StringBuffer(this.getLocalizedString("school_choice.old_headmaster_body1", "Dear headmaster ")); body.append(student.getName()).append("\n");
@@ -1153,7 +1166,8 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	}
 
 	protected String getNewHeadmasterBody(SchoolChoice choice, User student, School oldSchool) {
-		Object[] arguments = {student.getNameLastFirst(true), oldSchool.getSchoolName(), PersonalIDFormatter.format(student.getPersonalID(), this.getIWApplicationContext().getApplicationSettings().getDefaultLocale()), choice.getPlacementDate() != null ? new IWTimestamp(choice.getPlacementDate()).getLocaleDate(this.getIWApplicationContext().getApplicationSettings().getDefaultLocale(), IWTimestamp.SHORT) : "" };
+		//Object[] arguments = {student.getNameLastFirst(true), oldSchool.getSchoolName(), PersonalIDFormatter.format(student.getPersonalID(), this.getIWApplicationContext().getApplicationSettings().getDefaultLocale()), choice.getPlacementDate() != null ? new IWTimestamp(choice.getPlacementDate()).getLocaleDate(this.getIWApplicationContext().getApplicationSettings().getDefaultLocale(), IWTimestamp.SHORT) : "" };
+		Object[] arguments = {student.getName(), oldSchool.getSchoolName(), PersonalIDFormatter.format(student.getPersonalID(), this.getIWApplicationContext().getApplicationSettings().getDefaultLocale()), choice.getPlacementDate() != null ? new IWTimestamp(choice.getPlacementDate()).getLocaleDate(this.getIWApplicationContext().getApplicationSettings().getDefaultLocale(), IWTimestamp.SHORT) : "" };
 		String body = MessageFormat.format(getLocalizedString("school_choice.new_headmaster_body", "Dear headmaster"), arguments);
 		/*
 		 * StringBuffer body = new StringBuffer(this.getLocalizedString("school_choice.old_headmaster_body1", "Dear headmaster ")); body.append(student.getName()).append("\n");
