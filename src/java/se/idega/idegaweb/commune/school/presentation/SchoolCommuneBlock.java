@@ -10,11 +10,14 @@ import se.idega.idegaweb.commune.presentation.CommuneBlock;
 import se.idega.idegaweb.commune.school.business.SchoolCommuneBusiness;
 import se.idega.idegaweb.commune.school.business.SchoolCommuneSession;
 
+import com.idega.block.school.business.SchoolBusiness;
 import com.idega.block.school.business.SchoolYearComparator;
+import com.idega.block.school.data.School;
 import com.idega.block.school.data.SchoolClass;
 import com.idega.block.school.data.SchoolSeason;
 import com.idega.block.school.data.SchoolYear;
 import com.idega.business.IBOLookup;
+import com.idega.idegaweb.IWApplicationContext;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Table;
 import com.idega.presentation.text.Text;
@@ -31,6 +34,7 @@ public abstract class SchoolCommuneBlock extends CommuneBlock {
 
 	private SchoolCommuneBusiness business;
 	private SchoolCommuneSession session;
+	private SchoolBusiness sBusiness;
 	private int _schoolID = -1;
 	private int _schoolSeasonID = -1;
 	private int _schoolYearID = -1;
@@ -40,6 +44,7 @@ public abstract class SchoolCommuneBlock extends CommuneBlock {
 		setResourceBundle(getResourceBundle(iwc));
 		business = getSchoolCommuneBusiness(iwc);
 		session = getSchoolCommuneSession(iwc);
+		sBusiness = getSchoolBusiness(iwc);
 		initialize(iwc);
 
 		init(iwc);
@@ -55,23 +60,57 @@ public abstract class SchoolCommuneBlock extends CommuneBlock {
 	}
 	
 	protected Table getNavigationTable(boolean showClass) throws RemoteException {
-		Table table = new Table(5,1);
+		return getNavigationTable(showClass, false);
+	}
+	
+	protected Table getNavigationTable(boolean showClass, boolean multipleSchools) throws RemoteException {
+		Table table = new Table(8,1);
 		table.setCellpadding(0);
 		table.setCellspacing(0);
 		table.setWidth(3,"8");
+		int row = 1;
 
-		table.add(getSmallHeader(localize("school.season","Season")+":"+Text.NON_BREAKING_SPACE),1,1);
-		table.add(getSchoolSeasons(),2,1);
-		table.add(getSmallHeader(localize("school.year","Year")+":"+Text.NON_BREAKING_SPACE),4,1);
-		table.add(getSchoolYears(),5,1);
+		if (multipleSchools) {
+			table.resize(8, 3);
+			table.add(getSmallHeader(localize("school.school","School")+":"+Text.NON_BREAKING_SPACE),1,row);
+			table.mergeCells(2, row, 8, row);
+			table.add(getSchools(),2,row);
+			++row;
+			table.setHeight(row, "2");
+			++row;
+		}
+
+		table.add(getSmallHeader(localize("school.season","Season")+":"+Text.NON_BREAKING_SPACE),1,row);
+		table.add(getSchoolSeasons(),2,row);
+		table.add(getSmallHeader(localize("school.year","Year")+":"+Text.NON_BREAKING_SPACE),4,row);
+		table.add(getSchoolYears(),5,row);
 		if (showClass) {
-			table.resize(8, 1);
+//			table.resize(8, row);
 			table.setWidth(6, "8");
-			table.add(getSmallHeader(localize("school.class","Class")+":"+Text.NON_BREAKING_SPACE),7,1);
-			table.add(getSchoolClasses(),8,1);
+			table.add(getSmallHeader(localize("school.class","Class")+":"+Text.NON_BREAKING_SPACE),7,row);
+			table.add(getSchoolClasses(),8,row);
 		}
 		
 		return table;
+	}
+	
+
+	protected DropdownMenu getSchools() throws RemoteException {
+		
+		DropdownMenu menu = new DropdownMenu(session.getParameterSchoolID());
+		menu.setToSubmit();
+		Collection schools = business.getSchoolBusiness().findAllSchools();
+		Iterator iter = schools.iterator();
+		while (iter.hasNext()) {
+			School sCool = (School) iter.next();	
+			menu.addMenuElement(sCool.getPrimaryKey().toString(), sCool.getName());
+		}	
+		
+		if (getSchoolID() != -1) {
+			menu.setSelectedElement(getSchoolID());	
+		}
+		
+		return (DropdownMenu) getStyledInterface(menu);	
 	}
 	
 	protected DropdownMenu getSchoolSeasons() throws RemoteException {
@@ -165,6 +204,10 @@ public abstract class SchoolCommuneBlock extends CommuneBlock {
 	
 	private SchoolCommuneSession getSchoolCommuneSession(IWContext iwc) throws RemoteException {
 		return (SchoolCommuneSession) IBOLookup.getSessionInstance(iwc, SchoolCommuneSession.class);	
+	}
+	
+	private SchoolBusiness getSchoolBusiness(IWApplicationContext iwac) throws RemoteException {
+		return (SchoolBusiness) IBOLookup.getServiceInstance(iwac, SchoolBusiness.class);
 	}
 	
 	/**
