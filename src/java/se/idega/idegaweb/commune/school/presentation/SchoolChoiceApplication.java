@@ -261,11 +261,11 @@ public class SchoolChoiceApplication extends CommuneBlock {
 									count++;
 									if (!hasPreviousSchool) {
 										initSchoolFromChoice(element);
-										logWarning("*** !hasPreviousSch * currentSch from Choice - child: " + childId 
-												+ " choiceID: " + ((Integer) element.getPrimaryKey()).intValue() + " ***");
+										/*logWarning("*** !hasPreviousSch * currentSch from Choice - child: " + childId 
+												+ " choiceID: " + ((Integer) element.getPrimaryKey()).intValue() + " ***");*/
 									} else {
-										logWarning("*** hasPreviousSchool * currentSch from latestPlc - child: " + childId 
-												+ " choiceID: " + ((Integer) element.getPrimaryKey()).intValue() + " ***");
+										/*logWarning("*** hasPreviousSchool * currentSch from latestPlc - child: " + childId 
+												+ " choiceID: " + ((Integer) element.getPrimaryKey()).intValue() + " ***");*/
 										
 									}
 									owner = element.getOwner();
