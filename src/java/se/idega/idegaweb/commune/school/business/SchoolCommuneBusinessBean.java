@@ -676,10 +676,8 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
             final Integer id = (Integer) student.getPrimaryKey ();
             final Collection keys
                     = home.findAllStudyPathsByMemberId (id.intValue ());
-            final Integer studyPathId = keys.isEmpty () ? null
-                    : (Integer) keys.iterator ().next ();
-            return null == studyPathId ? null
-                    : home.findByPrimaryKey (studyPathId);
+            return keys.isEmpty () ? null
+                    : (SchoolStudyPath) keys.iterator ().next ();
         } catch (FinderException e) {
             return null;
         } catch (IDOLookupException e) {
