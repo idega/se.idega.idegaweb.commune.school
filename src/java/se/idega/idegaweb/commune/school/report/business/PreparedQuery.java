@@ -1,5 +1,5 @@
 /*
- * $Id: PreparedQuery.java,v 1.27 2004/02/17 18:10:24 anders Exp $
+ * $Id: PreparedQuery.java,v 1.29 2004/02/17 19:29:16 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -27,10 +27,10 @@ import com.idega.block.school.data.SchoolSeason;
 /** 
  * Handles the SQL logic for school report calculations.
  * <p>
- * Last modified: $Date: 2004/02/17 18:10:24 $ by $Author: anders $
+ * Last modified: $Date: 2004/02/17 19:29:16 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.27 $
+ * @version $Revision: 1.29 $
  */
 public class PreparedQuery {
 
@@ -120,7 +120,7 @@ public class PreparedQuery {
 		_sqlSelect = "select count(distinct u.personal_id)";
 
 		_sqlFrom.put(U, TABLE_U);
-}
+	}
 
 	/**
 	 * Sets the query to count rows.
@@ -144,12 +144,14 @@ public class PreparedQuery {
 		String sql = "cm.register_date <= '" + _currentDate + 
 		"' and (cm. removed_date is null or cm.removed_date > '" + _currentDate + "')" + 
 		" and sc.school_id = s.sch_school_id and sc.sch_school_class_id = cm.sch_school_class_id" +
-		" and sc.sch_school_season_id = " + schoolSeasonId;
+		" and sc.sch_school_season_id = " + schoolSeasonId +
+		" and cm.ic_user_id = u.ic_user_id";
 		_sqlWhere.add(sql);
 		
 		_sqlFrom.put(CM, TABLE_CM);
 		_sqlFrom.put(SC, TABLE_SC);
 		_sqlFrom.put(S, TABLE_S);
+		_sqlFrom.put(U, TABLE_U);
 	}
 	
 	/**
