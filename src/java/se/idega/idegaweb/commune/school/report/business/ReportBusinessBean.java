@@ -1,5 +1,5 @@
 /*
- * $Id: ReportBusinessBean.java,v 1.6 2003/12/12 13:22:46 anders Exp $
+ * $Id: ReportBusinessBean.java,v 1.7 2003/12/15 12:21:01 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -27,10 +27,10 @@ import com.idega.block.school.data.SchoolSeason;
 /** 
  * Business logic for school reports.
  * <p>
- * Last modified: $Date: 2003/12/12 13:22:46 $ by $Author: anders $
+ * Last modified: $Date: 2003/12/15 12:21:01 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  */
 public class ReportBusinessBean extends com.idega.business.IBOServiceBean implements ReportBusiness  {
 
@@ -254,6 +254,28 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 		} else {
 			query.setSelectCountPlacements(getSchoolSeasonId(), schoolId);
 		}
+		if (schoolYearName.equals("F")) {
+			query.setSchoolTypePreSchoolClass();
+		} else {
+			query.setSchoolTypeElementarySchool();
+		}
+		if (sixYearsOld) {
+			query.setOnlyStudentsBorn(getSchoolSeasonStartYear() - 6);
+			query.setSchoolYear("1");
+		} else {
+			query.setSchoolYear(schoolYearName);			
+		}
+		return query.execute();
+	}
+	
+	/**
+	 * Returns the number of student placements for the specified school and school year
+	 * for students in communes outside Nacka (OCC = other commune citizens).
+	 */
+	public int getElementarySchoolOCCPlacementCount(int schoolId, String schoolYearName) {
+		ReportQuery query = new ReportQuery();
+		boolean sixYearsOld = schoolYearName.equals("0");
+		query.setSelectCountOCCPlacements(getSchoolSeasonId(), schoolId);
 		if (schoolYearName.equals("F")) {
 			query.setSchoolTypePreSchoolClass();
 		} else {

@@ -1,5 +1,5 @@
 /*
- * $Id: ReportBlock.java,v 1.7 2003/12/12 10:01:02 anders Exp $
+ * $Id: ReportBlock.java,v 1.8 2003/12/15 12:22:13 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -10,6 +10,7 @@
 package se.idega.idegaweb.commune.school.report.presentation;
 
 import java.rmi.RemoteException;
+import java.sql.Date;
 
 import se.idega.idegaweb.commune.presentation.CommuneBlock;
 import se.idega.idegaweb.commune.school.report.business.Cell;
@@ -27,10 +28,10 @@ import com.idega.presentation.ui.PrintButton;
 /** 
  * This is the base class for school report blocks.
  * <p>
- * Last modified: $Date: 2003/12/12 10:01:02 $ by $Author: anders $
+ * Last modified: $Date: 2003/12/15 12:22:13 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.8 $
  */
 public class ReportBlock extends CommuneBlock {
 
@@ -51,6 +52,8 @@ public class ReportBlock extends CommuneBlock {
 	private ReportModel _reportModel = null;
 	
 	private boolean _showPrintButton = false;
+	private boolean _showTitle = false;
+	private boolean _showDate = false;
 
 	/**
 	 * Default constructor.
@@ -94,6 +97,34 @@ public class ReportBlock extends CommuneBlock {
 	}
 	
 	/**
+	 * Return property indicating if the report title is visible. 
+	 */
+	public boolean getShowTitle() {
+		return _showTitle;
+	}
+	
+	/**
+	 * Sets property indicating if the report title is visible. 
+	 */
+	public void setShowTitle(boolean showTitle) {
+		_showTitle = showTitle;
+	}
+	
+	/**
+	 * Return property indicating if the report created date is visible. 
+	 */
+	public boolean getShowDate() {
+		return _showDate;
+	}
+	
+	/**
+	 * Sets property indicating if the report created date is visible. 
+	 */
+	public void setShowDate(boolean showDate) {
+		_showDate = showDate;
+	}
+	
+	/**
 	 * @see com.idega.presentation.Block#main(com.idega.presentation.IWContext)
 	 */
 	public void main(IWContext iwc) {
@@ -134,6 +165,22 @@ public class ReportBlock extends CommuneBlock {
 		if (getReportModel() == null) {
 			add(getErrorText(localize(KEY_SESSION_TIMEOUT, "You session has timed out. Please login again.")));
 			return;
+		}
+		if (getShowTitle() || getShowDate()) {
+			Table table = new Table();
+			table.setCellspacing(getCellspacing());
+			table.setCellpadding(getCellpadding());
+			if (getShowTitle()) {
+				String key = getReportModel().getReportTitleLocalizationKey();
+				String title = localize(key, key) + " ";
+				table.add(getSmallText(title), 1, 1);
+			}
+			if (getShowDate()) {
+				Date date = new Date(System.currentTimeMillis());
+				table.add(getSmallText(date.toString()), 1, 1);
+			}
+			add(table);
+			add(new Break());
 		}
 		Table table = new Table();
 		table.setWidth("400");
@@ -202,6 +249,7 @@ public class ReportBlock extends CommuneBlock {
 					Header child = children[j];
 					s = localize(child.getLocalizationKey(), child.getLocalizationKey());
 					table.add(getSmallText(s), column + j, 2);
+					table.setVerticalAlignment(column + j, 2, Table.VERTICAL_ALIGN_BOTTOM);
 				}
 				column += children.length;
 			}

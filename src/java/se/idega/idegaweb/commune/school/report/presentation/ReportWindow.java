@@ -1,5 +1,5 @@
 /*
- * $Id: ReportWindow.java,v 1.2 2003/12/12 10:01:02 anders Exp $
+ * $Id: ReportWindow.java,v 1.3 2003/12/15 12:22:13 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -17,10 +17,10 @@ import com.idega.presentation.ui.Window;
 /** 
  * Window for viewing a printer-friendly school report.
  * <p>
- * Last modified: $Date: 2003/12/12 10:01:02 $ by $Author: anders $
+ * Last modified: $Date: 2003/12/15 12:22:13 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class ReportWindow extends Window {
 
@@ -48,6 +48,8 @@ public class ReportWindow extends Window {
 		}
 		ReportBlock reportBlock = new ReportBlock(reportModel);
 		reportBlock.setShowPrintButton(true);
+		reportBlock.setShowTitle(true);
+		reportBlock.setShowDate(true);
 		add(reportBlock);
 	}
 	
