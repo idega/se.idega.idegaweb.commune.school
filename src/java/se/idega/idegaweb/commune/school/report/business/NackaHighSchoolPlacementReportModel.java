@@ -1,5 +1,5 @@
 /*
- * $Id: NackaHighSchoolPlacementReportModel.java,v 1.5 2004/01/09 10:21:00 anders Exp $
+ * $Id: NackaHighSchoolPlacementReportModel.java,v 1.6 2004/01/09 16:47:16 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -18,10 +18,10 @@ import com.idega.block.school.data.SchoolStudyPath;
 /** 
  * Report model for high school placements per student age for students in Nacka and schools in Nacka.
  * <p>
- * Last modified: $Date: 2004/01/09 10:21:00 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/09 16:47:16 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
 public class NackaHighSchoolPlacementReportModel extends ReportModel {
 
@@ -386,7 +386,7 @@ public class NackaHighSchoolPlacementReportModel extends ReportModel {
 							value += getCell(row, 22).getFloatValue();
 							value += getCell(row, 23).getFloatValue();
 						} else {
-							for (int i = column - 20; i < column; i += 4) {
+							for (int i = column - 20; i < column; i += 5) {
 								Cell c = getCell(row, i);
 								value += c.getFloatValue();
 							}
