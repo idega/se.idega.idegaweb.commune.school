@@ -1,5 +1,5 @@
 /*
- * $Id: ReportBlock.java,v 1.14 2004/01/20 16:08:06 anders Exp $
+ * $Id: ReportBlock.java,v 1.15 2004/01/23 08:36:46 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -29,10 +29,10 @@ import com.idega.presentation.ui.PrintButton;
 /** 
  * This is the base class for school report blocks.
  * <p>
- * Last modified: $Date: 2004/01/20 16:08:06 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/23 08:36:46 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.14 $
+ * @version $Revision: 1.15 $
  */
 public class ReportBlock extends CommuneBlock {
 
@@ -336,11 +336,18 @@ public class ReportBlock extends CommuneBlock {
 				for (int cellColumn = 0; cellColumn < _reportModel.getColumnSize(); cellColumn++) {
 					Cell cell = _reportModel.getCell(cellRow, cellColumn);
 					Text text = null;
-					if (cell.getCellType() == Cell.CELLTYPE_PERCENT) {
-						String s = formatter.format(cell.getFloatValue());
-						text = getSmallText(s);
-					} else {
-						text = getSmallText("" + cell.getValue());						
+					switch (cell.getCellType()) {
+						case Cell.CELLTYPE_PERCENT:
+							String s = formatter.format(cell.getFloatValue());
+							text = getSmallText(s);
+							break;
+						case Cell.CELLTYPE_ROW_HEADER:
+							s = (String) cell.getStringValue();
+							text = getSmallHeader(s);
+							break;
+						default:
+							text = getSmallText("" + cell.getValue());
+							break;
 					}
 					int tableColumn = cellColumn + 2;
 					table.add(text, tableColumn, tableRow);
