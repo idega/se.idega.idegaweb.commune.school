@@ -76,7 +76,19 @@ public class SchoolChoiceApprover extends CommuneBlock {
 		if (schoolId > 0) {
 			if(iwc.isParameterSet(prmPupilInfo)){
 				Integer choiceId = new Integer(iwc.getParameter(prmPupilInfo));
-				add(getPupilInfo(iwc,choiceId.intValue()));
+				SchoolChoice choice = null;
+				User child = null;
+				try {
+					choice = choiceBean.getSchoolChoice(choiceId.intValue());
+					child = userBean.getUser(choice.getChildId());
+				}
+				catch (Exception e) {
+				}
+				Table T = new Table();
+				T.add(getPupilInfo(iwc,child,choice),1,1);
+				T.add(getSchoolChoiceInfo(iwc,child,choice),1,2);
+				T.add(getBackLink(),1,3);
+				add(T);
 			}
 			else{
 				try {
@@ -278,16 +290,13 @@ public class SchoolChoiceApprover extends CommuneBlock {
 	}
 	
 	
-	public PresentationObject getPupilInfo(IWContext iwc,int choiceId)throws RemoteException{
-		SchoolChoice choice = null;
-		try {
-			choice = choiceBean.getSchoolChoice(choiceId);
-		}
-		catch (FinderException e) {
-		}
+	public PresentationObject getPupilInfo(IWContext iwc,User child,SchoolChoice choice)throws RemoteException{
+		
 		Table T = new Table();
+		T.setColor("#ffffcc");
+		T.setCellpadding(8);
 		if(choice!=null){
-			User child = userBean.getUser(choice.getChildId());
+			
 			
 			int row = 1;
 			T.add(tf.format(iwrb.getLocalizedString("child","Child"),tf.HEADER),1,row);		
@@ -299,9 +308,10 @@ public class SchoolChoiceApprover extends CommuneBlock {
 				Iterator iter = addresses.iterator();
 				if(iter.hasNext()){
 					Address addr = (Address) iter.next();
-					T.add(tf.format(addr.toString()),2,row);
+					T.add(tf.format(addr.getStreetAddress()),2,row);
 				}
 			}
+			row++;
 			row++;
 			MemberFamilyLogic ml = (MemberFamilyLogic) IBOLookup.getServiceInstance(iwc,MemberFamilyLogic.class);
 	       
@@ -318,6 +328,8 @@ public class SchoolChoiceApprover extends CommuneBlock {
 	        			row++;
 	        			T.add(tf.format(p.getNameLastFirst()),1,row);
 	        			row++;
+	        			row++;
+	        			count++;
 	        		}
 	        	}
 				
@@ -325,7 +337,16 @@ public class SchoolChoiceApprover extends CommuneBlock {
 			catch (Exception e) {
 			}
 			
-			T.add(tf.format(iwrb.getLocalizedString("personal_id","Personal ID"),tf.HEADER),1,row);
+		
+		}
+		return T;
+	}
+	
+	private PresentationObject getSchoolChoiceInfo(IWContext iwc,User child,SchoolChoice choice)throws RemoteException{
+		Table T = new Table();
+		T.setCellpadding(3);
+		int row = 1;
+		T.add(tf.format(iwrb.getLocalizedString("personal_id","Personal ID"),tf.HEADER),1,row);
 			T.add(tf.format(child.getPersonalID()),2,row);
 			row++;
 			if(choice!=null){
@@ -349,23 +370,29 @@ public class SchoolChoiceApprover extends CommuneBlock {
 					T.add(tf.format(language),2,row);
 				row++;
 			}
-			
-			Link back = new Link(tf.format(iwrb.getLocalizedString("back","Back")));
-			back.addParameter(prmSchoolId,this.schoolId);
-			T.add(back,1,row);
-		}
 		return T;
 	}
 	
+	private PresentationObject getBackLink(){
+		Link back = new Link(tf.format(iwrb.getLocalizedString("back","Back")));
+			back.addParameter(prmSchoolId,this.schoolId);
+		return back;
+	}
+	
 	private PresentationObject getSchoolInfo()throws RemoteException{
-		Table T = new Table();
+		Table T = new Table(2,5);
+		T.setColor("#ffffcc");
+		T.setCellpadding(8);
+		T.setWidth(600);
 		int row = 1,col = 1;
 		T.add(tf.format(iwrb.getLocalizedString("school","School"),tf.HEADER),1,1);
 		T.add(tf.format(school.getSchoolName()),1,2);
 		T.add(tf.format(iwrb.getLocalizedString("address","Address"),tf.HEADER),2,1);
+		//Address addr = school.getSchoolAddress();
+		//T.add(tf.format(addr.getStreetAddress()+" , "+addr.getPostalAddress() ),2,2);
 		T.add(tf.format(school.getSchoolAddress()),2,2);
-		T.add(tf.format(iwrb.getLocalizedString("phone","Phone"),tf.HEADER),3,1);
-		T.add(tf.format(school.getSchoolPhone()),3,2);
+		T.add(tf.format(iwrb.getLocalizedString("phone","Phone"),tf.HEADER),1,4);
+		T.add(tf.format(school.getSchoolPhone()),1,5);
 		
 		return T;
 	}
