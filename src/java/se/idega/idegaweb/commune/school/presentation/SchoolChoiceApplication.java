@@ -232,7 +232,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 
 	private boolean saveSchoolChoice(IWContext iwc) {
 		try {
-			schBuiz.createSchoolChoices(valCaseOwner, childId, valPreType, valPreSchool, valFirstSchool, valSecondSchool, valThirdSchool, valPreGrade, valMethod, -1, -1, valLanguage, valMessage, valSchoolChange, valSixyearCare, valAutoAssign, valCustodiansAgree, valSendCatalogue);
+			schBuiz.createSchoolChoices(valCaseOwner, childId, valType, valPreSchool, valFirstSchool, valSecondSchool, valThirdSchool, valPreGrade, valMethod, -1, -1, valLanguage, valMessage, valSchoolChange, valSixyearCare, valAutoAssign, valCustodiansAgree, valSendCatalogue);
 			return true;
 		}
 		catch (Exception ex) {
@@ -319,7 +319,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 					p.setOnLoad(getInitFilterCallerScript(iwc, prmType, prmThirdArea, prmThirdSchool, valType, valThirdArea, valThirdSchool));
 			}
 			T.add(F, 1, T.getColumns());
-			if (school != null) {
+			if (school != null && hasChosen) {
 				Script initScript = new Script();
 
 				String initFunction = (getInitFilterCallerScript(iwc, prmType, prmFirstArea, prmFirstSchool, ((Integer) schoolType.getPrimaryKey()).intValue(), ((Integer) schoolArea.getPrimaryKey()).intValue(), ((Integer) school.getPrimaryKey()).intValue()));
@@ -421,7 +421,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	
 	private void initSchoolFromChoice(SchoolChoice choice) {
 		try {
-			school = schBuiz.getSchool(choice.getCurrentSchoolId());
+			school = schBuiz.getSchool(choice.getChosenSchoolId());
 			schoolArea = schBuiz.getSchoolBusiness().getSchoolAreaHome().findByPrimaryKey(new Integer(school.getSchoolAreaId()));
 			schoolYear = schCommBiz.getSchoolYear(choice.getGrade());
 			schoolType = schBuiz.getSchoolBusiness().getSchoolTypeHome().findByPrimaryKey(choice.getSchoolTypeId());
