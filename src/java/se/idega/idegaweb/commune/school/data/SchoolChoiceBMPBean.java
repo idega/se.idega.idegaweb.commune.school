@@ -3,9 +3,12 @@ package se.idega.idegaweb.commune.school.data;
 import com.idega.block.process.data.*;
 import com.idega.block.school.data.School;
 import com.idega.block.school.data.SchoolSeason;
+import com.idega.data.IDOQuery;
 import com.idega.user.data.User;
 import java.sql.Timestamp;
 import java.util.Collection;
+
+import javax.ejb.FinderException;
 
 import se.idega.idegaweb.commune.school.business.SchoolChoiceBusinessBean;
 
@@ -284,6 +287,15 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
     sql.append(" = ");
     sql.append(seasonID);
     return super.idoFindPKsBySQL(sql.toString());
+  }
+  
+  public Collection ejbFindBySchoolAndSeasonAndGrade(int schoolID, int seasonID, int gradeYear) throws FinderException {
+  	IDOQuery sql = new IDOQuery();
+  	sql.appendSelectAllFrom(getEntityName()).appendWhere().append(CHOSEN_SCHOOL);
+  	sql.appendEqualSign().append(schoolID).appendAnd().append(SCHOOL_SEASON);
+  	sql.appendEqualSign().append(seasonID).appendAnd().append(GRADE).appendEqualSign();
+  	sql.append(gradeYear);
+  	return super.idoFindPKsBySQL(sql.toString());
   }
 
 }

@@ -21,6 +21,7 @@ import se.idega.util.PIDChecker;
 import com.idega.block.school.business.SchoolAreaBusiness;
 import com.idega.block.school.business.SchoolBusiness;
 import com.idega.block.school.business.SchoolTypeBusiness;
+import com.idega.block.school.business.SchoolYearBusiness;
 import com.idega.block.school.data.*;
 import com.idega.block.school.data.SchoolArea;
 import com.idega.block.school.data.SchoolSeason;
@@ -428,8 +429,13 @@ public class SchoolChoiceApplication extends CommuneBlock {
       //drpSchools.setWidth("20");
       DropdownMenu drpGrade = new DropdownMenu(prmPreGrade);
       drpGrade.addMenuElement("-1","");
-      for (int i = 1; i < 10; i++) {
-        drpGrade.addMenuElement(String.valueOf(i));
+      Collection coll = getSchoolYears(iwc);
+      if (coll != null) {
+      	Iterator iter = coll.iterator();
+				while (iter.hasNext()) {
+					SchoolYear element = (SchoolYear) iter.next();
+					drpGrade.addMenuElement(element.getSchoolYearAge(), element.getName());
+				}
       }
       drpGrade.setSelectedElement(String.valueOf(valPreGrade));
 
@@ -611,6 +617,16 @@ public class SchoolChoiceApplication extends CommuneBlock {
 
     }
     return null;
+  }
+  
+  private Collection getSchoolYears(IWContext iwc) {
+  	try {
+    	SchoolYearBusiness sBuiz = (SchoolYearBusiness) IBOLookup.getServiceInstance(iwc,SchoolYearBusiness.class);
+    	return sBuiz.findAllSchoolYears();
+ 		}
+  	catch (Exception e){
+  	}
+  	return null;	
   }
 
   private Collection getSchools(IWContext iwc,int area,int type){

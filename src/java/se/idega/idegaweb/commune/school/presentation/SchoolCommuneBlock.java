@@ -62,6 +62,8 @@ public abstract class SchoolCommuneBlock extends CommuneBlock {
 			while (iter.hasNext()) {
 				SchoolSeason element = (SchoolSeason) iter.next();
 				menu.addMenuElement(element.getPrimaryKey().toString(), element.getSchoolSeasonName());
+				if (_schoolSeasonID == -1)
+					_schoolSeasonID = ((Integer)element.getPrimaryKey()).intValue();
 			}
 		}
 		else {

@@ -326,4 +326,13 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 
 		throw new FinderException("No school found that " + user.getName() + " manages");
 	}
+	
+	public Collection getApplicantsForSchoolAndSeasonAndGrade(int schoolID,int seasonID,int grade) throws RemoteException {
+		try {
+			return getSchoolChoiceHome().findBySchoolAndSeasonAndGrade(schoolID, seasonID, grade);	
+		}
+		catch (FinderException fe) {
+			return new Vector();
+		}
+	}
 }
