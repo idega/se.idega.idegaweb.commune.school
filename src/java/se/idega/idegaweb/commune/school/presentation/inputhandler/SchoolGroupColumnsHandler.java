@@ -75,8 +75,7 @@ public class SchoolGroupColumnsHandler extends SelectionBox implements HiddenInp
 	 */
 	public Object getResultingObject(String[] values, IWContext iwc) throws Exception {
 		Collection names = null;
-		int count = values.length;
-		if (values != null && count > 0) {
+		if (values != null && values.length > 0) {
 			names = new ArrayList();
 			
 			for(int i=0; i<values.length; i++) {
