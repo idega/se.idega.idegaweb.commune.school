@@ -183,6 +183,9 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 	public int getSchoolSeasonId() {
 		return getIntColumnValue(SCHOOL_SEASON);
 	}
+	public SchoolSeason getSchoolSeason() {
+		return (SchoolSeason) getColumnValue(SCHOOL_SEASON);
+	}
 	public void setSchoolSeasonId(int id) {
 		setColumn(SCHOOL_SEASON, id);
 	}
