@@ -1,5 +1,5 @@
 /*
- * $Id: ReportBlock.java,v 1.2 2003/12/09 06:17:20 staffan Exp $
+ * $Id: ReportBlock.java,v 1.3 2003/12/09 09:51:08 laddi Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -25,10 +25,10 @@ import com.idega.presentation.text.Text;
 /** 
  * This is the base class for school report blocks.
  * <p>
- * Last modified: $Date: 2003/12/09 06:17:20 $ by $Author: staffan $
+ * Last modified: $Date: 2003/12/09 09:51:08 $ by $Author: laddi $
  *
  * @author Anders Lindman
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class ReportBlock extends CommuneBlock {
 
@@ -39,7 +39,8 @@ public class ReportBlock extends CommuneBlock {
 	private Class _reportModelClass = null;
 	private ReportModel _reportModel = null;
 
-	public ReportBlock() {};
+	public ReportBlock() {
+	}
 	
 	/**
 	 * @see com.idega.presentation.PresentationObject#getBundleIdentifier()
