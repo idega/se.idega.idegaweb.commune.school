@@ -1,5 +1,5 @@
 /*
- * $Id: ReportBusinessBean.java,v 1.33 2004/01/27 15:01:56 anders Exp $
+ * $Id: ReportBusinessBean.java,v 1.34 2004/02/02 15:36:28 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -29,10 +29,10 @@ import com.idega.block.school.data.SchoolStudyPathHome;
 /** 
  * Business logic for school reports.
  * <p>
- * Last modified: $Date: 2004/01/27 15:01:56 $ by $Author: anders $
+ * Last modified: $Date: 2004/02/02 15:36:28 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.33 $
+ * @version $Revision: 1.34 $
  */
 public class ReportBusinessBean extends com.idega.business.IBOServiceBean implements ReportBusiness  {
 
@@ -561,7 +561,7 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 				School s2 = home.findBySchoolName("Nacka Gymnasium A-enheten");
 				School s3 = home.findBySchoolName("Nacka Gymnasium B-enheten");
 				School s4 = home.findBySchoolName("Nacka Gymnasium C-enheten");
-				School s5 = home.findByPrimaryKey(new Integer(26)); // Saltsjobadens Samskola
+				School s5 = home.findByPrimaryKey(new Integer(1938)); // Saltsjobadens Samskola
 				_schools.add(s1);
 				_schools.add(s2);
 				_schools.add(s3);
