@@ -29,11 +29,9 @@ import com.idega.block.navigation.presentation.UserHomeLink;
 import com.idega.block.school.business.SchoolBusiness;
 import com.idega.block.school.data.School;
 import com.idega.block.school.data.SchoolArea;
-import com.idega.block.school.data.SchoolCategory;
 import com.idega.block.school.data.SchoolCategoryBMPBean;
 import com.idega.block.school.data.SchoolClass;
 import com.idega.block.school.data.SchoolClassMember;
-import com.idega.block.school.data.SchoolClassMemberHome;
 import com.idega.block.school.data.SchoolSeason;
 import com.idega.block.school.data.SchoolType;
 import com.idega.block.school.data.SchoolTypeHome;
@@ -563,12 +561,13 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		}
 
 		try {
-			SchoolSeason previousSeason = null;
+			/*SchoolSeason previousSeason = null;
 			if (_useOngoingSeason)
 				previousSeason = season;
 			else
 				previousSeason = schCommBiz.getPreviousSchoolSeason(season);
-
+				*/
+			
 			//schoolClassMember = schBuiz.getSchoolBusiness().getSchoolClassMemberHome().findByUserAndSeason(child, previousSeason);
 			
 			// Get current elementary school placement
@@ -754,12 +753,10 @@ public class SchoolChoiceApplication extends CommuneBlock {
 						SchoolYear element = (SchoolYear) iter.next();
 						drpGrade.addMenuElement(element.getSchoolYearAge(), element.getName());
 						//Integer yearPK = (Integer) element.getPrimaryKey();
-						//String tmpStr = yearPK.toString();
 						//drpGrade.addMenuElement(yearPK.toString(), element.getName());
 					}
 				}
 				//drpGrade.setSelectedElement(String.valueOf(valPreGrade));
-				//String tmpStr2 = String.valueOf(schoolYear);
 				/*if (schoolYear != null) {
 					Integer yearPK = (Integer) schoolYear.getPrimaryKey();
 					drpGrade.setSelectedElement(String.valueOf(yearPK));					
