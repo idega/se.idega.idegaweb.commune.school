@@ -418,8 +418,8 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 						Iterator iterator = parents.iterator();
 						while (iterator.hasNext()) {
 							User parent = (User) iterator.next();
-							Object[] arguments = { school.getName(), parent.getNameLastFirst(true), schoolClass.getName(), student.getNameLastFirst(true) };
-							getMessageBusiness().createUserMessage(parent, subject, MessageFormat.format(body, arguments));
+							//Object[] arguments = { school.getName(), parent.getNameLastFirst(true), schoolClass.getName(), student.getNameLastFirst(true) };
+							getMessageBusiness().createUserMessage(parent, subject, body);
 						}	
 					}
 				}
