@@ -1,5 +1,5 @@
 /*
- * $Id: SchoolReports.java,v 1.14 2004/01/20 13:39:43 anders Exp $
+ * $Id: SchoolReports.java,v 1.15 2004/01/20 14:00:16 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -40,10 +40,10 @@ import com.idega.presentation.ui.SubmitButton;
 /** 
  * This block handles selecting and presenting school reports.
  * <p>
- * Last modified: $Date: 2004/01/20 13:39:43 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/20 14:00:16 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.14 $
+ * @version $Revision: 1.15 $
  */
 public class SchoolReports extends CommuneBlock {
 
@@ -163,7 +163,11 @@ public class SchoolReports extends CommuneBlock {
 			add(table);
 			return;
 		}
-		table.add(new ReportBlock(_reportModelClasses[Integer.parseInt(reportIndex)]), 1, 1);
+		Class[] reportModelClasses = _reportModelClasses;
+		if (_useChildCareReports) {
+			reportModelClasses = _childCareReportModelClasses;
+		}
+		table.add(new ReportBlock(reportModelClasses[Integer.parseInt(reportIndex)]), 1, 1);
 		add(table);
 		add(new Break());
 		GenericButton button = new GenericButton("", localize(KEY_FOR_PRINTING, "For printing"));
