@@ -40,7 +40,7 @@ import com.idega.util.IWTimestamp;
  * Business object with helper methods for CentralPlacingEditor
  */
 public class CentralPlacementBusinessBean extends IBOServiceBean 
-																					{
+																			implements CentralPlacementBusiness {
 																							
 	//  Keys for error messages
 	private static final String KP = "central_placement_business.";
