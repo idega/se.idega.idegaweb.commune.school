@@ -1067,8 +1067,8 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 			arguments[count++] = getSchool(choice.getChosenSchoolId()).getSchoolName();
 		}
 		if (choices.size() == 1) {
-			arguments[3] = "";
 			arguments[4] = "";
+			arguments[5] = "";
 		}
 
 		String body = MessageFormat.format(text, arguments);
