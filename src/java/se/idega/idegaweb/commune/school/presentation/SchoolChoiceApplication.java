@@ -273,9 +273,6 @@ public class SchoolChoiceApplication extends CommuneBlock {
 									if (element.getLanguageChoice() != null) valLanguage = element.getLanguageChoice();
 									if (element.getMessage() != null) valMessage = element.getMessage();
 									count++;
-									if (!hasPreviousSchool) {
-										initSchoolFromChoice(element);
-									}
 									owner = element.getOwner();
 									choiceDate = element.getCreated();
 									isOwner = ((IDOEntity) iwc.getCurrentUser()).equals(owner);
@@ -620,17 +617,6 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		catch (RemoteException re) {
 			hasPreviousSchool = false;
 		}
-	}
-
-	private void initSchoolFromChoice(SchoolChoice choice) {
-		school = choice.getCurrentSchool();
-		if (school == null) {
-			hasPreviousSchool = false;
-		}
-		schoolYear = choice.getSchoolYear();
-		schoolType = choice.getSchoolType();
-		valPreYear = choice.getCurrentSchoolYearID();
-		valPreSchool = choice.getCurrentSchoolId();
 	}
 
 	private PresentationObject getChildInfo(IWContext iwc, User child) throws java.rmi.RemoteException {
