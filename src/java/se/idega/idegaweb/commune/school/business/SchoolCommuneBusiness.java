@@ -1,5 +1,10 @@
 package se.idega.idegaweb.commune.school.business;
 
+import java.rmi.RemoteException;
+import java.util.Date;
+import java.util.Locale;
+import javax.ejb.CreateException;
+import javax.ejb.FinderException;
 import com.idega.block.datareport.util.ReportableCollection;
 import com.idega.block.school.data.SchoolClassMember;
 import com.idega.block.school.data.SchoolSeason;
@@ -7,14 +12,6 @@ import com.idega.block.school.data.SchoolStudyPath;
 import com.idega.data.IDOException;
 import com.idega.data.IDOLookupException;
 import com.idega.user.data.User;
-import java.rmi.RemoteException;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.ejb.CreateException;
-import javax.ejb.FinderException;
 
 public interface SchoolCommuneBusiness extends com.idega.business.IBOService,com.idega.block.process.business.CaseBusiness
 {
@@ -77,6 +74,4 @@ public interface SchoolCommuneBusiness extends com.idega.business.IBOService,com
 	public java.util.Map getYearClassMap(java.util.Collection schoolYears, int schoolID, int seasonID, String emptyString, boolean showSubGroups) throws java.rmi.RemoteException;
 	public boolean removeSubGroupPlacements(int userID, int schoolID, int seasonID) throws java.rmi.RemoteException;
 	public boolean hasChoicesForSeason(int userID, int seasonID) throws java.rmi.RemoteException;
-	public Map getSchoolTypeClassMap(Collection schoolTypes,int schoolID,int seasonID,Boolean showSubGroups,Boolean showNonSeasonGroups,String noSchoolClassFoundEntry) throws java.rmi.RemoteException;
-		
 }
