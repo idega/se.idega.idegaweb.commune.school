@@ -173,7 +173,9 @@ public class UserCases extends CommuneBlock {
 			
 			// 1. find my groups
 			final GroupBusiness groupBusiness = (GroupBusiness) IBOLookup.getServiceInstance(iwc, GroupBusiness.class);
-			final Collection groups = groupBusiness.getAllGroupsNotDirectlyRelated(userId, iwc);
+			final UserBusiness userBusiness = (UserBusiness) IBOLookup.getServiceInstance(iwc, UserBusiness.class);
+
+			final Collection groups = userBusiness.getUserGroups(userId);
 
 			// 2. find unhandled viewpoints
 			ViewpointBusiness viewpointBusiness = (ViewpointBusiness) IBOLookup.getServiceInstance(iwc, ViewpointBusiness.class);
