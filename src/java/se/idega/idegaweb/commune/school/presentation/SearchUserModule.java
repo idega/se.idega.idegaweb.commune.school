@@ -227,7 +227,7 @@ public class SearchUserModule extends CommuneBlock {
 				last = TextSoap.capitalize(last);
 		}
 		usersFound =
-			home.findUsersByConditions(first, middle, last, pid, null, null, -1, -1, -1, -1, null ,null ,true);
+			home.findUsersByConditions(first, middle, last, pid, null, null, -1, -1, -1, -1, null ,null ,true, true);
 		if (user == null && usersFound != null)
 			if (!usersFound.isEmpty()) {
 				hasManyUsers = usersFound.size() > 1;
