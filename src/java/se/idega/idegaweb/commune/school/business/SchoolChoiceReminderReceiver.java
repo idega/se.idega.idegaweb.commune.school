@@ -18,13 +18,18 @@ public class SchoolChoiceReminderReceiver implements Serializable {
 
     SchoolChoiceReminderReceiver
         (final MemberFamilyLogic familyLogic, final UserBusiness userBusiness,
-         final Integer userId) throws RemoteException, NoCustodianFound {
+         final Integer userId) throws RemoteException {
         final User student = userBusiness.getUser (userId);
         studentName = student.getName ();
         ssn = student.getPersonalID();
         Address address = null;
-        final Collection parents = familyLogic.getCustodiansFor(student);
-        if (parents.isEmpty ()) {
+        Collection parents = null;
+        try {
+            parents = familyLogic.getCustodiansFor(student);
+        } catch (NoCustodianFound e) {
+            parents = null;
+        }
+        if (parents == null || parents.isEmpty ()) {
             parentName = "?";
             address = userBusiness.getUserAddress1 (userId.intValue ());
         } else {
