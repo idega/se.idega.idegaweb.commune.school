@@ -847,6 +847,12 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		}
 		throw new ClassCastException("Case with casecode: " + caseCode + " cannot be converted to a schoolchoice");
 	}
+	
+	public String getSchoolChoiceCaseCode() {
+		return SCHOOL_CHOICE_CASECODE;
+	}
+
+	
 	public String getLocalizedCaseDescription(Case theCase, Locale locale) throws RemoteException {
 		SchoolChoice choice = getSchoolChoiceInstance(theCase);
 		Object[] arguments = {getUserBusiness().getUser(choice.getChildId()).getFirstName(), String.valueOf(choice.getChoiceOrder()), choice.getChosenSchool().getName()};
