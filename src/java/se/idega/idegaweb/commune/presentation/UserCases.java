@@ -207,7 +207,7 @@ public class UserCases extends CommuneBlock {
                 (useCase.getPrimaryKey().toString());
         if (useCase.getCode().equalsIgnoreCase (Viewpoint.CASE_CODE_KEY) &&
             getViewpointPage() != -1) {
-            Link viewpointLink = new Link (caseNumber);
+            final Link viewpointLink = new Link (caseNumber);
             viewpointLink.setPage(getViewpointPage());
             viewpointLink.addParameter
                     (ViewpointForm.PARAM_ACTION,
