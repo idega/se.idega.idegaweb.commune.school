@@ -380,7 +380,6 @@ public class SchoolChoiceApplication extends CommuneBlock {
 
 		myForm = new Form();
 		myForm.setName(prmForm);
-		myForm.setOnSubmit("return checkApplication()");
 		
 		Table T = new Table();
 		T.setCellpadding(0);
@@ -404,6 +403,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		T.setHeight(row++, 12);
 
 		SubmitButton button = (SubmitButton) getButton(new SubmitButton("submit",localize("school_choice.ready", "Ready")));
+		button.setOnSubmitFunction("checkApplication", getSchoolCheckScript());
 		//button.setToDisableOnClick(button, true);
 		
 		T.add(button, 1, row++);
@@ -415,7 +415,6 @@ public class SchoolChoiceApplication extends CommuneBlock {
 			Script S = p.getAssociatedScript();
 			Script F = new Script();
 			S.addFunction("initFilter", getInitFilterScript());
-			S.addFunction("checkApplication", getSchoolCheckScript());
 			S.addFunction("setSelected", getSetSelectedScript());
 
 			S.addFunction("changeFilter", getFilterScript());
