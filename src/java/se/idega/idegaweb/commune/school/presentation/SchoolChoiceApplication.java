@@ -177,6 +177,9 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	private java.sql.Date valPlacementDate = null;
 	private boolean _isForTesting = false;
 	private boolean _showChoiceMessage = false;
+	
+	private boolean _forwardToCheckPage = true;
+	private int _maxAge;
 
 	/**
 	 * @param ongoingSeason
@@ -302,6 +305,9 @@ public class SchoolChoiceApplication extends CommuneBlock {
 						if(valWantsAfterSchool){
 							boolean hasApprovedCheck = getCheckBusiness(iwc).hasGrantedCheck(child);
 							getChildCareSession(iwc).setChildID(((Integer)child.getPrimaryKey()).intValue());
+							if (!_forwardToCheckPage) {
+								hasApprovedCheck = true;
+							}
 							// forward to afterschool page
 							if(hasApprovedCheck && afterSchoolPageID!=null){
 								iwc.forwardToIBPage(getParentPage(),afterSchoolPageID.intValue());
@@ -937,7 +943,11 @@ public class SchoolChoiceApplication extends CommuneBlock {
 			table.mergeCells(3, row, 5, row++);
 		}
 		
-		if (age.getYears() <= 10) {
+		if (_maxAge == -1) {
+			_maxAge = 10;
+		}
+		
+		if (age.getYears() <= _maxAge) {
 			table.setHeight(row++, 5);
 			table.mergeCells(1, row, 5, row);
 			table.add(getHeader(iwrb.getLocalizedString("school.after_school_choice", "Choice of after school care")), 1, row);
@@ -1573,5 +1583,15 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	 */
 	public void setShowExtraChoiceMessage(boolean showChoiceMessage) {
 		this._showChoiceMessage = showChoiceMessage;
+	}
+	/**
+	 * @param forwardToCheckPage The forwardToCheckPage to set.
+	 */
+	public void setForwardToCheckPage(boolean forwardToCheckPage) {
+		this._forwardToCheckPage = forwardToCheckPage;
+	}
+	
+	public void setMaxAfterCareAge(int age) {
+		_maxAge = age;
 	}
 }
