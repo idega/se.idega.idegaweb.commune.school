@@ -147,6 +147,10 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 		this.addAttribute(HAS_RECEIVED_PLACEMENT_MESSAGE, "Placement message", Boolean.class);
 		this.addAttribute(HAS_RECEIVED_CONFIRMATION_MESSAGE, "Confirmation message", Boolean.class);
 
+		addIndex("IDX_COMM_SCH_CHOICE_2", new String[]{getIDColumnName(), CHILD});
+		addIndex("IDX_COMM_SCH_CHOICE_3", new String[]{getIDColumnName(), CHOSEN_SCHOOL});
+		addIndex("IDX_COMM_SCH_CHOICE_4", new String[]{getIDColumnName(), SCHOOL_SEASON});
+		addIndex("IDX_COMM_SCH_CHOICE_5", new String[]{getIDColumnName(), CHOSEN_SCHOOL, SCHOOL_SEASON});
 	}
 	public String getEntityName() {
 		return SCHOOLCHOICE;
