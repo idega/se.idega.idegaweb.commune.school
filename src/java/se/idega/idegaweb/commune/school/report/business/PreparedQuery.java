@@ -1,5 +1,5 @@
 /*
- * $Id: PreparedQuery.java,v 1.12 2004/01/22 10:18:22 anders Exp $
+ * $Id: PreparedQuery.java,v 1.13 2004/01/23 12:21:20 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -27,10 +27,10 @@ import com.idega.block.school.data.SchoolSeason;
 /** 
  * Handles the SQL logic for school report calculations.
  * <p>
- * Last modified: $Date: 2004/01/22 10:18:22 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/23 12:21:20 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.12 $
+ * @version $Revision: 1.13 $
  */
 public class PreparedQuery {
 
@@ -86,6 +86,16 @@ public class PreparedQuery {
 			} catch (SQLException e) {}
 		}
 	}
+
+	/**
+	 * Sets the query to calulate mean value for child care taker week hours.
+	 */
+	public void setSelectMeanChildCareWeekHours() {
+		_sqlSelect = "select avg(c.care_time)";
+		
+		_sqlFrom.put(C, TABLE_C);
+	}
+
 	/**
 	 * Sets the query to count rows.
 	 */
@@ -132,6 +142,21 @@ public class PreparedQuery {
 	 */
 	public int setSchool() {
 		String sql = "s.sch_school_id = ?";
+		_sqlWhere.add(sql);
+		
+		_sqlFrom.put(S, TABLE_S);
+		
+		int index = _parameterIndex;
+		_parameterIndex++;
+		return index;
+	}
+	
+	/**
+	 * Sets the query to select a specific school area.
+	 * @return the index for the school area id parameter
+	 */
+	public int setSchoolArea() {
+		String sql = "s.sch_school_area_id = ?";
 		_sqlWhere.add(sql);
 		
 		_sqlFrom.put(S, TABLE_S);
@@ -580,6 +605,33 @@ public class PreparedQuery {
 			resultSet = _preparedStatement.executeQuery();
 			if (resultSet.next()) {
 				result = resultSet.getInt(1);
+			}
+		} catch (Exception e) {
+			System.out.println("execute(): " + e.getMessage());
+			e.printStackTrace();
+		} finally {
+			if (resultSet != null) {
+				try {
+					resultSet.close();
+				} catch (Exception e) {}
+			}
+		}
+
+		return result;
+	}
+	
+	/**
+	 * Executes this query and returns the float value from the first row in the result set.
+	 * Returns -1 if error or no row found. 
+	 */
+	public float executeFloat() {
+		float result = -1;
+		ResultSet resultSet = null;
+		
+		try {
+			resultSet = _preparedStatement.executeQuery();
+			if (resultSet.next()) {
+				result = resultSet.getFloat(1);
 			}
 		} catch (Exception e) {
 			System.out.println("execute(): " + e.getMessage());
