@@ -658,16 +658,18 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	private void sendMessageToSchool(int schoolID, String subject, String body,String code) throws RemoteException {
 		try {
 			School school = getSchool(schoolID);
-
-			//If school is centralized administrated (by BUN), the message shall be marked as such, so that it will show in BUN's messagebox.
-			Group bunGroup = school.getCentralizedAdministration() ? getBunGroup() : null;
-
-			Collection coll = getSchoolBusiness().getSchoolUserBusiness().getSchoolUserHome().findBySchool(school);
-			if (!coll.isEmpty()) {
-				Iterator iter = coll.iterator();
-				while (iter.hasNext()) {
-					SchoolUser user = (SchoolUser) iter.next();
-					getMessageBusiness().createUserMessage(user.getUser(), subject, bunGroup, body, false,code);
+			
+			if (school != null) {
+				//If school is centralized administrated (by BUN), the message shall be marked as such, so that it will show in BUN's messagebox.
+				Group bunGroup = school.getCentralizedAdministration() ? getBunGroup() : null;
+	
+				Collection coll = getSchoolBusiness().getSchoolUserBusiness().getSchoolUserHome().findBySchool(school);
+				if (!coll.isEmpty()) {
+					Iterator iter = coll.iterator();
+					while (iter.hasNext()) {
+						SchoolUser user = (SchoolUser) iter.next();
+						getMessageBusiness().createUserMessage(user.getUser(), subject, bunGroup, body, false,code);
+					}
 				}
 			}
 		}
@@ -846,6 +848,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 			return choice;
 		}
 		catch (Exception e) {
+			e.printStackTrace(System.err);
 		}
 		return null;
 	}
