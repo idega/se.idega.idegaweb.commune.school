@@ -546,6 +546,10 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 	}
 
 	public int ejbHomeGetCountByChildAndSchool(int childID, int schoolID) throws IDOException {
+		return ejbHomeGetCountByChildAndSchoolAndStatus(childID, schoolID, null);
+	}
+	
+	public int ejbHomeGetCountByChildAndSchoolAndStatus(int childID, int schoolID, String[] caseStatus) throws IDOException {
 		IDOQuery query =idoQuery();
 		query.appendSelectCountFrom().append(getEntityName()).append(" csc");
 		query.append(", ").append(CaseBMPBean.TABLE_NAME).append(" pc");
@@ -553,6 +557,9 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 		query.appendEquals("csc."+getIDColumnName(), "pc."+CaseBMPBean.TABLE_NAME + "_ID");
 		query.appendAnd().appendEquals("csc."+CHILD, childID);
 		query.appendAnd().appendEquals("csc."+CHOSEN_SCHOOL, schoolID);
+		if (caseStatus != null) {
+			query.appendAnd().append(CaseBMPBean.COLUMN_CASE_STATUS).appendInArrayWithSingleQuotes(caseStatus);
+		}
 		return super.idoGetNumberOfRecords(query);
 	}
 	
