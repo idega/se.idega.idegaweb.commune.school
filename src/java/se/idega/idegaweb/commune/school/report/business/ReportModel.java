@@ -1,5 +1,5 @@
 /*
- * $Id: ReportModel.java,v 1.3 2003/12/12 10:00:03 anders Exp $
+ * $Id: ReportModel.java,v 1.4 2003/12/12 13:22:46 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -15,10 +15,10 @@ import java.rmi.RemoteException;
  * This abstract class holds cell and header values for school statistics reports.
  * Subclasses implements methods for generating report data and cell value calculations.
  * <p>
- * Last modified: $Date: 2003/12/12 10:00:03 $ by $Author: anders $
+ * Last modified: $Date: 2003/12/12 13:22:46 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public abstract class ReportModel {
 
@@ -84,10 +84,18 @@ public abstract class ReportModel {
 	protected void setReportSize(int rowSize, int columnSize) {
 		_rowSize = rowSize;
 		_columnSize = columnSize;
-		_cells = new Cell[_rowSize][_columnSize];
-		_rowHeaders = buildRowHeaders();
-		_columnHeaders = buildColumnHeaders();
-		buildCells();				
+	}
+
+	/*
+	 * Initializes the model information (headers and cells).
+	 */
+	private void init() {
+		if (_cells == null) {
+			_cells = new Cell[_rowSize][_columnSize];
+			_rowHeaders = buildRowHeaders();
+			_columnHeaders = buildColumnHeaders();
+			buildCells();							
+		}
 	}
 	
 	/**
@@ -115,6 +123,7 @@ public abstract class ReportModel {
 	 * Returns the row headers for this report model. 
 	 */
 	public Header[] getRowHeaders() {
+		init();
 		return _rowHeaders;
 	}
 	
@@ -122,6 +131,7 @@ public abstract class ReportModel {
 	 * Returns the column headers for this report model. 
 	 */
 	public Header[] getColumnHeaders() {
+		init();
 		return _columnHeaders;
 	}
 	
@@ -129,6 +139,7 @@ public abstract class ReportModel {
 	 * Returns the cell for the specified position. 
 	 */
 	public Cell getCell(int row, int column) {
+		init();
 		return _cells[row][column];
 	}
 
@@ -148,6 +159,7 @@ public abstract class ReportModel {
 	 * Sets the cell for the specified position. 
 	 */
 	protected void setCell(int row, int column, Cell cell) {
+		init();
 		_cells[row][column] = cell;
 	}
 	

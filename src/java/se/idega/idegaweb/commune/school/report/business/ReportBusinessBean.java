@@ -1,5 +1,5 @@
 /*
- * $Id: ReportBusinessBean.java,v 1.5 2003/12/12 10:29:33 anders Exp $
+ * $Id: ReportBusinessBean.java,v 1.6 2003/12/12 13:22:46 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -20,16 +20,17 @@ import java.util.TreeMap;
 import com.idega.block.school.business.SchoolBusiness;
 import com.idega.block.school.data.School;
 import com.idega.block.school.data.SchoolArea;
+import com.idega.block.school.data.SchoolAreaHome;
 import com.idega.block.school.data.SchoolHome;
 import com.idega.block.school.data.SchoolSeason;
 
 /** 
  * Business logic for school reports.
  * <p>
- * Last modified: $Date: 2003/12/12 10:29:33 $ by $Author: anders $
+ * Last modified: $Date: 2003/12/12 13:22:46 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
 public class ReportBusinessBean extends com.idega.business.IBOServiceBean implements ReportBusiness  {
 
@@ -312,14 +313,8 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 	public Collection getElementarySchoolAreas() {
 		if (_schoolAreas == null) {
 			try {
-				_schoolAreas = getSchoolBusiness().findAllSchoolAreasByType(SCHOOL_TYPE_ELEMENTARY_SCHOOL);
-				Iterator iter = _schoolAreas.iterator();
-				while (iter.hasNext()) {
-					SchoolArea area = (SchoolArea) iter.next();
-					if (!area.getSchoolAreaCity().equals("Nacka")) {
-						_schoolAreas.remove(area);
-					}
-				}
+				SchoolAreaHome home = getSchoolBusiness().getSchoolAreaHome();
+				_schoolAreas = home.findAllBySchoolTypeAndCity(SCHOOL_TYPE_ELEMENTARY_SCHOOL, "Nacka");
 			} catch (Exception e) {}
 		}
 		return _schoolAreas;
