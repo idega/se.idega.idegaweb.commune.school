@@ -10,11 +10,14 @@ public interface SchoolCommuneSession extends com.idega.business.IBOSession
  public java.lang.String getParameterSchoolYearID() throws java.rmi.RemoteException;
  public java.lang.String getParameterStudentID() throws java.rmi.RemoteException;
  public int getSchoolClassID() throws java.rmi.RemoteException;
+ public se.idega.idegaweb.commune.school.business.SchoolCommuneBusiness getSchoolCommuneBusiness()throws java.rmi.RemoteException, java.rmi.RemoteException;
  public int getSchoolID()throws java.rmi.RemoteException, java.rmi.RemoteException;
  public int getSchoolSeasonID() throws java.rmi.RemoteException;
  public int getSchoolYearID() throws java.rmi.RemoteException;
+ public int getStudentID() throws java.rmi.RemoteException;
  public void setSchoolClassID(int p0) throws java.rmi.RemoteException;
  public void setSchoolID(int p0) throws java.rmi.RemoteException;
  public void setSchoolSeasonID(int p0) throws java.rmi.RemoteException;
  public void setSchoolYearID(int p0) throws java.rmi.RemoteException;
+ public void setStudentID(int p0) throws java.rmi.RemoteException;
 }

@@ -27,6 +27,7 @@ public class SchoolEventListener implements IWPageEventListener {
 	private int _schoolSeasonID = -1;
 	private int _schoolYearID = -1;
 	private int _schoolClassID = -1;
+	private int _studentID = -1;
 	
 	/**
 	 * @see com.idega.business.IWEventListener#actionPerformed(IWContext)
@@ -48,6 +49,9 @@ public class SchoolEventListener implements IWPageEventListener {
 			if (iwc.isParameterSet(session.getParameterSchoolClassID()))
 				_schoolClassID = Integer.parseInt(iwc.getParameter(session.getParameterSchoolClassID()));
 			
+			if (iwc.isParameterSet(session.getParameterStudentID()))
+				_studentID = Integer.parseInt(iwc.getParameter(session.getParameterStudentID()));
+			
 			if ( _schoolClassID != -1 && _schoolYearID != -1 )
 				validateSchoolClass(iwc);
 				
@@ -55,6 +59,7 @@ public class SchoolEventListener implements IWPageEventListener {
 			session.setSchoolID(_schoolID);
 			session.setSchoolSeasonID(_schoolSeasonID);
 			session.setSchoolYearID(_schoolYearID);
+			session.setStudentID(_studentID);
 			return true;
 		}
 		catch (RemoteException re) {

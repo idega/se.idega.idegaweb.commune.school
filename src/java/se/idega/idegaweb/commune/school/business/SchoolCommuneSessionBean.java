@@ -31,6 +31,7 @@ public class SchoolCommuneSessionBean extends IBOSessionBean implements SchoolCo
 	protected int _schoolYearID = -1;
 	protected int _schoolSeasonID = -1;
 	protected int _schoolClassID = -1;
+	protected int _studentID = -1;
 	private int _userID = -1;
 
 	public CommuneUserBusiness getCommuneUserBusiness() throws RemoteException {
@@ -186,5 +187,19 @@ public class SchoolCommuneSessionBean extends IBOSessionBean implements SchoolCo
 	 */
 	public String getParameterStudentID() {
 		return PARAMETER_STUDENT_ID;
+	}
+	
+	/**
+	 * @return Returns the studentID.
+	 */
+	public int getStudentID() {
+		return this._studentID;
+	}
+	
+	/**
+	 * @param studentID The studentID to set.
+	 */
+	public void setStudentID(int studentID) {
+		this._studentID = studentID;
 	}
 }
