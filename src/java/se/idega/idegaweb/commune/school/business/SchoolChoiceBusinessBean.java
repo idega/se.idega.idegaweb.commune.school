@@ -816,11 +816,15 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	public void changeSchoolYearForChoice(int userID, int schoolSeasonID, int schoolYearID) throws RemoteException {
 		Collection choices = findByStudentAndSeason(userID, schoolSeasonID);
 		SchoolYear year = getCommuneSchoolBusiness().getSchoolBusiness().getSchoolYear(new Integer(schoolYearID));
+		int grade = year.getSchoolYearAge() - 1;
 		if (!choices.isEmpty() && year != null) {
 			Iterator iter = choices.iterator();
 			while (iter.hasNext()) {
 				SchoolChoice element = (SchoolChoice) iter.next();
-				element.setGrade(year.getSchoolYearAge() - 1);
+				if (element.getCaseStatus().equals(getCaseStatusMoved())) {
+					grade++;
+				}
+				element.setGrade(grade);
 				element.store();
 			}
 		}
