@@ -44,6 +44,8 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
   public final static String AUTOASSIGNMENT = "auto_assignment";
   public final static String CUSTODIANSAGGREE = "custodians_agree";
   public final static String SCHOOLCATALOGUE = "school_catalogue";
+  public final static String FREETIMETHISSCHOOL = "child_care_this_school";
+  public final static String FREETIMEOTHER = "child_care_other";
 
   public final static String LANGUAGECHOICE = "language_choice";
   public final static String SCHOOLCHOICEDATE = "school_choice_date";
@@ -107,6 +109,8 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
     this.addAttribute(AUTOASSIGNMENT,"Autoassignment",Boolean.class);
     this.addAttribute(CUSTODIANSAGGREE,"Custodian agree",Boolean.class);
     this.addAttribute(SCHOOLCATALOGUE,"School catalogue",Boolean.class);
+    this.addAttribute(FREETIMETHISSCHOOL,"School catalogue",Boolean.class);
+    this.addAttribute(FREETIMEOTHER,"School catalogue",String.class,255);
 
 
     //this.addManyToOneRelationship(CURRENT_SCHOOL,School.class);
@@ -254,6 +258,21 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
   }
   public void setSchoolCatalogue(boolean catalogue){
     setColumn(SCHOOLCATALOGUE,catalogue);
+  }
+  public boolean getFreetimeInThisSchool(){
+    String returnBoolean = getStringColumnValue(FREETIMETHISSCHOOL);
+    if (returnBoolean != null && Boolean.valueOf(returnBoolean).booleanValue())
+    	return true;
+    return false;
+  }
+  public void setFreetimeInThisSchool(boolean freetimeInThisSchool){
+    setColumn(this.FREETIMETHISSCHOOL,freetimeInThisSchool);
+  }
+  public String getFreetimeOther(){
+    return getStringColumnValue(FREETIMEOTHER);
+  }
+  public void setFreetimeOther(String other){
+    setColumn(FREETIMEOTHER,other);
   }
 
   public Collection ejbFindByChosenSchoolId(int chosenSchoolId,int schoolSeasonId)throws javax.ejb.FinderException{
