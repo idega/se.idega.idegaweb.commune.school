@@ -43,6 +43,10 @@ public class SchoolCommuneSessionBean extends IBOSessionBean implements SchoolCo
 		return (CommuneUserBusiness) IBOLookup.getServiceInstance(getIWApplicationContext(), CommuneUserBusiness.class);
 	}
 	
+	public SchoolCommuneBusiness getSchoolCommuneBusiness() throws RemoteException {
+		return (SchoolCommuneBusiness) IBOLookup.getServiceInstance(getIWApplicationContext(), SchoolCommuneBusiness.class);
+	}
+	
 	/**
 	 * Returns the schoolID.
 	 * @return int
@@ -62,6 +66,9 @@ public class SchoolCommuneSessionBean extends IBOSessionBean implements SchoolCo
 			}
 			else {
 				_userID = userID;
+				_schoolSeasonID = getSchoolCommuneBusiness().getCurrentSchoolSeasonID();
+				_schoolYearID = -1;
+				_schoolClassID = -1;
 				return getSchoolIDFromUser(user);
 			}
 		}
@@ -71,19 +78,19 @@ public class SchoolCommuneSessionBean extends IBOSessionBean implements SchoolCo
 	}
 	
 	private int getSchoolIDFromUser(User user) throws RemoteException {
-		int schoolID = -1;
+		_schoolID = -1;
 		if (user != null) {
 			try {
 				School school = getCommuneUserBusiness().getFirstManagingSchoolForUser(user);
 				if (school != null) {
-					schoolID = ((Integer) school.getPrimaryKey()).intValue();
+					_schoolID = ((Integer) school.getPrimaryKey()).intValue();
 				}
 			}
 			catch (FinderException fe) {
-				schoolID = -1;
+				_schoolID = -1;
 			}
 		}
-		return schoolID;
+		return _schoolID;
 	}
 
 	/**
