@@ -489,7 +489,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		}
 		catch (Exception e) {
 			hasPreviousSchool = false;
-			valPreGrade = choice.getGrade() + 1;
+			valPreGrade = choice.getGrade();
 			valPreSchool = choice.getCurrentSchoolId();
 		}
 	}
