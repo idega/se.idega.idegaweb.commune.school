@@ -1,5 +1,5 @@
 /*
- * $Id: SchoolReports.java,v 1.37 2004/09/08 09:17:54 anders Exp $
+ * $Id: SchoolReports.java,v 1.38 2004/11/02 13:17:47 aron Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -54,10 +54,10 @@ import com.idega.presentation.ui.SubmitButton;
 /** 
  * This block handles selecting and presenting school reports.
  * <p>
- * Last modified: $Date: 2004/09/08 09:17:54 $ by $Author: anders $
+ * Last modified: $Date: 2004/11/02 13:17:47 $ by $Author: aron $
  *
  * @author Anders Lindman
- * @version $Revision: 1.37 $
+ * @version $Revision: 1.38 $
  */
 public class SchoolReports extends CommuneBlock {
 
@@ -111,7 +111,8 @@ public class SchoolReports extends CommuneBlock {
 				NackaHighSchoolAgePlacementReportModel.class,
 				NackaCommuneHighSchoolPlacementReportModel.class,
 				NackaCompulsoryHighSchoolPlacementReportModel.class,
-				NackaPrivateHighSchoolPlacementReportModel.class
+				NackaPrivateHighSchoolPlacementReportModel.class,
+				NackaHighSchoolStudyPathPlacementReportModel.class
 	};
 
 	private Class[] _childCareReportModelClasses = {
