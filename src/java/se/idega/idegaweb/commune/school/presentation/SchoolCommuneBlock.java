@@ -131,12 +131,12 @@ public abstract class SchoolCommuneBlock extends CommuneBlock {
 		table.setWidth(3,"8");
 
 		int row = 1;
-		table.add(getSmallHeader(localize("school.opfield", "Operationalfield: ")), 1, row);
-		table.add(new OperationalFieldsMenu(), 2, row++);
-		table.setHeight(row++, 15);
-		
 
 		if (multipleSchools) {
+			
+			table.add(getSmallHeader(localize("school.opfield", "Operationalfield: ")), 1, row);
+			table.add(new OperationalFieldsMenu(), 2, row++);
+			table.setHeight(row++, 15);			
 			
 			if (centralizedAdminChoice){
 				table.resize(9, row + 2);
