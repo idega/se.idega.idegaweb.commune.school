@@ -1,5 +1,5 @@
 /*
- * $Id: ReportBusinessBean.java,v 1.28 2004/01/21 14:46:30 anders Exp $
+ * $Id: ReportBusinessBean.java,v 1.29 2004/01/22 14:10:59 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -29,10 +29,10 @@ import com.idega.block.school.data.SchoolStudyPathHome;
 /** 
  * Business logic for school reports.
  * <p>
- * Last modified: $Date: 2004/01/21 14:46:30 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/22 14:10:59 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.28 $
+ * @version $Revision: 1.29 $
  */
 public class ReportBusinessBean extends com.idega.business.IBOServiceBean implements ReportBusiness  {
 
@@ -246,7 +246,71 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 		}
 		return _schoolAreas;
 	}
+	
+	/**
+	 * Returns all school areas for pre school operation. 
+	 */
+	public Collection getPreSchoolOperationAreas() {
+		if (_schoolAreas == null) {
+			Collection managementTypes = new ArrayList();
+			managementTypes.add("COMMUNE");
+			managementTypes.add("COMPANY");
+			managementTypes.add("FOUNDATION");
+			managementTypes.add("OTHER");
+			managementTypes.add("COOPERATIVE_COMMUNE_LIABILITY");
+			Collection schoolTypes = new ArrayList();
+			schoolTypes.add(new Integer(SCHOOL_TYPE_PRE_SCHOOL));
+			schoolTypes.add(new Integer(SCHOOL_TYPE_FAMILY_DAYCARE));
+			schoolTypes.add(new Integer(SCHOOL_TYPE_GENERAL_PRE_SCHOOL));
+			schoolTypes.add(new Integer(SCHOOL_TYPE_GENERAL_FAMILY_DAYCARE));
+			SchoolHome schoolHome = null;
+			try {
+				schoolHome = getSchoolHome();
+				SchoolAreaHome home = getSchoolBusiness().getSchoolAreaHome();
+				_schoolAreas = home.findAllBySchoolTypes(schoolTypes);
+			} catch (Exception e) {}
+			ArrayList areas = new ArrayList();
+			Iterator iter = _schoolAreas.iterator();
+			while (iter.hasNext()) {
+				SchoolArea area = (SchoolArea) iter.next();
+				int areaId = ((Integer) area.getPrimaryKey()).intValue();
+				try {
+					Collection schools = schoolHome.findAllByAreaTypeManagementCommune(
+							areaId,
+							schoolTypes,
+							managementTypes,
+							NACKA_COMMUNE_ID);
+					if (schools.size() > 0) {
+						areas.add(area);
+					}
+				} catch (Exception e) {}
+			}
+			_schoolAreas = areas;
+		}
+		return _schoolAreas;
+	}
 
+	/**
+	 * Returns schools matching the speficied parameters.
+	 * @param areaId the school area id
+	 * @param schoolTypes the collection of school types (Integer)
+	 * @param managementTypes the collection of management types (String) 
+	 */
+	public Collection getCommuneSchools(int areaId, Collection schoolTypes, Collection managementTypes) {
+		Collection schools = null;
+		try {
+		SchoolHome schoolHome = getSchoolHome();
+		schools = schoolHome.findAllByAreaTypeManagementCommune(
+				areaId,
+				schoolTypes,
+				managementTypes,
+				NACKA_COMMUNE_ID);
+		} catch (Exception e) {
+			log(e);
+		}
+		return schools;
+	}
+	
 	/**
 	 * Returns all elementary for the specified area. 
 	 */
