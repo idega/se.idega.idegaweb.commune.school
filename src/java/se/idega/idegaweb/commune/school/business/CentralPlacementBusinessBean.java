@@ -16,6 +16,8 @@ import javax.ejb.FinderException;
 import javax.transaction.SystemException;
 import javax.transaction.UserTransaction;
 
+import se.idega.idegaweb.commune.accounting.invoice.business.RegularPaymentBusiness;
+import se.idega.idegaweb.commune.accounting.invoice.data.RegularPaymentEntry;
 import se.idega.idegaweb.commune.accounting.resource.business.ResourceBusiness;
 import se.idega.idegaweb.commune.accounting.resource.data.ResourceClassMember;
 import se.idega.idegaweb.commune.business.CommuneUserBusiness;
@@ -23,6 +25,7 @@ import se.idega.idegaweb.commune.business.CommuneUserBusiness;
 import se.idega.idegaweb.commune.school.presentation.CentralPlacementEditor;
 
 import com.idega.block.school.business.SchoolBusiness;
+import com.idega.block.school.data.School;
 import com.idega.block.school.data.SchoolCategory;
 import com.idega.block.school.data.SchoolCategoryHome;
 import com.idega.block.school.data.SchoolClassMember;
@@ -33,6 +36,7 @@ import com.idega.block.school.data.SchoolSeason;
 import com.idega.business.IBOServiceBean;
 import com.idega.data.IDOLookup;
 import com.idega.presentation.IWContext;
+import com.idega.user.business.UserBusiness;
 import com.idega.user.data.User;
 import com.idega.util.IWTimestamp;
 
@@ -60,14 +64,17 @@ public class CentralPlacementBusinessBean extends IBOServiceBean
 	public SchoolClassMember storeSchoolClassMember(IWContext iwc, int childID) 
 																throws RemoteException, CentralPlacementException {
 		int studentID = -1;
+		User student = null;
 		int schoolClassID = -1;
 		int schoolYearID = -1;
 		int schoolTypeID = -1;
 		int registrator = -1;
 		String placementDateStr = "-1";
-		Timestamp registerDate = null;
+		Timestamp registerStamp = null;
+		java.sql.Date registerDate = null;
 		Timestamp dayBeforeRegStamp = null;
 		Date dayBeforeRegDate = null;
+		java.sql.Date dayBeforeSqlDate = null;
 		//String seeDayBeforeDate = null;
 		String notes = null;
 		SchoolClassMember newPlacement = null;
@@ -75,27 +82,18 @@ public class CentralPlacementBusinessBean extends IBOServiceBean
 		SchoolClassMember latestPlacement = null;
 		int newPlacementID = -1;
 		
-		// Get current placement from user http session. Put there from CentralPlacementEditor
-		User pupil = (User) iwc.getSession().getAttribute(CentralPlacementEditor.SESSION_KEY_CHILD);
-		if (pupil != null) {
-			//currentPlacement = getCurrentSchoolClassMembership(pupil, iwc);
-			latestPlacement = getLatestPlacement(pupil);			
-		}
-		/*Integer currID = null;
-		if (currentPlacement != null)
-			currID = (Integer) currentPlacement.getPrimaryKey(); // test
-		Integer latestId = null;
-		if (latestPlacement != null)
-			latestId = (Integer) latestPlacement.getPrimaryKey();*/ // test
-
-				
 	// *** START - Check in params ***
 		// pupil
 		if (childID == -1) {
 			throw new CentralPlacementException(KEY_ERROR_CHILD_ID, "No valid pupil found");
 		} else {
 			studentID = childID;
+			student = getUserBusiness().getUser(studentID);
+			if (student == null) 
+				throw new CentralPlacementException(KEY_ERROR_CHILD_ID, "No valid pupil found");
+			latestPlacement = getLatestPlacement(student);
 		}
+		
 		// provider
 		if (iwc.isParameterSet(CentralPlacementEditor.PARAM_PROVIDER)) {
 			String providerID = iwc.getParameter(CentralPlacementEditor.PARAM_PROVIDER);
@@ -151,15 +149,17 @@ public class CentralPlacementBusinessBean extends IBOServiceBean
 				dayBeforeStamp.addDays(-1);
 				dayBeforeRegStamp = dayBeforeStamp.getTimestamp();
 				dayBeforeRegDate = dayBeforeStamp.getDate();
+				dayBeforeSqlDate = new java.sql.Date(dayBeforeRegDate.getTime());
 				
-				// Below *** Removed check if earlier than today ***
+		/* Below *** Removed check if earlier than today ***/
 				/*if (placeStamp.isEarlierThan(today)) {
 					throw new CentralPlacementException(KEY_ERROR_PLACEMENT_DATE, 
 														"Placement date must be set and cannot be earlier than today");
 				} else {
 				*/
 				
-				registerDate = placeStamp.getTimestamp();
+				registerStamp = placeStamp.getTimestamp();
+				registerDate = new java.sql.Date(placeStamp.getDate().getTime());
 				
 				//}
 			} else {
@@ -186,7 +186,7 @@ public class CentralPlacementBusinessBean extends IBOServiceBean
 			trans.begin();
 			// Create new placement
 			newPlacement = getSchoolBusiness().storeNewSchoolClassMember(studentID, schoolClassID, 
-														schoolYearID, schoolTypeID, registerDate, registrator, notes);
+														schoolYearID, schoolTypeID, registerStamp, registrator, notes);
 			if (newPlacement != null) {
 			// *** START - Store the rest of the parameters ***
 				newPlacementID = ((Integer) newPlacement.getPrimaryKey()).intValue(); // test
@@ -249,9 +249,11 @@ public class CentralPlacementBusinessBean extends IBOServiceBean
 			
 			// End old placement
 			if (latestPlacement != null) {
+				// Set removed date 
 				latestPlacement.setRemovedDate(dayBeforeRegStamp);
 				latestPlacement.store();
-				// finish old placements
+				
+				// finish old resource placements
 				Collection rscPlaces = getResourceBusiness().getResourcePlacementsByMemberId(
 																				(Integer) latestPlacement.getPrimaryKey());
 				for (Iterator iter = rscPlaces.iterator(); iter.hasNext();) {
@@ -259,6 +261,16 @@ public class CentralPlacementBusinessBean extends IBOServiceBean
 					rscPlace.setEndDate(dayBeforeRegDate);
 					//String seeDate = seeDayBeforeDate;
 					rscPlace.store();
+				}
+				
+				// Finish ongoing regular payments
+				School provider = latestPlacement.getSchoolClass().getSchool();
+				Collection regPayEntries = getRegularPaymentBusiness()
+															.findOngoingRegularPaymentsForUserAndSchoolByDate(
+																									student, provider, registerDate);
+				for (Iterator iter = regPayEntries.iterator(); iter.hasNext();) {
+					RegularPaymentEntry regPay = (RegularPaymentEntry) iter.next();
+					regPay.setTo(dayBeforeSqlDate);					
 				}
 			}
 			trans.commit();
@@ -347,6 +359,10 @@ public class CentralPlacementBusinessBean extends IBOServiceBean
 	public CommuneUserBusiness getCommuneUserBusiness() throws RemoteException {
 		return (CommuneUserBusiness) getServiceInstance(CommuneUserBusiness.class);
 	}
+
+	public UserBusiness getUserBusiness() throws RemoteException {
+		return (UserBusiness) getServiceInstance(UserBusiness.class);
+	}
 	
 	private SchoolBusiness getSchoolBusiness() throws RemoteException {
 		return (SchoolBusiness) getServiceInstance(SchoolBusiness.class);
@@ -358,6 +374,10 @@ public class CentralPlacementBusinessBean extends IBOServiceBean
 
 	private SchoolChoiceBusiness getSchoolChoiceBusiness() throws RemoteException {
 		return (SchoolChoiceBusiness) getServiceInstance(SchoolChoiceBusiness.class);
+	}
+	
+	private RegularPaymentBusiness getRegularPaymentBusiness() throws RemoteException {
+		return (RegularPaymentBusiness) getServiceInstance(RegularPaymentBusiness.class);
 	}
 	
 	private SchoolClassMemberHome getSchoolClassMemberHome() throws RemoteException {
