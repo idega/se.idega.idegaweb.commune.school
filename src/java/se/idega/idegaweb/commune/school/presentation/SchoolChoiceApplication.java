@@ -442,10 +442,10 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		T.add(spaceT, 1, row++);
 
 		SubmitButton button = (SubmitButton) getButton(new SubmitButton("submit",localize("school_choice.ready", "Ready")));
+		T.add(button, 1, row++);
 		button.setOnSubmitFunction("checkApplication", getSchoolCheckScript());
 		//button.setToDisableOnClick(button, true);
 		
-		T.add(button, 1, row++);
 		T.add(new HiddenInput(prmAction, "true"), 1, 1);
 		T.add(new HiddenInput(prmChildId, child.getPrimaryKey().toString()), 1, 1);
 
@@ -1509,6 +1509,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	}
 
 	private boolean[] checkCanApply(IWContext iwc) throws RemoteException {
+
 		if (_useOngoingSeason) {
 			boolean[] canApply = {true, true, true};
 			return canApply;
