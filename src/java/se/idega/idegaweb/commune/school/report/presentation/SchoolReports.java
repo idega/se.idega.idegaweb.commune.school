@@ -1,5 +1,5 @@
 /*
- * $Id: SchoolReports.java,v 1.25 2004/02/17 14:17:38 anders Exp $
+ * $Id: SchoolReports.java,v 1.26 2004/02/26 14:21:50 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -38,23 +38,27 @@ import se.idega.idegaweb.commune.school.report.business.NackaPrivateSchoolPlacem
 import se.idega.idegaweb.commune.school.report.business.NackaProviderSummaryReportModel;
 import se.idega.idegaweb.commune.school.report.business.ReportBusiness;
 import se.idega.idegaweb.commune.school.report.business.ReportModel;
+import se.idega.idegaweb.commune.school.report.business.ReportPDFWriter;
 
+import com.idega.core.file.data.ICFile;
 import com.idega.presentation.ExceptionWrapper;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Table;
 import com.idega.presentation.text.Break;
+import com.idega.presentation.text.Link;
 import com.idega.presentation.ui.DropdownMenu;
 import com.idega.presentation.ui.Form;
 import com.idega.presentation.ui.GenericButton;
+import com.idega.presentation.ui.HiddenInput;
 import com.idega.presentation.ui.SubmitButton;
 
 /** 
  * This block handles selecting and presenting school reports.
  * <p>
- * Last modified: $Date: 2004/02/17 14:17:38 $ by $Author: anders $
+ * Last modified: $Date: 2004/02/26 14:21:50 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.25 $
+ * @version $Revision: 1.26 $
  */
 public class SchoolReports extends CommuneBlock {
 
@@ -64,6 +68,8 @@ public class SchoolReports extends CommuneBlock {
 	
 	private final static String PARAMETER_REPORT_INDEX = PP + "report_index";
 	private final static String PARAMETER_CREATE_REPORT = PP + "create_report";
+	private final static String PARAMETER_CREATE_PDF = PP + "create_pdf";
+	private final static String PARAMETER_REPORT_CLASS_NAME = PP + "report_class_name";
 
 	private final static String KP = "school_report."; // Localization key prefix
 	
@@ -71,9 +77,12 @@ public class SchoolReports extends CommuneBlock {
 	private final static String KEY_CREATE_REPORT = KP + "create_report";
 	private final static String KEY_NO_REPORT_SELECTED = KP + "no_report_selected";
 	private final static String KEY_FOR_PRINTING = KP + "for_printing";	
+	private final static String KEY_PDF = KP + "pdf";	
+	private final static String KEY_BACK = KP + "back";	
 	
 	private final static int ACTION_DEFAULT = 1;
 	private final static int ACTION_CREATE_REPORT = 2;
+	private final static int ACTION_CREATE_PDF = 3;
 
 	private Class[] _reportModelClasses = {
 				NackaCitizenElementarySchoolPlacementReportModel.class,
@@ -144,6 +153,9 @@ public class SchoolReports extends CommuneBlock {
 				case ACTION_CREATE_REPORT:
 					handleCreateReportAction(iwc);
 					break;
+				case ACTION_CREATE_PDF:
+					handleCreatePDFAction(iwc);
+					break;
 			}
 		} catch (Exception e) {
 			log(e);
@@ -157,9 +169,13 @@ public class SchoolReports extends CommuneBlock {
 	 */
 	private int parseAction(IWContext iwc) {
 		int action = ACTION_DEFAULT;
+
 		if (iwc.isParameterSet(PARAMETER_CREATE_REPORT)) {
 			action = ACTION_CREATE_REPORT;
+		} else if (iwc.isParameterSet(PARAMETER_CREATE_PDF)) {
+			action = ACTION_CREATE_PDF;
 		}
+
 		return action;
 	}
 
@@ -189,7 +205,8 @@ public class SchoolReports extends CommuneBlock {
 		if (_useChildCareReports) {
 			reportModelClasses = _childCareReportModelClasses;
 		}
-		table.add(new ReportBlock(reportModelClasses[Integer.parseInt(reportIndex)]), 1, 1);
+		Class reportModelClass = reportModelClasses[Integer.parseInt(reportIndex)];
+		table.add(new ReportBlock(reportModelClass), 1, 1);
 		add(table);
 		add(new Break());
 		GenericButton button = new GenericButton("", localize(KEY_FOR_PRINTING, "For printing"));
@@ -199,7 +216,55 @@ public class SchoolReports extends CommuneBlock {
 		table.setCellpadding(getCellpadding());
 		table.setCellspacing(getCellspacing());
 		table.add(button, 1, 1);
-		add(table);
+		
+		Form form = new Form();
+		SubmitButton pdfButton = new SubmitButton(PARAMETER_CREATE_PDF, localize(KEY_PDF, "PDF"));
+		pdfButton = (SubmitButton) getButton(pdfButton);
+		table.add(pdfButton, 2, 1);
+		form.add(table);
+		HiddenInput reportClassName = new HiddenInput(PARAMETER_REPORT_CLASS_NAME, reportModelClass.getName());
+		form.add(reportClassName);
+		
+		add(form);
+	}
+
+	private void handleCreatePDFAction(IWContext iwc) {
+		Table table = new Table();
+		table.setCellpadding(getCellpadding());
+		table.setCellspacing(getCellspacing());
+
+		ReportModel reportModel = null;
+		try {
+			reportModel = (ReportModel) iwc.getSession().getAttribute(ReportBlock.PARAMETER_REPORT_MODEL);
+		} catch (Exception e) {}
+
+		try {
+			if (reportModel == null) {
+				String reportModelClassName = iwc.getParameter(PARAMETER_REPORT_CLASS_NAME);
+				Class reportModelClass = Class.forName(reportModelClassName);
+				reportModel = getReportBusiness(iwc).createReportModel(reportModelClass);
+			}
+			ReportPDFWriter pdfWriter = new ReportPDFWriter(reportModel, getResourceBundle());
+			ICFile file = (ICFile) pdfWriter.createFile();
+			Link iconLink = new Link(getBundle().getImage("shared/pdf.gif"));
+			iconLink.setFile(file);
+			table.add(iconLink, 1, 1);
+			String titleKey = reportModel.getReportTitleLocalizationKey();
+			String title = localize(titleKey, titleKey);
+			Link link = new Link(title);
+			link.setFile(file);
+			table.add(link, 2, 1);
+			Form form = new Form();
+			SubmitButton back = new SubmitButton("", localize(KEY_BACK, KEY_BACK));
+			back = (SubmitButton) getButton(back);
+			form.add(back);
+			table.add(form, 1, 4);
+			table.mergeCells(1, 4, 2, 4);
+			add(table);
+
+		} catch (Exception e) {
+			log(e);
+		}
 	}
 	
 	private Form getSelectorForm(IWContext iwc) {
