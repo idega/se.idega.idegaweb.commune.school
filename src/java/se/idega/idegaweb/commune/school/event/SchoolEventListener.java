@@ -71,7 +71,7 @@ public class SchoolEventListener implements IWPageEventListener {
 	private void validateSchoolClass(IWContext iwc) throws RemoteException {
 		SchoolClass schoolClass = getSchoolCommuneBusiness(iwc).getSchoolBusiness().findSchoolClass(new Integer(_schoolClassID));
 		SchoolYear schoolYear = getSchoolCommuneBusiness(iwc).getSchoolBusiness().getSchoolYear(new Integer(_schoolYearID));
-		if ( schoolYear != null || !schoolClass.hasRelationToSchoolYear(schoolYear) ) {
+		if (!schoolClass.hasRelationToSchoolYear(schoolYear) ) {
 			Collection schoolClasses = getSchoolCommuneBusiness(iwc).getSchoolBusiness().findSchoolClassesBySchoolAndSeasonAndYear(_schoolID, _schoolSeasonID, _schoolYearID);
 			if ( !schoolClasses.isEmpty() ) {
 				Iterator iter = schoolClasses.iterator();
