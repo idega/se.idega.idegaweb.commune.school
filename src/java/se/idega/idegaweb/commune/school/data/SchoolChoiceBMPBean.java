@@ -609,12 +609,14 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 		return ejbHomeGetCount(schoolId, -1, validStatuses);
 	}
 	
-	public int ejbHomeGetCount (final SchoolSeason schoolSeason)
+	public int ejbHomeGetCount (final SchoolSeason schoolSeason,
+															final Date startDate, final Date endDate)
 		throws IDOException {
 		IDOQuery sql = idoQuery();
 		sql.appendSelect ().append (" count (distinct " + CHILD + ") ");
 		sql.appendFrom ().append (getEntityName());
 		sql.appendWhereEquals (SCHOOL_SEASON, schoolSeason);
+		sql.appendAnd ().appendWithinDates (SCHOOLCHOICEDATE, startDate, endDate);
 		return idoGetNumberOfRecords(sql);
 	}
 

@@ -62,6 +62,7 @@ import com.idega.data.IDOCreateException;
 import com.idega.data.IDOException;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOStoreException;
+import com.idega.idegaweb.IWPropertyList;
 import com.idega.io.MemoryFileBuffer;
 import com.idega.io.MemoryInputStream;
 import com.idega.io.MemoryOutputStream;
@@ -1126,11 +1127,42 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 
 	public int getNumberOfApplicants () {
 		try {
-			return getSchoolChoiceHome ().getCount (getCurrentSeason ());
+			final Date startDate = getSchoolChoiceStartDate ().getDate ();
+			final Date endDate = getSchoolChoiceCriticalDate ().getDate ();
+			return getSchoolChoiceHome ().getCount
+					(getCurrentSeason (), startDate, endDate);
 		}	catch (Exception e) {
 			e.printStackTrace ();
 			return 0;
 		}
+	}
+
+	public IWTimestamp getSchoolChoiceStartDate () throws RemoteException,
+																												FinderException {
+		return getTimestampFromProperty ("choice_start_date");
+	}
+
+	public IWTimestamp getSchoolChoiceEndDate () throws RemoteException,
+																											FinderException {
+		return getTimestampFromProperty ("choice_end_date");
+	}
+
+	public IWTimestamp getSchoolChoiceCriticalDate () throws RemoteException,
+																											FinderException {
+		return getTimestampFromProperty ("choice_critical_date");
+	}
+
+	private IWTimestamp getTimestampFromProperty (final String key)
+		throws RemoteException, FinderException {
+		final IWPropertyList properties = getIWApplicationContext ()
+				.getSystemProperties ().getProperties ("school_properties");
+		final String valueAsString = properties.getProperty(key);
+		final IWTimestamp seasonStart
+				= new IWTimestamp (getCurrentSeason ().getSchoolSeasonStart ());
+		final IWTimestamp result = new IWTimestamp (seasonStart);
+		result.setDay (Integer.parseInt (valueAsString.substring (0, 2)));
+		result.setMonth (Integer.parseInt (valueAsString.substring (3)));
+		return result;
 	}
 
 	public Collection getApplicantsForSchoolAndSeasonAndGrade(int schoolID, int seasonID, int grade) throws RemoteException {
@@ -1220,95 +1252,12 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 			final PdfPTable reminderText = new PdfPTable(1);
 			reminderText.setWidthPercentage(100f);
 			reminderText.addCell(reminderCell);
-			/*
-			final PdfPCell spaceCell = new PdfPCell(new Phrase(" "));
-			spaceCell.setBorder(0);
-			spaceCell.setNoWrap(true);
-			spaceCell.setMinimumHeight(mmToPoints(50));
-			PdfPTable spaceTable = new PdfPTable(1);
-			spaceTable.addCell(spaceCell);
-			final PdfPTable footer = new PdfPTable(new float[]{1, 1, 1.5f, 1});
-			footer.getDefaultCell().setBorder(0);
-			footer.setWidthPercentage(100f);
-			////////////////////// början
-			/*footer.addCell(new Phrase(new Chunk("Postadress:\nNacka kommun\n131 81 Nacka", SANSSERIF_FONT)));
-			footer.addCell(new Phrase(new Chunk("Besöksadress:\nStadshuset\nGranitvägen 15\nNacka", SANSSERIF_FONT)));
-			footer.addCell(new Phrase(new Chunk("Tel växel:\n08-718 80 00\n" + "Hemsida:\nwww.nacka24.nacka.se", SANSSERIF_FONT)));
-			footer.addCell(new Phrase(new Chunk("Organisationsnr:\n212000-0167", SANSSERIF_FONT)));
-			final String logoPath = getIWApplicationContext().getApplication().getBundle("se.idega.idegaweb.commune").getResourcesRealPath() + "/shared/nacka_logo.jpg";
-			*////////////Slut
-			
-			///////////NYBÖRJAN
-			/*
-			IWBundle iwb = getIWApplicationContext().getApplication().getBundle(CommuneBlock.IW_BUNDLE_IDENTIFIER);
-		
-			footer.addCell(new Phrase(iwb.getProperty("commune.name_mailaddr","Mail address"),nameFont));
-			footer.addCell(new Phrase(iwb.getProperty("commune.name_visitaddr","Visit address"),nameFont));
-			footer.addCell(new Phrase(iwb.getProperty("commune.name_contact","Contact"),nameFont));
-			footer.addCell(new Phrase(iwb.getProperty("commune.name_org_nr","Organizationsnr"),nameFont));
-	
-			footer.addCell(new Phrase(iwb.getProperty("commune.mail_name","Mail name"),textFont));
-			footer.addCell(new Phrase(iwb.getProperty("commune.visit_name","Visit name"),textFont));
-			footer.addCell(new Phrase(iwb.getProperty("commune.name_phone","Name phone")+"   "+iwb.getProperty("commune.office_phone","Office phone"),textFont));
-			footer.addCell(new Phrase(iwb.getProperty("commune.org_number","XXXXXX-XXXX"),textFont));
-		
-			footer.addCell(new Phrase(iwb.getProperty("commune.mail_zip","Zip code and area"),textFont));
-			footer.addCell(new Phrase(iwb.getProperty("commune.visit_streetaddr","Street and number"),textFont));
-			footer.addCell(new Phrase(iwb.getProperty("commune.website","www.some-place.com"),textFont));
-			footer.addCell(new Phrase(" ",textFont));
-		
-			footer.addCell(new Phrase(" ",textFont));
-			footer.addCell(new Phrase(iwb.getProperty("commune.visit_zip","Visist zip"),textFont));	
-			footer.addCell(new Phrase(" ",textFont));
-			footer.addCell(new Phrase(" ",textFont));
-			*/
-			/*
-			//Image image =Image.getInstance(iwb.getResourcesRealPath()+ "/shared/commune_logo.png");
-			final String logoPath = iwb.getResourcesRealPath()+ "/shared/commune_logo.png";		
-			///////////NYSLUT
-			PdfPCell logoCell;
-			try {
-				final Image logo = Image.getInstance(logoPath);
-				//logo.scaleToFit(mmToPoints(48), mmToPoints(16));
-				logo.scaleToFit(mmToPoints(30), mmToPoints(15));
-				logoCell = new PdfPCell(logo);
-				logoCell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-				logoCell.setHorizontalAlignment(Element.ALIGN_LEFT);
-			}
-			catch (Exception e) {
-				logoCell = new PdfPCell(new Phrase("The file '" + logoPath + "' is missing. Please contact the system" + " administartor."));
-			}
-			logoCell.setBorder(0);
-			final PdfPTable header = new PdfPTable(new float[]{1, 1});
-			header.setWidthPercentage(100f);
-			final PdfPCell defaultCell = header.getDefaultCell();
-			defaultCell.setBorder(0);
-			defaultCell.setFixedHeight(mmToPoints(40));
-			defaultCell.setPadding(0);
-			defaultCell.setNoWrap(true);
-			defaultCell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			header.addCell(logoCell);
-			header.addCell(new Phrase(getDateChunk()));
-			*/
-			//added for testing 
-			//int length = receivers!=null?receivers.length:1;
 			int length = receivers.length;
 			for (int i = 0; i < length; i++) {
 				if (i != 0) {
 					document.newPage();
 				}
 				
-				/*document.add(header);
-				document.add(getAddressTable(receivers[i]));
-				document.add(reminderText);
-				document.add(spaceTable);
-				final PdfContentByte cb = writer.getDirectContent();
-				cb.setLineWidth(1);
-				cb.moveTo(mmToPoints(30), mmToPoints(28));
-				cb.lineTo(mmToPoints(180), mmToPoints(28));
-				cb.stroke();
-				document.add(footer);
-				*/
 				//commented out above and added following
 				docBusiness.createHeaderDate(document,writer,IWTimestamp.RightNow().getLocaleDate(getIWApplicationContext().getApplicationSettings().getDefaultLocale()));
 				docBusiness.createLogoContent(document);

@@ -1489,17 +1489,10 @@ public class SchoolChoiceApplication extends CommuneBlock {
 				IWTimestamp seasonStart = new IWTimestamp(season.getSchoolSeasonStart());
 				IWTimestamp dateNow = new IWTimestamp();
 				if (choiceStart != null && choiceEnd != null && choiceRed != null) {
-					IWTimestamp start = new IWTimestamp(seasonStart);
-					start.setDay(Integer.parseInt(choiceStart.substring(0, 2)));
-					start.setMonth(Integer.parseInt(choiceStart.substring(3)));
-
-					IWTimestamp end = new IWTimestamp(seasonStart);
-					end.setDay(Integer.parseInt(choiceEnd.substring(0, 2)));
-					end.setMonth(Integer.parseInt(choiceEnd.substring(3)));
-
-					IWTimestamp red = new IWTimestamp(seasonStart);
-					red.setDay(Integer.parseInt(choiceRed.substring(0, 2)));
-					red.setMonth(Integer.parseInt(choiceRed.substring(3)));
+					SchoolChoiceBusiness business = (SchoolChoiceBusiness) IBOLookup.getServiceInstance(iwc, SchoolChoiceBusiness.class);
+					IWTimestamp start = business.getSchoolChoiceStartDate ();
+					IWTimestamp end = business.getSchoolChoiceEndDate ();
+					IWTimestamp red = business.getSchoolChoiceCriticalDate ();
 
 					if (dateNow.isBetween(start, end))
 						checkCanApply[0] = true;

@@ -1,5 +1,8 @@
 package se.idega.idegaweb.commune.school.business;
 
+import com.idega.util.IWTimestamp;
+import java.rmi.RemoteException;
+import javax.ejb.FinderException;
 
 public interface SchoolChoiceBusiness extends com.idega.business.IBOService,com.idega.block.process.business.CaseBusiness
 {
@@ -74,4 +77,7 @@ public interface SchoolChoiceBusiness extends com.idega.business.IBOService,com.
  public void setAsPreliminary(se.idega.idegaweb.commune.school.data.SchoolChoice p0,com.idega.user.data.User p1) throws java.rmi.RemoteException;
  public void setChildcarePreferences(com.idega.user.data.User p0,int p1,boolean p2,java.lang.String p3,java.lang.String p4,java.lang.String p5)throws java.rmi.RemoteException, java.rmi.RemoteException;
  public void importLanguageToPlacement() throws java.rmi.RemoteException;
+	IWTimestamp getSchoolChoiceStartDate () throws RemoteException,	FinderException;
+	IWTimestamp getSchoolChoiceEndDate () throws RemoteException, FinderException;
+	IWTimestamp getSchoolChoiceCriticalDate () throws RemoteException, FinderException;
 }

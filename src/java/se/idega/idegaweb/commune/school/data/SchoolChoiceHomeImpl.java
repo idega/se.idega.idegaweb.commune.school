@@ -172,9 +172,9 @@ public int getChoices(int p0,int p1,int p2)throws com.idega.data.IDOException{
 	return theReturn;
 }
 
-public int getCount(com.idega.block.school.data.SchoolSeason p0)throws com.idega.data.IDOException {
+public int getCount(com.idega.block.school.data.SchoolSeason p0,java.sql.Date p1,java.sql.Date p2)throws com.idega.data.IDOException {
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-	int theReturn = ((SchoolChoiceBMPBean)entity).ejbHomeGetCount(p0);
+	int theReturn = ((SchoolChoiceBMPBean)entity).ejbHomeGetCount(p0,p1,p2);
 	this.idoCheckInPooledEntity(entity);
 	return theReturn;
 }
