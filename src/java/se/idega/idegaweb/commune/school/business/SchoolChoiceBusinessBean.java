@@ -180,4 +180,40 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
       season.store();
   }
 
+	public void createTestFamily(){
+
+	  javax.transaction.UserTransaction trans = getSessionContext().getUserTransaction();
+		try {
+			trans.begin();
+
+			com.idega.user.data.User[] familyMembers = new com.idega.user.data.User[5];
+			is.idega.idegaweb.member.business.MemberFamilyLogic ml = (is.idega.idegaweb.member.business.MemberFamilyLogic)getServiceInstance(is.idega.idegaweb.member.business.MemberFamilyLogic.class);
+		  se.idega.idegaweb.commune.business.CommuneUserBusiness ub = (se.idega.idegaweb.commune.business.CommuneUserBusiness) getServiceInstance(se.idega.idegaweb.commune.business.CommuneUserBusiness.class);
+
+			familyMembers[0] = ub.createCitizenByPersonalIDIfDoesNotExist("Gunnar","Páll","Daníelsson","0101");
+			familyMembers[1] = ub.createCitizenByPersonalIDIfDoesNotExist("Páll","","Helgason","0202");
+			familyMembers[2] = ub.createCitizenByPersonalIDIfDoesNotExist("Tryggvi","","Lárusson","0303");
+			familyMembers[3] = ub.createCitizenByPersonalIDIfDoesNotExist("Þórhallur","","Daníelsson","0404");
+			familyMembers[4] = ub.createCitizenByPersonalIDIfDoesNotExist("Jón","Karl","Jónsson","0505");
+
+			ml.setAsChildFor(familyMembers[1],familyMembers[0]);
+			ml.setAsChildFor(familyMembers[2],familyMembers[0]);
+			ml.setAsChildFor(familyMembers[3],familyMembers[1]);
+			ml.setAsChildFor(familyMembers[4],familyMembers[1]);
+
+
+			trans.commit();
+		}
+		catch (Exception ex) {
+			try {
+				trans.rollback();
+			}
+			catch (Exception e) {
+
+			}
+
+
+		}
+	}
+
 }

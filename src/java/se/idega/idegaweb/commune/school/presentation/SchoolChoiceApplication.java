@@ -103,28 +103,37 @@ public class SchoolChoiceApplication extends CommuneBlock {
   public void control(IWContext iwc) throws Exception{
     debugParameters(iwc);
     String ID = iwc.getParameter(prmChildId);
-    if(ID!=null){
-      childId = Integer.parseInt(ID);
-      userbuiz = (UserBusiness) IBOLookup.getServiceInstance(iwc,UserBusiness.class);
+		if(iwc.isLoggedOn()){
+			if(ID!=null){
+				childId = Integer.parseInt(ID);
+				userbuiz = (UserBusiness) IBOLookup.getServiceInstance(iwc,UserBusiness.class);
 
-      User child = userbuiz.getUser(childId);
-      if(child!=null){
-        parse(iwc);
-        boolean saved = false;
-        if(iwc.isParameterSet(prmAction) && iwc.getParameter(prmAction).equals("true")){
-          saved = saveSchoolChoice(iwc);
+				User child = userbuiz.getUser(childId);
+				if(child!=null){
+					parse(iwc);
+					boolean saved = false;
+					if(iwc.isParameterSet(prmAction) && iwc.getParameter(prmAction).equals("true")){
+						saved = saveSchoolChoice(iwc);
 
-        }
-        schoolTypes = getSchoolTypes(iwc,"SCHOOL");
-        if(!saved)
-          add(getSchoolChoiceForm(iwc,child));
-      }
-    }
+					}
+					schoolTypes = getSchoolTypes(iwc,"SCHOOL");
+					if(!saved)
+						add(getSchoolChoiceForm(iwc,child));
+				}
+			}
+			else
+			  add(iwrb.getLocalizedString("school.no_student_id_provided","No student provided"));
+		}
+		else
+			add(iwrb.getLocalizedString("school.need_to_be_logged_on","You need to log in"));
   }
 
-  private boolean saveSchoolChoice(IWContext iwc){
+  private boolean saveSchoolChoice(IWContext iwc) {
     /** @todo Add some rule checking */
 
+		// Checking if same school chosen more than once
+		if(valFirstSchool == valSecondSchool || valSecondSchool == valThirdSchool ||valThirdSchool == valFirstSchool)
+			return false;
     try{
       SchoolChoiceBusiness schBuiz = (SchoolChoiceBusiness) IBOLookup.getServiceInstance(iwc,SchoolChoiceBusiness.class);
       schBuiz.createSchoolChoices(iwc.getUserId(),childId,valPreSchool,
@@ -132,6 +141,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
           valLanguage,valMessage,valSchoolChange,valSixyearCare,valAutoAssign,
           valCustodiansAgree,valSendCatalogue);
       return true;
+
     }catch(Exception ex){
       ex.printStackTrace();
     }
@@ -169,6 +179,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
     T.add(getChoiceSchool(iwc,child),1,3);
     T.add(getParentInfo(iwc,child),1,4);
     T.add(getMessagePart(iwc),1,5);
+
     T.add(new SubmitButton(iwrb.getLocalizedString("school.submit_application","Send"),prmAction,"true"),1,6);
     T.add(new HiddenInput(prmChildId,child.getPrimaryKey().toString() ) );
     myForm.add(T);
@@ -230,11 +241,12 @@ public class SchoolChoiceApplication extends CommuneBlock {
     drpTypes.setOnChange(getFilterCallerScript(iwc,prmPreType,prmPreArea,prmPreSchool,1));
     drpTypes.setWidth("20");
     DropdownMenu drpAreas = new DropdownMenu(prmPreArea);
+		drpAreas.addMenuElementFirst("-1",iwrb.getLocalizedString("school.area","School area..........."));
     drpAreas.setOnChange(getFilterCallerScript(iwc,prmPreType,prmPreArea,prmPreSchool,2));
-    drpAreas.setWidth("50");
+    //drpAreas.setWidth("50");
     DropdownMenu drpSchools = new DropdownMenu(prmPreSchool);
-    drpSchools.addMenuElement("-1","             ");
-    drpSchools.setWidth("20");
+		drpSchools.addMenuElementFirst("-1",iwrb.getLocalizedString("school.school","School................"));
+    //drpSchools.setWidth("20");
     DropdownMenu drpGrade = new DropdownMenu(prmPreGrade);
     drpGrade.addMenuElement("-1","");
     for (int i = 1; i < 10; i++) {
@@ -326,17 +338,21 @@ public class SchoolChoiceApplication extends CommuneBlock {
 
   private PresentationObject getParentInfo(IWContext iwc,User child)throws java.rmi.RemoteException{
     Table T = new Table();
-    T.add(getSmallHeader(iwrb.getLocalizedString("school.custodians","Custodians")),1,1);
+		int row = 1;
+    T.add(getSmallHeader(iwrb.getLocalizedString("school.custodians","Custodians")),1,row);
+		row++;
     MemberFamilyLogic mlogic = (MemberFamilyLogic) IBOLookup.getServiceInstance(iwc,MemberFamilyLogic.class);
     try{
       Collection parents = mlogic.getCustodiansFor(child);
       Iterator iter = parents.iterator();
       while(iter.hasNext()){
-
+				User parent = (User) iter.next();
+				T.add(getSmallText(parent.getNameLastFirst()),1,row);
       }
     }
     catch(NoCustodianFound ex){
-      T.add(getSmallErrorText(iwrb.getLocalizedString("school.no_registered_custodians","No registered custodians")),1,3);
+		ex.printStackTrace();
+      T.add(getSmallErrorText(iwrb.getLocalizedString("school.no_registered_custodians","No registered custodians")),1,row);
     }
     return T;
   }
