@@ -457,7 +457,7 @@ public class SchoolReportBusinessBean extends IBOSessionBean implements SchoolRe
 		int numberOfChoices = 0;
 
 		try {
-			String[] validStatuses = new String[] { getSchoolChoiceBusiness().getCaseStatusPreliminary().getStatus(), getSchoolChoiceBusiness().getCaseStatusMoved().getStatus() };
+			String[] validStatuses = new String[] { getSchoolChoiceBusiness().getCaseStatusPreliminary().getStatus(), getSchoolChoiceBusiness().getCaseStatusMoved().getStatus(), getSchoolChoiceBusiness().getCaseStatusPlaced().getStatus() };
 			int schoolYearAge = getSchoolCommuneBusiness().getGradeForYear(getSchoolSession().getSchoolYearID());
 			Collection applicants = getSchoolChoiceBusiness().getApplicantsForSchool(getSchoolSession().getSchoolID(), getSchoolSession().getSchoolSeasonID(), schoolYearAge, validStatuses, null, SchoolChoiceComparator.NAME_SORT, -1, -1);
 			
