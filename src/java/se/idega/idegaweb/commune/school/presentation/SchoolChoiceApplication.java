@@ -587,8 +587,6 @@ public class SchoolChoiceApplication extends CommuneBlock {
 			else
 				previousSeason = schCommBiz.getPreviousSchoolSeason(season);
 			
-			//schoolClassMember = schBuiz.getSchoolBusiness().getSchoolClassMemberHome().findByUserAndSeason(child, previousSeason);
-
 			try {
 				schoolClassMember = schBuiz.getSchoolBusiness().getSchoolClassMemberHome().findLatestByUserAndSchCategoryAndSeason(child, schBuiz.getSchoolBusiness().getCategoryElementarySchool(), previousSeason);
 			} catch (Exception e) {}
@@ -597,25 +595,21 @@ public class SchoolChoiceApplication extends CommuneBlock {
 				schoolClassMember = schBuiz.getSchoolBusiness().getSchoolClassMemberHome().findLatestByUserAndSchCategory(child, schBuiz.getSchoolBusiness().getCategoryChildcare());
 			}
 			
-			//schoolClass = schBuiz.getSchoolBusiness().getSchoolClassHome().findByPrimaryKey(new Integer(schoolClassMember.getSchoolClassId()));
 			schoolClass = schoolClassMember.getSchoolClass();
 			
 			school = schBuiz.getSchool(schoolClass.getSchoolId());
 			if (school != null)
 				hasPreviousSchool = true;
 			
-			//schoolArea = schBuiz.getSchoolBusiness().getSchoolAreaHome().findByPrimaryKey(new Integer(school.getSchoolAreaId()));
 			if (school != null)
 				schoolArea = school.getSchoolArea();
 			
-			/*Collection Stypes = school.findRelatedSchoolTypes();
-			if (!Stypes.isEmpty())
-				schoolType = (SchoolType) Stypes.iterator().next();
-			*/
 			schoolType = schoolClassMember.getSchoolType();
 
-			//schoolYear = schBuiz.getSchoolBusiness().getSchoolYearHome().findByPrimaryKey(new Integer(schoolClassMember.getSchoolYearId()));
 			schoolYear = schoolClassMember.getSchoolYear();
+			if (schoolYear == null) {
+				valPreGrade = 5;
+			}
 		}
 		catch (Exception e) {
 			hasPreviousSchool = false;
@@ -627,6 +621,9 @@ public class SchoolChoiceApplication extends CommuneBlock {
 			school = schBuiz.getSchool(choice.getCurrentSchoolId());
 			schoolArea = schBuiz.getSchoolBusiness().getSchoolAreaHome().findByPrimaryKey(new Integer(school.getSchoolAreaId()));
 			schoolYear = schCommBiz.getSchoolYear(choice.getGrade());
+			if (schoolYear == null) {
+				valPreGrade = choice.getGrade();
+			}
 			schoolType = schBuiz.getSchoolBusiness().getSchoolTypeHome().findByPrimaryKey(new Integer(choice.getSchoolTypeId()));
 			hasPreviousSchool = true;
 		}
@@ -780,10 +777,15 @@ public class SchoolChoiceApplication extends CommuneBlock {
 				}
 				String initFunction;
 				if (hasChosen) {
-					if (school != null && schoolYear != null) {
+					if (school != null) {
 						initFunction = getInitFilterCallerScript(prmPreType, prmPreArea, prmPreSchool, ((Integer)schoolType.getPrimaryKey()).intValue(), ((Integer)schoolArea.getPrimaryKey()).intValue(), ((Integer)school.getPrimaryKey()).intValue(), true);
 						script.addFunction("presch_init", initFunction);
-						drpGrade.setSelectedElement(schoolYear.getSchoolYearAge());
+						if (schoolYear != null) {
+							drpGrade.setSelectedElement(schoolYear.getSchoolYearAge());
+						}
+						else {
+							drpGrade.setSelectedElement(valPreGrade);
+						}
 					}
 					else {
 						initFunction = getInitFilterCallerScript(prmPreType, prmPreArea, prmPreSchool, -2, -1, -1, true);
@@ -797,7 +799,12 @@ public class SchoolChoiceApplication extends CommuneBlock {
 						try {
 							initFunction = getInitFilterCallerScript(prmPreType, prmPreArea, prmPreSchool, ((Integer)schoolType.getPrimaryKey()).intValue(), ((Integer)schoolArea.getPrimaryKey()).intValue(), ((Integer)school.getPrimaryKey()).intValue(), true);
 							script.addFunction("presch_init", initFunction);
-							drpGrade.setSelectedElement(schoolYear.getSchoolYearAge());
+							if (schoolYear != null) {
+								drpGrade.setSelectedElement(schoolYear.getSchoolYearAge());
+							}
+							else {
+								drpGrade.setSelectedElement(valPreGrade);
+							}
 							getParentPage().setOnLoad(initFunction);
 						}
 						catch (Exception e) {
