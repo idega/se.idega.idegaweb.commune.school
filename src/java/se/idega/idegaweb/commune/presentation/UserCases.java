@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
@@ -17,6 +18,7 @@ import se.idega.idegaweb.commune.school.data.SchoolChoiceReminder;
 
 import com.idega.block.process.business.CaseBusiness;
 import com.idega.block.process.data.Case;
+import com.idega.block.process.data.CaseCode;
 import com.idega.business.IBOLookup;
 import com.idega.core.builder.data.ICPage;
 import com.idega.presentation.ExceptionWrapper;
@@ -117,13 +119,31 @@ public class UserCases extends CommuneBlock {
 		mainTable.setCellpadding(0);
 		mainTable.setCellspacing(0);
 		mainTable.setWidth(getWidth());
-		add(mainTable);
+		add(mainTable); 
 
+		
 		if (iwc.isLoggedOn()) {
+		
+						
 			User user = iwc.getCurrentUser();
 			final int userId = ((Integer) user.getPrimaryKey()).intValue();
 			List cases = new Vector(getCommuneCaseBusiness(iwc).getAllCasesDefaultVisibleForUser(user));
 			Collections.reverse(cases);
+			
+			// 1. find my groups
+			final UserBusiness userBusiness = (UserBusiness) IBOLookup.getServiceInstance(iwc, UserBusiness.class);
+			final Collection groupCollection = userBusiness.getUserGroups(userId);
+			final Group[] groups = (Group[]) groupCollection.toArray(new Group[0]);
+						
+			// add cases belonging to my group 
+			final CaseBusiness caseBusiness = (CaseBusiness) IBOLookup.getServiceInstance(iwc, CaseBusiness.class);
+			Iterator g = groupCollection.iterator();
+			CaseCode [] hiddenCases = getCommuneCaseBusiness(iwc).getUserHiddenCaseCodes();
+			while(g.hasNext()){
+				cases.addAll(caseBusiness.getAllCasesForGroupExceptCodes((Group) g.next(), hiddenCases));
+			}
+			
+						
 			if (cases != null & !cases.isEmpty()) {
 				int casesSize = cases.size();
 
@@ -177,10 +197,8 @@ public class UserCases extends CommuneBlock {
 				mainTable.add(getSmallHeader(localize(NOONGOINGCASES_KEY, NOONGOINGCASES_DEFAULT)), 1, 1);
 			}
 
-			// 1. find my groups
-			final UserBusiness userBusiness = (UserBusiness) IBOLookup.getServiceInstance(iwc, UserBusiness.class);
-			final Collection groupCollection = userBusiness.getUserGroups(userId);
-			final Group[] groups = (Group[]) groupCollection.toArray(new Group[0]);
+			
+		
 
 			// 2. find unhandled cases
 			final SchoolChoiceBusiness schoolChoiceBusiness = (SchoolChoiceBusiness) IBOLookup.getServiceInstance(iwc, SchoolChoiceBusiness.class);
