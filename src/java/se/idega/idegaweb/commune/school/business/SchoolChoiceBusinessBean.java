@@ -1,18 +1,32 @@
 package se.idega.idegaweb.commune.school.business;
-import se.idega.idegaweb.commune.school.data.*;
-import com.idega.block.school.data.*;
-import com.idega.block.school.business.*;
+import java.rmi.RemoteException;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Vector;
+
+import javax.ejb.CreateException;
+import javax.ejb.FinderException;
 
 import se.idega.idegaweb.commune.business.CommuneUserBusiness;
 import se.idega.idegaweb.commune.message.business.MessageBusiness;
-import com.idega.business.IBOServiceBean;
-import com.idega.data.*;
+import se.idega.idegaweb.commune.school.data.CurrentSchoolSeason;
+import se.idega.idegaweb.commune.school.data.CurrentSchoolSeasonHome;
+import se.idega.idegaweb.commune.school.data.SchoolChoice;
+import se.idega.idegaweb.commune.school.data.SchoolChoiceHome;
+
+import com.idega.block.process.data.Case;
+import com.idega.block.process.data.CaseStatus;
+import com.idega.block.school.business.SchoolBusiness;
+import com.idega.block.school.data.School;
+import com.idega.block.school.data.SchoolHome;
+import com.idega.block.school.data.SchoolSeason;
+import com.idega.block.school.data.SchoolSeasonHome;
+import com.idega.data.IDOCreateException;
+import com.idega.data.IDOStoreException;
 import com.idega.user.data.Group;
 import com.idega.user.data.User;
-import com.idega.block.process.data.*;
-import javax.ejb.*;
-import java.rmi.RemoteException;
-import java.util.*;
 /**
  * Title:
  * Description:
@@ -21,9 +35,7 @@ import java.util.*;
  * @author <a href="mailto:aron@idega.is">Aron Birkir</a>
  * @version 1.0
  */
-public class SchoolChoiceBusinessBean
-	extends com.idega.block.process.business.CaseBusinessBean
-	implements SchoolChoiceBusiness, com.idega.block.process.business.CaseBusiness {
+public class SchoolChoiceBusinessBean extends com.idega.block.process.business.CaseBusinessBean implements SchoolChoiceBusiness, com.idega.block.process.business.CaseBusiness {
 	public final static String SCHOOL_CHOICE_CASECODE = "MBSKOLV";
 	public String getBundleIdentifier() {
 		return se.idega.idegaweb.commune.presentation.CommuneBlock.IW_BUNDLE_IDENTIFIER;
@@ -56,97 +68,42 @@ public class SchoolChoiceBusinessBean
 	public School getSchool(int school) throws RemoteException {
 		return getSchoolBusiness().getSchool(new Integer(school));
 	}
-	public List createSchoolChoices(
-		int userId,
-		int childId,
-		int current_school,
-		int chosen_school_1,
-		int chosen_school_2,
-		int chosen_school_3,
-		int grade,
-		int method,
-		int workSituation1,
-		int workSituation2,
-		String language,
-		String message,
-		boolean changeOfSchool,
-		boolean keepChildrenCare,
-		boolean autoAssign,
-		boolean custodiansAgree,
-		boolean schoolCatalogue)
-		throws IDOCreateException {
+	public List createSchoolChoices(int userId, int childId, int current_school, int chosen_school_1, int chosen_school_2, int chosen_school_3, int grade, int method, int workSituation1, int workSituation2, String language, String message, boolean changeOfSchool, boolean keepChildrenCare, boolean autoAssign, boolean custodiansAgree, boolean schoolCatalogue) throws IDOCreateException {
 		int caseCount = 3;
 		java.sql.Timestamp time = new java.sql.Timestamp(System.currentTimeMillis());
 		List returnList = new Vector(3);
 		javax.transaction.UserTransaction trans = this.getSessionContext().getUserTransaction();
 		try {
 			trans.begin();
-			CaseStatus first = getCaseStatusOpen();
+			CaseStatus first = getCaseStatus("PREL");
 			CaseStatus other = getCaseStatus(super.getCaseStatusInactive().getStatus());
 			int[] schoolIds = { chosen_school_1, chosen_school_2, chosen_school_3 };
 			SchoolChoice choice = null;
 			for (int i = 0; i < caseCount; i++) {
-				choice =
-					createSchoolChoice(
-						userId,
-						childId,
-						current_school,
-						schoolIds[i],
-						grade,
-						i + 1,
-						method,
-						workSituation1,
-						workSituation2,
-						language,
-						message,
-						time,
-						changeOfSchool,
-						keepChildrenCare,
-						autoAssign,
-						custodiansAgree,
-						schoolCatalogue,
-						i == 0 ? first : other,
-						choice);
+				choice = createSchoolChoice(userId, childId, current_school, schoolIds[i], grade, i + 1, method, workSituation1, workSituation2, language, message, time, changeOfSchool, keepChildrenCare, autoAssign, custodiansAgree, schoolCatalogue, i == 0 ? first : other, choice);
 			}
 			trans.commit();
 			return returnList;
-		} catch (Exception ex) {
+		}
+		catch (Exception ex) {
 			try {
 				trans.rollback();
-			} catch (javax.transaction.SystemException e) {
+			}
+			catch (javax.transaction.SystemException e) {
 				throw new IDOCreateException(e.getMessage());
 			}
 			throw new IDOCreateException(ex.getMessage());
 		}
 	}
-	private SchoolChoice createSchoolChoice(
-		int userId,
-		int childId,
-		int current_school,
-		int chosen_school,
-		int grade,
-		int choiceOrder,
-		int method,
-		int workSituation1,
-		int workSituation2,
-		String language,
-		String message,
-		java.sql.Timestamp choiceDate,
-		boolean changeOfSchool,
-		boolean keepChildrenCare,
-		boolean autoAssign,
-		boolean custodiansAgree,
-		boolean schoolCatalogue,
-		CaseStatus caseStatus,
-		Case parentCase)
-		throws CreateException, RemoteException {
+	private SchoolChoice createSchoolChoice(int userId, int childId, int current_school, int chosen_school, int grade, int choiceOrder, int method, int workSituation1, int workSituation2, String language, String message, java.sql.Timestamp choiceDate, boolean changeOfSchool, boolean keepChildrenCare, boolean autoAssign, boolean custodiansAgree, boolean schoolCatalogue, CaseStatus caseStatus, Case parentCase) throws CreateException, RemoteException, FinderException {
 		SchoolChoiceHome home = this.getSchoolChoiceHome();
 		SchoolChoice choice = home.create();
 		SchoolSeason season = null;
 		try {
 			choice.setOwner(getUser(userId));
 			season = getCurrentSeason();
-		} catch (FinderException fex) {
+		}
+		catch (FinderException fex) {
 			throw new IDOCreateException(fex);
 		}
 		choice.setChildId(childId);
@@ -172,11 +129,15 @@ public class SchoolChoiceBusinessBean
 			choice.setSchoolSeasonId(seasonId.intValue());
 		}
 		choice.setCaseStatus(caseStatus);
+		if (caseStatus.getStatus().equalsIgnoreCase("PREL")) {
+			getMessageBusiness().createUserMessage(choice.getOwner(), getPreliminaryMessageSubject(), getPreliminaryMessageBody(choice));
+		}
 		if (parentCase != null)
 			choice.setParentCase(parentCase);
 		try {
 			choice.store();
-		} catch (IDOStoreException idos) {
+		}
+		catch (IDOStoreException idos) {
 			throw new IDOCreateException(idos);
 		}
 		return choice;
@@ -190,15 +151,19 @@ public class SchoolChoiceBusinessBean
 				season.remove();
 				season = shome.create();
 			}
-		} catch (javax.ejb.RemoveException rme) {
+		}
+		catch (javax.ejb.RemoveException rme) {
 			throw new java.rmi.RemoteException(rme.getMessage());
-		} catch (javax.ejb.CreateException cre) {
+		}
+		catch (javax.ejb.CreateException cre) {
 			throw new java.rmi.RemoteException(cre.getMessage());
-		} catch (javax.ejb.FinderException fe) {
+		}
+		catch (javax.ejb.FinderException fe) {
 			//fe.printStackTrace();
 			try {
 				season = shome.create();
-			} catch (javax.ejb.CreateException ce) {
+			}
+			catch (javax.ejb.CreateException ce) {
 				//ce.printStackTrace();
 				throw new java.rmi.RemoteException(ce.getMessage());
 			}
@@ -211,32 +176,8 @@ public class SchoolChoiceBusinessBean
 		try {
 			trans.begin();
 			com.idega.user.data.User[] familyMembers = new com.idega.user.data.User[5];
-			is.idega.idegaweb.member.business.MemberFamilyLogic ml =
-				(is
-					.idega
-					.idegaweb
-					.member
-					.business
-					.MemberFamilyLogic) getServiceInstance(is
-					.idega
-					.idegaweb
-					.member
-					.business
-					.MemberFamilyLogic
-					.class);
-			se.idega.idegaweb.commune.business.CommuneUserBusiness ub =
-				(se
-					.idega
-					.idegaweb
-					.commune
-					.business
-					.CommuneUserBusiness) getServiceInstance(se
-					.idega
-					.idegaweb
-					.commune
-					.business
-					.CommuneUserBusiness
-					.class);
+			is.idega.idegaweb.member.business.MemberFamilyLogic ml = (is.idega.idegaweb.member.business.MemberFamilyLogic) getServiceInstance(is.idega.idegaweb.member.business.MemberFamilyLogic.class);
+			se.idega.idegaweb.commune.business.CommuneUserBusiness ub = (se.idega.idegaweb.commune.business.CommuneUserBusiness) getServiceInstance(se.idega.idegaweb.commune.business.CommuneUserBusiness.class);
 			familyMembers[0] = ub.createCitizenByPersonalIDIfDoesNotExist("Gunnar", "Páll", "Daníelsson", "0101");
 			familyMembers[1] = ub.createCitizenByPersonalIDIfDoesNotExist("Páll", "", "Helgason", "0202");
 			familyMembers[2] = ub.createCitizenByPersonalIDIfDoesNotExist("Tryggvi", "", "Lárusson", "0303");
@@ -247,10 +188,12 @@ public class SchoolChoiceBusinessBean
 			ml.setAsChildFor(familyMembers[3], familyMembers[1]);
 			ml.setAsChildFor(familyMembers[4], familyMembers[1]);
 			trans.commit();
-		} catch (Exception ex) {
+		}
+		catch (Exception ex) {
 			try {
 				trans.rollback();
-			} catch (Exception e) {
+			}
+			catch (Exception e) {
 			}
 		}
 	}
@@ -268,11 +211,13 @@ public class SchoolChoiceBusinessBean
 				child.store();
 			}
 			trans.commit();
-		} catch (Exception ex) {
+		}
+		catch (Exception ex) {
 			ex.printStackTrace();
 			try {
 				trans.rollback();
-			} catch (Exception e) {
+			}
+			catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
@@ -285,7 +230,8 @@ public class SchoolChoiceBusinessBean
 			choice.store();
 			getMessageBusiness().createUserMessage(choice.getOwner(), getPreliminaryMessageSubject(), getPreliminaryMessageBody(choice));
 			return true;
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 		}
 		return false;
 	}
@@ -297,14 +243,15 @@ public class SchoolChoiceBusinessBean
 			choice.store();
 			getMessageBusiness().createUserMessage(choice.getOwner(), getGroupedMessageSubject(), getGroupedMessageBody(choice));
 			return true;
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 		}
 		return false;
 	}
 	protected String getPreliminaryMessageBody(SchoolChoice theCase) throws RemoteException, FinderException {
 		StringBuffer body = new StringBuffer(this.getLocalizedString("school_choice.prelim_mesg_body1", "Dear mr./ms./mrs. "));
 		body.append(theCase.getOwner().getNameLastFirst()).append("\n");
-		body.append(this.getLocalizedString("school_choice.prelim_mesg_body2", "Your child has been preliminary accepted in ."));
+		body.append(this.getLocalizedString("school_choice.prelim_mesg_body2", "Your child has been preliminary accepted in: ."));
 		body.append(getSchool(theCase.getChosenSchoolId()).getSchoolName()).append("\n");
 		return body.toString();
 	}
@@ -331,7 +278,8 @@ public class SchoolChoiceBusinessBean
 				int caseID = ((Integer) theCase.getPrimaryKey()).intValue();
 				return this.getSchoolChoice(caseID);
 			}
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			throw new RuntimeException(e.getMessage());
 		}
 		throw new ClassCastException("Case with casecode: " + caseCode + " cannot be converted to a schoolchoice");
@@ -343,11 +291,11 @@ public class SchoolChoiceBusinessBean
 		desc += choice.getChosenSchool().getName();
 		return desc;
 	}
-	
-	private CommuneUserBusiness getCommuneUserBusiness()throws RemoteException{
-		return (CommuneUserBusiness)getServiceInstance(CommuneUserBusiness.class);
+
+	private CommuneUserBusiness getCommuneUserBusiness() throws RemoteException {
+		return (CommuneUserBusiness) getServiceInstance(CommuneUserBusiness.class);
 	}
-	
+
 	/**
 	 * Method getFirstManagingSchoolForUser.
 	 * If there is no school that the user manages then the method throws a FinderException.
@@ -355,30 +303,30 @@ public class SchoolChoiceBusinessBean
 	 * @return School that is the first school that the user is a manager for.
 	 * @throws javax.ejb.FinderException if ther is no school that the user manages.
 	 */
-	public School getFirstManagingSchoolForUser(User user)throws FinderException,RemoteException{
-			CommuneUserBusiness commBuiz = getCommuneUserBusiness();
-			
-			try{
-				Group rootGroup = commBuiz.getRootSchoolAdministratorGroup();
-				// if user is a SchoolAdministrator
-				if(user.hasRelationTo(rootGroup)){
-					Collection schools = getSchoolHome().findAllBySchoolGroup(user);
-					if(!schools.isEmpty()){
-						Iterator iter = schools.iterator();
-						while(iter.hasNext()){
-							School school = (School) iter.next();
-							return school;
-						}
+	public School getFirstManagingSchoolForUser(User user) throws FinderException, RemoteException {
+		CommuneUserBusiness commBuiz = getCommuneUserBusiness();
+
+		try {
+			Group rootGroup = commBuiz.getRootSchoolAdministratorGroup();
+			// if user is a SchoolAdministrator
+			if (user.hasRelationTo(rootGroup)) {
+				Collection schools = getSchoolHome().findAllBySchoolGroup(user);
+				if (!schools.isEmpty()) {
+					Iterator iter = schools.iterator();
+					while (iter.hasNext()) {
+						School school = (School) iter.next();
+						return school;
 					}
 				}
 			}
-			catch(CreateException e){
-				e.printStackTrace();	
-			}
-			
-			throw new FinderException("No school found that "+user.getName()+" manages");
+		}
+		catch (CreateException e) {
+			e.printStackTrace();
+		}
+
+		throw new FinderException("No school found that " + user.getName() + " manages");
 	}
-	
+
 	/**
 	 * Method getFirstProviderForUser.
 	 * If there is no school that the user then the method throws a FinderException.
@@ -386,27 +334,27 @@ public class SchoolChoiceBusinessBean
 	 * @return School that is the first school that the user is a manager for.
 	 * @throws javax.ejb.FinderException if ther is no school that the user manages.
 	 */
-	public School getFirstProviderForUser(User user)throws FinderException,RemoteException{
-			CommuneUserBusiness commBuiz = getCommuneUserBusiness();
-			
-			try{
-				Group rootGroup = commBuiz.getRootProviderAdministratorGroup();
-				// if user is a SchoolAdministrator
-				if(user.hasRelationTo(rootGroup)){
-					Collection schools = getSchoolHome().findAllBySchoolGroup(user);
-					if(!schools.isEmpty()){
-						Iterator iter = schools.iterator();
-						while(iter.hasNext()){
-							School school = (School) iter.next();
-							return school;
-						}
+	public School getFirstProviderForUser(User user) throws FinderException, RemoteException {
+		CommuneUserBusiness commBuiz = getCommuneUserBusiness();
+
+		try {
+			Group rootGroup = commBuiz.getRootProviderAdministratorGroup();
+			// if user is a SchoolAdministrator
+			if (user.hasRelationTo(rootGroup)) {
+				Collection schools = getSchoolHome().findAllBySchoolGroup(user);
+				if (!schools.isEmpty()) {
+					Iterator iter = schools.iterator();
+					while (iter.hasNext()) {
+						School school = (School) iter.next();
+						return school;
 					}
 				}
 			}
-			catch(CreateException e){
-				e.printStackTrace();	
-			}
-			
-			throw new FinderException("No school found that "+user.getName()+" manages");
-	}	
+		}
+		catch (CreateException e) {
+			e.printStackTrace();
+		}
+
+		throw new FinderException("No school found that " + user.getName() + " manages");
+	}
 }
