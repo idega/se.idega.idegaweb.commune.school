@@ -124,6 +124,11 @@ public class SchoolCommuneSessionBean extends IBOSessionBean implements SchoolCo
 	 * @param schoolID The schoolID to set
 	 */
 	public void setSchoolID(int schoolID) {
+		//Fix for bug #nacp81  Roar 02.09.03
+		if (_schoolID != schoolID){
+			setSchoolClassID(-1);
+		}
+		//end fix
 		_schoolID = schoolID;
 	}
 
