@@ -1,48 +1,57 @@
 package se.idega.idegaweb.commune.school.presentation;
 
-import se.idega.idegaweb.commune.school.business.SchoolChoiceBusiness;
+import is.idega.idegaweb.member.business.MemberFamilyLogic;
+import is.idega.idegaweb.member.business.NoCustodianFound;
+
+import java.rmi.RemoteException;
+import java.text.DateFormat;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+
+import javax.ejb.FinderException;
+
+import se.idega.idegaweb.commune.presentation.CitizenChildren;
+import se.idega.idegaweb.commune.presentation.CommuneBlock;
+import se.idega.idegaweb.commune.school.business.SchoolChoiceBusiness;
 
 import com.idega.block.school.business.SchoolAreaBusiness;
 import com.idega.block.school.business.SchoolBusiness;
 import com.idega.block.school.business.SchoolTypeBusiness;
 import com.idega.block.school.data.School;
 import com.idega.block.school.data.SchoolArea;
+import com.idega.block.school.data.SchoolSeason;
 import com.idega.block.school.data.SchoolType;
 import com.idega.business.IBOLookup;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
+import com.idega.presentation.Page;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.Script;
 import com.idega.presentation.Table;
-import com.idega.presentation.Page;
+import com.idega.presentation.text.Link;
+import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.CheckBox;
+import com.idega.presentation.ui.DataTable;
 import com.idega.presentation.ui.DropdownMenu;
 import com.idega.presentation.ui.Form;
+import com.idega.presentation.ui.HiddenInput;
 import com.idega.presentation.ui.SubmitButton;
 import com.idega.presentation.ui.TextArea;
 import com.idega.presentation.ui.TextInput;
-import com.idega.presentation.ui.HiddenInput;
 import com.idega.user.business.UserBusiness;
 import com.idega.user.data.User;
 import com.idega.util.Age;
-
-import is.idega.idegaweb.member.business.MemberFamilyLogic;
-import is.idega.idegaweb.member.business.NoCustodianFound;
-
-import se.idega.idegaweb.commune.presentation.CitizenChildren;
-import se.idega.idegaweb.commune.presentation.CommuneBlock;
 
 
 /**
  * <p>Title: </p>
  * <p>Description: </p>
  * <p>Copyright: Copyright (c) 2002</p>
- * <p>Company: </p>
+ * <p>Company: idega</p>
  * @author <br><a href="mailto:aron@idega.is">Aron Birkir</a><br>
  * @version 1.0
  */
@@ -56,6 +65,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
   List[] schools = null;
   int preTypeId = -1;
   int preAreaId = -1;
+  DateFormat df;
 
   private String prefix = "sch_app_";
   private String prmSendCatalogue = prefix+"snd_cat";
@@ -80,6 +90,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
   private String prmChildId = CitizenChildren.getChildIDParameterName();
   private String prmForm = prefix+"the_frm";
 
+
   private boolean valSendCatalogue = false;
   private boolean valSixyearCare = false ;
   private boolean valAutoAssign = false ;
@@ -100,8 +111,9 @@ public class SchoolChoiceApplication extends CommuneBlock {
   private int valType = -1;
   private int childId = -1;
 
+
   public void control(IWContext iwc) throws Exception{
-    debugParameters(iwc);
+    //debugParameters(iwc);
     String ID = iwc.getParameter(prmChildId);
 		if(iwc.isLoggedOn()){
 			if(ID!=null){
@@ -119,6 +131,9 @@ public class SchoolChoiceApplication extends CommuneBlock {
 					schoolTypes = getSchoolTypes(iwc,"SCHOOL");
 					if(!saved)
 						add(getSchoolChoiceForm(iwc,child));
+					else{
+						add(getSchoolChoiceAnswer (iwc,child) );
+					}
 				}
 			}
 			else
@@ -173,14 +188,19 @@ public class SchoolChoiceApplication extends CommuneBlock {
   public PresentationObject getSchoolChoiceForm(IWContext iwc,User child)throws java.rmi.RemoteException{
     Form myForm = new Form();
     myForm.setName(prmForm);
-    Table T = new Table(1,7);
-    T.add(getChildInfo(child),1,1);
-    T.add(getCurrentSchool(iwc,child),1,2);
-    T.add(getChoiceSchool(iwc,child),1,3);
-    T.add(getParentInfo(iwc,child),1,4);
-    T.add(getMessagePart(iwc),1,5);
+    Table T = new Table(1,8);
+    T.add(getCurrentSchoolSeasonInfo(iwc),1,1);
+    T.add(getChildInfo(child),1,2);
+    T.add(getCurrentSchool(iwc,child),1,3);
+    T.add(getChoiceSchool(iwc,child),1,4);
+    T.add(getParentInfo(iwc,child),1,5);
+    T.add(getMessagePart(iwc),1,6);
 
-    T.add(new SubmitButton(iwrb.getLocalizedString("school.submit_application","Send"),prmAction,"true"),1,6);
+	String url = "javascript:MySubmit()";
+	Link save = new Link(iwrb.getLocalizedImageButton("save","Save"),url);
+	T.add(save,1,7);
+	T.add(new HiddenInput(prmAction,"false"));
+    //T.add(new SubmitButton(iwrb.getLocalizedString("school.submit_application","Send"),prmAction,"true"),1,7);
     T.add(new HiddenInput(prmChildId,child.getPrimaryKey().toString() ) );
     myForm.add(T);
 
@@ -189,6 +209,9 @@ public class SchoolChoiceApplication extends CommuneBlock {
       Script S = p.getAssociatedScript();
       Script F = new Script();
       S.addFunction("initFilter",getInitFilterScript());
+      S.addFunction("submitFunction",getMySubmitScript());
+      S.addFunction("checkApplication",getSchoolCheckScript());
+
       S.addFunction("changeFilter",getFilterScript(iwc));
       if(valPreType > 0 || valPreArea > 0 || valPreSchool > 0 ){
         F.addFunction("f1",getInitFilterCallerScript(iwc,prmPreType,prmPreArea,prmPreSchool,valPreType,valPreArea,valPreSchool));
@@ -206,10 +229,53 @@ public class SchoolChoiceApplication extends CommuneBlock {
     }
     return myForm;
   }
+  
+   public PresentationObject getSchoolChoiceAnswer(IWContext iwc,User child)throws java.rmi.RemoteException{
+   		DataTable T = new DataTable();
+   		T.setUseBottom(false);
+   		T.setUseTop(false);
+   		T.setUseTitles(false);
+   		String text1 = iwrb.getLocalizedString("school_choice.receipt_1","The school choice for ");
+   		String text2= iwrb.getLocalizedString("school_choice.receipt_2","has been received. ");
+   		String text3= iwrb.getLocalizedString("school_choice.receipt_3","The application will be processed by each school you applied for .");
+   		String text4= iwrb.getLocalizedString("school_choice.receipt_4","Thank you");
+   		int row = 1;
+   		T.add(getText( text1),1,row++);
+   		T.add(getHeader(child.getName()),1,row++);
+   		T.add(getText(text2),1,row++);
+   		T.add(getText(text3),1,row++);
+   		T.add(getText(text4),1,row++);
+   		
+   		return T;
+   }
+   
+  public PresentationObject getCurrentSchoolSeasonInfo(IWContext iwc) throws RemoteException {
+  	SchoolChoiceBusiness choiceBean  = (SchoolChoiceBusiness) IBOLookup.getServiceInstance(iwc,SchoolChoiceBusiness.class);
+  	SchoolSeason season = null;
+		try {
+			season = choiceBean.getCurrentSeason();
+		}
+		catch (RemoteException e) {
+		}
+		catch (FinderException e) {
+		}
+  	Table T = new Table();
+  	if(season !=null){
+  		String message = iwrb.getLocalizedString("school_choice.last_date_for_choice_is","Last date to choose is");
+  		String date = df.format(season.getSchoolSeasonDueDate());
+  		Text t = getHeader(message+" "+date);
+  		t.setFontColor("FF0000");
+  		T.add(t,1,1);
+  		
+  	}
+  	return T;
+  
+  }
 
   public void main(IWContext iwc)throws Exception{
     iwb = getBundle(iwc);
     iwrb = getResourceBundle(iwc);
+    df = DateFormat.getDateInstance(df.SHORT,iwc.getCurrentLocale());
     control(iwc);
   }
 
@@ -302,6 +368,14 @@ public class SchoolChoiceApplication extends CommuneBlock {
     DropdownMenu drpFirstSchool = new DropdownMenu(prmFirstSchool);
     DropdownMenu drpSecondSchool = new DropdownMenu(prmSecondSchool);
     DropdownMenu drpThirdSchool = new DropdownMenu(prmThirdSchool);
+    
+    	drpFirstArea.addMenuElementFirst("-1",iwrb.getLocalizedString("school.area_first",        "School Area...................."));
+		drpSecondArea.addMenuElementFirst("-1",iwrb.getLocalizedString("school.area_second",      "School Area ..................."));
+		drpThirdArea.addMenuElementFirst("-1",iwrb.getLocalizedString("school.area_third",        "School Area...................."));
+		drpFirstSchool.addMenuElementFirst("-1",iwrb.getLocalizedString("school.school_first",    "School........................."));
+		drpSecondSchool.addMenuElementFirst("-1",iwrb.getLocalizedString("school.school_second",  "School........................."));
+		drpThirdSchool.addMenuElementFirst("-1",iwrb.getLocalizedString("school.school_third",    "School........................."));
+
 
     T.add(typeDrop,1,3);
     T.mergeCells(2,3,3,3);
@@ -492,26 +566,46 @@ public class SchoolChoiceApplication extends CommuneBlock {
       School school;
       Collection areas;
       Collection schools;
+      // iterate through schooltypes
       while(iter.hasNext()){
         type = (SchoolType) iter.next();
-        areas = getSchoolAreasWithType(iwc,((Integer)type.getPrimaryKey()).intValue());
+        
+        Integer tPK = (Integer) type.getPrimaryKey();
+        //System.err.println("checking type "+tPK.toString());
+        areas = getSchoolAreasWithType(iwc,tPK.intValue());
         if(areas!=null && !areas.isEmpty()){
           Iterator iter2 = areas.iterator();
-          t.append("if(selected == \"").append(type.getPrimaryKey().toString()).append("\"){").append("\n\t\t");
-          while(iter2.hasNext()){
+          t.append("if(selected == \"").append(tPK.toString()).append("\"){").append("\n\t\t");
+          
+           Hashtable aHash = new Hashtable();
+           
+          // iterate through areas whithin types
+          while(iter2.hasNext()) {
             area = (SchoolArea) iter2.next();
-            schools = getSchoolByAreaAndType(iwc,((Integer)area.getPrimaryKey()).intValue(),((Integer)type.getPrimaryKey()).intValue());
-            if(schools!=null ){
-              Iterator iter3 = schools.iterator();
-              a.append("if(selected == \"").append(area.getPrimaryKey().toString()).append("\"){").append("\n\t\t");
-              while(iter3.hasNext()){
-                school = (School) iter3.next();
-                a.append("schoolSelect.options[schoolSelect.options.length] = new Option(\"");
-                a.append(school.getSchoolName()).append("\",\"");
-                a.append(school.getPrimaryKey().toString()).append("\")");
-
-              }
-              a.append("}\n\t\t");
+            Integer aPK = (Integer)area.getPrimaryKey();
+            // System.err.println("checking area "+aPK.toString());
+            if(!aHash.containsKey(aPK)){
+            	aHash.put(aPK,aPK);
+	            schools = getSchoolByAreaAndType(iwc,aPK.intValue(),tPK.intValue());
+	            if(schools!=null ){
+	              Iterator iter3 = schools.iterator();
+	              a.append("if(selected == \"").append(aPK.toString()).append("\"){").append("\n\t\t");
+	              Hashtable hash = new Hashtable();
+	              // iterator through schools whithin area and type
+	              while(iter3.hasNext()){
+	                school = (School) iter3.next();
+	                String pk = school.getPrimaryKey().toString();
+	                //System.err.println("checking school "+pk.toString());
+	                if(!hash.containsKey(pk)){
+		                a.append("schoolSelect.options[schoolSelect.options.length] = new Option(\"");
+		                a.append(school.getSchoolName()).append("\",\"");
+		                a.append(pk).append("\");\n\t\t");
+		                hash.put(pk,pk);
+	                }
+	
+	              }
+	              a.append("}\n\t\t");
+	        	}
             }
             else{
             System.err.println("shools empty");
@@ -521,7 +615,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
           t.append(area.getPrimaryKey().toString()).append("\");").append("\n\t\t");;
 
           }
-          t.append("}\n\t\t");
+          t.append("}\n\t");
         }
         else
            System.err.println("areas empty");
@@ -557,5 +651,56 @@ public class SchoolChoiceApplication extends CommuneBlock {
     s.append("school.selectedIndex = school_sel; \n}");
     return s.toString();
   }
+  
+	public String getSchoolCheckScript(){
+	  StringBuffer s = new StringBuffer();
+		s.append("\nfunction checkApplication(){\n\t");
+		//s.append("\n\t\t alert('").append("checking choices").append("');");
+		s.append("\n\t var dropOne = ").append("document.").append(prmForm).append(".elements['").append(prmFirstSchool).append("'];");
+		s.append("\n\t var dropTwo = ").append("document.").append(prmForm).append(".elements['").append(prmSecondSchool).append("'];");
+		s.append("\n\t var dropThree = ").append("document.").append(prmForm).append(".elements['").append(prmThirdSchool).append("'];");
+		s.append("\n\t var one = ").append("dropOne.options[dropOne.selectedIndex].value;");
+		s.append("\n\t var two = ").append("dropOne.options[dropTwo.selectedIndex].value;");
+		s.append("\n\t var  three = ").append("dropOne.options[dropThree.selectedIndex].value;");
+		s.append("\n\t if(one && two && three){");
+		s.append("\n\t if(one == two || two == three || three == one){");
+		s.append("\n\t\t\t alert('").append("some choices the same").append("');");
+		s.append("\n\t\t\t return false;");
+		s.append("\n\t\t }");
+		s.append("\n\t }");
+		s.append("\n\t else{");
+		s.append("\n\t\t alert('").append("no choices").append("');");
+		s.append("\n\t\t return false;");
+		s.append("\n\t }");
+		s.append("\n\t\t alert('").append("nothing wrong").append("');");
+		s.append("\n\t return true;");
+		s.append("\n}\n");
+		return s.toString();
+	}
+	
+	private String getMySubmitScript(){
+		StringBuffer s = new StringBuffer();
+		s.append("\n function MySubmit(){");
+		s.append("\n\t if(checkApplication()) {");
+		s.append("\n\t\t document.").append(prmForm).append(".elements['").append(prmAction).append("'].value='true';");
+		s.append("\n\t\t document.").append(prmForm).append(".submit();");
+		s.append("\n\t }");
+		s.append("\n\t else{");
+		s.append("\n\t\t alert('").append(iwrb.getLocalizedString("school_choice.unfinished","You have to finish the application")).append("');");
+		s.append("\n\t }");
+		s.append("\n}\n");
+		return s.toString();
+		
+		/*
+		if(checkApplication()){
+			document.
+		}
+		else{
+			
+		}
+		*/
+	}
+
 
 }
+	

@@ -74,12 +74,13 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
       CaseStatus first = getCaseStatusOpen();
       CaseStatus other = getCaseStatus("TYST");
       int[] schoolIds = {chosen_school_1,chosen_school_2,chosen_school_3};
+      SchoolChoice choice = null;
       for (int i = 0; i < caseCount; i++) {
 
-        SchoolChoice choice = createSchoolChoice(userId,childId,current_school,
+        choice = createSchoolChoice(userId,childId,current_school,
         schoolIds[i],grade,i+1,method,workSituation1,workSituation2,
         language,message,time,changeOfSchool,keepChildrenCare,autoAssign,
-        custodiansAgree,schoolCatalogue,i==0?first:other);
+        custodiansAgree,schoolCatalogue,i==0?first:other,choice);
       }
       trans.commit();
       return returnList;
@@ -114,20 +115,25 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
       boolean autoAssign,
       boolean custodiansAgree,
       boolean schoolCatalogue,
-      CaseStatus caseStatus
+      CaseStatus caseStatus,
+      Case parentCase
       )throws CreateException,RemoteException{
     SchoolChoiceHome home = this.getSchoolChoiceHome();
     SchoolChoice choice = home.create();
+    SchoolSeason season = null;
     try{
       choice.setOwner(getUser(userId));
+      season = getCurrentSeason();
     }
     catch(FinderException fex){
       throw new IDOCreateException(fex);
     }
 
     choice.setChildId(childId);
-    choice.setCurrentSchoolId(current_school);
+    if(current_school >0)
+   		choice.setCurrentSchoolId(current_school);
     choice.setChosenSchoolId(chosen_school);
+    //if(grade >0 )
     choice.setGrade(grade);
     choice.setChoiceOrder(choiceOrder);
     choice.setMethod(method );
@@ -141,8 +147,15 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
     choice.setSchoolCatalogue(schoolCatalogue);
     choice.setSchoolChoiceDate(choiceDate);
     choice.setMessage(message);
+    if(season!=null){
+    	Integer seasonId = (Integer)season.getPrimaryKey();
+    	choice.setSchoolSeasonId(seasonId.intValue());
+    }
+    	
 
     choice.setCaseStatus(caseStatus);
+    if(parentCase!=null)
+   		choice.setParentCase(parentCase);
 
 
     try{
@@ -214,6 +227,61 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 
 
 		}
+	}
+	
+	public boolean noRoomAction(Integer pk){
+		javax.transaction.UserTransaction trans = getSessionContext().getUserTransaction();
+		try {
+			trans.begin();
+			SchoolChoice choice = this.getSchoolChoiceHome().findByPrimaryKey(pk);
+			choice.setCaseStatus(getCaseStatus("TYST"));
+			choice.store();
+			Iterator children = choice.getChildren();
+			if(children.hasNext()){
+				Case child = (Case) children.next();
+				child.setCaseStatus(getCaseStatusOpen());
+				child.store();
+			}
+		
+			trans.commit();
+		}
+		catch (Exception ex) {
+			ex.printStackTrace();
+			try {
+				trans.rollback();
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+			}
+
+
+		}
+		return false;
+	}
+	
+	public boolean  preliminaryAction(Integer pk){
+		try {
+			SchoolChoice choice = getSchoolChoiceHome().findByPrimaryKey(pk);
+			choice.setCaseStatus(getCaseStatus("PREL"));
+			choice.store();
+			return true;		    
+		}
+		catch (Exception e) {
+		}	
+		return false;
+	}
+	
+	public boolean groupPlaceAction(Integer pk , String group){
+		try {
+			SchoolChoice choice = getSchoolChoiceHome().findByPrimaryKey(pk);
+			choice.setGroupPlace(group);
+			choice.setCaseStatus(getCaseStatus("PLAC"));
+			choice.store();
+			return true;		    
+		}
+		catch (Exception e) {
+		}	
+		return false;
 	}
 
 }

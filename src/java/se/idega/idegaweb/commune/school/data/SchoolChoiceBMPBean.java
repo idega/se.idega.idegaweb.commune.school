@@ -2,6 +2,7 @@ package se.idega.idegaweb.commune.school.data;
 
 import com.idega.block.process.data.*;
 import com.idega.block.school.data.School;
+import com.idega.block.school.data.SchoolSeason;
 import com.idega.user.data.User;
 import java.sql.Timestamp;
 import java.util.Collection;
@@ -20,6 +21,7 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
   final static public String SCHOOLCHOICE = "comm_sch_choice";
   final static public String CASECODE = "MBSKOLV";
 
+  public final static String SCHOOL_SEASON = "school_season_id";
   public final static String CURRENT_SCHOOL = "curr_school_id";
   public final static String GRADE = "grade";
   public final static String CHOSEN_SCHOOL = "school_id";
@@ -39,6 +41,7 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 
   public final static String WORK_SITUATION_1 = "work_situation_1";
   public final static String WORK_SITUATION_2 = "work_situation_2";
+  public final static String GROUP_PLACE = "group_place";
 
   private static final String[] CASE_STATUS_KEYS = {"UBEH","TYST","PREL","PLAC"};
   private static final String[] CASE_STATUS_DESCRIPTIONS = {"Case open","Sleep","Preliminary","Placed"};
@@ -62,10 +65,12 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
     this.addAttribute(CURRENT_SCHOOL,"Current school",true,true,Integer.class,MANY_TO_ONE,School.class);
     this.addAttribute(GRADE,"Grade",Integer.class);
     this.addAttribute(CHOSEN_SCHOOL,"Chosen school",true,true,Integer.class,MANY_TO_ONE,School.class);
+	this.addAttribute(SCHOOL_SEASON,"School season",true,true,Integer.class,MANY_TO_ONE,SchoolSeason.class);
 
     this.addAttribute(WORK_SITUATION_1,"Work situation one",Integer.class);
     this.addAttribute(WORK_SITUATION_2,"Work situation two",Integer.class);
     this.addAttribute(LANGUAGECHOICE,"Language choice",String.class);
+    this.addAttribute(GROUP_PLACE,"Language choice",String.class,10);
     this.addAttribute(SCHOOLCHOICEDATE,"choice date",Timestamp.class);
     this.addAttribute(MESSAGE,"message",String.class,4000);
     this.addAttribute(CHOICEORDER,"choice order",Integer.class);
@@ -113,6 +118,12 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
   public void setCurrentSchoolId(int id){
     setColumn(CURRENT_SCHOOL,id);
   }
+   public int getSchoolSeasonId(){
+    return getIntColumnValue(SCHOOL_SEASON);
+  }
+  public void setSchoolSeasonId(int id){
+    setColumn(SCHOOL_SEASON,id);
+  }
   public int getChosenSchoolId(){
     return getIntColumnValue(CHOSEN_SCHOOL);
   }
@@ -143,6 +154,15 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
   public void setLanguageChoice(String language){
     setColumn(LANGUAGECHOICE,language);
   }
+  
+  public String getGroupPlace(){
+  	return getStringColumnValue(GROUP_PLACE);
+  }
+  
+  public void setGroupPlace(String place){
+  	setColumn(GROUP_PLACE,place);
+  }
+  
   public Timestamp getSchoolChoiceDate(){
     return (Timestamp) getColumnValue(SCHOOLCHOICEDATE);
   }
@@ -198,15 +218,23 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
     setColumn(SCHOOLCATALOGUE,catalogue);
   }
 
-  public Collection ejbFindByChosenSchoolId(int chosenSchoolId)throws javax.ejb.FinderException{
-    return idoFindIDsBySQL("select * from "+getEntityName()+" where "+CHOSEN_SCHOOL+" = "+chosenSchoolId);
+  public Collection ejbFindByChosenSchoolId(int chosenSchoolId,int schoolSeasonId)throws javax.ejb.FinderException{
+    return idoFindIDsBySQL("select * from "+getEntityName()+" where "+CHOSEN_SCHOOL+" = "+chosenSchoolId+" and "+SCHOOL_SEASON+" = "+schoolSeasonId);
   }
-
+  
   public Collection ejbFindByChildId(int childId)throws javax.ejb.FinderException{
     return idoFindIDsBySQL("select * from "+getEntityName()+" where "+CHILD+" = "+childId);
   }
 
-  public Collection ejbFindByCodeAndStatus(String caseCode,String[] caseStatus, int schoolId)throws javax.ejb.FinderException{
+  public Collection ejbFindByChildId(int childId,int schoolSeasonId)throws javax.ejb.FinderException{
+    return idoFindIDsBySQL("select * from "+getEntityName()+" where "+CHILD+" = "+childId+" and "+SCHOOL_SEASON+" = "+schoolSeasonId);
+  }
+  
+  public Collection ejbFindByCodeAndStatus(String caseCode,String[] caseStatus, int schoolId,int schoolSeasonId)throws javax.ejb.FinderException{
+  	return ejbFindByCodeAndStatus(caseCode,caseStatus,schoolId,schoolSeasonId,null);
+  }
+
+  public Collection ejbFindByCodeAndStatus(String caseCode,String[] caseStatus, int schoolId,int schoolSeasonId,String ordered)throws javax.ejb.FinderException{
 
     StringBuffer sql = new StringBuffer("select s.* from ");
     sql.append(getEntityName()).append( " s ");
@@ -216,6 +244,7 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 
     sql.append(" and c.CASE_CODE = '").append(caseCode).append("' ");
     sql.append(" and s.SCHOOL_ID = ").append(schoolId);
+    sql.append(" and ").append(SCHOOL_SEASON).append(" = ").append(schoolSeasonId);
     sql.append(" and c.CASE_STATUS in (");
     for (int i = 0; i < caseStatus.length; i++) {
       if(i>0)
@@ -225,6 +254,9 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
       sql.append("'");
     }
     sql.append(" ) ");
+    if(ordered!=null && !"".equals(ordered)){
+    	sql.append(" order by ").append(ordered);
+    }
     /*}
     catch(java.rmi.RemoteException ex){}*/
     //System.err.println(" \n "+sql.toString()+" \n");
