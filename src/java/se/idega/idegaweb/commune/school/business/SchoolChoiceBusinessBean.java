@@ -839,25 +839,10 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
     public SchoolChoiceReminderReceiver []
         findAllStudentsThatMustDoSchoolChoice ()
         throws RemoteException, FinderException {
-        // this is a fake code - just to get some students - must be replaced!
-        //com.idega.util.Timer works like this.
-        //final long start = Calendar.getInstance ().getTimeInMillis ();
-
-        /*
         final Set ids = findStudentsInFinalClassesThatMustDoSchoolChoice ();
-        System.err.println ((Calendar.getInstance ().getTimeInMillis () - start)
-                            + ": " + ids.toString () + " (" + ids.size () + ")");
         final Set allreadyChosenIds
                 = findStudentIdsWhoChosedForCurrentSeason ();
-        System.err.println ((Calendar.getInstance ().getTimeInMillis () - start)
-                            + ": " + allreadyChosenIds.toString ());
         ids.removeAll (allreadyChosenIds);
-        System.err.println ((Calendar.getInstance ().getTimeInMillis () - start)
-                            + ": " + ids.toString () + " (" + ids.size () + ")");
-        */
-        final Set ids = findStudentIdsWhoChosedForCurrentSeason ();
-        //System.err.println ((Calendar.getInstance ().getTimeInMillis () - start)+ " msec: " + ids.toString () + " (" + ids.size () + ")");
-
         final int idCount = ids.size ();
         final SchoolChoiceReminderReceiver [] receivers
                 = new SchoolChoiceReminderReceiver [idCount];
@@ -869,40 +854,52 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
             receivers [i] = new SchoolChoiceReminderReceiver
                     (familyLogic, userBusiness, id);
         }
-        //System.err.println ((Calendar.getInstance ().getTimeInMillis () - start)  + " msec");
         return receivers;
-    }
-
-    private static float mmToPoints (final float mm) {
-        return mm*72/25.4f;
     }
 
 	private Set findStudentIdsWhoChosedForCurrentSeason ()
         throws RemoteException, FinderException {
+        com.idega.util.Timer timer = new com.idega.util.Timer ();
+        timer.start ();
         final Integer currentSeasonId
                 = (Integer) getCurrentSeason ().getPrimaryKey ();
         final Collection choices = getSchoolChoiceHome().findBySeason
                 (currentSeasonId.intValue ());
-        final Set students = new HashSet ();
+        final Set ids = new HashSet ();
         for (Iterator i = choices.iterator (); i.hasNext ();) {
             final SchoolChoice choice = (SchoolChoice) i.next ();
-            students.add (new Integer (choice.getChildId ()));
+            ids.add (new Integer (choice.getChildId ()));
         }
-        return students;
+        timer.stop ();
+        System.err.println ("Found " + choices.size () + " chosedstudents in "
+                            + timer.getTime () + " msec");
+        System.err.println (ids.toString ());
+        return ids;
 	}
 
     private Set findStudentsInFinalClassesThatMustDoSchoolChoice ()
         throws RemoteException, FinderException {
+        com.idega.util.Timer timer = new com.idega.util.Timer ();
+        timer.start ();
         final Integer currentSeasonId
                 = (Integer) getCurrentSeason ().getPrimaryKey ();
-        final Collection choices
+        System.err.println ("Current season=" + currentSeasonId);
+        final Collection students
                 = getSchoolClassMemberHome().findAllBySeasonAndMaximumAge
-                (currentSeasonId.intValue (), 15);
-        final Set students = new HashSet ();
-        for (Iterator i = choices.iterator (); i.hasNext ();) {
+                (currentSeasonId.intValue (), 14);
+        final Set ids = new HashSet ();
+        for (Iterator i = students.iterator (); i.hasNext ();) {
             final SchoolClassMember student = (SchoolClassMember) i.next ();
-            students.add (new Integer (student.getClassMemberId ()));
+            ids.add (new Integer (student.getClassMemberId ()));
         }
-        return students;        
+        timer.stop ();
+        System.err.println ("Found " + students.size () + " finalstudents in "
+                            + timer.getTime () + " msec");
+        System.err.println (ids.toString ());
+        return ids;        
+    }
+
+    private static float mmToPoints (final float mm) {
+        return mm*72/25.4f;
     }
 }
