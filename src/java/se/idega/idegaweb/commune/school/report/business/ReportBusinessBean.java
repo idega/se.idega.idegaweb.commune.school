@@ -1,5 +1,5 @@
 /*
- * $Id: ReportBusinessBean.java,v 1.19 2004/01/15 10:51:58 anders Exp $
+ * $Id: ReportBusinessBean.java,v 1.20 2004/01/19 08:33:21 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -29,10 +29,10 @@ import com.idega.block.school.data.SchoolStudyPathHome;
 /** 
  * Business logic for school reports.
  * <p>
- * Last modified: $Date: 2004/01/15 10:51:58 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/19 08:33:21 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.19 $
+ * @version $Revision: 1.20 $
  */
 public class ReportBusinessBean extends com.idega.business.IBOServiceBean implements ReportBusiness  {
 
@@ -363,6 +363,29 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 				_schools.add(s1);
 				_schools.add(s2);
 				_schools.add(s3);
+			} catch (Exception e) {}
+		}
+		return _schools;
+	}
+	
+	/**
+	 * Returns all Nacka commune high schools. 
+	 */
+	public Collection getNackaCommuneHighSchools() {
+		if (_schools == null) {
+			try {
+				_schools = new ArrayList();
+				SchoolHome home = getSchoolBusiness().getSchoolHome();
+				School s1 = home.findBySchoolName("Internationella Skolan i Nacka");
+				School s2 = home.findBySchoolName("Nacka Gymnasium A-enheten");
+				School s3 = home.findBySchoolName("Nacka Gymnasium B-enheten");
+				School s4 = home.findBySchoolName("Nacka Gymnasium C-enheten");
+				School s5 = home.findBySchoolName("Samskolan");
+				_schools.add(s1);
+				_schools.add(s2);
+				_schools.add(s3);
+				_schools.add(s4);
+				_schools.add(s5);
 			} catch (Exception e) {}
 		}
 		return _schools;

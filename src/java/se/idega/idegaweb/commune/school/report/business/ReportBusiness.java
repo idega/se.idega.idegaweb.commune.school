@@ -17,6 +17,7 @@ public interface ReportBusiness extends com.idega.business.IBOService
  public int getHighSchoolStudentAgeFrom(int p0) throws java.rmi.RemoteException;
  public int getHighSchoolStudentAgeTo(int p0) throws java.rmi.RemoteException;
  public int getHighSchoolTypeId() throws java.rmi.RemoteException;
+ public java.util.Collection getNackaCommuneHighSchools() throws java.rmi.RemoteException;
  public int getPreSchoolClassTypeId() throws java.rmi.RemoteException;
  public java.util.Collection getPrivateHighSchools() throws java.rmi.RemoteException;
  public java.util.Collection getPrivateSchoolAreas() throws java.rmi.RemoteException;

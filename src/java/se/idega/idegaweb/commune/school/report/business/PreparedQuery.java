@@ -1,5 +1,5 @@
 /*
- * $Id: PreparedQuery.java,v 1.2 2004/01/15 13:32:24 anders Exp $
+ * $Id: PreparedQuery.java,v 1.3 2004/01/19 08:33:21 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -27,10 +27,10 @@ import com.idega.block.school.data.SchoolSeason;
 /** 
  * Handles the SQL logic for school report calculations.
  * <p>
- * Last modified: $Date: 2004/01/15 13:32:24 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/19 08:33:21 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class PreparedQuery {
 
@@ -373,6 +373,24 @@ public class PreparedQuery {
 			School school = (School) iter.next();
 			sql += school.getPrimaryKey();
 			if (iter.hasNext()) {
+				sql += ", ";
+			}
+		}
+		sql += ")";
+		_sqlWhere.add(sql);
+		
+		_sqlFrom.put(U, TABLE_U);
+	}
+
+	/**
+	 * Set select only the specified schools.
+	 */
+	public void setSchools(School[] schools) {
+		String sql = "s.sch_school_id in (";
+		for (int i = 0; i < schools.length; i++) {
+			School school = schools[i];
+			sql += school.getPrimaryKey();
+			if (i != schools.length - 1) {
 				sql += ", ";
 			}
 		}
