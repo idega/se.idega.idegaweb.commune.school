@@ -45,8 +45,7 @@ import com.idega.util.IWTimestamp;
  *
  * Business object with helper methods for CentralPlacementEditor
  */
-public class CentralPlacementBusinessBean extends IBOServiceBean 
-																						implements CentralPlacementBusiness {
+public class CentralPlacementBusinessBean extends IBOServiceBean implements CentralPlacementBusiness {
 																							
 	//  Keys for error messages
 	private static final String KP = "central_placement_business.";
@@ -92,7 +91,7 @@ public class CentralPlacementBusinessBean extends IBOServiceBean
 			student = getUserBusiness().getUser(studentID);
 			if (student == null) 
 				throw new CentralPlacementException(KEY_ERROR_CHILD_ID, "No valid pupil found");
-			latestPlacement = getLatestPlacement(student);
+			latestPlacement = getLatestPlacementLatestFromElemAndHighSchool(student);
 		}
 		
 		// operational field
@@ -306,32 +305,8 @@ public class CentralPlacementBusinessBean extends IBOServiceBean
 		return newPlacement; 
 		
 	}
-
-	public SchoolClassMember getCurrentSchoolClassMembership(User user, IWContext iwc)
-		throws RemoteException {
-		try {
-			final SchoolSeason season = getSchoolChoiceBusiness().getCurrentSeason();
-
-			//int childID = ((Integer) child.getPrimaryKey()).intValue();
-			//final SchoolClassMember placement = 
-			//    getSchoolBusiness(iwc).getSchoolClassMemberHome().findByUserAndSeason(childID, 2);
-
-			final SchoolClassMember placement = getSchoolBusiness().getSchoolClassMemberHome()
-																							.findByUserAndSeason(user, season);
-			//Integer PK = (Integer) placement.getPrimaryKey();
-			Date removedDate = placement.getRemovedDate();
-			if (placement == null || removedDate != null)
-				return null;
-			else
-				return placement;
-				
-			//return (null == placement || null != placement.getRemovedDate()) ? null : placement;
-		} catch (final FinderException e) {
-			return null;
-		}
-	}
 	
-	public SchoolClassMember getLatestPlacement(User pupil) throws RemoteException {
+	public SchoolClassMember getLatestPlacementLatestFromElemAndHighSchool(User pupil) throws RemoteException {
 		SchoolClassMember mbr = null;
 		try {
 			if (pupil != null) {
