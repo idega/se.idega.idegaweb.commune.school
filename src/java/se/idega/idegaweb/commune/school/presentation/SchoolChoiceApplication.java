@@ -644,7 +644,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 					getParentPage().setOnLoad(initFunction);
 				}
 				else {
-					if (schoolClassMember != null) {
+					if (hasPreviousSchool) {
 						initFunction = getInitFilterCallerScript(iwc, prmPreType, prmPreArea, prmPreSchool, ((Integer)schoolType.getPrimaryKey()).intValue(), ((Integer)schoolArea.getPrimaryKey()).intValue(), ((Integer)school.getPrimaryKey()).intValue());
 						script.addFunction("presch_init", initFunction);
 						drpGrade.setSelectedElement(schoolYear.getSchoolYearAge());
