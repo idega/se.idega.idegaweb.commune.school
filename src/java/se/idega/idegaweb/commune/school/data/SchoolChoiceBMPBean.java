@@ -82,6 +82,7 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 
 	public static final int NAME_SORT = 1;
 	public static final int GENDER_SORT = 2;
+	public static final int ADDRESS_SORT = 3;
 	public static final int PERSONAL_ID_SORT = 4;
 	public static final int LANGUAGE_SORT = 5;
 	public static final int CREATED_SORT = 6;
@@ -751,12 +752,15 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 		query.append(getEntityName()).append(" csc");
 		query.append(", ").append(UserBMPBean.TABLE_NAME).append(" u");
 		query.append(", ").append(CaseBMPBean.TABLE_NAME).append(" pc");
+		query.append(", ic_address a, ic_user_address ua");
 		
 		
 
 		query.appendWhere();
 		query.append("u.").append(UserBMPBean.getColumnNameUserID()).appendEqualSign().append("csc.").append(CHILD);
 		query.appendAnd().append("csc.").append(getIDColumnName()).appendEqualSign().append("pc.").append(CaseBMPBean.TABLE_NAME + "_ID");
+		query.appendAnd().append("csc.").append(CHILD).appendEqualSign().append("ua.").append(UserBMPBean.getColumnNameUserID());
+		query.appendAnd().append("ua.ic_address_id").appendEqualSign().append("a.ic_address_id");
 
 		if (statuses) {
 			query.appendAnd().append("pc.").append(CaseBMPBean.COLUMN_CASE_STATUS).appendIn();
@@ -847,6 +851,8 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 		if (orderBy != -1) {
 			if (orderBy == NAME_SORT)
 				query.appendOrderBy("u.last_name,u.first_name,u.middle_name");
+			else if (orderBy == ADDRESS_SORT)
+				query.appendOrderBy("a.street_name,a.street_number,u.last_name,u.first_name,u.middle_name");
 			else if (orderBy == GENDER_SORT)
 				query.appendOrderBy("u.ic_gender_id,u.last_name,u.first_name,u.middle_name");
 			else if (orderBy == PERSONAL_ID_SORT)
