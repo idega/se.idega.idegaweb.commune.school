@@ -7,10 +7,8 @@
 package se.idega.idegaweb.commune.school.presentation;
 
 import java.rmi.RemoteException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 
 import se.idega.idegaweb.commune.school.business.SchoolCommuneBusiness;
 
@@ -33,7 +31,8 @@ public class SchoolClassViewer extends SchoolCommuneBlock {
 	public void init(IWContext iwc) throws Exception {
 		// TODO Auto-generated method stub
 		_business = getSchoolCommuneBusiness(iwc);
-		_columnsToShow = new ArrayList();
+		//_columnsToShow = new ArrayList();
+		getViewForClasses();
 	}
 	
 	private Table getViewForClasses() {
@@ -43,6 +42,7 @@ public class SchoolClassViewer extends SchoolCommuneBlock {
 			Iterator scIter = schoolClasses.iterator();
 			while(scIter.hasNext()) {
 				SchoolClass schoolClass = (SchoolClass) scIter.next();
+				add(schoolClass.getSchoolClassName());
 			}
 		} catch (RemoteException e) {
 			e.printStackTrace();
@@ -58,7 +58,7 @@ public class SchoolClassViewer extends SchoolCommuneBlock {
 	private int _schoolId = -1;
 	private int _schoolYearId = -1;
 	
-	private List _columnsToShow;
+	//private List _columnsToShow;
 }
 
 
