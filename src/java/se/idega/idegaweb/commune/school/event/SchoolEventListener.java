@@ -53,6 +53,9 @@ public class SchoolEventListener implements IWPageEventListener {
 			if (iwc.isParameterSet(session.getParameterStudentID()))
 				_studentID = Integer.parseInt(iwc.getParameter(session.getParameterStudentID()));
 			
+			if (iwc.isParameterSet(session.getParameterSchoolGroupIDs()))
+				session.setSchoolGroupIDs(iwc.getParameterValues(session.getParameterSchoolGroupIDs()));
+			
 			if ( _schoolClassID != -1 && _schoolYearID != -1 )
 				validateSchoolClass(iwc);
 				
