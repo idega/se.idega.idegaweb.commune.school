@@ -11,6 +11,7 @@ import se.idega.idegaweb.commune.school.business.SchoolCommuneBusiness;
 import se.idega.idegaweb.commune.school.business.SchoolCommuneSession;
 
 import com.idega.block.school.business.SchoolBusiness;
+import com.idega.block.school.business.SchoolTypeBusiness;
 import com.idega.block.school.business.SchoolYearComparator;
 import com.idega.block.school.data.School;
 import com.idega.block.school.data.SchoolClass;
@@ -35,6 +36,7 @@ public abstract class SchoolCommuneBlock extends CommuneBlock {
 	private SchoolCommuneBusiness business;
 	protected SchoolCommuneSession session;
 	private SchoolBusiness sBusiness;
+	private SchoolTypeBusiness stBusiness;
 	private int _schoolID = -1;
 	private int _schoolSeasonID = -1;
 	private int _schoolYearID = -1;
@@ -45,6 +47,7 @@ public abstract class SchoolCommuneBlock extends CommuneBlock {
 		business = getSchoolCommuneBusiness(iwc);
 		session = getSchoolCommuneSession(iwc);
 		sBusiness = getSchoolBusiness(iwc);
+		stBusiness = getSchoolTypeBusiness(iwc);
 		initialize(iwc);
 
 		init(iwc);
@@ -103,7 +106,8 @@ public abstract class SchoolCommuneBlock extends CommuneBlock {
 		
 		DropdownMenu menu = new DropdownMenu(session.getParameterSchoolID());
 		menu.setToSubmit();
-		Collection schools = business.getSchoolBusiness().findAllSchools();
+		Collection schoolTypeIds = stBusiness.findAllSchoolTypesForSchool();
+		Collection schools = business.getSchoolBusiness().findAllSchoolsByType(schoolTypeIds);
 		Iterator iter = schools.iterator();
 		while (iter.hasNext()) {
 			School sCool = (School) iter.next();	
@@ -218,6 +222,9 @@ public abstract class SchoolCommuneBlock extends CommuneBlock {
 		return (SchoolBusiness) IBOLookup.getServiceInstance(iwac, SchoolBusiness.class);
 	}
 	
+	private SchoolTypeBusiness getSchoolTypeBusiness(IWApplicationContext iwac) throws RemoteException {
+		return (SchoolTypeBusiness) IBOLookup.getServiceInstance(iwac, SchoolTypeBusiness.class);
+	}
 	/**
 	 * Returns the schoolClassID.
 	 * @return int
