@@ -218,11 +218,11 @@ public abstract class SchoolCommuneBlock extends CommuneBlock {
 		return (SchoolCommuneSession) IBOLookup.getSessionInstance(iwc, SchoolCommuneSession.class);	
 	}
 	
-	private SchoolBusiness getSchoolBusiness(IWApplicationContext iwac) throws RemoteException {
+	protected SchoolBusiness getSchoolBusiness(IWApplicationContext iwac) throws RemoteException {
 		return (SchoolBusiness) IBOLookup.getServiceInstance(iwac, SchoolBusiness.class);
 	}
 	
-	private SchoolTypeBusiness getSchoolTypeBusiness(IWApplicationContext iwac) throws RemoteException {
+	protected SchoolTypeBusiness getSchoolTypeBusiness(IWApplicationContext iwac) throws RemoteException {
 		return (SchoolTypeBusiness) IBOLookup.getServiceInstance(iwac, SchoolTypeBusiness.class);
 	}
 	/**
