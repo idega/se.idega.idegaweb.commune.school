@@ -673,11 +673,12 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		String personalID = PersonalIDFormatter.format(child.getPersonalID(), iwc.getApplication().getSettings().getApplicationLocale());
 		table.add(getSmallText(personalID), 3, 2);
 
-		try {
-			Address address = userbuiz.getUsersMainAddress(child);
-			table.add(getSmallText(address.getStreetAddress() + ", " + address.getPostalAddress()), 3, 3);
-		}
-		catch (RemoteException ex) {
+		Address childAddress = userbuiz.getUsersMainAddress(child);
+		if (childAddress != null) {
+			table.add(getSmallText(childAddress.getStreetAddress()), 3, 3);
+			if (childAddress.getPostalAddress() != null) {
+				table.add(getSmallText(", " + childAddress.getPostalAddress()), 3, 3);
+			}
 		}
 
 		MemberFamilyLogic mlogic = (MemberFamilyLogic) IBOLookup.getServiceInstance(iwc, MemberFamilyLogic.class);
