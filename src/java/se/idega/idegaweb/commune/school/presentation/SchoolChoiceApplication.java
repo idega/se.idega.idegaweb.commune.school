@@ -111,6 +111,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
   private int valPreSchool = -1;
   private int valType = -1;
   private int childId = -1;
+  private boolean showAgree = false;
 
 
   public void control(IWContext iwc) throws Exception{
@@ -428,10 +429,17 @@ public class SchoolChoiceApplication extends CommuneBlock {
     try{
       Collection parents = mlogic.getCustodiansFor(child);
       Iterator iter = parents.iterator();
+      String address = "";
       while(iter.hasNext()){
 				User parent = (User) iter.next();
-				T.add(getSmallText(parent.getNameLastFirst()),1,row++);
-				T.add(userbuiz.getUsersMainAddress(parent).getStreetAddress());
+				String addr = userbuiz.getUsersMainAddress(parent).getStreetAddress();
+				T.add(getSmallText(parent.getNameLastFirst()),1,row);
+				T.add(getSmallText(addr),3,row);
+				row++;
+				
+				// checkiing for same parent address
+				showAgree = address.equalsIgnoreCase(addr);
+				address = addr;
       }
     }
     catch(NoCustodianFound ex){
@@ -443,14 +451,17 @@ public class SchoolChoiceApplication extends CommuneBlock {
 
   private PresentationObject getMessagePart(IWContext iwc)throws java.rmi.RemoteException{
     Table T = new Table();
-
-    CheckBox chkCustodiansAgree = new CheckBox(prmCustodiansAgree,"true");
-    chkCustodiansAgree.setChecked(valCustodiansAgree);
+	
+    
     CheckBox chkSendCatalogue = new CheckBox(prmSendCatalogue,"true");
     chkSendCatalogue.setChecked(valSendCatalogue);
     TextArea taMessage = new TextArea(prmMessage,65,6);
-    T.add(chkCustodiansAgree,1,1);
-    T.add(getSmallText(iwrb.getLocalizedString("school.custodians_agree","Parents/Custodians agree")),1,1);
+    if(showAgree){
+    	CheckBox chkCustodiansAgree = new CheckBox(prmCustodiansAgree,"true");
+    	chkCustodiansAgree.setChecked(valCustodiansAgree);
+    	T.add(chkCustodiansAgree,1,1);
+    	T.add(getSmallText(iwrb.getLocalizedString("school.custodians_agree","Parents/Custodians agree")),1,1);
+    }
     T.add(chkSendCatalogue,1,2);
     T.add(getSmallText(iwrb.getLocalizedString("school.send_catalogue","Send school catalogue")),1,2);
     T.add(taMessage,1,3);
