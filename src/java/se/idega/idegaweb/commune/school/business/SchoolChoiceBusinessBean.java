@@ -262,12 +262,28 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	
 	private void handleSchoolChangeHeadMasters(User child,int oldSchoolID,int newSchoolID)throws RemoteException{
 		try {
-			getMessageBusiness().createUserMessage(getSchoolBusiness().getHeadmaster(oldSchoolID),getOldHeadmasterSubject(),getOldHeadmasterBody(child, getSchool(newSchoolID)));
+			School oldSchool = getSchool(oldSchoolID);
+			Collection coll = getSchoolBusiness().getHeadmasters(oldSchool);
+			if (!coll.isEmpty()) {
+				Iterator iter = coll.iterator();
+				while (iter.hasNext()) {
+					User user = (User) iter.next();
+					getMessageBusiness().createUserMessage(user,getOldHeadmasterSubject(),getOldHeadmasterBody(child, getSchool(newSchoolID)));
+				}
+			}
 		}
 		catch(Exception ex){
 		}
 		try{
-			getMessageBusiness().createUserMessage(getSchoolBusiness().getHeadmaster(newSchoolID),getNewHeadMasterSubject(),getNewHeadmasterBody(child, getSchool(oldSchoolID)));
+			School newSchool = getSchool(newSchoolID);
+			Collection coll = getSchoolBusiness().getHeadmasters(newSchool);
+			if (!coll.isEmpty()) {
+				Iterator iter = coll.iterator();
+				while (iter.hasNext()) {
+					User user = (User) iter.next();
+					getMessageBusiness().createUserMessage(user,getNewHeadMasterSubject(),getNewHeadmasterBody(child, getSchool(oldSchoolID)));
+				}
+			}
 		}
 		catch(Exception ex){
 		}
@@ -280,10 +296,12 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 			MemberFamilyLogic familyLogic = getMemberFamilyLogic();
 			Collection parents = familyLogic.getCustodiansFor(getUser(childID));
 			User appParent = getUser(applicationParentID);
-			if(isSchoolChangeApplication)
-				getMessageBusiness().createUserMessage(appParent,getSeparateParentSubjectChange(),getSeparateParentMessageBodyChange(choice,appParent)); 
-			else
-				getMessageBusiness().createUserMessage(appParent,getSeparateParentSubjectAppl(),getSeparateParentMessageBodyAppl(choices,appParent)); 
+			if (familyLogic.isChildInCustodyOf(choice.getChild(), appParent)) {
+				if(isSchoolChangeApplication)
+					getMessageBusiness().createUserMessage(appParent,getSeparateParentSubjectChange(),getSeparateParentMessageBodyChange(choice,appParent)); 
+				else
+					getMessageBusiness().createUserMessage(appParent,getSeparateParentSubjectAppl(),getSeparateParentMessageBodyAppl(choices,appParent)); 
+			}
 
 			Iterator iter = parents.iterator();		
 			User otherParent = null;
