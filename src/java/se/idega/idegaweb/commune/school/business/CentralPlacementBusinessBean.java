@@ -140,28 +140,41 @@ public class CentralPlacementBusinessBean extends IBOServiceBean
 			placement = getSchoolBusiness(iwc).storeSchoolClassMember(studentID, schoolClassID, 
 																									registerDate, registrator, notes);
 			if (placement != null) {
-				// *** Store the rest of the parameters ***
-					// Compensation by invoice
-				if (iwc.isParameterSet(CentralPlacementEditor.PARAM_PAYMENT_BY_INVOICE)) {
-					String value = iwc.getParameter(CentralPlacementEditor.PARAM_PAYMENT_BY_INVOICE);
+			// *** START - Store the rest of the parameters ***
+
+				// Compensation by agreement
+				if (iwc.isParameterSet(CentralPlacementEditor.PARAM_PAYMENT_BY_AGREEMENT) &&
+								!iwc.getParameter(CentralPlacementEditor.PARAM_PAYMENT_BY_AGREEMENT).
+																															equals("-1")) {
+					String value = 
+									iwc.getParameter(CentralPlacementEditor.PARAM_PAYMENT_BY_AGREEMENT);
 					if (value.equals(CentralPlacementEditor.KEY_DROPDOWN_YES)) {
-						placement.setHasCompensationByInvoice(true);
+						placement.setHasCompensationByAgreement(true);
 					} else if (value.equals(CentralPlacementEditor.KEY_DROPDOWN_NO)) {
-						placement.setHasCompensationByInvoice(true);
+						placement.setHasCompensationByAgreement(false);
 					}
 				}
-				// Compensation by agreement
-/*			if (iwc.isParameterSet(CentralPlacementEditor.PARAM_PAYMENT_BY_AGREEMENT)) {
-				String value = iwc.getParameter(CentralPlacementEditor.PARAM_PAYMENT_BY_AGREEMENT);
-				if (value.equals(CentralPlacementEditor.KEY_DROPDOWN_YES)) {
-					placement.(true);
-				} else if (value.equals(CentralPlacementEditor.KEY_DROPDOWN_NO)) {
-					placement.setHasCompensationByInvoice(true);
+				// Placement paragraph
+				if (iwc.isParameterSet(CentralPlacementEditor.PARAM_PLACEMENT_PARAGRAPH)) {
+					placement.setPlacementParagraph(
+									iwc.getParameter(CentralPlacementEditor.PARAM_PLACEMENT_PARAGRAPH));					
 				}
-			}
-*/				
+				// Invoice interval
+				if (iwc.isParameterSet(CentralPlacementEditor.PARAM_INVOICE_INTERVAL)) {
+					placement.setInvoiceInterval(
+										iwc.getParameter(CentralPlacementEditor.PARAM_INVOICE_INTERVAL));
+				}
+				// Study path
+				if (iwc.isParameterSet(CentralPlacementEditor.PARAM_STUDY_PATH)) {
+					int pK = Integer.parseInt(
+													iwc.getParameter(CentralPlacementEditor.PARAM_STUDY_PATH));
+					placement.setStudyPathId(pK);
+				}
 				
+			//	*** END - Store the rest of the parameters ***	
 			}
+			
+			
 //			Integer newPlaceID = (Integer) placement.getPrimaryKey(); // test
 
 			// End old placement
