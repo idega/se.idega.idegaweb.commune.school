@@ -73,4 +73,5 @@ public interface SchoolChoiceBusiness extends CaseBusiness
  public void setAsPreliminary(se.idega.idegaweb.commune.school.data.SchoolChoice p0,com.idega.user.data.User p1)throws java.rmi.RemoteException, java.rmi.RemoteException;
  public void setChildcarePreferences(com.idega.user.data.User p0,int p1,boolean p2,java.lang.String p3,java.lang.String p4,java.lang.String p5)throws java.rmi.RemoteException;
  public String getSchoolChoiceCaseCode() throws java.rmi.RemoteException;
+ public java.util.List getConnectedSchoolchoices(se.idega.idegaweb.commune.school.data.SchoolChoice selectedChoice)throws java.rmi.RemoteException;
  }

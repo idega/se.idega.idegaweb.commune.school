@@ -1531,4 +1531,34 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		return years;
 
 	}
+	
+	public List getConnectedSchoolchoices(SchoolChoice selectedChoice){
+		
+		SchoolChoice current =selectedChoice;
+		ArrayList list =new ArrayList();
+		try {
+			SchoolChoiceHome chome =getSchoolChoiceHome();
+			if(current!=null){
+				// find leaf
+				Collection childs  =chome.findByParent(current);
+				while(!childs.isEmpty()){
+					for (Iterator iter = childs.iterator(); iter.hasNext();) {
+						current = (SchoolChoice) iter.next();
+						childs =chome.findByParent(current);
+					}
+				}
+				list.add(0,current);
+				Case parent;
+				while((parent=current.getParentCase())!=null){
+					current =chome.findByPrimaryKey(parent.getPrimaryKey());
+					list.add(0,current);
+				}
+				
+			}
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+		return list;
+	}
 }

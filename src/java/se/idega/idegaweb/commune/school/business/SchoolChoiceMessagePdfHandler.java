@@ -8,6 +8,7 @@ package se.idega.idegaweb.commune.school.business;
 import java.rmi.RemoteException;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 
 import javax.ejb.EJBException;
@@ -154,8 +155,19 @@ public class SchoolChoiceMessagePdfHandler implements MessagePdfHandler {
 		Case parentCase =msg.getParentCase();
 		try {
 			SchoolChoiceBusiness schoolChoiceService =getSchoolChoiceBusiness(dpc);
-			if(parentCase.getCaseCode().equals(schoolChoiceService.getSchoolChoiceCaseCode())){
+			if(parentCase.getCaseCode().toString().equals(schoolChoiceService.getSchoolChoiceCaseCode())){
 				SchoolChoice choice = schoolChoiceService.getSchoolChoiceHome().findByPrimaryKey(parentCase.getPrimaryKey());
+				SchoolChoice choice1=null,choice2=null,choice3=null;
+				List choices =schoolChoiceService.getConnectedSchoolchoices(choice);
+				int size =choices.size();
+				if(size>=1)
+					choice1 = (SchoolChoice)choices.get(0);
+				if(size>=2)
+					choice2 = (SchoolChoice)choices.get(1);
+				if(size>=3)
+					choice3 = (SchoolChoice)choices.get(2);
+				
+				
 				//DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT,dpc.getLocale());
 				XmlPeer peer = new XmlPeer(ElementTags.CHUNK, "mbskolv_season");
 				peer.setContent(choice.getSchoolSeason().getName());
@@ -164,6 +176,31 @@ public class SchoolChoiceMessagePdfHandler implements MessagePdfHandler {
 				peer = new XmlPeer(ElementTags.CHUNK, "mbskolv_school");
 				peer.setContent(choice.getChosenSchool().getName());
 				tagmap.put(peer.getAlias(), peer);
+				
+				peer = new XmlPeer(ElementTags.CHUNK, "mbskolv_child_name");
+				peer.setContent(choice.getChild().getName());
+				tagmap.put(peer.getAlias(), peer);
+				
+				peer = new XmlPeer(ElementTags.CHUNK, "mbskolv_child_personalid");
+				peer.setContent(choice.getChild().getPersonalID());
+				tagmap.put(peer.getAlias(), peer);
+				
+				if(choice1!=null){
+					peer = new XmlPeer(ElementTags.CHUNK, "mbskolv_first_school");
+					peer.setContent(choice1.getChosenSchool().getName());
+					tagmap.put(peer.getAlias(), peer);
+				}
+				
+				if(choice2!=null){
+					peer = new XmlPeer(ElementTags.CHUNK, "mbskolv_second_school");
+					peer.setContent(choice2.getChosenSchool().getName());
+					tagmap.put(peer.getAlias(), peer);
+				}
+				if(choice3!=null){
+					peer = new XmlPeer(ElementTags.CHUNK, "mbskolv_third_school");
+					peer.setContent(choice3.getChosenSchool().getName());
+					tagmap.put(peer.getAlias(), peer);
+				}
 				
 			}
 		}
