@@ -1,5 +1,5 @@
 /*
- * $Id: StudentAddressLabelsWriter.java,v 1.9 2004/10/22 12:37:51 aron Exp $
+ * $Id: StudentAddressLabelsWriter.java,v 1.10 2004/10/29 12:50:08 laddi Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -51,10 +51,10 @@ import com.lowagie.text.pdf.PdfWriter;
 /** 
  * This MediaWritable class generates a PDF stream with student address labels.
  * <p>
- * Last modified: $Date: 2004/10/22 12:37:51 $ by $Author: aron $
+ * Last modified: $Date: 2004/10/29 12:50:08 $ by $Author: laddi $
  *
  * @author Anders Lindman
- * @version $Revision: 1.9 $
+ * @version $Revision: 1.10 $
  * @see com.idega.io.MediaWritable
  */
 public class StudentAddressLabelsWriter {
@@ -254,7 +254,7 @@ public class StudentAddressLabelsWriter {
 	/**
 	 * Adds a student address to the specified document. 
 	 */
-	protected void addAddress(PdfWriter writer, IWResourceBundle iwrb, MailReceiver student, int studentCount) throws RemoteException {
+	protected void addAddress(PdfWriter writer, IWResourceBundle iwrb, MailReceiver student, int studentCount) {
 
 		//User student = member.getStudent();
 		//Address address = userBusiness.getUsersMainAddress(student);
