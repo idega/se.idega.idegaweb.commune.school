@@ -1541,6 +1541,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 			s.append("\n\t }");
 		}
 		//s.append("\n\t\t findObj('").append("submit").append("').disabled=true;");
+		s.append("\n\t document.body.style.cursor = 'wait'");
 		s.append("\n\t return true;");
 		s.append("\n}\n");
 		return s.toString();
