@@ -1,5 +1,5 @@
 /*
- * $Id: ReportQuery.java,v 1.1 2003/12/08 16:24:24 anders Exp $
+ * $Id: ReportQuery.java,v 1.2 2003/12/09 12:49:34 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -19,10 +19,10 @@ import com.idega.util.database.ConnectionBroker;
 /** 
  * Handles the SQL logic for school report calculations.
  * <p>
- * Last modified: $Date: 2003/12/08 16:24:24 $ by $Author: anders $
+ * Last modified: $Date: 2003/12/09 12:49:34 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class ReportQuery {
 
@@ -135,6 +135,7 @@ public class ReportQuery {
 	 * Returns -1 if error or no row found. 
 	 */
 	public int execute() {
+		System.out.println("SQL = " + sql);
 		int result = -1;
 		Connection connection = null;
 		Statement statement = null;
