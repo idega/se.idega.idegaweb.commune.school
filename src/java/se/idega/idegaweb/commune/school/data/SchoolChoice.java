@@ -43,7 +43,6 @@ public interface SchoolChoice extends com.idega.data.IDOEntity,com.idega.block.p
  public int getSchoolTypeId();
  public int getWorkSituation1();
  public int getWorkSituation2();
- public void initializeAttributes();
  public void setAutoAssign(boolean p0);
  public void setChangeOfSchool(boolean p0);
  public void setChildId(int p0);

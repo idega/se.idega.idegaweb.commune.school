@@ -588,8 +588,15 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 		return ejbHomeGetCount(-1, validStatuses);
 	}
 
-	public int ejbHomeGetCount(int schoolId, String[] validStatuses) throws IDOException {
+	public int ejbHomeGetCount(String[] validStatuses, int seasonID) throws IDOException {
+		return ejbHomeGetCount(-1, seasonID, validStatuses);
+	}
 
+	public int ejbHomeGetCount(int schoolId, String[] validStatuses) throws IDOException {
+		return ejbHomeGetCount(schoolId, -1, validStatuses);
+	}
+	
+	public int ejbHomeGetCount(int schoolId, int seasonID, String[] validStatuses) throws IDOException {
 		if (validStatuses != null && validStatuses.length > 0) {
 			IDOQuery query = idoQuery();
 			query.appendSelectCountFrom().append(getEntityName()).append(" csc");
@@ -602,7 +609,10 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 			if (schoolId > 0) {
 				query.appendAnd().append("csc.").append(CHOSEN_SCHOOL).appendEqualSign().append(schoolId);
 			}
-
+			if (seasonID > 0) {
+				query.appendAnd().append("csc.").append(SCHOOL_SEASON).appendEqualSign().append(seasonID);
+			}
+			
 			return this.idoGetNumberOfRecords(query);
 		}
 		else {
@@ -611,8 +621,8 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 			return this.idoGetNumberOfRecords(query);
 
 		}
-
 	}
+
 	public int ejbHomeGetCount(int schoolID, int seasonID, int gradeYear, int[] choiceOrder, String[] validStatuses, String searchStringForUser) throws IDOException {
 		IDOQuery query = getIDOQuery(schoolID, seasonID, gradeYear, choiceOrder, validStatuses, searchStringForUser, true, false, -1);
 		return this.idoGetNumberOfRecords(query);
