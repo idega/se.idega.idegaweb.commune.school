@@ -796,6 +796,11 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	private Collection getSchoolByAreaAndType(IWContext iwc, int area, int type) {
 		try {
 			SchoolBusiness sBuiz = (SchoolBusiness) IBOLookup.getServiceInstance(iwc, SchoolBusiness.class);
+			if (schoolYear != null) {
+				SchoolYear yearAppliedFor = schCommBiz.getNextSchoolYear(schoolYear);
+				if (yearAppliedFor != null)
+					return sBuiz.findAllSchoolsByAreaAndTypeAndYear(area, type, ((Integer)yearAppliedFor.getPrimaryKey()).intValue());
+			}
 			return sBuiz.findAllSchoolsByAreaAndType(area, type);
 
 		}
@@ -848,6 +853,8 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		s.append("var typeSelect = type;").append(" \n\t");
 		s.append("var areaSelect = area;").append(" \n\t");
 		s.append("var schoolSelect = school;").append(" \n\t");
+		s.append("var selectedType = typeSelect.options[typeSelect.selectedIndex].value;").append(" \n\t");
+		s.append("var selectedArea = areaSelect.options[areaSelect.selectedIndex].value;").append(" \n\t");
 		s.append("var selected = 0;").append(" \n\t");
 		s.append("if(index == 1){").append(" \n\t\t");
 		s.append("selected = typeSelect.options[typeSelect.selectedIndex].value;").append("\n\t\t");
@@ -884,57 +891,59 @@ public class SchoolChoiceApplication extends CommuneBlock {
 			// iterate through schooltypes
 			while (iter.hasNext()) {
 				type = (SchoolType) iter.next();
-
-				Integer tPK = (Integer) type.getPrimaryKey();
-				//System.err.println("checking type "+tPK.toString());
-				areas = getSchoolAreasWithType(iwc, tPK.intValue());
-				if (areas != null && !areas.isEmpty()) {
-					Iterator iter2 = areas.iterator();
-					t.append("if(selected == \"").append(tPK.toString()).append("\"){").append("\n\t\t");
-
-					Hashtable aHash = new Hashtable();
-
-					// iterate through areas whithin types
-					while (iter2.hasNext()) {
-						area = (SchoolArea) iter2.next();
-						Integer aPK = (Integer) area.getPrimaryKey();
-						// System.err.println("checking area "+aPK.toString());
-						if (!aHash.containsKey(aPK)) {
-							aHash.put(aPK, aPK);
-							schools = getSchoolByAreaAndType(iwc, aPK.intValue(), tPK.intValue());
-							if (schools != null) {
-								Iterator iter3 = schools.iterator();
-								a.append("if(selected == \"").append(aPK.toString()).append("\"){").append("\n\t\t");
-								Hashtable hash = new Hashtable();
-								// iterator through schools whithin area and type
-								while (iter3.hasNext()) {
-									school = (School) iter3.next();
-									String pk = school.getPrimaryKey().toString();
-									//System.err.println("checking school "+pk.toString());
-									if (!hash.containsKey(pk)) {
-										a.append("schoolSelect.options[schoolSelect.options.length] = new Option(\"");
-										a.append(school.getSchoolName()).append("\",\"");
-										a.append(pk).append("\");\n\t\t");
-										hash.put(pk, pk);
+				if (age.getYears() <= type.getMaxSchoolAge()) {
+	
+					Integer tPK = (Integer) type.getPrimaryKey();
+					//System.err.println("checking type "+tPK.toString());
+					areas = getSchoolAreasWithType(iwc, tPK.intValue());
+					if (areas != null && !areas.isEmpty()) {
+						Iterator iter2 = areas.iterator();
+						t.append("if(selected == \"").append(tPK.toString()).append("\"){").append("\n\t\t");
+	
+						Hashtable aHash = new Hashtable();
+	
+						// iterate through areas whithin types
+						while (iter2.hasNext()) {
+							area = (SchoolArea) iter2.next();
+							Integer aPK = (Integer) area.getPrimaryKey();
+							// System.err.println("checking area "+aPK.toString());
+							if (!aHash.containsKey(aPK)) {
+								aHash.put(aPK, aPK);
+								schools = getSchoolByAreaAndType(iwc, aPK.intValue(), tPK.intValue());
+								if (schools != null) {
+									Iterator iter3 = schools.iterator();
+									a.append("if(selected == \"").append(aPK.toString()).append("\" && selectedType == \"").append(tPK.toString()).append("\"){").append("\n\t\t");
+									Hashtable hash = new Hashtable();
+									// iterator through schools whithin area and type
+									while (iter3.hasNext()) {
+										school = (School) iter3.next();
+										String pk = school.getPrimaryKey().toString();
+										//System.err.println("checking school "+pk.toString());
+										if (!hash.containsKey(pk)) {
+											a.append("schoolSelect.options[schoolSelect.options.length] = new Option(\"");
+											a.append(school.getSchoolName()).append("\",\"");
+											a.append(pk).append("\");\n\t\t");
+											hash.put(pk, pk);
+										}
+	
 									}
-
+									a.append("}\n\t\t");
 								}
-								a.append("}\n\t\t");
 							}
+							else {
+								System.err.println("shools empty");
+							}
+							t.append("areaSelect.options[areaSelect.options.length] = new Option(\"");
+							t.append(area.getSchoolAreaName()).append("\",\"");
+							t.append(area.getPrimaryKey().toString()).append("\");").append("\n\t\t");
+							;
+	
 						}
-						else {
-							System.err.println("shools empty");
-						}
-						t.append("areaSelect.options[areaSelect.options.length] = new Option(\"");
-						t.append(area.getSchoolAreaName()).append("\",\"");
-						t.append(area.getPrimaryKey().toString()).append("\");").append("\n\t\t");
-						;
-
+						t.append("}\n\t");
 					}
-					t.append("}\n\t");
+					else
+						System.err.println("areas empty");
 				}
-				else
-					System.err.println("areas empty");
 			}
 		}
 		else
