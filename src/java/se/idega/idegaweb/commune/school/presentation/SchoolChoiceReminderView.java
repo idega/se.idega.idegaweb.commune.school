@@ -53,11 +53,11 @@ import com.idega.user.data.User;
  * and entity ejb classes in {@link se.idega.idegaweb.commune.school.data}.
  * <p>
  * <p>
- * Last modified: $Date: 2004/10/29 13:01:09 $ by $Author: laddi $
+ * Last modified: $Date: 2004/11/18 19:18:38 $ by $Author: aron $
  *
  * @author <a href="http://www.staffannoteberg.com">Staffan Nöteberg</a>
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.45 $
+ * @version $Revision: 1.46 $
  * @see javax.ejb
  */
 public class SchoolChoiceReminderView extends CommuneBlock {
@@ -156,6 +156,7 @@ public class SchoolChoiceReminderView extends CommuneBlock {
 		} else if (action != null && action.equals (SCHOOL_YEAR_KEY)) {
 			selectSchoolYear (iwc);
         } else {
+            iwc.getSession ().removeAttribute (STUDENT_LIST_KEY);
             showAllReminders (iwc);
             showCreateReminderForm (iwc);
         }
@@ -206,7 +207,7 @@ public class SchoolChoiceReminderView extends CommuneBlock {
 		t.add (getSmallText (localize (ONLY_CHILDREN_LIVING_IN_COMMUNE_KEY, ONLY_CHILDREN_LIVING_IN_COMMUNE_KEY)), 1, row++);
 		final CheckBox isInSchoolsLastGradeCheckBox = new CheckBox (PARAM_IS_ONLY_IN_SCHOOLS_LAST_GRADE);
 		isInSchoolsLastGradeCheckBox.setChecked (true);
-		t.add (isInDefaultCommuneCheckBox, 1, row);
+		t.add (isInSchoolsLastGradeCheckBox, 1, row);
 		t.add (Text.getNonBrakingSpace (), 1, row);
 		t.add (getSmallText (localize (ONLY_CHILDREN_IN_SCHOOLS_LAST_GRADE_KEY, ONLY_CHILDREN_IN_SCHOOLS_LAST_GRADE_KEY)), 1, row++);
 
@@ -255,7 +256,7 @@ public class SchoolChoiceReminderView extends CommuneBlock {
 				SchoolSeason season = this.getSchoolSeason(iwc);
 				String yearPK = year.getPrimaryKey().toString();
 				String yearName = year.getSchoolYearName();
-				int numberOfNotDoneSchoolChoices = this.getSchoolChoiceBusiness(iwc).getNumberOfStudentsThatMustDoSchoolChoiceButHaveNot(season,year,isOnlyInCommune (iwc));
+				int numberOfNotDoneSchoolChoices = this.getSchoolChoiceBusiness(iwc).getNumberOfStudentsThatMustDoSchoolChoiceButHaveNot(season,year,isOnlyInCommune (iwc),iwc.isParameterSet(PARAM_IS_ONLY_IN_SCHOOLS_LAST_GRADE));
 				String yearString = yearName+" ("+numberOfNotDoneSchoolChoices+")";
 				group.addOption(yearPK,yearString);
 			}
@@ -512,7 +513,7 @@ public class SchoolChoiceReminderView extends CommuneBlock {
 				  //final SchoolChoiceReminder reminder = business.findSchoolChoiceReminder (reminderId);
 				MailReceiver [] receivers= (MailReceiver []) iwc.getSession ().getAttribute (STUDENT_LIST_KEY);
 		        if (receivers == null) {
-				  receivers= business.findAllStudentsThatMustDoSchoolChoiceButHaveNot(season,years,isOnlyInCommune (iwc));
+				  receivers= business.findAllStudentsThatMustDoSchoolChoiceButHaveNot(season,years,isOnlyInCommune (iwc),iwc.isParameterSet(PARAM_IS_ONLY_IN_SCHOOLS_LAST_GRADE));
 				  iwc.getSession ().setAttribute (STUDENT_LIST_KEY, receivers);
 		        }
 				  for (int i = 0; i < receivers.length; i++) {

@@ -1004,66 +1004,37 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 		return super.ejbFindSubCasesUnder(parent);
 	}
 	
-	public int ejbHomeCountChildrenWithoutSchoolChoice(SchoolSeason season,SchoolYear year, boolean onlyInCommune) throws SQLException{
-	    
-		try {
-            int yearOfBirth = new IWTimestamp(season.getSchoolSeasonStart()).getYear() - year.getSchoolYearAge();
-            YearPeriod period = new YearPeriod(yearOfBirth,yearOfBirth);
-            IWTimestamp dateFrom = period.getFirstTimestamp();
-            IWTimestamp dateTo = period.getLastTimestamp();
-            Integer statusID =  (Integer)((StatusHome) IDOLookup.getHome(Status.class)).findByStatusKey(UserStatusBusinessBean.STATUS_DECEASED).getPrimaryKey();
-            IDOQuery sql = idoQuery();
-            sql.append(" select count( *) ").append("\n");
-            sql.append(" from ic_address a left join ic_commune c on (a.ic_commune_id = c.ic_commune_id) ").append("\n");
-            sql.append(" left join ic_postal_code p on (a.postal_code_id = p.ic_postal_code_id), ic_user_address ua, ic_user u ").append("\n");
-            sql.append(" left join ic_usergroup_status us on (u.ic_user_id = us.ic_user_id and us.status_id = ").append(statusID).append(" )  ").append("\n");
-            sql.append(" where  u.ic_user_id = ua.ic_user_id ").append("\n");
-            sql.append(" and ua.ic_address_id = a.ic_address_id ").append("\n");
-   
-            sql.append(" and u.date_of_birth >= ").append(dateFrom.getDate()).append("\n");
-            sql.append(" and u.date_of_birth <= ").append(dateTo.getDate()).append("\n");
-            sql.append(" and u.ic_user_id not in( ").append("\n");
-            sql.append(" select u.ic_user_id ").append("\n");
-            sql.append("  from comm_sch_choice ch, ic_user u ").append("\n");
-            sql.append("  where u.ic_user_id = ch.child_id ").append("\n");
-            sql.append("  and ch.school_season_id = ").append(season.getPrimaryKey().toString());
-            sql.append(" and u.date_of_birth >= ").append(dateFrom.getDate()).append("\n");
-            sql.append(" and u.date_of_birth <= ").append(dateTo.getDate()).append("\n");
-            sql.append(" )");
-            sql.append(" and u.ic_user_id not in( ").append("\n");
-            sql.append("     select u.ic_user_id ").append("\n");
-            sql.append("     from sch_class_member mb,sch_school_class cl, ic_user u ").append("\n");
-            sql.append("     where mb.sch_school_class_id = cl.sch_school_class_id ").append("\n");
-            sql.append("     and u.ic_user_id = mb.ic_user_id ").append("\n");
-            sql.append("     and cl.sch_school_season_id = ").append(season.getPrimaryKey().toString()).append("\n");
-            sql.append("    and u.date_of_birth >= ").append(dateFrom.getDate()).append("\n");
-            sql.append("    and u.date_of_birth <= ").append(dateTo.getDate()).append("\n");
-            sql.append("     ) ").append("\n");
-            if(onlyInCommune)
-                sql.append(" and c.default_commune  = 'Y'");
-            sql.append(" and us.status_id is null ");
-            return getIntTableValue(sql.toString());
-        } catch (Exception e) {
-            throw new SQLException(e.getMessage());
+	public String getSQLForChildrenWithouWithoutSchoolChoice(SchoolSeason season,SchoolYear year, boolean onlyInCommune,boolean onlyLastGrade,int maxAge,boolean count){
+	    Integer seasonID = (Integer)season.getPrimaryKey();
+	    Integer yearID = (Integer)year.getPrimaryKey();
+        int yearOfBirth = new IWTimestamp(season.getSchoolSeasonStart()).getYear() - year.getSchoolYearAge();
+        YearPeriod period = new YearPeriod(yearOfBirth,yearOfBirth);
+        IWTimestamp dateFrom = period.getFirstTimestamp();
+        IWTimestamp dateTo = period.getLastTimestamp();
+        Integer statusID = null;
+        try {
+            statusID = (Integer)((StatusHome) IDOLookup.getHome(Status.class)).findByStatusKey(UserStatusBusinessBean.STATUS_DECEASED).getPrimaryKey();
+        } catch (IDOLookupException e1) {
+            e1.printStackTrace();
+        } catch (EJBException e1) {
+            e1.printStackTrace();
+        } catch (FinderException e1) {
+            e1.printStackTrace();
         }
-        
-	}
-	
-	public MailReceiver[] ejbHomeGetChildrenWithoutSchoolChoice(SchoolSeason season,SchoolYear year, boolean onlyInCommune) throws FinderException {
-	    try {
-            int yearOfBirth = new IWTimestamp(season.getSchoolSeasonStart()).getYear() - year.getSchoolYearAge();
-            YearPeriod period = new YearPeriod(yearOfBirth,yearOfBirth);
-            IWTimestamp dateFrom = period.getFirstTimestamp();
-            IWTimestamp dateTo = period.getLastTimestamp();
-            Integer statusID =  (Integer)((StatusHome) IDOLookup.getHome(Status.class)).findByStatusKey(UserStatusBusinessBean.STATUS_DECEASED).getPrimaryKey();
-            IDOQuery sql = idoQuery();
+        IDOQuery sql = idoQuery();
+        if(count)
+            sql.append(" select count( *) ").append("\n");
+        else{
             sql.append(" select distinct u.ic_user_id, u.personal_id, u.first_name,u.middle_name, u.last_name, ").append("\n");
             sql.append(" a.street_name,a.street_number, p.postal_code, p.name , c.commune_name, c.default_commune, ").append("\n");
             sql.append(" mom.ic_user_id, mom.first_name,mom.middle_name,mom.last_name, ").append("\n");
             sql.append(" dad.ic_user_id,dad.first_name,dad.middle_name,dad.last_name ").append("\n");
             sql.append(" ,us.status_id ").append("\n");
-            sql.append(" from ic_address a left join ic_commune c on (a.ic_commune_id = c.ic_commune_id) ").append("\n");
-            sql.append(" left join ic_postal_code p on (a.postal_code_id = p.ic_postal_code_id), ic_user_address ua , ic_user u ").append("\n");
+        }
+            
+        sql.append(" from ic_address a left join ic_commune c on (a.ic_commune_id = c.ic_commune_id) ").append("\n");
+        sql.append(" left join ic_postal_code p on (a.postal_code_id = p.ic_postal_code_id), ic_user_address ua, ic_user u ").append("\n");
+        if(!count){
             sql.append(" left   join  (select p1.ic_user_id , p1.first_name, p1.middle_name, p1.last_name, gr1.related_ic_group_id from ic_user p1, ic_group_relation gr1 ").append("\n");
             sql.append(" where p1.ic_user_id = gr1.ic_group_id and (gr1.relationship_type = 'FAM_PARENT' or gr1.relationship_type = 'FAM_CUSTODIAN')  and p1.ic_gender_id = 2  ").append("\n");
             sql.append(" and gr1.group_relation_status = 'ST_ACTIVE'    ) ").append("\n");
@@ -1072,41 +1043,106 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
             sql.append(" where p2.ic_user_id = gr2.ic_group_id and (gr2.relationship_type = 'FAM_PARENT' or gr2.relationship_type = 'FAM_CUSTODIAN' ) and p2.ic_gender_id = 1").append("\n");  
             sql.append(" and gr2.group_relation_status = 'ST_ACTIVE'    ) ").append("\n");
             sql.append(" dad  on ( u.ic_user_id = dad.related_ic_group_id ) ").append("\n");
-            sql.append(" left join ic_usergroup_status us on (u.ic_user_id = us.ic_user_id and us.status_id = ").append(statusID).append(" )  ").append("\n");
-            
-            sql.append(" where  u.ic_user_id = ua.ic_user_id ").append("\n");
-            sql.append(" and ua.ic_address_id = a.ic_address_id ").append("\n");
-            sql.append(" and u.date_of_birth >= ").append(dateFrom.getDate()).append("\n");
-            sql.append(" and u.date_of_birth <= ").append(dateTo.getDate()).append("\n");
-            sql.append(" and u.ic_user_id not in( ").append("\n");
-            sql.append(" select u.ic_user_id ").append("\n");
-            sql.append("  from comm_sch_choice ch, ic_user u ").append("\n");
-            sql.append("  where u.ic_user_id = ch.child_id ").append("\n");
-            sql.append("  and ch.school_season_id = ").append(season.getPrimaryKey().toString());
-            sql.append(" and u.date_of_birth >= ").append(dateFrom.getDate()).append("\n");
-            sql.append(" and u.date_of_birth <= ").append(dateTo.getDate()).append("\n");
-            sql.append(" )");
-            try {
-                SchoolSeason previousSeason = season.getPreviousSeason();
-                if(previousSeason!=null){
-                    int previousSeasonId = ((Integer) previousSeason.getPrimaryKey()).intValue();
-                    sql.append(" and u.ic_user_id not in( ").append("\n");
-                    sql.append("     select u.ic_user_id ").append("\n");
-                    sql.append("     from sch_class_member mb,sch_school_class cl, ic_user u ").append("\n");
-                    sql.append("     where mb.sch_school_class_id = cl.sch_school_class_id ").append("\n");
-                    sql.append("     and u.ic_user_id = mb.ic_user_id ").append("\n");
-                    sql.append("     and cl.sch_school_season_id = ").append(previousSeasonId).append("\n");
-                    sql.append("    and u.date_of_birth >= ").append(dateFrom.getDate()).append("\n");
-                    sql.append("    and u.date_of_birth <= ").append(dateTo.getDate()).append("\n");
-                    sql.append("     ) ").append("\n");
-                }
-            } catch (FinderException e2) {
-                e2.printStackTrace();
+        }
+        sql.append(" left join ic_usergroup_status us on (u.ic_user_id = us.ic_user_id and us.status_id = ").append(statusID).append(" )  ").append("\n");
+        sql.append(" where  u.ic_user_id = ua.ic_user_id ").append("\n");
+        sql.append(" and ua.ic_address_id = a.ic_address_id ").append("\n");
+
+        sql.append(" and u.date_of_birth >= ").append(dateFrom.getDate()).append("\n");
+        sql.append(" and u.date_of_birth <= ").append(dateTo.getDate()).append("\n");
+        sql.append(" and u.ic_user_id not in( ").append("\n");
+        sql.append(" select u.ic_user_id ").append("\n");
+        sql.append("  from comm_sch_choice ch, ic_user u ").append("\n");
+        sql.append("  where u.ic_user_id = ch.child_id ").append("\n");
+        sql.append("  and ch.school_season_id = ").append(seasonID);
+        sql.append(" and u.date_of_birth >= ").append(dateFrom.getDate()).append("\n");
+        sql.append(" and u.date_of_birth <= ").append(dateTo.getDate()).append("\n");
+        sql.append(" )");
+        //temporary check
+        if (!year.getSchoolYearName().equals("F")) {
+            if((year.getSchoolYearName().equals("1")) || (!onlyLastGrade) ){
+	            
+		            try {
+		                SchoolSeason previousSeason = season.getPreviousSeason();
+		                if(previousSeason!=null){
+		                    int previousSeasonId = ((Integer) previousSeason.getPrimaryKey()).intValue();
+				            sql.append(" and u.ic_user_id not in( ").append("\n");
+				            sql.append("     select u.ic_user_id ").append("\n");
+				            sql.append("     from sch_class_member mb,sch_school_class cl, ic_user u ").append("\n");
+				            sql.append("     where mb.sch_school_class_id = cl.sch_school_class_id ").append("\n");
+				            sql.append("     and u.ic_user_id = mb.ic_user_id ").append("\n");
+				            sql.append("     and cl.sch_school_season_id = ").append(previousSeasonId).append("\n");
+				            sql.append("    and u.date_of_birth >= ").append(dateFrom.getDate()).append("\n");
+				            sql.append("    and u.date_of_birth <= ").append(dateTo.getDate()).append("\n");
+				            sql.append("     ) ").append("\n");
+		                }
+		            } catch (FinderException e2) {
+		                e2.printStackTrace();
+		            }
+				
             }
-            if(onlyInCommune)
-                sql.append(" and c.default_commune  = 'Y'");
-            sql.append(" and us.status_id is null ");
+            else{
+                try {
+                    SchoolSeason lastSeason = season.getPreviousSeason();
+                    SchoolYear lastYear = year.getPreviousSchoolYearFromAge();
+                    if(lastSeason!=null){
+                        Integer lastSeasonID = ((Integer) lastSeason.getPrimaryKey());
+                        Integer lastYearID = (Integer) lastYear.getPrimaryKey();
+                    sql.append(" and u.ic_user_id in( ").append("\n");
+                    sql.append("select student.ic_user_id").append("\n");
+                    	sql.append(" from sch_school_sch_school_year school,sch_school_year schoolyear, sch_school_class class, sch_class_member student").append("\n");
+                    	sql.append(" where school.sch_school_year_id = schoolyear.sch_school_year_id").append("\n");
+                    	sql.append(" and student.sch_school_year_id  = school.sch_school_year_id").append("\n");
+                    	sql.append(" and class.school_id = school.sch_school_id").append("\n");
+                    	sql.append(" and class.sch_school_season_id = " + lastSeasonID).append("\n");
+                    	sql.append(" and class.sch_school_class_id = student.sch_school_class_id").append("\n");
+                    	if (year != null) {
+                    		sql.append(" and schoolyear.sch_school_year_id = " + lastYearID).append("\n");
+                    	}
+                    	sql.append(" and exists").append("\n");
+                    	sql.append(" (").append("\n");
+                    	sql.append(" select s.sch_school_id, max (y.year_age)").append("\n");
+                    	sql.append(" from sch_school_sch_school_year s, sch_school_year y").append("\n");
+                    	sql.append(" where s.sch_school_year_id = y.sch_school_year_id").append("\n");
+                    	sql.append(" group by s.sch_school_id").append("\n");
+                    	sql.append(" having max (y.year_age) <=").append(maxAge).append("\n");
+                    	sql.append(" and schoolyear.year_age = max (y.year_age)").append("\n");
+                    	//sql.append (" and school.sch_school_year_id =s.sch_school_year_id");
+                    	sql.append(" and school.sch_school_id = s.sch_school_id").append("\n");
+                    	sql.append(" )").append("\n");
+                    	sql.append(" ) ").append("\n");
+                    }
+                } catch (EJBException e) {
+                    e.printStackTrace();
+                } catch (FinderException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        if(onlyInCommune)
+            sql.append(" and c.default_commune  = 'Y'").append("\n");
+        sql.append(" and us.status_id is null ").append("\n");
+        return sql.toString();
+	}
+	
+	public int ejbHomeCountChildrenWithoutSchoolChoice(SchoolSeason season,SchoolYear year, boolean onlyInCommune,boolean onlyLastGrade,int maxAge) throws SQLException{
+	    
+		try {
+		    String sql = getSQLForChildrenWithouWithoutSchoolChoice(season,year,onlyInCommune,onlyLastGrade,maxAge,true).toString();
+            //System.out.println(sql.toString());
+            return getIntTableValue(sql.toString());
+           
+        } catch (Exception e) {
+            throw new SQLException(e.getMessage());
+        }
+        
+	}
+	
+	public MailReceiver[] ejbHomeGetChildrenWithoutSchoolChoice(SchoolSeason season,SchoolYear year, boolean onlyInCommune,boolean onlyLastGrade,int maxAge) throws FinderException {
+	    try {
+            String sql = getSQLForChildrenWithouWithoutSchoolChoice(season,year,onlyInCommune,onlyLastGrade,maxAge,false);
             
+            logSQL(sql.toString());
             Connection conn = null;
             Statement  stmt = null;
             ResultSet rs = null;
@@ -1160,9 +1196,7 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
                     freeConnection(conn);
             }
           
-        } catch (IDOLookupException e) {
-            throw new FinderException(e.getMessage());
-        } catch (EJBException e) {
+	    }catch (EJBException e) {
         		throw new FinderException(e.getMessage());
         }
         return null;

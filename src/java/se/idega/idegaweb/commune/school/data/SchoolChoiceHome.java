@@ -1,6 +1,6 @@
 /*
- * $Id: SchoolChoiceHome.java,v 1.47 2004/10/29 13:01:08 laddi Exp $
- * Created on 20.10.2004
+ * $Id: SchoolChoiceHome.java,v 1.48 2004/11/18 19:18:38 aron Exp $
+ * Created on 18.11.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
  *
@@ -25,10 +25,10 @@ import com.idega.data.IDOHome;
 
 /**
  * 
- *  Last modified: $Date: 2004/10/29 13:01:08 $ by $Author: laddi $
+ *  Last modified: $Date: 2004/11/18 19:18:38 $ by $Author: aron $
  * 
  * @author <a href="mailto:aron@idega.com">aron</a>
- * @version $Revision: 1.47 $
+ * @version $Revision: 1.48 $
  */
 public interface SchoolChoiceHome extends IDOHome {
     public SchoolChoice create() throws javax.ejb.CreateException;
@@ -298,14 +298,14 @@ public interface SchoolChoiceHome extends IDOHome {
      * @see se.idega.idegaweb.commune.school.data.SchoolChoiceBMPBean#ejbHomeCountChildrenWithoutSchoolChoice
      */
     public int countChildrenWithoutSchoolChoice(SchoolSeason season,
-            SchoolYear year, boolean onlyInCommune)
-            throws SQLException;
+            SchoolYear year, boolean onlyInCommune, boolean onlyLastGrade,
+            int maxAge) throws SQLException;
 
     /**
      * @see se.idega.idegaweb.commune.school.data.SchoolChoiceBMPBean#ejbHomeGetChildrenWithoutSchoolChoice
      */
     public MailReceiver[] getChildrenWithoutSchoolChoice(SchoolSeason season,
-            SchoolYear year, boolean onlyInCommune)
-            throws FinderException;
+            SchoolYear year, boolean onlyInCommune, boolean onlyLastGrade,
+            int maxAge) throws FinderException;
 
 }

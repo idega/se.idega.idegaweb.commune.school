@@ -1,6 +1,6 @@
 /*
- * $Id: SchoolChoice.java,v 1.30 2004/10/20 15:46:00 aron Exp $
- * Created on 20.10.2004
+ * $Id: SchoolChoice.java,v 1.31 2004/11/18 19:18:38 aron Exp $
+ * Created on 18.11.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
  *
@@ -25,10 +25,10 @@ import com.idega.user.data.User;
 
 /**
  * 
- *  Last modified: $Date: 2004/10/20 15:46:00 $ by $Author: aron $
+ *  Last modified: $Date: 2004/11/18 19:18:38 $ by $Author: aron $
  * 
  * @author <a href="mailto:aron@idega.com">aron</a>
- * @version $Revision: 1.30 $
+ * @version $Revision: 1.31 $
  */
 public interface SchoolChoice extends IDOEntity, Case {
     /**
@@ -400,5 +400,12 @@ public interface SchoolChoice extends IDOEntity, Case {
             String searchStringForUser, boolean selectCount,
             boolean selectOnlyChildIDs, boolean searchOnAddr, int orderBy,
             int placementType);
+
+    /**
+     * @see se.idega.idegaweb.commune.school.data.SchoolChoiceBMPBean#getSQLForChildrenWithouWithoutSchoolChoice
+     */
+    public String getSQLForChildrenWithouWithoutSchoolChoice(
+            SchoolSeason season, SchoolYear year, boolean onlyInCommune,
+            boolean onlyLastGrade, int maxAge, boolean count);
 
 }

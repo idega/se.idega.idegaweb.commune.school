@@ -1,6 +1,6 @@
 /*
- * $Id: SchoolChoiceHomeImpl.java,v 1.48 2004/10/29 13:01:08 laddi Exp $
- * Created on 20.10.2004
+ * $Id: SchoolChoiceHomeImpl.java,v 1.49 2004/11/18 19:18:38 aron Exp $
+ * Created on 18.11.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
  *
@@ -25,10 +25,10 @@ import com.idega.data.IDOFactory;
 
 /**
  * 
- *  Last modified: $Date: 2004/10/29 13:01:08 $ by $Author: laddi $
+ *  Last modified: $Date: 2004/11/18 19:18:38 $ by $Author: aron $
  * 
  * @author <a href="mailto:aron@idega.com">aron</a>
- * @version $Revision: 1.48 $
+ * @version $Revision: 1.49 $
  */
 public class SchoolChoiceHomeImpl extends IDOFactory implements
         SchoolChoiceHome {
@@ -450,23 +450,23 @@ public class SchoolChoiceHomeImpl extends IDOFactory implements
     }
 
     public int countChildrenWithoutSchoolChoice(SchoolSeason season,
-            SchoolYear year, boolean onlyInCommune)
-            throws SQLException {
+            SchoolYear year, boolean onlyInCommune, boolean onlyLastGrade,
+            int maxAge) throws SQLException {
         com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
         int theReturn = ((SchoolChoiceBMPBean) entity)
                 .ejbHomeCountChildrenWithoutSchoolChoice(season, year,
-                        onlyInCommune);
+                        onlyInCommune, onlyLastGrade, maxAge);
         this.idoCheckInPooledEntity(entity);
         return theReturn;
     }
 
     public MailReceiver[] getChildrenWithoutSchoolChoice(SchoolSeason season,
-            SchoolYear year, boolean onlyInCommune)
-            throws FinderException {
+            SchoolYear year, boolean onlyInCommune, boolean onlyLastGrade,
+            int maxAge) throws FinderException {
         com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
         MailReceiver[] theReturn = ((SchoolChoiceBMPBean) entity)
                 .ejbHomeGetChildrenWithoutSchoolChoice(season, year,
-                        onlyInCommune);
+                        onlyInCommune, onlyLastGrade, maxAge);
         this.idoCheckInPooledEntity(entity);
         return theReturn;
     }
