@@ -26,5 +26,7 @@ report.total=Totalt
 report.total_1_10=1-10
 report.total_f_10=F-10
 school_report.create_report=Skapa rapport
+school_report.for_printing=F\u00F6r utskrift
 school_report.no_report_selected=Ingen rapport vald.
+school_report.print=Skriv ut
 school_report.select_report=V\u00E4lj rapport

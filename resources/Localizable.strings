@@ -26,5 +26,7 @@ report.total=
 report.total_1_10=
 report.total_f_10=
 school_report.create_report=
+school_report.for_printing=For printing
 school_report.no_report_selected=
+school_report.print=Print
 school_report.select_report=
