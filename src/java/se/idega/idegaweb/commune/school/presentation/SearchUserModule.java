@@ -6,23 +6,33 @@
 package se.idega.idegaweb.commune.school.presentation;
 
 
-import com.idega.data.IDOLookup;
-import com.idega.data.IDOLookupException;
-import com.idega.idegaweb.IWBundle;
-import com.idega.idegaweb.IWResourceBundle;
-import com.idega.presentation.*;
-import com.idega.presentation.text.Link;
-import com.idega.presentation.text.Text;
-import com.idega.presentation.ui.*;
-import com.idega.user.data.User;
-import com.idega.user.data.UserHome;
-import com.idega.util.text.TextSoap;
 import java.rmi.RemoteException;
-import java.util.*;
-import javax.ejb.EJBLocalObject;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Vector;
+
 import javax.ejb.FinderException;
 
 import se.idega.idegaweb.commune.presentation.CommuneBlock;
+
+import com.idega.data.IDOLookup;
+import com.idega.data.IDOLookupException;
+import com.idega.idegaweb.IWResourceBundle;
+import com.idega.presentation.IWContext;
+import com.idega.presentation.PresentationObject;
+import com.idega.presentation.Table;
+import com.idega.presentation.text.Link;
+import com.idega.presentation.text.Text;
+import com.idega.presentation.ui.Form;
+import com.idega.presentation.ui.Parameter;
+import com.idega.presentation.ui.SubmitButton;
+import com.idega.presentation.ui.TextInput;
+import com.idega.user.data.User;
+import com.idega.user.data.UserHome;
+import com.idega.util.text.TextSoap;
 
 
 /**
@@ -30,10 +40,10 @@ import se.idega.idegaweb.commune.presentation.CommuneBlock;
  */
 public class SearchUserModule extends CommuneBlock {
 
-	private static final String SEARCH_PERSONAL_ID = "usrch_search_pid";
-	private static final String SEARCH_LAST_NAME = "usrch_search_lname";
-	private static final String SEARCH_MIDDLE_NAME = "usrch_search_mname";
-	private static final String SEARCH_FIRST_NAME = "usrch_search_fname";
+	//private static final String SEARCH_PERSONAL_ID = "usrch_search_pid";
+	//private static final String SEARCH_LAST_NAME = "usrch_search_lname";
+	//private static final String SEARCH_MIDDLE_NAME = "usrch_search_mname";
+	//private static final String SEARCH_FIRST_NAME = "usrch_search_fname";
 	public static final String SEARCH_COMMITTED = "mbe_act_search";
 	public static final String STYLENAME_TEXT = "Text";
 	public static final String STYLENAME_HEADER = "Header";
@@ -57,7 +67,7 @@ public class SearchUserModule extends CommuneBlock {
 	private String warningFontStyle;
 	private String buttonStyle;
 	private String interfaceStyle;
-	private static final String PRM_USER_ID = "usrch_user_id_";
+	//private static final String PRM_USER_ID = "usrch_user_id_";
 	private Integer userID;
 	private User user;
 	private Collection usersFound;
@@ -70,7 +80,7 @@ public class SearchUserModule extends CommuneBlock {
 	private int maxFoundUserCols;
 	private String bundleIdentifer;
 	private static String BUNDLE_IDENTIFIER = "is.idega.idegaweb.member";
-	private IWBundle iwb;
+	//private IWBundle iwb;
 	private IWResourceBundle iwrb;
 	private boolean processed;
 	private List maintainedParameters;
@@ -145,7 +155,6 @@ public class SearchUserModule extends CommuneBlock {
 
 	public void main(IWContext iwc) throws Exception {
 		initStyleNames();
-		iwb = getBundle(iwc);
 		iwrb = getResourceBundle(iwc);
 		String message = null;
 		try {
@@ -159,9 +168,9 @@ public class SearchUserModule extends CommuneBlock {
 			message = iwrb.getLocalizedString("usrch.no_user_found", "No user found");
 		}
 		Table T = new Table();
-		T.add(presentateCurrentUserSearch(iwc), 1, 1);
+		T.add(presentateCurrentUserSearch(), 1, 1);
 		if (!skipResultsForOneFound || hasManyUsers)
-			T.add(presentateFoundUsers(iwc), 1, 2);
+			T.add(presentateFoundUsers(), 1, 2);
 		if (message != null) {
 			Text tMessage = new Text(message);
 			T.add(tMessage, 1, 3);
@@ -180,7 +189,7 @@ public class SearchUserModule extends CommuneBlock {
 			return;
 		if (iwc.isParameterSet(SEARCH_COMMITTED + uniqueIdentifier)) {
 			// *** Borgman 
-			String tmpStr = iwc.getParameter("mbe_act_searc" + uniqueIdentifier);			
+			//String tmpStr = iwc.getParameter("mbe_act_searc" + uniqueIdentifier);			
 			processSearch(iwc);
 		}
 		else if (iwc.isParameterSet("usrch_user_id_" + uniqueIdentifier))
@@ -230,7 +239,7 @@ public class SearchUserModule extends CommuneBlock {
 			}
 	}
 
-	private Table presentateCurrentUserSearch(IWContext iwc) {
+	private Table presentateCurrentUserSearch() {
 		Table searchTable = new Table();
 		int row = 1;
 		int col = 1;
@@ -354,7 +363,7 @@ public class SearchUserModule extends CommuneBlock {
 		return searchTable;
 	}
 
-	private Table presentateFoundUsers(IWContext iwc) {
+	private Table presentateFoundUsers() {
 		Table T = new Table();
 		if (usersFound != null && !usersFound.isEmpty()) {
 			Iterator iter = usersFound.iterator();
