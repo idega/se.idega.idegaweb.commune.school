@@ -1,5 +1,5 @@
 /*
- * $Id: NackaCommuneHighSchoolPlacementReportModel.java,v 1.9 2004/01/23 13:19:40 anders Exp $
+ * $Id: NackaCommuneHighSchoolPlacementReportModel.java,v 1.10 2004/01/23 13:46:00 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -20,10 +20,10 @@ import com.idega.block.school.data.SchoolStudyPath;
 /** 
  * Report model for Nacka high school student placements.
  * <p>
- * Last modified: $Date: 2004/01/23 13:19:40 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/23 13:46:00 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.9 $
+ * @version $Revision: 1.10 $
  */
 public class NackaCommuneHighSchoolPlacementReportModel extends ReportModel {
 
@@ -460,7 +460,7 @@ public class NackaCommuneHighSchoolPlacementReportModel extends ReportModel {
 			query.prepare();
 			setQuery(QUERY_STUDY_PATH, query);
 		}
-		query.setString(1, studyPathCode);
+		query.setString(1, studyPathCode + "%");
 		return query.execute();
 	}
 	
@@ -471,7 +471,7 @@ public class NackaCommuneHighSchoolPlacementReportModel extends ReportModel {
 		if (_studyPaths == null) {
 			_studyPaths = new ArrayList();
 			ReportBusiness rb = getReportBusiness();
-			Collection c = rb.getAllStudyPathsIncludingDirections();
+			Collection c = rb.getAllStudyPaths();
 			Iterator iter = c.iterator();
 			while (iter.hasNext()) {
 				SchoolStudyPath sp = (SchoolStudyPath) iter.next();
