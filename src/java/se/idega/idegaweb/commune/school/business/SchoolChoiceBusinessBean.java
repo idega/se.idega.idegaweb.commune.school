@@ -788,7 +788,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	}
 
 	protected String getSeparateParentMessageBodyChange(SchoolChoice theCase, User parent) throws RemoteException, FinderException {
-		Object[] arguments = {parent.getNameLastFirst(true), theCase.getChild().getNameLastFirst(true), getSchool(theCase.getChosenSchoolId()).getSchoolName(), theCase.getPlacementDate() != null ? new IWTimestamp(theCase.getPlacementDate()).getLocaleDate(this.getIWApplicationContext().getApplicationSettings().getDefaultLocale(), IWTimestamp.SHORT) : "" };
+		Object[] arguments = {parent.getNameLastFirst(true), theCase.getChild().getNameLastFirst(true), getSchool(theCase.getChosenSchoolId()).getSchoolName(), theCase.getPlacementDate() != null ? new IWTimestamp(theCase.getPlacementDate()).getLocaleDate(this.getIWApplicationContext().getApplicationSettings().getDefaultLocale(), IWTimestamp.SHORT) : "", PersonalIDFormatter.format(theCase.getChild().getPersonalID(), this.getIWApplicationContext().getApplicationSettings().getDefaultLocale()) };
 		String body = MessageFormat.format(getLocalizedString("school_choice.sep_parent_change_mesg_body", "Dear mr./ms./mrs. "), arguments);
 		return body;
 	}
