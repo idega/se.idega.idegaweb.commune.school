@@ -12,6 +12,7 @@ import se.idega.util.PIDChecker;
 import com.idega.core.location.data.Address;
 import com.idega.user.business.UserBusiness;
 import com.idega.user.data.User;
+import com.idega.util.IWTimestamp;
 import com.idega.util.LocaleUtil;
 
 /**
@@ -29,6 +30,7 @@ public class SchoolChoiceComparator implements Comparator {
   public static final int ADDRESS_SORT = 3;
   public static final int PERSONAL_ID_SORT = 4;
   public static final int LANGUAGE_SORT = 5;
+	public static final int CREATED_SORT = 6;
   
   private Locale locale;
   public UserBusiness business;
@@ -75,6 +77,9 @@ public class SchoolChoiceComparator implements Comparator {
 					break;
 				case PERSONAL_ID_SORT :
 					result = personalIDSort(o1,o2);
+					break;
+				case CREATED_SORT :
+					result = createdSort(o1,o2);
 					break;
 			}
     }
@@ -182,6 +187,22 @@ public class SchoolChoiceComparator implements Comparator {
 		}
 
 		return result;
+	}	
+
+	public int createdSort(Object o1, Object o2) throws RemoteException {
+		SchoolChoice p1 = (SchoolChoice) o1;
+		SchoolChoice p2 = (SchoolChoice) o2;
+		
+		IWTimestamp one = new IWTimestamp(p1.getCreated());
+		IWTimestamp two = new IWTimestamp(p2.getCreated());
+				
+		if (one.isEarlierThan(two)){
+			return -1;
+		}
+		else if (one.isLaterThan(two))
+			return 1;
+
+		return 0;
 	}	
 
 }

@@ -74,6 +74,7 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 	public static final int GENDER_SORT = 2;
 	public static final int PERSONAL_ID_SORT = 4;
 	public static final int LANGUAGE_SORT = 5;
+	public static final int CREATED_SORT = 6;
 
 	private static final String[] CASE_STATUS_KEYS = { "UBEH", "TYST", "PREL", "PLAC", "GROU", "FLYT" };
 	private static final String[] CASE_STATUS_DESCRIPTIONS = { "Case open", "Sleep", "Preliminary", "Placed", "Grouped", "Moved" };
@@ -617,6 +618,8 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 				query.appendOrderBy("u.personal_id,u.last_name,u.first_name,u.middle_name");
 			else if (orderBy == LANGUAGE_SORT)
 				query.appendOrderBy("csc.language_choice,u.last_name,u.first_name,u.middle_name");
+			else if (orderBy == CREATED_SORT)
+				query.appendOrderBy("pc.created,u.last_name,u.first_name,u.middle_name");
 		}
 
 		//System.out.println(query.toString());
