@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 import javax.ejb.FinderException;
+import javax.faces.component.UIComponent;
 import se.idega.idegaweb.commune.care.business.CareBusiness;
 import se.idega.idegaweb.commune.care.presentation.ChildContracts;
 import se.idega.idegaweb.commune.presentation.CitizenChildren;
@@ -482,7 +483,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		}
 	}
 
-	public PresentationObject getSchoolChoiceForm(IWContext iwc, User child) throws java.rmi.RemoteException {
+	public UIComponent getSchoolChoiceForm(IWContext iwc, User child) throws java.rmi.RemoteException {
 		if (this.schoolChange) {
 			if (!canApply[2]) return getSmallHeader(localize("school_choice.not_possible_to_change_school", "It is not possible to change school until after the 22nd of February."));
 		}
