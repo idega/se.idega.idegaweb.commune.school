@@ -1,5 +1,5 @@
 /*
- * $Id: NackaHighSchoolYearPlacementReportModel.java,v 1.14 2004/01/09 17:18:32 anders Exp $
+ * $Id: NackaHighSchoolYearPlacementReportModel.java,v 1.15 2004/01/12 15:25:32 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -18,10 +18,10 @@ import com.idega.block.school.data.SchoolStudyPath;
 /** 
  * Report model for high school placements per year for students in Nacka.
  * <p>
- * Last modified: $Date: 2004/01/09 17:18:32 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/12 15:25:32 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.14 $
+ * @version $Revision: 1.15 $
  */
 public class NackaHighSchoolYearPlacementReportModel extends ReportModel {
 
@@ -370,11 +370,17 @@ public class NackaHighSchoolYearPlacementReportModel extends ReportModel {
 							value += getCell(row, 20).getFloatValue();
 							value += getCell(row, 21).getFloatValue();
 							value += getCell(row, 22).getFloatValue();
-						} else {							
-							value += getCell(row, column - 19).getFloatValue();
-							value += getCell(row, column - 14).getFloatValue();
-							value += getCell(row, column - 9).getFloatValue();
-							value += getCell(row, column - 5).getFloatValue();
+						} else {
+							if (column == 22) {
+								value += getCell(row, column - 19).getFloatValue();
+								value += getCell(row, column - 14).getFloatValue();
+								value += getCell(row, column - 5).getFloatValue();
+							} else {
+								value += getCell(row, column - 19).getFloatValue();
+								value += getCell(row, column - 14).getFloatValue();
+								value += getCell(row, column - 9).getFloatValue();
+								value += getCell(row, column - 5).getFloatValue();								
+							}
 						}
 						break;
 				}
