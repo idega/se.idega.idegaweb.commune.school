@@ -698,7 +698,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 			SchoolChoice choice = getSchoolChoiceHome().findByPrimaryKey(pk);
 			if (choice.getCaseStatus().equals(getCaseStatusMoved())) {
 				User child = choice.getChild();
-				Object[] arguments = { child.getNameLastFirst(true), choice.getChosenSchool().getSchoolName(), PersonalIDFormatter.format(child.getPersonalID(), this.getIWApplicationContext().getApplicationSettings().getDefaultLocale() };
+				Object[] arguments = { child.getNameLastFirst(true), choice.getChosenSchool().getSchoolName(), PersonalIDFormatter.format(child.getPersonalID(), this.getIWApplicationContext().getApplicationSettings().getDefaultLocale()) };
 				String body = MessageFormat.format(getLocalizedString("school_choice.student_moved_from_school_body", "Dear headmaster, {0} has been moved from your school and placed at {1}."), arguments);
 				this.sendMessageToSchool(choice.getCurrentSchoolId(), getLocalizedString("school_choice.student_moved_from_school_subject", "Student moved from your school"), body);
 			}
@@ -764,7 +764,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	}
 	
 	protected String getOldHeadmasterBody(User student, School newSchool) throws RemoteException, FinderException {
-		Object[] arguments = { student.getNameLastFirst(true), newSchool.getSchoolName() };
+		Object[] arguments = { student.getNameLastFirst(true), newSchool.getSchoolName(), PersonalIDFormatter.format(student.getPersonalID(), this.getIWApplicationContext().getApplicationSettings().getDefaultLocale()) };
 		String body = MessageFormat.format(getLocalizedString("school_choice.old_headmaster_body", "Dear headmaster"), arguments);
 		/*StringBuffer body = new StringBuffer(this.getLocalizedString("school_choice.old_headmaster_body1", "Dear headmaster "));
 		body.append(student.getName()).append("\n");
