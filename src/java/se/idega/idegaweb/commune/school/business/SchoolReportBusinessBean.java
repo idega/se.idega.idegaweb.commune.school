@@ -160,14 +160,14 @@ public class SchoolReportBusinessBean extends IBOSessionBean implements SchoolRe
 		}
 		
 		ReportableField swedishLanguage = new ReportableField(FIELD_SWEDISH_AS_SECOND_LANGUAGE, String.class);
-		language.setLocalizedName(getLocalizedString(FIELD_SWEDISH_AS_SECOND_LANGUAGE, "Swedish as second language"), currentLocale);
+		swedishLanguage.setLocalizedName(getLocalizedString(FIELD_SWEDISH_AS_SECOND_LANGUAGE, "Swedish as second language"), currentLocale);
 		if (displayColumn(FIELD_SWEDISH_AS_SECOND_LANGUAGE)) {
 			_fields.add(swedishLanguage);
 			reportCollection.addField(swedishLanguage);
 		}
 		
 		ReportableField terminationDate = new ReportableField(FIELD_TERMINATION_DATE, String.class);
-		language.setLocalizedName(getLocalizedString(FIELD_TERMINATION_DATE, "Termination date"), currentLocale);
+		terminationDate.setLocalizedName(getLocalizedString(FIELD_TERMINATION_DATE, "Termination date"), currentLocale);
 		if (displayColumn(FIELD_TERMINATION_DATE)) {
 			_fields.add(terminationDate);
 			reportCollection.addField(terminationDate);
@@ -202,11 +202,9 @@ public class SchoolReportBusinessBean extends IBOSessionBean implements SchoolRe
 			Iterator iter = students.iterator();
 			while (iter.hasNext()) {
 				SchoolClassMember student = (SchoolClassMember) iter.next();
+				boolean isRemoved = student.getRemovedDate() != null;
 				if (showTerminated != null) {
-					if (showTerminated.booleanValue() && student.getRemovedDate() == null) {
-						continue;
-					}
-					else if (!showTerminated.booleanValue() && student.getRemovedDate() != null) {
+					if (showTerminated.booleanValue() != isRemoved) {
 						continue;
 					}
 				}
@@ -466,20 +464,16 @@ public class SchoolReportBusinessBean extends IBOSessionBean implements SchoolRe
 			Iterator iter = applicants.iterator();
 			while (iter.hasNext()) {
 				SchoolChoice choice = (SchoolChoice) iter.next();
+				boolean hasLanguageChoice = choice.getLanguageChoice() != null;
 				if (showLanguageChoice != null) {
-					if (showNativeLanguage.booleanValue() && choice.getLanguageChoice() == null) {
-						continue;
-					}
-					else if (!showNativeLanguage.booleanValue() && choice.getLanguageChoice() != null) {
+					if (showNativeLanguage.booleanValue() != hasLanguageChoice) {
 						continue;
 					}
 				}
 				User user = choice.getChild();
+				boolean hasNativeLanguage = user.getNativeLanguage() != null;
 				if (showNativeLanguage != null) {
-					if (showNativeLanguage.booleanValue() && user.getNativeLanguage() == null) {
-						continue;
-					}
-					else if (!showNativeLanguage.booleanValue() && user.getNativeLanguage() != null) {
+					if (showNativeLanguage.booleanValue() != hasNativeLanguage) {
 						continue;
 					}
 				}
