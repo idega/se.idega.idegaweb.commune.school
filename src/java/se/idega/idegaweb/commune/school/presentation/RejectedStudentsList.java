@@ -20,6 +20,7 @@ import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Table;
 import com.idega.presentation.text.Link;
+import com.idega.user.business.NoPhoneFoundException;
 import com.idega.user.business.UserBusiness;
 import com.idega.user.data.User;
 import com.idega.util.PersonalIDFormatter;
@@ -135,7 +136,8 @@ public class RejectedStudentsList extends SchoolCommuneBlock {
 				applicant = getUserBusiness(iwc).getUser(choice.getChildId());
 				school = getBusiness().getSchoolBusiness().getSchool(new Integer(choice.getCurrentSchoolId()));
 				address = getUserBusiness(iwc).getUsersMainAddress(applicant);
-				phone = getUserBusiness(iwc).getUsersHomePhone(applicant);
+				
+				
 				name = getBusiness().getUserBusiness().getNameLastFirst(applicant, true);
 				table.add(getSmallText(name), column++, row);
 				if (applicant.getPersonalID() != null) {
@@ -145,9 +147,16 @@ public class RejectedStudentsList extends SchoolCommuneBlock {
 					table.add(getSmallText(address.getStreetAddress()), column, row);
 				}
 				column++;
-				if (phone != null && phone.getNumber() != null) {
-					table.add(getSmallText(phone.getNumber()), column, row);
+				try {
+					phone = getUserBusiness(iwc).getUsersHomePhone(applicant);
+					if (phone != null && phone.getNumber() != null) {
+						table.add(getSmallText(phone.getNumber()), column, row);
+					}
+				} catch (NoPhoneFoundException npfe){
+					log(npfe);
 				}
+				
+				
 				column++;
 				if (PIDChecker.getInstance().isFemale(applicant.getPersonalID())) {
 					table.add(getSmallText(localize("school.girl", "Girl")), column++, row);
