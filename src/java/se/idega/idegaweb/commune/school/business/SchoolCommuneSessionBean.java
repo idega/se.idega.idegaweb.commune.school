@@ -21,7 +21,7 @@ import com.idega.user.data.User;
  */
 public class SchoolCommuneSessionBean extends IBOSessionBean implements SchoolCommuneSession {
 
-	protected static final String PARAMETER_SCHOOL_ID = "sch_s_id";
+	public static final String PARAMETER_SCHOOL_ID = "sch_s_id";
 	protected static final String PARAMETER_SCHOOL_YEAR_ID = "sch_s_y_id";
 	protected static final String PARAMETER_SCHOOL_SEASON_ID = "sch_s_s_id";
 	protected static final String PARAMETER_SCHOOL_CLASS_ID = "sch_s_c_id";
