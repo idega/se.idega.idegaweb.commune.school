@@ -30,4 +30,5 @@ public interface SchoolCommuneBusiness extends com.idega.business.IBOService,com
  public void addSchoolAdministrator(User user) throws RemoteException, FinderException, CreateException;
  public void markSchoolClassReady(com.idega.block.school.data.SchoolClass schoolClass) throws RemoteException;
  public void markSchoolClassLocked(com.idega.block.school.data.SchoolClass schoolClass) throws RemoteException;
+ public boolean canMarkSchoolClass(com.idega.block.school.data.SchoolClass schoolClass, String propertyName) throws RemoteException;
 }

@@ -33,9 +33,11 @@ import com.idega.block.school.data.SchoolSeason;
 import com.idega.block.school.data.SchoolYear;
 import com.idega.business.IBOLookup;
 import com.idega.core.data.Email;
+import com.idega.idegaweb.IWPropertyList;
 import com.idega.user.business.UserBusiness;
 import com.idega.user.data.Group;
 import com.idega.user.data.User;
+import com.idega.util.IWTimestamp;
 
 /**
  * @author Laddi
@@ -277,7 +279,27 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 	
 	public void markSchoolClassLocked(SchoolClass schoolClass) throws RemoteException {
 		schoolClass.setLocked(true);
-		schoolClass.store();	
+		schoolClass.store();
+	}
+	
+	public boolean canMarkSchoolClass(SchoolClass schoolClass, String propertyName) throws RemoteException {
+		if (schoolClass != null) {
+			SchoolSeason season = getSchoolSeasonBusiness().getSchoolSeason(new Integer(schoolClass.getSchoolSeasonId()));
+			IWTimestamp seasonStart = new IWTimestamp(season.getSchoolSeasonStart());
+			IWTimestamp timeNow = new IWTimestamp();
+			if (timeNow.getYear() == 2002)
+				return true;
+			
+			IWPropertyList properties = getIWApplicationContext().getSystemProperties().getProperties("school_properties");
+			String ready = properties.getProperty(propertyName);
+			if (ready != null) {
+				seasonStart.setDay(Integer.parseInt(ready.substring(0, 2)));
+				seasonStart.setMonth(Integer.parseInt(ready.substring(3)));
+				if (timeNow.isEarlierThan(seasonStart))
+					return false;
+			}
+		}
+		return true;	
 	}
 	
 	public void moveToGroup(int studentID, int schoolClassID, int oldSchoolClassID) throws RemoteException {

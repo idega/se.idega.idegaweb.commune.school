@@ -34,6 +34,7 @@ import com.idega.builder.data.IBPage;
 import com.idega.business.IBOLookup;
 import com.idega.core.data.Address;
 import com.idega.idegaweb.IWBundle;
+import com.idega.idegaweb.IWPropertyList;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Page;
@@ -138,7 +139,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 
 	private boolean hasPreviousSchool = false;
 	private boolean schoolChange = false;
-	private boolean canApply = false;
+	private boolean[] canApply = {false,false};
 	private boolean hasChosen = false;
 	private Age age;
 	
@@ -149,14 +150,14 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		iwrb = getResourceBundle(iwc);
 		df = DateFormat.getDateInstance(df.SHORT, iwc.getCurrentLocale());
 		schBuiz = (SchoolChoiceBusiness) IBOLookup.getServiceInstance(iwc, SchoolChoiceBusiness.class);
-		canApply = checkCanApply(iwc);
+		canApply[0] = checkCanApply(iwc)[0];
 		control(iwc);
 	}
 
 	public void control(IWContext iwc) throws Exception {
 		//debugParameters(iwc);
 		String ID = iwc.getParameter(prmChildId);
-		if (iwc.isLoggedOn() && canApply) {
+		if (iwc.isLoggedOn() && canApply[0]) {
 			if (ID != null) {
 				childId = Integer.parseInt(ID);
 				userbuiz = (UserBusiness) IBOLookup.getServiceInstance(iwc, UserBusiness.class);
@@ -237,7 +238,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		}
 		else if (!iwc.isLoggedOn())
 			add(iwrb.getLocalizedString("school.need_to_be_logged_on", "You need to log in"));
-		else if (!canApply)
+		else if (!canApply[0])
 			add(iwrb.getLocalizedString("school_choice.last_date_expired", "Time limits to apply expired"));
 	}
 
@@ -394,7 +395,8 @@ public class SchoolChoiceApplication extends CommuneBlock {
 			String message = iwrb.getLocalizedString("school_choice.last_date_for_choice_is", "Last date to choose is");
 			String date = df.format(season.getSchoolSeasonDueDate());
 			Text t = getHeader(message + " " + date);
-			t.setFontColor("FF0000");
+			if (canApply[1])
+				t.setFontColor("FF0000");
 			T.add(t, 1, 1);
 
 		}
@@ -435,7 +437,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 			school = schBuiz.getSchool(choice.getChosenSchoolId());
 			schoolArea = schBuiz.getSchoolBusiness().getSchoolAreaHome().findByPrimaryKey(new Integer(school.getSchoolAreaId()));
 			schoolYear = schCommBiz.getSchoolYear(choice.getGrade());
-			schoolType = schBuiz.getSchoolBusiness().getSchoolTypeHome().findByPrimaryKey(choice.getSchoolTypeId());
+			schoolType = schBuiz.getSchoolBusiness().getSchoolTypeHome().findByPrimaryKey(new Integer(choice.getSchoolTypeId()));
 		}
 		catch (Exception e) {
 		}
@@ -578,11 +580,17 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		DropdownMenu drp = (DropdownMenu) getStyledInterface(new DropdownMenu(name));
 		drp.addMenuElement("-1", iwrb.getLocalizedString("school.school_type_select", "School type select"));
 		Iterator iter = schoolTypes.iterator();
-		boolean changeValues = false;
+		boolean canChoose = true;
 		
 		while (iter.hasNext()) {
 			SchoolType type = (SchoolType) iter.next();
-			drp.addMenuElement(type.getPrimaryKey().toString(), type.getSchoolTypeName());
+			if (age.getYears() <= type.getMaxSchoolAge())
+				canChoose = true;
+			else
+				canChoose = false;
+				
+			if (canChoose)
+				drp.addMenuElement(type.getPrimaryKey().toString(), type.getSchoolTypeName());
 		}
 		
 		return drp;
@@ -657,12 +665,14 @@ public class SchoolChoiceApplication extends CommuneBlock {
 			table.mergeCells(3, row, 5, row++);
 		}
 		
-		table.setHeight(row++, 5);
-		table.mergeCells(1, row, 5, row);
-		table.setWidth(1, row, Table.HUNDRED_PERCENT);
-		table.add(chkChildCare, 1, row);
-		table.add(getSmallHeader(Text.NON_BREAKING_SPACE + iwrb.getLocalizedString("school.child_care_requested", "Interested in after school child care")), 1, row);
-		
+		if (age.getYears() <= 10) {
+			table.setHeight(row++, 5);
+			table.mergeCells(1, row, 5, row);
+			table.setWidth(1, row, Table.HUNDRED_PERCENT);
+			table.add(chkChildCare, 1, row);
+			table.add(getSmallHeader(Text.NON_BREAKING_SPACE + iwrb.getLocalizedString("school.child_care_requested", "Interested in after school child care")), 1, row);
+		}
+				
 		table.setWidth(1, "100");
 		table.setWidth(2, "8");
 		table.setWidth(4, "3");
@@ -1003,21 +1013,54 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		return s.toString();
 	}
 
-	private boolean checkCanApply(IWContext iwc) throws RemoteException {
+	private boolean[] checkCanApply(IWContext iwc) throws RemoteException {
+		boolean[] checkCanApply = {true,true};
 		try {
 			SchoolSeason season = schBuiz.getCurrentSeason();
 			if (season != null) {
-				IWTimestamp dueDate = new IWTimestamp(season.getSchoolSeasonDueDate());
+				IWPropertyList properties = iwc.getSystemProperties().getProperties("school_properties");
+				String choiceStart = properties.getProperty("choice_start_date");
+				String choiceEnd = properties.getProperty("choice_end_date");
+				String choiceRed = properties.getProperty("choice_critical_date");
+				
+				IWTimestamp seasonStart = new IWTimestamp(season.getSchoolSeasonStart());
 				IWTimestamp dateNow = new IWTimestamp();
-				if (dateNow.isEarlierThan(dueDate))
-					return true;
-				else
-					return false;
+				if (choiceStart != null && choiceEnd != null && choiceRed != null) {
+					IWTimestamp start = new IWTimestamp(seasonStart);
+					start.setDay(Integer.parseInt(choiceStart.substring(0, 2)));
+					start.setMonth(Integer.parseInt(choiceStart.substring(3)));
+					System.out.println("Start: "+start.toString());
+
+					IWTimestamp end = new IWTimestamp(seasonStart);
+					end.setDay(Integer.parseInt(choiceEnd.substring(0, 2)));
+					end.setMonth(Integer.parseInt(choiceEnd.substring(3)));
+					System.out.println("End: "+end.toString());
+
+					IWTimestamp red = new IWTimestamp(seasonStart);
+					red.setDay(Integer.parseInt(choiceRed.substring(0, 2)));
+					red.setMonth(Integer.parseInt(choiceRed.substring(3)));
+					System.out.println("Red: "+red.toString());
+					System.out.println("Now: "+dateNow.toString());
+					
+					if (dateNow.isBetween(start, end))
+						checkCanApply[0] = true;
+					else
+						checkCanApply[0] = false;
+						
+					if (red.isEarlierThan(dateNow))
+						checkCanApply[1] = true;
+						
+					//temporary, for testing only...
+					if (dateNow.getYear() <= 2002) {
+						checkCanApply[0] = true;
+						checkCanApply[1] = false;
+					}
+				}
 			}
-			return true;
+			return checkCanApply;
 		}
 		catch (FinderException fe) {
-			return true;
+			return checkCanApply;
 		}
 	}
 	
