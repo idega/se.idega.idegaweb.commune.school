@@ -498,32 +498,7 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 			Object[] arguments = { student.getNameLastFirst(true) };
 			newBody = MessageFormat.format(body, arguments);
 			
-			User parent = choice.getOwner();
-			User child = choice.getChild();	
-					
-			if (getSchoolChoiceBusiness().getReceiver(parent, child) == child){
-				getMessageBusiness().createUserMessage(child, subject, newBody);	
-							
-			}
-			else {
-				getMessageBusiness().createUserMessage(parent, subject, newBody);
-	
-				try {
-					Collection parents = getMemberFamilyLogic().getCustodiansFor(student);
-					if (!parents.isEmpty()) {
-						Iterator iterator = parents.iterator();
-						while (iterator.hasNext()) {
-							User otherParent = (User) iterator.next();
-							if (!getUserBusiness().haveSameAddress(parent, otherParent)) {
-								getMessageBusiness().createUserMessage(otherParent, subject, newBody);
-							}
-						}	
-					}
-				}
-				catch (NoCustodianFound ncd) {
-					ncd.printStackTrace();
-				}
-			}
+			sendMessageToParents(choice, subject, newBody);
 		}
 	}
 	
@@ -572,11 +547,13 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 	
 	public void markSchoolClassReady(SchoolClass schoolClass) throws RemoteException {
 		schoolClass.setReady(true);
+		schoolClass.setReadyDate(new IWTimestamp().getTimestamp());
 		schoolClass.store();	
 	}
 	
 	public void markSchoolClassLocked(SchoolClass schoolClass) throws RemoteException {
 		schoolClass.setLocked(true);
+		schoolClass.setLockedDate(new IWTimestamp().getTimestamp());
 		schoolClass.store();
 	}
 	
@@ -604,10 +581,6 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 		SchoolClassMember classMember = getSchoolBusiness().findClassMemberInClass(studentID, oldSchoolClassID);
 		classMember.setSchoolClassId(schoolClassID);
 		classMember.store();
-	}
-
-	private MemberFamilyLogic getMemberFamilyLogic() throws RemoteException {
-		return (MemberFamilyLogic) com.idega.business.IBOLookup.getServiceInstance(getIWApplicationContext(), MemberFamilyLogic.class);
 	}
 
 	private MessageBusiness getMessageBusiness() throws RemoteException {
@@ -1052,5 +1025,34 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 		return reportData;
     }
     
+		public void sendMessageToParents(SchoolChoice choice, String subject, String body) {
+			try {
+				User child = choice.getChild();
+				Object[] arguments = { child.getNameLastFirst(true), choice.getChosenSchool().getSchoolName() };
+
+				User appParent = choice.getOwner();
+				if (getUserBusiness().getMemberFamilyLogic().isChildInCustodyOf(child, appParent)) {
+					getMessageBusiness().createUserMessage(choice, appParent, subject, MessageFormat.format(body, arguments), true);
+				}
+
+				try {
+					Collection parents = getUserBusiness().getMemberFamilyLogic().getCustodiansFor(child);
+					Iterator iter = parents.iterator();
+					while (iter.hasNext()) {
+						User parent = (User) iter.next();
+						if (!getUserBusiness().haveSameAddress(parent, appParent)) {
+							getMessageBusiness().createUserMessage(choice, parent, subject, MessageFormat.format(body, arguments), true);
+						}
+					}
+				}
+				catch (NoCustodianFound ncf) {
+					ncf.printStackTrace();
+				}
+			}
+			catch (RemoteException re) {
+				re.printStackTrace();
+			}
+		}
+
     
 }
