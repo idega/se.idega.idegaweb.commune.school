@@ -282,28 +282,30 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 			if(otherParent != null){
 				Address appAddress = getUserBusiness().getUsersMainAddress(appParent);
 				Address otherAddress = getUserBusiness().getUsersMainAddress(otherParent);
-				if(!appAddress.getStreetAddress().equalsIgnoreCase(otherAddress.getStreetAddress() )){
-					// We need to let the other parent know about the application
-					// If the parent has an Citizen Account we can send a message 
-					// else we senda a letter
-					
-					// send message
-					
-						if(getUserBusiness().hasUserLogin(otherParent)){
-							if(isSchoolChangeApplication)
-								getMessageBusiness().createUserMessage(otherParent,getSeparateParentSubjectChange(),getSeparateParentMessageBodyChange(choice)); 
-							else
-								getMessageBusiness().createUserMessage(otherParent,getSeparateParentSubjectAppl(),getSeparateParentMessageBodyAppl(choices,otherParent)); 
-						}
-						// send letter
-						else{
-							if(isSchoolChangeApplication)
-								getMessageBusiness().createPrintedLetterMessage(otherParent,getSeparateParentSubjectChange(),getSeparateParentMessageBodyChange(choice));
-							else
-								getMessageBusiness().createPrintedLetterMessage(otherParent,getSeparateParentSubjectAppl(),getSeparateParentMessageBodyAppl(choices,otherParent));
-						}
-					
-					
+				if (appAddress != null && otherAddress != null) {
+					if(!appAddress.getStreetAddress().equalsIgnoreCase(otherAddress.getStreetAddress() )){
+						// We need to let the other parent know about the application
+						// If the parent has an Citizen Account we can send a message 
+						// else we senda a letter
+						
+						// send message
+						
+							if(getUserBusiness().hasUserLogin(otherParent)){
+								if(isSchoolChangeApplication)
+									getMessageBusiness().createUserMessage(otherParent,getSeparateParentSubjectChange(),getSeparateParentMessageBodyChange(choice)); 
+								else
+									getMessageBusiness().createUserMessage(otherParent,getSeparateParentSubjectAppl(),getSeparateParentMessageBodyAppl(choices,otherParent)); 
+							}
+							// send letter
+							else{
+								if(isSchoolChangeApplication)
+									getMessageBusiness().createPrintedLetterMessage(otherParent,getSeparateParentSubjectChange(),getSeparateParentMessageBodyChange(choice));
+								else
+									getMessageBusiness().createPrintedLetterMessage(otherParent,getSeparateParentSubjectAppl(),getSeparateParentMessageBodyAppl(choices,otherParent));
+							}
+						
+						
+					}
 				}
 			}
 		}
