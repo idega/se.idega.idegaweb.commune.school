@@ -292,7 +292,9 @@ public class CentralPlacementBusinessBean extends IBOServiceBean
 		} catch (FinderException fe1) {
 			try {
 				// Find latest with removed_date set, by register_date
-				mbr = getSchoolClassMemberHome().findLatestByUserAndSchCategory(pupil, schCat);											
+				if (schCat != null && pupil != null) {
+					mbr = getSchoolClassMemberHome().findLatestByUserAndSchCategory(pupil, schCat);
+				}											
 			} catch (FinderException fe2) {
 				return null;
 			}
