@@ -1,5 +1,5 @@
 /*
- * $Id: NackaElementarySchoolOCCPlacementReportModel.java,v 1.2 2003/12/16 11:29:04 anders Exp $
+ * $Id: NackaElementarySchoolOCCPlacementReportModel.java,v 1.3 2003/12/19 14:57:03 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -19,10 +19,10 @@ import com.idega.block.school.data.SchoolArea;
 /** 
  * Report model for placements in Nacka elementary schools for commune citizens outside Nacka.
  * <p>
- * Last modified: $Date: 2003/12/16 11:29:04 $ by $Author: anders $
+ * Last modified: $Date: 2003/12/19 14:57:03 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class NackaElementarySchoolOCCPlacementReportModel extends ReportModel {
 
@@ -277,7 +277,6 @@ public class NackaElementarySchoolOCCPlacementReportModel extends ReportModel {
 	 */
 	protected float calculate(Cell cell) throws RemoteException {
 		float value = 0f;
-		ReportBusiness reportBusiness = getReportBusiness();
 		int schoolId = -1;
 		if (cell.getRowParameter() != null) {
 			schoolId = ((Integer) cell.getRowParameter()).intValue();
@@ -287,7 +286,7 @@ public class NackaElementarySchoolOCCPlacementReportModel extends ReportModel {
 		if (cell.getColumnMethod() == COLUMN_METHOD_SCHOOL_YEAR) {
 			switch (cell.getRowMethod()) {
 				case ROW_METHOD_SCHOOL:
-					value = reportBusiness.getElementarySchoolOCCPlacementCount(schoolId, schoolYearName);
+					value = getElementarySchoolOCCPlacementCount(schoolId, schoolYearName);
 					break;
 				case ROW_METHOD_SUM:
 					int rowIndex = cell.getRow() - 1;
@@ -351,5 +350,27 @@ public class NackaElementarySchoolOCCPlacementReportModel extends ReportModel {
 	 */
 	public String getReportTitleLocalizationKey() {
 		return KEY_REPORT_TITLE;
+	}
+	
+	/**
+	 * Returns the number of student placements for the specified school and school year
+	 * for students in communes outside Nacka (OCC = other commune citizens).
+	 */
+	protected int getElementarySchoolOCCPlacementCount(int schoolId, String schoolYearName) throws RemoteException {
+		ReportQuery query = new ReportQuery();
+		boolean sixYearsOld = schoolYearName.equals("0");
+		query.setSelectCountOCCPlacements(getReportBusiness().getSchoolSeasonId(), schoolId);
+		if (schoolYearName.equals("F")) {
+			query.setSchoolTypePreSchoolClass();
+		} else {
+			query.setSchoolTypeElementarySchool();
+		}
+		if (sixYearsOld) {
+			query.setOnlyStudentsBorn(getReportBusiness().getSchoolSeasonStartYear() - 6);
+			query.setSchoolYear("1");
+		} else {
+			query.setSchoolYear(schoolYearName);			
+		}
+		return query.execute();
 	}
 }

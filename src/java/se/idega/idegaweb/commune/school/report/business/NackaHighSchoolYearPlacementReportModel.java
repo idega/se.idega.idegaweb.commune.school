@@ -1,5 +1,5 @@
 /*
- * $Id: NackaHighSchoolYearPlacementReportModel.java,v 1.5 2003/12/17 11:07:45 anders Exp $
+ * $Id: NackaHighSchoolYearPlacementReportModel.java,v 1.6 2003/12/19 14:57:03 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -18,10 +18,10 @@ import com.idega.block.school.data.SchoolStudyPath;
 /** 
  * Report model for high school placements per year for students in Nacka.
  * <p>
- * Last modified: $Date: 2003/12/17 11:07:45 $ by $Author: anders $
+ * Last modified: $Date: 2003/12/19 14:57:03 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
 public class NackaHighSchoolYearPlacementReportModel extends ReportModel {
 
@@ -310,7 +310,6 @@ public class NackaHighSchoolYearPlacementReportModel extends ReportModel {
 	 */
 	protected float calculate(Cell cell) throws RemoteException {
 		float value = 0f;
-		ReportBusiness reportBusiness = getReportBusiness();
 		String studyPathPrefix = null;
 		if (cell.getRowParameter() != null) {
 			studyPathPrefix = (String) cell.getRowParameter();
@@ -329,7 +328,7 @@ public class NackaHighSchoolYearPlacementReportModel extends ReportModel {
 							value += getCell(row, 2).getFloatValue();
 							value += getCell(row, 3).getFloatValue();
 						} else {
-							value = reportBusiness.getHighSchoolNackaCommunePlacementCount(schoolYearName, studyPathPrefix);
+							value = getHighSchoolNackaCommunePlacementCount(schoolYearName, studyPathPrefix);
 						}
 						break;
 					case COLUMN_METHOD_OTHER_COMMUNES:
@@ -339,7 +338,7 @@ public class NackaHighSchoolYearPlacementReportModel extends ReportModel {
 							value += getCell(row, 7).getFloatValue();
 							value += getCell(row, 8).getFloatValue();
 						} else {
-							value = reportBusiness.getHighSchoolOtherCommunesPlacementCount(schoolYearName, studyPathPrefix);
+							value = getHighSchoolOtherCommunesPlacementCount(schoolYearName, studyPathPrefix);
 						}
 						break;
 					case COLUMN_METHOD_COUNTY_COUNCIL:
@@ -348,7 +347,7 @@ public class NackaHighSchoolYearPlacementReportModel extends ReportModel {
 							value += getCell(row, 11).getFloatValue();
 							value += getCell(row, 12).getFloatValue();
 						} else {
-							value = reportBusiness.getHighSchoolCountyCouncilPlacementCount(schoolYearName, studyPathPrefix);
+							value = getHighSchoolCountyCouncilPlacementCount(schoolYearName, studyPathPrefix);
 						}
 						break;
 					case COLUMN_METHOD_FREE_STANDING:
@@ -358,7 +357,7 @@ public class NackaHighSchoolYearPlacementReportModel extends ReportModel {
 							value += getCell(row, 16).getFloatValue();
 							value += getCell(row, 17).getFloatValue();
 						} else {
-							value = reportBusiness.getHighSchoolPrivatePlacementCount(schoolYearName, studyPathPrefix);
+							value = getHighSchoolPrivatePlacementCount(schoolYearName, studyPathPrefix);
 						}
 						break;
 					case COLUMN_METHOD_TOTAL:
@@ -454,5 +453,83 @@ public class NackaHighSchoolYearPlacementReportModel extends ReportModel {
 	 */
 	public String getReportTitleLocalizationKey() {
 		return KEY_REPORT_TITLE;
+	}
+	
+	/**
+	 * Returns the number of student placements for high schools
+	 * in Nacka commune for the specified school year.
+	 * Only students in Nacka commune are counted. 
+	 */
+	protected int getHighSchoolNackaCommunePlacementCount(String schoolYearName, String studyPathPrefix) throws RemoteException {
+		ReportQuery query = new ReportQuery();
+		query.setSelectCountStudyPathPlacements(getReportBusiness().getSchoolSeasonId(), studyPathPrefix);
+		query.setOnlyNackaCitizens();
+		if (schoolYearName.substring(0, 2).equals("GS")) {
+			query.setSchoolTypeCompulsoryHighSchool();
+		} else {
+			query.setSchoolTypeHighSchool();
+		}
+		query.setSchoolYear(schoolYearName);			
+		query.setNotPrivateSchools();
+		query.setNotCountyCouncilSchools();
+		return query.execute();
+	}
+	
+	/**
+	 * Returns the number of student placements for high schools
+	 * in Nacka commune for the specified school year.
+	 * Only students outside Nacka commune are counted. 
+	 */
+	protected int getHighSchoolOtherCommunesPlacementCount(String schoolYearName, String studyPathPrefix) throws RemoteException{
+		ReportQuery query = new ReportQuery();
+		query.setSelectCountStudyPathPlacements(getReportBusiness().getSchoolSeasonId(), studyPathPrefix);
+		query.setNotNackaCitizens();
+		if (schoolYearName.substring(0, 2).equals("GS")) {
+			query.setSchoolTypeCompulsoryHighSchool();
+		} else {
+			query.setSchoolTypeHighSchool();
+		}
+		query.setSchoolYear(schoolYearName);			
+		query.setNotPrivateSchools();
+		query.setNotCountyCouncilSchools();
+		return query.execute();
+	}
+	
+	/**
+	 * Returns the number of student placements for county council high schools
+	 * in Nacka commune for the specified school year.
+	 * Only students outside Nacka commune are counted. 
+	 */
+	protected int getHighSchoolCountyCouncilPlacementCount(String schoolYearName, String studyPathPrefix) throws RemoteException {
+		ReportQuery query = new ReportQuery();
+		query.setSelectCountStudyPathPlacements(getReportBusiness().getSchoolSeasonId(), studyPathPrefix);
+		query.setNotNackaCitizens();
+		if (schoolYearName.substring(0, 2).equals("GS")) {
+			query.setSchoolTypeCompulsoryHighSchool();
+		} else {
+			query.setSchoolTypeHighSchool();
+		}
+		query.setSchoolYear(schoolYearName);			
+		query.setOnlyCountyCouncilSchools();
+		return query.execute();
+	}
+	
+	/**
+	 * Returns the number of student placements for private high schools
+	 * in Nacka commune for the specified school year.
+	 * Only students outside Nacka commune are counted. 
+	 */
+	protected int getHighSchoolPrivatePlacementCount(String schoolYearName, String studyPathPrefix) throws RemoteException {
+		ReportQuery query = new ReportQuery();
+		query.setSelectCountStudyPathPlacements(getReportBusiness().getSchoolSeasonId(), studyPathPrefix);
+		query.setNotNackaCitizens();
+		if (schoolYearName.substring(0, 2).equals("GS")) {
+			query.setSchoolTypeCompulsoryHighSchool();
+		} else {
+			query.setSchoolTypeHighSchool();
+		}
+		query.setSchoolYear(schoolYearName);			
+		query.setOnlyPrivateSchools();
+		return query.execute();
 	}
 }

@@ -1,5 +1,5 @@
 /*
- * $Id: NackaCitizenElementarySchoolPlacementReportModel.java,v 1.2 2003/12/10 16:33:01 anders Exp $
+ * $Id: NackaCitizenElementarySchoolPlacementReportModel.java,v 1.3 2003/12/19 14:57:03 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -14,10 +14,10 @@ import java.rmi.RemoteException;
 /** 
  * Report model for Nacka citizen placement for elementary schools.
  * <p>
- * Last modified: $Date: 2003/12/10 16:33:01 $ by $Author: anders $
+ * Last modified: $Date: 2003/12/19 14:57:03 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class NackaCitizenElementarySchoolPlacementReportModel extends ReportModel {
 
@@ -278,22 +278,21 @@ public class NackaCitizenElementarySchoolPlacementReportModel extends ReportMode
 	 */
 	protected float calculate(Cell cell) throws RemoteException {
 		float value = 0f;
-		ReportBusiness reportBusiness = getReportBusiness();
 		String schoolYearName = (String) cell.getColumnParameter();
 		
 		if (cell.getColumnMethod() == COLUMN_METHOD_SCHOOL_YEAR) {
 			switch (cell.getRowMethod()) {
 				case ROW_METHOD_ELEMENTARY_NACKA_COMMUNE:
-					value = reportBusiness.getElementaryNackaCommunePlacementCount(schoolYearName);
+					value = getElementaryNackaCommunePlacementCount(schoolYearName);
 					break;
 				case ROW_METHOD_ELEMENTARY_OTHER_COMMUNES:
-					value = reportBusiness.getElementaryOtherCommunesPlacementCount(schoolYearName);
+					value = getElementaryOtherCommunesPlacementCount(schoolYearName);
 					break;
 				case ROW_METHOD_ELEMENTARY_PRIVATE_SCHOOLS:
-					value = reportBusiness.getElementaryPrivateSchoolPlacementCount(schoolYearName);
+					value = getElementaryPrivateSchoolPlacementCount(schoolYearName);
 					break;
 				case ROW_METHOD_ELEMENTARY_FOREIGN_SCHOOLS:
-					value = reportBusiness.getElementaryForeignSchoolPlacementCount(schoolYearName);
+					value = getElementaryForeignSchoolPlacementCount(schoolYearName);
 					break;
 				case ROW_METHOD_ELEMENTARY_SUM:
 					for (int i = 0; i < 4; i++) {
@@ -301,13 +300,13 @@ public class NackaCitizenElementarySchoolPlacementReportModel extends ReportMode
 					}
 					break;
 				case ROW_METHOD_COMPULSORY_NACKA_COMMUNE:
-					value = reportBusiness.getCompulsoryNackaCommunePlacementCount(schoolYearName);
+					value = getCompulsoryNackaCommunePlacementCount(schoolYearName);
 					break;
 				case ROW_METHOD_COMPULSORY_OTHER_COMMUNES:
-					value = reportBusiness.getCompulsoryOtherCommunesPlacementCount(schoolYearName);
+					value = getCompulsoryOtherCommunesPlacementCount(schoolYearName);
 					break;
 				case ROW_METHOD_COMPULSORY_PRIVATE_SCHOOLS:
-					value = reportBusiness.getCompulsoryPrivateSchoolPlacementCount(schoolYearName);
+					value = getCompulsoryPrivateSchoolPlacementCount(schoolYearName);
 					break;
 				case ROW_METHOD_COMPULSORY_SUM:
 					for (int i = 5; i < 8; i++) {
@@ -352,5 +351,183 @@ public class NackaCitizenElementarySchoolPlacementReportModel extends ReportMode
 	 */
 	public String getReportTitleLocalizationKey() {
 		return KEY_REPORT_TITLE;
+	}
+	
+	/**
+	 * Returns the number of student placements for elementary schools
+	 * in Nacka commune for the specified school year.
+	 * Only students in Nacka commune are counted. 
+	 */
+	protected int getElementaryNackaCommunePlacementCount(String schoolYearName) throws RemoteException {
+		ReportQuery query = new ReportQuery();
+		query.setSelectCountPlacements(getReportBusiness().getSchoolSeasonId());
+		query.setOnlyNackaCitizens();
+		query.setOnlyNackaSchools();
+		if (schoolYearName.equals("F")) {
+			query.setSchoolTypePreSchoolClass();
+		} else {
+			query.setSchoolTypeElementarySchool();
+		}
+		if (schoolYearName.equals("0")) {
+			query.setOnlyStudentsBorn(getReportBusiness().getSchoolSeasonStartYear() - 6);
+			query.setSchoolYear("1");
+		} else {
+			query.setSchoolYear(schoolYearName);			
+		}
+		query.setNotPrivateSchools();
+		query.setNotForieignSchools();
+		return query.execute();
+	}
+	
+	/**
+	 * Returns the number of student placements for elementary schools
+	 * outside Nacka commune for the specified school year. 
+	 * Only students in Nacka commune are counted. 
+	 */
+	protected int getElementaryOtherCommunesPlacementCount(String schoolYearName) throws RemoteException {
+		ReportQuery query = new ReportQuery();
+		query.setSelectCountPlacements(getReportBusiness().getSchoolSeasonId());
+		query.setOnlyNackaCitizens();
+		query.setOnlySchoolsInOtherCommunes();
+		if (schoolYearName.equals("F")) {
+			query.setSchoolTypePreSchoolClass();
+		} else {
+			query.setSchoolTypeElementarySchool();
+		}
+		if (schoolYearName.equals("0")) {
+			query.setOnlyStudentsBorn(getReportBusiness().getSchoolSeasonStartYear() - 6);
+			query.setSchoolYear("1");
+		} else {
+			query.setSchoolYear(schoolYearName);			
+		}
+		query.setNotPrivateSchools();
+		query.setNotForieignSchools();
+		return query.execute();
+	}
+	
+	/**
+	 * Returns the number of student placements for elementary private schools
+	 * for the specified school year. 
+	 * Only students in Nacka commune are counted. 
+	 */
+	protected int getElementaryPrivateSchoolPlacementCount(String schoolYearName) throws RemoteException {
+		ReportQuery query = new ReportQuery();
+		query.setSelectCountPlacements(getReportBusiness().getSchoolSeasonId());
+		query.setOnlyNackaCitizens();
+		if (schoolYearName.equals("F")) {
+			query.setSchoolTypePreSchoolClass();
+		} else {
+			query.setSchoolTypeElementarySchool();
+		}
+		if (schoolYearName.equals("0")) {
+			query.setOnlyStudentsBorn(getReportBusiness().getSchoolSeasonStartYear() - 6);
+			query.setSchoolYear("1");
+		} else {
+			query.setSchoolYear(schoolYearName);			
+		}
+		query.setOnlyPrivateSchools();
+		query.setNotForieignSchools();
+		return query.execute();
+	}
+	
+	/**
+	 * Returns the number of student placements for foreign schools
+	 * for the specified school year. 
+	 * Only students in Nacka commune are counted. 
+	 */
+	protected int getElementaryForeignSchoolPlacementCount(String schoolYearName) throws RemoteException {
+		ReportQuery query = new ReportQuery();
+		query.setSelectCountPlacements(getReportBusiness().getSchoolSeasonId());
+		query.setOnlyNackaCitizens();
+		if (schoolYearName.equals("F")) {
+			query.setSchoolTypePreSchoolClass();
+		} else {
+			query.setSchoolTypeElementarySchool();
+		}
+		if (schoolYearName.equals("0")) {
+			query.setOnlyStudentsBorn(getReportBusiness().getSchoolSeasonStartYear() - 6);
+			query.setSchoolYear("1");
+		} else {
+			query.setSchoolYear(schoolYearName);			
+		}
+		query.setOnlyForieignSchools();
+		return query.execute();
+	}
+	
+	/**
+	 * Returns the number of student placements for compulsory schools
+	 * in Nacka commune for the specified school year.
+	 * Only students in Nacka commune are counted. 
+	 */
+	protected int getCompulsoryNackaCommunePlacementCount(String schoolYearName) throws RemoteException {
+		ReportQuery query = new ReportQuery();
+		query.setSelectCountPlacements(getReportBusiness().getSchoolSeasonId());
+		query.setOnlyNackaCitizens();
+		query.setOnlyNackaSchools();
+		if (schoolYearName.equals("F")) {
+			return 0;
+		} else {
+			query.setSchoolTypeCompulsorySchool();
+		}
+		if (schoolYearName.equals("0")) {
+			query.setOnlyStudentsBorn(getReportBusiness().getSchoolSeasonStartYear() - 6);
+			query.setSchoolYear("S1");
+		} else {
+			query.setSchoolYear(schoolYearName);			
+		}
+		query.setNotPrivateSchools();
+		query.setNotForieignSchools();
+		return query.execute();
+	}
+	
+	/**
+	 * Returns the number of student placements for compulsory schools
+	 * outside Nacka commune for the specified school year. 
+	 * Only students in Nacka commune are counted. 
+	 */
+	protected int getCompulsoryOtherCommunesPlacementCount(String schoolYearName) throws RemoteException {
+		ReportQuery query = new ReportQuery();
+		query.setSelectCountPlacements(getReportBusiness().getSchoolSeasonId());
+		query.setOnlyNackaCitizens();
+		query.setOnlySchoolsInOtherCommunes();
+		if (schoolYearName.equals("F")) {
+			return 0;
+		} else {
+			query.setSchoolTypeCompulsorySchool();
+		}
+		if (schoolYearName.equals("0")) {
+			query.setOnlyStudentsBorn(getReportBusiness().getSchoolSeasonStartYear() - 6);
+			query.setSchoolYear("S1");
+		} else {
+			query.setSchoolYear(schoolYearName);			
+		}
+		query.setNotPrivateSchools();
+		query.setNotForieignSchools();
+		return query.execute();
+	}
+	
+	/**
+	 * Returns the number of student placements for compulsory private schools
+	 * for the specified school year. 
+	 * Only students in Nacka commune are counted. 
+	 */
+	protected int getCompulsoryPrivateSchoolPlacementCount(String schoolYearName) throws RemoteException {
+		ReportQuery query = new ReportQuery();
+		query.setSelectCountPlacements(getReportBusiness().getSchoolSeasonId());
+		query.setOnlyNackaCitizens();
+		if (schoolYearName.equals("F")) {
+			return 0;
+		} else {
+			query.setSchoolTypeElementarySchool();
+		}
+		if (schoolYearName.equals("0")) {
+			query.setOnlyStudentsBorn(getReportBusiness().getSchoolSeasonStartYear() - 6);
+			query.setSchoolYear("S1");
+		} else {
+			query.setSchoolYear(schoolYearName);			
+		}
+		query.setOnlyPrivateSchools();
+		query.setNotForieignSchools();
+		return query.execute();
 	}
 }
