@@ -2,6 +2,7 @@ package se.idega.idegaweb.commune.school.presentation;
 
 import is.idega.block.family.business.FamilyLogic;
 import is.idega.block.family.business.NoCustodianFound;
+
 import java.rmi.RemoteException;
 import java.text.DateFormat;
 import java.text.MessageFormat;
@@ -15,8 +16,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
+
 import javax.ejb.FinderException;
 import javax.faces.component.UIComponent;
+
 import se.idega.idegaweb.commune.care.business.CareBusiness;
 import se.idega.idegaweb.commune.care.presentation.ChildContracts;
 import se.idega.idegaweb.commune.presentation.CitizenChildren;
@@ -25,6 +28,7 @@ import se.idega.idegaweb.commune.school.business.SchoolChoiceBusiness;
 import se.idega.idegaweb.commune.school.business.SchoolCommuneBusiness;
 import se.idega.idegaweb.commune.school.data.SchoolChoice;
 import se.idega.util.PIDChecker;
+
 import com.idega.block.navigation.presentation.UserHomeLink;
 import com.idega.block.school.business.SchoolBusiness;
 import com.idega.block.school.data.School;
@@ -36,6 +40,7 @@ import com.idega.block.school.data.SchoolSeason;
 import com.idega.block.school.data.SchoolType;
 import com.idega.block.school.data.SchoolTypeHome;
 import com.idega.block.school.data.SchoolYear;
+import com.idega.block.school.presentation.SchoolYearSelectorCollectionHandler;
 import com.idega.business.IBOLookup;
 import com.idega.business.IBORuntimeException;
 import com.idega.core.builder.data.ICPage;
@@ -53,6 +58,7 @@ import com.idega.presentation.Page;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.Script;
 import com.idega.presentation.Table;
+import com.idega.presentation.remotescripting.RemoteScriptHandler;
 import com.idega.presentation.text.Break;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
@@ -933,6 +939,19 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		}
 		drpGrade.addMenuElementFirst("-1", iwrb.getLocalizedString("school.select_year", "Select year"));
 		
+		try {
+			RemoteScriptHandler rsh = new RemoteScriptHandler(typeDrop, drpGrade);
+			rsh.setRemoteScriptCollectionClass(SchoolYearSelectorCollectionHandler.class);
+			rsh.setToClear(drpGrade, iwrb.getLocalizedString("school.select_year", "Select year"));
+			add(rsh);
+		}
+		catch (IllegalAccessException iae) {
+			iae.printStackTrace();
+		}
+		catch (InstantiationException ie) {
+			ie.printStackTrace();
+		}
+
 		if (_reloadYear != -1){
 			drpGrade.setSelectedElement(String.valueOf(_reloadYear));
 		}else {
