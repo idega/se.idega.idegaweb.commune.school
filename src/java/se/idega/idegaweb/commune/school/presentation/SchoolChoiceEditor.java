@@ -17,15 +17,10 @@
 package se.idega.idegaweb.commune.school.presentation;
 
 import java.rmi.RemoteException;
-import java.sql.Timestamp;
-import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.Iterator;
 
-import se.idega.idegaweb.commune.accounting.resource.business.ResourceBusiness;
 import se.idega.idegaweb.commune.business.CommuneUserBusiness;
-import se.idega.idegaweb.commune.childcare.business.ChildCareBusiness;
-import se.idega.idegaweb.commune.message.business.MessageBusiness;
 import se.idega.idegaweb.commune.provider.business.ProviderSession;
 import se.idega.idegaweb.commune.school.business.CentralPlacementBusiness;
 import se.idega.idegaweb.commune.school.business.SchoolChoiceBusiness;
@@ -34,9 +29,7 @@ import se.idega.idegaweb.commune.school.data.SchoolChoice;
 import se.idega.idegaweb.commune.school.event.SchoolEventListener;
 
 import com.idega.block.process.business.CaseBusiness;
-import com.idega.block.school.business.SchoolBusiness;
 import com.idega.block.school.data.School;
-import com.idega.block.school.data.SchoolClass;
 import com.idega.block.school.data.SchoolClassMember;
 import com.idega.block.school.data.SchoolClassMemberHome;
 import com.idega.block.school.data.SchoolSeason;
@@ -45,27 +38,20 @@ import com.idega.block.school.data.SchoolStudyPath;
 import com.idega.block.school.data.SchoolStudyPathHome;
 import com.idega.business.IBOLookup;
 import com.idega.business.IBORuntimeException;
-import com.idega.core.contact.data.Email;
 import com.idega.core.contact.data.Phone;
-import com.idega.core.localisation.data.ICLanguage;
-import com.idega.core.localisation.data.ICLanguageHome;
 import com.idega.core.location.data.Address;
 import com.idega.data.IDOLookup;
-import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.Table;
-import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.Form;
 import com.idega.presentation.ui.HiddenInput;
 import com.idega.presentation.ui.Parameter;
 import com.idega.presentation.ui.SubmitButton;
-import com.idega.user.business.NoPhoneFoundException;
 import com.idega.user.data.User;
-import com.idega.util.IWTimestamp;
 
 
 public class SchoolChoiceEditor extends SchoolCommuneBlock {
@@ -73,7 +59,7 @@ public class SchoolChoiceEditor extends SchoolCommuneBlock {
 	private static final String KP = "school_choice_editor.";
 	private static final String KEY_WINDOW_HEADING = KP + "window_heading";
 	private static final String KEY_SEARCH_PUPIL_HEADING = KP + "search_pupil_heading";
-	private static final String KEY_PUPIL_HEADING = KP + "pupil_heading";
+	//private static final String KEY_PUPIL_HEADING = KP + "pupil_heading";
 	
 	private static final String KEY_SEARCH_NO_PUPIL_FOUND = KP + "search_no_pupil_found";
 	
@@ -83,7 +69,7 @@ public class SchoolChoiceEditor extends SchoolCommuneBlock {
 	private static final String KEY_FIRST_LAST_NAME_LABEL = KP + "first_last_name_label";
 	private static final String KEY_ADDRESS_LABEL = KP + "address_label";
 	private static final String KEY_PHONE_LABEL = KP + "telephone_label";
-	private static final String KEY_SCHOOL_TYPE_LABEL = KP + "school_type_label";
+	//private static final String KEY_SCHOOL_TYPE_LABEL = KP + "school_type_label";
 	private static final String KEY_SCHOOL_CHOICE_LABEL = KP + "school_choice_label";
 	
 	
@@ -92,9 +78,9 @@ public class SchoolChoiceEditor extends SchoolCommuneBlock {
 	
 	// Button keys
 //	private static final String KEY_BUTTON_SEARCH = KP + "button_search";
-	private static final String KEY_BUTTON_PLACE = KP + "button_place";
-	private static final String KEY_BUTTON_CANCEL = KP + "button_cancel";
-	private static final String KEY_BUTTON_SEND = KP + "button_send";
+	//private static final String KEY_BUTTON_PLACE = KP + "button_place";
+	//private static final String KEY_BUTTON_CANCEL = KP + "button_cancel";
+	//private static final String KEY_BUTTON_SEND = KP + "button_send";
 	
 	// Http request parameters  
 	public static final String PARAM_ACTION = "param_action";
@@ -116,7 +102,7 @@ public class SchoolChoiceEditor extends SchoolCommuneBlock {
 	// Actions
 	private static final int ACTION_REACTIVATE_CHOICE = 1;	
 	private static final int ACTION_REMOVE_SESSION_CHILD = 2;
-	private static final int ACTION_SEND_MESSAGES = 3;
+	//private static final int ACTION_SEND_MESSAGES = 3;
 	
 	
 	
@@ -128,9 +114,7 @@ public class SchoolChoiceEditor extends SchoolCommuneBlock {
 	private static final String STYLE_UNDERLINED_SMALL_HEADER =
 		"font-style:normal;text-decoration:underline;color:#000000;"
 		+ "font-size:10px;font-family:Verdana,Arial,Helvetica;font-weight:bold;";
-	private static final  String STYLE_STORED_PLACEMENT_MSG =
-		"font-style:normal;color:#0000FF;"
-		+ "font-size:10px;font-family:Verdana,Arial,Helvetica;font-weight:normal;";
+	//private static final  String STYLE_STORED_PLACEMENT_MSG = "font-style:normal;color:#0000FF;font-size:10px;font-family:Verdana,Arial,Helvetica;font-weight:normal;";
 	// Paths
 	private static final String PATH_TRANS_GIF =
 		"/idegaweb/bundles/com.idega.core.bundle/resources/transparentcell.gif";
@@ -142,7 +126,7 @@ public class SchoolChoiceEditor extends SchoolCommuneBlock {
 	private static final String UNIQUE_SUFFIX = "chosen_user";
 
 	// Instance variables
-	private IWResourceBundle iwrb;
+	//private IWResourceBundle iwrb;
 	private Form form;
 	private Table mainTable;
 	private int mainTableRow;
@@ -152,20 +136,20 @@ public class SchoolChoiceEditor extends SchoolCommuneBlock {
 	
 	private Image transGIF = new Image(PATH_TRANS_GIF);
 	private String errMsgSearch = null;
-	private String errMsgMid = null;
-	private SchoolClassMember latestPl = null;
+	//private String errMsgMid = null;
+	//private SchoolClassMember latestPl = null;
 	private SchoolClassMember storedPlacement = null;
-	private Link pupilOverviewLinkButton = null;
-	private Link editLatestPlacementButton = null;
-	private ProviderSession _providerSession = null;
-	private SchoolSeason currentSeason = null;
+	//private Link pupilOverviewLinkButton = null;
+	//private Link editLatestPlacementButton = null;
+	//private ProviderSession _providerSession = null;
+	//private SchoolSeason currentSeason = null;
 
 	private int _action = -1;
 	private boolean _newPlacement = false;
 	private boolean _cancelNewPlacement = false;
 
 	public void init(IWContext iwc) throws Exception {
-		iwrb = getResourceBundle(iwc);
+		//iwrb = getResourceBundle(iwc);
 		form = new Form();
 		form.setName(FORM_NAME);
 		form.setEventListener(SchoolEventListener.class);
@@ -179,16 +163,15 @@ public class SchoolChoiceEditor extends SchoolCommuneBlock {
 		
 		getSearchResult(iwc);
 
-		currentSeason = getCentralPlacementBusiness(iwc).getCurrentSeason();
+		//currentSeason = getCentralPlacementBusiness(iwc).getCurrentSeason();
 		// Perform actions according the _action input parameter
 		switch (_action) {
 		case ACTION_REACTIVATE_CHOICE :
 			try {
-				SchoolSeason chosenSeason = getSchoolSeasonHome().
-				findByPrimaryKey(new Integer(getSchoolCommuneSession(iwc).getSchoolSeasonID()));
-				latestPl = getCentralPlacementBusiness(iwc).getLatestPlacementFromElemAndHighSchool(child, chosenSeason);
+				//SchoolSeason chosenSeason = getSchoolSeasonHome().findByPrimaryKey(new Integer(getSchoolCommuneSession(iwc).getSchoolSeasonID()));
+				//latestPl = getCentralPlacementBusiness(iwc).getLatestPlacementFromElemAndHighSchool(child, chosenSeason);
 				//storedPlacement = storePlacement(iwc, child);
-				reactivateSchoolChoice(iwc, child);
+				reactivateSchoolChoice(iwc);
 			} 
 			catch (Exception e1) {log(e1);}			
 			break;
@@ -491,10 +474,10 @@ public class SchoolChoiceEditor extends SchoolCommuneBlock {
 		table.setCellspacing(0);
 		transGIF.setHeight("1");
 		transGIF.setWidth("1");
-		String rowHeight = "20";
+		//String rowHeight = "20";
 		
-		if (mainRowHeight != null)
-			rowHeight = mainRowHeight;
+		//if (mainRowHeight != null)
+			//rowHeight = mainRowHeight;
 		
 		int row = 1;
 		int col = 1;
@@ -508,9 +491,9 @@ public class SchoolChoiceEditor extends SchoolCommuneBlock {
 		table.setWidth(3, row, "20");
 		
 		int pendingSchoolId = -1;
-		boolean showChangePlacementDate = false;
-		School oldSchool = null;
-		Link reactivate;
+		//boolean showChangePlacementDate = false;
+		//School oldSchool = null;
+		//Link reactivate;
 		int choiceOrder = 0;
 		if (child != null){
 			Collection choices = getSchoolCommuneBusiness(iwc).getSchoolChoiceBusiness().findByStudentAndSeason(((Integer)child.getPrimaryKey()).intValue(), getSchoolCommuneSession(iwc).getSchoolSeasonID());
@@ -675,7 +658,7 @@ public class SchoolChoiceEditor extends SchoolCommuneBlock {
 
 	
 
-		private String getDateString(Timestamp stamp) {
+		/*private String getDateString(Timestamp stamp) {
 		IWTimestamp iwts = null;
 		String dateStr = "";
 		if (stamp != null) {
@@ -683,20 +666,20 @@ public class SchoolChoiceEditor extends SchoolCommuneBlock {
 			dateStr = iwts.getDateString("yyyy-MM-dd");
 		}
 		return dateStr;
-	}
+	}*/
 
 		
-	private void reactivateSchoolChoice(IWContext iwc, User child) throws RemoteException  {
+	private void reactivateSchoolChoice(IWContext iwc) throws RemoteException  {
 		int choiceID = Integer.valueOf(iwc.getParameter(PARAM_REACTIVATE_CHOICE_ID)).intValue();
-		Integer orderID = Integer.valueOf(iwc.getParameter(PARAM_REACTIVATE_CHOICE_ORDER));
+		//Integer orderID = Integer.valueOf(iwc.getParameter(PARAM_REACTIVATE_CHOICE_ORDER));
 		int numberChoices = Integer.valueOf(iwc.getParameter(PARAM_NUMBER_OF_CHOICES)).intValue();
-		boolean removedPlacement = false;
+		//boolean removedPlacement = false;
 		//String schoolRemovedFrom = "";
 		boolean hasReceivedPlacementMessage = false;
-		boolean hasReceivedConfirmationMessage = false;
+		//boolean hasReceivedConfirmationMessage = false;
 		int removedSchoolID = -1;
-		String activatedSchool = "";
-		School school = null;
+		//String activatedSchool = "";
+		//School school = null;
 		for (int i = 1; i <= numberChoices; i++) {
 			int currentChoiceID = Integer.valueOf(iwc.getParameter(PARAM_PLAC_CHOICE_ID + String.valueOf(i))).intValue();
 			try {
@@ -728,8 +711,8 @@ public class SchoolChoiceEditor extends SchoolCommuneBlock {
 				else if (currentChoiceID ==  choiceID) {
 					//change status to active
 					getSchoolChoiceBusiness(iwc).setAsPreliminary(choice, iwc.getCurrentUser());
-					school = getSchoolCommuneBusiness(iwc).getSchoolChoiceBusiness().getSchool(choiceID);
-					activatedSchool =  school.getName();
+					//school = getSchoolCommuneBusiness(iwc).getSchoolChoiceBusiness().getSchool(choiceID);
+					//activatedSchool =  school.getName();
 				
 				}
 				else if (choice.getStatus().equalsIgnoreCase("PREL") && currentChoiceID !=  choiceID) {
@@ -755,7 +738,7 @@ public class SchoolChoiceEditor extends SchoolCommuneBlock {
 	 * 
 	 * */
 	
-	private void sendMessages(IWContext iwc, boolean removedPlacement, String schoolRemovedFrom, String activatedSchool, SchoolChoice choice) throws RemoteException {
+	/*private void sendMessages(IWContext iwc, boolean removedPlacement, String schoolRemovedFrom, String activatedSchool, SchoolChoice choice) throws RemoteException {
 		String subject = "";
 		String subject2 = "";
 		String body = "";
@@ -765,7 +748,7 @@ public class SchoolChoiceEditor extends SchoolCommuneBlock {
 		String propNameBody = null;
 
 		int schoolClassID = getSchoolCommuneSession(iwc).getSchoolClassID();
-		SchoolClass schoolClass = getSchoolCommuneBusiness(iwc).getSchoolBusiness().findSchoolClass(new Integer(schoolClassID));
+		SchoolClass schoolClass = getSchoolCommuneBusiness(iwc).getSchoolBusiness().findSchoolClass(new Integer(schoolClassID));*/
 		/*if (schoolClass != null) {
 			if (!removedPlacement){
 				subject = localize(KEY_REACTIVATE_SUBJECT1, "School choice reactivated");
@@ -794,7 +777,7 @@ public class SchoolChoiceEditor extends SchoolCommuneBlock {
 		getParentPage().setParentToRedirect(URL.toString());
 		getParentPage().close();
 		*/
-		User user = iwc.getCurrentUser();
+		/*User user = iwc.getCurrentUser();
 		Email mail = getUserBusiness(iwc).getUserMail(user);
 		
 		String email = "";
@@ -815,7 +798,7 @@ public class SchoolChoiceEditor extends SchoolCommuneBlock {
 		
 		
 		
-	}
+	}*/
 	
 	
 	
@@ -834,9 +817,9 @@ public class SchoolChoiceEditor extends SchoolCommuneBlock {
 
 	// *** ACTIONS ***
 	
-	private ICLanguageHome getICLanguageHome() throws RemoteException {
+	/*private ICLanguageHome getICLanguageHome() throws RemoteException {
 		return (ICLanguageHome) IDOLookup.getHome(ICLanguage.class);
-	}
+	}*/
 	
 	protected ProviderSession getCentralPlacementProviderSession(IWUserContext iwuc) {
 		try {
@@ -860,9 +843,9 @@ public class SchoolChoiceEditor extends SchoolCommuneBlock {
 		IBOLookup.getServiceInstance(iwc, CommuneUserBusiness.class);
 	}
 
-	private SchoolBusiness getSchoolBusiness(IWContext iwc) throws RemoteException {
+	/*private SchoolBusiness getSchoolBusiness(IWContext iwc) throws RemoteException {
 		return (SchoolBusiness) IBOLookup.getServiceInstance(iwc, SchoolBusiness.class);
-	}
+	}*/
 
 	private SchoolChoiceBusiness getSchoolChoiceBusiness(IWContext iwc) throws RemoteException {
 		return (SchoolChoiceBusiness) IBOLookup.getServiceInstance(iwc, SchoolChoiceBusiness.class);
@@ -878,14 +861,14 @@ public class SchoolChoiceEditor extends SchoolCommuneBlock {
 	 SchoolCommuneBusiness.class);
 	 }
 	 */
-	private ChildCareBusiness getChildCareBusiness(IWContext iwc) throws RemoteException {
+	/*private ChildCareBusiness getChildCareBusiness(IWContext iwc) throws RemoteException {
 		return (ChildCareBusiness)
 		IBOLookup.getServiceInstance(iwc, ChildCareBusiness.class);
-	}
+	}*/
 
-	private ResourceBusiness getResourceBusiness(IWContext iwc) throws RemoteException {
+	/*private ResourceBusiness getResourceBusiness(IWContext iwc) throws RemoteException {
 		return (ResourceBusiness) IBOLookup.getServiceInstance(iwc, ResourceBusiness.class);
-	}
+	}*/
 	
 	public SchoolStudyPathHome getStudyPathHome() throws java.rmi.RemoteException {
 		return (SchoolStudyPathHome) IDOLookup.getHome(SchoolStudyPath.class);
@@ -899,9 +882,9 @@ public class SchoolChoiceEditor extends SchoolCommuneBlock {
 		return (SchoolClassMemberHome) IDOLookup.getHome(SchoolClassMember.class);
 	}
 
-	private MessageBusiness getMessageBusiness(IWContext iwc) throws RemoteException {
+	/*private MessageBusiness getMessageBusiness(IWContext iwc) throws RemoteException {
 		return (MessageBusiness) IBOLookup.getServiceInstance(iwc, MessageBusiness.class);
-	}
+	}*/
 
 	public CommuneUserBusiness getCommuneUserBusiness(IWContext iwc) throws RemoteException {
 		return (CommuneUserBusiness) IBOLookup.getServiceInstance(iwc, CommuneUserBusiness.class);
