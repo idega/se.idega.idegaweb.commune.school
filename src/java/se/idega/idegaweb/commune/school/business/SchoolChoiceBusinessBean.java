@@ -1545,11 +1545,13 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 			SchoolYear preSchoolClass = getSchoolYearHome().findByYearName("F");
 			SchoolYear firstClass = getSchoolYearHome().findByYearName("1");
 			SchoolYear fourthClass = getSchoolYearHome().findByYearName("4");
+			SchoolYear sixthClass = getSchoolYearHome().findByYearName("6");
 			SchoolYear seventhClass = getSchoolYearHome().findByYearName("7");
 
 			years.add(preSchoolClass);
 			years.add(firstClass);
 			years.add(fourthClass);
+			years.add(sixthClass);
 			years.add(seventhClass);
 
 		}
