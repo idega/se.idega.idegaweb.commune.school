@@ -46,7 +46,7 @@ import com.idega.util.IWTimestamp;
  * Copyright:    Copyright idega Software (c) 2002
  * Company:	idega Software
  * @author <a href="mailto:roar@idega.is">roar</a>
- * @version $Id: EventList.java,v 1.10 2004/01/13 13:40:08 jonas Exp $
+ * @version $Id: EventList.java,v 1.11 2004/01/13 15:05:29 jonas Exp $
  * @since 17.3.2003 
  */
 
@@ -240,7 +240,7 @@ public class EventList extends CommuneBlock {
 
 	private void viewMessages(String[] ids)
 		throws FinderException {
-		Table layout = new Table();
+		/*Table layout = new Table();
 		Collection selectedLetters = getPrintedLetter().findLetters(ids);
 
 		Iterator iter = selectedLetters.iterator();
@@ -290,10 +290,10 @@ public class EventList extends CommuneBlock {
 			System.out.println("parent case for EventList message is " + msg.getParentCase());
 			if(fileID!=-1) {
 				System.out.println("adding link for pdf");
-				Link viewLink = new Link(localize("printdoc.view", "View"));
+				Link viewLink = new Link(msg.getSubject() + "  (" + msg.getOwner().getName() + ")");
 				viewLink.setFile(fileID);
-				message.add("", 1, row);
-				message.add(viewLink, 2, row++);
+				message.add(viewLink, 1, row);
+				message.add("", 2, row++);
 			} else {
 				System.out.println("Could not create pdf, no link added");
 			}
@@ -316,7 +316,31 @@ public class EventList extends CommuneBlock {
 		toolbar.add(printBtn, 2, 1);
 
 		layout.add(toolbar, 1, layoutRow);
-		add(layout);
+		add(layout);*/
+		Collection selectedLetters = getPrintedLetter().findLetters(ids);
+
+		Iterator iter = selectedLetters.iterator();
+		int count = selectedLetters.size();
+		Table messages = new Table(1, count);
+		
+		while (iter.hasNext()) {
+			int row = 1;
+
+			PrintedLetterMessage msg = (PrintedLetterMessage) iter.next();
+			
+			int fileID = createPrintableMessage(msg);
+			System.out.println("parent case for EventList message is " + msg.getParentCase());
+			if(fileID!=-1) {
+				System.out.println("adding link for pdf");
+				Link viewLink = new Link(msg.getSubject() + "  (" + msg.getOwner().getName() + ")");
+				viewLink.setFile(fileID);
+				messages.add(viewLink, 1, row++);
+			} else {
+				System.out.println("Could not create pdf, no link added");
+			}
+		}
+		
+		add(messages);
 	}
 	
 	/* creates the pdf file and returns the ICFile identifier */
