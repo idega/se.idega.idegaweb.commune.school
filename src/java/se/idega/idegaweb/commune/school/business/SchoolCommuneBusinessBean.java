@@ -634,7 +634,10 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
         try {
             final SchoolSeason season
                     = getSchoolChoiceBusiness ().getCurrentSeason ();
-            return getSchoolBusiness ().findByStudentAndSeason (user, season);
+            final SchoolClassMember student = getSchoolBusiness ()
+                    .findByStudentAndSeason (user, season);
+            return (null == student || null != student.getRemovedDate ())
+                    ? null : student;
         } catch (final FinderException e) {
             return null;
         }
