@@ -37,7 +37,7 @@ import com.idega.util.IWTimestamp;
 /**
  * @author Göran Borgman
  *
- * Business object with helper methods for CentralPlacingEditor
+ * Business object with helper methods for CentralPlacementEditor
  */
 public class CentralPlacementBusinessBean extends IBOServiceBean 
 																						implements CentralPlacementBusiness {
@@ -57,6 +57,7 @@ public class CentralPlacementBusinessBean extends IBOServiceBean
 																throws RemoteException, CentralPlacementException {
 		int studentID = -1;
 		int schoolClassID = -1;
+		int schoolYearID = -1;
 		int registrator = -1;
 		String placementDateStr = "-1";
 		Timestamp registerDate = null;
@@ -105,6 +106,8 @@ public class CentralPlacementBusinessBean extends IBOServiceBean
 			if (yearID.equals("-1")) {
 				throw new CentralPlacementException(KEY_ERROR_SCHOOL_YEAR, 
 																				"You must chose a school year");
+			} else {
+				schoolYearID = Integer.parseInt(yearID);
 			}
 		}
 		
@@ -164,7 +167,7 @@ public class CentralPlacementBusinessBean extends IBOServiceBean
 			trans.begin();
 			// Create new placement
 			newPlacement = getSchoolBusiness(iwc).storeSchoolClassMember(studentID, schoolClassID, 
-																									registerDate, registrator, notes);
+																				schoolYearID, registerDate, registrator, notes);
 			if (newPlacement != null) {
 			// *** START - Store the rest of the parameters ***
 				newPlacementID = ((Integer) newPlacement.getPrimaryKey()).intValue(); // test
