@@ -37,7 +37,6 @@ public class UserCases extends CommuneBlock {
 	private final static int ACTION_VIEW_CASE_LIST = 1;
 	private final static String PARAM_CASE_ID = "USC_CASE_ID";
 	private final static String PARAM_MANAGER_ID = ManagerView.PARAM_MANAGER_ID;
-	private Table mainTable = null;
 	private int manager_page_id = -1;
 	private int viewpointPageId = -1;
 
@@ -92,12 +91,11 @@ public class UserCases extends CommuneBlock {
 	}
 
 	private void viewCaseList(IWContext iwc) throws Exception {
-		if (mainTable == null) {
-			mainTable = new Table();
-			mainTable.setCellpadding(0);
-			mainTable.setCellspacing(0);
-			mainTable.setWidth(getWidth());
-		}
+		Table mainTable = new Table();
+		mainTable.setCellpadding(0);
+		mainTable.setCellspacing(0);
+		mainTable.setWidth(getWidth());
+		add(mainTable);
 
 		if (iwc.isLoggedOn()) {
 			Collection cases = getCommuneCaseBusiness(iwc).getAllCasesDefaultVisibleForUser(iwc.getCurrentUser());
