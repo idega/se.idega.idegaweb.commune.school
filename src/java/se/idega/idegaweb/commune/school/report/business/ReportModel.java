@@ -1,5 +1,5 @@
 /*
- * $Id: ReportModel.java,v 1.14 2004/01/20 16:23:47 anders Exp $
+ * $Id: ReportModel.java,v 1.15 2004/01/21 10:35:13 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -21,10 +21,10 @@ import com.idega.util.database.ConnectionBroker;
  * This abstract class holds cell and header values for school statistics reports.
  * Subclasses implements methods for generating report data and cell value calculations.
  * <p>
- * Last modified: $Date: 2004/01/20 16:23:47 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/21 10:35:13 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.14 $
+ * @version $Revision: 1.15 $
  */
 public abstract class ReportModel {
 
@@ -96,6 +96,16 @@ public abstract class ReportModel {
 	protected final static String KEY_SCHOOL_CHILDREN_CARE_7_9_YEAR = KP + "school_children_care_7_9_year";
 	protected final static String KEY_FAMILY_AFTER_SCHOOL_CENTRE = KP + "family_after_school_centre";
 	protected final static String KEY_SUM_CHILDREN = KP + "sum_children";
+	protected final static String KEY_COMMUNE_PRE_SCHOOL_OPERATION = KP + "commune_pre_school_operation";
+	protected final static String KEY_PRIVATE_COOPERATIVE_PRE_SCHOOL_OPERATION = KP + "private_cooperative_pre_school_operation";
+	protected final static String KEY_COMMUNE_SCHOOL_CHILDREN_CARE_6 = KP + "commun_school_children_care_6";
+	protected final static String KEY_PRIVATE_COOPERATIVE_SCHOOL_CHILDREN_CARE_6 = KP + "private_cooperative_school_children_care_6";
+	protected final static String KEY_COMMUNE_SCHOOL_CHILDREN_CARE_7_9 = KP + "commune_school_children_care_7_9";
+	protected final static String KEY_PRIVATE_SCHOOL_CHILDREN_CARE_7_9 = KP + "private_school_children_care_7_9";
+	protected final static String KEY_COMMUNE_SUM = KP + "commune_sum";
+	protected final static String KEY_PRIVATE_SUM = KP + "private_sum";
+	protected final static String KEY_NUMBER_OF_CHILDREN = KP + "number_of_children";
+	protected final static String KEY_SHARE_IN_PERCENT = KP + "share_in_percent";
 
 	/**
 	 * Constructs a report model with the specified report business logic. 
