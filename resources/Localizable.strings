@@ -1,4 +1,5 @@
 iw.component.se.idega.idegaweb.commune.school.report.presentation.SchoolReports.name=
+report.compulsory_high_schools=report.compulsory_high_schools
 report.compulsory_schools=
 report.county_council=report.county_council
 report.elementary_school=
@@ -40,3 +41,4 @@ school_report.for_printing=For printing
 school_report.no_report_selected=
 school_report.print=Print
 school_report.select_report=
+study_path_code_compulsory_high_school=study_path_code_compulsory_high_school
