@@ -545,8 +545,6 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
   		sql.appendWithinSingleQuotes("Y");
   	else
   		sql.appendWithinSingleQuotes("N");
-  	System.out.println(sql.toString());
-  	
   	
 		return super.idoFindPKsBySQL(sql.toString());
   }
