@@ -83,11 +83,11 @@ public class SchoolReportBusinessBean extends IBOSessionBean implements SchoolRe
 		
 		ReportableCollection reportCollection = new ReportableCollection();
 		
-		reportCollection.addExtraHeaderParameterAtBeginning(
+		/*reportCollection.addExtraHeaderParameterAtBeginning(
 				"school_group_report",
 				getLocalizedString("extra_information", "Extra information"),
 				"label",
-				freeText);
+				freeText);*/
 		
 		ReportableField personalID = new ReportableField(FIELD_PERSONAL_ID, String.class);
 		personalID.setLocalizedName(getLocalizedString(FIELD_PERSONAL_ID, "Personal ID"), currentLocale);
