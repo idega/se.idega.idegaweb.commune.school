@@ -1086,15 +1086,23 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
             sql.append(" and u.date_of_birth >= ").append(dateFrom.getDate()).append("\n");
             sql.append(" and u.date_of_birth <= ").append(dateTo.getDate()).append("\n");
             sql.append(" )");
-            sql.append(" and u.ic_user_id not in( ").append("\n");
-            sql.append("     select u.ic_user_id ").append("\n");
-            sql.append("     from sch_class_member mb,sch_school_class cl, ic_user u ").append("\n");
-            sql.append("     where mb.sch_school_class_id = cl.sch_school_class_id ").append("\n");
-            sql.append("     and u.ic_user_id = mb.ic_user_id ").append("\n");
-            sql.append("     and cl.sch_school_season_id = ").append(season.getPrimaryKey().toString()).append("\n");
-            sql.append("    and u.date_of_birth >= ").append(dateFrom.getDate()).append("\n");
-            sql.append("    and u.date_of_birth <= ").append(dateTo.getDate()).append("\n");
-            sql.append("     ) ").append("\n");
+            try {
+                SchoolSeason previousSeason = season.getPreviousSeason();
+                if(previousSeason!=null){
+                    int previousSeasonId = ((Integer) previousSeason.getPrimaryKey()).intValue();
+                    sql.append(" and u.ic_user_id not in( ").append("\n");
+                    sql.append("     select u.ic_user_id ").append("\n");
+                    sql.append("     from sch_class_member mb,sch_school_class cl, ic_user u ").append("\n");
+                    sql.append("     where mb.sch_school_class_id = cl.sch_school_class_id ").append("\n");
+                    sql.append("     and u.ic_user_id = mb.ic_user_id ").append("\n");
+                    sql.append("     and cl.sch_school_season_id = ").append(previousSeasonId).append("\n");
+                    sql.append("    and u.date_of_birth >= ").append(dateFrom.getDate()).append("\n");
+                    sql.append("    and u.date_of_birth <= ").append(dateTo.getDate()).append("\n");
+                    sql.append("     ) ").append("\n");
+                }
+            } catch (FinderException e2) {
+                e2.printStackTrace();
+            }
             if(onlyInCommune)
                 sql.append(" and c.default_commune  = 'Y'");
             sql.append(" and us.status_id is null ");
