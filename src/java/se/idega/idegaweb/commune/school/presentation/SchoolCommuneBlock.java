@@ -11,7 +11,6 @@ import se.idega.idegaweb.commune.school.business.SchoolCommuneBusiness;
 import se.idega.idegaweb.commune.school.business.SchoolCommuneSession;
 
 import com.idega.block.school.business.SchoolBusiness;
-import com.idega.block.school.business.SchoolTypeBusiness;
 import com.idega.block.school.business.SchoolYearComparator;
 import com.idega.block.school.data.School;
 import com.idega.block.school.data.SchoolClass;
@@ -36,7 +35,6 @@ public abstract class SchoolCommuneBlock extends CommuneBlock {
 	private SchoolCommuneBusiness business;
 	protected SchoolCommuneSession session;
 	private SchoolBusiness sBusiness;
-	private SchoolTypeBusiness stBusiness;
 	private int _schoolID = -1;
 	private int _schoolSeasonID = -1;
 	private int _schoolYearID = -1;
@@ -47,7 +45,6 @@ public abstract class SchoolCommuneBlock extends CommuneBlock {
 		business = getSchoolCommuneBusiness(iwc);
 		session = getSchoolCommuneSession(iwc);
 		sBusiness = getSchoolBusiness(iwc);
-		stBusiness = getSchoolTypeBusiness(iwc);
 		initialize(iwc);
 
 		init(iwc);
@@ -111,7 +108,7 @@ public abstract class SchoolCommuneBlock extends CommuneBlock {
 		
 		DropdownMenu menu = new DropdownMenu(session.getParameterSchoolID());
 		menu.setToSubmit();
-		Collection schoolTypeIds = stBusiness.findAllSchoolTypesForSchool();
+		Collection schoolTypeIds = sBusiness.findAllSchoolTypesForSchool();
 		Collection schools = business.getSchoolBusiness().findAllSchoolsByType(schoolTypeIds);
 		Iterator iter = schools.iterator();
 		while (iter.hasNext()) {
@@ -131,7 +128,7 @@ public abstract class SchoolCommuneBlock extends CommuneBlock {
 		DropdownMenu menu = new DropdownMenu(session.getParameterSchoolSeasonID());
 		menu.setToSubmit();
 		
-		Collection seasons = business.getSchoolSeasonBusiness().findAllSchoolSeasons();
+		Collection seasons = business.getSchoolBusiness().findAllSchoolSeasons();
 		if ( !seasons.isEmpty() ) {
 			Iterator iter = seasons.iterator();
 			while (iter.hasNext()) {
@@ -189,7 +186,7 @@ public abstract class SchoolCommuneBlock extends CommuneBlock {
 		menu.setToSubmit();
 		
 		if ( _schoolID != -1 && _schoolSeasonID != -1 && _schoolYearID != -1 ) {
-			Collection classes = business.getSchoolClassBusiness().findSchoolClassesBySchoolAndSeasonAndYear(_schoolID, _schoolSeasonID, _schoolYearID);
+			Collection classes = business.getSchoolBusiness().findSchoolClassesBySchoolAndSeasonAndYear(_schoolID, _schoolSeasonID, _schoolYearID);
 			if ( !classes.isEmpty() ) {
 				Iterator iter = classes.iterator();
 				while (iter.hasNext()) {
@@ -227,9 +224,6 @@ public abstract class SchoolCommuneBlock extends CommuneBlock {
 		return (SchoolBusiness) IBOLookup.getServiceInstance(iwac, SchoolBusiness.class);
 	}
 	
-	protected SchoolTypeBusiness getSchoolTypeBusiness(IWApplicationContext iwac) throws RemoteException {
-		return (SchoolTypeBusiness) IBOLookup.getServiceInstance(iwac, SchoolTypeBusiness.class);
-	}
 	/**
 	 * Returns the schoolClassID.
 	 * @return int

@@ -78,7 +78,7 @@ public class SchoolClassWriter implements MediaWritable {
 			userBusiness = getCommuneUserBusiness(iwma.getIWApplicationContext());
 			
 			if (req.getParameter(prmClassId) != null) {
-				SchoolClass schoolClass = business.getSchoolClassBusiness().findSchoolClass(new Integer(req.getParameter(prmClassId)));
+				SchoolClass schoolClass = business.getSchoolBusiness().findSchoolClass(new Integer(req.getParameter(prmClassId)));
 				String type = req.getParameter(prmPrintType);
 				if (type.equals(PDF)) {
 					buffer = writePDF(schoolClass);
@@ -117,7 +117,7 @@ public class SchoolClassWriter implements MediaWritable {
 		Connection Conn = null;
 		MemoryFileBuffer buffer = new MemoryFileBuffer();
 		MemoryOutputStream mos = new MemoryOutputStream(buffer);
-		List students = new Vector(business.getSchoolClassMemberBusiness().findStudentsInClass(((Integer)schoolClass.getPrimaryKey()).intValue()));
+		List students = new Vector(business.getSchoolBusiness().findStudentsInClass(((Integer)schoolClass.getPrimaryKey()).intValue()));
 
 		if (!students.isEmpty()) {
 			Map studentMap = business.getStudentList(students);
@@ -180,7 +180,7 @@ public class SchoolClassWriter implements MediaWritable {
 		Connection Conn = null;
 		MemoryFileBuffer buffer = new MemoryFileBuffer();
 		MemoryOutputStream mos = new MemoryOutputStream(buffer);
-		List students = new Vector(business.getSchoolClassMemberBusiness().findStudentsInClass(((Integer)schoolClass.getPrimaryKey()).intValue()));
+		List students = new Vector(business.getSchoolBusiness().findStudentsInClass(((Integer)schoolClass.getPrimaryKey()).intValue()));
 
 		if (!students.isEmpty()) {
 			Map studentMap = business.getStudentList(students);

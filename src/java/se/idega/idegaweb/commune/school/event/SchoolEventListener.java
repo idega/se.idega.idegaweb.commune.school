@@ -65,9 +65,9 @@ public class SchoolEventListener implements IWEventListener {
 	}
 
 	private void validateSchoolClass(IWContext iwc) throws RemoteException {
-		SchoolClass schoolClass = getSchoolCommuneBusiness(iwc).getSchoolClassBusiness().findSchoolClass(new Integer(_schoolClassID));
+		SchoolClass schoolClass = getSchoolCommuneBusiness(iwc).getSchoolBusiness().findSchoolClass(new Integer(_schoolClassID));
 		if ( schoolClass.getSchoolYearId() != _schoolYearID ) {
-			Collection schoolClasses = getSchoolCommuneBusiness(iwc).getSchoolClassBusiness().findSchoolClassesBySchoolAndSeasonAndYear(_schoolID, _schoolSeasonID, _schoolYearID);
+			Collection schoolClasses = getSchoolCommuneBusiness(iwc).getSchoolBusiness().findSchoolClassesBySchoolAndSeasonAndYear(_schoolID, _schoolSeasonID, _schoolYearID);
 			if ( !schoolClasses.isEmpty() ) {
 				Iterator iter = schoolClasses.iterator();
 				while (iter.hasNext()) {

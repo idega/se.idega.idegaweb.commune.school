@@ -37,7 +37,7 @@ public class CurrentSchoolSeasonEditor extends Block {
   TextFormat tFormat;
   DateFormat dFormat;
 
-  SchoolSeasonBusiness sabBean;
+  SchoolBusiness sabBean;
   SchoolChoiceBusiness socBean;
   public final static String IW_BUNDLE_IDENTIFIER = "com.idega.block.school";
 
@@ -67,7 +67,7 @@ public class CurrentSchoolSeasonEditor extends Block {
   }
 
   private void initBeans(IWContext iwc) throws java.rmi.RemoteException,javax.ejb.CreateException{
-    sabBean = (SchoolSeasonBusiness) IBOLookup.getServiceInstance(iwc,SchoolSeasonBusiness.class);
+    sabBean = (SchoolBusiness) IBOLookup.getServiceInstance(iwc,SchoolBusiness.class);
     socBean = (SchoolChoiceBusiness) IBOLookup.getServiceInstance(iwc,SchoolChoiceBusiness.class);
   }
 

@@ -19,10 +19,7 @@ import se.idega.idegaweb.commune.school.business.SchoolCommuneBusiness;
 import se.idega.idegaweb.commune.school.data.SchoolChoice;
 import se.idega.util.PIDChecker;
 
-import com.idega.block.school.business.SchoolAreaBusiness;
 import com.idega.block.school.business.SchoolBusiness;
-import com.idega.block.school.business.SchoolTypeBusiness;
-import com.idega.block.school.business.SchoolYearBusiness;
 import com.idega.block.school.data.School;
 import com.idega.block.school.data.SchoolArea;
 import com.idega.block.school.data.SchoolClass;
@@ -707,8 +704,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 
 	private Collection getSchoolTypes(IWContext iwc, String category) {
 		try {
-			SchoolTypeBusiness sBuiz = (SchoolTypeBusiness) IBOLookup.getServiceInstance(iwc, SchoolTypeBusiness.class);
-			return sBuiz.findAllSchoolTypesInCategory(category);
+			return schCommBiz.getSchoolBusiness().findAllSchoolTypesInCategory(category);
 		}
 		catch (Exception ex) {
 
@@ -718,8 +714,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 
 	private Collection getSchoolYears(IWContext iwc) {
 		try {
-			SchoolYearBusiness sBuiz = (SchoolYearBusiness) IBOLookup.getServiceInstance(iwc, SchoolYearBusiness.class);
-			return sBuiz.findAllSchoolYears();
+			return schCommBiz.getSchoolBusiness().findAllSchoolYears();
 		}
 		catch (Exception e) {
 		}
@@ -740,8 +735,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 
 	private Collection getSchoolAreasWithType(IWContext iwc, int type) {
 		try {
-			SchoolAreaBusiness saBuiz = (SchoolAreaBusiness) IBOLookup.getServiceInstance(iwc, SchoolAreaBusiness.class);
-			return saBuiz.findAllSchoolAreasByType(type);
+			return schCommBiz.getSchoolBusiness().findAllSchoolAreasByType(type);
 		}
 		catch (Exception ex) {
 			ex.printStackTrace();
@@ -1029,18 +1023,14 @@ public class SchoolChoiceApplication extends CommuneBlock {
 					IWTimestamp start = new IWTimestamp(seasonStart);
 					start.setDay(Integer.parseInt(choiceStart.substring(0, 2)));
 					start.setMonth(Integer.parseInt(choiceStart.substring(3)));
-					System.out.println("Start: "+start.toString());
 
 					IWTimestamp end = new IWTimestamp(seasonStart);
 					end.setDay(Integer.parseInt(choiceEnd.substring(0, 2)));
 					end.setMonth(Integer.parseInt(choiceEnd.substring(3)));
-					System.out.println("End: "+end.toString());
 
 					IWTimestamp red = new IWTimestamp(seasonStart);
 					red.setDay(Integer.parseInt(choiceRed.substring(0, 2)));
 					red.setMonth(Integer.parseInt(choiceRed.substring(3)));
-					System.out.println("Red: "+red.toString());
-					System.out.println("Now: "+dateNow.toString());
 					
 					if (dateNow.isBetween(start, end))
 						checkCanApply[0] = true;
