@@ -1,6 +1,6 @@
 /*
- * $Id: SchoolConstants.java,v 1.2 2004/10/08 14:43:13 thomas Exp $
- * Created on Oct 8, 2004
+ * $Id: SchoolConstants.java,v 1.3 2004/10/19 17:20:02 thomas Exp $
+ * Created on Oct 19, 2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
  *
@@ -12,16 +12,12 @@ package se.idega.idegaweb.commune.school.business;
 
 /**
  * 
- *  Last modified: $Date: 2004/10/08 14:43:13 $ by $Author: thomas $
+ *  Last modified: $Date: 2004/10/19 17:20:02 $ by $Author: thomas $
  * 
  * @author <a href="mailto:thomas@idega.com">thomas</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class SchoolConstants {
 	
-	public final static char STATUS_DENIED = 'U';
-	public final static char STATUS_SENT_IN = 'A';
-	public final static String AFTER_SCHOOL_CASE_CODE_KEY = "MBFRITV";
-	
-	public static final String PARAMETER_CHILD_ID = "ccc_child_id";
+	public final static String SCHOOL_CHOICE_CASE_CODE_KEY ="MBSKOLV";
 }

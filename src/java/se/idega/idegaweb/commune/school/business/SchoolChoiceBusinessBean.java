@@ -85,7 +85,7 @@ import com.lowagie.text.pdf.PdfWriter;
  * @version 1.0
  */
 public class SchoolChoiceBusinessBean extends com.idega.block.process.business.CaseBusinessBean implements SchoolChoiceBusiness, com.idega.block.process.business.CaseBusiness {
-	public final static String SCHOOL_CHOICE_CASECODE = "MBSKOLV";
+
 	//Localization keys ,Messages
 	private static final String KP = "school_editor.";
 	private static final String KEY_REACTIVATE_SUBJECT1 = KP + "sch_admin_reactivate_subject1";
@@ -1136,7 +1136,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		String caseCode = "unreachable";
 		try {
 			caseCode = theCase.getCode();
-			if (SCHOOL_CHOICE_CASECODE.equals(caseCode)) {
+			if (SchoolConstants.SCHOOL_CHOICE_CASE_CODE_KEY.equals(caseCode)) {
 				int caseID = ((Integer) theCase.getPrimaryKey()).intValue();
 				return this.getSchoolChoice(caseID);
 			}
@@ -1148,7 +1148,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	}
 	
 	public String getSchoolChoiceCaseCode() {
-		return SCHOOL_CHOICE_CASECODE;
+		return SchoolConstants.SCHOOL_CHOICE_CASE_CODE_KEY;
 	}
 
 	

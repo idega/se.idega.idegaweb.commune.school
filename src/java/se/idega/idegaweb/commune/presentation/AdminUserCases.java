@@ -217,7 +217,7 @@ public class AdminUserCases extends UserCases {
 		final DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.SHORT, iwc.getCurrentLocale());
 		final Text caseDate = getSmallText(dateFormat.format(new Date(reminder.getCreated().getTime())));
 		Text caseNumber = getSmallText(reminder.getPrimaryKey().toString());
-		Text caseType = getSmallText(getCaseBusiness(iwc).getCaseBusiness(reminder.getCaseCode()).getLocalizedCaseDescription(reminder, iwc.getCurrentLocale()));
+		Text caseType = getSmallText(getCaseBusiness(iwc).getLocalizedCaseDescription(reminder, iwc.getCurrentLocale()));
 		final Group handlerGroup = reminder.getHandler();
 		final Text group = getSmallText(handlerGroup != null ? handlerGroup.getName() : "-");
 

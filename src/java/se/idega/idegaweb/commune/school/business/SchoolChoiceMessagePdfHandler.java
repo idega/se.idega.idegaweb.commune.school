@@ -9,12 +9,10 @@ import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-
 import javax.ejb.EJBException;
 import javax.ejb.FinderException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
-
 import se.idega.idegaweb.commune.message.business.MessageBusiness;
 import se.idega.idegaweb.commune.message.business.MessagePdfHandler;
 import se.idega.idegaweb.commune.message.data.PrintMessage;
@@ -24,7 +22,6 @@ import se.idega.idegaweb.commune.printing.business.ContentCreationException;
 import se.idega.idegaweb.commune.printing.business.DocumentBusiness;
 import se.idega.idegaweb.commune.printing.business.DocumentPrintContext;
 import se.idega.idegaweb.commune.school.data.SchoolChoice;
-
 import com.idega.block.process.data.Case;
 import com.idega.business.IBOLookup;
 import com.idega.business.IBOLookupException;
@@ -267,7 +264,7 @@ public class SchoolChoiceMessagePdfHandler implements MessagePdfHandler,BundleRe
 	 * @see se.idega.idegaweb.commune.message.business.MessagePdfHandler#getHandlerCode()
 	 */
 	public String getHandlerCode() {
-		return SchoolChoiceBusinessBean.SCHOOL_CHOICE_CASECODE;
+		return SchoolConstants.SCHOOL_CHOICE_CASE_CODE_KEY;
 	}
 
 	

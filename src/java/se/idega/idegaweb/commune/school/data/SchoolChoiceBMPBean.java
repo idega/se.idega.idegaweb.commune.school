@@ -4,11 +4,8 @@ import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Collection;
-
 import javax.ejb.FinderException;
-
-import se.idega.idegaweb.commune.school.business.SchoolChoiceBusinessBean;
-
+import se.idega.idegaweb.commune.school.business.SchoolConstants;
 import com.idega.block.process.data.AbstractCaseBMPBean;
 import com.idega.block.process.data.Case;
 import com.idega.block.process.data.CaseBMPBean;
@@ -38,7 +35,6 @@ import com.idega.user.data.UserBMPBean;
 public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolChoice, Case {
 
 	final static public String SCHOOLCHOICE = "comm_sch_choice";
-	final static public String CASECODE = SchoolChoiceBusinessBean.SCHOOL_CHOICE_CASECODE;
 
 	public final static String SCHOOL_SEASON = "school_season_id";
 	public final static String SCHOOL_TYPE = "school_type_id";
@@ -157,7 +153,7 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 		return SCHOOLCHOICE;
 	}
 	public String getCaseCodeKey() {
-		return CASECODE;
+		return SchoolConstants.SCHOOL_CHOICE_CASE_CODE_KEY;
 	}
 	public String getCaseCodeDescription() {
 		return "School choice application";
@@ -475,7 +471,7 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 		sql.append(getEntityName()).append(" s ");
 		sql.append(",").append(CaseBMPBean.TABLE_NAME).append(" c ");
 		sql.append(" where s.COMM_SCH_CHOICE_ID = c.PROC_CASE_ID ");
-		sql.append(" and c.CASE_CODE = '").append(CASECODE).append("'");
+		sql.append(" and c.CASE_CODE = '").append(SchoolConstants.SCHOOL_CHOICE_CASE_CODE_KEY).append("'");
 		if (schoolID != -1)
 			sql.append(" and s.SCHOOL_ID = ").append(schoolID);
 		sql.append(" and s.").append(SCHOOL_SEASON).append(" = ").append(schoolSeasonID);
@@ -489,7 +485,7 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 		sql.append(getEntityName()).append(" s ");
 		sql.append(",").append(CaseBMPBean.TABLE_NAME).append(" c ");
 		sql.append(" where s.COMM_SCH_CHOICE_ID = c.PROC_CASE_ID ");
-		sql.append(" and c.CASE_CODE = '").append(CASECODE).append("'");
+		sql.append(" and c.CASE_CODE = '").append(SchoolConstants.SCHOOL_CHOICE_CASE_CODE_KEY).append("'");
 		if (schoolID != -1)
 			sql.append(" and s.SCHOOL_ID = ").append(schoolID);
 		sql.append(" and s.").append(SCHOOL_SEASON).append(" = ").append(schoolSeasonID);
@@ -668,7 +664,7 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 			query.append(" where ");
 			query.append("csc.").append(getIDColumnName()).appendEqualSign().append("pc.").append(CaseBMPBean.TABLE_NAME + "_ID").appendAnd().append("pc.").append(CaseBMPBean.COLUMN_CASE_STATUS).appendIn();
 			query.appendWithinParentheses(idoQuery().appendCommaDelimitedWithinSingleQuotes(validStatuses));
-			query.appendAnd().append("pc.").append(CaseBMPBean.COLUMN_CASE_CODE).appendEqualSign().appendWithinSingleQuotes(CASECODE);
+			query.appendAnd().append("pc.").append(CaseBMPBean.COLUMN_CASE_CODE).appendEqualSign().appendWithinSingleQuotes(SchoolConstants.SCHOOL_CHOICE_CASE_CODE_KEY);
 
 			if (schoolId > 0) {
 				query.appendAnd().append("csc.").append(CHOSEN_SCHOOL).appendEqualSign().append(schoolId);
@@ -779,7 +775,7 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 			}
 			query.append("pc.").append(CaseBMPBean.COLUMN_CASE_STATUS).appendIn();
 			query.appendWithinParentheses(idoQuery().appendCommaDelimitedWithinSingleQuotes(validStatuses));
-			query.appendAnd().append("pc.").append(CaseBMPBean.COLUMN_CASE_CODE).appendEqualSign().appendWithinSingleQuotes(CASECODE);
+			query.appendAnd().append("pc.").append(CaseBMPBean.COLUMN_CASE_CODE).appendEqualSign().appendWithinSingleQuotes(SchoolConstants.SCHOOL_CHOICE_CASE_CODE_KEY);
 			needAnd = true;
 		}
 

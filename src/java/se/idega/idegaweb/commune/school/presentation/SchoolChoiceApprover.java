@@ -9,6 +9,7 @@ import se.idega.idegaweb.commune.care.business.CareBusiness;
 import se.idega.idegaweb.commune.presentation.CommuneBlock;
 import se.idega.idegaweb.commune.school.business.SchoolChoiceBusiness;
 import se.idega.idegaweb.commune.school.business.SchoolCommuneSession;
+import se.idega.idegaweb.commune.school.business.SchoolConstants;
 import se.idega.idegaweb.commune.school.data.SchoolChoice;
 import com.idega.block.school.business.SchoolBusiness;
 import com.idega.block.school.data.School;
@@ -72,7 +73,7 @@ public class SchoolChoiceApprover extends CommuneBlock {
 		init(iwc);
 		parse(iwc);
 		String[] statusToSearch = { "UBEH", "PLAC", "PREL" };
-		String code = "MBSKOLV";
+		String code = SchoolConstants.SCHOOL_CHOICE_CASE_CODE_KEY;
 		if (schoolId > 0) {
 			if(iwc.isParameterSet(prmPupilInfo)){
 				Integer choiceId = new Integer(iwc.getParameter(prmPupilInfo));

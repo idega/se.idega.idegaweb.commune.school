@@ -9,9 +9,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 import java.util.logging.Level;
-
 import javax.ejb.FinderException;
-
 import se.idega.idegaweb.commune.block.pointOfView.business.PointOfViewBusiness;
 import se.idega.idegaweb.commune.block.pointOfView.data.PointOfView;
 import se.idega.idegaweb.commune.business.CommuneCaseBusiness;
@@ -19,8 +17,8 @@ import se.idega.idegaweb.commune.care.data.AfterSchoolChoiceBMPBean;
 import se.idega.idegaweb.commune.school.business.SchoolChoiceBusiness;
 import se.idega.idegaweb.commune.school.data.SchoolChoice;
 import se.idega.idegaweb.commune.school.data.SchoolChoiceBMPBean;
-
 import com.idega.block.process.business.CaseBusiness;
+import com.idega.block.process.business.CaseCodeManager;
 import com.idega.block.process.data.Case;
 import com.idega.block.process.data.CaseStatus;
 import com.idega.business.IBOLookup;
@@ -248,7 +246,7 @@ public class UserCases extends CommuneBlock {
 		DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.SHORT, iwc.getCurrentLocale());
 		Date caseDate = new Date(useCase.getCreated().getTime());
 		Text caseNumber = getSmallHeader(useCase.getPrimaryKey().toString());
-		CaseBusiness caseBusiness = getCaseBusiness(iwc).getCaseBusiness(useCase.getCaseCode());
+		CaseBusiness caseBusiness = CaseCodeManager.getInstance().getCaseBusinessOrDefault(useCase.getCaseCode(), iwc);
 		
 		
 		
