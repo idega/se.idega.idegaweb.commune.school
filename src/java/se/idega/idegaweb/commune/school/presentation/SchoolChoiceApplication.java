@@ -6,11 +6,14 @@ import is.idega.idegaweb.member.business.NoCustodianFound;
 import java.rmi.RemoteException;
 import java.text.DateFormat;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import javax.ejb.FinderException;
@@ -43,6 +46,7 @@ import com.idega.core.localisation.data.ICLanguage;
 import com.idega.core.localisation.data.ICLanguageHome;
 import com.idega.core.location.data.Address;
 import com.idega.data.IDOEntity;
+import com.idega.data.IDOException;
 import com.idega.data.IDOLookup;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWBundle;
@@ -167,6 +171,8 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	SchoolArea schoolArea = null;
 	SchoolType schoolType = null;
 	SchoolSeason season = null;
+	
+	Map schoolsByType = null;
 
 	private boolean hasPreviousSchool = false;
 	private boolean schoolChange = false;
@@ -745,7 +751,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 
 		DropdownMenu drpTypes = getTypeDrop(prmPreType, false, _showChildCareTypes);
 		drpTypes.addMenuElement("-2", localize("school.school_type_other", "Other/None"));
-		drpTypes.setOnChange(getFilterCallerScript(prmPreType, prmPreArea, prmPreSchool, 1, true) + "; changeSchoolYear();");
+		drpTypes.setOnChange(getFilterCallerScript(prmPreType, prmPreArea, prmPreSchool, 1, true));
 
 		DropdownMenu drpAreas = (DropdownMenu) getStyledInterface(new DropdownMenu(prmPreArea));
 		drpAreas.addMenuElementFirst("-1", iwrb.getLocalizedString("school.area", "School area..........."));
@@ -753,7 +759,8 @@ public class SchoolChoiceApplication extends CommuneBlock {
 
 		DropdownMenu drpSchools = (DropdownMenu) getStyledInterface(new DropdownMenu(prmPreSchool));
 		drpSchools.addMenuElementFirst("-1", iwrb.getLocalizedString("school.school", "School................"));
-
+		drpSchools.setOnChange("changeSchoolYear();");
+				
 		DropdownMenu drpGrade = (DropdownMenu) getStyledInterface(new DropdownMenu(prmPreGrade));
 		if (_useOngoingSeason) {
 			drpGrade.addMenuElement("6", "");
@@ -1208,30 +1215,59 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		s.append("function changeSchoolYear(){\n");
 		s.append("  var dropSchoolTypes = ").append("findObj('").append(prmPreType).append("');\n");
 		s.append("  var dropSchoolYears = ").append("findObj('").append(prmPreGrade).append("');\n");
+		s.append("  var dropSchool = ").append("findObj('").append(prmPreSchool).append("');\n");
 		s.append("  var typeId = dropSchoolTypes.options[dropSchoolTypes.selectedIndex].value;\n");
+		s.append("  var schoolId = -1;\n");
+		s.append("  if (dropSchool.options.length > 0) {\n");
+		s.append("    schoolId = dropSchool.options[dropSchool.selectedIndex].value;\n");
+		s.append("  }\n");
 		s.append("  dropSchoolYears.options.length = 0;\n");
 		
+		Map relatedSchoolYears = new HashMap();
 		Collection schoolTypes = getSchoolTypes(schBuiz.getSchoolBusiness().getElementarySchoolSchoolCategory());
 		Iterator iter = schoolTypes.iterator();
 		while (iter.hasNext()) {
 			SchoolType st = (SchoolType) iter.next();
 			int stId = ((Integer) st.getPrimaryKey()).intValue();
 			s.append("  if (typeId == " + stId + ") {\n");
-			Collection schoolYears = schCommBiz.getSchoolBusiness().findAllSchoolYearsBySchoolType(stId);
-			Iterator iter2 = schoolYears.iterator();
-			if (schoolYears.size() > 1) {
-				s.append("    dropSchoolYears.options[dropSchoolYears.options.length] = new Option(\"");
-				s.append(iwrb.getLocalizedString("choose_school_year", "Choose school year")).append("\",\"-1\",true,true);").append("\n");				
-			}
-			while (iter2.hasNext()) {
-				SchoolYear sy = (SchoolYear) iter2.next();
-				s.append("    dropSchoolYears.options[dropSchoolYears.options.length] = new Option(\"");
-				s.append(sy.getName()).append("\",\"").append(sy.getSchoolYearAge());
-				s.append("\",true,true);").append("\n");
-			}
+			
+			Collection schools = (Collection) schoolsByType.get(st.getPrimaryKey());
+			Iterator schoolIter = schools.iterator();
+			while (schoolIter.hasNext()) {
+				School school = (School) schoolIter.next();
+				s.append("    if (schoolId == " + school.getPrimaryKey() + ") {\n");
+				Collection schoolYears = (Collection) relatedSchoolYears.get(school);
+				if (schoolYears == null) {
+					try {
+						schoolYears = school.findRelatedSchoolYearsSortedByName();
+					} catch (IDOException e) {
+						schoolYears = new ArrayList();
+					}
+					relatedSchoolYears.put(school, schoolYears);
+				}
+			
+				Iterator schoolYearIter = schoolYears.iterator();
+				StringBuffer s2 = new StringBuffer();
+				int schoolYearCount = 0;
+				while (schoolYearIter.hasNext()) {
+					SchoolYear sy = (SchoolYear) schoolYearIter.next();
+					if (sy.getSchoolTypeId() != stId) {
+						continue;
+					}
+					s2.append("      dropSchoolYears.options[dropSchoolYears.options.length] = new Option(\"");
+					s2.append(sy.getName()).append("\",\"").append(sy.getSchoolYearAge()).append("\");\n");
+					schoolYearCount++;
+				}			
+				if (schoolYearCount > 1) {
+					s.append("      dropSchoolYears.options[dropSchoolYears.options.length] = new Option(\"");
+					s.append(iwrb.getLocalizedString("choose_school_year", "Choose school year")).append("\",\"-1\");").append("\n");				
+				}
+				s.append(s2);
+				s.append("    }\n");
+			}			
 			s.append("  }\n");
 		}
-		s.append("  dropSchoolYears.selectedIndex = 0\n");
+		s.append("  dropSchoolYears.selectedIndex = 0;\n");
 		s.append("}\n");
 		return s.toString();
 	}
@@ -1239,7 +1275,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	private String getFilterScript() {
 		StringBuffer s = new StringBuffer();
 		s.append("function changeFilter(index,type,area,school,showAll){").append(" \n\t");
-		s.append("changeFilter2(index,type,area,school,-1,showAll);").append("\n").append("}");
+		s.append("changeFilter2(index,type,area,school,-1,showAll); changeSchoolYear();").append("\n").append("}");
 		return s.toString();
 	}
 
@@ -1282,6 +1318,8 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		StringBuffer a = new StringBuffer("else if(index==2){\n\t");
 		StringBuffer c = new StringBuffer("else if(index==3){\n\t");
 
+		schoolsByType = new HashMap();
+		
 		Collection Types = this.schoolTypes;
 		if (Types != null && !Types.isEmpty()) {
 			Iterator iter = Types.iterator();
@@ -1290,6 +1328,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 			School school;
 			Collection areas;
 			Collection schools;
+			Collection schoolsInType;
 
 			SchoolYear yearAppliedFor = null;
 			if (schoolYear != null)
@@ -1307,6 +1346,8 @@ public class SchoolChoiceApplication extends CommuneBlock {
 					t.append("if(selected == \"").append(tPK.toString()).append("\"){").append("\n\t\t");
 
 					Hashtable aHash = new Hashtable();
+					
+					schoolsInType = new ArrayList();
 
 					// iterate through areas whithin types
 					while (iter2.hasNext()) {
@@ -1317,6 +1358,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 							aHash.put(aPK, aPK);
 							schools = getSchoolByAreaAndType(iwc, aPK.intValue(), tPK.intValue());
 							if (schools != null) {
+								schoolsInType.addAll(schools);
 								Iterator iter3 = schools.iterator();
 								a.append("if(selected == \"").append(aPK.toString()).append("\" && selectedType == \"").append(tPK.toString()).append("\"){").append("\n\t\t");
 								Hashtable hash = new Hashtable();
@@ -1355,10 +1397,12 @@ public class SchoolChoiceApplication extends CommuneBlock {
 
 					}
 					t.append("}\n\t");
+					schoolsByType.put(tPK, schoolsInType);
 				}
-				else
+				else {
 					System.err.println("areas empty");
-				//}
+					schoolsByType.put(tPK, new ArrayList());
+				}
 			}
 		}
 		else
