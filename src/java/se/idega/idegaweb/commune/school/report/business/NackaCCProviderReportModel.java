@@ -1,5 +1,5 @@
 /*
- * $Id: NackaCCProviderReportModel.java,v 1.7 2004/02/23 13:34:02 anders Exp $
+ * $Id: NackaCCProviderReportModel.java,v 1.8 2004/02/23 15:44:11 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -14,10 +14,10 @@ import java.rmi.RemoteException;
 /** 
  * Report model for child care commune and private providers.
  * <p>
- * Last modified: $Date: 2004/02/23 13:34:02 $ by $Author: anders $
+ * Last modified: $Date: 2004/02/23 15:44:11 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.8 $
  */
 public class NackaCCProviderReportModel extends ReportModel {
 
@@ -66,17 +66,19 @@ public class NackaCCProviderReportModel extends ReportModel {
 	 */
 	protected Header[] buildRowHeaders() {
 		
-		Header[] headers = new Header[8];
+		Header[] headers = new Header[9];
 
 		headers[0] = new Header(KEY_PRE_SCHOOL, Header.HEADERTYPE_ROW_LABEL);
 		headers[1] = new Header(KEY_COMMUNE_PRE_SCHOOL_PROVIDERS, Header.HEADERTYPE_ROW_HEADER);
 		headers[2] = new Header(KEY_PRIVATE_PRE_SCHOOL_PROVIDERS, Header.HEADERTYPE_ROW_HEADER);
 		headers[3] = new Header(KEY_COMMUNE_FAMILY_DAYCARE_PROVIDERS, Header.HEADERTYPE_ROW_HEADER);
 		headers[4] = new Header(KEY_PRIVATE_FAMILY_DAYCARE_PROVIDERS, Header.HEADERTYPE_ROW_HEADER);		
+
+		headers[5] = new Header(null, Header.HEADERTYPE_ROW_SPACER);		
 		
-		headers[5] = new Header(KEY_SCHOOL_CHILDREN_CARE, Header.HEADERTYPE_ROW_LABEL);
-		headers[6] = new Header(KEY_COMMUNE_AFTER_SCHOOL_PROVIDERS, Header.HEADERTYPE_ROW_HEADER);
-		headers[7] = new Header(KEY_PRIVATE_AFTER_SCHOOL_PROVIDERS, Header.HEADERTYPE_ROW_HEADER);
+		headers[6] = new Header(KEY_SCHOOL_CHILDREN_CARE, Header.HEADERTYPE_ROW_LABEL);
+		headers[7] = new Header(KEY_COMMUNE_AFTER_SCHOOL_PROVIDERS, Header.HEADERTYPE_ROW_HEADER);
+		headers[8] = new Header(KEY_PRIVATE_AFTER_SCHOOL_PROVIDERS, Header.HEADERTYPE_ROW_HEADER);
 		
 //		Header h = new Header(KEY_TOTAL, Header.HEADERTYPE_ROW_HEADER, 1);
 //		Header child0 = new Header(KEY_PROVIDER_TOTAL, Header.HEADERTYPE_ROW_NORMAL);
