@@ -207,6 +207,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 									choiceDate = element.getCreated();
 									isOwner = iwc.getCurrentUser().equals(owner);
 									custodiansAgree = element.getCustodiansAgree();
+									valType = element.getSchoolTypeId();
 								}
 								else if (count == 2) {
 									valSecondSchool = schoolID;
@@ -222,10 +223,12 @@ public class SchoolChoiceApplication extends CommuneBlock {
 						}
 					}
 					
-					if (hasPreviousSchool)
-						valType = 4;
-					else
-						valType = 5;
+					if (valType == -1) {
+						if (hasPreviousSchool)
+							valType = 4;
+						else
+							valType = 5;
+					}
 						
 					schoolTypes = getSchoolTypes(iwc, "SCHOOL");
 					if (saved) {
@@ -354,14 +357,14 @@ public class SchoolChoiceApplication extends CommuneBlock {
 					p.setOnLoad(getInitFilterCallerScript(iwc, prmType, prmThirdArea, prmThirdSchool, valType, valThirdArea, valThirdSchool));
 			}
 			T.add(F, 1, T.getColumns());
-			if (school != null && hasChosen) {
+			if (hasChosen) {
 				Script initScript = myForm.getAssociatedFormScript();
 				if (initScript == null) {
 					initScript = new Script();
 					myForm.setAssociatedFormScript(initScript);
 				}
 
-				String initFunction = (getInitFilterCallerScript(iwc, prmType, prmFirstArea, prmFirstSchool, ((Integer) schoolType.getPrimaryKey()).intValue(), ((Integer) schoolArea.getPrimaryKey()).intValue(), ((Integer) school.getPrimaryKey()).intValue()));
+				String initFunction = getInitFilterCallerScript(iwc, prmType, prmFirstArea, prmFirstSchool, valType, valFirstArea, valFirstSchool);
 
 				initScript.addFunction("sch_init", initFunction);
 			}
