@@ -1,5 +1,5 @@
 /*
- * $Id: SchoolReports.java,v 1.34 2004/04/07 13:30:39 anders Exp $
+ * $Id: SchoolReports.java,v 1.35 2004/04/28 14:00:25 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -55,10 +55,10 @@ import com.idega.presentation.ui.SubmitButton;
 /** 
  * This block handles selecting and presenting school reports.
  * <p>
- * Last modified: $Date: 2004/04/07 13:30:39 $ by $Author: anders $
+ * Last modified: $Date: 2004/04/28 14:00:25 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.34 $
+ * @version $Revision: 1.35 $
  */
 public class SchoolReports extends CommuneBlock {
 
@@ -380,7 +380,7 @@ public class SchoolReports extends CommuneBlock {
 	
 	private Form getSelectorForm(IWContext iwc) {
 		Form form = new Form();
-		form.setTarget("new");
+		form.setTarget("_blank");
 		Table table = new Table();
 		table.setCellpadding(getCellpadding());
 		table.setCellspacing(getCellspacing());
