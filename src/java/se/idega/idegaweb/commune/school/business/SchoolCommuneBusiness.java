@@ -36,4 +36,5 @@ public interface SchoolCommuneBusiness extends com.idega.business.IBOService,com
  public boolean[] hasSchoolChoices(int userID, int seasonID) throws java.rmi.RemoteException;
  public String getLocalizedSchoolTypeKey(com.idega.block.school.data.SchoolType type);
  public void resetSchoolClassStatus(int schoolClassID) throws java.rmi.RemoteException;
+ public com.idega.block.school.data.SchoolYear getNextSchoolYear(com.idega.block.school.data.SchoolYear schoolYear) throws java.rmi.RemoteException;
 }

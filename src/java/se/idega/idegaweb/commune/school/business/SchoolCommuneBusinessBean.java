@@ -327,6 +327,13 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 		return -1;
 	}
 	
+	public SchoolYear getNextSchoolYear(SchoolYear schoolYear) throws RemoteException {
+		SchoolYear nextYear = getSchoolYear(schoolYear.getSchoolYearAge()+1);
+		if (nextYear != null)
+			return nextYear;
+		return null;
+	}
+	
 	public int getGradeForYear(int schoolYearID) throws RemoteException {
 		SchoolYear year = getSchoolBusiness().getSchoolYear(new Integer(schoolYearID));
 		if (year != null)
