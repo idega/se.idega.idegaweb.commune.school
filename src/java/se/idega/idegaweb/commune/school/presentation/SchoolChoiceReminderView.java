@@ -1,9 +1,17 @@
 package se.idega.idegaweb.commune.school.presentation;
 
-import com.idega.presentation.text.Text;
+import com.idega.business.IBOLookup;
 import com.idega.presentation.*;
+import com.idega.presentation.text.*;
 import com.idega.presentation.ui.*;
+import com.idega.user.business.UserBusiness;
+import com.idega.user.data.User;
+import java.rmi.RemoteException;
+import java.util.Calendar;
+import javax.ejb.CreateException;
 import se.idega.idegaweb.commune.presentation.CommuneBlock;
+import se.idega.idegaweb.commune.school.business.SchoolChoiceBusiness;
+import se.idega.idegaweb.commune.school.data.SchoolChoiceReminder;
 
 /**
  * SchoolChoiceReminderView is an IdegaWeb block that registers and handles
@@ -12,10 +20,10 @@ import se.idega.idegaweb.commune.presentation.CommuneBlock;
  * and entity ejb classes in {@link se.idega.idegaweb.commune.school.data}.
  * <p>
  * <p>
- * Last modified: $Date: 2002/12/17 14:13:03 $ by $Author: staffan $
+ * Last modified: $Date: 2002/12/17 14:56:47 $ by $Author: staffan $
  *
  * @author <a href="http://www.staffannoteberg.com">Staffan Nöteberg</a>
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  * @see javax.ejb
  */
 public class SchoolChoiceReminderView extends CommuneBlock {
@@ -44,15 +52,15 @@ public class SchoolChoiceReminderView extends CommuneBlock {
     private static final String REMINDER_DATE_KEY = PREFIX + "reminder_date";
     private static final String ERROR_FIELD_CAN_NOT_BE_EMPTY_DEFAULT = "Fältet måste fyllas i";
     private static final String ERROR_FIELD_CAN_NOT_BE_EMPTY_KEY = PREFIX + "error_field_can_not_be_empty";
-    
-    private static final int REMINDER_TEXT1_ID = 0;
-    private static final int REMINDER_TEXT2_ID = 1;
-    private static final int CUSTOM_REMINDER_TEXT_ID = 2;
+    private final static String CONFIRMENTERREMINDER_KEY = PREFIX + "confirm_enter_reminder";
+	private final static String CONFIRMENTERREMINDER_DEFAULT = "Din påminnelse är nu registrerad";
+    private final static String GOBACKTOMYPAGE_KEY = PREFIX + "goBackToMyPage";
+	private final static String GOBACKTOMYPAGE_DEFAULT = "Tillbaka till Min sida";
 
 	/**
 	 * @param iwc session data like user info etc.
 	 */
-	public void main(final IWContext iwc) {
+	public void main(final IWContext iwc) throws RemoteException, CreateException {
 		setResourceBundle (getResourceBundle(iwc));
         final String action = iwc.getParameter (ACTION_KEY);
 
@@ -61,10 +69,7 @@ public class SchoolChoiceReminderView extends CommuneBlock {
         } else if (action != null && action.equals (LIST_ALL_REMINDERS_KEY)) {
             showAllReminders (iwc);
         } else if (action != null && action.equals (CREATE_REMINDER_KEY)) {
-            add ("REMINDER_TEXT_KEY=" + iwc.getParameter (REMINDER_TEXT_KEY) + "<br/>");
-            add ("CUSTOM_REMINDER_TEXT_KEY=" + iwc.getParameter (CUSTOM_REMINDER_TEXT_KEY) + "<br/>");
-            add ("EVENT_DATE_KEY=" + iwc.getParameter (EVENT_DATE_KEY) + "<br/>");
-            add ("REMINDER_DATE_KEY=" + iwc.getParameter (REMINDER_DATE_KEY) + "<br/>");
+            createReminder (iwc);
         } else {
             showMainMenu (iwc);
         }
@@ -141,6 +146,29 @@ public class SchoolChoiceReminderView extends CommuneBlock {
         add ("The method showAllReminders is not implemented yet. /<a href=http://www.staffannoteberg.com>Staffan Nöteberg</a>");
     }
 
+    private void createReminder (final IWContext iwc) throws RemoteException, CreateException {
+        add ("REMINDER_TEXT_KEY=" + iwc.getParameter (REMINDER_TEXT_KEY) + "<br/>");
+        add ("CUSTOM_REMINDER_TEXT_KEY=" + iwc.getParameter (CUSTOM_REMINDER_TEXT_KEY) + "<br/>");
+        add ("EVENT_DATE_KEY=" + iwc.getParameter (EVENT_DATE_KEY) + "<br/>");
+        add ("REMINDER_DATE_KEY=" + iwc.getParameter (REMINDER_DATE_KEY) + "<br/>");
+		final SchoolChoiceBusiness business = getSchoolChoiceBusiness (iwc);
+		business.createSchoolChoiceReminder (iwc.getParameter (REMINDER_TEXT_KEY), Calendar.getInstance ().getTime (), Calendar.getInstance ().getTime ());
+
+		final Text text1
+                = new Text (getLocalizedString (CONFIRMENTERREMINDER_KEY,
+                                                CONFIRMENTERREMINDER_DEFAULT));
+		text1.setWidth (Table.HUNDRED_PERCENT);
+		final Table table = new Table ();
+		int row = 1;
+		table.setWidth (getWidth ());
+		table.setCellspacing (0);
+		table.setCellpadding (0);
+		table.add (text1, 1, row++);
+		table.setHeight (row++, 12);
+		table.add (getUserHomePageLink (iwc), 1, row++);
+		add (table);
+    }
+
 	private TextInput getSingleInput (IWContext iwc, final String paramId, final int maxLength) {
 		TextInput textInput = (TextInput) getStyledInterface
                 (new TextInput(paramId));
@@ -157,6 +185,19 @@ public class SchoolChoiceReminderView extends CommuneBlock {
 		return textInput;
 	}
 
+	private Link getUserHomePageLink (final IWContext iwc)
+        throws RemoteException {
+		final Text userHomePageText
+                = new Text (getLocalizedString (GOBACKTOMYPAGE_KEY,
+                                                GOBACKTOMYPAGE_DEFAULT));
+ 		final UserBusiness userBusiness = (UserBusiness)
+                IBOLookup.getServiceInstance (iwc, UserBusiness.class);
+        final User user = iwc.getCurrentUser ();
+		final Link link = new Link (userHomePageText);
+        link.setPage (userBusiness.getHomePageIDForUser (user));
+		return link;
+	}
+
 	private Text getHeader(final String paramId, final String defaultText) {
 		return getSmallHeader(localize(paramId, defaultText));
 	}
@@ -167,6 +208,13 @@ public class SchoolChoiceReminderView extends CommuneBlock {
                 = getResourceBundle().getLocalizedString (key, defaultName);
 		return (SubmitButton) getButton (new SubmitButton (name));
     }
+
+	private SchoolChoiceBusiness getSchoolChoiceBusiness (final IWContext iwc)
+        throws RemoteException {
+		return (SchoolChoiceBusiness) IBOLookup.getServiceInstance
+                (iwc, SchoolChoiceBusiness.class);
+	}
+
 	private String getLocalizedString(final String key, final String value) {
 		return getResourceBundle().getLocalizedString(key, value);
 	}
