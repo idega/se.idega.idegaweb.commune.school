@@ -32,5 +32,6 @@ public interface SchoolReportBusiness extends IBOSession {
 	public static final String FIELD_LANGUAGE_CHOICE = "language_choice";
 	
 	public ReportableCollection getGroupReport(Collection schoolGroups, Collection columnNames) throws RemoteException;
-
+	public ReportableCollection getChoicesReport(Collection columnNames) throws RemoteException;
+	
 }
