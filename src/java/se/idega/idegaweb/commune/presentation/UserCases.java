@@ -8,12 +8,12 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
+import java.util.logging.Level;
 
 import javax.ejb.FinderException;
 
-import se.cubecon.bun24.viewpoint.business.ViewpointBusiness;
-import se.cubecon.bun24.viewpoint.data.Viewpoint;
-import se.cubecon.bun24.viewpoint.presentation.ViewpointForm;
+import se.idega.idegaweb.commune.block.pointOfView.business.PointOfViewBusiness;
+import se.idega.idegaweb.commune.block.pointOfView.data.PointOfView;
 import se.idega.idegaweb.commune.business.CommuneCaseBusiness;
 import se.idega.idegaweb.commune.childcare.data.AfterSchoolChoiceBMPBean;
 import se.idega.idegaweb.commune.school.business.SchoolChoiceBusiness;
@@ -24,6 +24,7 @@ import com.idega.block.process.business.CaseBusiness;
 import com.idega.block.process.data.Case;
 import com.idega.block.process.data.CaseStatus;
 import com.idega.business.IBOLookup;
+import com.idega.business.IBOLookupException;
 import com.idega.core.builder.data.ICPage;
 import com.idega.presentation.CollectionNavigator;
 import com.idega.presentation.ExceptionWrapper;
@@ -318,19 +319,21 @@ public class UserCases extends CommuneBlock {
 					status = getStatus(iwc, useCase.getCaseStatus());
 			}
 		
-		
-			
-		if (useCase.getCode().equalsIgnoreCase(Viewpoint.CASE_CODE_KEY)) {
-			final ViewpointBusiness viewpointBusiness = (ViewpointBusiness) IBOLookup.getServiceInstance(iwc, ViewpointBusiness.class);
-			final Viewpoint viewpoint = viewpointBusiness.findViewpoint(Integer.parseInt(useCase.getPrimaryKey().toString()));
-			caseType = getSmallText(viewpoint.getCategory());
-			if (getViewpointPage() != -1) {
-				final Link viewpointLink = getSmallLink(useCase.getPrimaryKey().toString());
-				viewpointLink.setPage(getViewpointPage());
-				viewpointLink.addParameter(ViewpointForm.PARAM_ACTION, ViewpointForm.SHOWVIEWPOINT_ACTION + "");
-				viewpointLink.addParameter(ViewpointForm.PARAM_VIEWPOINT_ID, useCase.getPrimaryKey().toString());
-				caseNumber = viewpointLink;
+		try {
+			PointOfViewBusiness pointOfViewBusiness = (PointOfViewBusiness) IBOLookup.getServiceInstance(iwc, PointOfViewBusiness.class);
+			String caseCodeKeyPointOfView = pointOfViewBusiness.getCaseCodeKeyForPointOfView();
+			if (useCase.getCode().equalsIgnoreCase(caseCodeKeyPointOfView)) {
+				PointOfView pointOfView = pointOfViewBusiness.findPointOfView(Integer.parseInt(useCase.getPrimaryKey().toString()));
+				caseType = getSmallText(pointOfView.getCategory());
+				if (getViewpointPage() != -1) {
+					Link pointOfViewLink = pointOfViewBusiness.getLinkToPageForPointOfView(getViewpointPage(), pointOfView);
+					caseNumber = getStyleLink(new Link(pointOfViewLink), STYLENAME_SMALL_LINK);
+				}
 			}
+		}
+		catch (IBOLookupException ex) {
+			log(Level.INFO, "[UserCases] PointOfViewBusiness is not installed");
+			// nothing to do, sometimes point of view bundle is not installed
 		}
 
 		if (useStyleNames) {

@@ -10,19 +10,19 @@ import java.rmi.RemoteException;
 import java.text.DateFormat;
 import java.util.Collection;
 import java.util.Date;
-
+import java.util.Iterator;
+import java.util.logging.Level;
 import javax.ejb.FinderException;
 
-import se.cubecon.bun24.viewpoint.business.ViewpointBusiness;
-import se.cubecon.bun24.viewpoint.data.Viewpoint;
-import se.cubecon.bun24.viewpoint.presentation.ViewpointForm;
+import se.idega.idegaweb.commune.block.pointOfView.business.PointOfViewBusiness;
+import se.idega.idegaweb.commune.block.pointOfView.data.PointOfView;
 import se.idega.idegaweb.commune.school.business.SchoolChoiceBusiness;
 import se.idega.idegaweb.commune.school.data.SchoolChoice;
 import se.idega.idegaweb.commune.school.data.SchoolChoiceReminder;
-
 import com.idega.block.process.data.Case;
 import com.idega.block.school.data.School;
 import com.idega.business.IBOLookup;
+import com.idega.business.IBOLookupException;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Table;
 import com.idega.presentation.text.Link;
@@ -120,18 +120,23 @@ public class AdminUserCases extends UserCases {
 	private void addViewPoints(IWContext iwc, Table mainTable, final int userId)
 		throws RemoteException, FinderException, Exception {
 		// 1. find my groups			
-		final Collection groupCollection = getGroups(iwc, userId);
-		final Group[] groups = (Group[]) groupCollection.toArray(new Group[0]);
+		final Collection groups = getGroups(iwc, userId);
+		final Group[] groupArray = (Group[]) groups.toArray(new Group[0]);
 		
 		
 		// 2. find unhandled cases
 		final SchoolChoiceBusiness schoolChoiceBusiness = (SchoolChoiceBusiness) IBOLookup.getServiceInstance(iwc, SchoolChoiceBusiness.class);
-		final SchoolChoiceReminder[] reminders = schoolChoiceBusiness.findUnhandledSchoolChoiceReminders(groups);
-		final ViewpointBusiness viewpointBusiness = (ViewpointBusiness) IBOLookup.getServiceInstance(iwc, ViewpointBusiness.class);
-		final Viewpoint[] viewpoints = viewpointBusiness.findUnhandledViewpointsInGroups(groups);
-		
+		final SchoolChoiceReminder[] reminders = schoolChoiceBusiness.findUnhandledSchoolChoiceReminders(groupArray);
+		Collection pointOfViews = null;
+		try {
+			PointOfViewBusiness pointOfViewBusiness = (PointOfViewBusiness) IBOLookup.getServiceInstance(iwc, PointOfViewBusiness.class);
+			pointOfViews = pointOfViewBusiness.findUnhandledPointOfViewsInGroups(groups);
+		}
+		catch (IBOLookupException ex) {
+			log(Level.INFO, "[AdminUserCases] PointOfViewBusiness is not installed");
+		}
 		// 3. display unhandled cases
-		if ((viewpoints != null && viewpoints.length > 0) || (reminders != null && reminders.length > 0)) {
+		if (pointOfViews != null && (! pointOfViews.isEmpty()) || (reminders != null && reminders.length > 0)) {
 			mainTable.setHeight(2, 12);
 			mainTable.add(getLocalizedSmallHeader(UNHANDLEDCASESINMYGROUPS_KEY, UNHANDLEDCASESINMYGROUPS_DEFAULT), 1, 3);
 			mainTable.setHeight(4, 6);
@@ -153,9 +158,11 @@ public class AdminUserCases extends UserCases {
 			messageList.add(getSmallHeader(localize(DATE_KEY, DATE_DEFAULT)), 4, row);
 			messageList.add(getSmallHeader(localize(HANDLERGROUP_KEY, HANDLERGROUP_DEFAULT)), 5, row++);
 
-			if (viewpoints != null) {
-				for (int i = 0; i < viewpoints.length; i++) {
-					addViewpointToMessageList(iwc, viewpoints[i], messageList, row++);
+			if (pointOfViews != null) {
+				Iterator pointOfViewsIterator = pointOfViews.iterator();
+				while (pointOfViewsIterator.hasNext()) {
+					PointOfView pointOfView = (PointOfView) pointOfViewsIterator.next();
+					addViewpointToMessageList(iwc, pointOfView, messageList, row++);
 				}
 			}
 			if (reminders != null) {
@@ -165,32 +172,35 @@ public class AdminUserCases extends UserCases {
 			}
 			mainTable.add(form, 1, 5);
 		}
+
 	}
 	
 
-	private void addViewpointToMessageList(final IWContext iwc, final Viewpoint viewpoint, final Table messageList, int row) throws Exception {
+	private void addViewpointToMessageList(final IWContext iwc, final PointOfView pointOfView, final Table messageList, int row) throws Exception {
 
 		final DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.SHORT, iwc.getCurrentLocale());
-		final Text caseDate = getSmallText(dateFormat.format(new Date(viewpoint.getCreated().getTime())));
-		Text caseNumber = getSmallText(viewpoint.getPrimaryKey().toString());
-		final Text category = getSmallText(viewpoint.getCategory());
-		final Text subject = getSmallText(viewpoint.getSubject());
-		final Group handlerGroup = viewpoint.getHandlerGroup();
+		final Text caseDate = getSmallText(dateFormat.format(new Date(pointOfView.getCreated().getTime())));
+		Text caseNumber = getSmallText(pointOfView.getPrimaryKey().toString());
+		final Text category = getSmallText(pointOfView.getCategory());
+		final Text subject = getSmallText(pointOfView.getSubject());
+		final Group handlerGroup = pointOfView.getHandlerGroup();
 		final Text group = getSmallText(handlerGroup != null ? handlerGroup.getName() : "-");
-
-		if (getViewpointPage() != -1) {
-			Link viewpointLink = getSmallLink(viewpoint.getPrimaryKey().toString());
-			viewpointLink.setPage(getViewpointPage());
-			viewpointLink.addParameter(ViewpointForm.PARAM_ACTION, ViewpointForm.SHOWVIEWPOINT_ACTION + "");
-			viewpointLink.addParameter(ViewpointForm.PARAM_VIEWPOINT_ID, viewpoint.getPrimaryKey().toString());
-			caseNumber = viewpointLink;
-		}
-
+		
 		if (row % 2 == 0)
 			messageList.setRowColor(row, getZebraColor1());
 		else
 			messageList.setRowColor(row, getZebraColor2());
 
+		if (getViewpointPage() != -1) {
+			try {
+				PointOfViewBusiness pointOfViewBusiness = (PointOfViewBusiness) IBOLookup.getServiceInstance(iwc, PointOfViewBusiness.class);
+				Link pointOfViewLink = pointOfViewBusiness.getLinkToPageForPointOfView(getViewpointPage(), pointOfView);
+				caseNumber = getStyleLink(pointOfViewLink, STYLENAME_SMALL_LINK);
+			}
+			catch (IBOLookupException ex) {
+				log(Level.INFO, "[AdminUserCases] Pointof ViewBusiness is not installed");
+			}
+		}
 		messageList.add(caseNumber, 1, row);
 		messageList.add(category, 2, row);
 		messageList.add(subject, 3, row);
