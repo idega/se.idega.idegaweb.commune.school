@@ -1,5 +1,5 @@
 /*
- * $Id: StudentAddressLabelsWriter.java,v 1.10 2004/10/29 12:50:08 laddi Exp $
+ * $Id: StudentAddressLabelsWriter.java,v 1.11 2005/02/25 13:12:57 palli Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -51,10 +51,10 @@ import com.lowagie.text.pdf.PdfWriter;
 /** 
  * This MediaWritable class generates a PDF stream with student address labels.
  * <p>
- * Last modified: $Date: 2004/10/29 12:50:08 $ by $Author: laddi $
+ * Last modified: $Date: 2005/02/25 13:12:57 $ by $Author: palli $
  *
  * @author Anders Lindman
- * @version $Revision: 1.10 $
+ * @version $Revision: 1.11 $
  * @see com.idega.io.MediaWritable
  */
 public class StudentAddressLabelsWriter {
@@ -177,7 +177,7 @@ public class StudentAddressLabelsWriter {
 		return exportFile;
 	}
 	
-	private Collection getReceivers(String[] schoolClassIds) throws NumberFormatException, RemoteException, FinderException{
+	private Collection getReceivers(String[] schoolClassIds) throws RemoteException, FinderException {
 	    ArrayList receivers = new ArrayList();
 	    Collection students;
 	    SchoolClass schoolClass = null;
@@ -187,7 +187,7 @@ public class StudentAddressLabelsWriter {
 	    Integer classID;
 	    SchoolBusiness schoolBuiz = business.getSchoolBusiness();
 	    for (int i = 0; i < schoolClassIds.length; i++) {
-			 //schoolClass = business.getSchoolBusiness().findSchoolClass(new Integer(schoolClassIds[i]));
+			 schoolClass = business.getSchoolBusiness().findSchoolClass(new Integer(schoolClassIds[i]));
 			 classID = Integer.valueOf(schoolClassIds[i]);
 			 students = schoolBuiz.findStudentsInClass(classID.intValue());
 			 Iterator iter = students.iterator();
@@ -197,10 +197,23 @@ public class StudentAddressLabelsWriter {
 			     receivers.add(receiver);
 			 }
 	    }
-	    if(schoolClass!=null)
+	    
+	    if (schoolClassIds.length > 0 && schoolClassIds[0] != null) {
+			 try {
+				schoolClass = business.getSchoolBusiness().findSchoolClass(new Integer(schoolClassIds[0]));
+			}
+			catch (NumberFormatException e) {
+			}
+			catch (RemoteException e) {
+			}	    	
+	    }
+	    
+	    if (schoolClass != null) {
 	        filename = "student_address_labels_"+schoolClass.getSchoolId()+".pdf";
-	    else
-	        filename = "student_address_labels_##.pdf";
+	    } else {
+	        filename = "student_address_labels_all.pdf";
+	    }
+	    
 	    return receivers;
 			
 	}
