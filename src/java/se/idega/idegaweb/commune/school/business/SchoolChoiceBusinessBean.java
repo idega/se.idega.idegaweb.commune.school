@@ -894,7 +894,24 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 			return new Vector();
 		}
 	}
-
+	
+	public int getNumberOfApplicationsByUserAndSchool(int userID, int schoolID) throws RemoteException {
+		try {
+			return getSchoolChoiceHome().getCountByChildAndSchool(userID, schoolID);
+		} catch (IDOException e) {
+			return 0;
+		}
+	}
+	
+	public Collection findByStudentAndSchool(int studentID, int schoolID) throws RemoteException {
+		try {
+			return getSchoolChoiceHome().findByChildAndSchool(studentID, schoolID);
+		}
+		catch (FinderException fe) {
+			return new Vector();
+		}
+	}
+	
 	public int getNumberOfApplications(int schoolID, int schoolSeasonID) throws RemoteException {
 		try {
 			return getSchoolChoiceHome().getNumberOfApplications(getCaseStatusPreliminary().getStatus(), schoolID, schoolSeasonID);

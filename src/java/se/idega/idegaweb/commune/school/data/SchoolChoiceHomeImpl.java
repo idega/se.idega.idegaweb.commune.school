@@ -1,5 +1,7 @@
 package se.idega.idegaweb.commune.school.data;
 
+import com.idega.data.IDOException;
+
 
 public class SchoolChoiceHomeImpl extends com.idega.data.IDOFactory implements SchoolChoiceHome
 {
@@ -89,6 +91,21 @@ public java.util.Collection findBySchoolAndSeasonAndGrade(int p0,int p1,int p2)t
 	this.idoCheckInPooledEntity(entity);
 	return this.getEntityCollectionForPrimaryKeys(ids);
 }
+
+public java.util.Collection findByChildAndSchool(int childID, int schoolID) throws javax.ejb.FinderException {
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	java.util.Collection ids = ((SchoolChoiceBMPBean)entity).ejbFindByChildAndSchool(childID, schoolID);
+	this.idoCheckInPooledEntity(entity);
+	return this.getEntityCollectionForPrimaryKeys(ids);
+}
+
+public int getCountByChildAndSchool(int childID, int schoolID) throws IDOException {
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	int theReturn = ((SchoolChoiceBMPBean)entity).ejbHomeGetCountByChildAndSchool(childID, schoolID);
+	this.idoCheckInPooledEntity(entity);
+	return theReturn;
+}
+
 
 public java.util.Collection findBySchoolIDAndSeasonIDAndStatus(int p0,int p1,java.lang.String[] p2,int p3,int p4)throws javax.ejb.FinderException{
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();

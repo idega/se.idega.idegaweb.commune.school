@@ -529,6 +529,30 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 		return super.idoFindPKsBySQL(sql.toString());
 	}
 
+	public int ejbHomeGetCountByChildAndSchool(int childID, int schoolID) throws IDOException {
+		IDOQuery query =idoQuery();
+		query.appendSelectCountFrom().append(getEntityName()).append(" csc");
+		query.append(", ").append(CaseBMPBean.TABLE_NAME).append(" pc");
+		query.append(" where ");
+		query.appendEquals("csc."+getIDColumnName(), "pc."+CaseBMPBean.TABLE_NAME + "_ID");
+		query.appendAnd().appendEquals("csc."+CHILD, childID);
+		query.appendAnd().appendEquals("csc."+CHOSEN_SCHOOL, schoolID);
+		return super.idoGetNumberOfRecords(query);
+	}
+	
+	public Collection ejbFindByChildAndSchool(int childID, int schoolID) throws javax.ejb.FinderException {
+		IDOQuery query =idoQuery();
+		query.appendSelectAllFrom().append(getEntityName()).append(" csc");
+		query.append(", ").append(CaseBMPBean.TABLE_NAME).append(" pc");
+		query.append(" where ");
+		query.appendEquals("csc."+getIDColumnName(), "pc."+CaseBMPBean.TABLE_NAME + "_ID");
+		query.appendAnd().appendEquals("csc."+CHILD, childID);
+		query.appendAnd().appendEquals("csc."+CHOSEN_SCHOOL, schoolID);
+		query.appendOrderBy(CaseBMPBean.COLUMN_CREATED);
+		
+		return super.idoFindPKsByQuery(query);
+	}
+	
 	public Collection ejbFindByChildAndSchoolAndSeason(int childID, int schoolID, int seasonID) throws javax.ejb.FinderException {
 		StringBuffer sql = new StringBuffer("select * from ");
 		sql.append(SCHOOLCHOICE);

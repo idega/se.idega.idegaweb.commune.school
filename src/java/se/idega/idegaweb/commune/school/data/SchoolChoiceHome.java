@@ -1,5 +1,7 @@
 package se.idega.idegaweb.commune.school.data;
 
+import com.idega.data.IDOException;
+
 
 public interface SchoolChoiceHome extends com.idega.data.IDOHome
 {
@@ -16,6 +18,7 @@ public interface SchoolChoiceHome extends com.idega.data.IDOHome
  public java.util.Collection findByCodeAndStatus(java.lang.String p0,java.lang.String[] p1,int p2,int p3)throws javax.ejb.FinderException;
  public java.util.Collection findBySchoolAndFreeTime(int p0,int p1,boolean p2)throws javax.ejb.FinderException;
  public java.util.Collection findBySchoolAndSeasonAndGrade(int p0,int p1,int p2)throws javax.ejb.FinderException;
+ public java.util.Collection findByChildAndSchool(int childID, int schoolID) throws javax.ejb.FinderException;
  public java.util.Collection findBySchoolIDAndSeasonIDAndStatus(int p0,int p1,java.lang.String[] p2,int p3,int p4)throws javax.ejb.FinderException;
  public java.util.Collection findBySeason(int p0)throws javax.ejb.FinderException;
  public java.util.Collection findBySeasonAndSchoolYear(com.idega.block.school.data.SchoolSeason p0,com.idega.block.school.data.SchoolYear p1)throws javax.ejb.FinderException;
@@ -27,6 +30,7 @@ public interface SchoolChoiceHome extends com.idega.data.IDOHome
  public int getCount(int p0,int p1,int p2,int[] p3,java.lang.String[] p4,java.lang.String p5)throws javax.ejb.FinderException,com.idega.data.IDOException;
  public int getCount(java.lang.String[] p0)throws com.idega.data.IDOException;
  public int getCount(int p0,java.lang.String[] p1)throws com.idega.data.IDOException;
+ public int getCountByChildAndSchool(int childID, int schoolID) throws IDOException;
  public int getMoveChoices(int p0,int p1,int p2)throws com.idega.data.IDOException;
  public int getNumberOfApplications(java.lang.String p0,int p1,int p2)throws javax.ejb.FinderException,com.idega.data.IDOException;
  public int getNumberOfApplications(java.lang.String p0,int p1,int p2,int p3)throws javax.ejb.FinderException,com.idega.data.IDOException;

@@ -1,5 +1,7 @@
 package se.idega.idegaweb.commune.school.business;
 
+import java.rmi.RemoteException;
+
 import com.idega.block.process.business.CaseBusiness;
 
 
@@ -20,6 +22,7 @@ public interface SchoolChoiceBusiness extends CaseBusiness
  public java.util.Collection findBySchoolAndFreeTime(int p0,int p1,boolean p2)throws java.rmi.RemoteException, java.rmi.RemoteException;
  public se.idega.idegaweb.commune.school.data.SchoolChoice findByStudentAndSchoolAndSeason(int p0,int p1,int p2)throws java.rmi.RemoteException, java.rmi.RemoteException;
  public java.util.Collection findByStudentAndSeason(int p0,int p1)throws java.rmi.RemoteException, java.rmi.RemoteException;
+ public java.util.Collection findByStudentAndSchool(int studentID, int schoolID) throws java.rmi.RemoteException;
  public se.idega.idegaweb.commune.school.data.SchoolChoiceReminder findSchoolChoiceReminder(int p0)throws java.rmi.RemoteException,javax.ejb.FinderException, java.rmi.RemoteException;
  public se.idega.idegaweb.commune.school.data.SchoolChoiceReminder[] findUnhandledSchoolChoiceReminders(com.idega.user.data.Group[] p0)throws java.rmi.RemoteException,javax.ejb.FinderException, java.rmi.RemoteException;
  public int generateReminderLetter(int p0,se.idega.idegaweb.commune.school.business.SchoolChoiceReminderReceiver[] p1)throws java.rmi.RemoteException, java.rmi.RemoteException;
@@ -44,6 +47,7 @@ public interface SchoolChoiceBusiness extends CaseBusiness
  public int getNumberOfApplications(int p0,int p1,int p2)throws java.rmi.RemoteException, java.rmi.RemoteException;
  public int getNumberOfApplicationsForStudents(int p0,int p1)throws java.rmi.RemoteException, java.rmi.RemoteException;
  public int getNumberOfStudentsThatMustDoSchoolChoiceButHaveNot(com.idega.block.school.data.SchoolSeason p0,com.idega.block.school.data.SchoolYear p1) throws java.rmi.RemoteException;
+ public int getNumberOfApplicationsByUserAndSchool(int userID, int schoolID) throws RemoteException;
  public java.lang.String getOldHeadmasterSubject() throws java.rmi.RemoteException;
  public java.lang.String getPreliminaryMessageSubject() throws java.rmi.RemoteException;
  public int getPreviousSeasonId()throws java.rmi.RemoteException,javax.ejb.FinderException, java.rmi.RemoteException;
