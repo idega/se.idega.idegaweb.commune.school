@@ -131,7 +131,7 @@ public class SchoolChoiceWriter implements MediaWritable {
 
 			int cellRow = 0;
 			int cellColumn = 0;
-			HSSFRow row = sheet.createRow((short)cellRow++);
+			HSSFRow row = sheet.createRow(cellRow++);
 			HSSFCell cell = row.createCell((short)cellColumn++);
 	    cell.setCellValue(iwrb.getLocalizedString("school.name","Name"));
 	    cell.setCellStyle(style);
@@ -164,7 +164,7 @@ public class SchoolChoiceWriter implements MediaWritable {
 	    
 			Iterator iter = students.iterator();
 			while (iter.hasNext()) {
-				row = sheet.createRow((short)cellRow++);
+				row = sheet.createRow(cellRow++);
 				cellColumn = 0;
 				choice = (SchoolChoice) iter.next();
 				created = new IWTimestamp(choice.getCreated());
