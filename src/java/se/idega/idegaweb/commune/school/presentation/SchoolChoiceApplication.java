@@ -870,7 +870,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		table.add(getSmallHeader(iwrb.getLocalizedString("school.school_type", "SchoolType") + ":"), 1, row);
 		table.add(typeDrop, 3, row++);
 
-		table.add(getSmallHeader(iwrb.getLocalizedString("school.school_tear", "School year") + ":"), 1, row);
+		table.add(getSmallHeader(iwrb.getLocalizedString("school.school_year", "School year") + ":"), 1, row);
 		table.add(drpGrade, 3, row++);
 
 		table.add(getSmallHeader(iwrb.getLocalizedString("school.first_choice", "First choice") + ":"), 1, row);
