@@ -261,6 +261,12 @@ public class SchoolChoiceApplication extends CommuneBlock {
 									count++;
 									if (!hasPreviousSchool) {
 										initSchoolFromChoice(element);
+										logWarning("*** !hasPreviousSch * currentSch from Choice - child: " + childId 
+												+ " choiceID: " + ((Integer) element.getPrimaryKey()).intValue() + " ***");
+									} else {
+										logWarning("*** hasPreviousSchool * currentSch from latestPlc - child: " + childId 
+												+ " choiceID: " + ((Integer) element.getPrimaryKey()).intValue() + " ***");
+										
 									}
 									owner = element.getOwner();
 									choiceDate = element.getCreated();
@@ -595,7 +601,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 			
 			school = schBuiz.getSchool(schoolClass.getSchoolId());
 			if (school != null)
-				this.hasPreviousSchool = true;
+				hasPreviousSchool = true;
 			
 			//schoolArea = schBuiz.getSchoolBusiness().getSchoolAreaHome().findByPrimaryKey(new Integer(school.getSchoolAreaId()));
 			if (school != null)
@@ -863,6 +869,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		table.mergeCells(1, 1, 4, 1);
 		table.setBorder(0);
 		table.setWidthAndHeightToHundredPercent();
+		table.setWidth(5, 1, "100%");
 		table.add(getHeader(iwrb.getLocalizedString("school.choice_for_schoolyear", "Choice for the schoolyear")), 1, 1);
 		
 		DropdownMenu typeDrop = getTypeDrop(prmType, true, false);
