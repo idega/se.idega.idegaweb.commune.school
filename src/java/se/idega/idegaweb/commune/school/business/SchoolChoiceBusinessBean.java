@@ -1,8 +1,10 @@
 package se.idega.idegaweb.commune.school.business;
 
 import se.idega.idegaweb.commune.school.data.*;
-import com.idega.block.school.data.SchoolSeason;
-import com.idega.block.school.data.SchoolSeasonHome;
+import com.idega.block.school.data.*;
+import com.idega.block.school.business.*;
+
+import se.idega.idegaweb.commune.message.business.MessageBusiness;
 
 import com.idega.business.IBOServiceBean;
 import com.idega.data.*;
@@ -22,10 +24,24 @@ import java.util.*;
  */
 
 public class SchoolChoiceBusinessBean extends com.idega.block.process.business.CaseBusinessBean implements SchoolChoiceBusiness{
+	
 
+	public SchoolBusiness getSchoolBusiness()throws java.rmi.RemoteException{
+		return (SchoolBusiness) this.getServiceInstance(SchoolBusiness.class);
+	}
+
+	public MessageBusiness getMessageBusiness() throws RemoteException {
+		return (MessageBusiness) this.getServiceInstance(MessageBusiness.class);
+	}
+
+  public SchoolHome getSchoolHome() throws java.rmi.RemoteException{
+  	return getSchoolBusiness().getSchoolHome();
+  }
+  
   public SchoolChoiceHome getSchoolChoiceHome() throws java.rmi.RemoteException{
     return (SchoolChoiceHome) this.getIDOHome(SchoolChoice.class);
   }
+
 
   public CurrentSchoolSeasonHome getCurrentSchoolSeasonHome() throws java.rmi.RemoteException{
     return (CurrentSchoolSeasonHome) this.getIDOHome(CurrentSchoolSeason.class);
@@ -42,6 +58,10 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 
   public SchoolChoice getSchoolChoice(int schoolChoiceId) throws FinderException,RemoteException {
     return getSchoolChoiceHome().findByPrimaryKey(new Integer(schoolChoiceId));
+  }
+  
+  public School getSchool(int school)throws RemoteException{
+  	return getSchoolBusiness().getSchool(new Integer(school));
   }
 
   public List createSchoolChoices(
@@ -264,6 +284,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 			SchoolChoice choice = getSchoolChoiceHome().findByPrimaryKey(pk);
 			choice.setCaseStatus(getCaseStatus("PREL"));
 			choice.store();
+			getMessageBusiness().createUserMessage(choice.getOwner(),getPreliminaryMessageSubject(),getPreliminaryMessageBody(choice));
 			return true;		    
 		}
 		catch (Exception e) {
@@ -277,11 +298,46 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 			choice.setGroupPlace(group);
 			choice.setCaseStatus(getCaseStatus("PLAC"));
 			choice.store();
+			getMessageBusiness().createUserMessage(choice.getOwner(),getGroupedMessageSubject(),getGroupedMessageBody(choice));
 			return true;		    
 		}
 		catch (Exception e) {
 		}	
 		return false;
 	}
+	
+	protected String getPreliminaryMessageBody(SchoolChoice theCase) throws RemoteException,FinderException {
+		
+		StringBuffer body = new StringBuffer( this.getLocalizedString("school_choice.prelim_mesg_body1", "Dear mr./ms./mrs. ") );
+		body.append( theCase.getOwner().getNameLastFirst() ).append("\n");
+		body.append( this.getLocalizedString("school_choice.prelim_mesg_body2", "Your child has been preliminary accepted in .") );
+		body.append(getSchool(theCase.getChosenSchoolId()).getSchoolName()).append("\n");
+	
+		return body.toString();
+	}
+	
+	protected String getGroupedMessageBody(SchoolChoice theCase) throws RemoteException,FinderException {
+		
+		StringBuffer body = new StringBuffer( this.getLocalizedString("acc.app.acc.body1", "Dear mr./ms./mrs. ") );
+		body.append( theCase.getOwner().getNameLastFirst() ).append("\n");
+		body.append( this.getLocalizedString("school_choice.group_mesg_body2", "Your child has been grouped  in .") );
+		body.append(theCase.getGroupPlace()).append("\n");
+		body.append( this.getLocalizedString("school_choice.group_mesg_body3", "in school .") );
+		body.append(getSchool(theCase.getChosenSchoolId()).getSchoolName()).append("\n");
+	
+		return body.toString();
+	}
+	
+	public String getPreliminaryMessageSubject() {
+		return this.getLocalizedString("school_choice.prelim_mesg_subj", "Prelimininary school acceptance");
+	}
+
+
+	public String getGroupedMessageSubject() {
+		return this.getLocalizedString("school_choice.group_mesg_subj", "School grouping");
+	}
+
+
+
 
 }
