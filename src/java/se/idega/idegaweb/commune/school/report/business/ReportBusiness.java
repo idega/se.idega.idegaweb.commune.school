@@ -4,7 +4,9 @@ package se.idega.idegaweb.commune.school.report.business;
 public interface ReportBusiness extends com.idega.business.IBOService
 {
  public se.idega.idegaweb.commune.school.report.business.ReportModel createReportModel(java.lang.Class p0) throws java.rmi.RemoteException;
+ public java.util.Collection getAfterSchool6Areas() throws java.rmi.RemoteException;
  public int getAfterSchool6TypeId() throws java.rmi.RemoteException;
+ public java.util.Collection getAfterSchool7_9Areas() throws java.rmi.RemoteException;
  public int getAfterSchool7_9TypeId() throws java.rmi.RemoteException;
  public java.util.Collection getAllStudyPaths() throws java.rmi.RemoteException;
  public java.util.Collection getAllStudyPathsIncludingDirections() throws java.rmi.RemoteException;

@@ -1,5 +1,5 @@
 /*
- * $Id: ReportBusinessBean.java,v 1.30 2004/01/23 13:25:04 anders Exp $
+ * $Id: ReportBusinessBean.java,v 1.31 2004/01/26 09:13:01 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -29,10 +29,10 @@ import com.idega.block.school.data.SchoolStudyPathHome;
 /** 
  * Business logic for school reports.
  * <p>
- * Last modified: $Date: 2004/01/23 13:25:04 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/26 09:13:01 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.30 $
+ * @version $Revision: 1.31 $
  */
 public class ReportBusinessBean extends com.idega.business.IBOServiceBean implements ReportBusiness  {
 
@@ -263,6 +263,88 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 			schoolTypes.add(new Integer(SCHOOL_TYPE_FAMILY_DAYCARE));
 			schoolTypes.add(new Integer(SCHOOL_TYPE_GENERAL_PRE_SCHOOL));
 			schoolTypes.add(new Integer(SCHOOL_TYPE_GENERAL_FAMILY_DAYCARE));
+			SchoolHome schoolHome = null;
+			try {
+				schoolHome = getSchoolHome();
+				SchoolAreaHome home = getSchoolBusiness().getSchoolAreaHome();
+				_schoolAreas = home.findAllSchoolAreas();
+			} catch (Exception e) {}
+			ArrayList areas = new ArrayList();
+			Iterator iter = _schoolAreas.iterator();
+			while (iter.hasNext()) {
+				SchoolArea area = (SchoolArea) iter.next();
+				int areaId = ((Integer) area.getPrimaryKey()).intValue();
+				try {
+					Collection schools = schoolHome.findAllByAreaTypeManagementCommune(
+							areaId,
+							schoolTypes,
+							managementTypes,
+							NACKA_COMMUNE_ID);
+					if (schools.size() > 0) {
+						areas.add(area);
+					}
+				} catch (Exception e) {}
+			}
+			_schoolAreas = areas;
+		}
+		return _schoolAreas;
+	}
+	
+	/**
+	 * Returns all school areas for after schools for 6 years children. 
+	 */
+	public Collection getAfterSchool6Areas() {
+		if (_schoolAreas == null) {
+			Collection managementTypes = new ArrayList();
+			managementTypes.add("COMMUNE");
+			managementTypes.add("COMPANY");
+			managementTypes.add("FOUNDATION");
+			managementTypes.add("OTHER");
+			managementTypes.add("COOPERATIVE_COMMUNE_LIABILITY");
+			Collection schoolTypes = new ArrayList();
+			schoolTypes.add(new Integer(SCHOOL_TYPE_AFTER_SCHOOL_6));
+			schoolTypes.add(new Integer(SCHOOL_TYPE_FAMILY_AFTER_SCHOOL_6));
+			SchoolHome schoolHome = null;
+			try {
+				schoolHome = getSchoolHome();
+				SchoolAreaHome home = getSchoolBusiness().getSchoolAreaHome();
+				_schoolAreas = home.findAllSchoolAreas();
+			} catch (Exception e) {}
+			ArrayList areas = new ArrayList();
+			Iterator iter = _schoolAreas.iterator();
+			while (iter.hasNext()) {
+				SchoolArea area = (SchoolArea) iter.next();
+				int areaId = ((Integer) area.getPrimaryKey()).intValue();
+				try {
+					Collection schools = schoolHome.findAllByAreaTypeManagementCommune(
+							areaId,
+							schoolTypes,
+							managementTypes,
+							NACKA_COMMUNE_ID);
+					if (schools.size() > 0) {
+						areas.add(area);
+					}
+				} catch (Exception e) {}
+			}
+			_schoolAreas = areas;
+		}
+		return _schoolAreas;
+	}
+	
+	/**
+	 * Returns all school areas for after schools for 7-9 years children. 
+	 */
+	public Collection getAfterSchool7_9Areas() {
+		if (_schoolAreas == null) {
+			Collection managementTypes = new ArrayList();
+			managementTypes.add("COMMUNE");
+			managementTypes.add("COMPANY");
+			managementTypes.add("FOUNDATION");
+			managementTypes.add("OTHER");
+			managementTypes.add("COOPERATIVE_COMMUNE_LIABILITY");
+			Collection schoolTypes = new ArrayList();
+			schoolTypes.add(new Integer(SCHOOL_TYPE_AFTER_SCHOOL_7_9));
+			schoolTypes.add(new Integer(SCHOOL_TYPE_FAMILY_AFTER_SCHOOL_7_9));
 			SchoolHome schoolHome = null;
 			try {
 				schoolHome = getSchoolHome();
