@@ -1,5 +1,5 @@
 /*
- * $Id: SchoolReports.java,v 1.26 2004/02/26 14:21:50 anders Exp $
+ * $Id: SchoolReports.java,v 1.27 2004/02/27 10:21:12 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -39,6 +39,7 @@ import se.idega.idegaweb.commune.school.report.business.NackaProviderSummaryRepo
 import se.idega.idegaweb.commune.school.report.business.ReportBusiness;
 import se.idega.idegaweb.commune.school.report.business.ReportModel;
 import se.idega.idegaweb.commune.school.report.business.ReportPDFWriter;
+import se.idega.idegaweb.commune.school.report.business.ReportXLSWriter;
 
 import com.idega.core.file.data.ICFile;
 import com.idega.presentation.ExceptionWrapper;
@@ -55,10 +56,10 @@ import com.idega.presentation.ui.SubmitButton;
 /** 
  * This block handles selecting and presenting school reports.
  * <p>
- * Last modified: $Date: 2004/02/26 14:21:50 $ by $Author: anders $
+ * Last modified: $Date: 2004/02/27 10:21:12 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.26 $
+ * @version $Revision: 1.27 $
  */
 public class SchoolReports extends CommuneBlock {
 
@@ -69,6 +70,7 @@ public class SchoolReports extends CommuneBlock {
 	private final static String PARAMETER_REPORT_INDEX = PP + "report_index";
 	private final static String PARAMETER_CREATE_REPORT = PP + "create_report";
 	private final static String PARAMETER_CREATE_PDF = PP + "create_pdf";
+	private final static String PARAMETER_CREATE_EXCEL = PP + "create_excel";
 	private final static String PARAMETER_REPORT_CLASS_NAME = PP + "report_class_name";
 
 	private final static String KP = "school_report."; // Localization key prefix
@@ -78,11 +80,13 @@ public class SchoolReports extends CommuneBlock {
 	private final static String KEY_NO_REPORT_SELECTED = KP + "no_report_selected";
 	private final static String KEY_FOR_PRINTING = KP + "for_printing";	
 	private final static String KEY_PDF = KP + "pdf";	
+	private final static String KEY_EXCEL = KP + "excel";	
 	private final static String KEY_BACK = KP + "back";	
 	
 	private final static int ACTION_DEFAULT = 1;
 	private final static int ACTION_CREATE_REPORT = 2;
 	private final static int ACTION_CREATE_PDF = 3;
+	private final static int ACTION_CREATE_EXCEL = 4;
 
 	private Class[] _reportModelClasses = {
 				NackaCitizenElementarySchoolPlacementReportModel.class,
@@ -156,6 +160,9 @@ public class SchoolReports extends CommuneBlock {
 				case ACTION_CREATE_PDF:
 					handleCreatePDFAction(iwc);
 					break;
+				case ACTION_CREATE_EXCEL:
+					handleCreateExcelAction(iwc);
+					break;
 			}
 		} catch (Exception e) {
 			log(e);
@@ -174,6 +181,8 @@ public class SchoolReports extends CommuneBlock {
 			action = ACTION_CREATE_REPORT;
 		} else if (iwc.isParameterSet(PARAMETER_CREATE_PDF)) {
 			action = ACTION_CREATE_PDF;
+		} else if (iwc.isParameterSet(PARAMETER_CREATE_EXCEL)) {
+			action = ACTION_CREATE_EXCEL;
 		}
 
 		return action;
@@ -221,6 +230,9 @@ public class SchoolReports extends CommuneBlock {
 		SubmitButton pdfButton = new SubmitButton(PARAMETER_CREATE_PDF, localize(KEY_PDF, "PDF"));
 		pdfButton = (SubmitButton) getButton(pdfButton);
 		table.add(pdfButton, 2, 1);
+		SubmitButton xlsButton = new SubmitButton(PARAMETER_CREATE_EXCEL, localize(KEY_EXCEL, "Excel"));
+		xlsButton = (SubmitButton) getButton(xlsButton);
+		table.add(xlsButton, 3, 1);
 		form.add(table);
 		HiddenInput reportClassName = new HiddenInput(PARAMETER_REPORT_CLASS_NAME, reportModelClass.getName());
 		form.add(reportClassName);
@@ -228,6 +240,9 @@ public class SchoolReports extends CommuneBlock {
 		add(form);
 	}
 
+	/*
+	 * Creates PDF file with link.
+	 */
 	private void handleCreatePDFAction(IWContext iwc) {
 		Table table = new Table();
 		table.setCellpadding(getCellpadding());
@@ -247,6 +262,54 @@ public class SchoolReports extends CommuneBlock {
 			ReportPDFWriter pdfWriter = new ReportPDFWriter(reportModel, getResourceBundle());
 			ICFile file = (ICFile) pdfWriter.createFile();
 			Link iconLink = new Link(getBundle().getImage("shared/pdf.gif"));
+			iconLink.setFile(file);
+			table.add(iconLink, 1, 1);
+			String titleKey = reportModel.getReportTitleLocalizationKey();
+			String title = localize(titleKey, titleKey);
+			Link link = new Link(title);
+			link.setFile(file);
+			table.add(link, 2, 1);
+			Form form = new Form();
+			SubmitButton back = new SubmitButton("", localize(KEY_BACK, KEY_BACK));
+			back = (SubmitButton) getButton(back);
+			form.add(back);
+			table.add(form, 1, 4);
+			table.mergeCells(1, 4, 2, 4);
+			add(table);
+
+		} catch (Exception e) {
+			log(e);
+		}
+	}
+	
+	/*
+	 * Creates Excel file with link.
+	 */
+	private void handleCreateExcelAction(IWContext iwc) {
+		Table table = new Table();
+		table.setCellpadding(getCellpadding());
+		table.setCellspacing(getCellspacing());
+
+		ReportModel reportModel = null;
+		try {
+			reportModel = (ReportModel) iwc.getSession().getAttribute(ReportBlock.PARAMETER_REPORT_MODEL);
+		} catch (Exception e) {}
+
+		try {
+			if (reportModel == null) {
+				String reportModelClassName = iwc.getParameter(PARAMETER_REPORT_CLASS_NAME);
+				Class reportModelClass = Class.forName(reportModelClassName);
+				reportModel = getReportBusiness(iwc).createReportModel(reportModelClass);
+			}
+			ReportBlock rb = new ReportBlock(reportModel);
+			Table t = new Table();
+			rb.buildReportTable(t);
+			String key = reportModel.getReportTitleLocalizationKey();
+			String reportTitle = localize(key, key);
+			String filename = reportModel.getReportTitleLocalizationKey() + ".xls";
+			ReportXLSWriter xlsWriter = new ReportXLSWriter(t, filename, reportTitle);
+			ICFile file = (ICFile) xlsWriter.createFile();
+			Link iconLink = new Link(getBundle().getImage("shared/xls.gif"));
 			iconLink.setFile(file);
 			table.add(iconLink, 1, 1);
 			String titleKey = reportModel.getReportTitleLocalizationKey();
@@ -310,7 +373,7 @@ public class SchoolReports extends CommuneBlock {
 			_reportModels[i] = rb.createReportModel(reportModelClasses[i]);
 		}
 	}
-
+	
 	/*
 	 * Returns a report business object.
 	 */
