@@ -46,7 +46,6 @@ import com.idega.core.localisation.data.ICLanguage;
 import com.idega.core.localisation.data.ICLanguageHome;
 import com.idega.core.location.data.Address;
 import com.idega.data.IDOEntity;
-import com.idega.data.IDOException;
 import com.idega.data.IDOLookup;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWBundle;
