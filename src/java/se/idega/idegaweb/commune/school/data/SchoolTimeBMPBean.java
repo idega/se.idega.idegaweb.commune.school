@@ -5,13 +5,12 @@ import com.idega.data.GenericEntity;
 import com.idega.user.data.User;
 import java.util.Date;
 import java.rmi.RemoteException;
-import java.sql.SQLException;
 
 /**
- * Last modified: $Date: 2003/03/28 11:10:06 $ by $Author: staffan $
+ * Last modified: $Date: 2003/04/02 17:55:51 $ by $Author: laddi $
  *
  * @author <a href="http://www.staffannoteberg.com">Staffan Nöteberg</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  * @see se.idega.idegaweb.commune.block.importer.business.NackaStudentTimeImportFileHandler
  */
 public class SchoolTimeBMPBean extends GenericEntity implements SchoolTime {
@@ -54,13 +53,10 @@ public class SchoolTimeBMPBean extends GenericEntity implements SchoolTime {
     
     public void setSchool (final School school) throws RemoteException {
         if (school == null) {
-            try {
-                setColumnAsNull (COLUMN_SCHOOL_ID);
-            } catch (SQLException e) {
-                throw new RemoteException ("Couldn't set school to null", e);
-            }
-        } else {
-            setColumn (COLUMN_SCHOOL_ID, school.getPrimaryKey ());
+          this.removeFromColumn(COLUMN_SCHOOL_ID);
+        }
+        else {
+        	setColumn (COLUMN_SCHOOL_ID, school.getPrimaryKey ());
         }
     }
     

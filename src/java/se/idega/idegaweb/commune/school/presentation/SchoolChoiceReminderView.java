@@ -21,10 +21,10 @@ import se.idega.idegaweb.commune.school.data.SchoolChoiceReminder;
  * and entity ejb classes in {@link se.idega.idegaweb.commune.school.data}.
  * <p>
  * <p>
- * Last modified: $Date: 2003/04/02 16:45:53 $ by $Author: laddi $
+ * Last modified: $Date: 2003/04/02 17:55:51 $ by $Author: laddi $
  *
  * @author <a href="http://www.staffannoteberg.com">Staffan Nöteberg</a>
- * @version $Revision: 1.29 $
+ * @version $Revision: 1.30 $
  * @see javax.ejb
  */
 public class SchoolChoiceReminderView extends CommuneBlock {
@@ -216,10 +216,10 @@ public class SchoolChoiceReminderView extends CommuneBlock {
             final String text = reminder.getText ();
             final String message = text.length () > 33
                     ? text.substring (0, 30) + "..." : text;
-            messageList.add (message, col++, row);
-            messageList.add (dateFormatter.format (reminder.getEventDate ()),
+            messageList.add (new Text(message), col++, row);
+            messageList.add (new Text(dateFormatter.format (reminder.getEventDate ())),
                              col++, row);
-            messageList.add (dateFormatter.format (reminder.getReminderDate ()),
+            messageList.add (new Text(dateFormatter.format (reminder.getReminderDate ())),
                              col++, row);
             final Link deleteLink
                     = getSmallLink (localize (DELETE_KEY, DELETE_DEFAULT));
@@ -237,11 +237,11 @@ public class SchoolChoiceReminderView extends CommuneBlock {
                                        ACTIVE_REMINDERS_DEFAULT)), 1, row++);
         table.setHeight (row++, 12);
         if (reminders.length > 0) {
-            table.add (localize ("scr_click_below", "Om du klickar på id-numret nedan så räknar systemet ut vilka som ska få påminnelse. Observera att detta kan ta 3 minuter eller längre."), 1, row++);
+            table.add (new Text(localize ("scr_click_below", "Om du klickar på id-numret nedan så räknar systemet ut vilka som ska få påminnelse. Observera att detta kan ta 3 minuter eller längre.")), 1, row++);
             table.setHeight (row++, 12);
             table.add(form, 1, row++);
         } else {
-            table.add (localize ("scr_no_active", "Det finns inga aktiva påminnelser just nu."), 1, row++);
+            table.add (new Text(localize ("scr_no_active", "Det finns inga aktiva påminnelser just nu.")), 1, row++);
         }
 		add(table);
     }
@@ -322,17 +322,17 @@ public class SchoolChoiceReminderView extends CommuneBlock {
         table.add(getSmallHeader(localize (REMINDER_TEXT_KEY,
                                            REMINDER_TEXT_DEFAULT)), 1, row++);
 		table.setHeight (row++, 6);
-        table.add(reminder.getText (), 1, row++);
+        table.add(new Text(reminder.getText ()), 1, row++);
 		table.setHeight (row++, 12);
         table.add(getSmallHeader(localize (EVENT_DATE_KEY,
                                            EVENT_DATE_DEFAULT)), 1, row++);
 		table.setHeight (row++, 6);
-        table.add("" + reminder.getEventDate (), 1, row++);
+        table.add(new Text("" + reminder.getEventDate ()), 1, row++);
 		table.setHeight (row++, 12);
         table.add(getSmallHeader(localize (REMINDER_DATE_KEY,
                                            REMINDER_DATE_DEFAULT)), 1, row++);
 		table.setHeight (row++, 6);
-        table.add("" + reminder.getReminderDate (), 1, row++);
+        table.add(new Text("" + reminder.getReminderDate ()), 1, row++);
 		table.setHeight (row++, 24);
         final Table submitTable = new Table ();
         submitTable.add (getStyledInterface
@@ -390,10 +390,10 @@ public class SchoolChoiceReminderView extends CommuneBlock {
                                             ? getZebraColor1()
                                             : getZebraColor2());
                     studentList.add (checkBox, col++, row);
-                    studentList.add (receiver.getStudentName (), col++, row);
+                    studentList.add (new Text(receiver.getStudentName ()), col++, row);
                     final String ssn = receiver.getSsn ();
-                    studentList.add (ssn.substring (2, 8) + "-"
-                                     + ssn.substring (8, 12), col++, row);
+                    studentList.add (new Text(ssn.substring (2, 8) + "-"
+                                     + ssn.substring (8, 12)), col++, row);
                     final String parentName = receiver.getParentName ();
                     final Text parentText = new Text(parentName);
                     if (parentName.startsWith ("?")) {

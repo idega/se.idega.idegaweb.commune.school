@@ -431,7 +431,7 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
   }
 
 	public Collection ejbFindAll() throws FinderException {
-		return this.idoFindIDsBySQL("select * from "+getEntityName());	
+		return this.idoFindPKsBySQL("select * from "+getEntityName());	
 	}
 
   public Collection ejbFindChoices(int schoolID, int seasonID, int gradeYear, String[] validStatuses, String searchStringForUser, int orderBy, int numberOfEntries, int startingEntry) throws FinderException, RemoteException {

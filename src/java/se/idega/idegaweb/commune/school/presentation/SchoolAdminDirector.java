@@ -14,6 +14,7 @@ import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Table;
 import com.idega.presentation.text.Link;
+import com.idega.presentation.text.Text;
 import com.idega.user.business.GroupBusiness;
 import com.idega.user.business.UserBusiness;
 import com.idega.user.data.Group;
@@ -64,7 +65,7 @@ public class SchoolAdminDirector extends CommuneBlock {
 					Table T = new Table();
 					int row = 1;
 					int col = 1;
-					T.add(iwrb.getLocalizedString("school_choice.links_to_choice_approvers","Links to school choice approvers"),col,row++);
+					T.add(new Text(iwrb.getLocalizedString("school_choice.links_to_choice_approvers","Links to school choice approvers")),col,row++);
 					
 					Iterator iter = schools.iterator();
 					while(iter.hasNext()){

@@ -357,8 +357,8 @@ public class UserCases extends CommuneBlock {
 		messageList.add (caseNumber, 1, row);
 		messageList.add (caseType, 2, row);
         final String reminderText = reminder.getText ();
-        messageList.add (reminderText.length () < 25 ? reminderText
-                         : (reminderText.substring (0, 20) + "..."), 3, row);
+        messageList.add (reminderText.length () < 25 ? new Text(reminderText)
+                         : new Text((reminderText.substring (0, 20) + "...")), 3, row);
 		messageList.add (caseDate, 4, row);
 		messageList.add (group, 5, row);
 	}
