@@ -275,46 +275,26 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 			MemberFamilyLogic familyLogic = getMemberFamilyLogic();
 			Collection parents = familyLogic.getCustodiansFor(getUser(childID));
 			User appParent = getUser(applicationParentID);
+			if(isSchoolChangeApplication)
+				getMessageBusiness().createUserMessage(appParent,getSeparateParentSubjectChange(),getSeparateParentMessageBodyChange(choice,appParent)); 
+			else
+				getMessageBusiness().createUserMessage(appParent,getSeparateParentSubjectAppl(),getSeparateParentMessageBodyAppl(choices,appParent)); 
+
 			Iterator iter = parents.iterator();		
 			User otherParent = null;
 			while(iter.hasNext()){
 				User parent = (User) iter.next();
-				if( !parent.getPrimaryKey().equals(appParent.getPrimaryKey() )){
-					otherParent = parent;
-					break;
+				if (!getUserBusiness().haveSameAddress(parent, appParent)) {
+					if(isSchoolChangeApplication)
+						getMessageBusiness().createUserMessage(parent,getSeparateParentSubjectChange(),getSeparateParentMessageBodyChange(choice,parent)); 
+					else
+						getMessageBusiness().createUserMessage(parent,getSeparateParentSubjectAppl(),getSeparateParentMessageBodyAppl(choices,parent)); 
 				}
-			}
-			if(otherParent != null){
-				Address appAddress = getUserBusiness().getUsersMainAddress(appParent);
-				Address otherAddress = getUserBusiness().getUsersMainAddress(otherParent);
-				if (appAddress != null && otherAddress != null) {
-					if(!appAddress.getStreetAddress().equalsIgnoreCase(otherAddress.getStreetAddress() )){
-						// We need to let the other parent know about the application
-						// If the parent has an Citizen Account we can send a message 
-						// else we senda a letter
-						
-						// send message
-						
-							if(getUserBusiness().hasUserLogin(otherParent)){
-								if(isSchoolChangeApplication)
-									getMessageBusiness().createUserMessage(otherParent,getSeparateParentSubjectChange(),getSeparateParentMessageBodyChange(choice)); 
-								else
-									getMessageBusiness().createUserMessage(otherParent,getSeparateParentSubjectAppl(),getSeparateParentMessageBodyAppl(choices,otherParent)); 
-							}
-							// send letter
-							else{
-								if(isSchoolChangeApplication)
-									getMessageBusiness().createPrintedLetterMessage(otherParent,getSeparateParentSubjectChange(),getSeparateParentMessageBodyChange(choice));
-								else
-									getMessageBusiness().createPrintedLetterMessage(otherParent,getSeparateParentSubjectAppl(),getSeparateParentMessageBodyAppl(choices,otherParent));
-							}
-						
-						
-					}
-				}
+					
 			}
 		}
-		}catch(Exception ex){throw new RemoteException(ex.getMessage());}
+		}
+		catch(Exception ex){throw new RemoteException(ex.getMessage());}
 	}
 	
 	public void createCurrentSchoolSeason(Integer newKey, Integer oldKey) throws java.rmi.RemoteException {
@@ -572,13 +552,10 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		return body;
 	}
 	
-	protected String getSeparateParentMessageBodyChange(SchoolChoice theCase) throws RemoteException, FinderException {
-		StringBuffer body = new StringBuffer(this.getLocalizedString("school_choice.sep_parent_change_mesg_body1", "Dear mr./ms./mrs. "));
-		body.append(theCase.getOwner().getNameLastFirst()).append("\n");
-		body.append(this.getLocalizedString("school_choice.sep_parent_change_mesg_body2", "School change application for your child has been received"));
-		body.append(getSchool(theCase.getChosenSchoolId()).getSchoolName()).append("\n");
-		body.append(this.getLocalizedString("school_choice.sep_parent_change_mesg_body3", "You can comment on this within 14 days from now."));
-		return body.toString();
+	protected String getSeparateParentMessageBodyChange(SchoolChoice theCase, User parent) throws RemoteException, FinderException {
+		Object[] arguments = { parent.getNameLastFirst(true), theCase.getChild().getNameLastFirst(true), getSchool(theCase.getChosenSchoolId()).getSchoolName() };
+		String body = MessageFormat.format(getLocalizedString("school_choice.sep_parent_change_mesg_body", "Dear mr./ms./mrs. "), arguments);
+		return body;
 	}
 	
 	protected String getOldHeadmasterBody(User student) throws RemoteException, FinderException {
