@@ -32,6 +32,7 @@ import com.idega.presentation.ui.TextInput;
 import com.idega.user.business.UserBusiness;
 import com.idega.user.data.User;
 import com.idega.util.PersonalIDFormatter;
+import com.idega.util.text.Name;
 import com.idega.presentation.util.TextFormat;
 
 /**
@@ -106,10 +107,10 @@ public class SchoolChoiceApprover extends CommuneBlock {
 				}
 				if (cases != null){
 					if(pupilList){
-						add(getPupilList());
+						add(getPupilList(iwc));
 					}
 					else
-						add(getChoiceList());
+						add(getChoiceList(iwc));
 				}
 				
 			}
@@ -165,7 +166,7 @@ public class SchoolChoiceApprover extends CommuneBlock {
 		}
 	}
 
-	public PresentationObject getChoiceList() throws RemoteException {
+	public PresentationObject getChoiceList(IWContext iwc) throws RemoteException {
 		Form F = new Form();
 		DataTable T = new DataTable();
 		T.setUseTop(false);
@@ -187,7 +188,7 @@ public class SchoolChoiceApprover extends CommuneBlock {
 			choice = (SchoolChoice) iter.next();
 			String sid = choice.getPrimaryKey().toString();
 			child = userBean.getUser(choice.getChildId());
-			T.add(getPupilInfoLink(child,choice), 1, row);
+			T.add(getPupilInfoLink(iwc, child,choice), 1, row);
 			//T.add(tf.format(choice.getGrade()), 2, row);
 			T.add(tf.format(df.format(choice.getSchoolChoiceDate())), 3, row);
 			if (choice.getChangeOfSchool()) {
@@ -232,7 +233,7 @@ public class SchoolChoiceApprover extends CommuneBlock {
 		return F;
 	}
 	
-	public PresentationObject getPupilList() throws RemoteException {
+	public PresentationObject getPupilList(IWContext iwc) throws RemoteException {
 		Form F = new Form();
 		DataTable T = new DataTable();
 		T.setUseTop(false);
@@ -254,7 +255,7 @@ public class SchoolChoiceApprover extends CommuneBlock {
 			child = userBean.getUser(choice.getChildId());
 			String status = choice.getCaseStatus().getStatus();
 			if (status.equals(choice.getCaseStatusPlaced())) {
-				T.add(getPupilInfoLink(child,choice), 1, row);
+				T.add(getPupilInfoLink(iwc, child,choice), 1, row);
 				T.add(tf.format(choice.getGroupPlace()), 2, row);
 				T.add(tf.format(df.format(choice.getSchoolChoiceDate())), 3, row);
 				if (choice.getChangeOfSchool()) {
@@ -298,7 +299,8 @@ public class SchoolChoiceApprover extends CommuneBlock {
 			T.add(tf.format(iwrb.getLocalizedString("child","Child"),TextFormat.HEADER),1,row);		
 			T.add(tf.format(iwrb.getLocalizedString("address","Address"),TextFormat.HEADER),2,row);
 			row++;
-			T.add(tf.format(child.getNameLastFirst()),1,row);
+			Name name = new Name(child.getFirstName(), child.getMiddleName(), child.getLastName());
+			T.add(tf.format(name.getName(iwc.getApplicationSettings().getDefaultLocale())),1,row);
 			Collection addresses  = child.getAddresses();
 			if(!addresses.isEmpty()){
 				Iterator iter = addresses.iterator();
@@ -322,7 +324,8 @@ public class SchoolChoiceApprover extends CommuneBlock {
 	        			T.add(tf.format(iwrb.getLocalizedString( "custodian","Custodian")+" "+count,TextFormat.HEADER),1,row);
 	        			T.add(tf.format(iwrb.getLocalizedString("phone","Phone"),TextFormat.HEADER),2,row);
 	        			row++;
-	        			T.add(tf.format(p.getNameLastFirst()),1,row);
+	      				name = new Name(p.getFirstName(), p.getMiddleName(), p.getLastName());
+	        			T.add(tf.format(name.getName(iwc.getApplicationSettings().getDefaultLocale())),1,row);
 	        			row++;
 	        			row++;
 	        			count++;
@@ -395,8 +398,9 @@ public class SchoolChoiceApprover extends CommuneBlock {
 		return T;
 	}
 	
-	private Link getPupilInfoLink(User child,SchoolChoice choice) {
-		Link L = new Link(tf.format(child.getNameLastFirst()));
+	private Link getPupilInfoLink(IWContext iwc, User child,SchoolChoice choice) {
+		Name name = new Name(child.getFirstName(), child.getMiddleName(), child.getLastName());
+		Link L = new Link(tf.format(name.getName(iwc.getApplicationSettings().getDefaultLocale())));
 		L.addParameter(prmPupilInfo,choice.getPrimaryKey().toString());
 		return L;
 	}
