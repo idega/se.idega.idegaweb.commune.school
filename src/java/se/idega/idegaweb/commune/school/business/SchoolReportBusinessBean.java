@@ -344,7 +344,7 @@ public class SchoolReportBusinessBean extends IBOSessionBean implements SchoolRe
 		return reportCollection;
 	}
 	
-	public ReportableCollection getChoicesReport(Collection columnNames, Boolean showLanguageChoice) {
+	public ReportableCollection getChoicesReport(Collection columnNames, Boolean showLanguageChoice, Boolean showNativeLanguage) {
 		fillColumns(columnNames);
 		initializeBundlesIfNeeded();
 		Locale currentLocale = this.getUserContext().getCurrentLocale();
@@ -435,6 +435,13 @@ public class SchoolReportBusinessBean extends IBOSessionBean implements SchoolRe
 			reportCollection.addField(language);
 		}
 		
+		ReportableField nativeLanguage = new ReportableField(FIELD_NATIVE_LANGUAGE, String.class);
+		nativeLanguage.setLocalizedName(getLocalizedString(FIELD_NATIVE_LANGUAGE, "Native language"), currentLocale);
+		if (displayColumn(FIELD_NATIVE_LANGUAGE)) {
+			_fields.add(nativeLanguage);
+			reportCollection.addField(nativeLanguage);
+		}
+		
 		ReportableField custodian = new ReportableField(FIELD_CUSTODIAN, String.class);
 		custodian.setLocalizedName(getLocalizedString(FIELD_CUSTODIAN, "Custodian"), currentLocale);
 		if (displayColumn(FIELD_CUSTODIAN)) {
@@ -460,14 +467,22 @@ public class SchoolReportBusinessBean extends IBOSessionBean implements SchoolRe
 			while (iter.hasNext()) {
 				SchoolChoice choice = (SchoolChoice) iter.next();
 				if (showLanguageChoice != null) {
-					if (showLanguageChoice.booleanValue() && choice.getLanguageChoice() == null) {
+					if (showNativeLanguage.booleanValue() && choice.getLanguageChoice() == null) {
 						continue;
 					}
-					else if (!showLanguageChoice.booleanValue() && choice.getLanguageChoice() != null) {
+					else if (!showNativeLanguage.booleanValue() && choice.getLanguageChoice() != null) {
 						continue;
 					}
 				}
 				User user = choice.getChild();
+				if (showNativeLanguage != null) {
+					if (showNativeLanguage.booleanValue() && user.getNativeLanguage() == null) {
+						continue;
+					}
+					else if (!showNativeLanguage.booleanValue() && user.getNativeLanguage() != null) {
+						continue;
+					}
+				}
 				Address homeAddress = getUserBusiness().getUsersMainAddress(user);
 				Phone homePhone = getUserBusiness().getChildHomePhone(user);
 				User parent = getUserBusiness().getCustodianForChild(user);
@@ -524,7 +539,12 @@ public class SchoolReportBusinessBean extends IBOSessionBean implements SchoolRe
 					if (choice.getLanguageChoice() != null) {
 						data.addData(language, choice.getLanguageChoice());
 					}
-					
+				}
+				
+				if (displayColumn(FIELD_NATIVE_LANGUAGE)) {
+					if (user.getNativeLanguage() != null) {
+						data.addData(nativeLanguage, user.getNativeLanguage().getName());
+					}
 				}
 				
 				if (displayColumn(FIELD_FROM_SCHOOL)) {
