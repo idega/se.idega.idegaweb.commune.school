@@ -1,5 +1,5 @@
 /*
- * $Id: ReportPDFWriter.java,v 1.11 2004/03/03 08:18:38 anders Exp $
+ * $Id: ReportPDFWriter.java,v 1.12 2004/03/03 09:25:07 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -37,10 +37,10 @@ import com.lowagie.text.pdf.PdfWriter;
 /** 
  * Creates report files in Adobe PDF format.
  * <p>
- * Last modified: $Date: 2004/03/03 08:18:38 $ by $Author: anders $
+ * Last modified: $Date: 2004/03/03 09:25:07 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.11 $
+ * @version $Revision: 1.12 $
  */
 public class ReportPDFWriter {
 
@@ -399,6 +399,9 @@ public class ReportPDFWriter {
 		}
 		int len = s.length();
 		if (_widths[column] < len) {
+			if (s.indexOf('m') != -1) {
+				len++;
+			}
 			_widths[column] = len;
 		}
 	}
