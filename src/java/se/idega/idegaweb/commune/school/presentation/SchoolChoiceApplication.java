@@ -1219,7 +1219,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 			s.append("  if (typeId == " + stId + ") {\n");
 			Collection schoolYears = schCommBiz.getSchoolBusiness().findAllSchoolYearsBySchoolType(stId);
 			Iterator iter2 = schoolYears.iterator();
-			if (iter2.hasNext()) {
+			if (schoolYears.size() > 1) {
 				s.append("    dropSchoolYears.options[dropSchoolYears.options.length] = new Option(\"");
 				s.append(iwrb.getLocalizedString("choose_school_year", "Choose school year")).append("\",\"-1\",true,true);").append("\n");				
 			}
