@@ -2,7 +2,7 @@ package se.idega.idegaweb.commune.school.business;
 
 import javax.ejb.*;
 
-public interface SchoolChoiceBusiness extends com.idega.business.IBOService
+public interface SchoolChoiceBusiness extends com.idega.business.IBOService,com.idega.block.process.business.CaseBusiness
 {
  public com.idega.block.school.data.SchoolSeason getCurrentSeason()throws javax.ejb.FinderException,java.rmi.RemoteException, java.rmi.RemoteException;
  public se.idega.idegaweb.commune.school.data.CurrentSchoolSeasonHome getCurrentSchoolSeasonHome()throws java.rmi.RemoteException, java.rmi.RemoteException;

@@ -7,6 +7,8 @@ import com.idega.user.data.User;
 import java.sql.Timestamp;
 import java.util.Collection;
 
+import se.idega.idegaweb.commune.school.business.SchoolChoiceBusinessBean;
+
 /**
  * <p>Title: </p>
  * <p>Description: </p>
@@ -19,7 +21,7 @@ import java.util.Collection;
 public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolChoice,Case {
 
   final static public String SCHOOLCHOICE = "comm_sch_choice";
-  final static public String CASECODE = "MBSKOLV";
+  final static public String CASECODE =SchoolChoiceBusinessBean.SCHOOL_CHOICE_CASECODE;
 
   public final static String SCHOOL_SEASON = "school_season_id";
   public final static String CURRENT_SCHOOL = "curr_school_id";
@@ -115,6 +117,9 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
   public int getCurrentSchoolId(){
     return getIntColumnValue(CURRENT_SCHOOL);
   }
+  public School setCurrentSchool(){
+    return (School) getColumnValue(CURRENT_SCHOOL);
+  }
   public void setCurrentSchoolId(int id){
     setColumn(CURRENT_SCHOOL,id);
   }
@@ -126,6 +131,9 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
   }
   public int getChosenSchoolId(){
     return getIntColumnValue(CHOSEN_SCHOOL);
+  }
+  public School getChosenSchool(){
+    return (School) getColumnValue(CHOSEN_SCHOOL);
   }
   public void setChosenSchoolId(int id){
     setColumn(CHOSEN_SCHOOL,id);

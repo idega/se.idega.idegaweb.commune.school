@@ -308,8 +308,8 @@ public class SchoolChoiceApplication extends CommuneBlock {
     Address address = userbuiz.getUsersMainAddress(child);
     T.add(getText(address.getStreetAddress()),1,5);
     try{
-    T.add(getText(address.getPostalCode().getName()),4,5);
-    }catch(java.sql.SQLException ex){}
+    T.add(getText(address.getPostalAddress()),4,5);
+    }catch(Exception ex){}
 
 
     return T;

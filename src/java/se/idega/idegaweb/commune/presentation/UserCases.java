@@ -128,7 +128,7 @@ public class UserCases extends CommuneBlock
 				Text status = null;
 				//CheckBox deleteCheck = null;
 				boolean isRead = false;
-				DateFormat dateFormat = java.text.DateFormat.getDateTimeInstance(2, 2, iwc.getCurrentLocale());
+				DateFormat dateFormat = com.idega.util.CustomDateFormat.getDateTimeInstance(iwc.getCurrentLocale());
 				if (cases != null)
 				{
 					Collection casesVector = cases;
@@ -145,8 +145,8 @@ public class UserCases extends CommuneBlock
 							caseNumber = getSmallText(theCase.getPrimaryKey().toString());
 							caseType =
 								getSmallText(
-									getCaseBusiness(iwc).getLocalizedCaseCodeDescription(
-										theCase.getCaseCode(),
+									getCaseBusiness(iwc).getCaseBusiness(theCase.getCaseCode()).getLocalizedCaseDescription(
+										theCase,
 										iwc.getCurrentLocale()));
 							//subject.addParameter(PARAM_VIEW_MESSAGE,"true");
 							//subject.addParameter(PARAM_MESSAGE_ID,msg.getPrimaryKey().toString());

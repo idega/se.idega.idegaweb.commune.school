@@ -3,6 +3,8 @@ package se.idega.idegaweb.commune.school.data;
 import java.rmi.RemoteException;
 import javax.ejb.*;
 
+import com.idega.block.school.data.School;
+
 public interface SchoolChoice extends com.idega.data.IDOEntity, com.idega.block.process.data.Case {
 	public int getChosenSchoolId() throws java.rmi.RemoteException;
 	public int getWorkSituation2() throws java.rmi.RemoteException;
@@ -48,5 +50,7 @@ public interface SchoolChoice extends com.idega.data.IDOEntity, com.idega.block.
 	public void setGroupPlace(String place) throws RemoteException;
 	public int getSchoolSeasonId() throws RemoteException;
   	public void setSchoolSeasonId(int id) throws RemoteException;
+  	public School getChosenSchool() throws RemoteException;
+  	public School setCurrentSchool() throws RemoteException;
   
 }
