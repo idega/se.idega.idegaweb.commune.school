@@ -20,7 +20,7 @@ import se.idega.idegaweb.commune.school.business.SchoolChoiceBusiness;
 import com.idega.block.school.business.SchoolAreaBusiness;
 import com.idega.block.school.business.SchoolBusiness;
 import com.idega.block.school.business.SchoolTypeBusiness;
-import com.idega.block.school.data.School;
+import com.idega.block.school.data.*;
 import com.idega.block.school.data.SchoolArea;
 import com.idega.block.school.data.SchoolSeason;
 import com.idega.block.school.data.SchoolType;
@@ -118,6 +118,10 @@ public class SchoolChoiceApplication extends CommuneBlock {
   private boolean showAgree = false;
   protected boolean quickAdmin = false;
   SchoolChoiceBusiness schBuiz;
+  SchoolClassMember schoolClassMember = null;
+    SchoolClass schoolClass = null;
+    School school = null;
+    SchoolYear schoolYear = null;
 
 
   public void control(IWContext iwc) throws Exception{
@@ -130,6 +134,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 
 				User child = userbuiz.getUser(childId);
 				if(child!=null){
+          initSchoolChild(iwc,child);
           boolean hasChoosed = false;
           Collection currentChildChoices = null;
 					parse(iwc);
@@ -326,6 +331,18 @@ public class SchoolChoiceApplication extends CommuneBlock {
     control(iwc);
   }
 
+  private void initSchoolChild(IWContext iwc,User child){
+
+    try{
+      schoolClassMember = schBuiz.getSchoolBusiness().getSchoolClassMemberHome().findByUserAndSeason(child,schBuiz.getCurrentSeason());
+      schoolClass = schBuiz.getSchoolBusiness().getSchoolClassHome().findByPrimaryKey(new Integer(schoolClassMember.getSchoolClassId()));
+      school = schBuiz.getSchool(schoolClass.getSchoolId());
+      schoolYear = schBuiz.getSchoolBusiness().getSchoolYearHome().findByPrimaryKey(new Integer(schoolClass.getSchoolYearId()));
+    }catch(Exception e){
+      e.printStackTrace();
+    }
+  }
+
   private PresentationObject getChildInfo(IWContext iwc,User child)throws java.rmi.RemoteException{
     Table T = new Table(6,5);
     T.setColor("#ffffcc");
@@ -360,32 +377,52 @@ public class SchoolChoiceApplication extends CommuneBlock {
     T.mergeCells(1,1,4,1);
 
     T.add(getHeader(iwrb.getLocalizedString("school.child_is_now_in","Child is now in :")),1,1);
-    DropdownMenu drpTypes = getTypeDrop(prmPreType);
-    drpTypes.setOnChange(getFilterCallerScript(iwc,prmPreType,prmPreArea,prmPreSchool,1));
-    drpTypes.setWidth("20");
-    DropdownMenu drpAreas = new DropdownMenu(prmPreArea);
-		drpAreas.addMenuElementFirst("-1",iwrb.getLocalizedString("school.area","School area..........."));
-    drpAreas.setOnChange(getFilterCallerScript(iwc,prmPreType,prmPreArea,prmPreSchool,2));
-    //drpAreas.setWidth("50");
-    DropdownMenu drpSchools = new DropdownMenu(prmPreSchool);
-		drpSchools.addMenuElementFirst("-1",iwrb.getLocalizedString("school.school","School................"));
-    //drpSchools.setWidth("20");
-    DropdownMenu drpGrade = new DropdownMenu(prmPreGrade);
-    drpGrade.addMenuElement("-1","");
-    for (int i = 1; i < 10; i++) {
-      drpGrade.addMenuElement(String.valueOf(i));
+
+    if(schoolClassMember!=null){
+      T.add(getSmallHeader(iwrb.getLocalizedString("school.school_name","School name")),2,3);
+      T.add(getSmallHeader(iwrb.getLocalizedString("school.school_class","School class")),2,3);
+      T.add(getSmallHeader(iwrb.getLocalizedString("school.school_year","School year")),3,3);
+
+      T.add(getText(school.getName()),2,4);
+      T.add(getText(schoolClass.getName()),3,4);
+      T.add(getText(schoolYear.getName()),4,4);
+      T.add(new HiddenInput(prmPreSchool,school.getPrimaryKey().toString()));
+      int year = 0;
+      try{
+        year = Integer.parseInt(schoolYear.getName());
+
+      }
+      catch(NumberFormatException nfe){
+
+      }
+      year++;
+      T.add(new HiddenInput(prmPreGrade,String.valueOf(year)));
     }
-    drpGrade.setSelectedElement(String.valueOf(valPreGrade));
+    else {
+      DropdownMenu drpTypes = getTypeDrop(prmPreType);
+      drpTypes.setOnChange(getFilterCallerScript(iwc,prmPreType,prmPreArea,prmPreSchool,1));
+      drpTypes.setWidth("20");
+      DropdownMenu drpAreas = new DropdownMenu(prmPreArea);
+      drpAreas.addMenuElementFirst("-1",iwrb.getLocalizedString("school.area","School area..........."));
+      drpAreas.setOnChange(getFilterCallerScript(iwc,prmPreType,prmPreArea,prmPreSchool,2));
+      //drpAreas.setWidth("50");
+      DropdownMenu drpSchools = new DropdownMenu(prmPreSchool);
+      drpSchools.addMenuElementFirst("-1",iwrb.getLocalizedString("school.school","School................"));
+      //drpSchools.setWidth("20");
+      DropdownMenu drpGrade = new DropdownMenu(prmPreGrade);
+      drpGrade.addMenuElement("-1","");
+      for (int i = 1; i < 10; i++) {
+        drpGrade.addMenuElement(String.valueOf(i));
+      }
+      drpGrade.setSelectedElement(String.valueOf(valPreGrade));
 
-
-    T.add(getSmallHeader(iwrb.getLocalizedString("school.school_name","School name")),3,3);
-    T.add(getSmallHeader(iwrb.getLocalizedString("school.grade","Grade")),4,3);
-
-
-    T.add(drpTypes,1,4);
-    T.add(drpAreas,2,4);
-    T.add(drpSchools,3,4);
-    T.add(drpGrade,4,4);
+      T.add(getSmallHeader(iwrb.getLocalizedString("school.school_name","School name")),3,3);
+      T.add(getSmallHeader(iwrb.getLocalizedString("school.grade","Grade")),4,3);
+      T.add(drpTypes,1,4);
+      T.add(drpAreas,2,4);
+      T.add(drpSchools,3,4);
+      T.add(drpGrade,4,4);
+    }
 
     return T;
   }
