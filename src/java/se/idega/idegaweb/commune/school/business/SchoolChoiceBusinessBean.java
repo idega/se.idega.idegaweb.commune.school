@@ -1193,12 +1193,18 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 
 	public IWTimestamp getSchoolChoiceEndDate () throws RemoteException,
 																											FinderException {
-		return getTimestampFromProperty ("choice_end_date");
+		final IWTimestamp result = getTimestampFromProperty ("choice_end_date");
+		result.addDays (1);
+		result.addSeconds (-1);
+		return result;
 	}
-
+	
 	public IWTimestamp getSchoolChoiceCriticalDate () throws RemoteException,
-																											FinderException {
-		return getTimestampFromProperty ("choice_critical_date");
+																													 FinderException {
+		final IWTimestamp result = getTimestampFromProperty ("choice_critical_date");
+		result.addDays (1);
+		result.addSeconds (-1);
+		return result;
 	}
 
 	private IWTimestamp getTimestampFromProperty (final String key)
