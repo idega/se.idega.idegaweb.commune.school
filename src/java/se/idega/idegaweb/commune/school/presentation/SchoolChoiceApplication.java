@@ -1,22 +1,40 @@
 package se.idega.idegaweb.commune.school.presentation;
 
-import se.idega.idegaweb.commune.school.business.*;
-import se.idega.idegaweb.commune.presentation.CommuneBlock;
-import se.idega.idegaweb.commune.presentation.CitizenChildren;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+
+import com.idega.block.school.business.SchoolAreaBusiness;
+import com.idega.block.school.business.SchoolBusiness;
+import com.idega.block.school.business.SchoolTypeBusiness;
+import com.idega.block.school.data.School;
+import com.idega.block.school.data.SchoolArea;
+import com.idega.block.school.data.SchoolType;
+import com.idega.business.IBOLookup;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObject;
-
-import com.idega.presentation.ui.*;
-import com.idega.presentation.text.*;
+import com.idega.presentation.Script;
 import com.idega.presentation.Table;
-import com.idega.user.data.User;
+import com.idega.presentation.Page;
+import com.idega.presentation.ui.CheckBox;
+import com.idega.presentation.ui.DropdownMenu;
+import com.idega.presentation.ui.Form;
+import com.idega.presentation.ui.SubmitButton;
+import com.idega.presentation.ui.TextArea;
+import com.idega.presentation.ui.TextInput;
+import com.idega.presentation.ui.HiddenInput;
 import com.idega.user.business.UserBusiness;
-import com.idega.business.IBOLookup;
+import com.idega.user.data.User;
+import com.idega.util.Age;
 
-import java.util.Collection;
-import java.util.Iterator;
+import is.idega.idegaweb.member.business.MemberFamilyLogic;
+import is.idega.idegaweb.member.business.NoCustodianFound;
+
+import se.idega.idegaweb.commune.presentation.CitizenChildren;
+import se.idega.idegaweb.commune.presentation.CommuneBlock;
 
 
 /**
@@ -33,30 +51,124 @@ public class SchoolChoiceApplication extends CommuneBlock {
   IWBundle iwb;
   IWResourceBundle iwrb;
   UserBusiness userbuiz;
-  Collection schoolHelp = null;
+  Collection schoolTypes = null;
+  List[] schools = null;
+  int preTypeId = -1;
+  int preAreaId = -1;
+
+  private String prefix = "sch_app_";
+  private String prmSendCatalogue = prefix+"snd_cat";
+  private String prmCustodiansAgree = prefix+"cus_agr";
+  private String prmFirstSchool = prefix+"fst_scl";
+  private String prmSecondSchool = prefix+"snd_scl";
+  private String prmThirdSchool = prefix+"trd_scl";
+  private String prmFirstArea = prefix+"fst_ara";
+  private String prmSecondArea = prefix+"snd_ara";
+  private String prmThirdArea = prefix+"trd_ara";
+  private String prmPreSchool = prefix+"pre_scl";
+  private String prmPreArea = prefix+"pre_ara";
+  private String prmPreType = prefix+"pre_typ";
+  private String prmType = prefix+"cho_typ";
+  private String prmPreGrade = prefix+"pre_grd";
+  private String prmMessage = prefix+"msg";
+  private String prmAutoAssign = prefix+"aut_ass";
+  private String prmSchoolChange = prefix+"scl_chg";
+  private String prmSixYearCare = prefix+"six_car";
+  private String prmLanguage = prefix+"cho_lng";
+  private String prmAction = prefix+"snd_frm";
+  private String prmChildId = CitizenChildren.getChildIDParameterName();
+  private String prmForm = prefix+"the_frm";
+
+  private boolean valSendCatalogue = false;
+  private boolean valSixyearCare = false ;
+  private boolean valAutoAssign = false ;
+  private boolean valSchoolChange = false;
+  private boolean valCustodiansAgree = false ;
+  private String valMessage = "";
+  private String valLanguage = "";
+  private int valFirstSchool = -1;
+  private int valSecondSchool = -1;
+  private int valThirdSchool = -1;
+  private int valFirstArea = -1;
+  private int valSecondArea = -1;
+  private int valThirdArea = -1;
+  private int valPreGrade = -1;
+  private int valPreType = -1;
+  private int valPreArea = -1;
+  private int valPreSchool = -1;
+  private int valType = -1;
 
   public void control(IWContext iwc) throws Exception{
-    String ID = iwc.getParameter(CitizenChildren.getChildIDParameterName());
+    debugParameters(iwc);
+    String ID = iwc.getParameter(prmChildId);
     if(ID!=null){
       int childId = Integer.parseInt(ID);
       userbuiz = (UserBusiness) IBOLookup.getServiceInstance(iwc,UserBusiness.class);
 
       User child = userbuiz.getUser(childId);
       if(child!=null){
-
-        add(getSchoolChoiceForm(child));
+        parse(iwc);
+        schoolTypes = getSchoolTypes(iwc,"SCHOOL");
+        add(getSchoolChoiceForm(iwc,child));
       }
     }
   }
 
-  public PresentationObject getSchoolChoiceForm(User child)throws java.rmi.RemoteException{
+  private void parse(IWContext iwc){
+    valSendCatalogue = iwc.isParameterSet(prmSendCatalogue);
+    valSixyearCare = iwc.isParameterSet(prmSixYearCare);
+    valAutoAssign = iwc.isParameterSet(prmAutoAssign);
+    valSchoolChange = iwc.isParameterSet(prmSchoolChange);
+    valCustodiansAgree = iwc.isParameterSet(prmCustodiansAgree);
+    valMessage = iwc.getParameter(prmMessage);
+    valLanguage = iwc.getParameter(prmLanguage);
+    valFirstSchool = iwc.isParameterSet(prmFirstSchool)?Integer.parseInt(iwc.getParameter(prmFirstSchool)):-1;
+    valSecondSchool = iwc.isParameterSet(prmSecondSchool)?Integer.parseInt(iwc.getParameter(prmSecondSchool)):-1;
+    valThirdSchool = iwc.isParameterSet(prmThirdSchool)?Integer.parseInt(iwc.getParameter(prmThirdSchool)):-1;
+    valFirstArea = iwc.isParameterSet(prmFirstArea)?Integer.parseInt(iwc.getParameter(prmFirstArea)):-1;
+    valSecondArea = iwc.isParameterSet(prmSecondArea)?Integer.parseInt(iwc.getParameter(prmSecondArea)):-1;
+    valThirdArea = iwc.isParameterSet(prmThirdArea)?Integer.parseInt(iwc.getParameter(prmThirdArea)):-1;
+    valPreGrade = iwc.isParameterSet(prmPreGrade)?Integer.parseInt(iwc.getParameter(prmPreGrade)):-1;
+    valPreType = iwc.isParameterSet(prmPreType)?Integer.parseInt(iwc.getParameter(prmType)):-1;
+    valPreArea = iwc.isParameterSet(prmPreArea)?Integer.parseInt(iwc.getParameter(prmPreArea)):-1;
+    valPreSchool = iwc.isParameterSet(prmPreSchool)?Integer.parseInt(iwc.getParameter(prmPreSchool)):-1;
+    valType = iwc.isParameterSet(prmType)?Integer.parseInt(iwc.getParameter(prmType)):-1;
+
+  }
+
+  public PresentationObject getSchoolChoiceForm(IWContext iwc,User child)throws java.rmi.RemoteException{
     Form myForm = new Form();
-    Table T = new Table(1,4);
+    myForm.setName(prmForm);
+    Table T = new Table(1,7);
     T.add(getChildInfo(child),1,1);
-    T.add(getCurrentSchool(child),1,2);
-    T.add(getChoiceSchool(child),1,3);
-    T.add(getParentInfo(child),1,4);
+    T.add(getCurrentSchool(iwc,child),1,2);
+    T.add(getChoiceSchool(iwc,child),1,3);
+    T.add(getParentInfo(iwc,child),1,4);
+    T.add(getMessagePart(iwc),1,5);
+    T.add(new SubmitButton(iwrb.getLocalizedString("school.submit_application",prmAction)),1,6);
+    T.add(new HiddenInput(prmChildId,child.getPrimaryKey().toString() ) );
     myForm.add(T);
+
+    Page p = this.getParentPage();
+    if(p!=null){
+      Script S = p.getAssociatedScript();
+      Script F = new Script();
+      S.addFunction("initFilter",getInitFilterScript());
+      S.addFunction("changeFilter",getFilterScript(iwc));
+      if(valPreType > 0 || valPreArea > 0 || valPreSchool > 0 ){
+        F.addFunction("f1",getInitFilterCallerScript(iwc,prmPreType,prmPreArea,prmPreSchool,valPreType,valPreArea,valPreSchool));
+      }
+      if(valType > 0){
+        if(valFirstArea > 0 || valFirstSchool > 0)
+          F.addFunction("f2",getInitFilterCallerScript(iwc,prmType,prmFirstArea,prmFirstSchool,valType,valFirstArea,valFirstSchool));
+        if(valSecondArea > 0 || valSecondSchool > 0)
+          F.addFunction("f3",getInitFilterCallerScript(iwc,prmType,prmSecondArea,prmSecondSchool,valType,valSecondArea,valSecondSchool));
+        if(valThirdArea > 0 || valThirdSchool > 0)
+          F.addFunction("f4",getInitFilterCallerScript(iwc,prmType,prmThirdArea,prmThirdSchool,valType,valThirdArea,valThirdSchool));
+
+      }
+      T.add(F,1,T.getColumns());
+    }
     return myForm;
   }
 
@@ -85,18 +197,30 @@ public class SchoolChoiceApplication extends CommuneBlock {
     return T;
   }
 
-  private PresentationObject getCurrentSchool(User child){
+  private PresentationObject getCurrentSchool(IWContext iwc,User child)throws java.rmi.RemoteException{
     Table T = new Table(4,7);
     T.mergeCells(1,1,4,1);
 
-    T.add(getHeader(iwrb.getLocalizedString("child_is_now_in","Child is now in :")),1,1);
-    DropdownMenu drpTypes = new DropdownMenu("sch_types_before");
-    DropdownMenu drpAreas = new DropdownMenu("sch_area_before");
-    DropdownMenu drpSchools = new DropdownMenu("sch_school_before");
-    DropdownMenu drpGrade = new DropdownMenu("sch_grade_before");
+    T.add(getHeader(iwrb.getLocalizedString("school.child_is_now_in","Child is now in :")),1,1);
+    DropdownMenu drpTypes = getTypeDrop(prmPreType);
+    drpTypes.setOnChange(getFilterCallerScript(iwc,prmPreType,prmPreArea,prmPreSchool,1));
+    drpTypes.setWidth("20");
+    DropdownMenu drpAreas = new DropdownMenu(prmPreArea);
+    drpAreas.setOnChange(getFilterCallerScript(iwc,prmPreType,prmPreArea,prmPreSchool,2));
+    drpAreas.setWidth("50");
+    DropdownMenu drpSchools = new DropdownMenu(prmPreSchool);
+    drpSchools.addMenuElement("-1","             ");
+    drpSchools.setWidth("20");
+    DropdownMenu drpGrade = new DropdownMenu(prmPreGrade);
+    drpGrade.addMenuElement("-1","");
+    for (int i = 1; i < 10; i++) {
+      drpGrade.addMenuElement(String.valueOf(i));
+    }
+    drpGrade.setSelectedElement(String.valueOf(valPreGrade));
 
-    T.add(getSmallHeader(iwrb.getLocalizedString("school_name","School name")),3,4);
-    T.add(getSmallHeader(iwrb.getLocalizedString("grade","Grade")),4,4);
+
+    T.add(getSmallHeader(iwrb.getLocalizedString("school.school_name","School name")),3,4);
+    T.add(getSmallHeader(iwrb.getLocalizedString("school.grade","Grade")),4,4);
 
 
     T.add(drpTypes,1,5);
@@ -107,15 +231,357 @@ public class SchoolChoiceApplication extends CommuneBlock {
     return T;
   }
 
-  private PresentationObject getChoiceSchool(User child){
-    Table T = new Table();
-    T.add(getHeader(iwrb.getLocalizedString("choice_for_schoolyear","Choice for the schoolyear")),1,1);
+  private DropdownMenu getTypeDrop(String name)throws java.rmi.RemoteException{
+    DropdownMenu drp = new DropdownMenu(name);
+    drp.addMenuElement("-1",iwrb.getLocalizedString("school.school_type","School type"));
+    Iterator iter = schoolTypes.iterator();
+    while(iter.hasNext()){
+      SchoolType type = (SchoolType) iter.next();
+      drp.addMenuElement(type.getPrimaryKey().toString(),type.getSchoolTypeName());
+    }
+
+    return drp;
+  }
+
+  private PresentationObject getChoiceSchool(IWContext iwc,User child)throws java.rmi.RemoteException{
+    Table T = new Table(3,10);
+    T.mergeCells(1,1,3,1);
+    T.add(getHeader(iwrb.getLocalizedString("school.choice_for_schoolyear","Choice for the schoolyear")),1,1);
+    Date d = child.getDateOfBirth();
+    if(d==null)
+      d = new Date();
+    Age age = new Age(d);
+
+    DropdownMenu typeDrop = getTypeDrop(prmType);
+    CheckBox chkSixYear = new CheckBox(prmSixYearCare,"true");
+    CheckBox chkAutoAssign = new CheckBox(prmAutoAssign,"true");
+    CheckBox chkSchoolChange = new CheckBox(prmSchoolChange,"true");
+    chkSixYear.setChecked(valSixyearCare);
+    chkAutoAssign.setChecked(valAutoAssign);
+    chkSchoolChange.setChecked(valSchoolChange);
+    TextInput txtLangChoice = new TextInput(prmLanguage);
+    DropdownMenu drpFirstArea = new DropdownMenu(prmFirstArea);
+    DropdownMenu drpSecondArea = new DropdownMenu(prmSecondArea);
+    DropdownMenu drpThirdArea = new DropdownMenu(prmThirdArea);
+    DropdownMenu drpFirstSchool = new DropdownMenu(prmFirstSchool);
+    DropdownMenu drpSecondSchool = new DropdownMenu(prmSecondSchool);
+    DropdownMenu drpThirdSchool = new DropdownMenu(prmThirdSchool);
+
+    T.add(typeDrop,1,3);
+    T.mergeCells(2,3,3,3);
+    T.mergeCells(2,4,3,4);
+    T.mergeCells(2,5,3,5);
+    typeDrop.setOnChange(getFilterCallerScript(iwc,prmType,prmFirstArea,prmFirstSchool,1));
+    typeDrop.setOnChange(getFilterCallerScript(iwc,prmType,prmSecondArea,prmSecondSchool,1));
+    typeDrop.setOnChange(getFilterCallerScript(iwc,prmType,prmThirdArea,prmThirdSchool,1));
+    drpFirstArea.setOnChange(getFilterCallerScript(iwc,prmType,prmFirstArea,prmFirstSchool,2));
+    drpSecondArea.setOnChange(getFilterCallerScript(iwc,prmType,prmSecondArea,prmSecondSchool,2));
+    drpThirdArea.setOnChange(getFilterCallerScript(iwc,prmType,prmThirdArea,prmThirdSchool,2));
+    if(age.getYears()==6){
+      T.add(chkAutoAssign,2,3);
+      T.add(getSmallText(iwrb.getLocalizedString("school.six_year_childcare","I want my six years old to be within childcare")),2,3);
+    }
+    T.add(chkAutoAssign,2,4);
+    T.add(getSmallText(iwrb.getLocalizedString("school.assign_school_placing","Assign me a school placing")),2,4);
+    T.add(chkSchoolChange,2,5);
+    T.add(getSmallText(iwrb.getLocalizedString("school.change_of_school","Change of school")),2,5);
+    T.add(getSmallText(iwrb.getLocalizedString("school.first_choice","First choice")),1,6);
+    T.add(drpFirstArea,2,6);
+    T.add(drpFirstSchool,3,6);
+    T.add(getSmallText(iwrb.getLocalizedString("school.second_choice","Second choice")),1,7);
+    T.add(drpSecondArea,2,7);
+    T.add(drpSecondSchool,3,7);
+    T.add(getSmallText(iwrb.getLocalizedString("school.third_choice","Third choice")),1,8);
+    T.add(drpThirdArea,2,8);
+    T.add(drpThirdSchool,3,8);
+
+
+
     return T;
   }
 
-  private PresentationObject getParentInfo(User child){
+  private PresentationObject getParentInfo(IWContext iwc,User child)throws java.rmi.RemoteException{
     Table T = new Table();
+    T.add(getSmallHeader(iwrb.getLocalizedString("school.custodians","Custodians")),1,1);
+    MemberFamilyLogic mlogic = (MemberFamilyLogic) IBOLookup.getServiceInstance(iwc,MemberFamilyLogic.class);
+    try{
+      Collection parents = mlogic.getCustodiansFor(child);
+      Iterator iter = parents.iterator();
+      while(iter.hasNext()){
+
+      }
+    }
+    catch(NoCustodianFound ex){
+      T.add(getSmallErrorText(iwrb.getLocalizedString("school.no_registered_custodians","No registered custodians")),1,3);
+    }
     return T;
+  }
+
+  private PresentationObject getMessagePart(IWContext iwc)throws java.rmi.RemoteException{
+    Table T = new Table();
+
+    CheckBox chkCustodiansAgree = new CheckBox(prmCustodiansAgree,"true");
+    chkCustodiansAgree.setChecked(valCustodiansAgree);
+    CheckBox chkSendCatalogue = new CheckBox(prmSendCatalogue,"true");
+    chkSendCatalogue.setChecked(valSendCatalogue);
+    TextArea taMessage = new TextArea(prmMessage,65,6);
+    T.add(chkCustodiansAgree,1,1);
+    T.add(getSmallText(iwrb.getLocalizedString("school.custodians_agree","Parents/Custodians agree")),1,1);
+    T.add(chkSendCatalogue,1,2);
+    T.add(getSmallText(iwrb.getLocalizedString("school.send_catalogue","Send school catalogue")),1,2);
+    T.add(taMessage,1,3);
+    return T;
+  }
+
+  private Collection getSchoolTypes(IWContext iwc,String category){
+    try{
+      SchoolTypeBusiness sBuiz = (SchoolTypeBusiness) IBOLookup.getServiceInstance(iwc,SchoolTypeBusiness.class);
+      return sBuiz.findAllSchoolTypesInCategory(category);
+    }
+    catch(Exception ex){
+
+    }
+    return null;
+  }
+
+  private Collection getSchools(IWContext iwc,int area,int type){
+   try{
+      SchoolBusiness sBuiz = (SchoolBusiness) IBOLookup.getServiceInstance(iwc,SchoolBusiness.class);
+      return sBuiz.findAllSchoolsByAreaAndType(area,type);
+
+    }
+    catch(Exception ex){
+      ex.printStackTrace();
+      return new java.util.Vector();
+    }
+  }
+
+  private Collection getSchoolAreasWithType(IWContext iwc,int type){
+    try{
+      SchoolAreaBusiness saBuiz = (SchoolAreaBusiness) IBOLookup.getServiceInstance(iwc,SchoolAreaBusiness.class);
+      return saBuiz.findAllSchoolAreasByType(type);
+    }
+    catch(Exception ex){
+      ex.printStackTrace();
+    }
+    return null;
+  }
+
+  private Collection getSchoolByAreaAndType(IWContext iwc,int area,int type){
+    try{
+      SchoolBusiness sBuiz = (SchoolBusiness) IBOLookup.getServiceInstance(iwc,SchoolBusiness.class);
+      return sBuiz.findAllSchoolsByAreaAndType(area,type);
+
+    }
+    catch(Exception ex){
+      ex.printStackTrace();
+    }
+    return null;
+  }
+
+  private String getFilterCallerScript(IWContext iwc,String typeName,String areaName,String schoolName,int Type){
+    StringBuffer script = new StringBuffer("changeFilter(");
+    script.append(Type);
+    script.append(",");
+    script.append("this.form.elements['");
+    script.append(typeName);
+    script.append("'],");
+    script.append("this.form.elements['");
+    script.append(areaName);
+    script.append("'],");
+    script.append("this.form.elements['");
+    script.append(schoolName);
+    script.append("'])");
+    return script.toString();
+  }
+
+  private String getInitFilterCallerScript(IWContext iwc,String typeName,String areaName,String schoolName,int typeSel,int areaSel,int schoolSel){
+    StringBuffer script = new StringBuffer("initFilter(");
+    script.append("document.forms['").append(prmForm).append("'].elements['");
+    script.append(typeName);
+    script.append("'],");
+    script.append("document.forms['").append(prmForm).append("'].elements['");
+    script.append(areaName);
+    script.append("'],");
+    script.append("document.forms['").append(prmForm).append("'].elements['");
+    script.append(schoolName);
+    script.append("'],");
+    script.append(typeSel);
+    script.append(",");
+    script.append(areaSel);
+    script.append(",");
+    script.append(schoolSel);
+    script.append(")");
+    return script.toString();
+  }
+
+  private String getFilterScript(IWContext iwc)throws java.rmi.RemoteException{
+    StringBuffer s = new StringBuffer();
+    s.append("function changeFilter(index,type,area,school){").append(" \n\t");
+    s.append("var typeSelect = type;").append(" \n\t");
+    s.append("var areaSelect = area;").append(" \n\t");
+    s.append("var schoolSelect = school;").append(" \n\t");
+    s.append("var selected = 0;").append(" \n\t");
+    s.append("if(index == 1){").append(" \n\t\t");
+    s.append("selected = typeSelect.options[typeSelect.selectedIndex].value;").append("\n\t\t");
+    s.append("areaSelect.options.length = 0;").append("\n\t\t");
+    s.append("schoolSelect.options.length = 0;").append("\n\t\t");
+    s.append("areaSelect.options[areaSelect.options.length] = new Option(\"");
+    s.append(iwrb.getLocalizedString("choose_area","Choose Area")).append("\",\"-1\",true,true);").append("\n\t\t");
+    //s.append("schoolSelect.options[schoolSelect.options.length] = new Option(\"Veldu skóla\",\"-1\",true,true);").append("\n\t");
+    s.append("}else if(index == 2){").append(" \n\t\t");
+    s.append("selected = areaSelect.options[areaSelect.selectedIndex].value;").append("\n\t\t");
+    s.append("schoolSelect.options.length = 0;").append("\n\t\t");
+    s.append("schoolSelect.options[schoolSelect.options.length] = new Option(\"");
+    s.append(iwrb.getLocalizedString("choose_school","Choose School")).append("\",\"-1\",true,true);").append("\n\t");
+    s.append("} else if(index == 3){").append("\n\t\t");
+    s.append("selected = schoolSelect.options[schoolSelect.selectedIndex].value;").append("\n\t");
+    s.append("}").append("\n\t\t\t");
+
+    // Data Filling ::
+
+    StringBuffer t = new StringBuffer("if(index==1){\n\t");
+    StringBuffer a = new StringBuffer("else if(index==2){\n\t");
+    StringBuffer c = new StringBuffer("else if(index==3){\n\t");
+
+    Collection Types = this.schoolTypes;
+    if(Types!=null && !Types.isEmpty()){
+      Iterator iter = Types.iterator();
+      SchoolType type;
+      SchoolArea area;
+      School school;
+      Collection areas;
+      Collection schools;
+      while(iter.hasNext()){
+        type = (SchoolType) iter.next();
+        areas = getSchoolAreasWithType(iwc,((Integer)type.getPrimaryKey()).intValue());
+        if(areas!=null && !areas.isEmpty()){
+          Iterator iter2 = areas.iterator();
+          t.append("if(selected == \"").append(type.getPrimaryKey().toString()).append("\"){").append("\n\t\t");
+          while(iter2.hasNext()){
+            area = (SchoolArea) iter2.next();
+            schools = getSchoolByAreaAndType(iwc,((Integer)area.getPrimaryKey()).intValue(),((Integer)type.getPrimaryKey()).intValue());
+            if(schools!=null ){
+              Iterator iter3 = schools.iterator();
+              a.append("if(selected == \"").append(area.getPrimaryKey().toString()).append("\"){").append("\n\t\t");
+              while(iter3.hasNext()){
+                school = (School) iter3.next();
+                a.append("schoolSelect.options[schoolSelect.options.length] = new Option(\"");
+                a.append(school.getSchoolName()).append("\",\"");
+                a.append(school.getPrimaryKey().toString()).append("\")");
+
+              }
+              a.append("}\n\t\t");
+            }
+            else{
+            System.err.println("shools empty");
+          }
+          t.append("areaSelect.options[areaSelect.options.length] = new Option(\"");
+          t.append(area.getSchoolAreaName()).append("\",\"");
+          t.append(area.getPrimaryKey().toString()).append("\");").append("\n\t\t");;
+
+          }
+          t.append("}\n\t\t");
+        }
+        else
+           System.err.println("areas empty");
+      }
+    }
+    else
+      System.err.println("types empty");
+
+
+    s.append("\n\n");
+
+
+    t.append("\n\t }");
+    a.append("\n\t }");
+    c.append("\n\t }");
+
+    s.append(t.toString());
+    s.append(a.toString());
+    s.append(c.toString());
+    s.append("\n}");
+
+    return s.toString();
+  }
+
+  /*
+  function changeFilter(index,type,area,school){
+
+	// 1 = TYPE, 2 = AREA 3= SCHOOL
+
+	var typeSelect = type;
+	var areaSelect = area;
+	var schoolSelect = select;
+
+	int selected;
+
+	if(index == 1){
+	  selected = typeSelect.options[typeSelect.selectedIndex].value;
+	  areaSelect.options.length = 0;
+	  schoolSelect.options.length = 0;
+	  areaSelect.options[areaSelect.options.length] = new Option("Veldu svæði","-1",true,true);
+	  schoolSelect.options[schoolSelect.options.length] = new Option("Veldu skóla","-1",true,true);
+	}
+	else if(index == 2){
+	  selected = areaSelect.options[areaSelect.selectedIndex].value;
+	  schoolSelect.options.length = 0;
+	  schoolSelect.options[schoolSelect.options.length] = new Option("Veldu skóla","-1",true,true);
+	}
+	else if(index == 3){
+	  selected = schoolSelect.options[schoolSelect.selectedIndex].value;
+	}
+
+
+	if(index==1){
+	  if(selected == "1"){
+	    areaSelect.options[areaSelect.options.length] = new Option("Alte","0");
+	    areaSelect.options[areaSelect.options.length] = new Option("Sicklön","1");
+	    areaSelect.options[areaSelect.options.length] = new Option("Bimbo","2");
+
+	  }
+	  else if(selected == "2"){
+	    areaSelect.options[areaSelect.options.length] = new Option("Alte","0");
+	    areaSelect.options[areaSelect.options.length] = new Option("Sicklön","1");
+	    areaSelect.options[areaSelect.options.length] = new Option("Bimbo","2");
+	  }
+	}
+	else if(index==2){
+	  if(selected == "0"){
+
+	  }
+
+	}
+
+
+
+}
+  */
+
+  public String getInitFilterScript(){
+    StringBuffer s = new StringBuffer();
+    /*
+      funtion initFilter(type,area,school,type_sel,area_sel,school_sel){
+        changeFilter( 1 ,type,area,school);
+        type.selectedIndex = type_sel;
+        changeFilter(2,type,area,school);
+        area.selectedIndex = area_sel;
+        changeFilter(3,type,area,school);
+        school.selectedIndex = school_sel
+
+      }
+
+    */
+
+    s.append("function initFilter(type,area,school,type_sel,area_sel,school_sel){ \n  ");
+    s.append("changeFilter( 1 ,type,area,school); \n  ");
+    s.append("type.selectedIndex = type_sel; \n  ");
+    s.append("changeFilter(2,type,area,school); \n  ");
+    s.append("area.selectedIndex = area_sel; \n  ");
+    s.append("changeFilter(3,type,area,school); \n ");
+    s.append("school.selectedIndex = school_sel; \n}");
+    return s.toString();
   }
 
 

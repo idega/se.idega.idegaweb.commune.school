@@ -27,13 +27,14 @@ public class SchoolChoiceHelper {
   }
 
   private void init()throws java.rmi.RemoteException,javax.ejb.FinderException{
-
+/*
     if(schoolArea!=null && schoolType !=null){
       SchoolHome schoolHome = (SchoolHome) IDOLookup.getHome(School.class);
       int areaId = ((Integer) schoolArea.getPrimaryKey()).intValue();
       int typeId = ((Integer) schoolArea.getPrimaryKey()).intValue();
       schools = schoolHome.findAllBySchoolAreaAndType(areaId,typeId);
     }
+  */
   }
 
   public SchoolArea getSchoolArea(){
