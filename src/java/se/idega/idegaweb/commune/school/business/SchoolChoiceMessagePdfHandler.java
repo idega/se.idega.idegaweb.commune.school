@@ -61,8 +61,8 @@ public class SchoolChoiceMessagePdfHandler implements MessagePdfHandler,BundleRe
 	 * @see se.idega.idegaweb.commune.message.business.MessagePdfHandler#createMessageContent(se.idega.idegaweb.commune.printing.business.DocumentPrintContext)
 	 */
 	public void createMessageContent(DocumentPrintContext dpc) throws ContentCreationException {
-		/*String code =dpc.getMessage().getContentCode();
-		
+		String code =dpc.getMessage().getContentCode();
+		if(code!=null){
 		if(CODE_PRELIMINARY.equals(code)){
 			createPreliminaryContent(dpc,code);
 		}
@@ -92,11 +92,13 @@ public class SchoolChoiceMessagePdfHandler implements MessagePdfHandler,BundleRe
 		}
 		else{
 			createDefaultContent(dpc);
-		}*/
+		}}
+		else{
 		createDefaultContent(dpc);
+		}
 	}
 	
-	/*private void createPreliminaryContent(DocumentPrintContext dpc,String code)throws ContentCreationException{
+	private void createPreliminaryContent(DocumentPrintContext dpc,String code)throws ContentCreationException{
 		createContent( dpc, getHandlerCode()+"_"+code+"_letter.xml");
 	}
 	
@@ -130,7 +132,7 @@ public class SchoolChoiceMessagePdfHandler implements MessagePdfHandler,BundleRe
 	
 	private void createChildSelfChangeContent(DocumentPrintContext dpc,String code)throws ContentCreationException{
 		createContent( dpc, getHandlerCode()+"_"+code+"_letter.xml");
-	}*/
+	}
 	
 	private void createDefaultContent(DocumentPrintContext dpc)throws ContentCreationException{
 		createContent(dpc,"default_letter.xml");
