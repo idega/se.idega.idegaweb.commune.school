@@ -36,6 +36,7 @@ import com.idega.block.school.data.SchoolClass;
 import com.idega.block.school.data.SchoolClassMember;
 import com.idega.block.school.data.SchoolClassMemberHome;
 import com.idega.block.school.data.SchoolSeason;
+import com.idega.block.school.data.SchoolStudyPath;
 import com.idega.block.school.data.SchoolType;
 import com.idega.block.school.data.SchoolYear;
 import com.idega.business.IBOLookup;
@@ -664,7 +665,37 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
         }
     }
     
-    
+    // The method getStudyPath is specified in the interface
+    // SchoolCommuneBusiness.  /Staffan
+    public SchoolStudyPath getStudyPath (final SchoolClassMember student) {
+        SchoolStudyPath result = null;
+        try {
+            final SchoolClass schoolClass = student.getSchoolClass ();
+            final Integer schoolTypeId
+                    = new Integer (schoolClass.getSchoolTypeId ());
+            final School school = schoolClass.getSchool ();
+            final SchoolBusiness business = getSchoolBusiness ();
+            final Map studyPathMap
+                    = business.getSchoolAndSchoolTypeRelatedSchoolCourses
+                    (school, schoolTypeId);
+            final Collection studyPaths = studyPathMap.values ();
+            for (Iterator i = studyPaths.iterator ();
+                 i.hasNext () && null == result;) {
+                final SchoolStudyPath studyPath = (SchoolStudyPath) i.next ();
+                final Collection students = studyPath.getSchoolClassMembers ();
+                /// ...are students PK or SchoolClassMember?
+                /// ...Collection.contains (SchoolClassMember) etc.
+            }
+            /// not fully implemented 2003-09-26 //Staffan
+            throw new UnsupportedOperationException
+                    ("not implemented yet //Staffan");
+        } catch (Exception e) {
+            e.printStackTrace ();
+            return null;
+        }
+        //return result;
+    }    
+
 	private void initializeBundlesIfNeeded(Locale currentLocale){
 		if(_iwb==null){
 			_iwb = this.getIWApplicationContext().getApplication().getBundle(IW_BUNDLE_IDENTIFIER);

@@ -3,6 +3,7 @@ package se.idega.idegaweb.commune.school.business;
 import com.idega.block.datareport.util.ReportableCollection;
 import com.idega.block.school.data.SchoolClassMember;
 import com.idega.block.school.data.SchoolSeason;
+import com.idega.block.school.data.SchoolStudyPath;
 import com.idega.data.IDOException;
 import com.idega.data.IDOLookupException;
 import com.idega.user.data.User;
@@ -10,7 +11,6 @@ import java.rmi.RemoteException;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Locale;
-
 import javax.ejb.CreateException;
 import javax.ejb.FinderException;
 
@@ -78,6 +78,14 @@ public interface SchoolCommuneBusiness extends com.idega.business.IBOService,com
      */
     SchoolClassMember getCurrentSchoolClassMembership (User user)
         throws RemoteException;
+
+    /**
+     * Retreive school study path for this student or nul if no path exists
+     *
+     * @return SchoolStudyPath or null if not found
+     * @author <a href="http://www.staffannoteberg.com">Staffan Nöteberg</a>
+     */
+    SchoolStudyPath getStudyPath (SchoolClassMember student);
         
 	public ReportableCollection getReportOfUsersNotRegisteredInAnyClass(Locale currentLocale, Date selectedDate, SchoolSeason currentSeason, Collection classes) throws RemoteException, IDOLookupException, IDOException, FinderException, CreateException;
 
