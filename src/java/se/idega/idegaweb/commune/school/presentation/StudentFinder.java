@@ -31,7 +31,13 @@ public class StudentFinder extends CommuneUserFinder {
 	 */
 	public boolean addUser(IWContext iwc, User user) {
 		try {
-			return getSchoolBusiness(iwc).isPlacedAtSchool(((Integer)user.getPrimaryKey()).intValue(), getSchoolSession(iwc).getSchoolID());
+			boolean tempBoolean;
+			tempBoolean = getSchoolBusiness(iwc).isPlacedAtSchool(((Integer)user.getPrimaryKey()).intValue(), getSchoolSession(iwc).getSchoolID());
+			if (!tempBoolean) {
+				tempBoolean = (getSchoolBusiness(iwc).getSchoolChoiceBusiness().getNumberOfApplicationsByUserAndSchool(Integer.parseInt(user.getPrimaryGroup().toString()), getSchoolSession(iwc).getSchoolID()) > 0);
+			}
+			return tempBoolean;
+			//this.getSchoolBusiness(iwc).getSchoolChoiceBusiness().f
 		}
 		catch (RemoteException e) {
 			return false;
