@@ -287,7 +287,7 @@ public class SchoolReportBusinessBean extends IBOSessionBean implements SchoolRe
 				
 				if (displayColumn(FIELD_TERMINATION_DATE)) {
 					if (student.getRemovedDate() != null) {
-						data.addData(language, new IWTimestamp(student.getRemovedDate()).getLocaleDate(currentLocale, IWTimestamp.SHORT));
+						data.addData(terminationDate, new IWTimestamp(student.getRemovedDate()).getLocaleDate(currentLocale, IWTimestamp.SHORT));
 					}
 				}
 				
