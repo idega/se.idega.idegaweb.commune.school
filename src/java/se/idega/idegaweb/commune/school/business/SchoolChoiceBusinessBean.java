@@ -322,8 +322,10 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	 * @return @throws
 	 *         IDOCreateException
 	 */
-	public List createSchoolChoices(int userId, int childId, int school_type_id, int current_school, int chosen_school_1, int chosen_school_2, int chosen_school_3, int schoolYearID, int currentYearID, int method, int workSituation1, int workSituation2, String language, String message, boolean changeOfSchool, boolean keepChildrenCare, boolean autoAssign, boolean custodiansAgree, boolean schoolCatalogue, Date placementDate, SchoolSeason season, boolean nativeLangIsChecked, int nativeLang, String[] extraMessages) throws IDOCreateException {
+	public List createSchoolChoices(int userId, int childId, int school_type_id, int current_school, int chosen_school_1, int chosen_school_2, int chosen_school_3, int schoolYearID, int currentYearID, int method, int workSituation1, int workSituation2, String language, String message, boolean changeOfSchool, boolean keepChildrenCare, boolean autoAssign, boolean custodiansAgree, boolean schoolCatalogue, Date placementDate, SchoolSeason season, boolean nativeLangIsChecked, int nativeLang, String[] extraMessages, boolean useAsAdmin) throws IDOCreateException {
+		boolean isInSCPeriod = isInSchoolChoicePeriod();		
 		if (placementDate != null) {
+			
 			try {
 				try {
 					season = getSchoolSeasonHome().findSeasonByDate(placementDate);
@@ -377,7 +379,12 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 					choice = createSchoolChoice(stamp, userId, childId, school_type_id, current_school, schoolIds[i], schoolYearID, currentYearID, i + 1, method, workSituation1, workSituation2, language, message, time, changeOfSchool, keepChildrenCare, autoAssign, custodiansAgree, schoolCatalogue, i == 0 ? first : other, choice, placementDate, season, extraMessages[i]);
 					returnList.add(choice);
 				}
-				handleSeparatedParentApplication(userId, returnList, false);
+				if (useAsAdmin || isInSCPeriod){
+					handleSeparatedParentApplication(userId, returnList, false);	
+				}
+				else {
+					handleSeparatedParentApplicationNewlyMovedIn(userId, returnList, false);
+				}
 				trans.commit();
 
 				int previousSeasonID = -1;
@@ -504,12 +511,8 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 			throw new IDOCreateException(idos);
 		}
 		
-		boolean isSCPeriod = false; 
-		try {
-			isSCPeriod = IWTimestamp.RightNow().isBetween(new IWTimestamp(getSchoolChoiceStartDate()), new IWTimestamp(getSchoolChoiceEndDate()));
-		} catch (Exception fe) {
-			log(fe);
-		}
+		boolean isSCPeriod = isInSchoolChoicePeriod(); 
+		
 		
 		if (IWTimestamp.RightNow().isBetween(new IWTimestamp(season.getSchoolSeasonStart()), new IWTimestamp(season.getSchoolSeasonEnd())) || !isSCPeriod) {
 			try {
@@ -538,7 +541,8 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 			if (choices != null) {
 				SchoolChoice choice = (SchoolChoice) choices.get(0);
 				User appParent = getUser(applicationParentID);
-
+				
+				
 				String applyingSubject, applyingBody,applyingCode;
 				String nonApplyingSubject , nonApplyingBody,nonApplyingCode;
 				if (isSchoolChangeApplication) {
@@ -558,6 +562,31 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 					applyingCode = SchoolChoiceMessagePdfHandler.CODE_APPLYING_SINGLEPARENT_APPLICATION_NEW ;
 				}
 
+				sendMessageToParents(choice, nonApplyingSubject, nonApplyingBody,nonApplyingCode,applyingSubject,applyingBody,applyingCode,isSchoolChangeApplication);
+			}
+		}
+		catch (Exception ex) {
+			throw new RemoteException(ex.getMessage());
+		}
+	}
+	
+	private void handleSeparatedParentApplicationNewlyMovedIn(int applicationParentID, List choices, boolean isSchoolChangeApplication) throws RemoteException {
+		try {
+			if (choices != null) {
+				SchoolChoice choice = (SchoolChoice) choices.get(0);
+				User appParent = getUser(applicationParentID);
+				boolean isInSCPeriod = isInSchoolChoicePeriod();
+				
+				String applyingSubject, applyingBody,applyingCode;
+				String nonApplyingSubject , nonApplyingBody,nonApplyingCode;
+				
+				nonApplyingSubject = getNonApplyingSeparateParentSubjectApplNew();
+				nonApplyingBody = getNonApplyingSeparateParentMessageBodyApplNew(choices, appParent);
+				nonApplyingCode = SchoolChoiceMessagePdfHandler.CODE_NONAPPLYING_SINGLEPARENT_APPLICATION_NEW ;
+				applyingSubject = getPreliminaryMessageSubjectNew();//getApplyingSeparateParentSubjectAppl();
+				applyingBody = getPreliminaryMessageBodyNew(choice);//getApplyingSeparateParentMessageBodyAppl(choices, appParent);
+				applyingCode = SchoolChoiceMessagePdfHandler.CODE_APPLYING_SINGLEPARENT_APPLICATION_NEW ;
+				
 				sendMessageToParents(choice, nonApplyingSubject, nonApplyingBody,nonApplyingCode,applyingSubject,applyingBody,applyingCode,isSchoolChangeApplication);
 			}
 		}
@@ -1025,6 +1054,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	
 	protected String getPreliminaryMessageBody(SchoolChoice theCase) {
 		SchoolYear year = theCase.getSchoolYear();
+				
 		Object[] arguments = {theCase.getChosenSchool().getName(), theCase.getOwner().getNameLastFirst(true), theCase.getChild().getNameLastFirst(true), year != null ? year.getSchoolYearName() : "" };
 		String body = MessageFormat.format(getLocalizedString("school_choice.prelim_mesg_body", "Dear mr./ms./mrs. {1}\n Your child, {2} has been preliminary accepted in: {0} for year {3}"), arguments);
 
@@ -1033,7 +1063,18 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		 */
 		return body;
 	}
-	
+	protected String getPreliminaryMessageBodyNew(SchoolChoice theCase) {
+		SchoolYear year = theCase.getSchoolYear();
+		String placementDate = theCase.getPlacementDate() != null ? new IWTimestamp(theCase.getPlacementDate()).getLocaleDate(this.getIWApplicationContext().getApplicationSettings().getDefaultLocale(), IWTimestamp.SHORT) : "";
+		
+		Object[] arguments = {theCase.getChosenSchool().getName(), theCase.getOwner().getNameLastFirst(true), theCase.getChild().getNameLastFirst(true), year != null ? year.getSchoolYearName() : "", placementDate };
+		String body = MessageFormat.format(getLocalizedString("school_choice.prelim_mesg_body_new", "Dear mr./ms./mrs. {1}\n Your child, {2} has been preliminary accepted in: {0} for year {3} with placement date {4}"), arguments);
+
+		/*
+		 * StringBuffer body = new StringBuffer(this.getLocalizedString("school_choice.prelim_mesg_body1", "Dear mr./ms./mrs. ")); body.append().append("\n"); body.append(this.getLocalizedString("school_choice.prelim_mesg_body2", "Your child has been preliminary accepted in: ."));
+		 */
+		return body;
+	}
 		
 	protected String getGroupedMessageBody(SchoolChoice theCase) throws RemoteException {
 		StringBuffer body = new StringBuffer(this.getLocalizedString("acc.app.acc.body1", "Dear mr./ms./mrs. "));
@@ -1050,6 +1091,9 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	}
 	protected String getNonApplyingSeparateParentMessageBodyAppl(List choices, User parent) throws RemoteException {
 		return getSeparateParentMessageBodyAppl( getLocalizedString("school_choice.sep_parent_appl_mesg_body", "Dear mr./ms./mrs. "),choices,  parent);
+	}
+	protected String getNonApplyingSeparateParentMessageBodyApplNew(List choices, User parent) throws RemoteException {
+		return getSeparateParentMessageBodyAppl( getLocalizedString("school_choice.sep_parent_appl_mesg_body_new", "Dear mr./ms./mrs. "),choices,  parent);
 	}
 	private String getSeparateParentMessageBodyAppl(String text,List choices, User parent) throws RemoteException {
 		Object[] arguments = new Object[5];
@@ -1114,6 +1158,9 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	public String getPreliminaryMessageSubject() {
 		return this.getLocalizedString("school_choice.prelim_mesg_subj", "Prelimininary school acceptance");
 	}
+	public String getPreliminaryMessageSubjectNew() {
+		return this.getLocalizedString("school_choice.prelim_mesg_subj_new", "Prelimininary school acceptance");
+	}
 	public String getGroupedMessageSubject() {
 		return this.getLocalizedString("school_choice.group_mesg_subj", "School grouping");
 	}
@@ -1130,7 +1177,13 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	public String getNonApplyingSeparateParentSubjectChange() {
 		return this.getLocalizedString("school_choice.sep_parent_change_subj", "School change application received for your child");
 	}
-
+	public String getApplyingSeparateParentSubjectApplNew() {
+		return this.getLocalizedString("school_choice.applying_sep_parent_appl_subj", "School application received for your child");
+	}
+	public String getNonApplyingSeparateParentSubjectApplNew() {
+		return this.getLocalizedString("school_choice.sep_parent_appl_subj_new", "School application received for your child");
+	}
+	
 	public String getOldHeadmasterSubject() {
 		return this.getLocalizedString("school_choice.old_headmaster_subj", "School change request");
 	}
@@ -1847,6 +1900,17 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		}
 	}
 
+	public boolean isInSchoolChoicePeriod() {
+		boolean isSCPeriod = false;
+		try {
+			isSCPeriod = IWTimestamp.RightNow().isBetween(new IWTimestamp(getSchoolChoiceStartDate()), new IWTimestamp(getSchoolChoiceEndDate()));
+		} catch (Exception fe) {
+			log(fe);
+		}
+		
+		return isSCPeriod;
+}
+	
 	/**
 	 * Returns the SchoolYears that are mandatory to do a schoolChoice for
 	 * 
