@@ -1,5 +1,5 @@
 /*
- * $Id: NackaHighSchoolYearPlacementReportModel.java,v 1.20 2004/02/12 10:05:20 anders Exp $
+ * $Id: NackaHighSchoolYearPlacementReportModel.java,v 1.21 2004/02/12 18:14:49 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -18,10 +18,10 @@ import com.idega.block.school.data.SchoolStudyPath;
 /** 
  * Report model for high school placements per year for students in Nacka.
  * <p>
- * Last modified: $Date: 2004/02/12 10:05:20 $ by $Author: anders $
+ * Last modified: $Date: 2004/02/12 18:14:49 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.20 $
+ * @version $Revision: 1.21 $
  */
 public class NackaHighSchoolYearPlacementReportModel extends ReportModel {
 
@@ -191,6 +191,7 @@ public class NackaHighSchoolYearPlacementReportModel extends ReportModel {
 			int row = 0;
 			int columnMethod = 0;
 			String columnParameter = null;
+			int cellType = Cell.CELLTYPE_NORMAL;
 			switch (column) {
 				case 0:
 					columnMethod = COLUMN_METHOD_NACKA_COMMUNE;
@@ -211,6 +212,7 @@ public class NackaHighSchoolYearPlacementReportModel extends ReportModel {
 				case 4:
 					columnMethod = COLUMN_METHOD_NACKA_COMMUNE;
 					columnParameter = null;
+					cellType = Cell.CELLTYPE_SUM;
 					break;
 				case 5:
 					columnMethod = COLUMN_METHOD_OTHER_COMMUNES;
@@ -231,6 +233,7 @@ public class NackaHighSchoolYearPlacementReportModel extends ReportModel {
 				case 9:
 					columnMethod = COLUMN_METHOD_OTHER_COMMUNES;
 					columnParameter = null;
+					cellType = Cell.CELLTYPE_SUM;
 					break;
 				case 10:
 					columnMethod = COLUMN_METHOD_COUNTY_COUNCIL;
@@ -247,6 +250,7 @@ public class NackaHighSchoolYearPlacementReportModel extends ReportModel {
 				case 13:
 					columnMethod = COLUMN_METHOD_COUNTY_COUNCIL;
 					columnParameter = null;
+					cellType = Cell.CELLTYPE_SUM;
 					break;
 				case 14:
 					columnMethod = COLUMN_METHOD_FREE_STANDING;
@@ -267,6 +271,7 @@ public class NackaHighSchoolYearPlacementReportModel extends ReportModel {
 				case 18:
 					columnMethod = COLUMN_METHOD_FREE_STANDING;
 					columnParameter = null;
+					cellType = Cell.CELLTYPE_SUM;
 					break;
 				case 19:
 					columnMethod = COLUMN_METHOD_TOTAL;
@@ -287,6 +292,7 @@ public class NackaHighSchoolYearPlacementReportModel extends ReportModel {
 				case 23:
 					columnMethod = COLUMN_METHOD_TOTAL;
 					columnParameter = null;
+					cellType = Cell.CELLTYPE_TOTAL;
 					break;
 			}
 			
@@ -302,12 +308,12 @@ public class NackaHighSchoolYearPlacementReportModel extends ReportModel {
 						schoolYear = "G" + columnParameter; 
 					}
 					Cell cell = new Cell(this, row, column, ROW_METHOD_STUDY_PATH,
-							columnMethod, rowParameter, schoolYear, Cell.CELLTYPE_NORMAL);
+							columnMethod, rowParameter, schoolYear, cellType);
 					setCell(row, column, cell);
 					row++;
 					if (studyPath.getCode().equals("IB")) {
 						cell = new Cell(this, row, column, ROW_METHOD_STUDY_PATH,
-								columnMethod, "LP", schoolYear, Cell.CELLTYPE_NORMAL);
+								columnMethod, "LP", schoolYear, cellType);
 						setCell(row, column, cell);
 						row++;
 					}					
@@ -499,7 +505,7 @@ public class NackaHighSchoolYearPlacementReportModel extends ReportModel {
 	 * Special case for study path IB handled.
 	 */
 	private int executeStudyPathQuery(int parameterIndex, String studyPathPrefix, PreparedQuery query) {
-		query.setString(2, studyPathPrefix + "%");
+		query.setString(parameterIndex, studyPathPrefix + "%");
 		int value = query.execute();
 		if (studyPathPrefix.equals("IB")) {
 			query.setString(parameterIndex, "PRE%");
