@@ -82,6 +82,7 @@ public class SchoolUserEditor extends com.idega.block.school.presentation.School
 	
 	private int getSchoolAdminGroupId() {
 		String groupId = getCommuneBundle().getProperty(SCHOOL_ADMINISTATION_GROUP_PARAMETER_NAME);
+		System.out.println("[SchoolUserEditor (se)] : getGroupId for category SCHOOL = '"+groupId+"'");
 		if (groupId != null) {
 				return Integer.parseInt(groupId);
 		}	
@@ -90,6 +91,7 @@ public class SchoolUserEditor extends com.idega.block.school.presentation.School
 	
 	private int getChildCareAdminGroupId() {
 			String groupId = getCommuneBundle().getProperty(CHILDCARE_ADMINISTATION_GROUP_PARAMETER_NAME);
+			System.out.println("[SchoolUserEditor (se)] : getGroupId for category CHILDCARE = '"+groupId+"'");
 			if (groupId != null) {
 					return Integer.parseInt(groupId);
 			}	
