@@ -42,7 +42,6 @@ import com.idega.block.school.data.School;
 import com.idega.block.school.data.SchoolClass;
 import com.idega.block.school.data.SchoolClassMember;
 import com.idega.block.school.data.SchoolClassMemberHome;
-import com.idega.block.school.data.SchoolHome;
 import com.idega.block.school.data.SchoolSeason;
 import com.idega.block.school.data.SchoolUser;
 import com.idega.block.school.data.SchoolYear;
@@ -156,9 +155,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	}
 
 	
-	public SchoolHome getSchoolHome() throws java.rmi.RemoteException {
-		return getSchoolBusiness().getSchoolHome();
-	}
+
 	public SchoolChoiceHome getSchoolChoiceHome() throws java.rmi.RemoteException {
 		return (SchoolChoiceHome) this.getIDOHome(SchoolChoice.class);
 	}
@@ -1266,39 +1263,6 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		return careBusiness;
 	}
 	
-	/**
-	 * Method getFirstProviderForUser. If there is no school that the user then the method throws a FinderException.
-	 * 
-	 * @param user
-	 *          a user
-	 * @return School that is the first school that the user is a manager for.
-	 * @throws javax.ejb.FinderException
-	 *           if ther is no school that the user manages.
-	 */
-	public School getFirstProviderForUser(User user) throws FinderException, RemoteException {
-		SchoolBusiness schoolBusiness = getSchoolBusiness();
-
-		try {
-			Group rootGroup = schoolBusiness.getRootProviderAdministratorGroup();
-			// if user is a SchoolAdministrator
-			if (user.hasRelationTo(rootGroup)) {
-				Collection schools = getSchoolHome().findAllBySchoolGroup(user);
-				if (!schools.isEmpty()) {
-					Iterator iter = schools.iterator();
-					while (iter.hasNext()) {
-						School school = (School) iter.next();
-						return school;
-					}
-				}
-			}
-		}
-		catch (CreateException e) {
-			e.printStackTrace();
-		}
-
-		throw new FinderException("No school found that " + user.getName() + " manages");
-	}
-
 	public Collection getApplicantsForSchool(int schoolID, int seasonID, int schoolYearID, String[] validStatuses, String searchString, int orderBy, int numberOfEntries, int startingEntry) throws RemoteException {
 		return getApplicantsForSchool(schoolID, seasonID, schoolYearID, null, validStatuses, searchString, orderBy, numberOfEntries, startingEntry);
 	}
