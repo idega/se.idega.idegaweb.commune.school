@@ -1330,16 +1330,16 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	 * Sets the childcarePage.
 	 * @param childcarePage The childcarePage to set
 	 */
-	public void setAfterschoolPage(Integer afterschoolPageID) {
-		this.afterSchoolPageID = afterschoolPageID;
+	public void setAfterschoolPage(ICPage afterSchoolPage) {
+		this.afterSchoolPageID = (Integer) afterSchoolPage.getPrimaryKey();
 	 }
 	 
 	 /**
 	  * Sets the childcarePage ID.
 	  * @param childcarePageID The childcarePage to set
 	  */
-	 public void setCheckPage(Integer checkPageID) {
-		 this.checkPageID = checkPageID;
+	 public void setCheckPage(ICPage checkPage) {
+		 this.checkPageID = (Integer) checkPage.getPrimaryKey();
 	  }
 
 	private UserHomeLink getUserHomePageLink (final IWContext iwc)
