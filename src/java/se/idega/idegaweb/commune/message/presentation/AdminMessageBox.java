@@ -12,7 +12,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import se.idega.idegaweb.commune.message.business.MessageBusiness;
 import se.idega.idegaweb.commune.message.data.Message;
 
 import com.idega.business.IBOLookup;
@@ -33,9 +32,9 @@ public class AdminMessageBox extends MessageBox {
 	/**
 	 * @see MessageBox
 	 */
-	Collection getMessages(IWContext iwc, User user, MessageBusiness messageBusiness) throws Exception{
+	Collection getMessages(IWContext iwc, User user) throws Exception{
 		// get my messages
-		Collection messages = super.getMessages(iwc, user, messageBusiness);	
+		Collection messages = super.getMessages(iwc, user);	
 
 		// add messages belonging to my groups 
 		UserBusiness userBusiness = (UserBusiness) IBOLookup.getServiceInstance(iwc, UserBusiness.class);
@@ -43,7 +42,7 @@ public class AdminMessageBox extends MessageBox {
 						
 		Iterator g = groupCollection.iterator();
 		while(g.hasNext()){
-			messages.addAll(messageBusiness.findMessages((Group) g.next()));
+			messages.addAll(getMessageBusiness(iwc).findMessages((Group) g.next()));
 		}
 		
 		//removing duplicates
