@@ -90,6 +90,18 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 		return coll;		
 	}
 	
+	public boolean isAlreadyInSchool(int userID, int schoolID, int seasonID) throws RemoteException {
+		try {
+			SchoolClassMember member = getSchoolBusiness().getSchoolClassMemberHome().findByUserAndSchoolAndSeason(userID, schoolID, seasonID);
+			if (member != null)
+				return true;
+			return false;
+		}
+		catch (FinderException e) {
+			return false;
+		}
+	}
+	
 	public Map getUserMapFromChoices(IDOQuery query) throws RemoteException {
 		HashMap coll = new HashMap();
 			
