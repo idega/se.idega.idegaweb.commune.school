@@ -21,7 +21,6 @@ import se.idega.idegaweb.commune.accounting.invoice.data.RegularPaymentEntry;
 import se.idega.idegaweb.commune.accounting.resource.business.ResourceBusiness;
 import se.idega.idegaweb.commune.accounting.resource.data.ResourceClassMember;
 import se.idega.idegaweb.commune.business.CommuneUserBusiness;
-//import se.idega.idegaweb.commune.message.business.MessageBusiness;
 import se.idega.idegaweb.commune.school.presentation.CentralPlacementEditor;
 
 import com.idega.block.school.business.SchoolBusiness;
@@ -30,9 +29,6 @@ import com.idega.block.school.data.SchoolCategory;
 import com.idega.block.school.data.SchoolCategoryHome;
 import com.idega.block.school.data.SchoolClassMember;
 import com.idega.block.school.data.SchoolClassMemberHome;
-import com.idega.block.school.data.SchoolSeason;
-//import com.idega.block.school.data.SchoolType;
-//import com.idega.business.IBOLookup;
 import com.idega.business.IBOServiceBean;
 import com.idega.data.IDOLookup;
 import com.idega.presentation.IWContext;
@@ -346,10 +342,6 @@ public class CentralPlacementBusinessBean extends IBOServiceBean implements Cent
 		return (ResourceBusiness) getServiceInstance(ResourceBusiness.class);
 	}
 
-	private SchoolChoiceBusiness getSchoolChoiceBusiness() throws RemoteException {
-		return (SchoolChoiceBusiness) getServiceInstance(SchoolChoiceBusiness.class);
-	}
-	
 	private RegularPaymentBusiness getRegularPaymentBusiness() throws RemoteException {
 		return (RegularPaymentBusiness) getServiceInstance(RegularPaymentBusiness.class);
 	}
