@@ -26,7 +26,7 @@ import se.idega.idegaweb.commune.school.business.SchoolMarkValues;
 /**
  * School marks business
  * <p>
- * $Id: SchoolMarksBusinessBean.java,v 1.9 2003/12/13 16:51:48 kjell Exp $
+ * $Id: SchoolMarksBusinessBean.java,v 1.10 2003/12/17 18:53:11 kjell Exp $
  *
  * I will add some comments on the school marks calculation technique here later.
  * However I am waiting for Nacka to present me that specification.
@@ -52,6 +52,7 @@ public class SchoolMarksBusinessBean extends com.idega.business.IBOServiceBean i
 	private String MARK_VG = "VG";
 	private String MARK_MVG = "MVG";
 	private String MARK_IG1 = "1";
+	private String MARK_IG2 = "2";
 	
 	private static int sumTotalMerit = 0;
 	private static int numberOfSchools = 0;
@@ -984,7 +985,22 @@ public class SchoolMarksBusinessBean extends com.idega.business.IBOServiceBean i
 		if ((""+marks.getSVA()).equals(MARK_G)) _sumSwedish2G++;
 		if ((""+marks.getTN()).equals(MARK_G)) gCount++;
 		if ((""+marks.getTK()).equals(MARK_G)) gCount++;
-		
+
+		if (((""+marks.getNO()).equals(MARK_G)) && 
+			((""+marks.getBI()).equals(MARK_IG2)) &&
+			((""+marks.getFY()).equals(MARK_IG2)) &&
+			((""+marks.getKE()).equals(MARK_IG2))) {
+			gCount+=2;		
+		}
+
+		if (((""+marks.getSO()).equals(MARK_G)) && 
+			((""+marks.getGE()).equals(MARK_IG2)) &&
+			((""+marks.getHI()).equals(MARK_IG2)) &&
+			((""+marks.getRE()).equals(MARK_IG2)) &&
+			((""+marks.getSH()).equals(MARK_IG2))) {
+			gCount+=3;		
+		}
+
 		return gCount;
 	}
 
@@ -1020,6 +1036,22 @@ public class SchoolMarksBusinessBean extends com.idega.business.IBOServiceBean i
 		if ((""+marks.getSVA()).equals(MARK_VG)) _sumSwedish2VG++;
 		if ((""+marks.getTN()).equals(MARK_VG)) vgCount++;
 		if ((""+marks.getTK()).equals(MARK_VG)) vgCount++;
+
+		if (((""+marks.getNO()).equals(MARK_VG)) && 
+			((""+marks.getBI()).equals(MARK_IG2)) &&
+			((""+marks.getFY()).equals(MARK_IG2)) &&
+			((""+marks.getKE()).equals(MARK_IG2))) {
+			vgCount+=2;		
+		}
+
+		if (((""+marks.getSO()).equals(MARK_VG)) && 
+			((""+marks.getGE()).equals(MARK_IG2)) &&
+			((""+marks.getHI()).equals(MARK_IG2)) &&
+			((""+marks.getRE()).equals(MARK_IG2)) &&
+			((""+marks.getSH()).equals(MARK_IG2))) {
+			vgCount+=3;		
+		}
+
 		return vgCount;
 	}
 
@@ -1055,6 +1087,22 @@ public class SchoolMarksBusinessBean extends com.idega.business.IBOServiceBean i
 		if ((""+marks.getSVA()).equals(MARK_MVG)) _sumSwedish2MVG++;
 		if ((""+marks.getTN()).equals(MARK_MVG)) mvgCount++;
 		if ((""+marks.getTK()).equals(MARK_MVG)) mvgCount++;
+
+		if (((""+marks.getNO()).equals(MARK_MVG)) && 
+			((""+marks.getBI()).equals(MARK_IG2)) &&
+			((""+marks.getFY()).equals(MARK_IG2)) &&
+			((""+marks.getKE()).equals(MARK_IG2))) {
+			mvgCount+=2;		
+		}
+
+		if (((""+marks.getSO()).equals(MARK_MVG)) && 
+			((""+marks.getGE()).equals(MARK_IG2)) &&
+			((""+marks.getHI()).equals(MARK_IG2)) &&
+			((""+marks.getRE()).equals(MARK_IG2)) &&
+			((""+marks.getSH()).equals(MARK_IG2))) {
+			mvgCount+=3;		
+		}
+
 		return mvgCount;
 	}
 
