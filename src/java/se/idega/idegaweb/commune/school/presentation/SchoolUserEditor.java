@@ -59,7 +59,7 @@ public class SchoolUserEditor extends com.idega.block.school.presentation.School
 				Iterator iter = coll.iterator();
 				while (iter.hasNext()) {
 					try {
-						schoolType = stHome.findByPrimaryKey(iter.next());
+						schoolType = (SchoolType) iter.next();
 						category = schoolType.getSchoolCategory();
 						groupId = -1;
 						if (category != null && category.equals(CATEGORY_SCHOOL)) {
