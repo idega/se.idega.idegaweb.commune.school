@@ -8,7 +8,7 @@ import se.idega.idegaweb.commune.school.data.SchoolStatisticsData;
 /**
  * Helpclass to hold and calculate school marks statistics
  * <p>
- * $Id: SchoolStatistics.java,v 1.1 2003/09/25 07:58:41 kjell Exp $
+ * $Id: SchoolStatistics.java,v 1.2 2003/10/06 11:58:45 kjell Exp $
  *
  * @author <a href="mailto:kjell@lindman.com">Kjell Lindman</a>
  * @author <a href="mailto:anders.lindman@ncmedia.com">Anders Lindman</a>
@@ -20,10 +20,12 @@ public class SchoolStatistics {
 	private String schoolName;
 	SchoolMarksBusiness smBiz = null;
 	SchoolStatisticsData schoolStatisticsData = null;
+	String schoolManagementType = null;
 
-	public SchoolStatistics(IWContext iwc,  String code, String name ) {
+	public SchoolStatistics(IWContext iwc,  String code, String name, String smt ) {
 		scbCode = code;
 		schoolName = name;
+		schoolManagementType = smt; 
 		try {
 			smBiz = getSchoolMarksBusiness(iwc);
 			smBiz.calculateStatistics(scbCode);
@@ -41,11 +43,20 @@ public class SchoolStatistics {
 			return schoolName;
 	}
 
+	public String getSchoolManagementType() {
+			return schoolManagementType;
+	}
+
 	public void setSchoolSCBCode(String code) {
 			scbCode = code;
 	}
+
 	public void setSchoolName(String name) {
 			schoolName = name;
+	}
+
+	public void setSchoolManagementType(String smt) {
+		schoolManagementType = smt;
 	}
 
 	public PercentValue getMeriteValue() throws RemoteException {

@@ -27,7 +27,7 @@ import se.idega.idegaweb.commune.school.business.SchoolMarkValues;
 /**
  * School marks business
  * <p>
- * $Id: SchoolMarksBusinessBean.java,v 1.1 2003/09/25 07:58:41 kjell Exp $
+ * $Id: SchoolMarksBusinessBean.java,v 1.2 2003/10/06 11:58:45 kjell Exp $
  *
  * @author <a href="mailto:kjell@lindman.com">Kjell Lindman</a>
  * @author <a href="http://www.ncmedia.com">Anders Lindman</a>
@@ -114,14 +114,16 @@ public class SchoolMarksBusinessBean extends com.idega.business.IBOServiceBean i
 			SCBCode scb = (SCBCode) iter.next();	
 			String scbCode = scb.getCode();
 			Integer idegaCode = (Integer) scb.getPrimaryKey();
-		
-			School school = null;
-			try {
-				school = getSchoolBusiness(iwc).getSchool(idegaCode);
-			} catch (RemoteException e) {
-				return null;
-			}
-			SchoolStatistics sc = new SchoolStatistics(iwc, scbCode, school.getSchoolName());
+			School school = scb.getSchool();
+			
+			
+//			try {
+//				school = getSchoolBusiness(iwc).getSchool(idegaCode);
+//			} catch (RemoteException e) {
+//				return null;
+//			}
+			
+			SchoolStatistics sc = new SchoolStatistics(iwc, scbCode, school.getSchoolName(), school.getManagementTypeId());
 			stats.add(sc);
 		}
 		
@@ -129,7 +131,7 @@ public class SchoolMarksBusinessBean extends com.idega.business.IBOServiceBean i
 	}
 
 	public SchoolStatistics findCommuneStatistics(IWContext iwc) {
-		SchoolStatistics sc = new SchoolStatistics(iwc, "", "");
+		SchoolStatistics sc = new SchoolStatistics(iwc, "", "", null);
 		return sc;
 	}
 
@@ -346,15 +348,21 @@ public class SchoolMarksBusinessBean extends com.idega.business.IBOServiceBean i
 		smvSumAuth.vg.percent = "" +  (((float) (Integer.parseInt(smvSumAuth.vg.number))) / 
 										((float)sumAuth)) * 100;
 
-		smvSumAuth.mvg.number = "" + (Integer.parseInt(smvEnglish.vg.number) + Integer.parseInt(smvMaths.vg.number) + Integer.parseInt(smvSwedish.vg.number) + Integer.parseInt(smvSwedish2.vg.number));
+		smvSumAuth.mvg.number = "" + (Integer.parseInt(smvEnglish.mvg.number) + Integer.parseInt(smvMaths.mvg.number) + Integer.parseInt(smvSwedish.mvg.number) + Integer.parseInt(smvSwedish2.mvg.number));
 		smvSumAuth.mvg.percent = "" +  (((float) (Integer.parseInt(smvSumAuth.mvg.number))) / 
 										((float)sumAuth)) * 100;
 		
 		smvSumAuth.tot.number = "" + sumAuth;  
+		float sw2 = 0;
+		float authDiv = 3;
+		if (Integer.parseInt(smvSwedish2.tot.number) != 0) {
+			sw2 = Float.parseFloat(smvSwedish2.tot.percent);
+			authDiv = 4;
+		}
 		smvSumAuth.tot.percent = "" +  	((Float.parseFloat(smvEnglish.tot.percent) +
 										Float.parseFloat(smvMaths.tot.percent) +
 									 	Float.parseFloat(smvSwedish.tot.percent) + 
-										Float.parseFloat(smvSwedish2.tot.percent))/4);
+										sw2)/authDiv);
 
 		int sumTotal = _ig1Number + _gNumber + _vgNumber + _mvgNumber;
 
@@ -396,6 +404,7 @@ public class SchoolMarksBusinessBean extends com.idega.business.IBOServiceBean i
 			try {
 				ss = home.create();
 				ss.setSchoolCode(scbCode);
+
 			} catch (CreateException e) {
 				e.printStackTrace();
 			}
@@ -1005,7 +1014,7 @@ public class SchoolMarksBusinessBean extends com.idega.business.IBOServiceBean i
 		if ((""+marks.getSV()).equals(MARK_VG)) vgCount++;
 		if ((""+marks.getSV()).equals(MARK_VG)) _sumSwedishVG++;
 		if ((""+marks.getSVA()).equals(MARK_VG)) vgCount++;
-		if ((""+marks.getSV()).equals(MARK_VG)) _sumSwedish2VG++;
+		if ((""+marks.getSVA()).equals(MARK_VG)) _sumSwedish2VG++;
 		if ((""+marks.getTN()).equals(MARK_VG)) vgCount++;
 		if ((""+marks.getTK()).equals(MARK_VG)) vgCount++;
 		return vgCount;
@@ -1040,7 +1049,7 @@ public class SchoolMarksBusinessBean extends com.idega.business.IBOServiceBean i
 		if ((""+marks.getSV()).equals(MARK_MVG)) mvgCount++;
 		if ((""+marks.getSV()).equals(MARK_MVG)) _sumSwedishMVG++;
 		if ((""+marks.getSVA()).equals(MARK_MVG)) mvgCount++;
-		if ((""+marks.getSV()).equals(MARK_MVG)) _sumSwedish2MVG++;
+		if ((""+marks.getSVA()).equals(MARK_MVG)) _sumSwedish2MVG++;
 		if ((""+marks.getTN()).equals(MARK_MVG)) mvgCount++;
 		if ((""+marks.getTK()).equals(MARK_MVG)) mvgCount++;
 		return mvgCount;
