@@ -20,6 +20,7 @@ import java.util.Vector;
 import javax.ejb.CreateException;
 import javax.ejb.EJBException;
 import javax.ejb.FinderException;
+import javax.ejb.RemoveException;
 
 import se.idega.idegaweb.commune.business.CommuneUserBusiness;
 import se.idega.idegaweb.commune.message.business.MessageBusiness;
@@ -631,6 +632,29 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 		schoolClass.setLocked(false);
 		schoolClass.setReady(false);
 		schoolClass.store();
+	}
+	
+	public boolean removeSubGroupPlacements(int userID, int schoolID, int seasonID) {
+		try {
+			Collection placements = getSchoolBusiness().findSubGroupPlacements(userID, schoolID, seasonID);
+			Iterator iter = placements.iterator();
+			while (iter.hasNext()) {
+				SchoolClassMember element = (SchoolClassMember) iter.next();
+				element.remove();
+			}
+			return true;
+		}
+		catch (FinderException fe) {
+			return false;
+		}
+		catch (RemoteException re) {
+			log(re);
+			return false;
+		}
+		catch (RemoveException re) {
+			log(re);
+			return false;
+		}
 	}
 		
     /**
