@@ -1,5 +1,5 @@
 /*
- * $Id: SchoolReports.java,v 1.20 2004/01/23 12:23:29 anders Exp $
+ * $Id: SchoolReports.java,v 1.21 2004/01/27 13:36:14 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -12,10 +12,13 @@ package se.idega.idegaweb.commune.school.report.presentation;
 import java.rmi.RemoteException;
 
 import se.idega.idegaweb.commune.presentation.CommuneBlock;
+import se.idega.idegaweb.commune.school.report.business.NackaCC6YearPlacementReportModel;
+import se.idega.idegaweb.commune.school.report.business.NackaCC7_9YearPlacementReportModel;
 import se.idega.idegaweb.commune.school.report.business.NackaCCCommunePrivatePlacementReportModel;
 import se.idega.idegaweb.commune.school.report.business.NackaCCPlacementReportModel;
 import se.idega.idegaweb.commune.school.report.business.NackaCCPreSchoolPlacementReportModel;
 import se.idega.idegaweb.commune.school.report.business.NackaCCProviderReportModel;
+import se.idega.idegaweb.commune.school.report.business.NackaCCTotalPlacementReportModel;
 import se.idega.idegaweb.commune.school.report.business.NackaCitizenElementarySchoolPlacementReportModel;
 import se.idega.idegaweb.commune.school.report.business.NackaCommuneHighSchoolPlacementReportModel;
 import se.idega.idegaweb.commune.school.report.business.NackaCompulsoryHighSchoolPlacementReportModel;
@@ -43,10 +46,10 @@ import com.idega.presentation.ui.SubmitButton;
 /** 
  * This block handles selecting and presenting school reports.
  * <p>
- * Last modified: $Date: 2004/01/23 12:23:29 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/27 13:36:14 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.20 $
+ * @version $Revision: 1.21 $
  */
 public class SchoolReports extends CommuneBlock {
 
@@ -86,7 +89,10 @@ public class SchoolReports extends CommuneBlock {
 				NackaCCPlacementReportModel.class,
 				NackaCCCommunePrivatePlacementReportModel.class,
 				NackaCCProviderReportModel.class,
-				NackaCCPreSchoolPlacementReportModel.class
+				NackaCCPreSchoolPlacementReportModel.class,
+				NackaCC6YearPlacementReportModel.class,
+				NackaCC7_9YearPlacementReportModel.class,
+				NackaCCTotalPlacementReportModel.class
 	};
 
 	private ReportModel[] _reportModels = null;
