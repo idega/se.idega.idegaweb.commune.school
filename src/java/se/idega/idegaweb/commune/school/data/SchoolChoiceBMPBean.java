@@ -54,7 +54,14 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
   public final static String WORK_SITUATION_1 = "work_situation_1";
   public final static String WORK_SITUATION_2 = "work_situation_2";
   public final static String GROUP_PLACE = "group_place";
-
+  
+  public final static String CASE_STATUS_CREATED     = "UBEH";
+  public final static String CASE_STATUS_QUIET       = "TYST";
+  public final static String CASE_STATUS_PRELIMINARY = "PREL";
+  public final static String CASE_STATUS_PLACED      = "PLAC";
+  public final static String CASE_STATUS_GROUPED     = "GROU";
+  public final static String CASE_STATUS_MOVED       = "FLYT";
+  
   private static final String[] CASE_STATUS_KEYS = {"UBEH","TYST","PREL","PLAC","GROU","FLYT"};
   private static final String[] CASE_STATUS_DESCRIPTIONS = {"Case open","Sleep","Preliminary","Placed","Grouped","Moved"};
 
@@ -359,8 +366,12 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 	public Collection ejbFindAll() throws FinderException {
 		return this.idoFindIDsBySQL("select * from "+getEntityName());	
 	}
-  
+
   public Collection ejbFindChoices(int schoolID, int seasonID, int gradeYear, String[] validStatuses, String searchStringForUser) throws FinderException, RemoteException {
+		return ejbFindChoices(schoolID, seasonID, gradeYear, validStatuses, searchStringForUser);
+  }
+  
+  public Collection ejbFindChoices(int schoolID, int seasonID, int gradeYear, int[] choiceOrder ,String[] validStatuses, String searchStringForUser) throws FinderException, RemoteException {
   	boolean search = searchStringForUser != null && !searchStringForUser.equals("");
   	boolean statuses = validStatuses != null && validStatuses.length > 0;
   	
@@ -437,6 +448,21 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 				query.appendAnd();
 			}
   		query.append(GRADE).appendEqualSign().append(gradeYear);	
+  		needAnd = true;
+  	}
+  	
+  	if (choiceOrder != null && choiceOrder.length > 0) {
+  		if (needAnd) {
+  			query.appendAnd();	
+  		}
+  		query.append(CHOICEORDER).append(" in (");
+  		for (int i = 0; i < choiceOrder.length; i++) {
+  			if (	i != 0 ) {
+  				query.append(", ");	
+  			}
+  			query.append(choiceOrder[i]);
+  		}
+  		query.append(")");
   		needAnd = true;
   	}
   	
