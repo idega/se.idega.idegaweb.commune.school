@@ -619,7 +619,7 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 			else if (orderBy == LANGUAGE_SORT)
 				query.appendOrderBy("csc.language_choice,u.last_name,u.first_name,u.middle_name");
 			else if (orderBy == CREATED_SORT)
-				query.appendOrderBy("pc.created,u.last_name,u.first_name,u.middle_name");
+				query.appendOrderBy("pc.created desc,u.last_name,u.first_name,u.middle_name");
 		}
 
 		//System.out.println(query.toString());
