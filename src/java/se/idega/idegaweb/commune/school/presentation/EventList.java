@@ -17,7 +17,7 @@ import com.idega.presentation.IWContext;
  * Copyright:    Copyright idega Software (c) 2002
  * Company:	idega Software
  * @author <a href="mailto:roar@idega.is">roar</a>
- * @version $Id: EventList.java,v 1.18 2004/02/16 17:33:26 aron Exp $
+ * @version $Id: EventList.java,v 1.19 2004/06/10 15:15:11 gimmi Exp $
  * @since 17.3.2003 
  */
 // refactored by aron 16.04.2004
@@ -37,10 +37,14 @@ public class EventList extends PrintMessageViewer {
 	protected Collection getLetters(IWContext iwc) throws FinderException {
 		try {
 			int schoolID = getSchoolSession(iwc).getSchoolID();
+			String ssn = getSearchSsn();
+			if (ssn != null) {
+				ssn.replaceAll("-", "");
+			}
 			return getPrintedLetter().
 			findAllLettersBySchool(
 						schoolID,
-						getSearchSsn(),
+						ssn,
 						getSearchMsgId(),
 						getUFrom(),
 						getUTo());
