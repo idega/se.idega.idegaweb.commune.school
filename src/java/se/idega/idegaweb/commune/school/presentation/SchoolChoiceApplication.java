@@ -440,7 +440,6 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	}
 
 	private void initSchoolChild(IWContext iwc, User child) {
-
 		try {
 			Date d = child.getDateOfBirth();
 			if (d == null) {
@@ -451,6 +450,11 @@ public class SchoolChoiceApplication extends CommuneBlock {
 					d = new Date();
 			}
 			age = new Age(d);
+		}
+		catch (Exception e) {
+		}
+
+		try {
 			SchoolSeason previousSeason = schCommBiz.getPreviousSchoolSeason(schBuiz.getCurrentSeason());
 			schoolClassMember = schBuiz.getSchoolBusiness().getSchoolClassMemberHome().findByUserAndSeason(child, previousSeason);
 			schoolClass = schBuiz.getSchoolBusiness().getSchoolClassHome().findByPrimaryKey(new Integer(schoolClassMember.getSchoolClassId()));
@@ -464,6 +468,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 			schoolYear = schBuiz.getSchoolBusiness().getSchoolYearHome().findByPrimaryKey(new Integer(schoolClass.getSchoolYearId()));
 		}
 		catch (Exception e) {
+			hasPreviousSchool = false;
 		}
 	}
 	
@@ -473,6 +478,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 			schoolArea = schBuiz.getSchoolBusiness().getSchoolAreaHome().findByPrimaryKey(new Integer(school.getSchoolAreaId()));
 			schoolYear = schCommBiz.getSchoolYear(choice.getGrade());
 			schoolType = schBuiz.getSchoolBusiness().getSchoolTypeHome().findByPrimaryKey(new Integer(choice.getSchoolTypeId()));
+			hasPreviousSchool = true;
 		}
 		catch (Exception e) {
 			hasPreviousSchool = false;
