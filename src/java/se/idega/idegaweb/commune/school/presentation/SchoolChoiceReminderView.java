@@ -20,10 +20,10 @@ import se.idega.idegaweb.commune.school.data.SchoolChoiceReminder;
  * and entity ejb classes in {@link se.idega.idegaweb.commune.school.data}.
  * <p>
  * <p>
- * Last modified: $Date: 2002/12/27 09:42:51 $ by $Author: staffan $
+ * Last modified: $Date: 2002/12/28 08:46:16 $ by $Author: staffan $
  *
  * @author <a href="http://www.staffannoteberg.com">Staffan Nöteberg</a>
- * @version $Revision: 1.13 $
+ * @version $Revision: 1.14 $
  * @see javax.ejb
  */
 public class SchoolChoiceReminderView extends CommuneBlock {
@@ -357,9 +357,20 @@ public class SchoolChoiceReminderView extends CommuneBlock {
                 (new SchoolChoiceReminderReceiver [checkedReceivers.size ()]);
         final int docId = business.generateReminderLetter (reminderId,
                                                            receiverArray);
-        final Link viewLink = new Link("BRA LÄNK");
+        final Table table = new Table ();
+		table.setWidth(getWidth());
+        add (table);
+        int row = 1;
+        table.add (getSmallHeader ("För att skriva ut påminnelsebreven så gör du enligt följande"), 1, row++);
+        table.add (getSmallText ("1. Klicka på länken 'Öppna breven i Acrobat Reader' nedan - ett nytt fönster med breven som ska skrivas ut öppnas"), 1, row++);
+        table.add (getSmallText ("2. Klicka på skrivarikonen i det nya fönstret"), 1, row++);
+        table.add (getSmallText ("3. Välj skrivare och skriv ut"), 1, row++);
+        table.add (getSmallText ("4. Stäng fönstret med breven - bakom finns det här fönstret"), 1, row++);
+        final Link viewLink = new Link("Öppna breven i Acrobat Reader");
         viewLink.setFile (docId);
-        add (viewLink);
+        viewLink.setTarget ("letter_window");
+        table.add (viewLink, 1, row++);
+        table.add (getUserHomePageLink (iwc), 1, row++);
     }
 
     private static void logTime (final Table table, final int row) {

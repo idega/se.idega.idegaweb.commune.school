@@ -704,38 +704,44 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
         try{
             final MemoryFileBuffer buffer = new MemoryFileBuffer ();
             final OutputStream outStream = new MemoryOutputStream (buffer);
-            final Document document = new Document (PageSize.A4, 30*72/25.4f,
-                                                    30*72/25.4f, 9*72/25.4f,
-                                                    9*72/25.4f);
+            final Document document = new Document
+                    (PageSize.A4, mmToPoints (30), mmToPoints (30),
+                     mmToPoints (40), mmToPoints (9));
             PdfWriter.getInstance(document, outStream);
             document.open();
             final SchoolChoiceReminder reminder
                     = findSchoolChoiceReminder (reminderId);
-            final PdfPTable headerTable = new PdfPTable (3);
-            headerTable.setWidths (new float [] {1,1,1});
-            headerTable.getDefaultCell ().setBorder (0);
-            headerTable.getDefaultCell ().setFixedHeight (36*72/25.4f);
-            headerTable.getDefaultCell ().setPadding (0);
-            headerTable.getDefaultCell ().setNoWrap (true);
-            headerTable.setWidthPercentage (100f);
             final PdfPCell leftHeaderMargin = new PdfPCell (new Phrase (""));
             leftHeaderMargin.setBorder (0);
             leftHeaderMargin.setNoWrap (true);
-            final SchoolChoiceReminderReceiver receiver = receivers [0];
-            final PdfPCell addressCell = new PdfPCell
-                    (new Phrase (receiver.getParentName () + "\n"
-                                 + receiver.getStreetAddress () + "\n"
-                                 + receiver.getPostalAddress () + "\n"
-                                 + "\nVårdnadshavare för:\n"
-                                 + receiver.getSsn () + " "
-                                 + receiver.getStudentName ()));
-            addressCell.setBorder (0);
-            addressCell.setNoWrap (true);					
-            headerTable.addCell (leftHeaderMargin);
-            headerTable.addCell (addressCell);
-            headerTable.addCell (leftHeaderMargin);
-            document.add (headerTable);
-            document.add(new Paragraph (reminder.getText ()));
+            for (int i = 0; i < receivers.length; i++) {
+                if (i != 0) {
+                    document.newPage ();
+                }
+                final SchoolChoiceReminderReceiver receiver = receivers [i];
+                final String longSsn = receiver.getSsn ();
+                final String ssn = longSsn.substring (2, 8) + "-"
+                        + longSsn.substring (8);
+                final PdfPCell addressCell = new PdfPCell
+                        (new Phrase (receiver.getParentName () + "\n"
+                                     + receiver.getStreetAddress () + "\n"
+                                     + receiver.getPostalAddress () + "\n"
+                                     + "\nVårdnadshavare till:\n" + ssn + " "
+                                     + receiver.getStudentName ()));
+                addressCell.setBorder (0);
+                addressCell.setNoWrap (true);					
+                final PdfPTable headerTable = new PdfPTable (2);
+                headerTable.setWidths (new float [] {1, 1});
+                headerTable.getDefaultCell ().setBorder (0);
+                headerTable.getDefaultCell ().setFixedHeight (mmToPoints (30));
+                headerTable.getDefaultCell ().setPadding (0);
+                headerTable.getDefaultCell ().setNoWrap (true);
+                headerTable.setWidthPercentage (100f);
+                headerTable.addCell (leftHeaderMargin);
+                headerTable.addCell (addressCell);
+                document.add (headerTable);
+                document.add(new Paragraph (reminder.getText ()));
+            }
             document.close();
             final ICFileHome icFileHome = (ICFileHome) getIDOHome(ICFile.class);
             final ICFile file = icFileHome.create();
@@ -752,32 +758,11 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
                                        + reminderId, e);
         }
     }
-    /*
-Document document = new Document(PageSize.A4, 50, 50, 50, 50);
- try {
-    // creation of the different writers
-    HtmlWriter.getInstance(document, System.out);
-    PdfWriter.getInstance(document, new FileOutputStream("text.pdf"));
 
-    // we add some meta information to the document
-    document.addAuthor("Bruno Lowagie");
-    document.addSubject("This is the result of a Test.");
+    private static float mmToPoints (final float mm) {
+        return mm*72/25.4f;
+    }
 
-    // we define a header and a footer
-    HeaderFooter header = new HeaderFooter(new Phrase("This is a header."), false);
-    HeaderFooter footer = new HeaderFooter(new Phrase("This is page "), new Phrase("."));
-    footer.setAlignment(Element.ALIGN_CENTER);
-    document.setHeader(header);
-	  document.setFooter(footer);
-    // we open the document for writing
-    document.open();
-    document.add(new Paragraph("Hello world"));
- }
- catch(DocumentException de) {
-    System.err.println(de.getMessage());
- }
- document.close();
-    */        
     public SchoolChoiceReminderReceiver []
         findAllStudentsThatMustDoSchoolChoice ()
         throws RemoteException, FinderException {
