@@ -73,6 +73,26 @@ public class CentralPlacementBusinessBean extends IBOServiceBean
 																				"You must chose a school for the placement");
 			} 
 		}
+
+		// school year
+		if (iwc.isParameterSet(CentralPlacementEditor.PARAM_SCHOOL_YEAR)) {
+			String providerID = iwc.getParameter(CentralPlacementEditor.PARAM_SCHOOL_YEAR);
+			if (providerID.equals("-1")) {
+				throw new CentralPlacementException(KEY_ERROR_SCHOOL_YEAR, 
+																				"You must chose a school year");
+			}
+		}
+		
+		// school group
+		if (iwc.isParameterSet(CentralPlacementEditor.PARAM_SCHOOL_GROUP)) {
+			String providerID = iwc.getParameter(CentralPlacementEditor.PARAM_SCHOOL_GROUP);
+			if (providerID.equals("-1")) {
+				throw new CentralPlacementException(KEY_ERROR_SCHOOL_GROUP, 
+																				"You must chose a school group");
+			} else {
+				schoolClassID = Integer.parseInt(providerID);
+			}
+		}
 		
 		// registerDate
 		if (iwc.isParameterSet(CentralPlacementEditor.PARAM_PLACEMENT_DATE)) {
@@ -106,26 +126,7 @@ public class CentralPlacementBusinessBean extends IBOServiceBean
 		// registrator
 		int currentUser = iwc.getCurrentUserId();
 		registrator = currentUser;
-		
-		// school year
-		if (iwc.isParameterSet(CentralPlacementEditor.PARAM_SCHOOL_YEAR)) {
-			String providerID = iwc.getParameter(CentralPlacementEditor.PARAM_SCHOOL_YEAR);
-			if (providerID.equals("-1")) {
-				throw new CentralPlacementException(KEY_ERROR_SCHOOL_YEAR, 
-																				"You must chose a school year");
-			}
-		}
-		
-		// school group
-		if (iwc.isParameterSet(CentralPlacementEditor.PARAM_SCHOOL_GROUP)) {
-			String providerID = iwc.getParameter(CentralPlacementEditor.PARAM_SCHOOL_GROUP);
-			if (providerID.equals("-1")) {
-				throw new CentralPlacementException(KEY_ERROR_SCHOOL_GROUP, 
-																				"You must chose a school group");
-			} else {
-				schoolClassID = Integer.parseInt(providerID);
-			}
-		}				
+						
 	// *** END - Check in params ***
 																											 	
 						// int studentID, int schoolClassID, Timestamp registerDate, int registrator, String notes)		
@@ -138,11 +139,36 @@ public class CentralPlacementBusinessBean extends IBOServiceBean
 			// Create new placement
 			placement = getSchoolBusiness(iwc).storeSchoolClassMember(studentID, schoolClassID, 
 																									registerDate, registrator, notes);
-			//Integer newPlaceID = (Integer) placement.getPrimaryKey(); // test
+			if (placement != null) {
+				// *** Store the rest of the parameters ***
+					// Compensation by invoice
+				if (iwc.isParameterSet(CentralPlacementEditor.PARAM_PAYMENT_BY_INVOICE)) {
+					String value = iwc.getParameter(CentralPlacementEditor.PARAM_PAYMENT_BY_INVOICE);
+					if (value.equals(CentralPlacementEditor.KEY_DROPDOWN_YES)) {
+						placement.setHasCompensationByInvoice(true);
+					} else if (value.equals(CentralPlacementEditor.KEY_DROPDOWN_NO)) {
+						placement.setHasCompensationByInvoice(true);
+					}
+				}
+				// Compensation by agreement
+/*			if (iwc.isParameterSet(CentralPlacementEditor.PARAM_PAYMENT_BY_AGREEMENT)) {
+				String value = iwc.getParameter(CentralPlacementEditor.PARAM_PAYMENT_BY_AGREEMENT);
+				if (value.equals(CentralPlacementEditor.KEY_DROPDOWN_YES)) {
+					placement.(true);
+				} else if (value.equals(CentralPlacementEditor.KEY_DROPDOWN_NO)) {
+					placement.setHasCompensationByInvoice(true);
+				}
+			}
+*/				
+				
+			}
+//			Integer newPlaceID = (Integer) placement.getPrimaryKey(); // test
+
 			// End old placement
 			if (currentPlacement != null) {
-				//Integer currID = (Integer) currentPlacement.getPrimaryKey(); // test
+//				Integer currID = (Integer) currentPlacement.getPrimaryKey(); // test
 				currentPlacement.setRemovedDate(dayBeforeRegDate);
+				currentPlacement.store();
 			}
 			trans.commit();
 		} catch (Exception e) {
@@ -184,6 +210,10 @@ public class CentralPlacementBusinessBean extends IBOServiceBean
 	private SchoolBusiness getSchoolBusiness(IWContext iwc) throws RemoteException {
 		return (SchoolBusiness) IBOLookup.getServiceInstance(iwc, SchoolBusiness.class);
 	}
+
+/*	private UserBusiness getUserBusiness(IWContext iwc) throws RemoteException {
+		return (UserBusiness) IBOLookup.getServiceInstance(iwc, UserBusiness.class);
+	}*/
 
 /*	private SchoolCommuneBusiness getSchoolCommuneBusiness(IWContext iwc) 
 																											throws RemoteException {
