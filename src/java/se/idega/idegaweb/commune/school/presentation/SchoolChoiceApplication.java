@@ -1220,7 +1220,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		s.append("\n\t var school = 0;");
 		
 		if (age.getYears() <= 10) {
-			s.append("\n\t var afterSchool = findObj(';").append(prmAfterschool).append("').value;");
+			s.append("\n\t var afterSchool = findObj('").append(prmAfterschool).append("').value;");
 			s.append("\n\n\t if (afterSchool.length <= 0) {");
 			s.append("\n\t\t alert('"+localize("school.must_select_after_school_option","You have to select an after school option.")+"');");
 			s.append("\n\t\t return false; \n}");
