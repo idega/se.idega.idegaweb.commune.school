@@ -1,5 +1,5 @@
 /*
- * $Id: SchoolReports.java,v 1.13 2004/01/19 08:49:14 anders Exp $
+ * $Id: SchoolReports.java,v 1.14 2004/01/20 13:39:43 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -12,6 +12,7 @@ package se.idega.idegaweb.commune.school.report.presentation;
 import java.rmi.RemoteException;
 
 import se.idega.idegaweb.commune.presentation.CommuneBlock;
+import se.idega.idegaweb.commune.school.report.business.NackaCCPlacementReportModel;
 import se.idega.idegaweb.commune.school.report.business.NackaCitizenElementarySchoolPlacementReportModel;
 import se.idega.idegaweb.commune.school.report.business.NackaCommuneHighSchoolPlacementReportModel;
 import se.idega.idegaweb.commune.school.report.business.NackaCompulsoryHighSchoolPlacementReportModel;
@@ -39,10 +40,10 @@ import com.idega.presentation.ui.SubmitButton;
 /** 
  * This block handles selecting and presenting school reports.
  * <p>
- * Last modified: $Date: 2004/01/19 08:49:14 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/20 13:39:43 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.13 $
+ * @version $Revision: 1.14 $
  */
 public class SchoolReports extends CommuneBlock {
 
@@ -77,14 +78,34 @@ public class SchoolReports extends CommuneBlock {
 				NackaPrivateSchoolOCCPlacementReportModel.class,
 				NackaPrivateHighSchoolPlacementReportModel.class
 	};
-	
+
+	private Class[] _childCareReportModelClasses = {
+				NackaCCPlacementReportModel.class
+	};
+
 	private ReportModel[] _reportModels = null;
+	
+	private boolean _useChildCareReports = false;
 	
 	/**
 	 * @see com.idega.presentation.PresentationObject#getBundleIdentifier()
 	 */
 	public String getBundleIdentifier() {
 		return IW_BUNDLE_IDENTIFIER;
+	}
+
+	/**
+	 * Returns true if child care reports should be used.
+	 */
+	public boolean getChildCare() {
+		return _useChildCareReports;
+	}
+
+	/**
+	 * Sets if child care reports should be used.
+	 */
+	public void setChildCare(boolean useChildCareReports) {
+		_useChildCareReports = useChildCareReports;
 	}
 	
 	/**
@@ -188,10 +209,14 @@ public class SchoolReports extends CommuneBlock {
 	 * Creates all report models from the report model classes. 
 	 */
 	private void createReportModels(IWContext iwc) throws RemoteException {
+		Class[] reportModelClasses = _reportModelClasses;
+		if (_useChildCareReports) {
+			reportModelClasses = _childCareReportModelClasses;
+		}
 		ReportBusiness rb = getReportBusiness(iwc);
-		_reportModels = new ReportModel[_reportModelClasses.length];
-		for (int i = 0; i <_reportModelClasses.length; i++) {
-			_reportModels[i] = rb.createReportModel(_reportModelClasses[i]);
+		_reportModels = new ReportModel[reportModelClasses.length];
+		for (int i = 0; i < reportModelClasses.length; i++) {
+			_reportModels[i] = rb.createReportModel(reportModelClasses[i]);
 		}
 	}
 
