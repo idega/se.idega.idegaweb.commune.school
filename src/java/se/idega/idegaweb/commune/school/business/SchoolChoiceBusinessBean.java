@@ -1155,7 +1155,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 			textFont.setSize(9);
 			final MemoryFileBuffer buffer = new MemoryFileBuffer();
 			final OutputStream outStream = new MemoryOutputStream(buffer);
-			final Document document = new Document(PageSize.A4, mmToPoints(30), mmToPoints(30), mmToPoints(0), mmToPoints(0));
+			final Document document = new Document(PageSize.A4, docBusiness.getPointsFromMM(30), docBusiness.getPointsFromMM(30), docBusiness.getPointsFromMM(0), docBusiness.getPointsFromMM(0));
 			final PdfWriter writer = PdfWriter.getInstance(document, outStream);
 			writer.setViewerPreferences(PdfWriter.PageModeUseThumbs | PdfWriter.HideMenubar | PdfWriter.PageLayoutOneColumn | PdfWriter.FitWindow | PdfWriter.CenterWindow);
 
@@ -1168,12 +1168,12 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 			final String rawReminderString = reminder.getText();
 			final Chunk subjectChunk = getSubjectChunk(rawReminderString);
 			final Chunk bodyChunk = getBodyChunk(rawReminderString);
-			final Phrase reminderPhrase = new Phrase(mmToPoints(20), subjectChunk);
+			final Phrase reminderPhrase = new Phrase(docBusiness.getPointsFromMM(20), subjectChunk);
 			reminderPhrase.add(bodyChunk);
 			final PdfPCell reminderCell = new PdfPCell(reminderPhrase);
 			reminderCell.setBorder(0);
 			reminderCell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-			reminderCell.setMinimumHeight(mmToPoints(125));
+			reminderCell.setMinimumHeight(docBusiness.getPointsFromMM(125));
 			final PdfPTable reminderText = new PdfPTable(1);
 			reminderText.setWidthPercentage(100f);
 			reminderText.addCell(reminderCell);
@@ -1247,10 +1247,14 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 			header.addCell(logoCell);
 			header.addCell(new Phrase(getDateChunk()));
 			*/
-			for (int i = 0; i < receivers.length; i++) {
+			//added for testing 
+			//int length = receivers!=null?receivers.length:1;
+			int length = receivers.length;
+			for (int i = 0; i < length; i++) {
 				if (i != 0) {
 					document.newPage();
 				}
+				
 				/*document.add(header);
 				document.add(getAddressTable(receivers[i]));
 				document.add(reminderText);
@@ -1263,7 +1267,9 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 				document.add(footer);
 				*/
 				//commented out above and added following
+				docBusiness.createHeaderDate(document,writer,IWTimestamp.RightNow().getLocaleDate(getIWApplicationContext().getApplicationSettings().getDefaultLocale()));
 				docBusiness.createLogoContent(document);
+				//if(receivers!=null)// for testing
 				docBusiness.createAddressContent(getReceiverAddressString(receivers[i]),writer);
 				docBusiness.createNewlinesContent(document);
 				document.add(reminderText);
@@ -1595,11 +1601,11 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	private Chunk getDateChunk() {
 		return new Chunk(new IWTimestamp().getLocaleDate(getIWApplicationContext().getApplicationSettings().getDefaultLocale(), IWTimestamp.SHORT), SERIF_FONT);
 	}*/
-
+/*// TODO belongs to DocumentBusiness
 	private float mmToPoints(final float mm) {
 		return mm * 72 / 25.4f;
 	}
-
+*/
 	public void sendMessageToParentOrChild(SchoolChoice choice, User parent, User child, String subject, String body,String contentCode) throws RemoteException {
 		getMessageBusiness().createUserMessage(choice, getReceiver(parent, child),null,null, subject, body, true,contentCode);
 	}
