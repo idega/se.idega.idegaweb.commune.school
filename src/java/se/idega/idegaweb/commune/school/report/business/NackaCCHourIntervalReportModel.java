@@ -1,5 +1,5 @@
 /*
- * $Id: NackaCCHourIntervalReportModel.java,v 1.2 2004/02/23 15:54:49 anders Exp $
+ * $Id: NackaCCHourIntervalReportModel.java,v 1.3 2004/03/16 09:15:59 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -14,10 +14,10 @@ import java.rmi.RemoteException;
 /** 
  * Report model for total number of child care placements per child care hour interval.
  * <p>
- * Last modified: $Date: 2004/02/23 15:54:49 $ by $Author: anders $
+ * Last modified: $Date: 2004/03/16 09:15:59 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class NackaCCHourIntervalReportModel extends ReportModel {
 
@@ -87,7 +87,7 @@ public class NackaCCHourIntervalReportModel extends ReportModel {
 		Header child0 = new Header("1-15", Header.HEADERTYPE_COLUMN_NONLOCALIZED_HEADER);
 		Header child1 = new Header("16-25", Header.HEADERTYPE_COLUMN_NONLOCALIZED_HEADER);
 		Header child2 = new Header("26-35", Header.HEADERTYPE_COLUMN_NONLOCALIZED_HEADER);
-		Header child3 = new Header(">=36", Header.HEADERTYPE_COLUMN_NONLOCALIZED_HEADER);
+		Header child3 = new Header(KEY_GTEQ_36, Header.HEADERTYPE_COLUMN_HEADER);
 		h.setChild(0, child0);
 		h.setChild(1, child1);
 		h.setChild(2, child2);
