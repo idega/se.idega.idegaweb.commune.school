@@ -20,6 +20,7 @@ import java.util.Map;
 import javax.ejb.CreateException;
 import javax.ejb.FinderException;
 
+import se.idega.idegaweb.commune.business.CommuneUserBusiness;
 import se.idega.idegaweb.commune.presentation.CommuneBlock;
 import se.idega.idegaweb.commune.school.business.SchoolChoiceBusiness;
 import se.idega.idegaweb.commune.school.business.SchoolCommuneBusiness;
@@ -46,6 +47,7 @@ import com.idega.presentation.ui.HiddenInput;
 import com.idega.presentation.ui.InterfaceObject;
 import com.idega.presentation.ui.SubmitButton;
 import com.idega.presentation.ui.TextInput;
+import com.idega.user.data.Group;
 import com.idega.util.IWTimestamp;
 import com.idega.util.datastructures.QueueMap;
 
@@ -219,11 +221,12 @@ public class MandatorySchoolReminder extends CommuneBlock {
 	/**
 	 * 
 	 */
-	private void presentResultAsCount(IWContext iwc,IWResourceBundle iwrb) throws RemoteException, MandatorySchoolReminderException{
+	private void presentResultAsCount(IWContext iwc,IWResourceBundle iwrb) throws MandatorySchoolReminderException, RemoteException, CreateException, FinderException{
 		SchoolBusiness sBusiness =  (SchoolBusiness)IBOLookup.getServiceInstance(iwc,SchoolBusiness.class);
 		SchoolChoiceBusiness scBusiness = (SchoolChoiceBusiness)IBOLookup.getServiceInstance(iwc,SchoolChoiceBusiness.class);
-		
-		
+		CommuneUserBusiness communeUserService = (CommuneUserBusiness)IBOLookup.getServiceInstance(this.getIWApplicationContext(),CommuneUserBusiness.class);
+		Group communeGroup = communeUserService.getRootCitizenGroup();
+
 		
 		try {
 			SchoolSeason currentSeason = scBusiness.getCurrentSeason();
@@ -248,7 +251,7 @@ public class MandatorySchoolReminder extends CommuneBlock {
 				int countResult = -1;
 				
 				try {
-					countResult	= sBusiness.getSchoolClassMemberHome().getNumberOfUsersNotAssignedToClassOnGivenDate(new java.sql.Date(_selectedDate.getTime()),classes,firstDateOfBirth.getDate(),lastDateOfBirth.getDate());
+					countResult	= sBusiness.getSchoolClassMemberHome().getNumberOfUsersNotAssignedToClassOnGivenDate(communeGroup,new java.sql.Date(_selectedDate.getTime()),classes,firstDateOfBirth.getDate(),lastDateOfBirth.getDate());
 				} catch (IDOException e) {
 					e.printStackTrace();
 				}
