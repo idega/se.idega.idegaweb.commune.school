@@ -46,7 +46,7 @@ import com.idega.util.IWTimestamp;
  * Copyright:    Copyright idega Software (c) 2002
  * Company:	idega Software
  * @author <a href="mailto:roar@idega.is">roar</a>
- * @version $Id: EventList.java,v 1.9 2004/01/13 13:09:24 jonas Exp $
+ * @version $Id: EventList.java,v 1.10 2004/01/13 13:40:08 jonas Exp $
  * @since 17.3.2003 
  */
 
@@ -322,7 +322,7 @@ public class EventList extends CommuneBlock {
 	/* creates the pdf file and returns the ICFile identifier */
 	private int createPrintableMessage(PrintMessage msg) {
 		try {
-			System.out.println("EventList message Case is \"" + msg.getParentCase() + "\"");
+			System.out.println("EventList message CaseCode is \"" + msg.getParentCase().getCaseCode().toString() + "\"");
 			DocumentBusiness docBiz = getDocumentBusiness();
 			String userName = _iwc.getCurrentUser().getName();
 			String fileName = "EventListLetter-" + msg.getNodeID() + "-" + _iwc.getCurrentLocaleId() + ".pdf";
