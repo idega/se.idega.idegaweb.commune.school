@@ -380,8 +380,8 @@ public class SchoolChoiceApplication extends CommuneBlock {
 
     if(schoolClassMember!=null){
       T.add(getSmallHeader(iwrb.getLocalizedString("school.school_name","School name")),2,3);
-      T.add(getSmallHeader(iwrb.getLocalizedString("school.school_class","School class")),2,3);
-      T.add(getSmallHeader(iwrb.getLocalizedString("school.school_year","School year")),3,3);
+      T.add(getSmallHeader(iwrb.getLocalizedString("school.school_class","School class")),3,3);
+      T.add(getSmallHeader(iwrb.getLocalizedString("school.school_year","School year")),4,3);
 
       T.add(getText(school.getName()),2,4);
       T.add(getText(schoolClass.getName()),3,4);
