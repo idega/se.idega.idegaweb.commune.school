@@ -408,19 +408,26 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 				SchoolChoice choice = (SchoolChoice) choices.get(0);
 				User appParent = getUser(applicationParentID);
 
-				String subject, body,code;
+				String applyingSubject, applyingBody,applyingCode;
+				String nonApplyingSubject , nonApplyingBody,nonApplyingCode;
 				if (isSchoolChangeApplication) {
-					subject = getSeparateParentSubjectChange();
-					body = getSeparateParentMessageBodyChange(choice, appParent);
-					code = SchoolChoiceMessagePdfHandler.CODE_SINGLEPARENT_APPLICATION_NEW ;
+					nonApplyingSubject = getNonApplyingSeparateParentSubjectChange();
+					nonApplyingBody = getNonApplyingSeparateParentMessageBodyChange(choice, appParent);
+					nonApplyingCode = SchoolChoiceMessagePdfHandler.CODE_NONAPPLYING_SINGLEPARENT_APPLICATION_NEW ;
+					applyingSubject = getNonApplyingSeparateParentSubjectChange();
+					applyingBody = getNonApplyingSeparateParentMessageBodyChange(choice, appParent);
+					applyingCode = SchoolChoiceMessagePdfHandler.CODE_NONAPPLYING_SINGLEPARENT_APPLICATION_NEW ;
 				}
 				else {
-					subject = getSeparateParentSubjectAppl();
-					body = getSeparateParentMessageBodyAppl(choices, appParent);
-					code = SchoolChoiceMessagePdfHandler.CODE_SINGLEPARENT_APPLICATION_CHANGE ;
+					nonApplyingSubject = getNonApplyingSeparateParentSubjectAppl();
+					nonApplyingBody = getNonApplyingSeparateParentMessageBodyAppl(choices, appParent);
+					nonApplyingCode = SchoolChoiceMessagePdfHandler.CODE_NONAPPLYING_SINGLEPARENT_APPLICATION_CHANGE ;
+					applyingSubject = getApplyingSeparateParentSubjectAppl();
+					applyingBody = getApplyingSeparateParentMessageBodyAppl(choices, appParent);
+					applyingCode = SchoolChoiceMessagePdfHandler.CODE_APPLYING_SINGLEPARENT_APPLICATION_CHANGE ;
 				}
 
-				sendMessageToParents(choice, subject, body,code);
+				sendMessageToParents(choice, nonApplyingSubject, nonApplyingBody,nonApplyingCode,applyingSubject,applyingBody,applyingCode,isSchoolChangeApplication);
 			}
 		}
 		catch (Exception ex) {
@@ -510,19 +517,30 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		return false;
 	}
 
-	private void sendMessageToParents(SchoolChoice application, String subject, String body,String code) {
+	private void sendMessageToParents(SchoolChoice application, String nonApplyingSubject, String nonApplyingBody,String nonApplyingCode,String applyingSubject,String applyingBody,String applyingCode,boolean isChangeApplication) {
 		try {
 			User child = application.getChild();
 			Object[] arguments = {child.getNameLastFirst(true), application.getChosenSchool().getSchoolName()};
 
 			if (isOfAge(child)) {
+				String subject,body,code;
+				if(isChangeApplication){
+					 subject = getLocalizedString("school_choice.child_self_change_subj", "School application received for you");
+					 body = getLocalizedString("school_choice.child_self_change_mesg_body", "Dear mr./ms./mrs. ");
+					 code = SchoolChoiceMessagePdfHandler.CODE_CHILD_SELF_APPLICATION_CHANGE;
+				}
+				else{
+					subject = getLocalizedString("school_choice.child_self_appl_subj", "School application received for you");
+					body = getLocalizedString("school_choice.child_self_change_mesg_body", "Dear mr./ms./mrs. ");
+					code = SchoolChoiceMessagePdfHandler.CODE_CHILD_SELF_APPLICATION_NEW;
+				}
 				getMessageBusiness().createUserMessage(application, child,null,null, subject, MessageFormat.format(body, arguments), true,code);
 
 			}
 			else {
 				User appParent = application.getOwner();
 				if (getUserBusiness().getMemberFamilyLogic().isChildInCustodyOf(child, appParent)) {
-					getMessageBusiness().createUserMessage(application, appParent,  null,null,subject, MessageFormat.format(body, arguments), true,code);
+					getMessageBusiness().createUserMessage(application, appParent,  null,null,applyingSubject, MessageFormat.format(applyingBody, arguments), true,applyingCode);
 				}
 
 				try {
@@ -531,9 +549,9 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 					while (iter.hasNext()) {
 						User parent = (User) iter.next();
 						if (!getUserBusiness().haveSameAddress(parent, appParent)) {
-							getMessageBusiness().createUserMessage(application, parent,null,null, subject, MessageFormat.format(body, arguments), true,code);
+							getMessageBusiness().createUserMessage(application, parent,null,null, nonApplyingSubject, MessageFormat.format(nonApplyingBody, arguments), true,nonApplyingCode);
 						} else if (!parent.equals((IDOEntity)appParent)){
-							getMessageBusiness().createUserMessage(application, parent,null,null, subject, MessageFormat.format(body, arguments), false,code);
+							getMessageBusiness().createUserMessage(application, parent,null,null, nonApplyingSubject, MessageFormat.format(nonApplyingBody, arguments), false,nonApplyingCode);
 						}
 					}
 				}
@@ -607,13 +625,13 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 					SchoolChoice element = (SchoolChoice) iter.next();
 					if (element.getChoiceOrder() == (choice.getChoiceOrder() + 1)) {
 						super.changeCaseStatus(element, getCaseStatusPreliminary().getStatus(), performer);
-						sendMessageToParents(element, getPreliminaryMessageSubject(), getPreliminaryMessageBody(element),code);
+						sendMessageToParents(element, getPreliminaryMessageSubject(), getPreliminaryMessageBody(element),code,getPreliminaryMessageSubject(),getPreliminaryMessageBody(element),code,false);
 						continue;
 					}
 				}
 			}
 
-			sendMessageToParents(choice, messageSubject, messageBody,code);
+			sendMessageToParents(choice, messageSubject, messageBody,code,messageSubject, messageBody,code,false);
 			rejectAfterSchoolApplication(choice.getChildId(), choice.getChosenSchoolId(), seasonID, performer);
 
 			if (choice.getChoiceOrder() == 3) {
@@ -762,7 +780,13 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		return body.toString();
 	}
 
-	protected String getSeparateParentMessageBodyAppl(List choices, User parent) throws RemoteException {
+	protected String getApplyingSeparateParentMessageBodyAppl(List choices, User parent) throws RemoteException {
+		return getSeparateParentMessageBodyAppl( getLocalizedString("school_choice.applying_sep_parent_appl_mesg_body", "Dear mr./ms./mrs. "),choices,  parent);
+	}
+	protected String getNonApplyingSeparateParentMessageBodyAppl(List choices, User parent) throws RemoteException {
+		return getSeparateParentMessageBodyAppl( getLocalizedString("school_choice.sep_parent_appl_mesg_body", "Dear mr./ms./mrs. "),choices,  parent);
+	}
+	private String getSeparateParentMessageBodyAppl(String text,List choices, User parent) throws RemoteException {
 		Object[] arguments = new Object[5];
 		arguments[0] = parent.getNameLastFirst(true);
 		Iterator iter = choices.iterator();
@@ -781,18 +805,25 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 			arguments[4] = "";
 		}
 
-		String body = MessageFormat.format(getLocalizedString("school_choice.sep_parent_appl_mesg_body", "Dear mr./ms./mrs. "), arguments);
+		String body = MessageFormat.format(text, arguments);
 		/*
 		 * StringBuffer body = new StringBuffer(this.getLocalizedString("school_choice.sep_parent_appl_mesg_body1", "Dear mr./ms./mrs. ")); body.append(parent.getNameLastFirst()).append("\n"); body.append(this.getLocalizedString("school_choice.separate_parent_appl_mesg_body2", "School application for your child has been received \n The schools are: "));
 		 */
 		return body;
 	}
 
-	protected String getSeparateParentMessageBodyChange(SchoolChoice theCase, User parent) throws RemoteException {
+	protected String getNonApplyingSeparateParentMessageBodyChange(SchoolChoice theCase, User parent) throws RemoteException {
 		Object[] arguments = {parent.getNameLastFirst(true), theCase.getChild().getNameLastFirst(true), getSchool(theCase.getChosenSchoolId()).getSchoolName(), theCase.getPlacementDate() != null ? new IWTimestamp(theCase.getPlacementDate()).getLocaleDate(this.getIWApplicationContext().getApplicationSettings().getDefaultLocale(), IWTimestamp.SHORT) : "", PersonalIDFormatter.format(theCase.getChild().getPersonalID(), this.getIWApplicationContext().getApplicationSettings().getDefaultLocale()) };
 		String body = MessageFormat.format(getLocalizedString("school_choice.sep_parent_change_mesg_body", "Dear mr./ms./mrs. "), arguments);
 		return body;
 	}
+	
+	protected String getApplyingSeparateParentMessageBodyChange(SchoolChoice theCase, User parent) throws RemoteException {
+		Object[] arguments = {parent.getNameLastFirst(true), theCase.getChild().getNameLastFirst(true), getSchool(theCase.getChosenSchoolId()).getSchoolName(), theCase.getPlacementDate() != null ? new IWTimestamp(theCase.getPlacementDate()).getLocaleDate(this.getIWApplicationContext().getApplicationSettings().getDefaultLocale(), IWTimestamp.SHORT) : "", PersonalIDFormatter.format(theCase.getChild().getPersonalID(), this.getIWApplicationContext().getApplicationSettings().getDefaultLocale()) };
+		String body = MessageFormat.format(getLocalizedString("school_choice.applying_sep_parent_change_mesg_body", "Dear mr./ms./mrs. "), arguments);
+		return body;
+	}
+	
 
 	protected String getOldHeadmasterBody(SchoolChoice choice, User student, School newSchool) {
 		Object[] arguments = {student.getNameLastFirst(true), newSchool.getSchoolName(), PersonalIDFormatter.format(student.getPersonalID(), this.getIWApplicationContext().getApplicationSettings().getDefaultLocale()), choice.getPlacementDate() != null ? new IWTimestamp(choice.getPlacementDate()).getLocaleDate(this.getIWApplicationContext().getApplicationSettings().getDefaultLocale(), IWTimestamp.SHORT) : "" };
@@ -819,10 +850,16 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		return this.getLocalizedString("school_choice.group_mesg_subj", "School grouping");
 	}
 
-	public String getSeparateParentSubjectAppl() {
+	public String getApplyingSeparateParentSubjectAppl() {
+		return this.getLocalizedString("school_choice.applying_sep_parent_appl_subj", "School application received for your child");
+	}
+	public String getNonApplyingSeparateParentSubjectAppl() {
 		return this.getLocalizedString("school_choice.sep_parent_appl_subj", "School application received for your child");
 	}
-	public String getSeparateParentSubjectChange() {
+	public String getApplyingSeparateParentSubjectChange() {
+		return this.getLocalizedString("school_choice.applying_sep_parent_change_subj", "School change application received for your child");
+	}
+	public String getNonApplyingSeparateParentSubjectChange() {
 		return this.getLocalizedString("school_choice.sep_parent_change_subj", "School change application received for your child");
 	}
 
