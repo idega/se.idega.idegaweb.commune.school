@@ -33,7 +33,7 @@ import com.idega.presentation.ui.DropdownMenu;
 public abstract class SchoolCommuneBlock extends CommuneBlock {
 
 	private SchoolCommuneBusiness business;
-	private SchoolCommuneSession session;
+	protected SchoolCommuneSession session;
 	private SchoolBusiness sBusiness;
 	private int _schoolID = -1;
 	private int _schoolSeasonID = -1;
@@ -105,6 +105,7 @@ public abstract class SchoolCommuneBlock extends CommuneBlock {
 			School sCool = (School) iter.next();	
 			menu.addMenuElement(sCool.getPrimaryKey().toString(), sCool.getName());
 		}	
+		menu.addMenuElementFirst("-1", localize("school.all_schools", "All schools"));
 		
 		if (getSchoolID() != -1) {
 			menu.setSelectedElement(getSchoolID());	
@@ -202,7 +203,7 @@ public abstract class SchoolCommuneBlock extends CommuneBlock {
 		return (SchoolCommuneBusiness) IBOLookup.getServiceInstance(iwc, SchoolCommuneBusiness.class);	
 	}
 	
-	private SchoolCommuneSession getSchoolCommuneSession(IWContext iwc) throws RemoteException {
+	protected SchoolCommuneSession getSchoolCommuneSession(IWContext iwc) throws RemoteException {
 		return (SchoolCommuneSession) IBOLookup.getSessionInstance(iwc, SchoolCommuneSession.class);	
 	}
 	

@@ -6,6 +6,9 @@ import com.idega.block.school.data.SchoolSeason;
 import com.idega.data.IDOException;
 import com.idega.data.IDOQuery;
 import com.idega.user.data.User;
+import com.idega.user.data.UserBMPBean;
+
+import java.rmi.RemoteException;
 import java.sql.Timestamp;
 import java.util.Collection;
 
@@ -342,13 +345,68 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
     sql.append(schoolID);
     return super.idoFindPKsBySQL(sql.toString());
   }
+
+	public Collection ejbFindAll() throws FinderException {
+		return this.idoFindIDsBySQL("select * from "+getEntityName());	
+	}
+  
+  public Collection ejbFindChoices(int schoolID, int seasonID, int gradeYear, String searchStringForUser) throws FinderException, RemoteException {
+  	boolean search = searchStringForUser != null && !searchStringForUser.equals("");
+  	boolean needAnd = false;
+  	IDOQuery query = new IDOQuery();
+  	query.appendSelectAllFrom(getEntityName());
+  	
+  	if (schoolID < 1 && seasonID < 1 && gradeYear < 1 && !search) {
+  		return ejbFindAll();
+  	} 
+  	
+  	if (search) {
+  		query.append(", ").append(UserBMPBean.TABLE_NAME)
+  		.appendWhere().append(getEntityName()).append(".").append(CHILD)
+  		.appendEqualSign().append(UserBMPBean.TABLE_NAME).append(".").append(UserBMPBean.getColumnNameUserID())
+  		.appendAnd().append("(");
+  		query.append(UserBMPBean.TABLE_NAME).append(".").append(UserBMPBean.getColumnNameFirstName())
+  		.append(" like '%").append(searchStringForUser).append("%'")
+  		.appendOr().append(UserBMPBean.TABLE_NAME).append(".").append(UserBMPBean.getColumnNameLastName())
+  		.append(" like '%").append(searchStringForUser).append("%'")
+  		.appendOr().append(UserBMPBean.TABLE_NAME).append(".").append(UserBMPBean.getColumnNamePersonalID())
+  		.append(" like '%").append(searchStringForUser).append("%'");
+  		query.append(")").appendAnd();
+  	}else {
+  		query.appendWhere();	
+  	}
+  	
+  	if (seasonID > 0) {
+  		query.append(SCHOOL_SEASON).appendEqualSign().append(seasonID);
+  		needAnd = true;
+  	}
+
+  	if (schoolID > 0) {
+			if (needAnd) {
+				query.appendAnd();
+			}
+  		query.append(CHOSEN_SCHOOL).appendEqualSign().append(schoolID);	
+  		needAnd = true;
+  	}
+
+  	if (gradeYear > 0) {
+			if (needAnd) {
+				query.appendAnd();
+			}
+  		query.append(GRADE).appendEqualSign().append(gradeYear);	
+  		needAnd = true;
+  	}
+  	
+  	System.out.println("[SchoolChoiceBean] sql : "+query.toString());
+  	return this.idoFindPKsByQuery(query);
+  }
   
   public Collection ejbFindBySchoolAndSeasonAndGrade(int schoolID, int seasonID, int gradeYear) throws FinderException {
   	IDOQuery sql = new IDOQuery();
-  	sql.appendSelectAllFrom(getEntityName()).appendWhere().append(CHOSEN_SCHOOL);
-  	sql.appendEqualSign().append(schoolID).appendAnd().append(SCHOOL_SEASON);
-  	sql.appendEqualSign().append(seasonID).appendAnd().append(GRADE).appendEqualSign();
-  	sql.append(gradeYear);
+  	sql.appendSelectAllFrom(getEntityName()).appendWhere()
+  	.append(CHOSEN_SCHOOL).appendEqualSign().append(schoolID)
+  	.appendAnd().append(SCHOOL_SEASON).appendEqualSign().append(seasonID)
+  	.appendAnd().append(GRADE).appendEqualSign().append(gradeYear);
 
   	return super.idoFindPKsBySQL(sql.toString());
   }
