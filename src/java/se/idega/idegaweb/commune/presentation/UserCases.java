@@ -15,8 +15,8 @@ import javax.ejb.FinderException;
 import se.idega.idegaweb.commune.block.pointOfView.business.PointOfViewBusiness;
 import se.idega.idegaweb.commune.block.pointOfView.data.PointOfView;
 import se.idega.idegaweb.commune.business.CommuneCaseBusiness;
-import se.idega.idegaweb.commune.childcare.data.AfterSchoolChoiceBMPBean;
 import se.idega.idegaweb.commune.school.business.SchoolChoiceBusiness;
+import se.idega.idegaweb.commune.school.data.AfterSchoolChoiceBMPBean;
 import se.idega.idegaweb.commune.school.data.SchoolChoice;
 import se.idega.idegaweb.commune.school.data.SchoolChoiceBMPBean;
 
