@@ -21,6 +21,7 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import se.idega.idegaweb.commune.business.CommuneUserBusiness;
+import se.idega.idegaweb.commune.presentation.CommuneBlock;
 
 import com.idega.block.school.data.SchoolClass;
 import com.idega.block.school.data.SchoolClassMember;
@@ -31,6 +32,7 @@ import com.idega.core.data.PhoneType;
 import com.idega.core.data.PostalCode;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWMainApplication;
+import com.idega.idegaweb.IWResourceBundle;
 import com.idega.io.MediaWritable;
 import com.idega.io.MemoryFileBuffer;
 import com.idega.io.MemoryInputStream;
@@ -63,6 +65,13 @@ public class SchoolClassWriter implements MediaWritable {
 	private SchoolCommuneBusiness business;
 	private CommuneUserBusiness userBusiness;
 	private Locale locale;
+	private SchoolClass schoolClass;
+	private IWResourceBundle iwrb;
+	
+	private String schoolName;
+	private String seasonName;
+	private String yearName;
+	private String groupName;
 
 	public final static String prmClassId = "group_id";
 	public final static String prmPrintType = "print_type";
@@ -77,9 +86,15 @@ public class SchoolClassWriter implements MediaWritable {
 			locale = iwma.getIWApplicationContext().getApplicationSettings().getApplicationLocale();
 			business = getSchoolCommuneBusiness(iwma.getIWApplicationContext());
 			userBusiness = getCommuneUserBusiness(iwma.getIWApplicationContext());
+			iwrb = iwma.getBundle(CommuneBlock.IW_BUNDLE_IDENTIFIER).getResourceBundle(locale);
 			
 			if (req.getParameter(prmClassId) != null) {
-				SchoolClass schoolClass = business.getSchoolBusiness().findSchoolClass(new Integer(req.getParameter(prmClassId)));
+				schoolClass = business.getSchoolBusiness().findSchoolClass(new Integer(req.getParameter(prmClassId)));
+				schoolName = business.getSchoolBusiness().getSchool(new Integer(schoolClass.getSchoolId())).getSchoolName();
+				seasonName = business.getSchoolBusiness().getSchoolSeason(new Integer(schoolClass.getSchoolSeasonId())).getSchoolSeasonName();
+				yearName = business.getSchoolBusiness().getSchoolYear(new Integer(schoolClass.getSchoolYearId())).getSchoolYearName();
+				groupName = schoolClass.getSchoolClassName();
+				
 				String type = req.getParameter(prmPrintType);
 				if (type.equals(PDF)) {
 					buffer = writePDF(schoolClass);
@@ -133,24 +148,44 @@ public class SchoolClassWriter implements MediaWritable {
 			sheet.setColumnWidth((short)4, (short) (14 * 256));
 	    HSSFFont font = wb.createFont();
 	    font.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
+	    font.setFontHeightInPoints((short)12);
 	    HSSFCellStyle style = wb.createCellStyle();
 	    style.setFont(font);
 
-	    HSSFRow row = sheet.createRow((short)0);
-	    HSSFCell cell = row.createCell((short)0);
-	    cell.setCellValue("Name");
+			int cellRow = 0;
+			HSSFRow row = sheet.createRow((short)cellRow++);
+			HSSFCell cell = row.createCell((short)0);
+			cell.setCellValue(schoolName);
+			cell.setCellStyle(style);
+			cell = row.createCell((short)1);
+			
+			row = sheet.createRow((short)cellRow++);
+			cell = row.createCell((short)0);
+			cell.setCellValue(seasonName);
+			cell.setCellStyle(style);
+			
+			row = sheet.createRow((short)cellRow++);
+			cell = row.createCell((short)0);
+			cell.setCellValue(yearName + " - " + groupName);
+			cell.setCellStyle(style);
+			
+			row = sheet.createRow((short)cellRow++);
+			
+	    row = sheet.createRow((short)cellRow++);
+	    cell = row.createCell((short)0);
+	    cell.setCellValue(iwrb.getLocalizedString("school.name","Name"));
 	    cell.setCellStyle(style);
 	    cell = row.createCell((short)1);
-	    cell.setCellValue("PersonalID");
+	    cell.setCellValue(iwrb.getLocalizedString("school.personal_id","Personal ID"));
 	    cell.setCellStyle(style);
 	    cell = row.createCell((short)2);
-	    cell.setCellValue("Address");
+	    cell.setCellValue(iwrb.getLocalizedString("school.address","Address"));
 	    cell.setCellStyle(style);
 			cell = row.createCell((short)2);
-			cell.setCellValue("Postal code");
+			cell.setCellValue(iwrb.getLocalizedString("school.postal_code","Postal code"));
 			cell.setCellStyle(style);
 	    cell = row.createCell((short)3);
-	    cell.setCellValue("Phone");
+	    cell.setCellValue(iwrb.getLocalizedString("school.phone","Phone"));
 	    cell.setCellStyle(style);
 
 			User student;
@@ -159,10 +194,9 @@ public class SchoolClassWriter implements MediaWritable {
 			Phone phone;
 			SchoolClassMember studentMember;
 			
-			int cellRow = 1;
 			Iterator iter = students.iterator();
 			while (iter.hasNext()) {
-				row = sheet.createRow((short)cellRow);
+				row = sheet.createRow((short)cellRow++);
 				studentMember = (SchoolClassMember) iter.next();
 				student = (User) studentMap.get(new Integer(studentMember.getClassMemberId()));
 				address = userBusiness.getUsersMainAddress(student);
@@ -179,7 +213,6 @@ public class SchoolClassWriter implements MediaWritable {
 		    }
 			  if (phone != null)
 			    row.createCell((short)4).setCellValue(phone.getNumber());
-			  cellRow++;
 			}
 			wb.write(mos);
 		}
@@ -203,6 +236,11 @@ public class SchoolClassWriter implements MediaWritable {
 			document.addAuthor("Idega Reports");
 			document.addSubject(schoolClass.getName());
 			document.open();
+			
+			document.add(new Phrase(schoolName+"\n", new Font(Font.HELVETICA, 12, Font.BOLD)));
+			document.add(new Phrase(seasonName+"\n", new Font(Font.HELVETICA, 12, Font.BOLD)));
+			document.add(new Phrase(yearName+" - "+groupName+"\n", new Font(Font.HELVETICA, 12, Font.BOLD)));
+			document.add(new Phrase("\n", new Font(Font.HELVETICA, 12, Font.BOLD)));
 			
 			User student;
 			Address address;
