@@ -9,8 +9,7 @@ package se.idega.idegaweb.commune.school.presentation.inputhandler;
 import com.idega.business.InputHandler;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
-import com.idega.presentation.PresentationObject;
-import com.idega.presentation.ui.DropdownMenu;
+import com.idega.presentation.ui.DropDownMenuInputHandler;
 
 /**
  * @author jonas
@@ -18,7 +17,7 @@ import com.idega.presentation.ui.DropdownMenu;
  * To change the template for this generated type comment go to
  * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
-public class YesNoDropDownMenu extends DropdownMenu implements InputHandler {
+public class YesNoDropDownMenu extends DropDownMenuInputHandler  {
 
 	private final static String LOCALIZED_YES = "YesNoDropDownMenu.yes";
 	private final static String LOCALIZED_NO = "YesNoDropDownMenu.no";
@@ -35,19 +34,6 @@ public class YesNoDropDownMenu extends DropdownMenu implements InputHandler {
 		addMenuElement(NO, rb.getLocalizedString(LOCALIZED_NO, "No"));
 	}
 	
-	/* (non-Javadoc)
-	 * @see com.idega.business.InputHandler#getHandlerObject(java.lang.String, java.lang.String, com.idega.presentation.IWContext)
-	 */
-	public PresentationObject getHandlerObject(String name, String stringValue, IWContext iwc) {
-		this.setName(name);
-
-		if (stringValue != null) {
-			this.setSelectedElement(stringValue);
-		}
-
-		return this;
-	}
-
 	/* (non-Javadoc)
 	 * @see com.idega.business.InputHandler#getResultingObject(java.lang.String[], com.idega.presentation.IWContext)
 	 */
@@ -81,4 +67,6 @@ public class YesNoDropDownMenu extends DropdownMenu implements InputHandler {
 	public String getBundleIdentifier() {
 		return IW_BUNDLE_IDENTIFIER;
 	}
+
+
 }

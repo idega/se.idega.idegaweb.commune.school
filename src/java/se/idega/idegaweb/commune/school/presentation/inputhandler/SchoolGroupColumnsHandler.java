@@ -8,6 +8,7 @@ package se.idega.idegaweb.commune.school.presentation.inputhandler;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 
 import se.idega.idegaweb.commune.school.business.SchoolReportBusiness;
@@ -62,10 +63,10 @@ public class SchoolGroupColumnsHandler extends SelectionBox implements HiddenInp
 	/* (non-Javadoc)
 	 * @see com.idega.business.InputHandler#getHandlerObject(java.lang.String, java.lang.String, com.idega.presentation.IWContext)
 	 */
-	public PresentationObject getHandlerObject(String name, String stringValue, IWContext iwc) {
+	public PresentationObject getHandlerObject(String name, String value, IWContext iwc) {
 		this.setName(name);
-		if (stringValue != null) {
-			this.setContent(stringValue);
+		if (value != null) {
+			this.setContent(value);
 		}
 		this.setStyleClass("commune_Interface");
 		return this;
@@ -114,4 +115,18 @@ public class SchoolGroupColumnsHandler extends SelectionBox implements HiddenInp
 	public String getBundleIdentifier() {
 		return IW_BUNDLE_IDENTIFIER;
 	}
+
+	public PresentationObject getHandlerObject(String name, Collection values, IWContext iwc) {
+		String value = (String) Collections.min(values);
+		return getHandlerObject(name, value, iwc);
+	}
+
+
+	/* (non-Javadoc)
+	 * @see com.idega.business.InputHandler#convertResultingObjectToType(java.lang.Object, java.lang.String)
+	 */
+	public Object convertSingleResultingObjectToType(Object value, String className) {
+		return value;
+	}
+
 }

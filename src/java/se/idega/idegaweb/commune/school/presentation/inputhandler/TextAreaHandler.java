@@ -6,6 +6,9 @@
  */
 package se.idega.idegaweb.commune.school.presentation.inputhandler;
 
+import java.util.Collection;
+import java.util.Collections;
+
 import com.idega.business.InputHandler;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObject;
@@ -22,10 +25,10 @@ public class TextAreaHandler extends TextArea implements InputHandler {
 	/* (non-Javadoc)
 	 * @see com.idega.business.InputHandler#getHandlerObject(java.lang.String, java.lang.String, com.idega.presentation.IWContext)
 	 */
-	public PresentationObject getHandlerObject(String name, String stringValue, IWContext iwc) {
+	public PresentationObject getHandlerObject(String name, String value, IWContext iwc) {
 		this.setName(name);
-		if (stringValue != null) {
-			this.setContent(stringValue);
+		if (value != null) {
+			this.setContent(value);
 		}
 		this.setStyleClass("commune_Interface");
 		this.setRows(6);
@@ -48,6 +51,16 @@ public class TextAreaHandler extends TextArea implements InputHandler {
 	 */
 	public String getDisplayForResultingObject(Object value, IWContext iwc) {
 		return (String)value;
+	}
+
+	public PresentationObject getHandlerObject(String name, Collection values, IWContext iwc) {
+		String value = (String) Collections.min(values);
+		return getHandlerObject(name, value, iwc);
+	}
+
+
+	public Object convertSingleResultingObjectToType(Object value, String className) {
+		return value;
 	}
 
 }

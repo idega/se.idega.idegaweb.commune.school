@@ -9,6 +9,7 @@ package se.idega.idegaweb.commune.school.presentation.inputhandler;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 
 import se.idega.idegaweb.commune.school.business.SchoolCommuneSession;
@@ -53,11 +54,11 @@ public class SchoolGroupHandler extends SelectionBox implements InputHandler {
 	/* (non-Javadoc)
 	 * @see com.idega.business.InputHandler#getHandlerObject(java.lang.String, java.lang.String, com.idega.presentation.IWContext)
 	 */
-	public PresentationObject getHandlerObject(String name, String stringValue, IWContext iwc) {
+	public PresentationObject getHandlerObject(String name, String value, IWContext iwc) {
 		IWResourceBundle iwrb = this.getResourceBundle(iwc);
 		this.setName(name);
-		if (stringValue != null) {
-			this.setContent(stringValue);
+		if (value != null) {
+			this.setContent(value);
 		}
 		this.setStyleClass("commune_Interface");
 		this.setAsNotEmpty(iwrb.getLocalizedString("school_report.must_select_group", "You have to select at least one group."));
@@ -121,5 +122,18 @@ public class SchoolGroupHandler extends SelectionBox implements InputHandler {
 
 	public String getBundleIdentifier() {
 		return IW_BUNDLE_IDENTIFIER;
+	}
+
+	public PresentationObject getHandlerObject(String name, Collection values, IWContext iwc) {
+		String value = (String) Collections.min(values);
+		return getHandlerObject(name, value, iwc);
+	}
+
+
+	/* (non-Javadoc)
+	 * @see com.idega.business.InputHandler#convertResultingObjectToType(java.lang.Object, java.lang.String)
+	 */
+	public Object convertSingleResultingObjectToType(Object value, String className) {
+		return value;
 	}
 }
