@@ -338,7 +338,7 @@ public class SchoolReportBusinessBean extends IBOSessionBean implements SchoolRe
 		}
 		
 		ReportableData count = new ReportableData();
-		count.addData((ReportableField)_fields.get(0), String.valueOf(numberOfStudents));
+		count.addData((ReportableField)_fields.get(0), getLocalizedString("number_of_students", "Number of students:") + " " + String.valueOf(numberOfStudents));
 		reportCollection.add(count);
 		
 		return reportCollection;
@@ -559,7 +559,7 @@ public class SchoolReportBusinessBean extends IBOSessionBean implements SchoolRe
 		}
 		
 		ReportableData count = new ReportableData();
-		count.addData((ReportableField)_fields.get(0), String.valueOf(numberOfChoices));
+		count.addData((ReportableField)_fields.get(0), getLocalizedString("number_of_choices", "Number of choices:") + " " +  String.valueOf(numberOfChoices));
 		reportCollection.add(count);
 		
 		return reportCollection;
