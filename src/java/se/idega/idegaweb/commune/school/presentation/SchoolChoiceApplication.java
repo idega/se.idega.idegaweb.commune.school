@@ -461,10 +461,17 @@ public class SchoolChoiceApplication extends CommuneBlock {
 			boolean caseOwning = true;
 			while (iter.hasNext()) {
 				User parent = (User) iter.next();
-				String addr = userbuiz.getUsersMainAddress(parent).getStreetAddress();
-
+				
+				Address parAddress	=	userbuiz.getUsersMainAddress(parent);
+				String sParAddress = null;
+				if(parAddress!=null){
+					sParAddress = parAddress.getStreetAddress();
+				}
+				else{
+					sParAddress = "";
+				}	
 				// checkiing for same parent address
-				showAgree = address.equalsIgnoreCase(addr);
+				showAgree = address.equalsIgnoreCase(sParAddress);
 				
 				if (quickAdmin && caseOwning && valCaseOwner == -1) {
 					valCaseOwner = ((Integer) parent.getPrimaryKey()).intValue();
