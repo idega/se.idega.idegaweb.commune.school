@@ -32,7 +32,7 @@
 			</class_description>
 	
 			<class_description class="java.lang.Boolean" default_display_name="Terminated" name="terminated">
-				<localized_name name="Avslutade skolplaceringar" locale="sv_SE"/>
+				<localized_name name="Avslutad skolplaceringar" locale="sv_SE"/>
 				<class_handler class="se.idega.idegaweb.commune.school.presentation.inputhandler.YesNoDropDownMenu" />
 			</class_description>
 	
