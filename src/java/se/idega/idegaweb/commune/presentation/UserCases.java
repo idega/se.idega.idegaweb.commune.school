@@ -28,6 +28,7 @@ import com.idega.core.builder.data.ICPage;
 import com.idega.presentation.CollectionNavigator;
 import com.idega.presentation.ExceptionWrapper;
 import com.idega.presentation.IWContext;
+import com.idega.presentation.PresentationObject;
 import com.idega.presentation.Table;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
@@ -55,8 +56,10 @@ public class UserCases extends CommuneBlock {
 	private int reminderPageId = -1;
 
 	private boolean _showName = false;
+	private boolean _showManager = true;
 	private boolean _showStatusAfterschoolCare = true;
 	private boolean useStyleNames = false;
+	//private boolean useBullets = false;
 	private int firstColumnPadding = 12;
 
 	private int _startCase = -1;
@@ -87,7 +90,7 @@ public class UserCases extends CommuneBlock {
 
 	public final static String PARAMETER_START_CASE = "case_start_nr";
 	public final static String PARAMETER_END_CASE = "case_end_nr";
-
+	
 	public String getBundleIdentifier() {
 		return IW_BUNDLE_IDENTIFIER;
 	}
@@ -216,7 +219,9 @@ public class UserCases extends CommuneBlock {
 			table.add(getSmallHeader(localize(NAME_KEY, NAME_DEFAULT)), getNameColumn(), row);
 		}
 		table.add(getSmallHeader(localize(DATE_KEY, DATE_DEFAULT)), getDateColumn(), row);
-		table.add(getSmallHeader(localize(MANAGER_KEY, MANAGER_DEFAULT)), getManagerColumn(), row);
+		if (_showManager) {
+			table.add(getSmallHeader(localize(MANAGER_KEY, MANAGER_DEFAULT)), getManagerColumn(), row);
+		}
 		table.add(getSmallHeader(localize(STATUS_KEY, STATUS_DEFAULT)), getStatusColumn(), row);
 		return row + 1;
 	}
@@ -293,7 +298,7 @@ public class UserCases extends CommuneBlock {
 		schBuiz = (SchoolChoiceBusiness) IBOLookup.getServiceInstance(iwc, SchoolChoiceBusiness.class);
 		
 		
-		final Text status;
+		PresentationObject status;
 		
 			if (caseCode.equals(caseCodeAS) && !getShowStatusAfterSchoolCare()) {
 				status = getSmallText("-");
@@ -301,13 +306,13 @@ public class UserCases extends CommuneBlock {
 			else if (caseCode.equals(caseCodeSc) && useCase.getCaseStatus().equals(caseStatusPlaced)) {
 				SchoolChoice choice = schBuiz.getSchoolChoice(((Integer) useCase.getPrimaryKey()).intValue());
 				if (choice != null && !choice.getHasReceivedPlacementMessage())
-					status = getSmallText(getCaseBusiness(iwc).getLocalizedCaseStatusDescription(caseStatusOpen, iwc.getCurrentLocale()));
+					status = getStatus(iwc, caseStatusOpen);
 				else
-					status = getSmallText(getCaseBusiness(iwc).getLocalizedCaseStatusDescription(useCase.getCaseStatus(), iwc.getCurrentLocale()));
+					status = getStatus(iwc, useCase.getCaseStatus());
 				
 			}
 			else {			
-					status = getSmallText(getCaseBusiness(iwc).getLocalizedCaseStatusDescription(useCase.getCaseStatus(), iwc.getCurrentLocale()));
+					status = getStatus(iwc, useCase.getCaseStatus());
 			}
 		
 		
@@ -371,13 +376,19 @@ public class UserCases extends CommuneBlock {
 		messageList.setNoWrap(column, row);
 		messageList.add(date, column, row);
 
-		column = getManagerColumn();
-		messageList.setNoWrap(column, row);
-		messageList.add(manager, column, row);
+		if (_showManager) {
+			column = getManagerColumn();
+			messageList.setNoWrap(column, row);
+			messageList.add(manager, column, row);
+		}
 
 		column = getStatusColumn();
 		messageList.setNoWrap(column, row);
 		messageList.add(status, column, row);
+	}
+	
+	protected PresentationObject getStatus(IWContext iwc, CaseStatus status) throws Exception {
+		return getSmallText(getCaseBusiness(iwc).getLocalizedCaseStatusDescription(status, iwc.getCurrentLocale()));
 	}
 	
 	int getNumberColumn(){
@@ -396,7 +407,7 @@ public class UserCases extends CommuneBlock {
 		return getDateColumn() + 1;
 	}	
 	int getStatusColumn(){
-		return getDateColumn() + 2;
+		return (_showManager ? getManagerColumn() + 1 : getDateColumn() + 1);
 	}	
 	int getLastColumn(){
 		return getStatusColumn();
@@ -413,36 +424,6 @@ public class UserCases extends CommuneBlock {
 		return navigator;
 	}
 	
-	/*private Table getNavigationTable(int caseSize) {
-		Table navigationTable = new Table(2, 1);
-		navigationTable.setCellpadding(0);
-		navigationTable.setCellspacing(0);
-		navigationTable.setWidth(Table.HUNDRED_PERCENT);
-		navigationTable.setAlignment(2, 1, Table.HORIZONTAL_ALIGN_RIGHT);
-
-		if (_startCase > 1) {
-			Link previous = getSmallLink(localize("usercases.previous", "<< previous"));
-			previous.addParameter(PARAMETER_START_CASE, (_startCase - _numberOfCases));
-			navigationTable.add(previous, 1, 1);
-		}
-		else {
-			Text previous = getSmallText(localize("usercases.previous", "<< previous"));
-			navigationTable.add(previous, 1, 1);
-		}
-
-		if (_startCase + _numberOfCases <= caseSize) {
-			Link next = getSmallLink(localize("usercases.next", "next >>"));
-			next.addParameter(PARAMETER_START_CASE, (_startCase + _numberOfCases));
-			navigationTable.add(next, 2, 1);
-		}
-		else {
-			Text next = getSmallText(localize("usercases.next", "next >>"));
-			navigationTable.add(next, 2, 1);
-		}
-
-		return navigationTable;
-	}*/
-
 	protected CaseBusiness getCaseBusiness(IWContext iwc) throws Exception {
 		return (CaseBusiness) IBOLookup.getServiceInstance(iwc, CaseBusiness.class);
 	}
@@ -454,13 +435,6 @@ public class UserCases extends CommuneBlock {
 	private UserBusiness getUserBusiness(IWContext iwc) throws Exception {
 		return (UserBusiness) IBOLookup.getServiceInstance(iwc, UserBusiness.class);
 	}
-
-	/* Commented out since it is never used...
-	private Case getCase(String id, IWContext iwc) throws Exception {
-		int msgId = Integer.parseInt(id);
-		Case msg = getCaseBusiness(iwc).getCase(msgId);
-		return msg;
-	}*/
 
 	public void setViewpointPage(final ICPage page) {
 		viewpointPageId = ((Integer)page.getPrimaryKey()).intValue();
@@ -495,6 +469,14 @@ public class UserCases extends CommuneBlock {
 	 */
 	public void setShowName(boolean showName) {
 		_showName = showName;
+	}
+
+	/**
+	 * Sets the showName.
+	 * @param showName The showName to set
+	 */
+	public void setShowManager(boolean showManager) {
+		_showManager = showManager;
 	}
 
 	/**
@@ -541,6 +523,14 @@ public class UserCases extends CommuneBlock {
 	public void setUseStyleNames(boolean useStyleNames) {
 		this.useStyleNames = useStyleNames;
 	}
+
+	/**
+	 * @param useBullets The useBullets to set.
+	 */
+	/*public void setUseBullets(boolean useBullets) {
+		this.useBullets = useBullets;
+	}*/
+
 	/**
 	 * @param firstColumnPadding The firstColumnPadding to set.
 	 */
