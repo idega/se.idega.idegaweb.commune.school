@@ -25,7 +25,7 @@ public class SchoolChoiceReminderReceiver implements Serializable {
         Address address = null;
         final Collection parents = familyLogic.getCustodiansFor(student);
         if (parents.isEmpty ()) {
-            parentName = "No parent to " + studentName + " found in Database";
+            parentName = "?";
             address = userBusiness.getUserAddress1 (userId.intValue ());
         } else {
             final User parent = (User) parents.iterator ().next ();

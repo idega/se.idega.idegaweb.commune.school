@@ -20,10 +20,10 @@ import se.idega.idegaweb.commune.school.data.SchoolChoiceReminder;
  * and entity ejb classes in {@link se.idega.idegaweb.commune.school.data}.
  * <p>
  * <p>
- * Last modified: $Date: 2003/01/20 12:51:05 $ by $Author: staffan $
+ * Last modified: $Date: 2003/01/20 13:46:06 $ by $Author: staffan $
  *
  * @author <a href="http://www.staffannoteberg.com">Staffan Nöteberg</a>
- * @version $Revision: 1.22 $
+ * @version $Revision: 1.23 $
  * @see javax.ejb
  */
 public class SchoolChoiceReminderView extends CommuneBlock {
@@ -57,9 +57,9 @@ public class SchoolChoiceReminderView extends CommuneBlock {
     private static final String REMINDER_DATE_KEY = PREFIX + "reminder_date";
     private static final String REMINDER_DAYS_BEFORE_DEFAULT = "Antal dagar innan utskick som påminnelse ska visas som ärende";
     private static final String REMINDER_DAYS_BEFORE_KEY = PREFIX + "reminder_days_before";
-    private static final String REMINDER_TEXT_1_DEFAULT = "Påminnelse - skolvalsperioden är snart slut!\n\n\nSkolvalsperioden är 13-31 januari. Vi har noterat att du ännu inte gjort ditt skolval.\n\nAll information om skolvalet finns på www.nacka24.nacka.se där du också ansöker om ditt personliga medborgarkonto.\n\nOm du har frågor angående skolvalet kontakta Kundvalsgruppen på telefon 718 80 00 eller e-post kundvalsgruppen@nacka.se\n\n\nMed vänlig hälsning\n\nKundvalsgruppen";
+    private static final String REMINDER_TEXT_1_DEFAULT = "Påminnelse - skolvalsperioden är snart slut!\n\nSkolvalsperioden är 13-31 januari. Vi har noterat att du ännu inte gjort ditt skolval.\n\nAll information om skolvalet finns på www.nacka24.nacka.se där du också ansöker om ditt personliga medborgarkonto.\n\nOm du har frågor angående skolvalet kontakta Kundvalsgruppen på telefon 08-718 80 00 eller e-post kundvalsgruppen@nacka.se\n\n\nMed vänlig hälsning\n\nKundvalsgruppen";
     private static final String REMINDER_TEXT_1_KEY = PREFIX + "remindertext_1";
-    private static final String REMINDER_TEXT_2_DEFAULT = "Påminnelse - sista möjligheten att välja skola!\n\n\nSkolvalsperioden är nu slut och skolorna påbörjar inom kort arbetet med att placera de barn som valt skola. Utnyttja möjligheten att själv göra ett aktivt val för ditt barn!\n\nDitt val måste vara gjort på www.nacka24.nacka.se senast fredagen den 7 februari kl. 24.00.\n\nOm du ej själv gör ett aktivt skolval för ditt barn får barnet en skolplacering på närmaste skola som har ledig plats.\n\nOm du har frågor angående skolvalet kontakta Kundvalsgruppen på telefon 718 80 00 eller e-post kundvalsgruppen@nacka.se\n\n\nMed vänlig hälsning\n\nKundvalsgruppen";
+    private static final String REMINDER_TEXT_2_DEFAULT = "Påminnelse - sista möjligheten att välja skola!\n\nSkolvalsperioden är nu slut och skolorna påbörjar inom kort arbetet med att placera de barn som har valt skola. Utnyttja möjligheten att själv göra ett aktivt val för ditt barn!\n\nDitt val måste vara gjort på www.nacka24.nacka.se senast fredagen den 7 februari kl. 24.00.\n\nOm du ej själv gör ett aktivt skolval för ditt barn får barnet en skolplacering på närmaste skola som har ledig plats.\n\nOm du har frågor angående skolvalet kontakta Kundvalsgruppen på telefon 08-718 80 00 eller e-post kundvalsgruppen@nacka.se\n\n\nMed vänlig hälsning\n\nKundvalsgruppen";
     private static final String REMINDER_TEXT_2_KEY = PREFIX + "remindertext_2";
     private static final String REMINDER_TEXT_DEFAULT = "Påminnelsetext";
     private static final String REMINDER_TEXT_KEY = PREFIX + "reminder_text";
@@ -174,11 +174,6 @@ public class SchoolChoiceReminderView extends CommuneBlock {
 
     private void showAllReminders (final IWContext iwc) throws RemoteException,
                                                                FinderException {
-		final Table table = new Table();
-		table.setCellpadding(0);
-		table.setCellspacing(0);
-		table.setWidth(getWidth());
-		add(table);
         final UserBusiness userBusiness = (UserBusiness)
                 IBOLookup.getServiceInstance(iwc, UserBusiness.class);
         final User user = iwc.getCurrentUser();
@@ -234,10 +229,18 @@ public class SchoolChoiceReminderView extends CommuneBlock {
             messageList.add (deleteLink, col++, row);
             row++;
         }
+		final Table table = new Table();
+		table.setCellpadding(0);
+		table.setCellspacing(0);
+		table.setWidth(getWidth());
+        row = 1;
         table.add (getHeader(localize (ACTIVE_REMINDERS_KEY,
-                                       ACTIVE_REMINDERS_DEFAULT)), 1, 1);
-        table.setHeight (2, 12);
-        table.add(form, 1, 3);
+                                       ACTIVE_REMINDERS_DEFAULT)), 1, row++);
+        table.setHeight (row++, 12);
+        table.add ("Om du klickar på id-numret nedan så räknar systemet ut vilka som ska få påminnelse. Observera att detta kan ta upp till 3 minuter.", 1, row++);
+        table.setHeight (row++, 12);
+        table.add(form, 1, row++);
+		add(table);
     }
 
     private void createReminder (final IWContext iwc) throws RemoteException,
@@ -388,10 +391,21 @@ public class SchoolChoiceReminderView extends CommuneBlock {
                     studentList.add (checkBox, col++, row);
                     studentList.add (receiver.getStudentName (), col++, row);
                     studentList.add (receiver.getSsn (), col++, row);
-                    studentList.add (receiver.getParentName (), col++, row);
-                    studentList.add (receiver.getStreetAddress () + ", "
-                                     + receiver.getPostalAddress (), col++,
-                                     row++);
+                    final Text parent = new Text(receiver.getParentName ());
+                    if (receiver.getParentName ().startsWith ("?")) {
+                        parent.setFontColor("#ff0000");
+                        parent.setBold ();
+                    }
+                    studentList.add (parent, col++, row);
+                    final Text address
+                            = new Text (receiver.getStreetAddress () + ", "
+                                        + receiver.getPostalAddress ());
+                    if (receiver.getStreetAddress ().startsWith ("?")
+                        || receiver.getPostalAddress ().startsWith ("?")) {
+                        address.setFontColor("#ff0000");
+                        address.setBold ();
+                    }
+                    studentList.add (address, col++, row++);
                 } catch (Exception e) {
                     e.printStackTrace ();
                 }
