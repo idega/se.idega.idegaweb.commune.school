@@ -16,6 +16,7 @@ import javax.ejb.FinderException;
 import se.idega.idegaweb.commune.presentation.CitizenChildren;
 import se.idega.idegaweb.commune.presentation.CommuneBlock;
 import se.idega.idegaweb.commune.school.business.SchoolChoiceBusiness;
+import se.idega.util.PIDChecker;
 
 import com.idega.block.school.business.SchoolAreaBusiness;
 import com.idega.block.school.business.SchoolBusiness;
@@ -455,6 +456,13 @@ public class SchoolChoiceApplication extends CommuneBlock {
     return drp;
   }
 
+	/**
+	 * Method getChoiceSchool.
+	 * @param iwc
+	 * @param child
+	 * @return PresentationObject
+	 * @throws RemoteException
+	 */
   private PresentationObject getChoiceSchool(IWContext iwc,User child)throws java.rmi.RemoteException{
     Table T = new Table(3,11);
     T.mergeCells(1,1,3,1);
@@ -462,7 +470,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
     Date d = child.getDateOfBirth();
     if(d==null) {
      	if ( child.getPersonalID() != null ) {
-     		d = PersonalIDFormatter.getDateFromPersonalID(child.getPersonalID());
+     		d = PIDChecker.getInstance().getDateFromPersonalID(child.getPersonalID());
      	}
      	if ( d == null )
      		d = new Date();
