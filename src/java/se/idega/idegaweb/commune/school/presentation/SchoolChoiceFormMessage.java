@@ -8,7 +8,6 @@ package se.idega.idegaweb.commune.school.presentation;
 
 import se.idega.idegaweb.commune.presentation.CommuneBlock;
 
-import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.Table;
@@ -16,8 +15,8 @@ import com.idega.presentation.Table;
 /**
  * @author 
  * @author <br><a href="mailto:gobom@wmdata.com">Göran Borgman</a><br>
- * Last modified: $Date: 2003/11/28 16:28:23 $ by $Author: goranb $
- * @version $Revision: 1.1 $
+ * Last modified: $Date: 2003/11/30 11:57:28 $ by $Author: laddi $
+ * @version $Revision: 1.2 $
  */
 public class SchoolChoiceFormMessage extends CommuneBlock {
 	// *** Localization keys ***
@@ -26,12 +25,12 @@ public class SchoolChoiceFormMessage extends CommuneBlock {
 	private static final String KEY_MESSAGE = KP + "message";
 
 	// Instance variables
-	private IWResourceBundle iwrb;
+	//private IWResourceBundle iwrb;
 	private Table mainTable;
 	private int mainTableRow;
 
 	public void main(IWContext iwc) throws Exception {
-		iwrb = getResourceBundle(iwc);
+		//iwrb = getResourceBundle(iwc);
 		mainTable = getMainTable();		
 		setMainTableContent(getMessageTable());
 		add(mainTable);
