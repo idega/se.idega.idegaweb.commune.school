@@ -72,11 +72,25 @@ public interface SchoolCommuneBusiness extends com.idega.business.IBOService,com
      * Retreive info about membership in a school class for this particular user
      * in current season.
      *
+     * @param user user to search for
      * @return SchoolClassMember or null if not found
      * @exception RemoteException when methods in data layer fails
      * @author <a href="http://www.staffannoteberg.com">Staffan Nöteberg</a>
      */
     SchoolClassMember getCurrentSchoolClassMembership (User user)
+        throws RemoteException;
+
+    /**
+     * Retreive info about membership in a school class for this particular user
+     * and school in current season.
+     *
+     * @param user user to search for
+     * @param schoolId only accept answers from this school
+     * @return SchoolClassMember or null if not found
+     * @exception RemoteException when methods in data layer fails
+     * @author <a href="http://www.staffannoteberg.com">Staffan Nöteberg</a>
+     */
+    SchoolClassMember getCurrentSchoolClassMembership (User user, int schoolId)
         throws RemoteException;
 
     /**

@@ -668,6 +668,28 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
             return null;
         }
     }
+
+    // The method getCurrentSchoolClassMembership is specified in the
+    // interface SchoolCommuneBusiness.  /Staffan
+    public SchoolClassMember getCurrentSchoolClassMembership
+        (final User user, final int schoolId)
+        throws RemoteException {
+        try {
+            final SchoolSeason season
+                    = getSchoolChoiceBusiness ().getCurrentSeason ();
+            final int userId
+                    = ((Integer) user.getPrimaryKey ()).intValue ();
+            final int seasonId
+                    = ((Integer) season.getPrimaryKey ()).intValue ();
+            final SchoolClassMember student
+                    = getSchoolBusiness ().findByStudentAndSchoolAndSeason
+                    (userId, schoolId, seasonId);
+            return (null == student || null != student.getRemovedDate ())
+                    ? null : student;
+        } catch (final FinderException e) {
+            return null;
+        }
+    }
     
     // The method getStudyPath is specified in the interface
     // SchoolCommuneBusiness.  /Staffan
