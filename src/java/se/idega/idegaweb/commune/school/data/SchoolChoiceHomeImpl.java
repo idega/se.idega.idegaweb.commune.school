@@ -172,6 +172,13 @@ public int getChoices(int p0,int p1,int p2)throws com.idega.data.IDOException{
 	return theReturn;
 }
 
+public int getCount(com.idega.block.school.data.SchoolSeason p0)throws javax.ejb.FinderException, com.idega.data.IDOException {
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	int theReturn = ((SchoolChoiceBMPBean)entity).ejbHomeGetCount(p0);
+	this.idoCheckInPooledEntity(entity);
+	return theReturn;
+}
+
 public int getCount(int p0,java.lang.String[] p1)throws com.idega.data.IDOException{
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	int theReturn = ((SchoolChoiceBMPBean)entity).ejbHomeGetCount(p0,p1);

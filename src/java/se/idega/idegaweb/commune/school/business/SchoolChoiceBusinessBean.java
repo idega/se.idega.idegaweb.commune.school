@@ -1110,6 +1110,15 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		}
 	}
 
+	public int getNumberOfApplicants () throws RemoteException {
+		try {
+			return getSchoolChoiceHome ().getCount (getCurrentSeason ());
+		}	catch (Exception e) {
+			e.printStackTrace ();
+			return 0;
+		}
+	}
+
 	public Collection getApplicantsForSchoolAndSeasonAndGrade(int schoolID, int seasonID, int grade) throws RemoteException {
 		try {
 			return getSchoolChoiceHome().findBySchoolAndSeasonAndGrade(schoolID, seasonID, grade);

@@ -42,6 +42,7 @@ public interface SchoolChoiceBusiness extends com.idega.business.IBOService,com.
  public java.lang.String getNewHeadMasterSubject() throws java.rmi.RemoteException;
  public java.lang.String getNonApplyingSeparateParentSubjectAppl() throws java.rmi.RemoteException;
  public java.lang.String getNonApplyingSeparateParentSubjectChange() throws java.rmi.RemoteException;
+ public int getNumberOfApplicants ()throws java.rmi.RemoteException;
  public int getNumberOfApplicants(java.lang.String[] p0)throws java.rmi.RemoteException, java.rmi.RemoteException;
  public int getNumberOfApplicantsForSchool(int p0,int p1,int p2,int[] p3,java.lang.String[] p4,java.lang.String p5)throws java.rmi.RemoteException, java.rmi.RemoteException;
  public int getNumberOfApplications(int p0,int p1)throws java.rmi.RemoteException, java.rmi.RemoteException;
