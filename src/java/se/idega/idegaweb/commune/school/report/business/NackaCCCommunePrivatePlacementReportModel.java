@@ -1,5 +1,5 @@
 /*
- * $Id: NackaCCCommunePrivatePlacementReportModel.java,v 1.2 2004/01/21 12:36:02 anders Exp $
+ * $Id: NackaCCCommunePrivatePlacementReportModel.java,v 1.3 2004/01/21 13:50:14 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -14,14 +14,14 @@ import java.rmi.RemoteException;
 /** 
  * Report model for child care placements in Nacka for commune and private providers.
  * <p>
- * Last modified: $Date: 2004/01/21 12:36:02 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/21 13:50:14 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class NackaCCCommunePrivatePlacementReportModel extends ReportModel {
 
-	private final static int ROW_SIZE = 8;
+	private final static int ROW_SIZE = 9;
 	private final static int COLUMN_SIZE = 2;
 	
 	private final static int ROW_METHOD_COMMUNE_PRE_SCHOOL_OPERATION = 1;
@@ -32,6 +32,7 @@ public class NackaCCCommunePrivatePlacementReportModel extends ReportModel {
 	private final static int ROW_METHOD_PRIVATE_SCHOOL_CHILDREN_CARE_7_9 = 6;
 	private final static int ROW_METHOD_COMMUNE_SUM = 7;
 	private final static int ROW_METHOD_PRIVATE_SUM = 8;
+	private final static int ROW_METHOD_TOTAL = 9;
 
 	private final static int COLUMN_METHOD_COUNT = 101;
 	private final static int COLUMN_METHOD_SHARE = 102;
@@ -73,8 +74,10 @@ public class NackaCCCommunePrivatePlacementReportModel extends ReportModel {
 		Header h = new Header(KEY_TOTAL, Header.HEADERTYPE_ROW_HEADER, 2);
 		Header child0 = new Header(KEY_COMMUNE_SUM, Header.HEADERTYPE_ROW_NORMAL);
 		Header child1 = new Header(KEY_PRIVATE_SUM, Header.HEADERTYPE_ROW_NORMAL);
+		Header child2 = new Header(KEY_CHILDREN_TOTAL, Header.HEADERTYPE_ROW_NORMAL);
 		h.setChild(0, child0);
 		h.setChild(1, child1);
+		h.setChild(2, child2);
 		headers[6] = h;
 		
 		return headers;
@@ -111,37 +114,45 @@ public class NackaCCCommunePrivatePlacementReportModel extends ReportModel {
 			}
 
 			Object rowParameter = null;
+			int cellType = Cell.CELLTYPE_NORMAL;
+			if (column == 1) {
+				cellType = Cell.CELLTYPE_PERCENT;
+			}
 
 			Cell cell = new Cell(this, row, column, ROW_METHOD_COMMUNE_PRE_SCHOOL_OPERATION,
-					columnMethod, rowParameter, columnParameter, Cell.CELLTYPE_NORMAL);
+					columnMethod, rowParameter, columnParameter, cellType);
 			setCell(row++, column, cell);
 			
 			cell = new Cell(this, row, column, ROW_METHOD_PRIVATE_COOPERATIVE_PRE_SCHOOL_OPERATION,
-					columnMethod, rowParameter, columnParameter, Cell.CELLTYPE_NORMAL);
+					columnMethod, rowParameter, columnParameter, cellType);
 			setCell(row++, column, cell);
 
 			cell = new Cell(this, row, column, ROW_METHOD_COMMUNE_SCHOOL_CHILDREN_CARE_6,
-					columnMethod, rowParameter, columnParameter, Cell.CELLTYPE_NORMAL);
+					columnMethod, rowParameter, columnParameter, cellType);
 			setCell(row++, column, cell);
 
 			cell = new Cell(this, row, column, ROW_METHOD_PRIVATE_COOPERATIVE_SCHOOL_CHILDREN_CARE_6,
-					columnMethod, rowParameter, columnParameter, Cell.CELLTYPE_NORMAL);
+					columnMethod, rowParameter, columnParameter, cellType);
 			setCell(row++, column, cell);
 
 			cell = new Cell(this, row, column, ROW_METHOD_COMMUNE_SCHOOL_CHILDREN_CARE_7_9,
-					columnMethod, rowParameter, columnParameter, Cell.CELLTYPE_NORMAL);
+					columnMethod, rowParameter, columnParameter, cellType);
 			setCell(row++, column, cell);
 
 			cell = new Cell(this, row, column, ROW_METHOD_PRIVATE_SCHOOL_CHILDREN_CARE_7_9,
-					columnMethod, rowParameter, columnParameter, Cell.CELLTYPE_NORMAL);
+					columnMethod, rowParameter, columnParameter, cellType);
 			setCell(row++, column, cell);
 
 			cell = new Cell(this, row, column, ROW_METHOD_COMMUNE_SUM,
-					columnMethod, rowParameter, columnParameter, Cell.CELLTYPE_NORMAL);
+					columnMethod, rowParameter, columnParameter, cellType);
 			setCell(row++, column, cell);
 
 			cell = new Cell(this, row, column, ROW_METHOD_PRIVATE_SUM,
-					columnMethod, rowParameter, columnParameter, Cell.CELLTYPE_NORMAL);
+					columnMethod, rowParameter, columnParameter, cellType);
+			setCell(row++, column, cell);
+
+			cell = new Cell(this, row, column, ROW_METHOD_TOTAL,
+					columnMethod, rowParameter, columnParameter, cellType);
 			setCell(row++, column, cell);
 		}
 	}
@@ -185,6 +196,9 @@ public class NackaCCCommunePrivatePlacementReportModel extends ReportModel {
 								getCell(3, column).getFloatValue() +
 								getCell(5, column).getFloatValue();
 						break;
+					case ROW_METHOD_TOTAL:
+						value = getCell(6, column).getFloatValue() + getCell(7, column).getFloatValue();
+						break;
 				}
 				break;
 			case COLUMN_METHOD_SHARE:
@@ -192,50 +206,53 @@ public class NackaCCCommunePrivatePlacementReportModel extends ReportModel {
 					case ROW_METHOD_COMMUNE_PRE_SCHOOL_OPERATION:
 						float total = getCell(0, 0).getFloatValue() + getCell(1, 0).getFloatValue();
 						if (total > 0) {
-							value = getCell(row, 0).getFloatValue() / total;
+							value = 100 * getCell(row, 0).getFloatValue() / total;
 						}
 						break;
 					case ROW_METHOD_PRIVATE_COOPERATIVE_PRE_SCHOOL_OPERATION:
 						total = getCell(0, 0).getFloatValue() + getCell(1, 0).getFloatValue();
 						if (total > 0) {
-							value = getCell(row, 0).getFloatValue() / total;
+							value = 100 * getCell(row, 0).getFloatValue() / total;
 						}
 						break;
 					case ROW_METHOD_COMMUNE_SCHOOL_CHILDREN_CARE_6:
 						total = getCell(2, 0).getFloatValue() + getCell(3, 0).getFloatValue();
 						if (total > 0) {
-							value = getCell(row, 0).getFloatValue() / total;
+							value = 100 * getCell(row, 0).getFloatValue() / total;
 						}
 						break;
 					case ROW_METHOD_PRIVATE_COOPERATIVE_SCHOOL_CHILDREN_CARE_6:
 						total = getCell(2, 0).getFloatValue() + getCell(3, 0).getFloatValue();
 						if (total > 0) {
-							value = getCell(row, 0).getFloatValue() / total;
+							value = 100 * getCell(row, 0).getFloatValue() / total;
 						}
 						break;
 					case ROW_METHOD_COMMUNE_SCHOOL_CHILDREN_CARE_7_9:
 						total = getCell(4, 0).getFloatValue() + getCell(5, 0).getFloatValue();
 						if (total > 0) {
-							value = getCell(row, 0).getFloatValue() / total;
+							value = 100 * getCell(row, 0).getFloatValue() / total;
 						}
 						break;
 					case ROW_METHOD_PRIVATE_SCHOOL_CHILDREN_CARE_7_9:
 						total = getCell(4, 0).getFloatValue() + getCell(5, 0).getFloatValue();
 						if (total > 0) {
-							value = getCell(row, 0).getFloatValue() / total;
+							value = 100 * getCell(row, 0).getFloatValue() / total;
 						}
 						break;
 					case ROW_METHOD_COMMUNE_SUM:
 						total = getCell(6, 0).getFloatValue() + getCell(7, 0).getFloatValue();
 						if (total > 0) {
-							value = getCell(row, 0).getFloatValue() / total;
+							value = 100 * getCell(row, 0).getFloatValue() / total;
 						}
 						break;
 					case ROW_METHOD_PRIVATE_SUM:
 						total = getCell(6, 0).getFloatValue() + getCell(7, 0).getFloatValue();
 						if (total > 0) {
-							value = getCell(row, 0).getFloatValue() / total;
+							value = 100 * getCell(row, 0).getFloatValue() / total;
 						}
+						break;
+					case ROW_METHOD_TOTAL:
+						total = 100.0f;
 						break;
 				}
 				break;
