@@ -1,5 +1,5 @@
 /*
- * $Id: NackaCommuneHighSchoolPlacementReportModel.java,v 1.11 2004/02/02 08:51:02 anders Exp $
+ * $Id: NackaCommuneHighSchoolPlacementReportModel.java,v 1.12 2004/02/12 10:05:20 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -20,10 +20,10 @@ import com.idega.block.school.data.SchoolStudyPath;
 /** 
  * Report model for Nacka high school student placements.
  * <p>
- * Last modified: $Date: 2004/02/02 08:51:02 $ by $Author: anders $
+ * Last modified: $Date: 2004/02/12 10:05:20 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.11 $
+ * @version $Revision: 1.12 $
  */
 public class NackaCommuneHighSchoolPlacementReportModel extends ReportModel {
 
@@ -345,6 +345,20 @@ public class NackaCommuneHighSchoolPlacementReportModel extends ReportModel {
 		return KEY_REPORT_TITLE;
 	}
 	
+	/*
+	 * Returns the value from executing the specified study path query.
+	 * Special case for study path IB handled.
+	 */
+	private int executeStudyPathQuery(int parameterIndex, String studyPathPrefix, PreparedQuery query) {
+		query.setString(2, studyPathPrefix + "%");
+		int value = query.execute();
+		if (studyPathPrefix.equals("IB")) {
+			query.setString(parameterIndex, "PRE%");
+			value += query.execute();
+		}
+		return value;		
+	}
+	
 	/**
 	 * Returns the number of student placements for high schools
 	 * in Nacka commune for the specified school year.
@@ -366,8 +380,7 @@ public class NackaCommuneHighSchoolPlacementReportModel extends ReportModel {
 		}
 		query.setInt(1, ((Integer) school.getPrimaryKey()).intValue());
 		query.setString(2, schoolYearName);
-		query.setString(3, studyPathPrefix + "%");
-		return query.execute();
+		return executeStudyPathQuery(3, studyPathPrefix, query);
 	}
 	
 	/**
@@ -390,8 +403,7 @@ public class NackaCommuneHighSchoolPlacementReportModel extends ReportModel {
 			setQuery(QUERY_NACKA_GYMNASIUM, query);
 		}
 		query.setString(1, schoolYearName);
-		query.setString(2, studyPathPrefix + "%");
-		return query.execute();
+		return executeStudyPathQuery(2, studyPathPrefix, query);
 	}
 	
 	/**
@@ -414,8 +426,7 @@ public class NackaCommuneHighSchoolPlacementReportModel extends ReportModel {
 			query.prepare();
 			setQuery(QUERY_OTHER_COMMUNES, query);
 		}
-		query.setString(1, studyPathPrefix + "%");
-		return query.execute();
+		return executeStudyPathQuery(1, studyPathPrefix, query);
 	}	
 	
 	/**
@@ -438,8 +449,7 @@ public class NackaCommuneHighSchoolPlacementReportModel extends ReportModel {
 			query.prepare();
 			setQuery(QUERY_NACKA_COMMUNE, query);
 		}
-		query.setString(1, studyPathPrefix + "%");
-		return query.execute();
+		return executeStudyPathQuery(1, studyPathPrefix, query);
 	}	
 	
 	/**
@@ -460,8 +470,7 @@ public class NackaCommuneHighSchoolPlacementReportModel extends ReportModel {
 			query.prepare();
 			setQuery(QUERY_STUDY_PATH, query);
 		}
-		query.setString(1, studyPathCode + "%");
-		return query.execute();
+		return executeStudyPathQuery(1, studyPathCode, query);
 	}
 	
 	/*
