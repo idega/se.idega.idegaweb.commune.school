@@ -1,5 +1,5 @@
 /*
- * $Id: ReportPDFWriter.java,v 1.1 2004/02/26 14:21:16 anders Exp $
+ * $Id: ReportPDFWriter.java,v 1.2 2004/02/27 07:46:30 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -37,10 +37,10 @@ import com.lowagie.text.pdf.PdfWriter;
 /** 
  * Creates report files in Adobe PDF format.
  * <p>
- * Last modified: $Date: 2004/02/26 14:21:16 $ by $Author: anders $
+ * Last modified: $Date: 2004/02/27 07:46:30 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class ReportPDFWriter {
 
@@ -124,7 +124,7 @@ public class ReportPDFWriter {
 		MemoryFileBuffer buffer = new MemoryFileBuffer();
 		MemoryOutputStream mos = new MemoryOutputStream(buffer);
 		
-		Document document = new Document(PageSize.A4, 50, 50, 50, 50);
+		Document document = new Document(PageSize.A4, 50, 40, 50, 50);
 		PdfWriter writer = PdfWriter.getInstance(document, mos);
 		
 		String titleKey = _reportModel.getReportTitleLocalizationKey();
