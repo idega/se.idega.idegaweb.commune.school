@@ -15,7 +15,7 @@
 			</class_description>
 		
 			<class_description class="java.lang.Boolean" default_display_name="Language choice" name="language_choice">
-				<localized_name name="Har sprakval" locale="sv_SE"/>
+				<localized_name name="Har spr&#229;kval" locale="sv_SE"/>
 				<class_handler class="se.idega.idegaweb.commune.school.presentation.inputhandler.YesNoDropDownMenu" />
 			</class_description>
 		

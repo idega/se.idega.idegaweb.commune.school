@@ -22,17 +22,17 @@
 			</class_description>
 	
 			<class_description class="java.lang.Boolean" default_display_name="Native language" name="native_language">
-				<localized_name name="Kun modersmal" locale="sv_SE"/>
+				<localized_name name="Har modersm&#229;lsundervisning" locale="sv_SE"/>
 				<class_handler class="se.idega.idegaweb.commune.school.presentation.inputhandler.YesNoDropDownMenu" />
 			</class_description>
 	
 			<class_description class="java.lang.Boolean" default_display_name="Second language" name="second_language">
-				<localized_name name="Svenska som andra sprak" locale="sv_SE"/>
+				<localized_name name="L&#228;ser svenska som andraspr&#229;k" locale="sv_SE"/>
 				<class_handler class="se.idega.idegaweb.commune.school.presentation.inputhandler.YesNoDropDownMenu" />
 			</class_description>
 	
 			<class_description class="java.lang.Boolean" default_display_name="Terminated" name="terminated">
-				<localized_name name="Burttagna" locale="sv_SE"/>
+				<localized_name name="Avslutade skolplaceringar" locale="sv_SE"/>
 				<class_handler class="se.idega.idegaweb.commune.school.presentation.inputhandler.YesNoDropDownMenu" />
 			</class_description>
 	
