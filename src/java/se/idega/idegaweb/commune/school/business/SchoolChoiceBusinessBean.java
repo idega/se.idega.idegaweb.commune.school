@@ -712,6 +712,15 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	}
 
 
+	public IDOQuery getApplicantsForSchoolQuery(int schoolID,int seasonID,int grade, String[] validStatuses, String searchString) throws RemoteException {
+		return getApplicantsForSchoolQuery(schoolID, seasonID, grade, null, validStatuses, searchString);
+	}
+	
+	public IDOQuery getApplicantsForSchoolQuery(int schoolID,int seasonID,int grade, int[] choiceOrder, String[] validStatuses, String searchString) throws RemoteException {
+		return getSchoolChoiceHome().getIDOQuery(schoolID, seasonID, grade, choiceOrder, validStatuses, searchString, false, true);	
+	}
+
+
 	public Collection getApplicantsForSchoolAndSeasonAndGrade(int schoolID,int seasonID,int grade) throws RemoteException {
 		try {
 			return getSchoolChoiceHome().findBySchoolAndSeasonAndGrade(schoolID, seasonID, grade);	

@@ -89,6 +89,10 @@ public class SchoolChoiceComparator implements Comparator {
 		User p2 = (User) studentMap.get(new Integer((((SchoolChoice)o2).getChildId())));
 		
 		if ( p1 == null || p2 == null) {
+			if (p1 == null)
+				System.out.println("User is null: " + ((SchoolChoice)o1).getChildId());
+			if (p2 == null)
+				System.out.println("User is null: " + ((SchoolChoice)o2).getChildId());
 			return 0;	
 		}
 		String one = p1.getLastName()!=null?p1.getLastName():"";

@@ -151,5 +151,9 @@ public int getNumberOfChoices(int p0,int p1)throws com.idega.data.IDOException{
 	return theReturn;
 }
 
+public com.idega.data.IDOQuery getIDOQuery( int schoolID, int seasonID, int gradeYear, int[] choiceOrder, String[] validStatuses, String searchStringForUser, boolean selectCount, boolean selectOnlyChildIDs) {
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	return ((SchoolChoiceBMPBean)entity).getIDOQuery(schoolID, seasonID, gradeYear, choiceOrder, validStatuses, searchStringForUser, selectCount, selectOnlyChildIDs);
+}
 
 }

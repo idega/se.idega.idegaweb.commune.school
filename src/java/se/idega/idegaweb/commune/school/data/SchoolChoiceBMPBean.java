@@ -464,16 +464,16 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
   	
   }
 	public int ejbHomeGetCount(int schoolID, int seasonID, int gradeYear, int[] choiceOrder ,String[] validStatuses, String searchStringForUser) throws FinderException, RemoteException, IDOException {
-		IDOQuery query = getIDOQuery(schoolID, seasonID, gradeYear, choiceOrder, validStatuses, searchStringForUser, true);
+		IDOQuery query = getIDOQuery(schoolID, seasonID, gradeYear, choiceOrder, validStatuses, searchStringForUser, true, false);
   	return this.idoGetNumberOfRecords(query);
 	}
 
   public Collection ejbFindChoices(int schoolID, int seasonID, int gradeYear, int[] choiceOrder ,String[] validStatuses, String searchStringForUser) throws FinderException, RemoteException {
-		IDOQuery query = getIDOQuery(schoolID, seasonID, gradeYear, choiceOrder, validStatuses, searchStringForUser, false);
+		IDOQuery query = getIDOQuery(schoolID, seasonID, gradeYear, choiceOrder, validStatuses, searchStringForUser, false, false);
   	return this.idoFindPKsByQuery(query);
   }
   
-	private IDOQuery getIDOQuery( int schoolID, int seasonID, int gradeYear, int[] choiceOrder, String[] validStatuses, String searchStringForUser, boolean selectCount) {
+	public IDOQuery getIDOQuery( int schoolID, int seasonID, int gradeYear, int[] choiceOrder, String[] validStatuses, String searchStringForUser, boolean selectCount, boolean selectOnlyChildIDs) {
 		boolean search = searchStringForUser != null && !searchStringForUser.equals("");
 		boolean statuses = validStatuses != null && validStatuses.length > 0;
 		
@@ -490,10 +490,15 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 		
 		boolean needAnd = false;
 		
-		if ( selectCount ) {
-			query.appendSelectCountFrom().append(getEntityName()).append(" csc");
-		}else {
-			query.appendSelect().append("csc.*").appendFrom().append(getEntityName()).append(" csc");
+		if (selectOnlyChildIDs) {
+			query.appendSelect().append("csc.child_id").appendFrom().append(getEntityName()).append(" csc");
+		}
+		else {
+			if ( selectCount ) {
+				query.appendSelectCountFrom().append(getEntityName()).append(" csc");
+			}else {
+				query.appendSelect().append("*").appendFrom().append(getEntityName()).append(" csc");
+			}
 		}
 		
 		if (search) {
@@ -607,10 +612,9 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
   	sql.appendAnd().append("pc.CASE_STATUS").appendIn().appendLeftParenthesis().appendWithinSingleQuotes("PREL");
   	sql.append(",").appendWithinSingleQuotes("PLAC").append(",").appendWithinSingleQuotes("FLYT").appendRightParenthesis();
   	
-		System.out.println(sql.toString());
 		return super.idoFindPKsBySQL(sql.toString());
   }
-
+  
 	public int ejbHomeGetNumberOfChoices(int userID, int seasonID) throws IDOException {
 		IDOQuery sql = idoQuery();
 		sql.appendSelectCountFrom(this).appendWhereEquals(CHILD, userID).appendAndEquals(SCHOOL_SEASON, seasonID);

@@ -69,4 +69,6 @@ public interface SchoolChoiceBusiness extends com.idega.business.IBOService,com.
     int generateReminderLetter (int reminderId,
                                 SchoolChoiceReminderReceiver [] receivers)
         throws RemoteException;
+	public com.idega.data.IDOQuery getApplicantsForSchoolQuery(int schoolID,int seasonID,int grade, String[] validStatuses, String searchString) throws RemoteException;
+	public com.idega.data.IDOQuery getApplicantsForSchoolQuery(int schoolID,int seasonID,int grade, int[] choiceOrder, String[] validStatuses, String searchString) throws RemoteException;
 }

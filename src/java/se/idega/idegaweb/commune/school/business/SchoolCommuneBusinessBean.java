@@ -13,6 +13,7 @@ import com.idega.business.IBOLookup;
 import com.idega.core.data.Address;
 import com.idega.core.data.Email;
 import com.idega.core.data.Phone;
+import com.idega.data.IDOQuery;
 import com.idega.idegaweb.IWPropertyList;
 import com.idega.user.business.UserBusiness;
 import com.idega.user.data.Group;
@@ -89,18 +90,32 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 		return coll;		
 	}
 	
+	public Map getUserMapFromChoices(IDOQuery query) throws RemoteException {
+		HashMap coll = new HashMap();
+			
+		User user;
+		Collection students = getCommuneUserBusiness().getUsers(query);
+		if (students != null) {
+			Iterator iterator = students.iterator();
+			while (iterator.hasNext()) {
+				user = (User) iterator.next();
+				coll.put((Integer)user.getPrimaryKey(), user);
+			}
+		}
+		
+		return coll;		
+	}
+	
 	public Map getUserMapFromChoices(Collection choices) throws RemoteException {
 		HashMap coll = new HashMap();
 			
-		if ( !choices.isEmpty() ) {
-			User user;
-			Collection students = getCommuneUserBusiness().getUsers(getUserIDsFromChoices(choices));
-			if (students != null) {
-				Iterator iterator = students.iterator();
-				while (iterator.hasNext()) {
-					user = (User) iterator.next();
-					coll.put((Integer)user.getPrimaryKey(), user);
-				}
+		User user;
+		Collection students = getCommuneUserBusiness().getUsers(getUserIDsFromChoices(choices));
+		if (students != null) {
+			Iterator iterator = students.iterator();
+			while (iterator.hasNext()) {
+				user = (User) iterator.next();
+				coll.put((Integer)user.getPrimaryKey(), user);
 			}
 		}
 		

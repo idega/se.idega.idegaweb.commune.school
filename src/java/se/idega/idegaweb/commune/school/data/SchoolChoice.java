@@ -64,4 +64,5 @@ public interface SchoolChoice extends com.idega.data.IDOEntity,com.idega.block.p
  public boolean getAutoAssign();
  public void setAutoAssign(boolean p0);
  public void setSchoolSeasonId(int p0);
+ public com.idega.data.IDOQuery getIDOQuery( int schoolID, int seasonID, int gradeYear, int[] choiceOrder, String[] validStatuses, String searchStringForUser, boolean selectCount, boolean selectOnlyChildIDs);
 }

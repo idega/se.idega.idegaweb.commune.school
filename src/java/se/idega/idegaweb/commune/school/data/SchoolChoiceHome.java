@@ -24,5 +24,5 @@ public interface SchoolChoiceHome extends com.idega.data.IDOHome
  public int getCount(int p0,int p1,int p2,int[] p3,java.lang.String[] p4,java.lang.String p5)throws javax.ejb.FinderException,java.rmi.RemoteException,com.idega.data.IDOException;
  public int getNumberOfApplications(java.lang.String p0,int p1,int p2,int p3)throws javax.ejb.FinderException,com.idega.data.IDOException;
  public int getNumberOfChoices(int p0,int p1)throws com.idega.data.IDOException;
-
+ public com.idega.data.IDOQuery getIDOQuery( int schoolID, int seasonID, int gradeYear, int[] choiceOrder, String[] validStatuses, String searchStringForUser, boolean selectCount, boolean selectOnlyChildIDs);
 }

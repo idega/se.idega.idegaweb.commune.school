@@ -21,7 +21,7 @@ public interface SchoolCommuneBusiness extends com.idega.business.IBOService,com
  public java.util.Map getStudentChoices(java.util.Collection p0,int p1)throws java.rmi.RemoteException, java.rmi.RemoteException;
  public java.util.Map getStudentList(java.util.Collection p0)throws java.rmi.RemoteException, java.rmi.RemoteException;
  public java.util.Map getUserAddressesMapFromChoices(java.util.Collection p0)throws java.rmi.RemoteException, java.rmi.RemoteException;
- public java.util.Map getUserMapFromChoices(java.util.Collection p0)throws java.rmi.RemoteException, java.rmi.RemoteException;
+ public java.util.Map getUserMapFromChoices(com.idega.data.IDOQuery p0)throws java.rmi.RemoteException, java.rmi.RemoteException;
  public java.util.Map getUserPhoneMapFromChoicesUserIdPK(java.util.Collection p0)throws java.rmi.RemoteException, java.rmi.RemoteException;
  public java.util.Map getUserAddressMapFromChoicesUserIdPK(java.util.Collection p0)throws java.rmi.RemoteException, java.rmi.RemoteException;
  public boolean hasChosenOtherSchool(java.util.Collection p0,int p1)throws java.rmi.RemoteException, java.rmi.RemoteException;
@@ -37,4 +37,5 @@ public interface SchoolCommuneBusiness extends com.idega.business.IBOService,com
  public String getLocalizedSchoolTypeKey(com.idega.block.school.data.SchoolType type);
  public void resetSchoolClassStatus(int schoolClassID) throws java.rmi.RemoteException;
  public com.idega.block.school.data.SchoolYear getNextSchoolYear(com.idega.block.school.data.SchoolYear schoolYear) throws java.rmi.RemoteException;
+ public java.util.Map getUserMapFromChoices(java.util.Collection choices) throws java.rmi.RemoteException;
 }
