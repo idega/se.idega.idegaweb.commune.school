@@ -1,5 +1,5 @@
 /*
- * $Id: PreparedQuery.java,v 1.17 2004/01/27 13:51:35 anders Exp $
+ * $Id: PreparedQuery.java,v 1.18 2004/01/27 16:04:20 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -27,10 +27,10 @@ import com.idega.block.school.data.SchoolSeason;
 /** 
  * Handles the SQL logic for school report calculations.
  * <p>
- * Last modified: $Date: 2004/01/27 13:51:35 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/27 16:04:20 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.17 $
+ * @version $Revision: 1.18 $
  */
 public class PreparedQuery {
 
@@ -92,6 +92,15 @@ public class PreparedQuery {
 	 */
 	public void setSelectMeanChildCareWeekHours() {
 		_sqlSelect = "select avg(c.care_time)";
+		
+		_sqlFrom.put(C, TABLE_C);
+	}
+
+	/**
+	 * Sets the query to calulate sum for child care taker week hours.
+	 */
+	public void setSelectSumChildCareWeekHours() {
+		_sqlSelect = "select sum(c.care_time)";
 		
 		_sqlFrom.put(C, TABLE_C);
 	}
