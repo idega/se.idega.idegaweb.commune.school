@@ -192,6 +192,9 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 	public int getSchoolTypeId() {
 		return getIntColumnValue(SCHOOL_TYPE);
 	}
+	public SchoolType getSchoolType() {
+		return (SchoolType) getColumnValue(SCHOOL_TYPE);
+	}
 	public void setSchoolTypeId(int id) {
 		setColumn(SCHOOL_TYPE, id);
 	}

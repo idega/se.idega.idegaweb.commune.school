@@ -40,6 +40,7 @@ public interface SchoolChoice extends com.idega.data.IDOEntity,com.idega.block.p
  public java.sql.Timestamp getSchoolChoiceDate();
  public com.idega.block.school.data.SchoolSeason getSchoolSeason();
  public int getSchoolSeasonId();
+ public com.idega.block.school.data.SchoolType getSchoolType();
  public int getSchoolTypeId();
  public int getWorkSituation1();
  public int getWorkSituation2();
