@@ -30,7 +30,7 @@ import se.idega.idegaweb.commune.business.CommuneUserBusiness;
 import se.idega.idegaweb.commune.childcare.business.AfterSchoolBusiness;
 import se.idega.idegaweb.commune.childcare.data.AfterSchoolChoice;
 import se.idega.idegaweb.commune.message.business.MessageBusiness;
-import se.idega.idegaweb.commune.presentation.CommuneBlock;
+import se.idega.idegaweb.commune.printing.business.DocumentBusiness;
 import se.idega.idegaweb.commune.school.data.CurrentSchoolSeason;
 import se.idega.idegaweb.commune.school.data.CurrentSchoolSeasonHome;
 import se.idega.idegaweb.commune.school.data.SchoolChoice;
@@ -59,7 +59,6 @@ import com.idega.data.IDOCreateException;
 import com.idega.data.IDOException;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOStoreException;
-import com.idega.idegaweb.IWBundle;
 import com.idega.io.MemoryFileBuffer;
 import com.idega.io.MemoryInputStream;
 import com.idega.io.MemoryOutputStream;
@@ -75,10 +74,8 @@ import com.lowagie.text.Document;
 import com.lowagie.text.Element;
 import com.lowagie.text.Font;
 import com.lowagie.text.FontFactory;
-import com.lowagie.text.Image;
 import com.lowagie.text.PageSize;
 import com.lowagie.text.Phrase;
-import com.lowagie.text.pdf.PdfContentByte;
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
@@ -100,6 +97,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 
 	private Font defaultParagraphFont;
 	private Font defaultTextFont;
+	
 
 	
 		/**
@@ -1150,6 +1148,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	 */
 	public int generateReminderLetter(final int reminderId, final SchoolChoiceReminderReceiver[] receivers) throws RemoteException {
 		try {
+			DocumentBusiness docBusiness = getDocumentBusiness();
 			Font nameFont = getDefaultParagraphFont();
 			nameFont.setSize(9);
 			Font textFont = getDefaultTextFont();
@@ -1178,6 +1177,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 			final PdfPTable reminderText = new PdfPTable(1);
 			reminderText.setWidthPercentage(100f);
 			reminderText.addCell(reminderCell);
+			/*
 			final PdfPCell spaceCell = new PdfPCell(new Phrase(" "));
 			spaceCell.setBorder(0);
 			spaceCell.setNoWrap(true);
@@ -1196,6 +1196,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 			*////////////Slut
 			
 			///////////NYBÖRJAN
+			/*
 			IWBundle iwb = getIWApplicationContext().getApplication().getBundle(CommuneBlock.IW_BUNDLE_IDENTIFIER);
 		
 			footer.addCell(new Phrase(iwb.getProperty("commune.name_mailaddr","Mail address"),nameFont));
@@ -1217,7 +1218,8 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 			footer.addCell(new Phrase(iwb.getProperty("commune.visit_zip","Visist zip"),textFont));	
 			footer.addCell(new Phrase(" ",textFont));
 			footer.addCell(new Phrase(" ",textFont));
-			
+			*/
+			/*
 			//Image image =Image.getInstance(iwb.getResourcesRealPath()+ "/shared/commune_logo.png");
 			final String logoPath = iwb.getResourcesRealPath()+ "/shared/commune_logo.png";		
 			///////////NYSLUT
@@ -1244,11 +1246,12 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 			defaultCell.setVerticalAlignment(Element.ALIGN_MIDDLE);
 			header.addCell(logoCell);
 			header.addCell(new Phrase(getDateChunk()));
+			*/
 			for (int i = 0; i < receivers.length; i++) {
 				if (i != 0) {
 					document.newPage();
 				}
-				document.add(header);
+				/*document.add(header);
 				document.add(getAddressTable(receivers[i]));
 				document.add(reminderText);
 				document.add(spaceTable);
@@ -1258,6 +1261,14 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 				cb.lineTo(mmToPoints(180), mmToPoints(28));
 				cb.stroke();
 				document.add(footer);
+				*/
+				//commented out above and added following
+				docBusiness.createLogoContent(document);
+				docBusiness.createAddressContent(getReceiverAddressString(receivers[i]),writer);
+				docBusiness.createNewlinesContent(document);
+				document.add(reminderText);
+				docBusiness.createCommuneFooter(writer);
+				
 			}
 			document.close();
 			final ICFileHome icFileHome = (ICFileHome) getIDOHome(ICFile.class);
@@ -1536,7 +1547,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 			throw new FinderException(re.getMessage());
 		}
 	}
-
+/* TODO remove when others things have been tested (aron)
 	private PdfPTable getAddressTable(final SchoolChoiceReminderReceiver receiver) {
 		final PdfPTable address = new PdfPTable(new float[]{1, 1});
 		address.setWidthPercentage(100f);
@@ -1550,7 +1561,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		address.addCell(new Phrase(getReceiverChunk(receiver)));
 		return address;
 	}
-
+*/
 	private Chunk getSubjectChunk(final String rawString) {
 		final int newlineIndex = rawString.indexOf('\n');
 		final Font font = FontFactory.getFont(FontFactory.HELVETICA_BOLD, REMINDER_FONTSIZE);
@@ -1562,21 +1573,28 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		final String bodyString = rawString.substring(newlineIndex != -1 ? newlineIndex : 0);
 		return new Chunk(bodyString, SERIF_FONT);
 	}
-
+/* TODO remove later
 	private Chunk getReceiverChunk(SchoolChoiceReminderReceiver receiver) {
+		StringBuffer address = new StringBuffer(getReceiverAddressString(receiver));
+		address.append("\n\n\n\n\n\n\n\n");
+		return new Chunk(address.toString(), SERIF_FONT);
+	}
+*/
+	private String getReceiverAddressString(SchoolChoiceReminderReceiver receiver) {
 		//String ssn = PersonalIDFormatter.format(receiver.getSsn(), getIWApplicationContext().getApplicationSettings().getDefaultLocale());
 		StringBuffer address = new StringBuffer();
 		address.append(getLocalizedString("school.spokesperson_for", "Spokesperson for")).append(": ").append("\n");
 		address.append(receiver.getStudentName()).append("\n"); 
 		address.append(receiver.getStreetAddress()).append("\n");
 		address.append(receiver.getPostalAddress()).append("\n");
-		address.append("\n\n\n\n\n\n\n\n");
-		return new Chunk(address.toString(), SERIF_FONT);
+		return address.toString();
 	}
 
+	// TODO remove later
+	/*
 	private Chunk getDateChunk() {
 		return new Chunk(new IWTimestamp().getLocaleDate(getIWApplicationContext().getApplicationSettings().getDefaultLocale(), IWTimestamp.SHORT), SERIF_FONT);
-	}
+	}*/
 
 	private float mmToPoints(final float mm) {
 		return mm * 72 / 25.4f;
@@ -1661,5 +1679,9 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 			e.printStackTrace();
 		}
 		return list;
+	}
+	
+	private DocumentBusiness getDocumentBusiness() throws RemoteException{
+		return (DocumentBusiness)getServiceInstance(DocumentBusiness.class);
 	}
 }
