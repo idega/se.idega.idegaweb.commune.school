@@ -1,5 +1,5 @@
 /*
- * $Id: NackaHighSchoolPlacementReportModel.java,v 1.2 2003/12/19 14:57:03 anders Exp $
+ * $Id: NackaHighSchoolPlacementReportModel.java,v 1.3 2003/12/19 15:36:54 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -18,10 +18,10 @@ import com.idega.block.school.data.SchoolStudyPath;
 /** 
  * Report model for high school placements per student age for students in Nacka and schools in Nacka.
  * <p>
- * Last modified: $Date: 2003/12/19 14:57:03 $ by $Author: anders $
+ * Last modified: $Date: 2003/12/19 15:36:54 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class NackaHighSchoolPlacementReportModel extends ReportModel {
 
@@ -488,12 +488,12 @@ public class NackaHighSchoolPlacementReportModel extends ReportModel {
 		ReportQuery query = new ReportQuery();
 		query.setSelectCountStudyPathPlacements(rb.getSchoolSeasonId(), studyPathPrefix);
 		query.setOnlyNackaCitizens();
+		query.setOnlyNackaSchools();
 		if (isCompulsory) {
 			query.setSchoolTypeCompulsoryHighSchool();
 		} else {
 			query.setSchoolTypeHighSchool();
 		}
-		query.setOnlyNackaSchools();
 		query.setStudentAge(rb.getCurrentSchoolSeason(), rb.getHighSchoolStudentAgeFrom(age), rb.getHighSchoolStudentAgeTo(age));			
 		query.setNotPrivateSchools();
 		query.setNotCountyCouncilSchools();
@@ -510,13 +510,13 @@ public class NackaHighSchoolPlacementReportModel extends ReportModel {
 		ReportBusiness rb = getReportBusiness();
 		ReportQuery query = new ReportQuery();
 		query.setSelectCountStudyPathPlacements(rb.getSchoolSeasonId(), studyPathPrefix);
-		query.setNotNackaCitizens();
+		query.setOnlyNackaCitizens();
+		query.setOnlySchoolsInOtherCommunes();
 		if (isCompulsory) {
 			query.setSchoolTypeCompulsoryHighSchool();
 		} else {
 			query.setSchoolTypeHighSchool();
 		}
-		query.setOnlyNackaSchools();
 		query.setStudentAge(rb.getCurrentSchoolSeason(), rb.getHighSchoolStudentAgeFrom(age), rb.getHighSchoolStudentAgeTo(age));			
 		query.setNotPrivateSchools();
 		query.setNotCountyCouncilSchools();
@@ -539,7 +539,6 @@ public class NackaHighSchoolPlacementReportModel extends ReportModel {
 		} else {
 			query.setSchoolTypeHighSchool();
 		}
-		query.setOnlyNackaSchools();
 		query.setStudentAge(rb.getCurrentSchoolSeason(), rb.getHighSchoolStudentAgeFrom(age), rb.getHighSchoolStudentAgeTo(age));			
 		query.setOnlyCountyCouncilSchools();
 		return query.execute();
@@ -561,7 +560,6 @@ public class NackaHighSchoolPlacementReportModel extends ReportModel {
 		} else {
 			query.setSchoolTypeHighSchool();
 		}
-		query.setOnlyNackaSchools();
 		query.setStudentAge(rb.getCurrentSchoolSeason(), rb.getHighSchoolStudentAgeFrom(age), rb.getHighSchoolStudentAgeTo(age));			
 		query.setOnlyPrivateSchools();
 		return query.execute();
