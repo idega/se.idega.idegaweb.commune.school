@@ -802,12 +802,11 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	  StringBuffer s = new StringBuffer();
 		s.append("\nfunction checkApplication(){\n\t");
 		//s.append("\n\t\t alert('").append("checking choices").append("');");
-		/*s.append("\n\t var currSchool = ").append("document.").append(prmForm).append(".elements['").append(prmPreSchool).append("'];");
+		s.append("\n\t var currSchool = ").append("document.").append(prmForm).append(".elements['").append(prmPreSchool).append("'];");
 		s.append("\n\t var dropOne = ").append("document.").append(prmForm).append(".elements['").append(prmFirstSchool).append("'];");
 		s.append("\n\t var dropTwo = ").append("document.").append(prmForm).append(".elements['").append(prmSecondSchool).append("'];");
 		s.append("\n\t var dropThree = ").append("document.").append(prmForm).append(".elements['").append(prmThirdSchool).append("'];");
 		s.append("\n\t var gradeDrop = ").append("document.").append(prmForm).append(".elements['").append(prmPreGrade).append("'];");
-		*/
 		s.append("\n\t var one = 0;");//.append("dropOne.options[dropOne.selectedIndex].value;");
 		s.append("\n\t var two = 0;");//.append("dropTwo.options[dropTwo.selectedIndex].value;");
 		s.append("\n\t var three = 0;");//.append("dropThree.options[dropThree.selectedIndex].value;");
@@ -817,8 +816,8 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		s.append("\n\n\t if (dropOne.selectedIndex != null) one = dropOne.options[dropOne.selectedIndex].value;");
 		s.append("\n\t if (dropTwo.selectedIndex != null) two = dropTwo.options[dropTwo.selectedIndex].value;");
 		s.append("\n\t if (dropThree.selectedIndex != null) three = dropThree.options[dropThree.selectedIndex].value;");
-		s.append("\n\t if (gradeDrop != null) year = gradeDrop.options?gradeDrop.options[gradeDrop.selectedIndex].value:document.sch_app_the_frm.elements['"+prmPreGrade+"'].value;");
-		s.append("\n\t if (currSchool != null) school = currSchool.options?currSchool.options[currSchool.selectedIndex].value:document.sch_app_the_frm.elements['"+prmPreSchool+"'].value;");
+		s.append("\n\t if (gradeDrop.selectedIndex != null) year = gradeDrop.options?gradeDrop.options[gradeDrop.selectedIndex].value:document.sch_app_the_frm.elements['"+prmPreGrade+"'].value;");
+		s.append("\n\t if (currSchool.selectedIndex != null) school = currSchool.options?currSchool.options[currSchool.selectedIndex].value:document.sch_app_the_frm.elements['"+prmPreSchool+"'].value;");
 
 		// current school check
 		s.append("\n\n\t if(school <= 0){");
