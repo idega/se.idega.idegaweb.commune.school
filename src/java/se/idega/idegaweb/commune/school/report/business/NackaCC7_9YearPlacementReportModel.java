@@ -1,5 +1,5 @@
 /*
- * $Id: NackaCC7_9YearPlacementReportModel.java,v 1.3 2004/01/27 14:29:58 anders Exp $
+ * $Id: NackaCC7_9YearPlacementReportModel.java,v 1.4 2004/01/27 15:30:15 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -23,10 +23,10 @@ import com.idega.block.school.data.SchoolArea;
  * Report model for child care after school and daycare placements 
  * for 7-9 years children in Nacka.
  * <p>
- * Last modified: $Date: 2004/01/27 14:29:58 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/27 15:30:15 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class NackaCC7_9YearPlacementReportModel extends ReportModel {
 
@@ -73,7 +73,6 @@ public class NackaCC7_9YearPlacementReportModel extends ReportModel {
 			ReportBusiness rb = getReportBusiness();
 			Collection schoolTypes = new ArrayList();
 			schoolTypes.add(new Integer(rb.getAfterSchool7_9TypeId()));
-			schoolTypes.add(new Integer(rb.getFamilyAfterSchool7_9TypeId()));
 			
 			Collection communeManagementTypes = new ArrayList();
 			communeManagementTypes.add("COMMUNE");
