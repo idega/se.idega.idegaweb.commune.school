@@ -4,6 +4,7 @@ import is.idega.idegaweb.member.business.MemberFamilyLogic;
 import is.idega.idegaweb.member.business.NoCustodianFound;
 
 import java.rmi.RemoteException;
+import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -232,6 +233,7 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 	
 	public void finalizeGroup(int schoolClassID, String subject, String body) throws RemoteException {
 		SchoolClass schoolClass = getSchoolClassBusiness().findSchoolClass(new Integer(schoolClassID));
+		School school = getSchoolBusiness().getSchool(new Integer(schoolClass.getSchoolId()));
 
 		Map students = getStudentList(getSchoolClassMemberBusiness().findStudentsInClass(schoolClassID));
 		Iterator iter = students.values().iterator();
@@ -247,7 +249,8 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 						if (!emails.isEmpty()) {
 							Email email = (Email) emails.get(0);
 							try {
-								getMessageBusiness().createUserMessage(parent, subject, body);
+								Object[] arguments = { school.getName(), parent.getNameLastFirst(true), schoolClass.getName(), student.getNameLastFirst(true) };
+								getMessageBusiness().createUserMessage(parent, subject, MessageFormat.format(body, arguments));
 							}
 							catch (CreateException ce) {
 								ce.printStackTrace();

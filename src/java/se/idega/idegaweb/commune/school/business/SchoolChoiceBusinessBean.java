@@ -1,7 +1,7 @@
 package se.idega.idegaweb.commune.school.business;
-import is.idega.idegaweb.golf.entity.Family;
 import is.idega.idegaweb.member.business.MemberFamilyLogic;
 import java.rmi.RemoteException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -424,11 +424,14 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	}
 
 	protected String getPreliminaryMessageBody(SchoolChoice theCase) throws RemoteException, FinderException {
-		StringBuffer body = new StringBuffer(this.getLocalizedString("school_choice.prelim_mesg_body1", "Dear mr./ms./mrs. "));
-		body.append(theCase.getOwner().getNameLastFirst()).append("\n");
+		Object[] arguments = { theCase.getChosenSchool().getName(), theCase.getOwner().getNameLastFirst(true) };
+		String body = MessageFormat.format(getLocalizedString("school_choice.prelim_mesg_body", "Dear mr./ms./mrs. {1}\n Your child has been preliminary accepted in: {0}."), arguments);
+		
+		/*StringBuffer body = new StringBuffer(this.getLocalizedString("school_choice.prelim_mesg_body1", "Dear mr./ms./mrs. "));
+		body.append().append("\n");
 		body.append(this.getLocalizedString("school_choice.prelim_mesg_body2", "Your child has been preliminary accepted in: ."));
-		body.append(getSchool(theCase.getChosenSchoolId()).getSchoolName()).append("\n");
-		return body.toString();
+		body.append(getSchool(theCase.getChosenSchoolId()).getSchoolName()).append("\n");*/
+		return body;
 	}
 	protected String getGroupedMessageBody(SchoolChoice theCase) throws RemoteException, FinderException {
 		StringBuffer body = new StringBuffer(this.getLocalizedString("acc.app.acc.body1", "Dear mr./ms./mrs. "));
