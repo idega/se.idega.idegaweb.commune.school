@@ -110,32 +110,32 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	
 
 	
-		/**
-		 * Method getDefaultTextFont.
-		 * @return Font
-		 */
-		private Font getDefaultTextFont() {
-			if (defaultTextFont == null) {
-				defaultTextFont = new Font(Font.HELVETICA);
-				defaultTextFont.setSize(12);
-			}
-			return defaultTextFont;
+	/**
+	 * Method getDefaultTextFont.
+	 * @return Font
+	 */
+	private Font getDefaultTextFont() {
+		if (defaultTextFont == null) {
+			defaultTextFont = new Font(Font.HELVETICA);
+			defaultTextFont.setSize(12);
 		}
+		return defaultTextFont;
+	}
 	
-		/**
-		 * Method getDefaultParagraphFont.
-		 * @return Font
-		 */
-		private Font getDefaultParagraphFont() {
-			if (defaultParagraphFont == null) {
-				defaultParagraphFont = new Font(Font.HELVETICA, 12, Font.BOLD);
-			}
-			return defaultParagraphFont;
+	/**
+	 * Method getDefaultParagraphFont.
+	 * @return Font
+	 */
+	private Font getDefaultParagraphFont() {
+		if (defaultParagraphFont == null) {
+			defaultParagraphFont = new Font(Font.HELVETICA, 12, Font.BOLD);
 		}
+		return defaultParagraphFont;
+	}
 
-		/*private Font getTextFont() {
-			return getDefaultTextFont();
-		}*/
+	/*private Font getTextFont() {
+	 return getDefaultTextFont();
+	 }*/
 
 	public String getBundleIdentifier() {
 		return se.idega.idegaweb.commune.presentation.CommuneBlock.IW_BUNDLE_IDENTIFIER;
@@ -499,9 +499,9 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		}
 
 		/*if (caseStatus.getStatus().equalsIgnoreCase(getCaseStatusPreliminary().getStatus())) {
-			sendMessageToParentOrChild(choice, choice.getOwner(), choice.getChild(), getPreliminaryMessageSubject(), getPreliminaryMessageBody(choice),SchoolChoiceMessagePdfHandler.CODE_PRELIMINARY);
-			//			getMessageBusiness().createUserMessage(choice.getOwner(), getPreliminaryMessageSubject(), getPreliminaryMessageBody(choice));
-		}*/
+		 sendMessageToParentOrChild(choice, choice.getOwner(), choice.getChild(), getPreliminaryMessageSubject(), getPreliminaryMessageBody(choice),SchoolChoiceMessagePdfHandler.CODE_PRELIMINARY);
+		 //			getMessageBusiness().createUserMessage(choice.getOwner(), getPreliminaryMessageSubject(), getPreliminaryMessageBody(choice));
+		 }*/
 		if (parentCase != null)
 			choice.setParentCase(parentCase);
 		try {
@@ -513,27 +513,36 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		
 		boolean isSCPeriod = isInSchoolChoicePeriod(); 
 		
-		
-		if (IWTimestamp.RightNow().isBetween(new IWTimestamp(season.getSchoolSeasonStart()), new IWTimestamp(season.getSchoolSeasonEnd())) || !isSCPeriod) {
-			try {
-				User student = getUser(childId);
-				Object[] arguments = {student.getNameLastFirst(true), PersonalIDFormatter.format(student.getPersonalID(), this.getIWApplicationContext().getApplicationSettings().getDefaultLocale()), choice.getPlacementDate() != null ? new IWTimestamp(choice.getPlacementDate()).getLocaleDate(this.getIWApplicationContext().getApplicationSettings().getDefaultLocale(), IWTimestamp.SHORT) : "" };
-
-				String subject = getLocalizedString("school_choice.newly_moved_in_choice_subject", "Newly moved in student seeks placement");
-				String body = MessageFormat.format(getLocalizedString("school_choice.newly_moved_in_choice_body", "{0}, {1}, wants a placement in your school from {2}."), arguments);
-				sendMessageToSchool(chosen_school, subject, body, null);
-			}
-			catch (FinderException fe) {
-				log(fe);
+		if (!changeOfSchool){
+			if (IWTimestamp.RightNow().isBetween(new IWTimestamp(season.getSchoolSeasonStart()), new IWTimestamp(season.getSchoolSeasonEnd())) || !isSCPeriod) {
+				if (choiceOrder <= 1){
+					try {
+						User student = getUser(childId);
+						Object[] arguments = {student.getNameLastFirst(true), PersonalIDFormatter.format(student.getPersonalID(), this.getIWApplicationContext().getApplicationSettings().getDefaultLocale()), choice.getPlacementDate() != null ? new IWTimestamp(choice.getPlacementDate()).getLocaleDate(this.getIWApplicationContext().getApplicationSettings().getDefaultLocale(), IWTimestamp.SHORT) : "" };
+	
+						String subject = getLocalizedString("school_choice.newly_moved_in_choice_subject", "Newly moved in student seeks placement");
+						String body = MessageFormat.format(getLocalizedString("school_choice.newly_moved_in_choice_body", "{0}, {1}, wants a placement in your school from {2}."), arguments);
+						sendMessageToSchool(chosen_school, subject, body, null);
+					}
+					catch (FinderException fe) {
+						log(fe);
+					}
+				}
 			}
 		}
-				
+		
+		
 		return choice;
 	}
 
 	private void handleSchoolChangeHeadMasters(SchoolChoice choice, User child, int oldSchoolID, int newSchoolID) throws RemoteException {
-		sendMessageToSchool(oldSchoolID, getOldHeadmasterSubject(), getOldHeadmasterBody(choice, child, getSchool(newSchoolID)),SchoolChoiceMessagePdfHandler.CODE_OLD_SCHOOL_CHANGE);
-		sendMessageToSchool(newSchoolID, getNewHeadMasterSubject(), getNewHeadmasterBody(choice, child, getSchool(oldSchoolID)),SchoolChoiceMessagePdfHandler.CODE_NEW_SCHOOL_CHANGE);
+		if(oldSchoolID != -1){
+			sendMessageToSchool(oldSchoolID, getOldHeadmasterSubject(), getOldHeadmasterBody(choice, child, getSchool(newSchoolID)),SchoolChoiceMessagePdfHandler.CODE_OLD_SCHOOL_CHANGE);	
+		}
+		
+		sendMessageToSchool(newSchoolID, getNewHeadMasterSubject(), getNewHeadmasterBody(choice, child, getSchool(oldSchoolID)),SchoolChoiceMessagePdfHandler.CODE_NEW_SCHOOL_CHANGE);	
+		
+		
 	}
 
 	private void handleSeparatedParentApplication(int applicationParentID, List choices, boolean isSchoolChangeApplication) throws RemoteException {
@@ -685,9 +694,9 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 			if (isOfAge(child)) {
 				String subject,body,code;
 				if(isChangeApplication){
-					 subject = getLocalizedString("school_choice.child_self_change_subj", "School application received for you");
-					 body = getLocalizedString("school_choice.child_self_change_mesg_body", "Dear mr./ms./mrs. ");
-					 code = SchoolChoiceMessagePdfHandler.CODE_CHILD_SELF_APPLICATION_CHANGE;
+					subject = getLocalizedString("school_choice.child_self_change_subj", "School application received for you");
+					body = getLocalizedString("school_choice.child_self_change_mesg_body", "Dear mr./ms./mrs. ");
+					code = SchoolChoiceMessagePdfHandler.CODE_CHILD_SELF_APPLICATION_CHANGE;
 				}
 				else{
 					subject = getLocalizedString("school_choice.child_self_appl_subj", "School application received for you");
@@ -712,8 +721,8 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 							getMessageBusiness().createUserMessage(application, parent,null,null, nonApplyingSubject, MessageFormat.format(nonApplyingBody, arguments), true,nonApplyingCode);
 						}
 						/*else if (!parent.equals((IDOEntity)appParent)){
-							getMessageBusiness().createUserMessage(application, parent,null,null, nonApplyingSubject, MessageFormat.format(nonApplyingBody, arguments), false,nonApplyingCode);
-						}*/
+						 getMessageBusiness().createUserMessage(application, parent,null,null, nonApplyingSubject, MessageFormat.format(nonApplyingBody, arguments), false,nonApplyingCode);
+						 }*/
 					}
 				}
 				catch (NoCustodianFound ncf) {
@@ -740,7 +749,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 			if (school != null) {
 				//If school is centralized administrated (by BUN), the message shall be marked as such, so that it will show in BUN's messagebox.
 				Group bunGroup = school.getCentralizedAdministration() ? getBunGroup() : null;
-	
+				
 				Collection coll = getSchoolBusiness().getSchoolUserBusiness().getSchoolUserHome().findBySchool(school);
 				if (!coll.isEmpty()) {
 					Iterator iter = coll.iterator();
@@ -802,7 +811,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 				sendMessageToSchool(choice.getChosenSchoolId(), messageSubject1, messageBody1, code);
 				sendMessageToParents(choice, messageSubject1, messageBody1,code, messageSubject1,messageBody1,code,false);
 			}
-				
+			
 			
 		}
 		catch (FinderException fe) {
@@ -829,9 +838,9 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 				while (iter.hasNext()) {
 					SchoolChoice element = (SchoolChoice) iter.next();
 					if (element.getChoiceOrder() == (choice.getChoiceOrder() + 1) && !element.getCaseStatus().equals("AVSL")) {
-							super.changeCaseStatus(element, getCaseStatusPreliminary().getStatus(), performer);
-							sendMessageToParents(element, getPreliminaryMessageSubject(), getPreliminaryMessageBody(element),code,getPreliminaryMessageSubject(),getPreliminaryMessageBody(element),code,false);
-							continue;						
+						super.changeCaseStatus(element, getCaseStatusPreliminary().getStatus(), performer);
+						sendMessageToParents(element, getPreliminaryMessageSubject(), getPreliminaryMessageBody(element),code,getPreliminaryMessageSubject(),getPreliminaryMessageBody(element),code,false);
+						continue;						
 					}
 				}
 			}
@@ -1054,7 +1063,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	
 	protected String getPreliminaryMessageBody(SchoolChoice theCase) {
 		SchoolYear year = theCase.getSchoolYear();
-				
+		
 		Object[] arguments = {theCase.getChosenSchool().getName(), theCase.getOwner().getNameLastFirst(true), theCase.getChild().getNameLastFirst(true), year != null ? year.getSchoolYearName() : "" };
 		String body = MessageFormat.format(getLocalizedString("school_choice.prelim_mesg_body", "Dear mr./ms./mrs. {1}\n Your child, {2} has been preliminary accepted in: {0} for year {3}"), arguments);
 
@@ -1075,7 +1084,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		 */
 		return body;
 	}
-		
+	
 	protected String getGroupedMessageBody(SchoolChoice theCase) throws RemoteException {
 		StringBuffer body = new StringBuffer(this.getLocalizedString("acc.app.acc.body1", "Dear mr./ms./mrs. "));
 		body.append(theCase.getOwner().getNameLastFirst()).append("\n");
@@ -1415,7 +1424,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 			final Date startDate = getSchoolChoiceStartDate ().getDate ();
 			final Date endDate = getSchoolChoiceEndDate ().getDate ();
 			return getSchoolChoiceHome ().getCount
-					(getCurrentSeason (), startDate, endDate);
+			(getCurrentSeason (), startDate, endDate);
 		}	catch (Exception e) {
 			e.printStackTrace ();
 			return 0;
@@ -1423,27 +1432,27 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	}
 
 	public IWTimestamp getSchoolChoiceStartDate () throws RemoteException,
-																												FinderException {
+	FinderException {
 		return getTimestampFromProperty ("choice_start_date");
 	}
 
 	public IWTimestamp getSchoolChoiceEndDate () throws RemoteException,
-																											FinderException {
+	FinderException {
 		return getTimestampFromProperty ("choice_end_date");
 	}
 	
 	public IWTimestamp getSchoolChoiceCriticalDate () throws RemoteException,
-																													 FinderException {
+	FinderException {
 		return getTimestampFromProperty ("choice_critical_date");
 	}
 
 	private IWTimestamp getTimestampFromProperty (final String key)
-		throws RemoteException, FinderException {
+	throws RemoteException, FinderException {
 		final IWPropertyList properties = getIWApplicationContext ()
-				.getSystemProperties ().getProperties ("school_properties");
+		.getSystemProperties ().getProperties ("school_properties");
 		final String valueAsString = properties.getProperty(key);
 		final IWTimestamp seasonStart
-				= new IWTimestamp (getCurrentSeason ().getSchoolSeasonStart ());
+		= new IWTimestamp (getCurrentSeason ().getSchoolSeasonStart ());
 		final IWTimestamp result = new IWTimestamp (seasonStart);
 		result.setDay (Integer.parseInt (valueAsString.substring (0, 2)));
 		result.setMonth (Integer.parseInt (valueAsString.substring (3)));
@@ -1826,21 +1835,21 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 			throw new FinderException(re.getMessage());
 		}
 	}
-/* TODO remove when others things have been tested (aron)
-	private PdfPTable getAddressTable(final SchoolChoiceReminderReceiver receiver) {
-		final PdfPTable address = new PdfPTable(new float[]{1, 1});
-		address.setWidthPercentage(100f);
-		final PdfPCell defaultCell = address.getDefaultCell();
-		defaultCell.setBorder(0);
-		defaultCell.setFixedHeight(mmToPoints(55));
-		defaultCell.setPadding(0);
-		defaultCell.setNoWrap(true);
-		defaultCell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-		address.addCell(new Phrase(""));
-		address.addCell(new Phrase(getReceiverChunk(receiver)));
-		return address;
-	}
-*/
+	/* TODO remove when others things have been tested (aron)
+	 private PdfPTable getAddressTable(final SchoolChoiceReminderReceiver receiver) {
+	 final PdfPTable address = new PdfPTable(new float[]{1, 1});
+	 address.setWidthPercentage(100f);
+	 final PdfPCell defaultCell = address.getDefaultCell();
+	 defaultCell.setBorder(0);
+	 defaultCell.setFixedHeight(mmToPoints(55));
+	 defaultCell.setPadding(0);
+	 defaultCell.setNoWrap(true);
+	 defaultCell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+	 address.addCell(new Phrase(""));
+	 address.addCell(new Phrase(getReceiverChunk(receiver)));
+	 return address;
+	 }
+	 */
 	private Chunk getSubjectChunk(final String rawString) {
 		final int newlineIndex = rawString.indexOf('\n');
 		final Font font = FontFactory.getFont(FontFactory.HELVETICA_BOLD, REMINDER_FONTSIZE);
@@ -1852,13 +1861,13 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		final String bodyString = rawString.substring(newlineIndex != -1 ? newlineIndex : 0);
 		return new Chunk(bodyString, SERIF_FONT);
 	}
-/* TODO remove later
-	private Chunk getReceiverChunk(SchoolChoiceReminderReceiver receiver) {
-		StringBuffer address = new StringBuffer(getReceiverAddressString(receiver));
-		address.append("\n\n\n\n\n\n\n\n");
-		return new Chunk(address.toString(), SERIF_FONT);
-	}
-*/
+	/* TODO remove later
+	 private Chunk getReceiverChunk(SchoolChoiceReminderReceiver receiver) {
+	 StringBuffer address = new StringBuffer(getReceiverAddressString(receiver));
+	 address.append("\n\n\n\n\n\n\n\n");
+	 return new Chunk(address.toString(), SERIF_FONT);
+	 }
+	 */
 	private String getReceiverAddressString(SchoolChoiceReminderReceiver receiver) {
 		//String ssn = PersonalIDFormatter.format(receiver.getSsn(), getIWApplicationContext().getApplicationSettings().getDefaultLocale());
 		StringBuffer address = new StringBuffer();
@@ -1871,14 +1880,14 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 
 	// TODO remove later
 	/*
-	private Chunk getDateChunk() {
-		return new Chunk(new IWTimestamp().getLocaleDate(getIWApplicationContext().getApplicationSettings().getDefaultLocale(), IWTimestamp.SHORT), SERIF_FONT);
-	}*/
-/*// TODO belongs to DocumentBusiness
-	private float mmToPoints(final float mm) {
-		return mm * 72 / 25.4f;
-	}
-*/
+	 private Chunk getDateChunk() {
+	 return new Chunk(new IWTimestamp().getLocaleDate(getIWApplicationContext().getApplicationSettings().getDefaultLocale(), IWTimestamp.SHORT), SERIF_FONT);
+	 }*/
+	/*// TODO belongs to DocumentBusiness
+	 private float mmToPoints(final float mm) {
+	 return mm * 72 / 25.4f;
+	 }
+	 */
 	public void sendMessageToParentOrChild(SchoolChoice choice, User parent, User child, String subject, String body,String contentCode) throws RemoteException {
 		getMessageBusiness().createUserMessage(choice, getReceiver(parent, child),null,null, subject, body, true,contentCode);
 	}
@@ -1909,7 +1918,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		}
 		
 		return isSCPeriod;
-}
+	}
 	
 	/**
 	 * Returns the SchoolYears that are mandatory to do a schoolChoice for
