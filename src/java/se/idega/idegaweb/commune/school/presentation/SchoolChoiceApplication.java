@@ -640,7 +640,9 @@ public class SchoolChoiceApplication extends CommuneBlock {
 				valPreGrade = choice.getGrade();
 				valPreSchool = choice.getCurrentSchoolId();
 			}
-			schoolArea = school.getSchoolArea();
+			if (school != null) {
+				schoolArea = school.getSchoolArea();
+			}
 			schoolYear = schCommBiz.getSchoolYear(choice.getGrade());
 			if (schoolYear == null) {
 				valPreGrade = choice.getGrade();
