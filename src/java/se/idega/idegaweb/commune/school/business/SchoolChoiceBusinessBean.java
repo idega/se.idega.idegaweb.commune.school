@@ -770,6 +770,17 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		}
 	}
 
+	public int getNumberOfApplicants(String[] validStatuses) throws RemoteException {
+		try {
+			return getSchoolChoiceHome().getCount(validStatuses);	
+		}
+		catch (IDOException ie) {
+			ie.printStackTrace(System.err);
+			return 0;
+		}
+	}
+
+
 
 	public Collection getApplicantsForSchoolAndSeasonAndGrade(int schoolID,int seasonID,int grade) throws RemoteException {
 		try {

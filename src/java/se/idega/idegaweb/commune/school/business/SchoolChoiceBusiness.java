@@ -72,4 +72,5 @@ public interface SchoolChoiceBusiness extends com.idega.business.IBOService,com.
 	public int getNumberOfApplicantsForSchool(int schoolID,int seasonID,int grade, int[] choiceOrder, String[] validStatuses, String searchString) throws RemoteException;
 	public void changeSchoolYearForChoice(int userID, int schoolSeasonID, int schoolYearID) throws RemoteException;
 	public Collection getApplicationsInClass(com.idega.block.school.data.SchoolClass schoolClass, boolean confirmation) throws RemoteException;
+	public int getNumberOfApplicants(String[] validStatuses) throws RemoteException;
 }
