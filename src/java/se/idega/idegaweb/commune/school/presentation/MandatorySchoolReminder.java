@@ -10,20 +10,16 @@ import java.io.IOException;
 import java.rmi.RemoteException;
 import java.text.DateFormat;
 import java.text.ParseException;
-import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
-
 import javax.ejb.CreateException;
 import javax.ejb.FinderException;
-
 import se.idega.idegaweb.commune.business.CommuneUserBusiness;
 import se.idega.idegaweb.commune.presentation.CommuneBlock;
 import se.idega.idegaweb.commune.school.business.SchoolChoiceBusiness;
 import se.idega.idegaweb.commune.school.business.SchoolCommuneBusiness;
-
 import com.idega.block.datareport.business.DynamicReportDesign;
 import com.idega.block.datareport.business.JasperReportBusiness;
 import com.idega.block.datareport.util.ReportableCollection;
@@ -49,7 +45,6 @@ import com.idega.presentation.ui.SubmitButton;
 import com.idega.user.data.Group;
 import com.idega.util.IWTimestamp;
 import com.idega.util.datastructures.QueueMap;
-
 import dori.jasper.engine.JRDataSource;
 import dori.jasper.engine.JRException;
 import dori.jasper.engine.JasperPrint;
@@ -259,18 +254,18 @@ public class MandatorySchoolReminder extends CommuneBlock {
 
 		try {
 			SchoolSeason currentSeason = sBusiness.getCurrentSchoolSeason();
-			Collection schoolyears = sBusiness.getSchoolYearHome().findAllSchoolYears();
+			int schoolYears = 9;
 			IWTimestamp seasonStartDate = new IWTimestamp(currentSeason.getSchoolSeasonStart());
 			int currentYear = seasonStartDate.getYear();
 
 //			System.out.println("Current Season"+currentSeason.getName()+"  "+currentSeason.getPrimaryKey() );
 //			Collection classes = sBusiness.getSchoolClassHome().findBySeason(currentSeason);
 
-			Table countTable = new Table(2,1+schoolyears.size());
+			Table countTable = new Table(2,schoolYears);
 			countTable.setCellpadding(0);
 			int index = 1;
 			String labelCourse = iwrb.getLocalizedString("MandatorySchoolReminder.course","Course");
-			for(int i=1; i<=9; i++){
+			for(int i=1; i<=schoolYears; i++){
 				SchoolYear schoolYear = sBusiness.getSchoolYearHome().findByYearName(""+i);
 //			Iterator iter = schoolyears.iterator();
 //			while (iter.hasNext()) {
@@ -291,8 +286,8 @@ public class MandatorySchoolReminder extends CommuneBlock {
 					e.printStackTrace();
 				}
 				
-				countTable.add(new Text(labelCourse+" "+schoolYear.getSchoolYearName()+":"),1,index);
-				countTable.add(new Text(String.valueOf(countResult)),2,index);
+				countTable.add(getText(labelCourse+" "+schoolYear.getSchoolYearName()+":"),1,index);
+				countTable.add(getText(String.valueOf(countResult)),2,index);
 				
 				index++;
 			}
@@ -310,7 +305,6 @@ public class MandatorySchoolReminder extends CommuneBlock {
 	 */
 	private void presentResultAsReport(IWContext iwc,IWResourceBundle iwrb) throws MandatorySchoolReminderException, IOException, JRException, IDOException, CreateException, RemoteException, FinderException{
 
-		SchoolBusiness sBusiness =  (SchoolBusiness)IBOLookup.getServiceInstance(iwc,SchoolBusiness.class);
 		SchoolChoiceBusiness scBusiness = (SchoolChoiceBusiness)IBOLookup.getServiceInstance(iwc,SchoolChoiceBusiness.class);
 		System.out.println("Jasper reports Bus");
 		JasperReportBusiness jasperBusiness =  (JasperReportBusiness)IBOLookup.getServiceInstance(iwc,JasperReportBusiness.class);
@@ -328,10 +322,9 @@ public class MandatorySchoolReminder extends CommuneBlock {
 //			int currentYear = seasonStartDate.getYear();
 		
 		System.out.println("Getting coll of schools");
-		Collection classes = sBusiness.getSchoolClassHome().findBySeason(currentSeason);
 
 		System.out.println("Date is "+_selectedDate);
-		JRDataSource dataSource = getDataSource(iwc,currentSeason,classes);
+		JRDataSource dataSource = getDataSource(iwc,currentSeason);
 		System.out.println("Getting map");
 		Map parameterMap = getParameterMap(iwrb,df,dataSource,iwc.getCurrentLocale());
 		JasperDesign design = getReportDesign(jasperBusiness,dataSource);
@@ -401,9 +394,9 @@ public class MandatorySchoolReminder extends CommuneBlock {
 	 * @param classes
 	 * @return
 	 */
-	private JRDataSource getDataSource(IWContext iwc, SchoolSeason currentSeason, Collection classes) throws IDOLookupException, RemoteException, IDOException, FinderException, CreateException {
+	private JRDataSource getDataSource(IWContext iwc, SchoolSeason currentSeason) throws IDOLookupException, RemoteException, IDOException, FinderException, CreateException {
 		SchoolCommuneBusiness business = (SchoolCommuneBusiness)IBOLookup.getServiceInstance(iwc,SchoolCommuneBusiness.class);
-		return business.getReportOfUsersNotRegisteredInAnyClass(iwc.getCurrentLocale(),_selectedDate,currentSeason,classes);
+		return business.getReportOfUsersNotRegisteredInAnyClass(iwc.getCurrentLocale(),_selectedDate,currentSeason);
 	}
 
 	/**

@@ -71,7 +71,7 @@ public interface SchoolCommuneBusiness extends com.idega.business.IBOService,com
     SchoolStudyPath getStudyPath (SchoolClassMember student);
     SchoolStudyPath [] getAllStudyPaths ();
 
-	public ReportableCollection getReportOfUsersNotRegisteredInAnyClass(Locale currentLocale, Date selectedDate, SchoolSeason currentSeason, Collection classes) throws RemoteException, IDOLookupException, IDOException, FinderException, CreateException;
+	public ReportableCollection getReportOfUsersNotRegisteredInAnyClass(Locale currentLocale, Date selectedDate, SchoolSeason currentSeason) throws RemoteException, IDOLookupException, IDOException, FinderException, CreateException;
 	public boolean isPlacedAtSchool(int userID, int schoolID) throws java.rmi.RemoteException;
 	public se.idega.idegaweb.commune.business.CommuneUserBusiness getUserBusiness() throws java.rmi.RemoteException;
 	public java.util.Map getYearClassMap(java.util.Collection schoolYears, int schoolID, int seasonID, String emptyString, boolean showSubGroups) throws java.rmi.RemoteException;

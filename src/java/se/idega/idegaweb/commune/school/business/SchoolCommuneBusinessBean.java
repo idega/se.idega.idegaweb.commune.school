@@ -2,7 +2,6 @@ package se.idega.idegaweb.commune.school.business;
 
 import is.idega.block.family.business.FamilyLogic;
 import is.idega.block.family.business.NoCustodianFound;
-
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
 import java.text.DateFormat;
@@ -17,12 +16,10 @@ import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.Vector;
-
 import javax.ejb.CreateException;
 import javax.ejb.EJBException;
 import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
-
 import se.idega.idegaweb.commune.accounting.school.data.ProviderAccountingProperties;
 import se.idega.idegaweb.commune.accounting.school.data.ProviderAccountingPropertiesHome;
 import se.idega.idegaweb.commune.business.CommuneUserBusiness;
@@ -30,7 +27,6 @@ import se.idega.idegaweb.commune.message.business.MessageBusiness;
 import se.idega.idegaweb.commune.school.data.SchoolChoice;
 import se.idega.idegaweb.commune.user.data.Citizen;
 import se.idega.idegaweb.commune.user.data.CitizenHome;
-
 import com.idega.block.datareport.util.ReportableCollection;
 import com.idega.block.datareport.util.ReportableData;
 import com.idega.block.datareport.util.ReportableField;
@@ -879,7 +875,7 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 		_iwrb = _iwb.getResourceBundle(currentLocale);
 	}
 
-	public ReportableCollection getReportOfUsersNotRegisteredInAnyClass(Locale currentLocale, Date selectedDate, SchoolSeason currentSeason, Collection classes) throws IDOException, RemoteException, CreateException, FinderException {
+	public ReportableCollection getReportOfUsersNotRegisteredInAnyClass(Locale currentLocale, Date selectedDate, SchoolSeason currentSeason) throws IDOException, RemoteException, CreateException, FinderException {
 		initializeBundlesIfNeeded(currentLocale);
 		CommuneUserBusiness _communeUserService = (CommuneUserBusiness) IBOLookup.getServiceInstance(this.getIWApplicationContext(), CommuneUserBusiness.class);
 		FamilyLogic _familyLogic = (FamilyLogic) IBOLookup.getServiceInstance(this.getIWApplicationContext(), FamilyLogic.class);
@@ -891,31 +887,36 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 
 		SchoolClassMemberHome scmHome = sBusiness.getSchoolClassMemberHome();
 
-		Collection schoolyears = sBusiness.getSchoolYearHome().findAllSchoolYears();
+		//Collection schoolyears = sBusiness.getSchoolYearHome().findAllSchoolYears();
 		IWTimestamp seasonStartDate = new IWTimestamp(currentSeason.getSchoolSeasonStart());
 		int currentYear = seasonStartDate.getYear();
 
-		Iterator yIter = schoolyears.iterator();
-		int minYearOfBirth = Integer.MAX_VALUE;
-		int maxYearOfBirth = 0;
-		while (yIter.hasNext()) {
-			SchoolYear schoolYear = (SchoolYear) yIter.next();
-			int schoolYearAge = schoolYear.getSchoolYearAge();
-			int yearOfBirth = currentYear - schoolYearAge;
-			if (minYearOfBirth > yearOfBirth) {
-				minYearOfBirth = yearOfBirth;
-			}
-			if (maxYearOfBirth < yearOfBirth) {
-				maxYearOfBirth = yearOfBirth;
-			}
-		}
+//		Iterator yIter = schoolyears.iterator();
+//		int minYearOfBirth = Integer.MAX_VALUE;
+//		int maxYearOfBirth = 0;
+//		while (yIter.hasNext()) {
+//			SchoolYear schoolYear = (SchoolYear) yIter.next();
+//			int schoolYearAge = schoolYear.getSchoolYearAge();
+//			int yearOfBirth = currentYear - schoolYearAge;
+//			if (minYearOfBirth > yearOfBirth) {
+//				minYearOfBirth = yearOfBirth;
+//			}
+//			if (maxYearOfBirth < yearOfBirth) {
+//				maxYearOfBirth = yearOfBirth;
+//			}
+//		}
+		
+		//TODO fetch this from database (needs some changes in presentation and probably datastructure to), fetching by name '1' and '9' is not good and fetching by school_type_id would return classes 1-10, might need to be property on the block and therefore parameters to this method
+		//See also MandatorySchoolReminder#presentResultAsCount(...)
+		int minYearOfBirth = currentYear - 15;
+		int maxYearOfBirth = currentYear - 7;
 
 		IWTimestamp firstDateOfBirth = new IWTimestamp(1, 1, minYearOfBirth);
 		IWTimestamp lastDateOfBirth = new IWTimestamp(31, 12, maxYearOfBirth);
 
 		CitizenHome citizenHome = (CitizenHome) IDOLookup.getHome(Citizen.class);
 		//maindata
-		Collection students = citizenHome.findCitizensNotAssignedToClassOnGivenDate(communeGroup, new java.sql.Date(selectedDate.getTime()), classes, firstDateOfBirth.getDate(), lastDateOfBirth.getDate());
+		Collection students = citizenHome.findCitizensNotAssignedToAnyClassOnGivenDate(communeGroup, currentSeason, new java.sql.Date(selectedDate.getTime()), firstDateOfBirth.getDate(), lastDateOfBirth.getDate());
 
 		GroupRelationHome gRelationHome = ((GroupRelationHome) IDOLookup.getHome(GroupRelation.class));
 
