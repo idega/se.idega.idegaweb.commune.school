@@ -1,5 +1,5 @@
 /*
- * $Id: PreparedQuery.java,v 1.30 2004/02/18 15:47:08 anders Exp $
+ * $Id: PreparedQuery.java,v 1.31 2004/02/23 10:42:55 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -27,10 +27,10 @@ import com.idega.block.school.data.SchoolSeason;
 /** 
  * Handles the SQL logic for school report calculations.
  * <p>
- * Last modified: $Date: 2004/02/18 15:47:08 $ by $Author: anders $
+ * Last modified: $Date: 2004/02/23 10:42:55 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.30 $
+ * @version $Revision: 1.31 $
  */
 public class PreparedQuery {
 
@@ -45,6 +45,8 @@ public class PreparedQuery {
 	private final static String TABLE_CA = "comm_childcare_archive";
 	private final static String TABLE_C = "comm_childcare";
 	private final static String TABLE_ST = "sch_school_sch_school_type";
+	private final static String TABLE_R = "cacc_regulation";
+	private final static String TABLE_RC = "cacc_conditions";
 	
 	private final static String CM = "cm";
 	private final static String SC = "sc";
@@ -57,6 +59,8 @@ public class PreparedQuery {
 	private final static String CA = "ca";	
 	private final static String C = "c";	
 	private final static String ST = "st";	
+	private final static String R = "r";	
+	private final static String RC = "rc";	
 	
 	private String _sqlSelect = null;
 	private String _sql = null;
@@ -105,6 +109,15 @@ public class PreparedQuery {
 		_sqlSelect = "select sum(c.care_time)";
 		
 		_sqlFrom.put(C, TABLE_C);
+	}
+
+	/**
+	 * Sets the query to select max study path amount.
+	 */
+	public void setSelectMaxStudyPathAmount() {
+		_sqlSelect = "select max(r.amount)";
+		
+		_sqlFrom.put(R, TABLE_R);
 	}
 
 	/**
@@ -655,6 +668,22 @@ public class PreparedQuery {
 		
 		int index = _parameterIndex;
 		_parameterIndex += 2;
+		return index;
+	}
+	
+	/**
+	 * Sets the query to select a specified study path amount.
+	 * @return the index for the study path id parameter
+	 */
+	public int setStudyPathAmount() {
+		String sql = "r.cacc_regulation_id = rc.regulation_id and rc.condition_id = 9 and rc.interval_id = ?";
+		_sqlWhere.add(sql);
+		
+		_sqlFrom.put(R, TABLE_R);
+		_sqlFrom.put(RC, TABLE_RC);
+		
+		int index = _parameterIndex;
+		_parameterIndex++;
 		return index;
 	}
 
