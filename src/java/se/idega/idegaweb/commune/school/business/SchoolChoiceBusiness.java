@@ -34,8 +34,6 @@ public interface SchoolChoiceBusiness extends com.idega.business.IBOService,com.
 	public java.lang.String getApplyingSeparateParentSubjectChange() throws java.rmi.RemoteException;
 	public java.lang.String getBundleIdentifier() throws java.rmi.RemoteException;
 	public java.util.List getConnectedSchoolchoices(se.idega.idegaweb.commune.school.data.SchoolChoice p0) throws java.rmi.RemoteException;
-	public se.idega.idegaweb.commune.care.data.CurrentSchoolSeasonHome getCurrentSchoolSeasonHome()throws java.rmi.RemoteException, java.rmi.RemoteException;
-	public com.idega.block.school.data.SchoolSeason getCurrentSeason()throws java.rmi.RemoteException,javax.ejb.FinderException, java.rmi.RemoteException;
 	public com.idega.block.school.data.School getFirstProviderForUser(com.idega.user.data.User p0)throws javax.ejb.FinderException,java.rmi.RemoteException, java.rmi.RemoteException;
 	public java.lang.String getGroupedMessageSubject() throws java.rmi.RemoteException;
 	public java.lang.String getLocalizedCaseDescription(com.idega.block.process.data.Case p0,java.util.Locale p1)throws java.rmi.RemoteException, java.rmi.RemoteException;
@@ -65,7 +63,6 @@ public interface SchoolChoiceBusiness extends com.idega.business.IBOService,com.
 	public se.idega.idegaweb.commune.school.data.SchoolChoiceHome getSchoolChoiceHome()throws java.rmi.RemoteException, java.rmi.RemoteException;
 	public com.idega.block.school.data.SchoolClassMemberHome getSchoolClassMemberHome()throws java.rmi.RemoteException, java.rmi.RemoteException;
 	public com.idega.block.school.data.SchoolHome getSchoolHome()throws java.rmi.RemoteException, java.rmi.RemoteException;
-	public com.idega.block.school.data.SchoolSeasonHome getSchoolSeasonHome()throws java.rmi.RemoteException, java.rmi.RemoteException;
 	public com.idega.block.school.data.SchoolYearHome getSchoolYearHome()throws java.rmi.RemoteException, java.rmi.RemoteException;
 	public se.idega.idegaweb.commune.business.CommuneUserBusiness getUserBusiness()throws java.rmi.RemoteException, java.rmi.RemoteException;
 	public se.idega.idegaweb.commune.school.data.SchoolChoice groupPlaceAction(java.lang.Integer p0,com.idega.user.data.User p1) throws java.rmi.RemoteException;

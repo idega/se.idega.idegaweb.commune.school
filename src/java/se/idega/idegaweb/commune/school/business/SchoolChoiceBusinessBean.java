@@ -2,7 +2,6 @@ package se.idega.idegaweb.commune.school.business;
 
 import is.idega.block.family.business.FamilyLogic;
 import is.idega.block.family.business.NoCustodianFound;
-
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.rmi.RemoteException;
@@ -20,13 +19,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.Vector;
-
 import javax.ejb.CreateException;
 import javax.ejb.FinderException;
-
 import se.cubecon.bun24.viewpoint.business.ViewpointBusiness;
 import se.cubecon.bun24.viewpoint.data.SubCategory;
 import se.idega.idegaweb.commune.business.CommuneUserBusiness;
+import se.idega.idegaweb.commune.care.business.CareBusiness;
 import se.idega.idegaweb.commune.care.data.CurrentSchoolSeason;
 import se.idega.idegaweb.commune.care.data.CurrentSchoolSeasonHome;
 import se.idega.idegaweb.commune.care.resource.business.ResourceBusiness;
@@ -37,7 +35,6 @@ import se.idega.idegaweb.commune.school.data.SchoolChoice;
 import se.idega.idegaweb.commune.school.data.SchoolChoiceHome;
 import se.idega.idegaweb.commune.school.data.SchoolChoiceReminder;
 import se.idega.idegaweb.commune.school.data.SchoolChoiceReminderHome;
-
 import com.idega.block.process.data.Case;
 import com.idega.block.process.data.CaseStatus;
 import com.idega.block.school.business.SchoolBusiness;
@@ -47,7 +44,6 @@ import com.idega.block.school.data.SchoolClassMember;
 import com.idega.block.school.data.SchoolClassMemberHome;
 import com.idega.block.school.data.SchoolHome;
 import com.idega.block.school.data.SchoolSeason;
-import com.idega.block.school.data.SchoolSeasonHome;
 import com.idega.block.school.data.SchoolUser;
 import com.idega.block.school.data.SchoolYear;
 import com.idega.block.school.data.SchoolYearHome;
@@ -105,6 +101,8 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 
 	private Font defaultParagraphFont;
 	private Font defaultTextFont;
+	
+	private CareBusiness careBusiness = null;
 	
 
 	
@@ -173,17 +171,6 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		return (SchoolYearHome) this.getIDOHome(SchoolYear.class);
 	}
 
-	public CurrentSchoolSeasonHome getCurrentSchoolSeasonHome() throws java.rmi.RemoteException {
-		return (CurrentSchoolSeasonHome) this.getIDOHome(CurrentSchoolSeason.class);
-	}
-	public SchoolSeasonHome getSchoolSeasonHome() throws java.rmi.RemoteException {
-		return (SchoolSeasonHome) this.getIDOHome(SchoolSeason.class);
-	}
-	public SchoolSeason getCurrentSeason() throws java.rmi.RemoteException, javax.ejb.FinderException {
-		CurrentSchoolSeason season = getCurrentSchoolSeasonHome().findCurrentSeason();
-		return getSchoolSeasonHome().findByPrimaryKey(season.getCurrent());
-	}
-
 	public int getPreviousSeasonId() throws RemoteException {
 		final int currentSeasonId = getCommuneSchoolBusiness().getCurrentSchoolSeasonID();
 		return getCommuneSchoolBusiness().getPreviousSchoolSeasonID(currentSeasonId);
@@ -222,10 +209,10 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		if (placementDate != null) {
 			try {
 				try {
-					season = getSchoolSeasonHome().findSeasonByDate(placementDate);
+					season = getCareBusiness().getSchoolSeasonHome().findSeasonByDate(placementDate);
 				}
 				catch (FinderException e) {
-					season = getCurrentSeason();
+					season = getCareBusiness().getCurrentSeason();
 				}
 			}
 			catch (FinderException fe) {
@@ -320,10 +307,10 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 			
 			try {
 				try {
-					season = getSchoolSeasonHome().findSeasonByDate(placementDate);
+					season = getCareBusiness().getSchoolSeasonHome().findSeasonByDate(placementDate);
 				}
 				catch (FinderException e) {
-					season = getCurrentSeason();
+					season = getCareBusiness().getCurrentSeason();
 				}
 			}
 			catch (FinderException fe) {
@@ -355,68 +342,66 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 			list.add(choice);
 			return list;
 		}
-		else {
-			int caseCount = 3;
-			java.sql.Timestamp time = new java.sql.Timestamp(System.currentTimeMillis());
-			List returnList = new Vector(3);
-			javax.transaction.UserTransaction trans = this.getSessionContext().getUserTransaction();
+		int caseCount = 3;
+		java.sql.Timestamp time = new java.sql.Timestamp(System.currentTimeMillis());
+		List returnList = new Vector(3);
+		javax.transaction.UserTransaction trans = this.getSessionContext().getUserTransaction();
+		try {
+			trans.begin();
+			CaseStatus first = getCaseStatusPreliminary();
+			CaseStatus other = getCaseStatusInactive();
+			int[] schoolIds = {chosen_school_1, chosen_school_2, chosen_school_3};
+			SchoolChoice choice = null;
+			IWTimestamp stamp = new IWTimestamp();
+			for (int i = 0; i < caseCount; i++) {
+				choice = createSchoolChoice(stamp, userId, childId, school_type_id, current_school, schoolIds[i], schoolYearID, currentYearID, i + 1, method, workSituation1, workSituation2, language, message, time, changeOfSchool, keepChildrenCare, autoAssign, custodiansAgree, schoolCatalogue, i == 0 ? first : other, choice, placementDate, season, extraMessages[i]);
+				returnList.add(choice);
+			}
+			if (useAsAdmin || isInSCPeriod){
+				handleSeparatedParentApplication(userId, returnList, false);	
+			}
+			else {
+				handleSeparatedParentApplicationNewlyMovedIn(userId, returnList, false);
+			}
+			trans.commit();
+
+			int previousSeasonID = -1;
+			if (season != null) {
+				previousSeasonID = getCommuneSchoolBusiness().getPreviousSchoolSeasonID(((Integer)season.getPrimaryKey()).intValue());
+			}
+			else {
+				previousSeasonID = getCommuneSchoolBusiness().getPreviousSchoolSeasonID(getCommuneSchoolBusiness().getCurrentSchoolSeasonID());
+			}
+			
+			if (previousSeasonID != -1) {
+				getCommuneSchoolBusiness().setNeedsSpecialAttention(childId, previousSeasonID, true);
+			}
+			// Set native language for child if param is set
+			if (childId != -1 && nativeLangIsChecked && nativeLang != -1) {
+				User child = getUserBusiness().getUser(childId);
+				if (child != null) {
+					child.setNativeLanguage(nativeLang);
+					child.store();
+				}
+			}
+
+			return returnList;
+		}
+		catch (Exception ex) {
 			try {
-				trans.begin();
-				CaseStatus first = getCaseStatusPreliminary();
-				CaseStatus other = getCaseStatusInactive();
-				int[] schoolIds = {chosen_school_1, chosen_school_2, chosen_school_3};
-				SchoolChoice choice = null;
-				IWTimestamp stamp = new IWTimestamp();
-				for (int i = 0; i < caseCount; i++) {
-					choice = createSchoolChoice(stamp, userId, childId, school_type_id, current_school, schoolIds[i], schoolYearID, currentYearID, i + 1, method, workSituation1, workSituation2, language, message, time, changeOfSchool, keepChildrenCare, autoAssign, custodiansAgree, schoolCatalogue, i == 0 ? first : other, choice, placementDate, season, extraMessages[i]);
-					returnList.add(choice);
-				}
-				if (useAsAdmin || isInSCPeriod){
-					handleSeparatedParentApplication(userId, returnList, false);	
-				}
-				else {
-					handleSeparatedParentApplicationNewlyMovedIn(userId, returnList, false);
-				}
-				trans.commit();
-
-				int previousSeasonID = -1;
-				if (season != null) {
-					previousSeasonID = getCommuneSchoolBusiness().getPreviousSchoolSeasonID(((Integer)season.getPrimaryKey()).intValue());
-				}
-				else {
-					previousSeasonID = getCommuneSchoolBusiness().getPreviousSchoolSeasonID(getCommuneSchoolBusiness().getCurrentSchoolSeasonID());
-				}
-				
-				if (previousSeasonID != -1) {
-					getCommuneSchoolBusiness().setNeedsSpecialAttention(childId, previousSeasonID, true);
-				}
-				// Set native language for child if param is set
-				if (childId != -1 && nativeLangIsChecked && nativeLang != -1) {
-					User child = getUserBusiness().getUser(childId);
-					if (child != null) {
-						child.setNativeLanguage(nativeLang);
-						child.store();
-					}
-				}
-
-				return returnList;
+				trans.rollback();
 			}
-			catch (Exception ex) {
-				try {
-					trans.rollback();
-				}
-				catch (javax.transaction.SystemException e) {
-					throw new IDOCreateException(e.getMessage());
-				}
-				throw new IDOCreateException(ex.getMessage());
+			catch (javax.transaction.SystemException e) {
+				throw new IDOCreateException(e.getMessage());
 			}
+			throw new IDOCreateException(ex.getMessage());
 		}
 	}
 
 	private SchoolChoice createSchoolChoice(IWTimestamp stamp, int userId, int childId, int school_type_id, int current_school, int chosen_school, int schoolYearID, int currentYearID, int choiceOrder, int method, int workSituation1, int workSituation2, String language, String message, java.sql.Timestamp choiceDate, boolean changeOfSchool, boolean keepChildrenCare, boolean autoAssign, boolean custodiansAgree, boolean schoolCatalogue, CaseStatus caseStatus, Case parentCase, Date placementDate, SchoolSeason season, String extraMessage) throws CreateException, RemoteException {
 		if (season == null) {
 			try {
-				season = getCurrentSeason();
+				season = getCareBusiness().getCurrentSeason();
 			}
 			catch (FinderException fex) {
 				season = null;
@@ -606,7 +591,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	}
 
 	public void createCurrentSchoolSeason(Integer newKey, Integer oldKey) throws java.rmi.RemoteException {
-		CurrentSchoolSeasonHome shome = getCurrentSchoolSeasonHome();
+		CurrentSchoolSeasonHome shome = getCareBusiness().getCurrentSchoolSeasonHome();
 		CurrentSchoolSeason season;
 		try {
 			season = shome.findByPrimaryKey(oldKey);
@@ -854,7 +839,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 
 	public void setChildcarePreferences(User performer, int childID, boolean freetimeInThisSchool, String otherMessage, String messageSubject, String messageBody) throws RemoteException {
 		try {
-			SchoolSeason season = getCurrentSeason();
+			SchoolSeason season = getCareBusiness().getCurrentSeason();
 			if (season != null) {
 				Collection choices = this.findByStudentAndSeason(childID, ((Integer) season.getPrimaryKey()).intValue());
 				if (!choices.isEmpty()) {
@@ -931,7 +916,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 				member = getSchoolBusiness().getSchoolClassMemberHome().findLatestByUserAndSchool(choice.getChildId(), choice.getCurrentSchoolId(), types);
 			}
 			else {
-				SchoolSeason season = getSchoolSeasonHome().findSeasonByDate(choice.getPlacementDate());
+				SchoolSeason season = getCareBusiness().getSchoolSeasonHome().findSeasonByDate(choice.getPlacementDate());
 				member = getSchoolBusiness().getSchoolClassMemberHome().findLatestByUserAndSchCategoryAndSeason(choice.getChild(), getSchoolBusiness().getCategoryElementarySchool(), season);
 			}
 			member.setRemovedDate(stamp.getTimestamp());
@@ -1274,6 +1259,13 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		return (SchoolCommuneBusiness) getServiceInstance(SchoolCommuneBusiness.class);
 	}
 	
+	private CareBusiness getCareBusiness() throws RemoteException {
+		if (careBusiness == null) {
+			careBusiness = (CareBusiness) getServiceInstance(CareBusiness.class);
+		}
+		return careBusiness;
+	}
+	
 	/**
 	 * Method getFirstProviderForUser. If there is no school that the user then the method throws a FinderException.
 	 * 
@@ -1355,7 +1347,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		try {
 			int seasonID = -1;
 			try {
-				seasonID = ((Integer)getCurrentSeason().getPrimaryKey()).intValue();
+				seasonID = ((Integer) getCareBusiness().getCurrentSeason().getPrimaryKey()).intValue();
 			}
 			catch (FinderException fe) {
 				seasonID = -1;
@@ -1373,7 +1365,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 			final Date startDate = getSchoolChoiceStartDate ().getDate ();
 			final Date endDate = getSchoolChoiceEndDate ().getDate ();
 			return getSchoolChoiceHome ().getCount
-			(getCurrentSeason (), startDate, endDate);
+			(getCareBusiness().getCurrentSeason (), startDate, endDate);
 		}	catch (Exception e) {
 			e.printStackTrace ();
 			return 0;
@@ -1401,7 +1393,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		.getSystemProperties ().getProperties ("school_properties");
 		final String valueAsString = properties.getProperty(key);
 		final IWTimestamp seasonStart
-		= new IWTimestamp (getCurrentSeason ().getSchoolSeasonStart ());
+		= new IWTimestamp (getCareBusiness().getCurrentSeason ().getSchoolSeasonStart ());
 		final IWTimestamp result = new IWTimestamp (seasonStart);
 		result.setDay (Integer.parseInt (valueAsString.substring (0, 2)));
 		result.setMonth (Integer.parseInt (valueAsString.substring (3)));
@@ -1935,7 +1927,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	
 	public void importLanguageToPlacement() {
 		try {
-			SchoolSeason season = getCurrentSeason();
+			SchoolSeason season = getCareBusiness().getCurrentSeason();
 			String[] status = { getCaseStatusInactive().getStatus(), getCaseStatusDeleted().getStatus() };
 			Collection choices = getSchoolChoiceHome().findAllWithLanguageWithinSeason(season, status);
 			int size = choices.size();

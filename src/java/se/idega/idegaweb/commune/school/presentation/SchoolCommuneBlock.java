@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Vector;
 import javax.ejb.FinderException;
 import se.idega.idegaweb.commune.care.business.AccountingSession;
+import se.idega.idegaweb.commune.care.business.CareBusiness;
 import se.idega.idegaweb.commune.presentation.CommuneBlock;
 import se.idega.idegaweb.commune.school.business.SchoolClassWriter;
 import se.idega.idegaweb.commune.school.business.SchoolCommuneBusiness;
@@ -50,6 +51,7 @@ public abstract class SchoolCommuneBlock extends CommuneBlock {
 	protected SchoolCommuneSession session;
 	private AccountingSession accountingSession;
 	private SchoolBusiness sBusiness;
+	private CareBusiness careBusiness;
 	private int _schoolID = -1;
 	private int _schoolSeasonID = -1;
 	private int _schoolYearID = -1;
@@ -69,6 +71,7 @@ public abstract class SchoolCommuneBlock extends CommuneBlock {
 		business = getSchoolCommuneBusiness(iwc);
 		session = getSchoolCommuneSession(iwc);
 		sBusiness = getSchoolBusiness(iwc);
+		careBusiness = getCareBusiness(iwc);
 		initialize(iwc);
 
 		init(iwc);
@@ -311,8 +314,12 @@ public abstract class SchoolCommuneBlock extends CommuneBlock {
 		return (SchoolCommuneSession) IBOLookup.getSessionInstance(iwc, SchoolCommuneSession.class);	
 	}
 	
-	protected SchoolBusiness getSchoolBusiness(IWApplicationContext iwac) throws RemoteException {
+	private SchoolBusiness getSchoolBusiness(IWApplicationContext iwac) throws RemoteException {
 		return (SchoolBusiness) IBOLookup.getServiceInstance(iwac, SchoolBusiness.class);
+	}
+
+	private CareBusiness getCareBusiness(IWApplicationContext iwac) throws RemoteException {
+		return (CareBusiness) IBOLookup.getServiceInstance(iwac, CareBusiness.class);
 	}
 	
 	/**
@@ -347,6 +354,16 @@ public abstract class SchoolCommuneBlock extends CommuneBlock {
 		return _schoolYearID;
 	}
 
+
+	public SchoolBusiness getSchoolBusiness() {
+		return sBusiness;
+	}
+	
+	
+	public CareBusiness getCareBusiness() {
+		return careBusiness;
+	}
+	
 	/**
 	 * Returns the business.
 	 * @return SchoolCommuneBusiness

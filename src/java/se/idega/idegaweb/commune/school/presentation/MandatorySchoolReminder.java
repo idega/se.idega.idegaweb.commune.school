@@ -15,8 +15,8 @@ import javax.ejb.CreateException;
 import javax.ejb.FinderException;
 import net.sf.jasperreports.engine.JRDataSource;
 import se.idega.idegaweb.commune.business.CommuneUserBusiness;
+import se.idega.idegaweb.commune.care.business.CareBusiness;
 import se.idega.idegaweb.commune.presentation.CommuneBlock;
-import se.idega.idegaweb.commune.school.business.SchoolChoiceBusiness;
 import se.idega.idegaweb.commune.school.business.SchoolCommuneBusiness;
 import com.idega.block.datareport.business.DynamicReportDesign;
 import com.idega.block.datareport.business.JasperReportBusiness;
@@ -298,14 +298,14 @@ public class MandatorySchoolReminder extends CommuneBlock {
 	 */
 	private void presentResultAsReport(IWContext iwc,IWResourceBundle iwrb) throws MandatorySchoolReminderException, IOException, IDOException, CreateException, RemoteException, FinderException{
 
-		SchoolChoiceBusiness scBusiness = (SchoolChoiceBusiness)IBOLookup.getServiceInstance(iwc,SchoolChoiceBusiness.class);
+		CareBusiness careBusiness = (CareBusiness)IBOLookup.getServiceInstance(iwc, CareBusiness.class);
 		System.out.println("Jasper reports Bus");
 		JasperReportBusiness jasperBusiness =  (JasperReportBusiness)IBOLookup.getServiceInstance(iwc,JasperReportBusiness.class);
 		DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT,iwc.getCurrentLocale()); 
 		
 		SchoolSeason currentSeason;
 		try {
-			currentSeason = scBusiness.getCurrentSeason();
+			currentSeason = careBusiness.getCurrentSeason();
 		} catch (FinderException e) {
 			throw new MandatorySchoolReminderException("No current schoolseason found in database",e,iwrb.getLocalizedString("could_not_find_current_school_season","Could not find current school season"));
 		}

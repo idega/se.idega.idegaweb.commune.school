@@ -173,6 +173,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	SchoolClassMember schoolClassMember = null;
 	SchoolClassMember schoolClassMemberNew = null;
 	SchoolCommuneBusiness schCommBiz;
+	CareBusiness careBuiz = null;
 	SchoolClass schoolClass = null;
 	SchoolClass schoolClassNew = null;
 	School school = null;
@@ -240,6 +241,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		iwrb = getResourceBundle(iwc);
 		df = DateFormat.getDateInstance(DateFormat.SHORT, iwc.getCurrentLocale());
 		schBuiz = (SchoolChoiceBusiness) IBOLookup.getServiceInstance(iwc, SchoolChoiceBusiness.class);
+		careBuiz = (CareBusiness) IBOLookup.getServiceInstance(iwc, CareBusiness.class);
 		canApply = checkCanApply(iwc);
 		//userbuiz = (UserBusiness) IBOLookup.getServiceInstance(iwc, UserBusiness.class);
 		//schCommBiz = (SchoolCommuneBusiness) IBOLookup.getServiceInstance(iwc, SchoolCommuneBusiness.class);
@@ -278,14 +280,14 @@ public class SchoolChoiceApplication extends CommuneBlock {
 
 				if (_useOngoingSeason) {
 					try {
-						season = schBuiz.getSchoolSeasonHome().findSeasonByDate(new IWTimestamp().getDate());
+						season = careBuiz.getSchoolSeasonHome().findSeasonByDate(new IWTimestamp().getDate());
 					}
 					catch (FinderException e) {
-						season = schBuiz.getCurrentSeason();
+						season = careBuiz.getCurrentSeason();
 					}
 				}
 				else
-					season = schBuiz.getCurrentSeason();
+					season = careBuiz.getCurrentSeason();
 
 				User child = userbuiz.getUser(childId);
 				if (child != null) {
@@ -300,9 +302,8 @@ public class SchoolChoiceApplication extends CommuneBlock {
 						///if a change of school is made when there is no placement that is ongoing, only placement for coming season
 						if (schoolChange && valPreSchool == -1) {							
 							try {
-								SchoolChoiceBusiness choiceBean = (SchoolChoiceBusiness) IBOLookup.getServiceInstance(iwc, SchoolChoiceBusiness.class);
 								//SchoolSeason season = null;
-								seasonNew = choiceBean.getCurrentSeason();
+								seasonNew = careBuiz.getCurrentSeason();
 								
 								schoolClassMemberNew = schBuiz.getSchoolBusiness().getSchoolClassMemberHome().findLatestByUserAndSchCategoryAndSeason(child, schBuiz.getSchoolBusiness().getCategoryElementarySchool(), seasonNew);
 								schoolClassNew = schoolClassMemberNew.getSchoolClass();
@@ -634,10 +635,9 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	}
 
 	public PresentationObject getCurrentSchoolSeasonInfo(IWContext iwc) throws RemoteException {
-		SchoolChoiceBusiness choiceBean = (SchoolChoiceBusiness) IBOLookup.getServiceInstance(iwc, SchoolChoiceBusiness.class);
 		SchoolSeason season = null;
 		try {
-			season = choiceBean.getCurrentSeason();
+			season = careBuiz.getCurrentSeason();
 		}
 		catch (RemoteException e) {
 		}
@@ -1645,7 +1645,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 
 		boolean[] checkCanApply = { false, false, false};
 		try {
-			SchoolSeason season = schBuiz.getCurrentSeason();
+			SchoolSeason season = careBuiz.getCurrentSeason();
 			if (season != null) {
 				IWPropertyList properties = iwc.getSystemProperties().getProperties("school_properties");
 				String choiceStart = properties.getProperty("choice_start_date");

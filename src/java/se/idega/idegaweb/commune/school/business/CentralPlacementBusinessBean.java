@@ -14,6 +14,7 @@ import javax.ejb.FinderException;
 import javax.transaction.SystemException;
 import javax.transaction.UserTransaction;
 import se.idega.idegaweb.commune.business.CommuneUserBusiness;
+import se.idega.idegaweb.commune.care.business.CareBusiness;
 import se.idega.idegaweb.commune.care.resource.data.ResourceClassMember;
 import se.idega.idegaweb.commune.care.resource.data.ResourceClassMemberHome;
 import se.idega.idegaweb.commune.school.presentation.CentralPlacementEditorConstants;
@@ -126,12 +127,12 @@ public class CentralPlacementBusinessBean extends IBOServiceBean implements Cent
 		SchoolSeason season = null;
 		
 		try {
-			season = getSchoolChoiceBusiness().getSchoolSeasonHome().findSeasonByDate(new IWTimestamp().getDate());
+			season = getCareBusiness().getSchoolSeasonHome().findSeasonByDate(new IWTimestamp().getDate());
 		} catch (Exception e) {}
 		
 		if (season == null) {
 			try {
-				season = getSchoolChoiceBusiness().getCurrentSeason();
+				season = getCareBusiness().getCurrentSeason();
 			} catch (Exception e1) {
 				e1.printStackTrace();
 			} 
@@ -208,4 +209,7 @@ public class CentralPlacementBusinessBean extends IBOServiceBean implements Cent
 		return (SchoolCategoryHome) IDOLookup.getHome(SchoolCategory.class);
 	}
 
+	private CareBusiness getCareBusiness() throws RemoteException {
+		return (CareBusiness) getServiceInstance(CareBusiness.class);
+	}
 }

@@ -1,23 +1,19 @@
 package se.idega.idegaweb.commune.school.presentation;
 
 import is.idega.block.family.business.FamilyLogic;
-
 import java.rmi.RemoteException;
 import java.text.DateFormat;
 import java.util.Collection;
 import java.util.Iterator;
-
-//import se.idega.idegaweb.commune.message.business.MessageBusiness;
+import se.idega.idegaweb.commune.care.business.CareBusiness;
 import se.idega.idegaweb.commune.presentation.CommuneBlock;
 import se.idega.idegaweb.commune.school.business.SchoolChoiceBusiness;
 import se.idega.idegaweb.commune.school.business.SchoolCommuneSession;
 import se.idega.idegaweb.commune.school.data.SchoolChoice;
-
 import com.idega.block.school.business.SchoolBusiness;
 import com.idega.block.school.data.School;
 import com.idega.business.IBOLookup;
 import com.idega.core.location.data.Address;
-//import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObject;
@@ -29,11 +25,11 @@ import com.idega.presentation.ui.Form;
 import com.idega.presentation.ui.HiddenInput;
 import com.idega.presentation.ui.SubmitButton;
 import com.idega.presentation.ui.TextInput;
+import com.idega.presentation.util.TextFormat;
 import com.idega.user.business.UserBusiness;
 import com.idega.user.data.User;
 import com.idega.util.PersonalIDFormatter;
 import com.idega.util.text.Name;
-import com.idega.presentation.util.TextFormat;
 
 /**
  * <p>Title: </p>
@@ -53,6 +49,7 @@ public class SchoolChoiceApprover extends CommuneBlock {
 	private UserBusiness userBean;
 	private SchoolBusiness schoolBean;
 	private SchoolChoiceBusiness choiceBean;
+	private CareBusiness careBean;
 	//private MessageBusiness msgBean;
 	private DateFormat df;
 	private int schoolId = -1;
@@ -86,6 +83,7 @@ public class SchoolChoiceApprover extends CommuneBlock {
 					child = userBean.getUser(choice.getChildId());
 				}
 				catch (Exception e) {
+					// empty
 				}
 				Table T = new Table();
 				T.add(getPupilInfo(iwc,child,choice),1,1);
@@ -95,7 +93,7 @@ public class SchoolChoiceApprover extends CommuneBlock {
 			}
 			else{
 				try {
-					seasonId = ((Integer)choiceBean.getCurrentSeason().getPrimaryKey()).intValue();
+					seasonId = ((Integer)careBean.getCurrentSeason().getPrimaryKey()).intValue();
 					school = schoolBean.getSchool(new Integer(schoolId));
 					if (pupilList)
 						cases = choiceBean.getSchoolChoiceHome().findByCodeAndStatus(code, statusToSearch, schoolId,seasonId,"group_place");
@@ -125,6 +123,7 @@ public class SchoolChoiceApprover extends CommuneBlock {
 		userBean = (UserBusiness) IBOLookup.getServiceInstance(iwc, UserBusiness.class);
 		schoolBean = (SchoolBusiness) IBOLookup.getServiceInstance(iwc, SchoolBusiness.class);
 		choiceBean = (SchoolChoiceBusiness) IBOLookup.getServiceInstance(iwc, SchoolChoiceBusiness.class);
+		careBean = (CareBusiness) IBOLookup.getServiceInstance(iwc,CareBusiness.class);
 		//msgBean = (MessageBusiness) IBOLookup.getServiceInstance(iwc,MessageBusiness.class);
 		
 		schoolId = getSchoolCommuneSession(iwc).getSchoolID();

@@ -2,9 +2,8 @@ package se.idega.idegaweb.commune.school.presentation;
 
 import java.text.DateFormat;
 import java.util.Collection;
-
+import se.idega.idegaweb.commune.care.business.CareBusiness;
 import se.idega.idegaweb.commune.school.business.SchoolChoiceBusiness;
-
 import com.idega.block.school.business.SchoolBusiness;
 import com.idega.block.school.data.SchoolSeason;
 import com.idega.business.IBOLookup;
@@ -39,6 +38,7 @@ public class CurrentSchoolSeasonEditor extends Block {
 
   SchoolBusiness sabBean;
   SchoolChoiceBusiness socBean;
+  CareBusiness careBean;
   public final static String IW_BUNDLE_IDENTIFIER = "com.idega.block.school";
 
   public String getBundleIdentifier(){
@@ -69,6 +69,7 @@ public class CurrentSchoolSeasonEditor extends Block {
   private void initBeans(IWContext iwc) throws java.rmi.RemoteException{
     sabBean = (SchoolBusiness) IBOLookup.getServiceInstance(iwc,SchoolBusiness.class);
     socBean = (SchoolChoiceBusiness) IBOLookup.getServiceInstance(iwc,SchoolChoiceBusiness.class);
+    careBean = (CareBusiness) IBOLookup.getServiceInstance(iwc,CareBusiness.class);
   }
 
   private void saveArea(IWContext iwc)throws java.rmi.RemoteException{
@@ -91,7 +92,7 @@ public class CurrentSchoolSeasonEditor extends Block {
     SchoolSeason current = null;
     try{
       SchoolSeasons = sabBean.findAllSchoolSeasons();
-      current = socBean.getCurrentSeason();
+      current = careBean.getCurrentSeason();
       T.add(new HiddenInput("old_current",current.getPrimaryKey().toString()));
 
     }

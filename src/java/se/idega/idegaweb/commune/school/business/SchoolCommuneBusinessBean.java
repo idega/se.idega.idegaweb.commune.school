@@ -21,6 +21,7 @@ import javax.ejb.EJBException;
 import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
 import se.idega.idegaweb.commune.business.CommuneUserBusiness;
+import se.idega.idegaweb.commune.care.business.CareBusiness;
 import se.idega.idegaweb.commune.care.data.ProviderAccountingProperties;
 import se.idega.idegaweb.commune.care.data.ProviderAccountingPropertiesHome;
 import se.idega.idegaweb.commune.message.business.MessageBusiness;
@@ -80,6 +81,8 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 	private IWBundle _iwb = null;
 
 	private IWResourceBundle _iwrb = null;
+	
+	private CareBusiness careBusiness = null;
 
 	private final static String IW_BUNDLE_IDENTIFIER = "se.idega.idegaweb.commune";
 
@@ -502,7 +505,7 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 
 	public int getCurrentSchoolSeasonID() throws RemoteException {
 		try {
-			return ((Integer) getSchoolChoiceBusiness().getCurrentSeason().getPrimaryKey()).intValue();
+			return ((Integer) getCareBusiness().getCurrentSeason().getPrimaryKey()).intValue();
 		}
 		catch (FinderException fe) {
 			fe.printStackTrace();
@@ -512,7 +515,7 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 
 	public SchoolSeason getCurrentSchoolSeason() throws FinderException {
 		try {
-			return getSchoolChoiceBusiness().getCurrentSeason();
+			return getCareBusiness().getCurrentSeason();
 		}
 		catch (RemoteException re) {
 			throw new IBORuntimeException(re);
@@ -791,7 +794,7 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 	 */
 	public SchoolClassMember getCurrentSchoolClassMembership(final User user) throws RemoteException {
 		try {
-			final SchoolSeason season = getSchoolChoiceBusiness().getCurrentSeason();
+			final SchoolSeason season = getCareBusiness().getCurrentSeason();
 			final SchoolClassMember student = getSchoolBusiness().findByStudentAndSeason(user, season);
 			return (null == student || null != student.getRemovedDate()) ? null : student;
 		}
@@ -815,7 +818,7 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 	 */
 	public SchoolClassMember getCurrentSchoolClassMembership(final User user, final int schoolId) throws RemoteException {
 		try {
-			final SchoolSeason season = getSchoolChoiceBusiness().getCurrentSeason();
+			final SchoolSeason season = getCareBusiness().getCurrentSeason();
 			final int userId = ((Integer) user.getPrimaryKey()).intValue();
 			final int seasonId = ((Integer) season.getPrimaryKey()).intValue();
 			final SchoolClassMember student = getSchoolBusiness().findByStudentAndSchoolAndSeason(userId, schoolId, seasonId);
@@ -1215,6 +1218,13 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 
 		}
 		return "";
+	}
+	
+	private CareBusiness getCareBusiness() throws RemoteException {
+		if (careBusiness == null) {
+			careBusiness = (CareBusiness) getServiceInstance(CareBusiness.class);
+		}
+		return careBusiness;
 	}
 
 }
