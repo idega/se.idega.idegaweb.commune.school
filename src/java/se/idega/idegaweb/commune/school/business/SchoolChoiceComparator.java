@@ -31,17 +31,19 @@ public class SchoolChoiceComparator implements Comparator {
   
   private Locale locale;
   private UserBusiness business;
+  private Map studentMap;
   private Collator collator;
   private int sortBy = NAME_SORT;
   
-  public SchoolChoiceComparator(Locale locale, UserBusiness business) {
-  	this(NAME_SORT, locale, business);
+  public SchoolChoiceComparator(Locale locale, UserBusiness business, Map studentMap) {
+  	this(NAME_SORT, locale, business, studentMap);
   }
   
-  public SchoolChoiceComparator(int sortBy, Locale locale, UserBusiness business) {
+  public SchoolChoiceComparator(int sortBy, Locale locale, UserBusiness business, Map studentMap) {
   	this.sortBy = sortBy;
   	this.locale = locale;
   	this.business = business;
+  	this.studentMap = studentMap;
   }
   
 	/**
@@ -75,8 +77,8 @@ public class SchoolChoiceComparator implements Comparator {
 	}
 	
 	public int lastNameSort(Object o1, Object o2) throws RemoteException {
-		User p1 = business.getUser(((SchoolChoice)o1).getChildId());
-		User p2 = business.getUser(((SchoolChoice)o2).getChildId());
+		User p1 = (User) studentMap.get(new Integer((((SchoolChoice)o1).getChildId())));
+		User p2 = (User) studentMap.get(new Integer((((SchoolChoice)o2).getChildId())));
 		
 		String one = p1.getLastName()!=null?p1.getLastName():"";
 		String two = p2.getLastName()!=null?p2.getLastName():"";
@@ -99,8 +101,8 @@ public class SchoolChoiceComparator implements Comparator {
 	}	
 
 	public int genderSort(Object o1, Object o2) throws RemoteException {
-		User p1 = business.getUser(((SchoolChoice)o1).getChildId());
-		User p2 = business.getUser(((SchoolChoice)o2).getChildId());
+		User p1 = (User) studentMap.get(new Integer((((SchoolChoice)o1).getChildId())));
+		User p2 = (User) studentMap.get(new Integer((((SchoolChoice)o2).getChildId())));
 		int result = 0;
 		
 		boolean isFemale1 = PIDChecker.getInstance().isFemale(p1.getPersonalID());

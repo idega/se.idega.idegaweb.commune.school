@@ -28,6 +28,7 @@ import com.idega.block.school.data.SchoolClassMember;
 import com.idega.block.school.data.SchoolSeason;
 import com.idega.block.school.data.SchoolYear;
 import com.idega.business.IBOLookup;
+import com.idega.core.data.Address;
 import com.idega.core.data.Email;
 import com.idega.idegaweb.IWPropertyList;
 import com.idega.user.business.UserBusiness;
@@ -73,19 +74,104 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 		HashMap coll = new HashMap();
 			
 		if ( !students.isEmpty() ) {
-			UserBusiness userBusiness = (UserBusiness) IBOLookup.getServiceInstance(getIWApplicationContext(), UserBusiness.class);	
+			Collection users = getCommuneUserBusiness().getUsers(this.getUserIDsFromClassMembers(students));
 			User user;
-			SchoolClassMember member;
 			
-			Iterator iter = students.iterator();
+			Iterator iter = users.iterator();
 			while (iter.hasNext()) {
-				member = (SchoolClassMember) iter.next();
-				user = userBusiness.getUser(member.getClassMemberId());
-				coll.put(new Integer(member.getClassMemberId()), user);
+				user = (User) iter.next();
+				coll.put((Integer)user.getPrimaryKey(), user);
 			}
 		}
 		
 		return coll;		
+	}
+	
+	public Map getUserMapFromChoices(Collection choices) throws RemoteException {
+		HashMap coll = new HashMap();
+			
+		if ( !choices.isEmpty() ) {
+			User user;
+			Collection students = getCommuneUserBusiness().getUsers(getUserIDsFromChoices(choices));
+			if (students != null) {
+				Iterator iterator = students.iterator();
+				while (iterator.hasNext()) {
+					user = (User) iterator.next();
+					coll.put((Integer)user.getPrimaryKey(), user);
+				}
+			}
+		}
+		
+		return coll;		
+	}
+	
+	public Map getUserAddressesMapFromChoices(Collection choices) throws RemoteException {
+		HashMap coll = new HashMap();
+			
+		if ( !choices.isEmpty() ) {
+			Address address;
+			Collection students = getCommuneUserBusiness().getUsersMainAddresses(getUserIDsFromChoices(choices));
+			if (students != null) {
+				Iterator iterator = students.iterator();
+				while (iterator.hasNext()) {
+					address = (Address) iterator.next();
+					coll.put((Integer)address.getPrimaryKey(), address);
+				}
+			}
+		}
+		
+		return coll;		
+	}
+	
+	private String[] getUserIDsFromChoices(Collection choices) {
+		if (choices != null) {
+			String[] userIDs = new String[choices.size()];
+			SchoolChoice choice;
+			
+			int a = 0;
+			Iterator iter = choices.iterator();
+			while (iter.hasNext()) {
+				choice = (SchoolChoice) iter.next();
+				userIDs[a] = String.valueOf(choice.getChildId());
+				a++;
+			}
+			return userIDs;
+		}
+		return null;
+	}
+	
+	private String[] getUserIDsFromClassMembers(Collection classMembers) throws RemoteException {
+		if (classMembers != null) {
+			String[] userIDs = new String[classMembers.size()];
+			SchoolClassMember classMember;
+			
+			int a = 0;
+			Iterator iter = classMembers.iterator();
+			while (iter.hasNext()) {
+				classMember = (SchoolClassMember) iter.next();
+				userIDs[a] = String.valueOf(classMember.getClassMemberId());
+				a++;
+			}
+			return userIDs;
+		}
+		return null;
+	}
+	
+	private String[] getUserIDsFromStudents(Collection choices) throws RemoteException {
+		if (choices != null) {
+			String[] userIDs = new String[choices.size()];
+			SchoolClassMember student;
+			
+			int a = 0;
+			Iterator iter = choices.iterator();
+			while (iter.hasNext()) {
+				student = (SchoolClassMember) iter.next();
+				userIDs[a] = String.valueOf(student.getClassMemberId());
+				a++;
+			}
+			return userIDs;
+		}
+		return null;
 	}
 	
 	public Map getStudentChoices(Collection students, int seasonID) throws RemoteException {
