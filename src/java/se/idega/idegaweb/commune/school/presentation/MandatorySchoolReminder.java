@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.rmi.RemoteException;
 import java.text.DateFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import javax.ejb.CreateException;
 import javax.ejb.FinderException;
@@ -37,6 +38,7 @@ import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.BackButton;
 import com.idega.presentation.ui.DateInput;
 import com.idega.presentation.ui.Form;
+import com.idega.presentation.ui.GenericButton;
 import com.idega.presentation.ui.HiddenInput;
 import com.idega.presentation.ui.InterfaceObject;
 import com.idega.presentation.ui.SubmitButton;
@@ -64,7 +66,7 @@ public class MandatorySchoolReminder extends CommuneBlock {
 	private static final String ACTION_CANCEL = "cancel";
 	
 	private String _action = ACTION_INITIALIZE;
-	public static final String PRM_ACTION = "action";
+	public static final String PRM_ACTION = "theaction";
 	
 	public static final String PRM_SEASON = "season";
 	public static final String PRM_DATE = "date";
@@ -146,6 +148,7 @@ public class MandatorySchoolReminder extends CommuneBlock {
 	
 	
 	public void main(IWContext iwc) throws Exception{
+	    debugParameters(iwc);
 		IWResourceBundle iwrb = getResourceBundle(iwc);
 		
 		try {
@@ -231,7 +234,9 @@ public class MandatorySchoolReminder extends CommuneBlock {
 
 		String date = iwc.getParameter(PRM_DATE_STRING);
 		if(date != null){
-			DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT,iwc.getCurrentLocale()); 
+		
+		    DateFormat df = new SimpleDateFormat("yyyy-mm-dd"); 
+		        //DateFormat.getDateInstance(DateFormat.SHORT,iwc.getCurrentLocale()); 
 			_selectedDate = df.parse(date);
 		}
 		
