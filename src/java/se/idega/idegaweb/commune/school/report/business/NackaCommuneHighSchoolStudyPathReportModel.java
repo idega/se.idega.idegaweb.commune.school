@@ -1,5 +1,5 @@
 /*
- * $Id: NackaCommuneHighSchoolStudyPathReportModel.java,v 1.15 2004/02/25 15:08:43 anders Exp $
+ * $Id: NackaCommuneHighSchoolStudyPathReportModel.java,v 1.16 2004/04/13 08:51:26 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -21,10 +21,10 @@ import com.idega.block.school.data.SchoolStudyPath;
 /** 
  * Report model for Nacka high school student placements with all study paths listed.
  * <p>
- * Last modified: $Date: 2004/02/25 15:08:43 $ by $Author: anders $
+ * Last modified: $Date: 2004/04/13 08:51:26 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.15 $
+ * @version $Revision: 1.16 $
  */
 public class NackaCommuneHighSchoolStudyPathReportModel extends ReportModel {
 
@@ -452,6 +452,7 @@ public class NackaCommuneHighSchoolStudyPathReportModel extends ReportModel {
 			query.setSchoolTypeHighSchool();
 			query.setSchools(rb.getNackaCommuneHighSchools());
 			query.setStudyPathPrefix(); // parameter 1
+			query.setNotSchoolYearName("G4");
 			query.prepare();
 			setQuery(QUERY_OTHER_COMMUNES, query);
 		}
@@ -475,6 +476,7 @@ public class NackaCommuneHighSchoolStudyPathReportModel extends ReportModel {
 			query.setSchoolTypeHighSchool();
 			query.setSchools(rb.getNackaCommuneHighSchools());
 			query.setStudyPathPrefix(); // parameter 1
+			query.setNotSchoolYearName("G4");
 			query.prepare();
 			setQuery(QUERY_NACKA_COMMUNE, query);
 		}
@@ -496,6 +498,7 @@ public class NackaCommuneHighSchoolStudyPathReportModel extends ReportModel {
 			query.setSchools(schools);
 			query.setSchoolTypeHighSchool();
 			query.setStudyPathPrefix(); // parameter 1
+			query.setNotSchoolYearName("G4");
 			query.prepare();
 			setQuery(QUERY_STUDY_PATH, query);
 		}
