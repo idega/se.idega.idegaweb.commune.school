@@ -304,7 +304,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 						if (schoolChange && valPreSchool == -1) {							
 							try {
 								SchoolChoiceBusiness choiceBean = (SchoolChoiceBusiness) IBOLookup.getServiceInstance(iwc, SchoolChoiceBusiness.class);
-								SchoolSeason season = null;
+								//SchoolSeason season = null;
 								seasonNew = choiceBean.getCurrentSeason();
 								
 								schoolClassMemberNew = schBuiz.getSchoolBusiness().getSchoolClassMemberHome().findLatestByUserAndSchCategoryAndSeason(child, schBuiz.getSchoolBusiness().getCategoryElementarySchool(), seasonNew);

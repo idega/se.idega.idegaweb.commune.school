@@ -584,7 +584,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 			if (choices != null) {
 				SchoolChoice choice = (SchoolChoice) choices.get(0);
 				User appParent = getUser(applicationParentID);
-				boolean isInSCPeriod = isInSchoolChoicePeriod();
+				//boolean isInSCPeriod = isInSchoolChoicePeriod();
 				
 				String applyingSubject, applyingBody,applyingCode;
 				String nonApplyingSubject , nonApplyingBody,nonApplyingCode;
