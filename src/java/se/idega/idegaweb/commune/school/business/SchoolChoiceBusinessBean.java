@@ -408,6 +408,34 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 					super.changeCaseStatus(element, "PREL", performer);
 					continue;
 				}
+			}			
+
+			User child = choice.getChild();
+			Collection parents = getUserBusiness().getMemberFamilyLogic().getCustodiansFor(child);
+			Iterator iterator = parents.iterator();
+			while (iterator.hasNext()) {
+				User parent = (User) iterator.next();
+				getMessageBusiness().createUserMessage(parent,messageSubject,messageBody);
+			}
+
+			if (choice.getChoiceOrder() == 3) {
+				ViewpointBusiness vpb = (ViewpointBusiness) getServiceInstance(ViewpointBusiness.class);
+				SubCategory subCategory = vpb.findSubCategory("Skolval");
+				if (subCategory != null) {
+					try {
+						Phone phone = getUserBusiness().getChildHomePhone(child);
+
+						StringBuffer body = new StringBuffer();
+						body.append(child.getNameLastFirst(true)).append(" - ").append(child.getPersonalID());
+						if (phone != null) {
+							body.append("\ntel: ").append(phone.getNumber());
+						}
+						vpb.createViewpoint(performer, messageSubject,  body.toString(), subCategory.getName(), getUserBusiness().getRootAdministratorGroupID());
+					}
+					catch (CreateException ce) {
+						ce.printStackTrace();
+					}
+				}
 			}
 		}
 		catch (FinderException fe) {
