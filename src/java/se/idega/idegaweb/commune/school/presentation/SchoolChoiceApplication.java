@@ -413,7 +413,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		T.setHeight(row++, 12);
 		T.add(getMessagePart(), 1, row++);
 		T.setHeight(row++, 12);
-		T.add(getCurrentSchool(iwc, child), 1, row++);
+		T.add(getCurrentSchool(/*iwc, child*/), 1, row++);
 		T.setHeight(row++, 12);
 
 		// Space table over submit button
@@ -690,7 +690,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		return table;
 	}
 
-	private PresentationObject getCurrentSchool(IWContext iwc, User child) throws java.rmi.RemoteException {
+	private PresentationObject getCurrentSchool(/*IWContext iwc, User child*/) throws java.rmi.RemoteException {
 		/*if (age.getYears() <= 6) {
 			hasPreviousSchool = true;
 			PresentationObjectContainer container = new PresentationObjectContainer();
@@ -1571,10 +1571,6 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	 */
 	public void setForTesting(boolean isForTesting) {
 		this._isForTesting = isForTesting;
-	}
-	
-	private CentralPlacementBusiness getCentralPlacementBusiness(IWContext iwc) 	throws RemoteException {
-		return (CentralPlacementBusiness) IBOLookup.getServiceInstance(iwc, CentralPlacementBusiness.class);
 	}
 	
 }
