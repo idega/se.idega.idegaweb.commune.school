@@ -8,6 +8,7 @@ package se.idega.idegaweb.commune.school.presentation.inputhandler;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 
 import se.idega.idegaweb.commune.school.business.SchoolReportBusiness;
 
@@ -86,6 +87,18 @@ public class SchoolGroupColumnsHandler extends SelectionBox implements InputHand
 	 * @see com.idega.business.InputHandler#getDisplayNameOfValue(java.lang.Object, com.idega.presentation.IWContext)
 	 */
 	public String getDisplayNameOfValue(Object value, IWContext iwc) {
+		if (value != null) {
+			StringBuffer buffer = new StringBuffer();
+			Iterator iter = ((Collection)value).iterator();
+			while (iter.hasNext()) {
+				String element = (String) iter.next();
+				buffer.append(element);
+				if (iter.hasNext()) {
+					buffer.append(", ");
+				}
+			}
+			return buffer.toString();
+		}
 		return null;
 	}
 	

@@ -86,6 +86,18 @@ public class SchoolGroupHandler extends SelectionBox implements InputHandler {
 	 * @see com.idega.business.InputHandler#getDisplayNameOfValue(java.lang.Object, com.idega.presentation.IWContext)
 	 */
 	public String getDisplayNameOfValue(Object value, IWContext iwc) {
+		if (value != null) {
+			StringBuffer buffer = new StringBuffer();
+			Iterator iter = ((Collection)value).iterator();
+			while (iter.hasNext()) {
+				SchoolClass element = (SchoolClass) iter.next();
+				buffer.append(element.getSchoolClassName());
+				if (iter.hasNext()) {
+					buffer.append(", ");
+				}
+			}
+			return buffer.toString();
+		}
 		return null;
 	}
 	
