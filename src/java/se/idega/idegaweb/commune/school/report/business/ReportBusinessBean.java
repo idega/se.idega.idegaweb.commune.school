@@ -1,5 +1,5 @@
 /*
- * $Id: ReportBusinessBean.java,v 1.13 2003/12/19 14:57:03 anders Exp $
+ * $Id: ReportBusinessBean.java,v 1.14 2004/01/08 11:53:21 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -29,14 +29,15 @@ import com.idega.block.school.data.SchoolStudyPathHome;
 /** 
  * Business logic for school reports.
  * <p>
- * Last modified: $Date: 2003/12/19 14:57:03 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/08 11:53:21 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.13 $
+ * @version $Revision: 1.14 $
  */
 public class ReportBusinessBean extends com.idega.business.IBOServiceBean implements ReportBusiness  {
 
 	private final static int SCHOOL_TYPE_ELEMENTARY_SCHOOL = 4;
+	private final static int SCHOOL_TYPE_COMPULSORY_SCHOOL = 28;
 	private final static String MANAGEMENT_TYPE_COMMUNE = "COMMUNE";
 	private final static int NACKA_COMMUNE_ID = 1;
 	
@@ -157,6 +158,37 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 		}
 		return _schoolAreas;
 	}
+	
+	/**
+	 * Returns all school areas for compulsory schools. 
+	 */
+	public Collection getCompulsorySchoolAreas() {
+		if (_schoolAreas == null) {
+			SchoolHome schoolHome = null;
+			try {
+				schoolHome = getSchoolHome();
+				SchoolAreaHome home = getSchoolBusiness().getSchoolAreaHome();
+				_schoolAreas = home.findAllBySchoolTypeAndCity(SCHOOL_TYPE_COMPULSORY_SCHOOL, "Nacka");
+			} catch (Exception e) {}
+			ArrayList areas = new ArrayList();
+			Iterator iter = _schoolAreas.iterator();
+			while (iter.hasNext()) {
+				SchoolArea area = (SchoolArea) iter.next();
+				int areaId = ((Integer) area.getPrimaryKey()).intValue();
+				try {
+					Collection schools = schoolHome.findAllByAreaTypeCommune(
+							areaId,
+							SCHOOL_TYPE_COMPULSORY_SCHOOL,
+							NACKA_COMMUNE_ID);
+					if (schools.size() > 0) {
+						areas.add(area);
+					}
+				} catch (Exception e) {}
+			}
+			_schoolAreas = areas;
+		}
+		return _schoolAreas;
+	}
 
 	/**
 	 * Returns all elementary for the specified area. 
@@ -175,6 +207,36 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 							schoolAreaId,
 							SCHOOL_TYPE_ELEMENTARY_SCHOOL,
 							MANAGEMENT_TYPE_COMMUNE,
+							NACKA_COMMUNE_ID);
+					_schoolsByArea.put(area.getName(), schools);
+				}
+			} catch (Exception e) {
+				log(e);
+			}
+		}
+		if (_schoolsByArea != null) {
+			return (Collection) _schoolsByArea.get(schoolArea.getName());
+		} else {
+			return new ArrayList();
+		}
+	}
+
+	/**
+	 * Returns all compulsory for the specified area. 
+	 */
+	public Collection getCompulsorySchools(SchoolArea schoolArea) {
+		if (_schoolsByArea == null) {
+			try {
+				_schoolsByArea = new TreeMap();
+				SchoolHome schoolHome = getSchoolHome();
+				Collection areas = getCompulsorySchoolAreas();
+				Iterator areaIter = areas.iterator();
+				while (areaIter.hasNext()) {
+					SchoolArea area = (SchoolArea) areaIter.next();
+					int schoolAreaId = ((Integer) area.getPrimaryKey()).intValue();
+					Collection schools = schoolHome.findAllByAreaTypeCommune(
+							schoolAreaId,
+							SCHOOL_TYPE_COMPULSORY_SCHOOL,
 							NACKA_COMMUNE_ID);
 					_schoolsByArea.put(area.getName(), schools);
 				}
