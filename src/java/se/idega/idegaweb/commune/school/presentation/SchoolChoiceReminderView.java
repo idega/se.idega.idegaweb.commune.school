@@ -50,10 +50,10 @@ import com.idega.user.data.User;
  * and entity ejb classes in {@link se.idega.idegaweb.commune.school.data}.
  * <p>
  * <p>
- * Last modified: $Date: 2004/01/26 20:06:57 $ by $Author: staffan $
+ * Last modified: $Date: 2004/01/26 23:22:08 $ by $Author: laddi $
  *
  * @author <a href="http://www.staffannoteberg.com">Staffan Nöteberg</a>
- * @version $Revision: 1.38 $
+ * @version $Revision: 1.39 $
  * @see javax.ejb
  */
 public class SchoolChoiceReminderView extends CommuneBlock {
@@ -166,7 +166,7 @@ public class SchoolChoiceReminderView extends CommuneBlock {
 		InputContainer yearSelectorCont = this.getInputContainer(SCHOOL_YEAR_KEY,"Select SchoolYear:",yearSelector);
 		
 		t.add(yearSelectorCont,1,1);
-		form.maintainParameter(this.PARAM_SCHOOL_SEASON_ID);
+		form.maintainParameter(PARAM_SCHOOL_SEASON_ID);
 		form.maintainParameter(PARAM_IS_ONLY_IN_DEFAULT_COMMUNE);
 		form.maintainParameter(CASE_ID_KEY);
 		t.add(this.getSubmitButton2(ACTION_KEY,SHOW_DETAILS_KEY),1,2);
@@ -204,7 +204,7 @@ public class SchoolChoiceReminderView extends CommuneBlock {
 	 */
 	private DropdownMenu getSchoolSeasonsInput()
 	{
-		DropdownMenu drop = new DropdownMenu(this.PARAM_SCHOOL_SEASON_ID);
+		DropdownMenu drop = new DropdownMenu(PARAM_SCHOOL_SEASON_ID);
 		try{
 			SchoolSeasonHome seasonHome = this.getSchoolSeasonHome();
 			Collection seasons = seasonHome.findAllSchoolSeasons();
@@ -228,7 +228,7 @@ public class SchoolChoiceReminderView extends CommuneBlock {
 	 */
 	private PresentationObject getSchoolYearsSelector(IWContext iwc)
 	{
-		CheckBoxGroup group = new CheckBoxGroup(this.PARAM_SCHOOL_YEAR_ID);
+		CheckBoxGroup group = new CheckBoxGroup(PARAM_SCHOOL_YEAR_ID);
 		try{
 			
 			SchoolChoiceBusiness business = this.getSchoolChoiceBusiness(iwc);
