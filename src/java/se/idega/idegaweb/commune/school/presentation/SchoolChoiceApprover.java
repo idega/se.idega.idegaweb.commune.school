@@ -382,17 +382,19 @@ public class SchoolChoiceApprover extends CommuneBlock {
 	private PresentationObject getSchoolInfo()throws RemoteException{
 		Table T = new Table(2,5);
 		T.setColor("#ffffcc");
-		T.setCellpadding(8);
+		T.setCellpadding(6);
 		T.setWidth(600);
 		int row = 1,col = 1;
 		T.add(tf.format(iwrb.getLocalizedString("school","School"),tf.HEADER),1,1);
 		T.add(tf.format(school.getSchoolName()),1,2);
-		T.add(tf.format(iwrb.getLocalizedString("address","Address"),tf.HEADER),2,1);
+		T.add(tf.format(iwrb.getLocalizedString("letter_address","Letter address"),tf.HEADER),2,1);
 		//Address addr = school.getSchoolAddress();
 		//T.add(tf.format(addr.getStreetAddress()+" , "+addr.getPostalAddress() ),2,2);
 		T.add(tf.format(school.getSchoolAddress()),2,2);
 		T.add(tf.format(iwrb.getLocalizedString("phone","Phone"),tf.HEADER),1,4);
 		T.add(tf.format(school.getSchoolPhone()),1,5);
+		T.add(tf.format(iwrb.getLocalizedString("school_address","School address"),tf.HEADER),2,4);
+		T.add(tf.format(school.getSchoolAddress()),2,5);
 		
 		return T;
 	}
