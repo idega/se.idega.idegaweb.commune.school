@@ -96,8 +96,6 @@ public class SchoolChoiceMessagePdfHandler implements MessagePdfHandler,BundleRe
 		
 	}
 	
-	
-	
 	private void createPreliminaryContent(DocumentPrintContext dpc,String code)throws ContentCreationException{
 		createContent( dpc, getHandlerCode()+"_"+code+"_letter.xml");
 	}
@@ -140,6 +138,8 @@ public class SchoolChoiceMessagePdfHandler implements MessagePdfHandler,BundleRe
 	
 	private void createContent(DocumentPrintContext dpc,String xml)throws ContentCreationException{
 		try {
+			System.out.println("Creating pdf using layout \"" + xml + "\"");
+			
 			DocumentBusiness docBuiz =getDocumentBusiness(dpc);
 			
 			Document document =dpc.getDocument();
