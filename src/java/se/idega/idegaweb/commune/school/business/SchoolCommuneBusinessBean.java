@@ -129,7 +129,6 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 							groupMap.put(group, group);
 						}
 					}
-					System.out.println("Adding year: " + year.getPrimaryKey());
 					yearMap.put(year, groupMap);
 				}
 			}
