@@ -86,7 +86,7 @@ public abstract class SchoolCommuneBlock extends CommuneBlock {
 
 		if (multipleSchools) {
 			table.resize(8, 3);
-			table.add(getSmallHeader(localize("school.school","School")+":"+Text.NON_BREAKING_SPACE),1,row);
+			table.add(getSmallHeader(localize("school.school_list","School")+":"+Text.NON_BREAKING_SPACE),1,row);
 			table.mergeCells(2, row, 8, row);
 			table.add(getSchools(),2,row);
 			++row;
