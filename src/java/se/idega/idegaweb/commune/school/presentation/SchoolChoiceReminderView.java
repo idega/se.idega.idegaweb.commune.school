@@ -53,11 +53,11 @@ import com.idega.user.data.User;
  * and entity ejb classes in {@link se.idega.idegaweb.commune.school.data}.
  * <p>
  * <p>
- * Last modified: $Date: 2004/10/20 15:47:32 $ by $Author: aron $
+ * Last modified: $Date: 2004/10/29 13:01:09 $ by $Author: laddi $
  *
  * @author <a href="http://www.staffannoteberg.com">Staffan Nöteberg</a>
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.44 $
+ * @version $Revision: 1.45 $
  * @see javax.ejb
  */
 public class SchoolChoiceReminderView extends CommuneBlock {
@@ -255,7 +255,7 @@ public class SchoolChoiceReminderView extends CommuneBlock {
 				SchoolSeason season = this.getSchoolSeason(iwc);
 				String yearPK = year.getPrimaryKey().toString();
 				String yearName = year.getSchoolYearName();
-				int numberOfNotDoneSchoolChoices = this.getSchoolChoiceBusiness(iwc).getNumberOfStudentsThatMustDoSchoolChoiceButHaveNot(season,year,isOnlyInCommune (iwc),isOnlyInSchoolsLastGrade (iwc));
+				int numberOfNotDoneSchoolChoices = this.getSchoolChoiceBusiness(iwc).getNumberOfStudentsThatMustDoSchoolChoiceButHaveNot(season,year,isOnlyInCommune (iwc));
 				String yearString = yearName+" ("+numberOfNotDoneSchoolChoices+")";
 				group.addOption(yearPK,yearString);
 			}
@@ -269,10 +269,6 @@ public class SchoolChoiceReminderView extends CommuneBlock {
 
 	private boolean isOnlyInCommune (IWContext context) {
 		return context.isParameterSet (PARAM_IS_ONLY_IN_DEFAULT_COMMUNE);
-	}
-
-	private boolean isOnlyInSchoolsLastGrade (IWContext context) {
-		return context.isParameterSet (PARAM_IS_ONLY_IN_SCHOOLS_LAST_GRADE);
 	}
 
 	private void showMainMenu () {
@@ -516,7 +512,7 @@ public class SchoolChoiceReminderView extends CommuneBlock {
 				  //final SchoolChoiceReminder reminder = business.findSchoolChoiceReminder (reminderId);
 				MailReceiver [] receivers= (MailReceiver []) iwc.getSession ().getAttribute (STUDENT_LIST_KEY);
 		        if (receivers == null) {
-				  receivers= business.findAllStudentsThatMustDoSchoolChoiceButHaveNot(season,years,isOnlyInCommune (iwc),isOnlyInSchoolsLastGrade (iwc));
+				  receivers= business.findAllStudentsThatMustDoSchoolChoiceButHaveNot(season,years,isOnlyInCommune (iwc));
 				  iwc.getSession ().setAttribute (STUDENT_LIST_KEY, receivers);
 		        }
 				  for (int i = 0; i < receivers.length; i++) {

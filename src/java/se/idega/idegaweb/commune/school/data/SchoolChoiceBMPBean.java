@@ -1004,7 +1004,7 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 		return super.ejbFindSubCasesUnder(parent);
 	}
 	
-	public int ejbHomeCountChildrenWithoutSchoolChoice(SchoolSeason season,SchoolYear year, boolean onlyInCommune,boolean onlyLastSchoolYear) throws SQLException{
+	public int ejbHomeCountChildrenWithoutSchoolChoice(SchoolSeason season,SchoolYear year, boolean onlyInCommune) throws SQLException{
 	    
 		try {
             int yearOfBirth = new IWTimestamp(season.getSchoolSeasonStart()).getYear() - year.getSchoolYearAge();
@@ -1049,7 +1049,7 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
         
 	}
 	
-	public MailReceiver[] ejbHomeGetChildrenWithoutSchoolChoice(SchoolSeason season,SchoolYear year, boolean onlyInCommune,boolean onlyLastSchoolYear)throws FinderException{
+	public MailReceiver[] ejbHomeGetChildrenWithoutSchoolChoice(SchoolSeason season,SchoolYear year, boolean onlyInCommune) throws FinderException {
 	    try {
             int yearOfBirth = new IWTimestamp(season.getSchoolSeasonStart()).getYear() - year.getSchoolYearAge();
             YearPeriod period = new YearPeriod(yearOfBirth,yearOfBirth);
@@ -1153,11 +1153,9 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
             }
           
         } catch (IDOLookupException e) {
-            e.printStackTrace();
+            throw new FinderException(e.getMessage());
         } catch (EJBException e) {
-            e.printStackTrace();
-        } catch (FinderException e) {
-            e.printStackTrace();
+        		throw new FinderException(e.getMessage());
         }
         return null;
 	}

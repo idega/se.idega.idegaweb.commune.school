@@ -1485,13 +1485,13 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		}
 	}
 
-	public MailReceiver[] findAllStudentsThatMustDoSchoolChoiceButHaveNot(SchoolSeason season, SchoolYear[] years, boolean isOnlyInCommune, boolean isOnlyInSchoolsLastGrade) {
+	public MailReceiver[] findAllStudentsThatMustDoSchoolChoiceButHaveNot(SchoolSeason season, SchoolYear[] years, boolean isOnlyInCommune) {
 		Collection coll = new ArrayList();
 		for (int i = 0; i < years.length; i++) {
 			SchoolYear year = years[i];
 			//MailReceiver[] receivers = findAllStudentsThatMustDoSchoolChoiceButHaveNot(season, year,isOnlyInCommune, isOnlyInSchoolsLastGrade);
 			try {
-                MailReceiver[] receivers = getStudentsWithoutSchoolChoice(season,year,isOnlyInCommune, isOnlyInSchoolsLastGrade);
+                MailReceiver[] receivers = getStudentsWithoutSchoolChoice(season,year,isOnlyInCommune);
                 for (int j = 0; j < receivers.length; j++) {
                 	MailReceiver receiver = receivers[j];
                 	coll.add(receiver);
@@ -1509,7 +1509,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	/**
 	 * Gets The number of students who should make a schoolchoice for the SchoolYear year and SchoolSeason season
 	 */
-	public int getNumberOfStudentsThatMustDoSchoolChoiceButHaveNot(SchoolSeason season, SchoolYear year,boolean isOnlyInCommune, boolean isOnlyInSchoolsLastGrade) {
+	public int getNumberOfStudentsThatMustDoSchoolChoiceButHaveNot(SchoolSeason season, SchoolYear year,boolean isOnlyInCommune) {
 		try {
             /*
             MailReceiver[] students = findAllStudentsThatMustDoSchoolChoiceButHaveNot(season, year,isOnlyInCommune, isOnlyInSchoolsLastGrade);
@@ -1519,7 +1519,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
             else {
             	return 0;
             }*/
-            return countStudentsWithoutSchoolChoice(season,year,isOnlyInCommune, isOnlyInSchoolsLastGrade);
+            return countStudentsWithoutSchoolChoice(season,year,isOnlyInCommune);
         } catch (RemoteException e) {
             e.printStackTrace();
         } catch (SQLException e) {
@@ -1539,20 +1539,20 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	 * @throws SQLException
 	 * @throws RemoteException
 	 */
-	public int countStudentsWithoutSchoolChoice(SchoolSeason season,SchoolYear year, boolean onlyInCommune,boolean onlyLastSchoolYear) throws RemoteException, SQLException{
+	public int countStudentsWithoutSchoolChoice(SchoolSeason season,SchoolYear year, boolean onlyInCommune) throws RemoteException, SQLException{
 	    com.idega.util.Timer timer = new com.idega.util.Timer();
 		timer.start();
-		int count = getSchoolChoiceHome().countChildrenWithoutSchoolChoice(season,year,onlyInCommune,onlyLastSchoolYear);
+		int count = getSchoolChoiceHome().countChildrenWithoutSchoolChoice(season,year,onlyInCommune);
 		
 		timer.stop();
 		System.err.println("Found student count " + timer.getTime() + " msec");
 		return count;
 	}
 	
-	public MailReceiver[] getStudentsWithoutSchoolChoice(SchoolSeason season, SchoolYear year, boolean onlyInCommune, boolean onlyLastSchoolYear) throws RemoteException, FinderException{
+	public MailReceiver[] getStudentsWithoutSchoolChoice(SchoolSeason season, SchoolYear year, boolean onlyInCommune) throws RemoteException, FinderException{
 	    com.idega.util.Timer timer = new com.idega.util.Timer();
 		timer.start();
-		MailReceiver[] receivers = getSchoolChoiceHome().getChildrenWithoutSchoolChoice(season,year,onlyInCommune,onlyLastSchoolYear);
+		MailReceiver[] receivers = getSchoolChoiceHome().getChildrenWithoutSchoolChoice(season,year,onlyInCommune);
 		
 		timer.stop();
 		System.err.println("Found students " + timer.getTime() + " msec");

@@ -1,5 +1,5 @@
 /*
- * $Id: SchoolChoiceHomeImpl.java,v 1.47 2004/10/20 15:46:00 aron Exp $
+ * $Id: SchoolChoiceHomeImpl.java,v 1.48 2004/10/29 13:01:08 laddi Exp $
  * Created on 20.10.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -25,10 +25,10 @@ import com.idega.data.IDOFactory;
 
 /**
  * 
- *  Last modified: $Date: 2004/10/20 15:46:00 $ by $Author: aron $
+ *  Last modified: $Date: 2004/10/29 13:01:08 $ by $Author: laddi $
  * 
  * @author <a href="mailto:aron@idega.com">aron</a>
- * @version $Revision: 1.47 $
+ * @version $Revision: 1.48 $
  */
 public class SchoolChoiceHomeImpl extends IDOFactory implements
         SchoolChoiceHome {
@@ -450,23 +450,23 @@ public class SchoolChoiceHomeImpl extends IDOFactory implements
     }
 
     public int countChildrenWithoutSchoolChoice(SchoolSeason season,
-            SchoolYear year, boolean onlyInCommune, boolean onlyLastSchoolYear)
+            SchoolYear year, boolean onlyInCommune)
             throws SQLException {
         com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
         int theReturn = ((SchoolChoiceBMPBean) entity)
                 .ejbHomeCountChildrenWithoutSchoolChoice(season, year,
-                        onlyInCommune, onlyLastSchoolYear);
+                        onlyInCommune);
         this.idoCheckInPooledEntity(entity);
         return theReturn;
     }
 
     public MailReceiver[] getChildrenWithoutSchoolChoice(SchoolSeason season,
-            SchoolYear year, boolean onlyInCommune, boolean onlyLastSchoolYear)
+            SchoolYear year, boolean onlyInCommune)
             throws FinderException {
         com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
         MailReceiver[] theReturn = ((SchoolChoiceBMPBean) entity)
                 .ejbHomeGetChildrenWithoutSchoolChoice(season, year,
-                        onlyInCommune, onlyLastSchoolYear);
+                        onlyInCommune);
         this.idoCheckInPooledEntity(entity);
         return theReturn;
     }
