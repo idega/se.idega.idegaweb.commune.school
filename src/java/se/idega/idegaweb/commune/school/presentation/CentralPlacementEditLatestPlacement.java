@@ -18,6 +18,7 @@ import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.Table;
 import com.idega.presentation.text.Text;
+import com.idega.presentation.ui.CloseButton;
 import com.idega.presentation.ui.Form;
 import com.idega.presentation.ui.HiddenInput;
 import com.idega.presentation.ui.SubmitButton;
@@ -26,8 +27,8 @@ import com.idega.presentation.ui.TextInput;
 /**
  * @author 
  * @author <br><a href="mailto:gobom@wmdata.com">Göran Borgman</a><br>
- * Last modified: $Date: 2003/12/10 15:40:04 $ by $Author: goranb $
- * @version $Revision: 1.1 $
+ * Last modified: $Date: 2003/12/10 16:52:07 $ by $Author: goranb $
+ * @version $Revision: 1.2 $
  */
 public class CentralPlacementEditLatestPlacement extends CommuneBlock {
 	
@@ -126,7 +127,14 @@ public class CentralPlacementEditLatestPlacement extends CommuneBlock {
 		SubmitButton cancel =  new SubmitButton(iwrb.getLocalizedImageButton("central_placement_editor.button_cancel",
 						"Cancel"));
 		cancel.setValueOnClick(PARAM_ACTION, String.valueOf(ACTION_CANCEL));
-		table.add(cancel, 2, row);		
+		table.add(cancel, 2, row);
+
+		table.add(Text.getNonBrakingSpace(2), 2, row);
+		
+		//CloseButton close = (CloseButton) getStyledInterface(new CloseButton(localize("close_window", "Close")));
+		CloseButton close = new CloseButton(iwrb.getLocalizedImageButton("close_window", "Close"));
+		
+		table.add(close, 2, row);
 		
 		// Last empty row
 		row++;
