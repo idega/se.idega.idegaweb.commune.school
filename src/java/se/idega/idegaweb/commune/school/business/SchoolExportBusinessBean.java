@@ -1,5 +1,5 @@
 /*
- * $Id: SchoolExportBusinessBean.java,v 1.1 2004/01/29 14:11:23 anders Exp $
+ * $Id: SchoolExportBusinessBean.java,v 1.2 2004/02/02 09:23:24 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -34,10 +34,10 @@ import com.idega.user.data.User;
 /** 
  * Business logic for exporting student placement text files.
  * <p>
- * Last modified: $Date: 2004/01/29 14:11:23 $ by $Author: anders $
+ * Last modified: $Date: 2004/02/02 09:23:24 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class SchoolExportBusinessBean extends com.idega.business.IBOServiceBean implements SchoolExportBusiness  {
 	 
@@ -151,6 +151,12 @@ public class SchoolExportBusinessBean extends com.idega.business.IBOServiceBean 
 		ICFile exportFile = null;
 		
 		try {
+			try {
+				exportFile = fileHome.findByFileName(filename);
+				if (exportFile != null) {
+					exportFile.remove();
+				}
+			} catch (FinderException e) {}
 			exportFile = fileHome.create();
 			String text = createCommaSeparatedText(placements);
 			byte[] bytes = text.getBytes();
@@ -186,13 +192,19 @@ public class SchoolExportBusinessBean extends com.idega.business.IBOServiceBean 
 			
 			String personalId = student.getPersonalID();
 			String lastName = student.getLastName();
-			String firstName = student.getFirstName() + " " + student.getMiddleName();
+			String s = student.getMiddleName();
+			if (s == null) {
+				s = "";
+			} else {
+				s = " " + s;
+			}
+			String firstName = student.getFirstName() + s;
 			String givenName = student.getLastName() + "," + student.getFirstName();
-			String middleName = "";
+			String middleName = " ";
 			String schoolName = school.getName();
 			String schoolClassName = schoolClass.getName();
-			String addressProtection = "";
-			String email = "";
+			String addressProtection = " ";
+			String email = " ";
 			
 			sb.append(personalId).append(";");
 			sb.append(lastName).append(";");
