@@ -8,10 +8,10 @@ import java.util.*;
 import javax.ejb.FinderException;
 
 /**
- * Last modified: $Date: 2003/01/16 13:48:23 $ by $Author: staffan $
+ * Last modified: $Date: 2003/01/29 03:48:10 $ by $Author: laddi $
  *
  * @author <a href="http://www.staffannoteberg.com">Staffan Nöteberg</a>
- * @version $Revision: 1.8 $
+ * @version $Revision: 1.9 $
  */
 public class SchoolChoiceReminderBMPBean extends AbstractCaseBMPBean implements SchoolChoiceReminder {
     private static final String ENTITY_NAME = "sch_reminder";
@@ -163,8 +163,9 @@ public class SchoolChoiceReminderBMPBean extends AbstractCaseBMPBean implements 
                 code.setDescription ("School choice reminder");
                 code.store ();
             }
-        } catch (final Exception e) {
-            e.printStackTrace ();
+        }
+        catch (final Exception e) {
+            //e.printStackTrace ();
         }
     }
 }
