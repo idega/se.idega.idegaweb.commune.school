@@ -127,12 +127,26 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 			while (iter.hasNext()) {
 				SchoolChoice element = (SchoolChoice) iter.next();
 				String caseStatus = element.getCaseStatus().toString();
-				if ((caseStatus.equalsIgnoreCase("PREL") || caseStatus.equalsIgnoreCase("PLAC")) && element.getChosenSchoolId() != schoolID)
+				if ((caseStatus.equalsIgnoreCase("PREL") || caseStatus.equalsIgnoreCase("PLAC") || caseStatus.equalsIgnoreCase("FLYT")) && element.getChosenSchoolId() != schoolID)
 					return true;
 			}
 		}
 		
 		return false;	
+	}
+	
+	public int getChosenSchoolID(Collection choices) throws RemoteException {
+		if (choices != null && !choices.isEmpty()) {
+			Iterator iter = choices.iterator();
+			while (iter.hasNext()) {
+				SchoolChoice element = (SchoolChoice) iter.next();
+				String caseStatus = element.getCaseStatus().toString();
+				if (caseStatus.equalsIgnoreCase("PREL") || caseStatus.equalsIgnoreCase("PLAC") || caseStatus.equalsIgnoreCase("FLYT"))
+					return ((Integer)element.getPrimaryKey()).intValue();
+			}
+		}
+		
+		return -1;	
 	}
 	
 	public SchoolSeason getPreviousSchoolSeason(SchoolSeason schoolSeason) throws RemoteException {
@@ -244,6 +258,12 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 				ncd.printStackTrace();
 			}
 		}
+	}
+	
+	public void moveToGroup(int studentID, int schoolClassID, int oldSchoolClassID) throws RemoteException {
+		SchoolClassMember classMember = getSchoolClassMemberBusiness().findClassMemberInClass(studentID, oldSchoolClassID);
+		classMember.setSchoolClassId(schoolClassID);
+		classMember.store();
 	}
 
 	private MemberFamilyLogic getMemberFamilyLogic() throws RemoteException {

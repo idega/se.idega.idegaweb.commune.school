@@ -22,4 +22,6 @@ public interface SchoolCommuneBusiness extends com.idega.business.IBOService,com
  public java.util.Map getStudentChoices(java.util.Collection p0,int p1)throws java.rmi.RemoteException, java.rmi.RemoteException;
  public java.util.Map getStudentList(java.util.Collection p0)throws java.rmi.RemoteException, java.rmi.RemoteException;
  public boolean hasChosenOtherSchool(java.util.Collection p0,int p1)throws java.rmi.RemoteException, java.rmi.RemoteException;
+ public void moveToGroup(int studentID, int newSchoolClassID, int oldSchoolClassID) throws java.rmi.RemoteException;
+ public int getChosenSchoolID(java.util.Collection choices) throws java.rmi.RemoteException;
 }
