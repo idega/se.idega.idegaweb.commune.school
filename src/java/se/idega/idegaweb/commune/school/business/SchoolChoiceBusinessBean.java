@@ -1,5 +1,8 @@
 package se.idega.idegaweb.commune.school.business;
+
 import is.idega.idegaweb.member.business.MemberFamilyLogic;
+
+import java.io.*;
 import java.rmi.RemoteException;
 import java.text.MessageFormat;
 import java.util.*;
@@ -18,28 +21,28 @@ import com.idega.block.school.data.School;
 import com.idega.block.school.data.SchoolHome;
 import com.idega.block.school.data.SchoolSeason;
 import com.idega.block.school.data.SchoolSeasonHome;
+import com.idega.core.data.*;
 import com.idega.core.data.Address;
 import com.idega.data.*;
+import com.idega.io.*;
 import com.idega.user.business.UserBusiness;
 import com.idega.user.data.Group;
 import com.idega.user.data.User;
 import com.idega.util.IWTimestamp;
-
-
-import com.idega.io.*;
-import com.idega.core.data.*;
-import com.lowagie.text.PageSize;
 import com.lowagie.text.Document;
-import com.lowagie.text.Phrase;
+import com.lowagie.text.Element;
+import com.lowagie.text.PageSize;
 import com.lowagie.text.Paragraph;
+import com.lowagie.text.Phrase;
 import com.lowagie.text.pdf.*;
-import java.io.*;
+
 /**
  * Title:
  * Description:
  * Copyright:    Copyright (c) 2002
  * Company:
  * @author <a href="mailto:aron@idega.is">Aron Birkir</a>
+ * @author <a href="http://www.staffannoteberg.com">Staffan Nöteberg</a>
  * @version 1.0
  */
 public class SchoolChoiceBusinessBean extends com.idega.block.process.business.CaseBusinessBean implements SchoolChoiceBusiness, com.idega.block.process.business.CaseBusiness {
@@ -706,44 +709,49 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
             final OutputStream outStream = new MemoryOutputStream (buffer);
             final Document document = new Document
                     (PageSize.A4, mmToPoints (30), mmToPoints (30),
-                     mmToPoints (40), mmToPoints (9));
+                     mmToPoints (0), mmToPoints (10));
             PdfWriter.getInstance(document, outStream);
             document.open();
             final SchoolChoiceReminder reminder
                     = findSchoolChoiceReminder (reminderId);
-            final PdfPCell leftHeaderMargin = new PdfPCell (new Phrase (""));
-            leftHeaderMargin.setBorder (0);
-            leftHeaderMargin.setNoWrap (true);
+            final PdfPCell emptyCell = new PdfPCell (new Phrase (""));
+            emptyCell.setBorder (0);
+            emptyCell.setNoWrap (true);
+            final Calendar today = Calendar.getInstance ();
+            final String date = today.get (Calendar.YEAR)
+                    + "-" + today.get (Calendar.MONTH)
+                    + "-" + today.get (Calendar.DATE);
             for (int i = 0; i < receivers.length; i++) {
-                if (i != 0) {
-                    document.newPage ();
-                }
+                if (i != 0) { document.newPage (); }
                 final SchoolChoiceReminderReceiver receiver = receivers [i];
                 final String longSsn = receiver.getSsn ();
                 final String ssn = longSsn.substring (2, 8) + "-"
                         + longSsn.substring (8);
-                final PdfPCell addressCell = new PdfPCell
-                        (new Phrase (receiver.getParentName () + "\n"
-                                     + receiver.getStreetAddress () + "\n"
-                                     + receiver.getPostalAddress () + "\n"
-                                     + "\nVårdnadshavare till:\n" + ssn + " "
-                                     + receiver.getStudentName ()));
-                addressCell.setBorder (0);
-                addressCell.setNoWrap (true);					
-                final PdfPTable headerTable = new PdfPTable (2);
-                headerTable.setWidths (new float [] {1, 1});
-                headerTable.getDefaultCell ().setBorder (0);
-                headerTable.getDefaultCell ().setFixedHeight (mmToPoints (30));
-                headerTable.getDefaultCell ().setPadding (0);
-                headerTable.getDefaultCell ().setNoWrap (true);
+                final String address = receiver.getParentName () + "\n"
+                        + receiver.getStreetAddress () + "\n"
+                        + receiver.getPostalAddress () + "\n"
+                        + "\nVårdnadshavare till:\n" + ssn + " "
+                        + receiver.getStudentName ();
+                final PdfPTable headerTable
+                        = new PdfPTable (new float [] {1, 1});
                 headerTable.setWidthPercentage (100f);
-                headerTable.addCell (leftHeaderMargin);
-                headerTable.addCell (addressCell);
+                final PdfPCell defaultCell = headerTable.getDefaultCell ();
+                defaultCell.setBorder (0);
+                defaultCell.setFixedHeight (mmToPoints (30));
+                defaultCell.setPadding (0);
+                defaultCell.setNoWrap (true);
+                defaultCell.setVerticalAlignment (Element.ALIGN_MIDDLE);
+                headerTable.addCell ("Nackalogga");
+                headerTable.addCell (date);
+                headerTable.addCell (emptyCell);
+                headerTable.addCell (address);
+                headerTable.addCell (emptyCell);
                 document.add (headerTable);
                 document.add(new Paragraph (reminder.getText ()));
             }
             document.close();
-            final ICFileHome icFileHome = (ICFileHome) getIDOHome(ICFile.class);
+            final ICFileHome icFileHome
+                    = (ICFileHome) getIDOHome(ICFile.class);
             final ICFile file = icFileHome.create();
             final InputStream inStream = new MemoryInputStream (buffer);
             file.setFileValue(inStream);
@@ -757,10 +765,6 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
             throw new RemoteException ("Couldn't generate reminder "
                                        + reminderId, e);
         }
-    }
-
-    private static float mmToPoints (final float mm) {
-        return mm*72/25.4f;
     }
 
     public SchoolChoiceReminderReceiver []
@@ -779,11 +783,14 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
             receivers [i] = new SchoolChoiceReminderReceiver
                     (familyLogic, userBusiness, id);
         }
-
         return receivers;
     }
 
-	Set findStudentIdsWhoChosedForCurrentSeason ()
+    private static float mmToPoints (final float mm) {
+        return mm*72/25.4f;
+    }
+
+	private Set findStudentIdsWhoChosedForCurrentSeason ()
         throws RemoteException, FinderException {
         final Integer currentYearId
                 = (Integer) getCurrentSeason ().getPrimaryKey ();
