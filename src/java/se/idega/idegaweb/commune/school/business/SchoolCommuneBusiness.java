@@ -1,6 +1,9 @@
 package se.idega.idegaweb.commune.school.business;
 
+import java.rmi.RemoteException;
 import javax.ejb.*;
+
+import com.idega.user.data.User;
 
 public interface SchoolCommuneBusiness extends com.idega.business.IBOService,com.idega.block.process.business.CaseBusiness
 {
@@ -24,4 +27,5 @@ public interface SchoolCommuneBusiness extends com.idega.business.IBOService,com
  public boolean hasChosenOtherSchool(java.util.Collection p0,int p1)throws java.rmi.RemoteException, java.rmi.RemoteException;
  public void moveToGroup(int studentID, int newSchoolClassID, int oldSchoolClassID) throws java.rmi.RemoteException;
  public int getChosenSchoolID(java.util.Collection choices) throws java.rmi.RemoteException;
+ public void addSchoolAdministrator(User user) throws RemoteException, FinderException, CreateException;
 }
