@@ -16,6 +16,7 @@ import com.idega.block.school.business.SchoolClassMemberBusiness;
 import com.idega.block.school.business.SchoolSeasonBusiness;
 import com.idega.block.school.business.SchoolYearBusiness;
 import com.idega.block.school.data.SchoolClassMember;
+import com.idega.block.school.data.SchoolSeason;
 import com.idega.business.IBOLookup;
 import com.idega.user.business.UserBusiness;
 import com.idega.user.data.User;
@@ -87,5 +88,16 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 		}
 		
 		return coll;		
+	}
+	
+	public SchoolSeason getPreviousSchoolSeason(SchoolSeason schoolSeason) throws RemoteException {
+		Collection coll = getSchoolSeasonBusiness().findAllPreviousSchoolSeasons(schoolSeason);
+		if ( !coll.isEmpty() ) {
+			Iterator iter = coll.iterator();
+			while (iter.hasNext()) {
+				return (SchoolSeason) iter.next();
+			}	
+		}
+		return null;
 	}
 }
