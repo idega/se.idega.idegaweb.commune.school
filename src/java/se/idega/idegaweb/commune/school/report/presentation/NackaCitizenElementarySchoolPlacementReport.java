@@ -1,5 +1,5 @@
 /*
- * $Id: NackaCitizenElementarySchoolPlacementReport.java,v 1.1 2003/12/08 16:24:24 anders Exp $
+ * $Id: NackaCitizenElementarySchoolPlacementReport.java,v 1.2 2003/12/08 17:44:51 laddi Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -11,17 +11,16 @@ package se.idega.idegaweb.commune.school.report.presentation;
 
 import se.idega.idegaweb.commune.school.report.business.NackaCitizenElementarySchoolPlacementReportModel;
 
-import com.idega.presentation.IWContext;
 import com.idega.presentation.Table;
 
 /** 
  * This report presents number of placements in elementary (and compulory) schools
  * for Nacka students.
  * <p>
- * Last modified: $Date: 2003/12/08 16:24:24 $ by $Author: anders $
+ * Last modified: $Date: 2003/12/08 17:44:51 $ by $Author: laddi $
  *
  * @author Anders Lindman
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class NackaCitizenElementarySchoolPlacementReport extends ReportBlock {
 	
@@ -35,7 +34,7 @@ public class NackaCitizenElementarySchoolPlacementReport extends ReportBlock {
 	/**
 	 * @see ReportBlock#buildReportTable()
 	 */
-	protected void buildReportTable(IWContext iwc, Table table) {
+	protected void buildReportTable(Table table) {
 		buildColumnHeaders(table);
 		buildRowHeaders(table);
 		buildReportCells(table);
