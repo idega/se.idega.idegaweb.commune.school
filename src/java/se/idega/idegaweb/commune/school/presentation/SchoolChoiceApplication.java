@@ -741,7 +741,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		table.add(getSmallHeader(iwrb.getLocalizedString("school.school_type", "Type") + ":"), 1, 2);
 		table.add(getSmallHeader(iwrb.getLocalizedString("school.school_area", "Area") + ":"), 1, 3);
 		table.add(getSmallHeader(iwrb.getLocalizedString("school.school_name", "School name") + ":"), 1, 4);
-		table.add(getSmallHeader(iwrb.getLocalizedString("school.school_year", "School year") + ":"), 1, 4);
+		table.add(getSmallHeader(iwrb.getLocalizedString("school.school_year", "School year") + ":"), 1, 5);
 
 		DropdownMenu drpTypes = getTypeDrop(prmPreType, false, _showChildCareTypes);
 		drpTypes.addMenuElement("-2", localize("school.school_type_other", "Other/None"));
@@ -1205,7 +1205,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		StringBuffer s = new StringBuffer();
 		s.append("function changeSchoolYear(){\n");
 		s.append("  var dropSchoolTypes = ").append("findObj('").append(prmPreType).append("');\n");
-		s.append("  var dropSchoolYears = ").append("findObj('").append(prmYear).append("');\n");
+		s.append("  var dropSchoolYears = ").append("findObj('").append(prmPreYear).append("');\n");
 		s.append("  var dropSchool = ").append("findObj('").append(prmPreSchool).append("');\n");
 		s.append("  var typeId = dropSchoolTypes.options[dropSchoolTypes.selectedIndex].value;\n");
 		s.append("  var schoolId = -1;\n");
