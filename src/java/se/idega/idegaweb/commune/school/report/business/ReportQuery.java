@@ -1,5 +1,5 @@
 /*
- * $Id: ReportQuery.java,v 1.14 2004/01/07 15:44:17 anders Exp $
+ * $Id: ReportQuery.java,v 1.15 2004/01/07 15:54:16 anders Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -20,10 +20,10 @@ import com.idega.util.database.ConnectionBroker;
 /** 
  * Handles the SQL logic for school report calculations.
  * <p>
- * Last modified: $Date: 2004/01/07 15:44:17 $ by $Author: anders $
+ * Last modified: $Date: 2004/01/07 15:54:16 $ by $Author: anders $
  *
  * @author Anders Lindman
- * @version $Revision: 1.14 $
+ * @version $Revision: 1.15 $
  */
 public class ReportQuery {
 
@@ -106,6 +106,22 @@ public class ReportQuery {
 	public void setSelectCountStudyPathPlacements(int schoolSeasonId, String studyPathPrefix) {
 		sql = "select count(*) from ic_user u, ic_address a, ic_user_address ua, sch_class_member cm," +
 				" sch_school_class sc, sch_school s, sch_school_year sy, sch_study_path sp where" +
+				" cm.register_date <= '" + currentDate + 
+				"' and (cm. removed_date is null or cm.removed_date > '" + currentDate + "')" + 
+				" and sc.school_id = s.sch_school_id and sc.sch_school_class_id = cm.sch_school_class_id" +
+				" and sc.sch_school_season_id = " + schoolSeasonId +
+				" and cm.study_path = sp.sch_study_path_id and sp.study_path_code like '" + studyPathPrefix +"%'";
+	}
+	
+	/**
+	 * Sets the query to select number of placements for the specified study path prefix (2 chars) for
+	 * student age interval.
+	 * @param schoolSeasonId the school season id for the placements to count
+	 * @param studyPathPrefix the two letter study path prefix
+	 */
+	public void setSelectCountStudyPathPlacementsAge(int schoolSeasonId, String studyPathPrefix) {
+		sql = "select count(*) from ic_user u, ic_address a, ic_user_address ua, sch_class_member cm," +
+				" sch_school_class sc, sch_school s, sch_study_path sp where" +
 				" cm.register_date <= '" + currentDate + 
 				"' and (cm. removed_date is null or cm.removed_date > '" + currentDate + "')" + 
 				" and sc.school_id = s.sch_school_id and sc.sch_school_class_id = cm.sch_school_class_id" +
