@@ -1006,11 +1006,12 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 	
 	public String getSQLForChildrenWithouWithoutSchoolChoice(SchoolSeason season,SchoolYear year, boolean onlyInCommune,boolean onlyLastGrade,int maxAge,boolean count){
 	    Integer seasonID = (Integer)season.getPrimaryKey();
-	    Integer yearID = (Integer)year.getPrimaryKey();
+	    //Integer yearID = (Integer)year.getPrimaryKey();
         int yearOfBirth = new IWTimestamp(season.getSchoolSeasonStart()).getYear() - year.getSchoolYearAge();
         YearPeriod period = new YearPeriod(yearOfBirth,yearOfBirth);
         IWTimestamp dateFrom = period.getFirstTimestamp();
         IWTimestamp dateTo = period.getLastTimestamp();
+        boolean addAgeCheck = year.getSchoolYearName().equals("F") || year.getSchoolYearName().equals("1");
         Integer statusID = null;
         try {
             statusID = (Integer)((StatusHome) IDOLookup.getHome(Status.class)).findByStatusKey(UserStatusBusinessBean.STATUS_DECEASED).getPrimaryKey();
@@ -1047,16 +1048,20 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
         sql.append(" left join ic_usergroup_status us on (u.ic_user_id = us.ic_user_id and us.status_id = ").append(statusID).append(" )  ").append("\n");
         sql.append(" where  u.ic_user_id = ua.ic_user_id ").append("\n");
         sql.append(" and ua.ic_address_id = a.ic_address_id ").append("\n");
-
-        sql.append(" and u.date_of_birth >= ").append(dateFrom.getDate()).append("\n");
-        sql.append(" and u.date_of_birth <= ").append(dateTo.getDate()).append("\n");
+        if(addAgeCheck) {
+            sql.append(" and u.date_of_birth >= ").append(dateFrom.getDate()).append("\n");
+            sql.append(" and u.date_of_birth <= ").append(dateTo.getDate()).append("\n");
+        }
         sql.append(" and u.ic_user_id not in( ").append("\n");
         sql.append(" select u.ic_user_id ").append("\n");
         sql.append("  from comm_sch_choice ch, ic_user u ").append("\n");
         sql.append("  where u.ic_user_id = ch.child_id ").append("\n");
         sql.append("  and ch.school_season_id = ").append(seasonID);
-        sql.append(" and u.date_of_birth >= ").append(dateFrom.getDate()).append("\n");
-        sql.append(" and u.date_of_birth <= ").append(dateTo.getDate()).append("\n");
+        // only check age for F and 1 years
+        if(addAgeCheck) {
+            sql.append(" and u.date_of_birth >= ").append(dateFrom.getDate()).append("\n");
+            sql.append(" and u.date_of_birth <= ").append(dateTo.getDate()).append("\n");
+        }
         sql.append(" )");
         //temporary check
         if (!year.getSchoolYearName().equals("F")) {
@@ -1122,6 +1127,7 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
         if(onlyInCommune)
             sql.append(" and c.default_commune  = 'Y'").append("\n");
         sql.append(" and us.status_id is null ").append("\n");
+        logSQL(sql.toString());
         return sql.toString();
 	}
 	
