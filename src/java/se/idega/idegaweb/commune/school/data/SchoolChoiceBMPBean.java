@@ -432,7 +432,7 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 
 	}
 
-	public int ejbHomeGetNumberOfApplications(String caseStatus, int schoolID, int schoolSeasonID) throws FinderException, IDOException {
+	public int ejbHomeGetNumberOfApplications(String caseStatus, int schoolID, int schoolSeasonID) throws IDOException {
 		StringBuffer sql = new StringBuffer("select count(*) from ");
 		sql.append(getEntityName()).append(" s ");
 		sql.append(",").append(CaseBMPBean.TABLE_NAME).append(" c ");
@@ -446,7 +446,7 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 		return super.idoGetNumberOfRecords(sql.toString());
 	}
 
-	public int ejbHomeGetNumberOfApplications(String caseStatus, int schoolID, int schoolSeasonID, int grade) throws FinderException, IDOException {
+	public int ejbHomeGetNumberOfApplications(String caseStatus, int schoolID, int schoolSeasonID, int grade) throws IDOException {
 		StringBuffer sql = new StringBuffer("select count(*) from ");
 		sql.append(getEntityName()).append(" s ");
 		sql.append(",").append(CaseBMPBean.TABLE_NAME).append(" c ");
@@ -461,7 +461,7 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 		return super.idoGetNumberOfRecords(sql.toString());
 	}
 
-	public int ejbHomeGetNumberOfHandledMoves(int seasonID) throws FinderException, IDOException {
+	public int ejbHomeGetNumberOfHandledMoves(int seasonID) throws IDOException {
 		
 		
 		StringBuffer sql = new StringBuffer("select count(*) from " +			"proc_case p, comm_sch_choice c " +			"where " +			"p.proc_case_id = c.comm_sch_choice_id and " +			"p.case_status = 'FLYT' and c.school_season_id = "+ seasonID);
@@ -469,7 +469,7 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 		return super.idoGetNumberOfRecords(sql.toString());
 	}
 
-	public int ejbHomeGetNumberOfUnHandledMoves(int seasonID) throws FinderException, IDOException {
+	public int ejbHomeGetNumberOfUnHandledMoves(int seasonID) throws IDOException {
 		StringBuffer sql = new StringBuffer("select count(*) from " +			"proc_case p, proc_case_log l, comm_sch_choice c " +			"where " +			"p.proc_case_id = l.case_id and " +			"p.proc_case_id = c.comm_sch_choice_id and " +			"l.case_status_before = 'FLYT' and " +			"c.school_season_id =" + seasonID);			return super.idoGetNumberOfRecords(sql.toString());
 	}
 
@@ -613,7 +613,7 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 		}
 
 	}
-	public int ejbHomeGetCount(int schoolID, int seasonID, int gradeYear, int[] choiceOrder, String[] validStatuses, String searchStringForUser) throws FinderException, IDOException {
+	public int ejbHomeGetCount(int schoolID, int seasonID, int gradeYear, int[] choiceOrder, String[] validStatuses, String searchStringForUser) throws IDOException {
 		IDOQuery query = getIDOQuery(schoolID, seasonID, gradeYear, choiceOrder, validStatuses, searchStringForUser, true, false, -1);
 		return this.idoGetNumberOfRecords(query);
 	}

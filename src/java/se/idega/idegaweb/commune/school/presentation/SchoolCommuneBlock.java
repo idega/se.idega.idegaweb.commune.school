@@ -355,7 +355,7 @@ public abstract class SchoolCommuneBlock extends CommuneBlock {
 		return (DropdownMenu) getStyledInterface(menu);	
 	}
 		
-	public Link getPDFLink(Class classToUse,Image image) throws RemoteException {
+	public Link getPDFLink(Class classToUse,Image image) {
 		Link link = new Link(image);
 		link.setWindow(getFileWindow());
 		link.addParameter(SchoolClassWriter.prmPrintType, SchoolClassWriter.PDF);
@@ -363,7 +363,7 @@ public abstract class SchoolCommuneBlock extends CommuneBlock {
 		return link;
 	}
 
-	public Link getXLSLink(Class classToUse,Image image) throws RemoteException {
+	public Link getXLSLink(Class classToUse,Image image) {
 		Link link = new Link(image);
 		link.setWindow(getFileWindow());
 		link.addParameter(SchoolClassWriter.prmPrintType, SchoolClassWriter.XLS);

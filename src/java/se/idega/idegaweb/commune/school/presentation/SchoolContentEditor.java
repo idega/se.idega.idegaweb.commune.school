@@ -21,14 +21,14 @@ public class SchoolContentEditor
 		return new SchoolUserEditor(iwc);
 	}
 
-	public static Link getLink(School school, PresentationObject po) throws RemoteException {
+	public static Link getLink(School school, PresentationObject po) {
 		Link link = new Link(po);
 		link.setWindowToOpen( SchoolContentEditor.class);
 		link.addParameter(PARAMETER_SCHOOL_ID, school.getPrimaryKey().toString() );
 		return link;
 	}
 
-	public static Link getLink(School school, String string) throws RemoteException {
+	public static Link getLink(School school, String string) {
 		Link link = new Link(string);
 		link.setWindowToOpen( SchoolContentEditor.class);
 		link.addParameter(PARAMETER_SCHOOL_ID, school.getPrimaryKey().toString() );

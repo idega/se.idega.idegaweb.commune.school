@@ -79,7 +79,7 @@ public class SchoolClassMemberComparator implements Comparator {
     return result;
 	}
 	
-	public int lastNameSort(Object o1, Object o2) throws RemoteException {
+	public int lastNameSort(Object o1, Object o2) {
 		User p1 = (User) students.get(new Integer(((SchoolClassMember)o1).getClassMemberId()));
 		User p2 = (User) students.get(new Integer(((SchoolClassMember)o2).getClassMemberId()));
 		
@@ -103,7 +103,7 @@ public class SchoolClassMemberComparator implements Comparator {
 		return result;
 	}	
 
-	public int genderSort(Object o1, Object o2) throws RemoteException {
+	public int genderSort(Object o1, Object o2) {
 		User p1 = (User) students.get(new Integer(((SchoolClassMember)o1).getClassMemberId()));
 		User p2 = (User) students.get(new Integer(((SchoolClassMember)o2).getClassMemberId()));
 		int result = 0;
@@ -142,7 +142,7 @@ public class SchoolClassMemberComparator implements Comparator {
 		return result;
 	}	
 
-	public int personalIDSort(Object o1, Object o2) throws RemoteException {
+	public int personalIDSort(Object o1, Object o2) {
 		User p1 = (User) students.get(new Integer((((SchoolClassMember)o1).getClassMemberId())));
 		User p2 = (User) students.get(new Integer((((SchoolClassMember)o2).getClassMemberId())));
 		
@@ -152,7 +152,7 @@ public class SchoolClassMemberComparator implements Comparator {
 		return collator.compare(pID1,pID2);
 	}	
 
-	public int languageSort(Object o1, Object o2) throws RemoteException {
+	public int languageSort(Object o1, Object o2) {
 		SchoolClassMember p1 = (SchoolClassMember) o1;
 		SchoolClassMember p2 = (SchoolClassMember) o2;
 		

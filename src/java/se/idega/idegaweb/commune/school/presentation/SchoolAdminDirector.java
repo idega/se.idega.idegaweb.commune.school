@@ -90,7 +90,7 @@ public class SchoolAdminDirector extends CommuneBlock {
 		*/
 	}
 	
-	public Link getApproverLink(School school)throws RemoteException{
+	public Link getApproverLink(School school) {
 		Link L = new Link(school.getName());
 		L.setPage(this.schoolChoiceApproverPageId.intValue());
 		L.addParameter(SchoolChoiceApprover.prmSchoolId,school.getPrimaryKey().toString());

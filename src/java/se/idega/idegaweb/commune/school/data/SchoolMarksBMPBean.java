@@ -9,7 +9,7 @@ import com.idega.data.IDOException;
 /**
  * This BMP bean handles school marks.
  * <p>
- * $Id: SchoolMarksBMPBean.java,v 1.2 2003/10/05 20:07:06 laddi Exp $
+ * $Id: SchoolMarksBMPBean.java,v 1.3 2004/01/12 09:02:47 gimmi Exp $
  *
  * @author Anders Lindman
  * @version $version$
@@ -146,7 +146,7 @@ public class SchoolMarksBMPBean extends GenericEntity implements SchoolMarks {
 		return idoFindPKsBySQL("select * from " + getEntityName());
 	}
 
-	public Collection ejbFindNumberOfSchools() throws javax.ejb.FinderException {
+	public Collection ejbFindNumberOfSchools() {
 		int count = 0;
 		try { 
 			count = idoGetNumberOfRecords("select unique(" + SCHOOLCODE + ") from " + getEntityName());		

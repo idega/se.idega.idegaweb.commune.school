@@ -494,7 +494,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		return myForm;
 	}
 
-	public PresentationObject getSchoolChoiceAnswer(User child) throws java.rmi.RemoteException {
+	public PresentationObject getSchoolChoiceAnswer(User child) {
 		Table T = new Table();
 		T.setCellpadding(getCellpadding());
 		T.setCellspacing(0);
@@ -515,7 +515,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		return T;
 	}
 
-	public PresentationObject getAlreadyChosenAnswer(User child) throws java.rmi.RemoteException {
+	public PresentationObject getAlreadyChosenAnswer(User child) {
 		DataTable T = new DataTable();
 		T.setUseBottom(false);
 		T.setUseTop(false);
@@ -531,7 +531,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		return T;
 	}
 
-	public PresentationObject getAlterChoiceInfo(IWContext iwc) throws RemoteException {
+	public PresentationObject getAlterChoiceInfo(IWContext iwc) {
 		Table T = new Table();
 		if (owner != null && choiceDate != null) {
 			Object[] arguments = { owner.getName(), new IWCalendar(choiceDate).getLocaleDate(iwc.getCurrentLocale(), IWCalendar.SHORT) };
@@ -1080,7 +1080,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		return drop;		
 	}
 
-	private PresentationObject getMessagePart() throws java.rmi.RemoteException {
+	private PresentationObject getMessagePart() {
 		Table table = new Table(1, 2);
 		table.setCellpadding(2);
 		table.setCellspacing(0);
@@ -1238,7 +1238,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		return script.toString();
 	}
 
-	private String getFilterScript() throws java.rmi.RemoteException {
+	private String getFilterScript() {
 		StringBuffer s = new StringBuffer();
 		s.append("function changeFilter(index,type,area,school,showAll){").append(" \n\t");
 		s.append("changeFilter2(index,type,area,school,-1,showAll);").append("\n").append("}");
@@ -1620,8 +1620,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		 this.checkPageID = (Integer) checkPage.getPrimaryKey();
 	  }
 
-	private UserHomeLink getUserHomePageLink ()
-        throws RemoteException {
+	private UserHomeLink getUserHomePageLink () {
 		return new UserHomeLink();
 	}
 	

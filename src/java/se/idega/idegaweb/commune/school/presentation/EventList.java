@@ -46,7 +46,7 @@ import com.idega.util.IWTimestamp;
  * Copyright:    Copyright idega Software (c) 2002
  * Company:	idega Software
  * @author <a href="mailto:roar@idega.is">roar</a>
- * @version $Id: EventList.java,v 1.5 2004/01/12 04:25:53 jonas Exp $
+ * @version $Id: EventList.java,v 1.6 2004/01/12 09:00:16 gimmi Exp $
  * @since 17.3.2003 
  */
 
@@ -239,7 +239,7 @@ public class EventList extends CommuneBlock {
 	}
 
 	private void viewMessages(String[] ids)
-		throws FinderException, RemoteException {
+		throws FinderException {
 		Table layout = new Table();
 		Collection selectedLetters = getPrintedLetter().findLetters(ids);
 
@@ -371,7 +371,7 @@ public class EventList extends CommuneBlock {
 
 	public Collection getPrintedMessagesByPrimaryKeys(
 		String[] primaryKeys)
-		throws RemoteException, FinderException {
+		throws FinderException {
 		PrintMessageHome msgHome = null;
 		PrintMessage msg;
 		ArrayList coll = new ArrayList(primaryKeys.length);

@@ -151,7 +151,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		return getSchoolSeasonHome().findByPrimaryKey(season.getCurrent());
 	}
 
-	public int getPreviousSeasonId() throws RemoteException, FinderException {
+	public int getPreviousSeasonId() throws RemoteException {
 		final int currentSeasonId = getCommuneSchoolBusiness().getCurrentSchoolSeasonID();
 		return getCommuneSchoolBusiness().getPreviousSchoolSeasonID(currentSeasonId);
 	}
@@ -307,7 +307,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		}
 	}
 
-	public SchoolChoice createSchoolChoice(int userId, int childId, int school_type_id, int current_school, int chosen_school, int grade, int choiceOrder, int method, int workSituation1, int workSituation2, String language, String message, java.sql.Timestamp choiceDate, boolean changeOfSchool, boolean keepChildrenCare, boolean autoAssign, boolean custodiansAgree, boolean schoolCatalogue, CaseStatus caseStatus, Case parentCase, Date placementDate, SchoolSeason season, String extraMessage) throws CreateException, RemoteException, FinderException {
+	public SchoolChoice createSchoolChoice(int userId, int childId, int school_type_id, int current_school, int chosen_school, int grade, int choiceOrder, int method, int workSituation1, int workSituation2, String language, String message, java.sql.Timestamp choiceDate, boolean changeOfSchool, boolean keepChildrenCare, boolean autoAssign, boolean custodiansAgree, boolean schoolCatalogue, CaseStatus caseStatus, Case parentCase, Date placementDate, SchoolSeason season, String extraMessage) throws CreateException, RemoteException {
 		if (season == null) {
 			try {
 				season = getCurrentSeason();
@@ -398,13 +398,8 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	}
 
 	private void handleSchoolChangeHeadMasters(SchoolChoice choice, User child, int oldSchoolID, int newSchoolID) throws RemoteException {
-		try {
-			sendMessageToSchool(oldSchoolID, getOldHeadmasterSubject(), getOldHeadmasterBody(choice, child, getSchool(newSchoolID)),SchoolChoiceMessagePdfHandler.CODE_OLD_SCHOOL_CHANGE);
-			sendMessageToSchool(newSchoolID, getNewHeadMasterSubject(), getNewHeadmasterBody(choice, child, getSchool(oldSchoolID)),SchoolChoiceMessagePdfHandler.CODE_NEW_SCHOOL_CHANGE);
-		}
-		catch (FinderException e) {
-			throw new RemoteException(e.getMessage());
-		}
+		sendMessageToSchool(oldSchoolID, getOldHeadmasterSubject(), getOldHeadmasterBody(choice, child, getSchool(newSchoolID)),SchoolChoiceMessagePdfHandler.CODE_OLD_SCHOOL_CHANGE);
+		sendMessageToSchool(newSchoolID, getNewHeadMasterSubject(), getNewHeadmasterBody(choice, child, getSchool(oldSchoolID)),SchoolChoiceMessagePdfHandler.CODE_NEW_SCHOOL_CHANGE);
 	}
 
 	private void handleSeparatedParentApplication(int applicationParentID, List choices, boolean isSchoolChangeApplication) throws RemoteException {
@@ -676,7 +671,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		return false;
 	}
 
-	public void setAsPreliminary(SchoolChoice choice, User performer) throws RemoteException {
+	public void setAsPreliminary(SchoolChoice choice, User performer) {
 		try {
 			super.changeCaseStatus(choice, getCaseStatusPreliminary().getStatus(), performer);
 		}
@@ -747,7 +742,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		return null;
 	}
 
-	protected String getPreliminaryMessageBody(SchoolChoice theCase) throws RemoteException, FinderException {
+	protected String getPreliminaryMessageBody(SchoolChoice theCase) throws RemoteException {
 		SchoolYear year = getCommuneSchoolBusiness().getSchoolYear(theCase.getGrade() + 1);
 		Object[] arguments = {theCase.getChosenSchool().getName(), theCase.getOwner().getNameLastFirst(true), theCase.getChild().getNameLastFirst(true), year != null ? year.getSchoolYearName() : "" };
 		String body = MessageFormat.format(getLocalizedString("school_choice.prelim_mesg_body", "Dear mr./ms./mrs. {1}\n Your child, {2} has been preliminary accepted in: {0} for year {3}"), arguments);
@@ -757,7 +752,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		 */
 		return body;
 	}
-	protected String getGroupedMessageBody(SchoolChoice theCase) throws RemoteException, FinderException {
+	protected String getGroupedMessageBody(SchoolChoice theCase) throws RemoteException {
 		StringBuffer body = new StringBuffer(this.getLocalizedString("acc.app.acc.body1", "Dear mr./ms./mrs. "));
 		body.append(theCase.getOwner().getNameLastFirst()).append("\n");
 		body.append(this.getLocalizedString("school_choice.group_mesg_body2", "Your child has been grouped  in ."));
@@ -767,7 +762,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		return body.toString();
 	}
 
-	protected String getSeparateParentMessageBodyAppl(List choices, User parent) throws RemoteException, FinderException {
+	protected String getSeparateParentMessageBodyAppl(List choices, User parent) throws RemoteException {
 		Object[] arguments = new Object[5];
 		arguments[0] = parent.getNameLastFirst(true);
 		Iterator iter = choices.iterator();
@@ -793,13 +788,13 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		return body;
 	}
 
-	protected String getSeparateParentMessageBodyChange(SchoolChoice theCase, User parent) throws RemoteException, FinderException {
+	protected String getSeparateParentMessageBodyChange(SchoolChoice theCase, User parent) throws RemoteException {
 		Object[] arguments = {parent.getNameLastFirst(true), theCase.getChild().getNameLastFirst(true), getSchool(theCase.getChosenSchoolId()).getSchoolName(), theCase.getPlacementDate() != null ? new IWTimestamp(theCase.getPlacementDate()).getLocaleDate(this.getIWApplicationContext().getApplicationSettings().getDefaultLocale(), IWTimestamp.SHORT) : "", PersonalIDFormatter.format(theCase.getChild().getPersonalID(), this.getIWApplicationContext().getApplicationSettings().getDefaultLocale()) };
 		String body = MessageFormat.format(getLocalizedString("school_choice.sep_parent_change_mesg_body", "Dear mr./ms./mrs. "), arguments);
 		return body;
 	}
 
-	protected String getOldHeadmasterBody(SchoolChoice choice, User student, School newSchool) throws RemoteException, FinderException {
+	protected String getOldHeadmasterBody(SchoolChoice choice, User student, School newSchool) {
 		Object[] arguments = {student.getNameLastFirst(true), newSchool.getSchoolName(), PersonalIDFormatter.format(student.getPersonalID(), this.getIWApplicationContext().getApplicationSettings().getDefaultLocale()), choice.getPlacementDate() != null ? new IWTimestamp(choice.getPlacementDate()).getLocaleDate(this.getIWApplicationContext().getApplicationSettings().getDefaultLocale(), IWTimestamp.SHORT) : "" };
 		String body = MessageFormat.format(getLocalizedString("school_choice.old_headmaster_body", "Dear headmaster"), arguments);
 		/*
@@ -808,7 +803,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		return body;
 	}
 
-	protected String getNewHeadmasterBody(SchoolChoice choice, User student, School oldSchool) throws RemoteException, FinderException {
+	protected String getNewHeadmasterBody(SchoolChoice choice, User student, School oldSchool) {
 		Object[] arguments = {student.getNameLastFirst(true), oldSchool.getSchoolName(), PersonalIDFormatter.format(student.getPersonalID(), this.getIWApplicationContext().getApplicationSettings().getDefaultLocale()), choice.getPlacementDate() != null ? new IWTimestamp(choice.getPlacementDate()).getLocaleDate(this.getIWApplicationContext().getApplicationSettings().getDefaultLocale(), IWTimestamp.SHORT) : "" };
 		String body = MessageFormat.format(getLocalizedString("school_choice.new_headmaster_body", "Dear headmaster"), arguments);
 		/*

@@ -99,7 +99,7 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 		return getSchoolBusiness().findAllSchoolSeasons();	
 	}*/
 	
-	public Map getYearClassMap(Collection schoolYears, int schoolID, int seasonID, String emptyString) throws RemoteException {
+	public Map getYearClassMap(Collection schoolYears, int schoolID, int seasonID, String emptyString) {
 		try {
 			SortedMap yearMap = new TreeMap(new SchoolYearComparator());
 			if (schoolYears != null) {
@@ -305,7 +305,7 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 		return null;
 	}
 	
-	private String[] getUserIDsFromClassMembers(Collection classMembers) throws RemoteException {
+	private String[] getUserIDsFromClassMembers(Collection classMembers) {
 		if (classMembers != null) {
 			String[] userIDs = new String[classMembers.size()];
 			SchoolClassMember classMember;
@@ -358,7 +358,7 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 		return coll;		
 	}
 	
-	public boolean hasChosenOtherSchool(Collection choices, int schoolID) throws RemoteException {
+	public boolean hasChosenOtherSchool(Collection choices, int schoolID) {
 		if (choices != null && !choices.isEmpty()) {
 			Iterator iter = choices.iterator();
 			while (iter.hasNext()) {
@@ -413,7 +413,7 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 		}
 	}
 	
-	public int getChosenSchoolID(Collection choices) throws RemoteException {
+	public int getChosenSchoolID(Collection choices) {
 		if (choices != null && !choices.isEmpty()) {
 			Iterator iter = choices.iterator();
 			while (iter.hasNext()) {
@@ -533,7 +533,7 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 		}
 	}
 	
-	public void setStudentAsSpeciallyPlaced(SchoolClassMember schoolMember) throws RemoteException {
+	public void setStudentAsSpeciallyPlaced(SchoolClassMember schoolMember) {
 		schoolMember.setSpeciallyPlaced(true);
 		schoolMember.store();	
 	}
@@ -576,13 +576,13 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 		getUserBusiness().getGroupBusiness().addUser(((Integer)rootAdminGroup.getPrimaryKey()).intValue(), user);
 	}
 	
-	public void markSchoolClassReady(SchoolClass schoolClass) throws RemoteException {
+	public void markSchoolClassReady(SchoolClass schoolClass) {
 		schoolClass.setReady(true);
 		schoolClass.setReadyDate(new IWTimestamp().getTimestamp());
 		schoolClass.store();	
 	}
 	
-	public void markSchoolClassLocked(SchoolClass schoolClass) throws RemoteException {
+	public void markSchoolClassLocked(SchoolClass schoolClass) {
 		schoolClass.setLocked(true);
 		schoolClass.setLockedDate(new IWTimestamp().getTimestamp());
 		schoolClass.store();

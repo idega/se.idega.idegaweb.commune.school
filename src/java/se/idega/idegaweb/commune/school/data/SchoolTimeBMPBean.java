@@ -4,13 +4,12 @@ import com.idega.block.school.data.*;
 import com.idega.data.GenericEntity;
 import com.idega.user.data.User;
 import java.util.Date;
-import java.rmi.RemoteException;
 
 /**
- * Last modified: $Date: 2003/04/02 17:55:51 $ by $Author: laddi $
+ * Last modified: $Date: 2004/01/12 09:02:30 $ by $Author: gimmi $
  *
  * @author <a href="http://www.staffannoteberg.com">Staffan Nöteberg</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  * @see se.idega.idegaweb.commune.block.importer.business.NackaStudentTimeImportFileHandler
  */
 public class SchoolTimeBMPBean extends GenericEntity implements SchoolTime {
@@ -51,7 +50,7 @@ public class SchoolTimeBMPBean extends GenericEntity implements SchoolTime {
         setColumn (COLUMN_USER_ID, user.getPrimaryKey ());
     }
     
-    public void setSchool (final School school) throws RemoteException {
+    public void setSchool (final School school) {
         if (school == null) {
           this.removeFromColumn(COLUMN_SCHOOL_ID);
         }

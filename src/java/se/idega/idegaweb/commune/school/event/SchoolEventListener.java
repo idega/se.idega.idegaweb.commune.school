@@ -11,7 +11,6 @@ import com.idega.block.school.data.SchoolClass;
 import com.idega.block.school.data.SchoolYear;
 import com.idega.business.IBOLookup;
 import com.idega.event.IWPageEventListener;
-import com.idega.idegaweb.IWException;
 import com.idega.presentation.IWContext;
 
 /**
@@ -33,7 +32,7 @@ public class SchoolEventListener implements IWPageEventListener {
 	/**
 	 * @see com.idega.business.IWEventListener#actionPerformed(IWContext)
 	 */
-	public boolean actionPerformed(IWContext iwc) throws IWException {
+	public boolean actionPerformed(IWContext iwc) {
 		try {
 			SchoolCommuneSession session = getSchoolCommuneSession(iwc);
 			_schoolID = session.getSchoolID();	

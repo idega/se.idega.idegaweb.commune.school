@@ -50,10 +50,10 @@ import com.idega.user.data.User;
  * and entity ejb classes in {@link se.idega.idegaweb.commune.school.data}.
  * <p>
  * <p>
- * Last modified: $Date: 2003/12/11 15:51:00 $ by $Author: laddi $
+ * Last modified: $Date: 2004/01/12 08:55:59 $ by $Author: gimmi $
  *
  * @author <a href="http://www.staffannoteberg.com">Staffan Nöteberg</a>
- * @version $Revision: 1.35 $
+ * @version $Revision: 1.36 $
  * @see javax.ejb
  */
 public class SchoolChoiceReminderView extends CommuneBlock {
@@ -445,7 +445,7 @@ public class SchoolChoiceReminderView extends CommuneBlock {
     }
 
     private void showDetails (final IWContext iwc)
-        throws RemoteException, CreateException, FinderException {
+        throws RemoteException, FinderException {
 		final Table table = new Table();
 		table.setCellpadding(0);
 		table.setCellspacing(0);
@@ -489,7 +489,7 @@ public class SchoolChoiceReminderView extends CommuneBlock {
     }
 
     private Table getStudentList (final IWContext iwc,
-                                  final SchoolChoiceBusiness business) throws RemoteException, FinderException {
+                                  final SchoolChoiceBusiness business) throws RemoteException {
         final Table studentList = new Table();
         studentList.setCellpadding(getCellpadding ());
         studentList.setCellspacing(getCellspacing ());
@@ -647,8 +647,7 @@ public class SchoolChoiceReminderView extends CommuneBlock {
 		return theReturn;
 	}
 
-	private void generateLetter (final IWContext iwc) throws RemoteException,
-                                                             FinderException {
+	private void generateLetter (final IWContext iwc) throws RemoteException {
         final SchoolChoiceReminderReceiver [] allReceivers
                 = (SchoolChoiceReminderReceiver [])
                 iwc.getSession ().getAttribute (STUDENT_LIST_KEY);

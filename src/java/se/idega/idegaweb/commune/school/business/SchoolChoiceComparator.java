@@ -1,6 +1,5 @@
 package se.idega.idegaweb.commune.school.business;
 
-import java.rmi.RemoteException;
 import java.text.Collator;
 import java.util.Comparator;
 import java.util.Locale;
@@ -61,36 +60,31 @@ public class SchoolChoiceComparator implements Comparator {
 			collator = Collator.getInstance(LocaleUtil.getSwedishLocale());
 		int result = 0;
 		
-    try {
-    	switch (sortBy) {
-				case NAME_SORT :
-					result = lastNameSort(o1,o2);
-					break;
-				case GENDER_SORT :
-					result = genderSort(o1,o2);
-					break;
-				case ADDRESS_SORT :
-					result = addressSort(o1,o2);
-					break;
-				case LANGUAGE_SORT :
-					result = languageSort(o1,o2);
-					break;
-				case PERSONAL_ID_SORT :
-					result = personalIDSort(o1,o2);
-					break;
-				case CREATED_SORT :
-					result = createdSort(o1,o2);
-					break;
-			}
-    }
-    catch (RemoteException re) {
-    	result = 0;
-    }
+		switch (sortBy) {
+			case NAME_SORT :
+				result = lastNameSort(o1,o2);
+				break;
+			case GENDER_SORT :
+				result = genderSort(o1,o2);
+				break;
+			case ADDRESS_SORT :
+				result = addressSort(o1,o2);
+				break;
+			case LANGUAGE_SORT :
+				result = languageSort(o1,o2);
+				break;
+			case PERSONAL_ID_SORT :
+				result = personalIDSort(o1,o2);
+				break;
+			case CREATED_SORT :
+				result = createdSort(o1,o2);
+				break;
+		}
     
     return result;
 	}
 	
-	public int lastNameSort(Object o1, Object o2) throws RemoteException {
+	public int lastNameSort(Object o1, Object o2) {
 		User p1 = (User) studentMap.get(new Integer((((SchoolChoice)o1).getChildId())));
 		User p2 = (User) studentMap.get(new Integer((((SchoolChoice)o2).getChildId())));
 		
@@ -121,7 +115,7 @@ public class SchoolChoiceComparator implements Comparator {
 		return result;
 	}	
 
-	public int genderSort(Object o1, Object o2) throws RemoteException {
+	public int genderSort(Object o1, Object o2) {
 		User p1 = (User) studentMap.get(new Integer((((SchoolChoice)o1).getChildId())));
 		User p2 = (User) studentMap.get(new Integer((((SchoolChoice)o2).getChildId())));
 		int result = 0;
@@ -141,7 +135,7 @@ public class SchoolChoiceComparator implements Comparator {
 		return result;
 	}	
 
-	public int addressSort(Object o1, Object o2) throws RemoteException {
+	public int addressSort(Object o1, Object o2) {
 		Address p1 = (Address) addressMap.get(new Integer((((SchoolChoice)o1).getChildId())));
 		Address p2 = (Address) addressMap.get(new Integer((((SchoolChoice)o2).getChildId())));
 		
@@ -164,7 +158,7 @@ public class SchoolChoiceComparator implements Comparator {
 		return result;
 	}	
 
-	public int personalIDSort(Object o1, Object o2) throws RemoteException {
+	public int personalIDSort(Object o1, Object o2) {
 		User p1 = (User) studentMap.get(new Integer((((SchoolChoice)o1).getChildId())));
 		User p2 = (User) studentMap.get(new Integer((((SchoolChoice)o2).getChildId())));
 		
@@ -174,7 +168,7 @@ public class SchoolChoiceComparator implements Comparator {
 		return collator.compare(pID1,pID2);
 	}	
 
-	public int languageSort(Object o1, Object o2) throws RemoteException {
+	public int languageSort(Object o1, Object o2) {
 		SchoolChoice p1 = (SchoolChoice) o1;
 		SchoolChoice p2 = (SchoolChoice) o2;
 		
@@ -189,7 +183,7 @@ public class SchoolChoiceComparator implements Comparator {
 		return result;
 	}	
 
-	public int createdSort(Object o1, Object o2) throws RemoteException {
+	public int createdSort(Object o1, Object o2) {
 		SchoolChoice p1 = (SchoolChoice) o1;
 		SchoolChoice p2 = (SchoolChoice) o2;
 		

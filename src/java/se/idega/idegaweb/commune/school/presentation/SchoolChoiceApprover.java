@@ -376,7 +376,7 @@ public class SchoolChoiceApprover extends CommuneBlock {
 		return back;
 	}
 	
-	private PresentationObject getSchoolInfo()throws RemoteException{
+	private PresentationObject getSchoolInfo() {
 		Table T = new Table(2,5);
 		T.setColor("#ffffcc");
 		T.setCellpadding(6);
@@ -395,7 +395,7 @@ public class SchoolChoiceApprover extends CommuneBlock {
 		return T;
 	}
 	
-	private Link getPupilInfoLink(User child,SchoolChoice choice) throws  RemoteException{
+	private Link getPupilInfoLink(User child,SchoolChoice choice) {
 		Link L = new Link(tf.format(child.getNameLastFirst()));
 		L.addParameter(prmPupilInfo,choice.getPrimaryKey().toString());
 		return L;
