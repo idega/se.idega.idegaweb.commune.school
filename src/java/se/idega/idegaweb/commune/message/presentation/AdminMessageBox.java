@@ -8,7 +8,9 @@ package se.idega.idegaweb.commune.message.presentation;
 
 import java.text.DateFormat;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import se.idega.idegaweb.commune.message.business.MessageBusiness;
 import se.idega.idegaweb.commune.message.data.Message;
@@ -35,13 +37,25 @@ public class AdminMessageBox extends MessageBox {
 		// get my messages
 		Collection messages = super.getMessages(iwc, user, messageBusiness);	
 
-		// add messages belonging to my group 
+		// add messages belonging to my groups 
 		UserBusiness userBusiness = (UserBusiness) IBOLookup.getServiceInstance(iwc, UserBusiness.class);
 		Collection groupCollection = userBusiness.getUserGroups(user);
 						
 		Iterator g = groupCollection.iterator();
 		while(g.hasNext()){
 			messages.addAll(messageBusiness.findMessages((Group) g.next()));
+		}
+		
+		//removing duplicates
+		Iterator m = messages.iterator();
+		Map map = new HashMap();
+		while (m.hasNext()){
+			Integer id = new Integer(((Message) m.next()).getNodeID());
+			if (map.containsKey(id)){
+				m.remove();
+			} else {
+				map.put(id, null);
+			}
 		}
 		
 		return messages;
