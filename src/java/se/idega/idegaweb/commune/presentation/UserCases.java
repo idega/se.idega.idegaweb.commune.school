@@ -103,7 +103,7 @@ public class UserCases extends CommuneBlock {
 		if (iwc.isParameterSet(PARAMETER_START_CASE))
 			_startCase = Integer.parseInt(iwc.getParameter(PARAMETER_START_CASE));
 		else
-			_startCase = 1;
+			_startCase = 0;
 
 		int action = ACTION_VIEW_CASE_LIST;
 		return action;
