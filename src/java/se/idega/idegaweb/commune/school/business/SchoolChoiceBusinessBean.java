@@ -471,7 +471,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 						if (phone != null) {
 							body.append("\ntel: ").append(phone.getNumber());
 						}
-						vpb.createViewpoint(performer, messageSubject,  body.toString(), subCategory.getName(), getUserBusiness().getRootAdministratorGroupID());
+						vpb.createViewpoint(performer, messageSubject,  body.toString(), subCategory.getName(), getUserBusiness().getRootAdministratorGroupID(), -1);
 					}
 					catch (CreateException ce) {
 						ce.printStackTrace();
@@ -520,7 +520,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 							SubCategory subCategory = vpb.findSubCategory("Fritids");
 							if (subCategory != null) {
 								try {
-									vpb.createViewpoint(performer, messageSubject, messageBody, subCategory.getName(), getUserBusiness().getRootAdministratorGroupID());
+									vpb.createViewpoint(performer, messageSubject, messageBody, subCategory.getName(), getUserBusiness().getRootAdministratorGroupID(), -1);
 								}
 								catch (CreateException ce) {
 									ce.printStackTrace();
