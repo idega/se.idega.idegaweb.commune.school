@@ -87,7 +87,7 @@ import com.lowagie.text.pdf.PdfWriter;
  * @author <a href="http://www.staffannoteberg.com">Staffan Nöteberg</a>
  * @version 1.0
  */
-public class SchoolChoiceBusinessBean extends com.idega.block.process.business.CaseBusinessBean {
+public class SchoolChoiceBusinessBean extends com.idega.block.process.business.CaseBusinessBean implements SchoolChoiceBusiness, com.idega.block.process.business.CaseBusiness {
 	public final static String SCHOOL_CHOICE_CASECODE = "MBSKOLV";
 	private final static int REMINDER_FONTSIZE = 12;
 	private final static Font SERIF_FONT
