@@ -301,7 +301,7 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 		return getBooleanColumnValue(FREETIMETHISSCHOOL);
 	}
 	public void setFreetimeInThisSchool(boolean freetimeInThisSchool) {
-		setColumn(this.FREETIMETHISSCHOOL, freetimeInThisSchool);
+		setColumn(FREETIMETHISSCHOOL, freetimeInThisSchool);
 	}
 	public String getFreetimeOther() {
 		return getStringColumnValue(FREETIMEOTHER);
@@ -365,7 +365,7 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 		.append(userDef.getSQLTableName()).append(" u ")
 		.appendWhere("sc.").append(this.getIDColumnName()).append(" = c.").append(caseDef.getPrimaryKeyDefinition().getField().getSQLFieldName())
 		.appendAnd().append(" u.").append(userDef.getPrimaryKeyDefinition().getField().getSQLFieldName())
-		.append(" = sc.").append(this.CHILD);
+		.append(" = sc.").append(CHILD);
 		if (schoolId > 0) {
 			query.appendAnd().append(" sc.").appendEquals(CHOSEN_SCHOOL, schoolId);
 		}
@@ -597,7 +597,7 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 			query.append(" where ");
 			query.append("csc.").append(getIDColumnName()).appendEqualSign().append("pc.").append(CaseBMPBean.TABLE_NAME + "_ID").appendAnd().append("pc.").append(CaseBMPBean.COLUMN_CASE_STATUS).appendIn();
 			query.appendWithinParentheses(idoQuery().appendCommaDelimitedWithinSingleQuotes(validStatuses));
-			query.appendAnd().append("pc.").append(CaseBMPBean.COLUMN_CASE_CODE).appendEqualSign().appendWithinSingleQuotes(this.CASECODE);
+			query.appendAnd().append("pc.").append(CaseBMPBean.COLUMN_CASE_CODE).appendEqualSign().appendWithinSingleQuotes(CASECODE);
 
 			if (schoolId > 0) {
 				query.appendAnd().append("csc.").append(CHOSEN_SCHOOL).appendEqualSign().append(schoolId);
@@ -664,7 +664,7 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 		if (statuses) {
 			query.appendAnd().append("pc.").append(CaseBMPBean.COLUMN_CASE_STATUS).appendIn();
 			query.appendWithinParentheses(idoQuery().appendCommaDelimitedWithinSingleQuotes(validStatuses));
-			query.appendAnd().append("pc.").append(CaseBMPBean.COLUMN_CASE_CODE).appendEqualSign().appendWithinSingleQuotes(this.CASECODE);
+			query.appendAnd().append("pc.").append(CaseBMPBean.COLUMN_CASE_CODE).appendEqualSign().appendWithinSingleQuotes(CASECODE);
 			needAnd = true;
 		}
 

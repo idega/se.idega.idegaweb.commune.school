@@ -102,11 +102,11 @@ public class CurrentSchoolSeasonEditor extends Block {
 
     }
     row++;
-    T.add(tFormat.format(iwrb.getLocalizedString("name","Name"),tFormat.HEADER),1,row);
-    T.add(tFormat.format(iwrb.getLocalizedString("start","Start"),tFormat.HEADER),2,row);
-    T.add(tFormat.format(iwrb.getLocalizedString("end","End"),tFormat.HEADER),3,row);
-    T.add(tFormat.format(iwrb.getLocalizedString("due_date","Duedate"),tFormat.HEADER),4,row);
-    T.add(tFormat.format(iwrb.getLocalizedString("current","Current"),tFormat.HEADER),5,row);
+    T.add(tFormat.format(iwrb.getLocalizedString("name","Name"),TextFormat.HEADER),1,row);
+    T.add(tFormat.format(iwrb.getLocalizedString("start","Start"),TextFormat.HEADER),2,row);
+    T.add(tFormat.format(iwrb.getLocalizedString("end","End"),TextFormat.HEADER),3,row);
+    T.add(tFormat.format(iwrb.getLocalizedString("due_date","Duedate"),TextFormat.HEADER),4,row);
+    T.add(tFormat.format(iwrb.getLocalizedString("current","Current"),TextFormat.HEADER),5,row);
     row++;
 
     java.util.Iterator iter = SchoolSeasons.iterator();
@@ -139,8 +139,8 @@ public class CurrentSchoolSeasonEditor extends Block {
   public void main(IWContext iwc)throws Exception{
     iwb = getBundle(iwc);
     iwrb = getResourceBundle(iwc);
-    tFormat = tFormat.getInstance();
-    dFormat = DateFormat.getDateInstance(dFormat.SHORT,iwc.getCurrentLocale());
+    tFormat = TextFormat.getInstance();
+    dFormat = DateFormat.getDateInstance(DateFormat.SHORT,iwc.getCurrentLocale());
     control(iwc);
   }
 }
