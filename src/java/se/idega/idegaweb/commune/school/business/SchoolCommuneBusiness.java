@@ -77,6 +77,6 @@ public interface SchoolCommuneBusiness extends com.idega.business.IBOService,com
 	public java.util.Map getYearClassMap(java.util.Collection schoolYears, int schoolID, int seasonID, String emptyString, boolean showSubGroups) throws java.rmi.RemoteException;
 	public boolean removeSubGroupPlacements(int userID, int schoolID, int seasonID) throws java.rmi.RemoteException;
 	public boolean hasChoicesForSeason(int userID, int seasonID) throws java.rmi.RemoteException;
-	public Map getSchoolTypeClassMap(Collection schoolTypes,int schoolID,int seasonID,boolean showSubGroups,boolean showNonSeasonGroups) throws java.rmi.RemoteException;
+	public Map getSchoolTypeClassMap(Collection schoolTypes,int schoolID,int seasonID,boolean showSubGroups,boolean showNonSeasonGroups,String noSchoolClassFoundEntry) throws java.rmi.RemoteException;
 		
 }
