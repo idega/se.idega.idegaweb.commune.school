@@ -279,6 +279,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 					User child = getUserBusiness().getUser(childId);
 					if (child != null) {
 						child.setNativeLanguage(nativeLang);
+						child.store();
 					}					
 				}
 					
