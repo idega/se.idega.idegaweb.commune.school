@@ -181,7 +181,8 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	
 	private boolean _forwardToCheckPage = true;
 	private int _maxAge = 0;
-	private boolean _useCheckBoxForAfterSchoolCare;
+	private boolean _useCheckBoxForAfterSchoolCare = false;
+	private boolean _showChildCareTypes = false;
 
 	/**
 	 * @param ongoingSeason
@@ -584,14 +585,14 @@ public class SchoolChoiceApplication extends CommuneBlock {
 			if (_useOngoingSeason)
 				previousSeason = season;
 			else
-				previousSeason = season; //schCommBiz.getPreviousSchoolSeason(season);
+				previousSeason = schCommBiz.getPreviousSchoolSeason(season);
 			
 			//schoolClassMember = schBuiz.getSchoolBusiness().getSchoolClassMemberHome().findByUserAndSeason(child, previousSeason);
 
 			try {
 				schoolClassMember = schBuiz.getSchoolBusiness().getSchoolClassMemberHome().findLatestByUserAndSchCategoryAndSeason(child, schBuiz.getSchoolBusiness().getCategoryElementarySchool(), previousSeason);
 			} catch (Exception e) {}
-			if (schoolClassMember == null) {
+			if (schoolClassMember == null && _showChildCareTypes) {
 				// No elementary school placement found, look for one in child care
 				schoolClassMember = schBuiz.getSchoolBusiness().getSchoolClassMemberHome().findLatestByUserAndSchCategoryAndSeason(child, schBuiz.getSchoolBusiness().getCategoryChildcare(), previousSeason);
 			}
@@ -744,7 +745,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 				table.add(getSmallHeader(iwrb.getLocalizedString("school.school_name", "School name")+":"), 1, 4);
 				table.add(getSmallHeader(iwrb.getLocalizedString("school.grade", "Grade")+":"), 1, 5);
 			
-				DropdownMenu drpTypes = getTypeDrop(prmPreType, false, true);
+				DropdownMenu drpTypes = getTypeDrop(prmPreType, false, _showChildCareTypes);
 				drpTypes.addMenuElement("-2",localize("school.school_type_other","Other/None"));
 				drpTypes.setOnChange(getFilterCallerScript(prmPreType, prmPreArea, prmPreSchool, 1, true));
 				
@@ -1663,5 +1664,11 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	 */
 	public void setUseCheckBoxForAfterSchoolCare(boolean useCheckBoxForAfterSchoolCare) {
 		this._useCheckBoxForAfterSchoolCare = useCheckBoxForAfterSchoolCare;
+	}
+	/**
+	 * @param showChildCareTypes The showChildCareTypes to set.
+	 */
+	protected void setShowChildCareTypes(boolean showChildCareTypes) {
+		this._showChildCareTypes = showChildCareTypes;
 	}
 }
