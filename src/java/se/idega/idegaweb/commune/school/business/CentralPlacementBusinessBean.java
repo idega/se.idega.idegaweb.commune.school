@@ -49,6 +49,7 @@ public class CentralPlacementBusinessBean extends IBOServiceBean implements Cent
 	private static final String KEY_ERROR_CATEGORY_ID = KP + "error.category_id";
 	private static final String KEY_ERROR_PROVIDER_ID = KP + "error.provider_id";
 	private static final String KEY_ERROR_PLACEMENT_DATE = KP + "error.placement_date";
+	private static final String KEY_ERROR_LATEST_REMOVED_DATE = KP + "error.latest_removed_date";
 	private static final String KEY_ERROR_SCHOOL_TYPE = KP + "error.school_type";
 	private static final String KEY_ERROR_SCHOOL_YEAR = KP + "error.school_year";
 	private static final String KEY_ERROR_SCHOOL_GROUP = KP + "error.school_group";
@@ -161,6 +162,19 @@ public class CentralPlacementBusinessBean extends IBOServiceBean implements Cent
 														"Placement date must be set and cannot be earlier than today");
 				} else {
 				*/
+				
+				// Check latest placement, if new removed date is before registerdate, throw exception.
+				if (latestPlacement != null) {
+					Timestamp latestRegDateStamp = latestPlacement.getRegisterDate();
+					IWTimestamp latestRegDate = new IWTimestamp(latestRegDateStamp);
+					latestRegDate.setAsDate();
+					dayBeforeStamp.setAsDate();
+					if (dayBeforeStamp.isEarlierThan(latestRegDate)) {
+						throw new CentralPlacementException(KEY_ERROR_LATEST_REMOVED_DATE,
+								"End date of latest placement, cannot be earlier than its start date. " 
+								+ "Delete the latest placement or change its end date");
+					}
+				}
 				
 				registerStamp = placeStamp.getTimestamp();
 				registerDate = new java.sql.Date(placeStamp.getDate().getTime());
