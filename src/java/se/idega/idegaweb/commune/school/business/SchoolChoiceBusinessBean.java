@@ -482,6 +482,21 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		catch (IDOStoreException idos) {
 			throw new IDOCreateException(idos);
 		}
+		
+		if (IWTimestamp.RightNow().isBetween(new IWTimestamp(season.getSchoolSeasonStart()), new IWTimestamp(season.getSchoolSeasonEnd()))) {
+			try {
+				User student = getUser(childId);
+				Object[] arguments = {student.getNameLastFirst(true), PersonalIDFormatter.format(student.getPersonalID(), this.getIWApplicationContext().getApplicationSettings().getDefaultLocale()), choice.getPlacementDate() != null ? new IWTimestamp(choice.getPlacementDate()).getLocaleDate(this.getIWApplicationContext().getApplicationSettings().getDefaultLocale(), IWTimestamp.SHORT) : "" };
+
+				String subject = getLocalizedString("school_choice.newly_moved_in_choice_subject", "Newly moved in student seeks placement");
+				String body = MessageFormat.format(getLocalizedString("school_choice.newly_moved_in_choice_body", "{0}, {1}, wants a placement in your school from {2}."), arguments);
+				sendMessageToSchool(chosen_school, subject, body, null);
+			}
+			catch (FinderException fe) {
+				log(fe);
+			}
+		}
+		
 		return choice;
 	}
 
