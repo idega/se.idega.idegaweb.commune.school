@@ -7,6 +7,7 @@ import java.rmi.RemoteException;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -22,6 +23,8 @@ import javax.ejb.EJBException;
 import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
 
+import se.idega.idegaweb.commune.accounting.school.data.ProviderAccountingProperties;
+import se.idega.idegaweb.commune.accounting.school.data.ProviderAccountingPropertiesHome;
 import se.idega.idegaweb.commune.business.CommuneUserBusiness;
 import se.idega.idegaweb.commune.message.business.MessageBusiness;
 import se.idega.idegaweb.commune.school.data.SchoolChoice;
@@ -39,6 +42,7 @@ import com.idega.block.school.data.School;
 import com.idega.block.school.data.SchoolClass;
 import com.idega.block.school.data.SchoolClassMember;
 import com.idega.block.school.data.SchoolClassMemberHome;
+import com.idega.block.school.data.SchoolHome;
 import com.idega.block.school.data.SchoolSeason;
 import com.idega.block.school.data.SchoolStudyPath;
 import com.idega.block.school.data.SchoolStudyPathHome;
@@ -671,13 +675,24 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
         if (null == operationalField || 0 >= operationalField.length ()) {
             return new SchoolClassMember [0];
         }
+				final Collection schools = new ArrayList ();
+				try {
+					final ProviderAccountingPropertiesHome pHome
+							= (ProviderAccountingPropertiesHome) IDOLookup.getHome
+							(ProviderAccountingProperties.class);
+					final Collection schoolIds = pHome.findAllIdsByPaymentByInvoice (true);
+					final SchoolHome sHome = (SchoolHome) IDOLookup.getHome (School.class);
+					schools.addAll (sHome.findAllByPrimaryKeys (schoolIds));
+				} catch (FinderException e) {
+					// No problem, no schools found
+				}
 
         final SchoolBusiness business = getSchoolBusiness ();
         final SchoolClassMemberHome home = business.getSchoolClassMemberHome ();
         try {
             final Collection result = home
-                    .findAllCurrentInvoiceCompensationBySchoolType
-                    (operationalField);
+                    .findAllCurrentInvoiceCompensationBySchoolTypeAndSchools
+                    (operationalField, schools);
             return (SchoolClassMember []) result.toArray (new SchoolClassMember
                                                           [result.size ()]);
         } catch (FinderException fe) {
