@@ -14,6 +14,7 @@ import com.idega.presentation.*;
 import com.idega.presentation.text.*;
 import com.idega.presentation.ui.*;
 import com.idega.user.Converter;
+import com.idega.user.data.Group;
 import com.idega.util.IWTimestamp;
 /**
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
@@ -157,7 +158,13 @@ public class UserCases extends CommuneBlock
 								date.setBold();
 							*/
 							date = this.getSmallText(dateFormat.format(caseDate));
-							manager = this.getSmallText("-");
+							try{
+								Group handler = theCase.getHandler();
+								manager = this.getSmallText(handler.getName());
+							}
+							catch(Exception e){
+								manager = this.getSmallText("-");
+							}
 							//deleteCheck = new CheckBox(PARAM_CASE_ID,msg.getPrimaryKey().toString());
 							caseOwnerName = getSmallText(theCase.getOwner().getFirstName());
 							status =
