@@ -37,6 +37,7 @@ import com.idega.block.datareport.util.ReportableField;
 import com.idega.block.process.business.CaseBusiness;
 import com.idega.block.process.business.CaseBusinessBean;
 import com.idega.block.school.business.SchoolBusiness;
+import com.idega.block.school.business.SchoolClassComparator;
 import com.idega.block.school.business.SchoolYearComparator;
 import com.idega.block.school.data.School;
 import com.idega.block.school.data.SchoolClass;
@@ -145,6 +146,41 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 			e.printStackTrace(System.err);
 			return null;
 		}
+	}
+	
+	public Map getSchoolTypeClassMap(Collection schoolTypes,int schoolID,int seasonID,boolean showSubGroups){
+		try {
+			SortedMap typeMap = new TreeMap(new SchoolClassComparator());
+			if (schoolTypes != null) {
+				Map groupMap = null;
+				SchoolType schoolType = null;
+				SchoolBusiness sb = getSchoolBusiness();
+				Collection groups = null;
+				SchoolClass group = null;
+
+				Iterator iter = schoolTypes.iterator();
+				while (iter.hasNext()) {
+					groupMap = new HashMap();
+
+					schoolType = (SchoolType) iter.next();
+					groups = sb.findSchoolClassesBySchoolAndSchoolTypeAndSeason(schoolID, ((Integer) schoolType.getPrimaryKey()).intValue(),seasonID, showSubGroups);
+					if (groups != null && groups.size() > 0) {
+						Iterator iterator = groups.iterator();
+						while (iterator.hasNext()) {
+							group = (SchoolClass) iterator.next();
+							groupMap.put(group, group);
+						}
+					}
+					typeMap.put(schoolType, groupMap);
+				}
+			}
+			return typeMap;
+		}
+		catch (Exception e) {
+			e.printStackTrace(System.err);
+			return null;
+		}
+	
 	}
 
 	public SchoolBusiness getSchoolBusiness() throws RemoteException {
