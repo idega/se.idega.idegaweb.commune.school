@@ -93,7 +93,13 @@ import com.lowagie.text.pdf.PdfWriter;
  */
 public class SchoolChoiceBusinessBean extends com.idega.block.process.business.CaseBusinessBean implements SchoolChoiceBusiness, com.idega.block.process.business.CaseBusiness {
 	public final static String SCHOOL_CHOICE_CASECODE = "MBSKOLV";
-		
+	//Localization keys ,Messages
+	private static final String KP = "school_editor.";
+	private static final String KEY_REACTIVATE_SUBJECT1 = KP + "sch_admin_reactivate_subject1";
+	private static final String KEY_REACTIVATE_SUBJECT2 = KP + "sch_admin_reactivate_subject2";
+	private static final String KEY_REACTIVATE_BODY1 = KP + "sch_admin_reactivate_body1";
+	private static final String KEY_REACTIVATE_BODY2 = KP + "sch_admin_reactivate_body2";
+	
 	
 	private final static int REMINDER_FONTSIZE = 12;
 	private final static Font SERIF_FONT = FontFactory.getFont(FontFactory.TIMES, REMINDER_FONTSIZE);
@@ -713,9 +719,51 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		}
 		return bunGroup;
 	}
+	
+	public void reactivateApplication(int applicationID, int removedSchoolID, boolean hasReceivedPlacementMessage) throws RemoteException {
+		//change PDF-handler to a new for reactivation		
+		reactivateApplication(applicationID,removedSchoolID,hasReceivedPlacementMessage,SchoolChoiceMessagePdfHandler.CODE_APPLICATION_REJECT);
+	}
+	public void reactivateApplication(int applicationID, int removedSchoolID, boolean hasReceivedPlacementMessage, String code) throws RemoteException {
+		try {
+			SchoolChoice choice = this.getSchoolChoiceHome().findByPrimaryKey(new Integer(applicationID));
+			User child = choice.getChild();
+			
+			String messageSubject1 = getReactivatedMessageSubject();
+			String messageBody1 = getReactivatedMessageBody(choice);
+			String messageSubject2 = getReactivatedMessageSubject(); 
+			String messageBody2 = "";
+			
+			if (removedSchoolID != -1) {
+				messageBody2 = getReactivatedRemovedMessageBody(choice, removedSchoolID);
+				if (!hasReceivedPlacementMessage) {
+					sendMessageToSchool(removedSchoolID, messageSubject2, messageBody2, code);
+					sendMessageToSchool(choice.getChosenSchoolId(), messageSubject2, messageBody2, code);
+					sendMessageToParents(choice, messageSubject1, messageBody1,code, messageSubject1,messageBody1,code,false);
+				}
+				else {
+					sendMessageToSchool(removedSchoolID, messageSubject2, messageBody2, code);
+					sendMessageToSchool(choice.getChosenSchoolId(), messageSubject2, messageBody2, code);
+					sendMessageToParents(choice, messageSubject2, messageBody2,code, messageSubject2,messageBody2,code,false);
+				}
+			}
+			else{
+				sendMessageToSchool(choice.getChosenSchoolId(), messageSubject1, messageBody1, code);
+				sendMessageToParents(choice, messageSubject1, messageBody1,code, messageSubject1,messageBody1,code,false);
+			}
+				
+			
+		}
+		catch (FinderException fe) {
+			fe.printStackTrace();
+		}
+		
+	}
 	public void rejectApplication(int applicationID, int seasonID, User performer, String messageSubject, String messageBody) throws RemoteException {
 		rejectApplication(applicationID,seasonID,performer,messageSubject,messageBody,SchoolChoiceMessagePdfHandler.CODE_APPLICATION_REJECT);
 	}
+	
+	
 	public void rejectApplication(int applicationID, int seasonID, User performer, String messageSubject, String messageBody,String code) throws RemoteException {
 		try {
 			SchoolChoice choice = this.getSchoolChoiceHome().findByPrimaryKey(new Integer(applicationID));
@@ -729,10 +777,10 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 				Iterator iter = coll.iterator();
 				while (iter.hasNext()) {
 					SchoolChoice element = (SchoolChoice) iter.next();
-					if (element.getChoiceOrder() == (choice.getChoiceOrder() + 1)) {
-						super.changeCaseStatus(element, getCaseStatusPreliminary().getStatus(), performer);
-						sendMessageToParents(element, getPreliminaryMessageSubject(), getPreliminaryMessageBody(element),code,getPreliminaryMessageSubject(),getPreliminaryMessageBody(element),code,false);
-						continue;
+					if (element.getChoiceOrder() == (choice.getChoiceOrder() + 1) && !element.getCaseStatus().equals("AVSL")) {
+							super.changeCaseStatus(element, getCaseStatusPreliminary().getStatus(), performer);
+							sendMessageToParents(element, getPreliminaryMessageSubject(), getPreliminaryMessageBody(element),code,getPreliminaryMessageSubject(),getPreliminaryMessageBody(element),code,false);
+							continue;						
 					}
 				}
 			}
@@ -913,6 +961,46 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		}
 	}
 
+	protected String getReactivatedMessageBody(SchoolChoice theCase) {
+		SchoolYear year = theCase.getSchoolYear();
+		Object[] arguments = {theCase.getChosenSchool().getName(), theCase.getChild().getNameLastFirst(true), theCase.getChild().getPersonalID(), year != null ? year.getSchoolYearName() : "" };
+		String body = MessageFormat.format(getLocalizedString(KEY_REACTIVATE_BODY1, "The school choice for child {1}, {2}, has been reactivated in {0} in year {3}"), arguments);
+		
+		/*
+		 * StringBuffer body = new StringBuffer(this.getLocalizedString("school_choice.prelim_mesg_body1", "Dear mr./ms./mrs. ")); body.append().append("\n"); body.append(this.getLocalizedString("school_choice.prelim_mesg_body2", "Your child has been preliminary accepted in: ."));
+		 */
+		return body;
+	}
+	
+	protected String getReactivatedRemovedMessageBody(SchoolChoice theCase, int removedSchoolID) {
+		SchoolYear year = theCase.getSchoolYear();
+		School removedSchool = null;
+		try {
+			removedSchool = getSchool(removedSchoolID);	
+		}
+		catch (RemoteException re){
+			return null;
+		}
+		
+		Object[] arguments = {theCase.getChosenSchool().getName(), theCase.getChild().getNameLastFirst(true), theCase.getChild().getPersonalID(), removedSchool.getName(), year != null ? year.getSchoolYearName() : "" };
+		String body = MessageFormat.format(getLocalizedString(KEY_REACTIVATE_BODY2, "The placement for child {1}, {2}, in school {3} has been removed since school choice in {0}:  for year {4}, has been reactivated."), arguments);
+		/*
+		 * StringBuffer body = new StringBuffer(this.getLocalizedString("school_choice.prelim_mesg_body1", "Dear mr./ms./mrs. ")); body.append().append("\n"); body.append(this.getLocalizedString("school_choice.prelim_mesg_body2", "Your child has been preliminary accepted in: ."));
+		 */
+		return body;
+	}
+	
+	protected String getPlacemReactivatedMessageBody(SchoolChoice theCase) {
+		SchoolYear year = theCase.getSchoolYear();
+		Object[] arguments = {theCase.getChosenSchool().getName(), theCase.getOwner().getNameLastFirst(true), theCase.getChild().getNameLastFirst(true), year != null ? year.getSchoolYearName() : "" };
+		String body = MessageFormat.format(getLocalizedString("school_choice.prelim_mesg_body", "Dear mr./ms./mrs. {1}\n Your child, {2} has been preliminary accepted in: {0} for year {3}"), arguments);
+
+		/*
+		 * StringBuffer body = new StringBuffer(this.getLocalizedString("school_choice.prelim_mesg_body1", "Dear mr./ms./mrs. ")); body.append().append("\n"); body.append(this.getLocalizedString("school_choice.prelim_mesg_body2", "Your child has been preliminary accepted in: ."));
+		 */
+		return body;
+	}
+	
 	protected String getPreliminaryMessageBody(SchoolChoice theCase) {
 		SchoolYear year = theCase.getSchoolYear();
 		Object[] arguments = {theCase.getChosenSchool().getName(), theCase.getOwner().getNameLastFirst(true), theCase.getChild().getNameLastFirst(true), year != null ? year.getSchoolYearName() : "" };
@@ -923,6 +1011,8 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		 */
 		return body;
 	}
+	
+		
 	protected String getGroupedMessageBody(SchoolChoice theCase) throws RemoteException {
 		StringBuffer body = new StringBuffer(this.getLocalizedString("acc.app.acc.body1", "Dear mr./ms./mrs. "));
 		body.append(theCase.getOwner().getNameLastFirst()).append("\n");
@@ -996,6 +1086,9 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		return body;
 	}
 
+	public String getReactivatedMessageSubject() {
+		return this.getLocalizedString(KEY_REACTIVATE_SUBJECT1, "School choice reactivated");
+	}
 	public String getPreliminaryMessageSubject() {
 		return this.getLocalizedString("school_choice.prelim_mesg_subj", "Prelimininary school acceptance");
 	}

@@ -73,6 +73,8 @@ public interface SchoolChoiceBusiness extends com.idega.business.IBOService,com.
  public boolean preliminaryAction(java.lang.Integer p0,com.idega.user.data.User p1) throws java.rmi.RemoteException;
  public void rejectApplication(int p0,int p1,com.idega.user.data.User p2,java.lang.String p3,java.lang.String p4)throws java.rmi.RemoteException, java.rmi.RemoteException;
  public void rejectApplication(int p0,int p1,com.idega.user.data.User p2,java.lang.String p3,java.lang.String p4,java.lang.String p5)throws java.rmi.RemoteException, java.rmi.RemoteException;
+ public void reactivateApplication(int p0,int p1,boolean p2)throws java.rmi.RemoteException, java.rmi.RemoteException;
+ public void reactivateApplication(int p0,int p1,boolean p2,java.lang.String p3)throws java.rmi.RemoteException, java.rmi.RemoteException;
  public void sendMessageToParentOrChild(se.idega.idegaweb.commune.school.data.SchoolChoice p0,com.idega.user.data.User p1,com.idega.user.data.User p2,java.lang.String p3,java.lang.String p4,java.lang.String p5)throws java.rmi.RemoteException, java.rmi.RemoteException;
  public void setAsPreliminary(se.idega.idegaweb.commune.school.data.SchoolChoice p0,com.idega.user.data.User p1) throws java.rmi.RemoteException;
  public void setAsInactive(se.idega.idegaweb.commune.school.data.SchoolChoice p0,com.idega.user.data.User p1) throws java.rmi.RemoteException;
