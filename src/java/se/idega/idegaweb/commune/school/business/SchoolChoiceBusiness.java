@@ -16,6 +16,7 @@ public interface SchoolChoiceBusiness extends com.idega.business.IBOService,com.
  public void createTestFamily() throws java.rmi.RemoteException;
  public se.idega.idegaweb.commune.school.data.SchoolChoice findByStudentAndSchoolAndSeason(int p0,int p1,int p2)throws java.rmi.RemoteException, java.rmi.RemoteException;
  public java.util.Collection findByStudentAndSeason(int p0,int p1)throws java.rmi.RemoteException, java.rmi.RemoteException;
+ public java.util.Collection findBySchoolAndFreeTime(int p0,boolean p1)throws java.rmi.RemoteException, java.rmi.RemoteException;
  public java.util.Collection getApplicantsForSchool(int p0,int p1,int p2,int[] p3,java.lang.String[] p4,java.lang.String p5)throws java.rmi.RemoteException, java.rmi.RemoteException;
  public java.util.Collection getApplicantsForSchool(int p0,int p1,int p2,java.lang.String[] p3,java.lang.String p4)throws java.rmi.RemoteException, java.rmi.RemoteException;
  public java.util.Collection getApplicantsForSchoolAndSeasonAndGrade(int p0,int p1,int p2)throws java.rmi.RemoteException, java.rmi.RemoteException;

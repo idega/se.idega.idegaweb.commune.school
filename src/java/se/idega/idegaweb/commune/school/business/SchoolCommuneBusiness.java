@@ -22,6 +22,8 @@ public interface SchoolCommuneBusiness extends com.idega.business.IBOService,com
  public java.util.Map getStudentList(java.util.Collection p0)throws java.rmi.RemoteException, java.rmi.RemoteException;
  public java.util.Map getUserAddressesMapFromChoices(java.util.Collection p0)throws java.rmi.RemoteException, java.rmi.RemoteException;
  public java.util.Map getUserMapFromChoices(java.util.Collection p0)throws java.rmi.RemoteException, java.rmi.RemoteException;
+ public java.util.Map getUserPhoneMapFromChoicesUserIdPK(java.util.Collection p0)throws java.rmi.RemoteException, java.rmi.RemoteException;
+ public java.util.Map getUserAddressMapFromChoicesUserIdPK(java.util.Collection p0)throws java.rmi.RemoteException, java.rmi.RemoteException;
  public boolean hasChosenOtherSchool(java.util.Collection p0,int p1)throws java.rmi.RemoteException, java.rmi.RemoteException;
  public void importStudentInformationToNewClass(com.idega.block.school.data.SchoolClassMember p0,com.idega.block.school.data.SchoolSeason p1)throws java.rmi.RemoteException, java.rmi.RemoteException;
  public void markSchoolClassLocked(com.idega.block.school.data.SchoolClass p0)throws java.rmi.RemoteException, java.rmi.RemoteException;

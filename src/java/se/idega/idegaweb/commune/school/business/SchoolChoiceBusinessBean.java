@@ -548,6 +548,15 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		}
 	}
 	
+	public Collection findBySchoolAndFreeTime(int schoolId, boolean freeTimeInSchool) throws RemoteException {
+		try {
+			return getSchoolChoiceHome().findBySchoolAndFreeTime(schoolId,freeTimeInSchool);
+		}
+		catch (FinderException fe) {
+			return new Vector();
+		}
+	}
+		
 	public Collection findByStudentAndSeason(int studentID, int seasonID) throws RemoteException {
 		try {
 			return getSchoolChoiceHome().findByChildAndSeason(studentID, seasonID);
