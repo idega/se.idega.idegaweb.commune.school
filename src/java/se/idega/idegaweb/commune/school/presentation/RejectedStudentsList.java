@@ -125,6 +125,7 @@ public class RejectedStudentsList extends SchoolCommuneBlock {
 		Address address;
 		Phone phone;
 		SchoolChoice choice;
+		String name = null;
 		Locale locale = iwc.getCurrentLocale();
 		for (Iterator iter = schoolChoices.iterator(); iter.hasNext(); ) {
 			choice = (SchoolChoice) iter.next();
@@ -135,7 +136,8 @@ public class RejectedStudentsList extends SchoolCommuneBlock {
 				school = getBusiness().getSchoolBusiness().getSchool(new Integer(choice.getCurrentSchoolId()));
 				address = getUserBusiness(iwc).getUsersMainAddress(applicant);
 				phone = getUserBusiness(iwc).getUsersHomePhone(applicant);
-				table.add(getSmallText(applicant.getName()), column++, row);
+				name = getBusiness().getUserBusiness().getNameLastFirst(applicant, true);
+				table.add(getSmallText(name), column++, row);
 				if (applicant.getPersonalID() != null) {
 					table.add(getSmallText(PersonalIDFormatter.format(applicant.getPersonalID(), locale)), column++, row);
 				}
