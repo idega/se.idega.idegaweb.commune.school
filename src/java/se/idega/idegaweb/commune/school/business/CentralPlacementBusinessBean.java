@@ -72,7 +72,10 @@ public class CentralPlacementBusinessBean extends IBOServiceBean implements Cent
 		int schoolYearID = -1;
 		int schoolTypeID = -1;
 		int registrator = -1;
+		int nativeLanguageID = -1;
+		
 		String placementDateStr = "-1";
+		String sLanguage = null;
 		Timestamp registerStamp = null;
 		java.sql.Date registerDate = null;
 		Timestamp dayBeforeRegStamp = null;
@@ -169,6 +172,11 @@ public class CentralPlacementBusinessBean extends IBOServiceBean implements Cent
 			}
 		}
 		
+		// language
+		if (iwc.isParameterSet(CentralPlacementEditor.PARAM_LANGUAGE)) {
+			sLanguage = iwc.getParameter(CentralPlacementEditor.PARAM_LANGUAGE);
+		}
+		
 		// school group
 		if (iwc.isParameterSet(CentralPlacementEditor.PARAM_SCHOOL_GROUP)) {
 			String groupID = iwc.getParameter(CentralPlacementEditor.PARAM_SCHOOL_GROUP);
@@ -258,7 +266,7 @@ public class CentralPlacementBusinessBean extends IBOServiceBean implements Cent
 			trans.begin();
 			// Create new placement
 			newPlacement = getSchoolBusiness().storeNewSchoolClassMember(studentID, schoolClassID, 
-														schoolYearID, schoolTypeID, registerStamp, registrator, notes);
+														schoolYearID, schoolTypeID, registerStamp, registrator, notes, sLanguage);
 			if (newPlacement != null) {
 			// *** START - Store the rest of the parameters ***
 				newPlacementID = ((Integer) newPlacement.getPrimaryKey()).intValue(); // test
@@ -289,9 +297,18 @@ public class CentralPlacementBusinessBean extends IBOServiceBean implements Cent
 				if (iwc.isParameterSet(CentralPlacementEditor.PARAM_STUDY_PATH)) {
 					String studyPathIDStr = iwc.getParameter(CentralPlacementEditor.PARAM_STUDY_PATH);
 					if (!studyPathIDStr.equals("-1")) {
-						int pK = Integer.parseInt(
-													iwc.getParameter(CentralPlacementEditor.PARAM_STUDY_PATH));
+						int pK = Integer.parseInt(iwc.getParameter(CentralPlacementEditor.PARAM_STUDY_PATH));
 						newPlacement.setStudyPathId(pK);
+					}
+				}
+				
+				//Native language
+				if (iwc.isParameterSet(CentralPlacementEditor.PARAM_NATIVE_LANGUAGE)) {
+					String studyNativeLangStr = iwc.getParameter(CentralPlacementEditor.PARAM_NATIVE_LANGUAGE);
+					if (!studyNativeLangStr.equals("-1")) {
+						nativeLanguageID = Integer.parseInt(studyNativeLangStr);
+						student.setNativeLanguage(nativeLanguageID);
+						student.store();
 					}
 				}
 				
