@@ -763,8 +763,12 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 		query.appendWhere();
 		query.append("u.").append(UserBMPBean.getColumnNameUserID()).appendEqualSign().append("csc.").append(CHILD);
 		query.appendAnd().append("csc.").append(getIDColumnName()).appendEqualSign().append("pc.").append(CaseBMPBean.TABLE_NAME + "_ID");
+		needAnd = true;
 		if(searchOnAddr){
-			query.appendAnd().append("csc.").append(CHILD).appendEqualSign().append("ua.").append(UserBMPBean.getColumnNameUserID());
+		    if (needAnd) {
+				query.appendAnd();
+			}
+			query.append("csc.").append(CHILD).appendEqualSign().append("ua.").append(UserBMPBean.getColumnNameUserID());
 			query.appendAnd().append("ua.ic_address_id").appendEqualSign().append("a.ic_address_id");
 			needAnd = true;
 		}
@@ -773,7 +777,7 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 			if (needAnd) {
 				query.appendAnd();
 			}
-			query.appendAnd().append("pc.").append(CaseBMPBean.COLUMN_CASE_STATUS).appendIn();
+			query.append("pc.").append(CaseBMPBean.COLUMN_CASE_STATUS).appendIn();
 			query.appendWithinParentheses(idoQuery().appendCommaDelimitedWithinSingleQuotes(validStatuses));
 			query.appendAnd().append("pc.").append(CaseBMPBean.COLUMN_CASE_CODE).appendEqualSign().appendWithinSingleQuotes(CASECODE);
 			needAnd = true;
