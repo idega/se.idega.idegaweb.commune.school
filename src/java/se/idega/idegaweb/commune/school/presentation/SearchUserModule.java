@@ -97,6 +97,7 @@ public class SearchUserModule extends CommuneBlock {
 	private String uniqueIdentifier;
 	private boolean showOverFlowMessage;
 	private Collection addedButtons;
+	private boolean showSearchParamsAfterSearch;
 
 	public SearchUserModule() {
 		textFontStyleName = null;
@@ -137,6 +138,7 @@ public class SearchUserModule extends CommuneBlock {
 		uniqueIdentifier = "unique";
 		showOverFlowMessage = true;
 		addedButtons = null;
+		showSearchParamsAfterSearch = false;
 	}
 
 	private void initStyleNames() {
@@ -181,39 +183,31 @@ public class SearchUserModule extends CommuneBlock {
 		} else {
 			add(T);
 		}
+
 	}
 
 	public void process(IWContext iwc) throws FinderException, RemoteException {
 		if (processed)
 			return;
 		if (iwc.isParameterSet(SEARCH_COMMITTED + uniqueIdentifier)) {
-			// *** Borgman 
-			//String tmpStr = iwc.getParameter("mbe_act_searc" + uniqueIdentifier);			
 			processSearch(iwc);
 		}
 		else if (iwc.isParameterSet("usrch_user_id_" + uniqueIdentifier))
 			userID = Integer.valueOf(iwc.getParameter("usrch_user_id_" + uniqueIdentifier));
 		if (userID != null)
 			try {
-				UserHome home =
-					(UserHome) IDOLookup.getHome(User.class);
-					//	class$com$idega$user$data$User != null
-					//		? class$com$idega$user$data$User
-					//		: (class$com$idega$user$data$User = class$("com.idega.user.data.User")));
+				UserHome home = (UserHome) IDOLookup.getHome(User.class);
 				user = home.findByPrimaryKey(userID);
 			} catch (IDOLookupException e) {
-				throw new FinderException(e.getMessage());
+				log(e);
+				logWarning("No child found for userID: " + userID);
 			}
 		processed = true;
 	}
 
 	private void processSearch(IWContext iwc)
 		throws IDOLookupException, FinderException, RemoteException {
-		UserHome home =
-		(UserHome) IDOLookup.getHome(User.class);
-				//class$com$idega$user$data$User != null
-				//	? class$com$idega$user$data$User
-				//	: (class$com$idega$user$data$User = class$("com.idega.user.data.User")));
+		UserHome home = (UserHome) IDOLookup.getHome(User.class);
 		String first = iwc.getParameter("usrch_search_fname" + uniqueIdentifier);
 		String middle = iwc.getParameter("usrch_search_mname" + uniqueIdentifier);
 		String last = iwc.getParameter("usrch_search_lname" + uniqueIdentifier);
@@ -231,10 +225,11 @@ public class SearchUserModule extends CommuneBlock {
 		if (user == null && usersFound != null)
 			if (!usersFound.isEmpty()) {
 				hasManyUsers = usersFound.size() > 1;
-				if (!hasManyUsers)
+				if (!hasManyUsers) {
 					user = (User) usersFound.iterator().next();
+				}				
 			} else {
-				throw new FinderException("No user was found");
+				// No user found
 			}
 	}
 
@@ -252,9 +247,9 @@ public class SearchUserModule extends CommuneBlock {
 			TextInput input = new TextInput("usrch_search_pid" + uniqueIdentifier);
 			input.setStyleClass(interfaceStyleName);
 			input.setLength(personalIDLength);
-// Empty user fields after search
-//			if (user != null && user.getPersonalID() != null)
-//				input.setContent(user.getPersonalID());
+		// Empty user fields after search
+		if (user != null && user.getPersonalID() != null && showSearchParamsAfterSearch)
+				input.setContent(user.getPersonalID());
 			if (stacked)
 				searchTable.add(input, col++, row + 1);
 			else
@@ -269,9 +264,9 @@ public class SearchUserModule extends CommuneBlock {
 			TextInput input = new TextInput("usrch_search_lname" + uniqueIdentifier);
 			input.setStyleClass(interfaceStyleName);
 			input.setLength(lastNameLength);
-//			if (user != null && user.getLastName() != null)
-// Empty user fields after search
-//				input.setContent(user.getLastName());
+			// Empty user fields after search
+			if (user != null && user.getLastName() != null && showSearchParamsAfterSearch)
+				input.setContent(user.getLastName());
 			if (stacked)
 				searchTable.add(input, col++, row + 1);
 			else
@@ -287,9 +282,9 @@ public class SearchUserModule extends CommuneBlock {
 			TextInput input = new TextInput("usrch_search_mname" + uniqueIdentifier);
 			input.setStyleClass(interfaceStyleName);
 			input.setLength(middleNameLength);
-//			if (user != null && user.getMiddleName() != null)
-// Empty user fields after search
-//				input.setContent(user.getMiddleName());
+			// Empty user fields after search
+			if (user != null && user.getMiddleName() != null && showSearchParamsAfterSearch)
+				input.setContent(user.getMiddleName());
 			if (stacked)
 				searchTable.add(input, col++, row + 1);
 			else
@@ -304,9 +299,9 @@ public class SearchUserModule extends CommuneBlock {
 			TextInput input = new TextInput("usrch_search_fname" + uniqueIdentifier);
 			input.setStyleClass(interfaceStyleName);
 			input.setLength(firstNameLength);
-//			if (user != null)
-// Empty user fields after search
-//				input.setContent(user.getFirstName());
+			// Empty user fields after search
+			if (user != null && showSearchParamsAfterSearch)
+				input.setContent(user.getFirstName());
 			if (stacked)
 				searchTable.add(input, col++, row + 1);
 			else
@@ -315,10 +310,6 @@ public class SearchUserModule extends CommuneBlock {
 				clearAction + "this.form.usrch_search_fname" + uniqueIdentifier + ".value ='' ;";
 		}
 		if (showButtons) {
-			//SubmitButton search =
-			//	new SubmitButton(iwrb.getLocalizedString(KEY_BUTTON_SEARCH, "Search"),
-			//									SEARCH_COMMITTED + uniqueIdentifier, "true");
-
 			SubmitButton search = new SubmitButton(
 													iwrb.getLocalizedImageButton(KEY_BUTTON_SEARCH, "Search"),
 													SEARCH_COMMITTED + uniqueIdentifier, "true");
@@ -652,6 +643,20 @@ public class SearchUserModule extends CommuneBlock {
 
 	public void setShowButtons(boolean b) {
 		showButtons = b;
+	}
+
+	/**
+	 * @return Returns the showSearchParamsAfterSearch.
+	 */
+	public boolean isShowSearchParamsAfterSearch() {
+		return showSearchParamsAfterSearch;
+	}
+
+	/**
+	 * @param showSearchParamsAfterSearch The showSearchParamsAfterSearch to set.
+	 */
+	public void setShowSearchParamsAfterSearch(boolean showSearchParamsAfterSearch) {
+		this.showSearchParamsAfterSearch = showSearchParamsAfterSearch;
 	}
 
 }
