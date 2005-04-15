@@ -970,7 +970,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		}
 		
 		drpGrade.setOnChange(getSchoolGradeScript(prmYear, prmYearReload, prmRealSubmit));
-		
+		drpGrade.setAsNotEmpty(iwrb.getLocalizedString("school.school_year_must_select", "You must select a school year"));
 		
 		
 		CheckBox chkChildCare = getCheckBox(prmSixYearCare, "true");
