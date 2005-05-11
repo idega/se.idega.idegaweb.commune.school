@@ -253,7 +253,7 @@ public class MandatorySchoolReminder extends CommuneBlock {
 		Group communeGroup = communeUserService.getRootCitizenGroup();
 
 		try {
-			SchoolSeason currentSeason = sBusiness.getCurrentSchoolSeason();
+			SchoolSeason currentSeason = sBusiness.getCurrentSchoolSeason(sBusiness.getCategoryElementarySchool());
 			int schoolYears = 9;
 			IWTimestamp seasonStartDate = new IWTimestamp(currentSeason.getSchoolSeasonStart());
 			int currentYear = seasonStartDate.getYear();

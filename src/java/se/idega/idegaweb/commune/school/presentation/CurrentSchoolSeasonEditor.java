@@ -91,7 +91,7 @@ public class CurrentSchoolSeasonEditor extends Block {
     Collection SchoolSeasons = new java.util.Vector(0);
     SchoolSeason current = null;
     try{
-      SchoolSeasons = sabBean.findAllSchoolSeasons();
+      SchoolSeasons = sabBean.findAllSchoolSeasons(sabBean.getCategoryElementarySchool());
       current = careBean.getCurrentSeason();
       T.add(new HiddenInput("old_current",current.getPrimaryKey().toString()));
 
@@ -126,7 +126,7 @@ public class CurrentSchoolSeasonEditor extends Block {
       T.add(tFormat.format(sarea.getSchoolSeasonName()),1,row);
       T.add(tFormat.format(dFormat.format(sarea.getSchoolSeasonStart())),2,row);
       T.add(tFormat.format(dFormat.format(sarea.getSchoolSeasonEnd())),3,row);
-      T.add(tFormat.format(dFormat.format(sarea.getSchoolSeasonDueDate())),4,row);
+      T.add(tFormat.format(dFormat.format(sarea.getChoiceEndDate())),4,row);
       T.add(butt,5,row);
       }
       catch(Exception ex){}

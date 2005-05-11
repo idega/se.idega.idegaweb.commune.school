@@ -1,5 +1,5 @@
 /*
- * $Id: SchoolExportBusinessBean.java,v 1.7 2004/09/06 19:45:28 sigtryggur Exp $
+ * $Id: SchoolExportBusinessBean.java,v 1.8 2005/05/11 07:15:37 laddi Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -40,10 +40,10 @@ import com.idega.user.data.User;
 /** 
  * Business logic for exporting student placement text files.
  * <p>
- * Last modified: $Date: 2004/09/06 19:45:28 $ by $Author: sigtryggur $
+ * Last modified: $Date: 2005/05/11 07:15:37 $ by $Author: laddi $
  *
  * @author Anders Lindman
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.8 $
  */
 public class SchoolExportBusinessBean extends com.idega.business.IBOServiceBean implements SchoolExportBusiness  {
 	 
@@ -86,7 +86,7 @@ public class SchoolExportBusinessBean extends com.idega.business.IBOServiceBean 
 		Collection placements = null;
 		try {
 			SchoolBusiness sb = getSchoolBusiness();
-			SchoolSeason season = sb.getCurrentSchoolSeason();
+			SchoolSeason season = sb.getCurrentSchoolSeason(sb.getCategoryElementarySchool());
 			int seasonId = ((Integer) season.getPrimaryKey()).intValue();
 			String highSchoolCategory = (String) category.getPrimaryKey();
 			SchoolClassMemberHome home = getSchoolClassMemberHome();

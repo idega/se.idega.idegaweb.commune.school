@@ -18,6 +18,7 @@ import se.idega.idegaweb.commune.care.business.CareBusiness;
 import se.idega.idegaweb.commune.care.resource.data.ResourceClassMember;
 import se.idega.idegaweb.commune.care.resource.data.ResourceClassMemberHome;
 import se.idega.idegaweb.commune.school.presentation.CentralPlacementEditorConstants;
+import com.idega.block.school.business.SchoolBusiness;
 import com.idega.block.school.data.SchoolCategory;
 import com.idega.block.school.data.SchoolCategoryHome;
 import com.idega.block.school.data.SchoolClassMember;
@@ -127,7 +128,7 @@ public class CentralPlacementBusinessBean extends IBOServiceBean implements Cent
 		SchoolSeason season = null;
 		
 		try {
-			season = getCareBusiness().getSchoolSeasonHome().findSeasonByDate(new IWTimestamp().getDate());
+			season = getCareBusiness().getSchoolSeasonHome().findSeasonByDate(getSchoolBusiness().getCategoryElementarySchool(), new IWTimestamp().getDate());
 		} catch (Exception e) {}
 		
 		if (season == null) {
@@ -211,5 +212,9 @@ public class CentralPlacementBusinessBean extends IBOServiceBean implements Cent
 
 	private CareBusiness getCareBusiness() throws RemoteException {
 		return (CareBusiness) getServiceInstance(CareBusiness.class);
+	}
+
+	private SchoolBusiness getSchoolBusiness() throws RemoteException {
+		return (SchoolBusiness) getServiceInstance(SchoolBusiness.class);
 	}
 }

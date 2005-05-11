@@ -287,7 +287,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 
 				if (_useOngoingSeason) {
 					try {
-						season = careBuiz.getSchoolSeasonHome().findSeasonByDate(new IWTimestamp().getDate());
+						season = careBuiz.getSchoolSeasonHome().findSeasonByDate(schCommBiz.getSchoolBusiness().getCategoryElementarySchool(), new IWTimestamp().getDate());
 					}
 					catch (FinderException e) {
 						season = careBuiz.getCurrentSeason();
@@ -665,7 +665,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		Table T = new Table();
 		if (season != null) {
 			String message = iwrb.getLocalizedString("school_choice.last_date_for_choice_is", "Last date to choose is");
-			String date = df.format(season.getSchoolSeasonDueDate());
+			String date = df.format(season.getChoiceEndDate());
 			Text t = getHeader(message + " " + date);
 			if (canApply[1]) t.setFontColor("FF0000");
 

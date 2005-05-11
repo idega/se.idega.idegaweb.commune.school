@@ -191,7 +191,7 @@ public abstract class SchoolCommuneBlock extends CommuneBlock {
 			menu.setToSubmit();
 		}
 		
-		Collection seasons = business.getSchoolBusiness().findAllSchoolSeasons();
+		Collection seasons = business.getSchoolBusiness().findAllSchoolSeasons(business.getSchoolBusiness().getCategoryElementarySchool());
 		if ( !seasons.isEmpty() ) {
 			Iterator iter = seasons.iterator();
 			while (iter.hasNext()) {

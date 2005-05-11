@@ -1,5 +1,5 @@
 /*
- * $Id: ReportBusinessBean.java,v 1.34 2004/02/02 15:36:28 anders Exp $
+ * $Id: ReportBusinessBean.java,v 1.35 2005/05/11 07:15:37 laddi Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -29,10 +29,10 @@ import com.idega.block.school.data.SchoolStudyPathHome;
 /** 
  * Business logic for school reports.
  * <p>
- * Last modified: $Date: 2004/02/02 15:36:28 $ by $Author: anders $
+ * Last modified: $Date: 2005/05/11 07:15:37 $ by $Author: laddi $
  *
  * @author Anders Lindman
- * @version $Revision: 1.34 $
+ * @version $Revision: 1.35 $
  */
 public class ReportBusinessBean extends com.idega.business.IBOServiceBean implements ReportBusiness  {
 
@@ -136,7 +136,7 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 		if (_currentSchoolSeason == null) {
 			try {
 				SchoolBusiness sb = getSchoolBusiness();
-				_currentSchoolSeason = sb.getCurrentSchoolSeason();
+				_currentSchoolSeason = sb.getCurrentSchoolSeason(sb.getCategoryElementarySchool());
 			} catch (Exception e) {}
 		}
 		return _currentSchoolSeason;

@@ -207,7 +207,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		if (placementDate != null) {
 			try {
 				try {
-					season = getCareBusiness().getSchoolSeasonHome().findSeasonByDate(placementDate);
+					season = getCareBusiness().getSchoolSeasonHome().findSeasonByDate(getSchoolBusiness().getCategoryElementarySchool(), placementDate);
 				}
 				catch (FinderException e) {
 					season = getCareBusiness().getCurrentSeason();
@@ -305,7 +305,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 			
 			try {
 				try {
-					season = getCareBusiness().getSchoolSeasonHome().findSeasonByDate(placementDate);
+					season = getCareBusiness().getSchoolSeasonHome().findSeasonByDate(getSchoolBusiness().getCategoryElementarySchool(), placementDate);
 				}
 				catch (FinderException e) {
 					season = getCareBusiness().getCurrentSeason();
@@ -943,7 +943,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 				member = getSchoolBusiness().getSchoolClassMemberHome().findLatestByUserAndSchool(choice.getChildId(), choice.getCurrentSchoolId(), types);
 			}
 			else {
-				SchoolSeason season = getCareBusiness().getSchoolSeasonHome().findSeasonByDate(choice.getPlacementDate());
+				SchoolSeason season = getCareBusiness().getSchoolSeasonHome().findSeasonByDate(getSchoolBusiness().getCategoryElementarySchool(), choice.getPlacementDate());
 				member = getSchoolBusiness().getSchoolClassMemberHome().findLatestByUserAndSchCategoryAndSeason(choice.getChild(), getSchoolBusiness().getCategoryElementarySchool(), season);
 			}
 			member.setRemovedDate(stamp.getTimestamp());
