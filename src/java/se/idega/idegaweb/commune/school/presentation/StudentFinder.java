@@ -58,6 +58,18 @@ public class StudentFinder extends CommuneUserFinder {
 			throw new IBORuntimeException(e.getMessage());
 		}
 	}
+	
+	/* (non-Javadoc)
+	 * @see se.idega.idegaweb.commune.presentation.CommuneUserFinder#getParameterName(com.idega.presentation.IWContext)
+	 */
+	public String getParameterUniqueName(IWContext iwc) {
+		try {
+			return getSchoolSession(iwc).getParameterStudentID();
+		}
+		catch (RemoteException e) {
+			throw new IBORuntimeException(e.getMessage());
+		}
+	}
 
 	/* (non-Javadoc)
 	 * @see se.idega.idegaweb.commune.presentation.CommuneUserFinder#getEventListener()

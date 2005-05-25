@@ -26,6 +26,7 @@ public class SchoolCommuneSessionBean extends IBOSessionBean implements SchoolCo
 	protected static final String PARAMETER_SCHOOL_SEASON_ID = "sch_s_s_id";
 	protected static final String PARAMETER_SCHOOL_CLASS_ID = "sch_s_c_id";
 	protected static final String PARAMETER_STUDENT_ID = "sch_st_id";
+	protected static final String PARAMETER_STUDENT__UNIQUE_ID = "sch_st_uq_id";
 	protected static final String PARAMETER_GROUP_IDS = "sch_group_ids";
 	
 	protected int _schoolID = -1;
@@ -34,7 +35,9 @@ public class SchoolCommuneSessionBean extends IBOSessionBean implements SchoolCo
 	protected int _schoolSeasonID = -1;
 	protected int _schoolClassID = -1;
 	protected int _studentID = -1;
+	private String _studentUniqueID = null;
 	private int _userID = -1;
+	
 	private String[] _schoolGroupIDs = null;
 
 	public CommuneUserBusiness getCommuneUserBusiness() throws RemoteException {
@@ -195,6 +198,14 @@ public class SchoolCommuneSessionBean extends IBOSessionBean implements SchoolCo
 	}
 	
 	/**
+	 * Returns the StudentUniqueID parameter.
+	 * @return String
+	 */
+	public String getParameterStudentUniqueID() {
+		return PARAMETER_STUDENT__UNIQUE_ID;
+	}
+	
+	/**
 	 * Returns the GroupIDs parameter.
 	 * @return String
 	 */
@@ -210,10 +221,24 @@ public class SchoolCommuneSessionBean extends IBOSessionBean implements SchoolCo
 	}
 	
 	/**
+	 * @return Returns the studentUniqueID.
+	 */
+	public String getStudentUniqueID() {
+		return this._studentUniqueID;
+	}
+	
+	/**
 	 * @param studentID The studentID to set.
 	 */
 	public void setStudentID(int studentID) {
 		this._studentID = studentID;
+	}
+	
+	/**
+	 * @param studentUniqueID The studentID to set.
+	 */
+	public void setStudentUniqueID(String studentUniqueID) {
+		this._studentUniqueID = studentUniqueID;
 	}
 	
 	/**
