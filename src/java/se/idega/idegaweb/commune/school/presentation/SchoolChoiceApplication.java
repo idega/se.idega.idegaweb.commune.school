@@ -42,6 +42,7 @@ import com.idega.block.school.data.SchoolTypeHome;
 import com.idega.block.school.data.SchoolYear;
 import com.idega.block.school.presentation.SchoolYearSelectorCollectionHandler;
 import com.idega.business.IBOLookup;
+import com.idega.business.IBOLookupException;
 import com.idega.business.IBORuntimeException;
 import com.idega.core.builder.data.ICPage;
 import com.idega.core.localisation.data.ICLanguage;
@@ -138,6 +139,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	private String prmAfterschool = prefix + "aft_schl";
 	private String prmAction = prefix + "snd_frm";
 	private String prmChildId = CitizenChildren.getChildIDParameterName();
+	private String prmChildUniqueId = CitizenChildren.getChildUniqueIDParameterName();
 	private String prmParentId = CitizenChildren.getParentIDParameterName();
 	
 	private String prmForm = prefix + "the_frm";
@@ -175,6 +177,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	private boolean showAgree = false;
 	protected boolean quickAdmin = false;
 	private int _reloadYear = -1;
+	private boolean hasPermisson = false;
 	
 	SchoolChoiceBusiness schBuiz;
 	SchoolClassMember schoolClassMember = null;
@@ -219,6 +222,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	private boolean _useCheckBoxForAfterSchoolCare = false;
 	private boolean _showChildCareTypes = false;
 	
+	
 	//variables for admin user
 	private boolean _useAsAdmin = false;
 	private static int MAX_FOUND_USER_COLS = 20;
@@ -250,37 +254,71 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		schBuiz = (SchoolChoiceBusiness) IBOLookup.getServiceInstance(iwc, SchoolChoiceBusiness.class);
 		careBuiz = (CareBusiness) IBOLookup.getServiceInstance(iwc, CareBusiness.class);
 		canApply = checkCanApply(iwc);
+		
 		//userbuiz = (UserBusiness) IBOLookup.getServiceInstance(iwc, UserBusiness.class);
 		//schCommBiz = (SchoolCommuneBusiness) IBOLookup.getServiceInstance(iwc, SchoolCommuneBusiness.class);
 		
-		if (_useAsAdmin) {
-			if (!iwc.isParameterSet(prmAction)) {
-				add (createMainTable (getUserSearchFormTable (iwc)));
+		
+			if (_useAsAdmin) {
+				if (!iwc.isParameterSet(prmAction)) {
+					add (createMainTable (getUserSearchFormTable (iwc)));
+				}
+				else{
+						control(iwc);	
+				}
 			}
-			else{
-				control(iwc);	
-			}
-		}
-		else {
-			control(iwc);
-		}
+			else {
+					control(iwc);
+			}	
+		
+		
+		
 	}
 
+	public boolean hasPermission(IWContext iwc) throws Exception {
+		
+		boolean hasPermission = false;
+				
+		if (isAdministrator(iwc) || _useAsAdmin){
+			hasPermission = true;
+		}
+		else if (childId != -1){
+		User parent = iwc.getCurrentUser();
+		Collection children = getUserBusiness(iwc).getChildrenForUser(parent);
+		Iterator theChild = children.iterator();
+			while(theChild.hasNext()){
+				User userChild = (User) theChild.next();
+				
+				int userChildId = ((Integer) userChild.getPrimaryKey()).intValue();
+				if (userChildId == childId){
+					hasPermission = true;
+					break;
+				}
+								
+			}
+		}
+		return hasPermission;
+	}
 	public void control(IWContext iwc) throws Exception {
 		//debugParameters(iwc);
-		String ID = null;
-		ID = iwc.getParameter(prmChildId);
+		childId = getChildId(iwc);
+		
 		if (iwc.isParameterSet(prmYearReload)){
 			_reloadYear = Integer.parseInt(iwc.getParameter(prmYearReload));
 		}
-		
+	/*	
+		String ID = null;
+		ID = iwc.getParameter(prmChildId);
 		if (ID == null && _useAsAdmin){
 			ID = _childId;	
+			childId = Integer.parseInt(ID);
 		}
 		
-		if (iwc.isLoggedOn() && canApply[0]) {
-			if (ID != null) {
-				childId = Integer.parseInt(ID);
+		*/	
+		
+		
+		if (iwc.isLoggedOn() && canApply[0] && hasPermission(iwc)) {
+			if (childId != -1) {
 				userbuiz = (UserBusiness) IBOLookup.getServiceInstance(iwc, UserBusiness.class);
 				schCommBiz = (SchoolCommuneBusiness) IBOLookup.getServiceInstance(iwc, SchoolCommuneBusiness.class);
 				boolean custodiansAgree = true;
@@ -438,8 +476,61 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		else if (!iwc.isLoggedOn())
 			add(getLocalizedHeader("school.need_to_be_logged_on", "You need to log in"));
 		else if (!canApply[0]) add(getLocalizedHeader("school_choice.last_date_expired", "Time limits to apply expired"));
+		else if (!hasPermission(iwc))
+			add(getErrorText(localize("not_permitted", "You do not have permission")));
 	}
 
+	
+	private int getChildId(IWContext iwc) {
+		if (_childId != null){
+			childId = Integer.parseInt(_childId);
+			return childId;
+		}
+		else if (iwc.isParameterSet(prmChildUniqueId)){
+			String childUniqueId = iwc.getParameter(prmChildUniqueId);
+			User child = null;
+			Object objChildId = null;
+			if (childUniqueId != null){
+				try {
+					child = getUserBusiness(iwc).getUserByUniqueId(childUniqueId);	
+				}
+				catch (IBOLookupException ibe){
+					log (ibe);
+				}
+				catch (FinderException fe){
+					log (fe);
+				}
+				catch (RemoteException re){
+					log (re);
+				}
+				
+				if (child != null)
+					objChildId = child.getPrimaryKey();
+				
+				if(objChildId != null)
+				    return ((Integer) (objChildId)).intValue();
+				else
+				    return -1;
+				
+			}
+			else {
+				return -1;
+			}
+		}
+		else {
+			String childId = iwc.getParameter(prmChildId);
+			if (childId != null) {
+				iwc.setSessionAttribute(prmChildId, childId);
+			}
+			else {
+				childId = (String) iwc.getSessionAttribute(prmChildId);
+			}
+			if(childId!=null)
+			    return Integer.parseInt(childId);
+			else
+			    return -1;
+		}
+	}
 	private boolean saveSchoolChoice() {
 		try {
 			//			schBuiz.createSchoolChoices(valCaseOwner, childId, valType,
@@ -555,6 +646,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		T.add(new HiddenInput(prmYearReload, "-1"), 1, 1);
 		T.add(new HiddenInput(prmRealSubmit, "-1"), 1, 1);
 		T.add(new HiddenInput(prmChildId, child.getPrimaryKey().toString()), 1, 1);
+		T.add(new HiddenInput(prmChildUniqueId, child.getUniqueId()), 1, 1);
 
 		Page p = this.getParentPage();
 		if (p != null) {
@@ -1812,11 +1904,11 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	 * @param context session data
 	 * @exception RemoteException if exception happens in lower layer
 	 */
-	private Table getUserSearchFormTable (final IWContext context)
+	private Table getUserSearchFormTable (final IWContext iwc)
 	throws RemoteException, Exception {
 		// set up searcher
 		final UserSearcher searcher = createSearcher ();
-		fillSearcherWithStudents (context, searcher);
+		fillSearcherWithStudents (iwc, searcher);
 		final User foundUser = searcher.getUser ();
 		
 		// output result
@@ -1848,7 +1940,9 @@ public class SchoolChoiceApplication extends CommuneBlock {
 			//boolean test1 = context.isParameterSet(prmChildIdAdmin);
 			//String test = context.getParameter(prmChildIdAdmin);
 			try {
-				control(context);
+				
+				control(iwc);
+				
 			}
 			catch (Exception e){
 				
