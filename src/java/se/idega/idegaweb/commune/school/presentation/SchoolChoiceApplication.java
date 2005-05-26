@@ -177,7 +177,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	private boolean showAgree = false;
 	protected boolean quickAdmin = false;
 	private int _reloadYear = -1;
-	private boolean hasPermisson = false;
+	//private boolean hasPermisson = false;
 	
 	SchoolChoiceBusiness schBuiz;
 	SchoolClassMember schoolClassMember = null;
