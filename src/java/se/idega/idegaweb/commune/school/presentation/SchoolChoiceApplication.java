@@ -1033,14 +1033,6 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		typeDrop.setOnChange(getFilterCallerScript(prmType, prmFirstArea, prmFirstSchool, 1, false));
 
 		DropdownMenu drpGrade = (DropdownMenu) getStyledInterface(new DropdownMenu(prmYear));
-		Collection coll = getSchoolYears();
-		if (coll != null) {
-			Iterator iter = coll.iterator();
-			while (iter.hasNext()) {
-				SchoolYear element = (SchoolYear) iter.next();
-				drpGrade.addMenuElement(element.getPrimaryKey().toString(), element.getName());
-			}
-		}
 		drpGrade.addMenuElementFirst("-1", iwrb.getLocalizedString("school.select_year", "Select year"));
 		
 		try {
@@ -1057,7 +1049,15 @@ public class SchoolChoiceApplication extends CommuneBlock {
 
 		if (_reloadYear != -1){
 			drpGrade.setSelectedElement(String.valueOf(_reloadYear));
-		}else {
+		}else if (valYear > -1) {
+			Collection coll = getSchoolYears();
+			if (coll != null) {
+				Iterator iter = coll.iterator();
+				while (iter.hasNext()) {
+					SchoolYear element = (SchoolYear) iter.next();
+					drpGrade.addMenuElement(element.getPrimaryKey().toString(), element.getName());
+				}
+			}
 			drpGrade.setSelectedElement(String.valueOf(valYear));	
 		}
 		
