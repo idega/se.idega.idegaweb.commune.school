@@ -1047,7 +1047,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 			ie.printStackTrace();
 		}
 
-		if (_reloadYear != -1){
+		/*if (_reloadYear != -1){
 			drpGrade.setSelectedElement(String.valueOf(_reloadYear));
 		}else if (valYear > -1) {
 			Collection coll = getSchoolYears();
@@ -1059,8 +1059,19 @@ public class SchoolChoiceApplication extends CommuneBlock {
 				}
 			}
 			drpGrade.setSelectedElement(String.valueOf(valYear));	
+		}*/
+
+		if (valYear > -1) {
+			Collection coll = getSchoolYears();
+			if (coll != null) {
+				Iterator iter = coll.iterator();
+				while (iter.hasNext()) {
+					SchoolYear element = (SchoolYear) iter.next();
+					drpGrade.addMenuElement(element.getPrimaryKey().toString(), element.getName());
+				}
+			}
+			drpGrade.setSelectedElement(String.valueOf(valYear));	
 		}
-		
 		drpGrade.setOnChange(getSchoolGradeScript(prmYear, prmYearReload, prmRealSubmit));
 		drpGrade.setAsNotEmpty(iwrb.getLocalizedString("school.school_year_must_select", "You must select a school year"));
 		
