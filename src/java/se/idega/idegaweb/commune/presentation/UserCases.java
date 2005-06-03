@@ -12,6 +12,11 @@ import java.util.Map;
 import java.util.Vector;
 import java.util.logging.Level;
 import javax.ejb.FinderException;
+
+import se.idega.idegaweb.commune.adulteducation.business.AdultEducationBusiness;
+import se.idega.idegaweb.commune.adulteducation.business.AdultEducationBusinessBean;
+import se.idega.idegaweb.commune.adulteducation.data.AdultEducationChoice;
+import se.idega.idegaweb.commune.adulteducation.data.AdultEducationChoiceBMPBean;
 import se.idega.idegaweb.commune.block.pointOfView.business.PointOfViewBusiness;
 import se.idega.idegaweb.commune.block.pointOfView.data.PointOfView;
 import se.idega.idegaweb.commune.business.CommuneCaseBusiness;
@@ -360,12 +365,16 @@ public class UserCases extends CommuneBlock {
 		
 		String caseCodeAS = new AfterSchoolChoiceBMPBean().getCaseCodeKey();
 		String caseCodeSc = new SchoolChoiceBMPBean().getCaseCodeKey();
+		String caseCodeVuxC = new AdultEducationChoiceBMPBean().getCaseCodeKey();
 		
 		
 		CaseStatus caseStatusOpen = caseBusiness.getCaseStatusOpen();
 		CaseStatus caseStatusPlaced = caseBusiness.getCaseStatusPlaced();
 		SchoolChoiceBusiness schBuiz;
 		schBuiz = (SchoolChoiceBusiness) IBOLookup.getServiceInstance(iwc, SchoolChoiceBusiness.class);
+		
+		AdultEducationBusiness adultSchBuiz;
+		adultSchBuiz = (AdultEducationBusiness) IBOLookup.getServiceInstance(iwc, AdultEducationBusiness.class);
 		
 		
 		PresentationObject status;
@@ -376,6 +385,15 @@ public class UserCases extends CommuneBlock {
 			else if (caseCode.equals(caseCodeSc) && useCase.getCaseStatus().equals(caseStatusPlaced)) {
 				SchoolChoice choice = schBuiz.getSchoolChoice(((Integer) useCase.getPrimaryKey()).intValue());
 				if (choice != null && !choice.getHasReceivedPlacementMessage())
+					status = getStatus(iwc, caseStatusOpen);
+				else
+					status = getStatus(iwc, caseStatus);
+				
+			}
+			else if (caseCode.equals(caseCodeVuxC) && useCase.getCaseStatus().equals(caseStatusPlaced)) {
+				//
+				AdultEducationChoice adultChoice = adultSchBuiz.getChoice(useCase.getPrimaryKey());
+				if (adultChoice != null && !adultChoice.isConfirmationMessageSent())
 					status = getStatus(iwc, caseStatusOpen);
 				else
 					status = getStatus(iwc, caseStatus);
