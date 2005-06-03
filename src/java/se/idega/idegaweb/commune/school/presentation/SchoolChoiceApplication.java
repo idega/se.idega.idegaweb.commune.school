@@ -1047,9 +1047,9 @@ public class SchoolChoiceApplication extends CommuneBlock {
 			ie.printStackTrace();
 		}
 
-		if (_reloadYear != -1){
+		/*if (_reloadYear != -1){
 			drpGrade.setSelectedElement(String.valueOf(_reloadYear));
-		}else if (valYear != -1) {//!= instead of > -1
+		}else*/ if (valYear > -1) {
 			Collection coll = getSchoolYears();
 			if (coll != null) {
 				Iterator iter = coll.iterator();
