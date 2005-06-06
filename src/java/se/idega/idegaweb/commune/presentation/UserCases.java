@@ -12,9 +12,7 @@ import java.util.Map;
 import java.util.Vector;
 import java.util.logging.Level;
 import javax.ejb.FinderException;
-
 import se.idega.idegaweb.commune.adulteducation.business.AdultEducationBusiness;
-import se.idega.idegaweb.commune.adulteducation.business.AdultEducationBusinessBean;
 import se.idega.idegaweb.commune.adulteducation.data.AdultEducationChoice;
 import se.idega.idegaweb.commune.adulteducation.data.AdultEducationChoiceBMPBean;
 import se.idega.idegaweb.commune.block.pointOfView.business.PointOfViewBusiness;
