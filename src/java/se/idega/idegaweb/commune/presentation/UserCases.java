@@ -391,7 +391,7 @@ public class UserCases extends CommuneBlock {
 			else if (caseCode.equals(caseCodeVuxC) && useCase.getCaseStatus().equals(caseStatusPlaced)) {
 				//
 				AdultEducationChoice adultChoice = adultSchBuiz.getChoice(useCase.getPrimaryKey());
-				if (adultChoice != null && !adultChoice.isConfirmationMessageSent())
+				if (adultChoice != null && !adultChoice.isPlacementMessageSent())
 					status = getStatus(iwc, caseStatusOpen);
 				else
 					status = getStatus(iwc, caseStatus);
