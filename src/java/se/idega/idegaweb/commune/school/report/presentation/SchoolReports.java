@@ -1,5 +1,5 @@
 /*
- * $Id: SchoolReports.java,v 1.38 2004/11/02 13:17:47 aron Exp $
+ * $Id: SchoolReports.java,v 1.39 2005/06/28 13:21:16 thomas Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -50,14 +50,15 @@ import com.idega.presentation.ui.DropdownMenu;
 import com.idega.presentation.ui.Form;
 import com.idega.presentation.ui.HiddenInput;
 import com.idega.presentation.ui.SubmitButton;
+import com.idega.repository.data.RefactorClassRegistry;
 
 /** 
  * This block handles selecting and presenting school reports.
  * <p>
- * Last modified: $Date: 2004/11/02 13:17:47 $ by $Author: aron $
+ * Last modified: $Date: 2005/06/28 13:21:16 $ by $Author: thomas $
  *
  * @author Anders Lindman
- * @version $Revision: 1.38 $
+ * @version $Revision: 1.39 $
  */
 public class SchoolReports extends CommuneBlock {
 
@@ -303,7 +304,7 @@ public class SchoolReports extends CommuneBlock {
 		try {
 			if (reportModel == null) {
 				String reportModelClassName = iwc.getParameter(PARAMETER_REPORT_CLASS_NAME);
-				Class reportModelClass = Class.forName(reportModelClassName);
+				Class reportModelClass = RefactorClassRegistry.forName(reportModelClassName);
 				reportModel = getReportBusiness(iwc).createReportModel(reportModelClass);
 			}
 			ReportPDFWriter pdfWriter = new ReportPDFWriter(reportModel, getResourceBundle());
@@ -345,7 +346,7 @@ public class SchoolReports extends CommuneBlock {
 		try {
 			if (reportModel == null) {
 				String reportModelClassName = iwc.getParameter(PARAMETER_REPORT_CLASS_NAME);
-				Class reportModelClass = Class.forName(reportModelClassName);
+				Class reportModelClass = RefactorClassRegistry.forName(reportModelClassName);
 				reportModel = getReportBusiness(iwc).createReportModel(reportModelClass);
 			}
 			ReportBlock rb = new ReportBlock(reportModel);
