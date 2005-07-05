@@ -12,16 +12,11 @@ import java.util.Map;
 import java.util.Vector;
 import java.util.logging.Level;
 import javax.ejb.FinderException;
-import se.idega.idegaweb.commune.adulteducation.business.AdultEducationBusiness;
-import se.idega.idegaweb.commune.adulteducation.data.AdultEducationChoice;
-import se.idega.idegaweb.commune.adulteducation.data.AdultEducationChoiceBMPBean;
-import se.idega.idegaweb.commune.block.pointOfView.business.PointOfViewBusiness;
-import se.idega.idegaweb.commune.block.pointOfView.data.PointOfView;
+import se.cubecon.bun24.viewpoint.business.ViewpointBusiness;
+import se.cubecon.bun24.viewpoint.data.Viewpoint;
 import se.idega.idegaweb.commune.business.CommuneCaseBusiness;
 import se.idega.idegaweb.commune.care.data.AfterSchoolChoiceBMPBean;
-import se.idega.idegaweb.commune.school.business.SchoolChoiceBusiness;
-import se.idega.idegaweb.commune.school.data.SchoolChoice;
-import se.idega.idegaweb.commune.school.data.SchoolChoiceBMPBean;
+import se.idega.idegaweb.commune.school.business.SchoolCaseBusiness;
 import com.idega.block.process.business.CaseBusiness;
 import com.idega.block.process.business.CaseCodeManager;
 import com.idega.block.process.data.Case;
@@ -39,6 +34,7 @@ import com.idega.presentation.Table;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.Form;
+import com.idega.repository.data.ImplementorRepository;
 import com.idega.user.business.UserBusiness;
 import com.idega.user.business.UserSession;
 import com.idega.user.data.Group;
@@ -361,54 +357,44 @@ public class UserCases extends CommuneBlock {
 		String caseCode = useCase.getCode();
 		CaseStatus caseStatus = useCase.getCaseStatus();
 		
-		String caseCodeAS = new AfterSchoolChoiceBMPBean().getCaseCodeKey();
-		String caseCodeSc = new SchoolChoiceBMPBean().getCaseCodeKey();
-		String caseCodeVuxC = new AdultEducationChoiceBMPBean().getCaseCodeKey();
-		
-		
 		CaseStatus caseStatusOpen = caseBusiness.getCaseStatusOpen();
 		CaseStatus caseStatusPlaced = caseBusiness.getCaseStatusPlaced();
-		SchoolChoiceBusiness schBuiz;
-		schBuiz = (SchoolChoiceBusiness) IBOLookup.getServiceInstance(iwc, SchoolChoiceBusiness.class);
 		
-		AdultEducationBusiness adultSchBuiz;
-		adultSchBuiz = (AdultEducationBusiness) IBOLookup.getServiceInstance(iwc, AdultEducationBusiness.class);
+		PresentationObject status = null;
 		
-		
-		PresentationObject status;
-		
-			if (caseCode.equals(caseCodeAS) && !getShowStatusAfterSchoolCare()) {
-				status = getSmallText("-");
+		// special case at the beginning
+		String caseCodeAS = new AfterSchoolChoiceBMPBean().getCaseCodeKey();
+		if (caseCode.equals(caseCodeAS) && !getShowStatusAfterSchoolCare()) {
+			status = getSmallText("-");
+		}
+		else {
+			List list = ImplementorRepository.getInstance().newInstances(SchoolCaseBusiness.class, this.getClass());
+			Iterator iterator = list.iterator();
+			while (iterator.hasNext() && status == null) {
+				SchoolCaseBusiness schoolCaseBusiness = (SchoolCaseBusiness) iterator.next();
+				if (schoolCaseBusiness.isCase(useCase) && useCase.getCaseStatus().equals(caseStatusPlaced)) {
+					if (schoolCaseBusiness.caseIsOpen(useCase, iwc)) {
+						status = getStatus(iwc, caseStatusOpen);
+					}
+					else {
+						status = getStatus(iwc, caseStatus);
+					}
+				}
 			}
-			else if (caseCode.equals(caseCodeSc) && useCase.getCaseStatus().equals(caseStatusPlaced)) {
-				SchoolChoice choice = schBuiz.getSchoolChoice(((Integer) useCase.getPrimaryKey()).intValue());
-				if (choice != null && !choice.getHasReceivedPlacementMessage())
-					status = getStatus(iwc, caseStatusOpen);
-				else
-					status = getStatus(iwc, caseStatus);
-				
-			}
-			else if (caseCode.equals(caseCodeVuxC) && useCase.getCaseStatus().equals(caseStatusPlaced)) {
-				//
-				AdultEducationChoice adultChoice = adultSchBuiz.getChoice(useCase.getPrimaryKey());
-				if (adultChoice != null && !adultChoice.isPlacementMessageSent())
-					status = getStatus(iwc, caseStatusOpen);
-				else
-					status = getStatus(iwc, caseStatus);
-				
-			}
-			else {			
-					status = getStatus(iwc, caseStatus);
-			}
+		}
+		// nothing was set yet
+		if (status == null) {
+			status = getStatus(iwc, caseStatus);
+		}
 		
 		try {
-			PointOfViewBusiness pointOfViewBusiness = (PointOfViewBusiness) IBOLookup.getServiceInstance(iwc, PointOfViewBusiness.class);
-			String caseCodeKeyPointOfView = pointOfViewBusiness.getCaseCodeKeyForPointOfView();
+			ViewpointBusiness viewpointBusiness = (ViewpointBusiness) IBOLookup.getServiceInstance(iwc, ViewpointBusiness.class);
+			String caseCodeKeyPointOfView = viewpointBusiness.getCaseCodeKeyForPointOfView();
 			if (useCase.getCode().equalsIgnoreCase(caseCodeKeyPointOfView)) {
-				PointOfView pointOfView = pointOfViewBusiness.findPointOfView(Integer.parseInt(useCase.getPrimaryKey().toString()));
-				caseType = getSmallText(pointOfView.getCategory());
+				Viewpoint viewpoint = viewpointBusiness.findViewpoint(Integer.parseInt(useCase.getPrimaryKey().toString()));
+				caseType = getSmallText(viewpoint.getCategory());
 				if (getViewpointPage() != -1) {
-					Link pointOfViewLink = pointOfViewBusiness.getLinkToPageForPointOfView(getViewpointPage(), pointOfView);
+					Link pointOfViewLink = viewpointBusiness.getLinkToPageForPointOfView(getViewpointPage(), viewpoint);
 					caseNumber = getStyleLink(new Link(pointOfViewLink), STYLENAME_SMALL_LINK);
 				}
 			}

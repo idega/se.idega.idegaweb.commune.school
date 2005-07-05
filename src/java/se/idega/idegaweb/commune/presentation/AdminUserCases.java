@@ -10,12 +10,10 @@ import java.rmi.RemoteException;
 import java.text.DateFormat;
 import java.util.Collection;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.logging.Level;
 import javax.ejb.FinderException;
-
-import se.idega.idegaweb.commune.block.pointOfView.business.PointOfViewBusiness;
-import se.idega.idegaweb.commune.block.pointOfView.data.PointOfView;
+import se.cubecon.bun24.viewpoint.business.ViewpointBusiness;
+import se.cubecon.bun24.viewpoint.data.Viewpoint;
 import se.idega.idegaweb.commune.school.business.SchoolChoiceBusiness;
 import se.idega.idegaweb.commune.school.data.SchoolChoice;
 import se.idega.idegaweb.commune.school.data.SchoolChoiceReminder;
@@ -127,16 +125,16 @@ public class AdminUserCases extends UserCases {
 		// 2. find unhandled cases
 		final SchoolChoiceBusiness schoolChoiceBusiness = (SchoolChoiceBusiness) IBOLookup.getServiceInstance(iwc, SchoolChoiceBusiness.class);
 		final SchoolChoiceReminder[] reminders = schoolChoiceBusiness.findUnhandledSchoolChoiceReminders(groupArray);
-		Collection pointOfViews = null;
+		Viewpoint[]  viewpoints = null;
 		try {
-			PointOfViewBusiness pointOfViewBusiness = (PointOfViewBusiness) IBOLookup.getServiceInstance(iwc, PointOfViewBusiness.class);
-			pointOfViews = pointOfViewBusiness.findUnhandledPointOfViewsInGroups(groups);
+			ViewpointBusiness pointOfViewBusiness = (ViewpointBusiness) IBOLookup.getServiceInstance(iwc, ViewpointBusiness.class);
+			viewpoints = pointOfViewBusiness.findUnhandledViewpointsInGroups(groupArray);
 		}
 		catch (IBOLookupException ex) {
 			log(Level.INFO, "[AdminUserCases] PointOfViewBusiness is not installed");
 		}
 		// 3. display unhandled cases
-		if (pointOfViews != null && (! pointOfViews.isEmpty()) || (reminders != null && reminders.length > 0)) {
+		if (viewpoints != null && (viewpoints.length > 0) || (reminders != null && reminders.length > 0)) {
 			mainTable.setHeight(2, 12);
 			mainTable.add(getLocalizedSmallHeader(UNHANDLEDCASESINMYGROUPS_KEY, UNHANDLEDCASESINMYGROUPS_DEFAULT), 1, 3);
 			mainTable.setHeight(4, 6);
@@ -158,11 +156,10 @@ public class AdminUserCases extends UserCases {
 			messageList.add(getSmallHeader(localize(DATE_KEY, DATE_DEFAULT)), 4, row);
 			messageList.add(getSmallHeader(localize(HANDLERGROUP_KEY, HANDLERGROUP_DEFAULT)), 5, row++);
 
-			if (pointOfViews != null) {
-				Iterator pointOfViewsIterator = pointOfViews.iterator();
-				while (pointOfViewsIterator.hasNext()) {
-					PointOfView pointOfView = (PointOfView) pointOfViewsIterator.next();
-					addViewpointToMessageList(iwc, pointOfView, messageList, row++);
+			if (viewpoints != null) {
+				for (int i = 0; i < viewpoints.length; i++) {
+					Viewpoint viewpoint = viewpoints[i];
+					addViewpointToMessageList(iwc, viewpoint, messageList, row++);
 				}
 			}
 			if (reminders != null) {
@@ -176,7 +173,7 @@ public class AdminUserCases extends UserCases {
 	}
 	
 
-	private void addViewpointToMessageList(final IWContext iwc, final PointOfView pointOfView, final Table messageList, int row) throws Exception {
+	private void addViewpointToMessageList(final IWContext iwc, final Viewpoint pointOfView, final Table messageList, int row) throws Exception {
 
 		final DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.SHORT, iwc.getCurrentLocale());
 		final Text caseDate = getSmallText(dateFormat.format(new Date(pointOfView.getCreated().getTime())));
@@ -193,8 +190,8 @@ public class AdminUserCases extends UserCases {
 
 		if (getViewpointPage() != -1) {
 			try {
-				PointOfViewBusiness pointOfViewBusiness = (PointOfViewBusiness) IBOLookup.getServiceInstance(iwc, PointOfViewBusiness.class);
-				Link pointOfViewLink = pointOfViewBusiness.getLinkToPageForPointOfView(getViewpointPage(), pointOfView);
+				ViewpointBusiness viewpointBusiness = (ViewpointBusiness) IBOLookup.getServiceInstance(iwc, ViewpointBusiness.class);
+				Link pointOfViewLink = viewpointBusiness.getLinkToPageForPointOfView(getViewpointPage(), pointOfView);
 				caseNumber = getStyleLink(pointOfViewLink, STYLENAME_SMALL_LINK);
 			}
 			catch (IBOLookupException ex) {
