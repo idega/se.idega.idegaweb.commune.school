@@ -173,14 +173,14 @@ public class AdminUserCases extends UserCases {
 	}
 	
 
-	private void addViewpointToMessageList(final IWContext iwc, final Viewpoint pointOfView, final Table messageList, int row) throws Exception {
+	private void addViewpointToMessageList(final IWContext iwc, final Viewpoint viewpoint, final Table messageList, int row) throws Exception {
 
 		final DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.SHORT, iwc.getCurrentLocale());
-		final Text caseDate = getSmallText(dateFormat.format(new Date(pointOfView.getCreated().getTime())));
-		Text caseNumber = getSmallText(pointOfView.getPrimaryKey().toString());
-		final Text category = getSmallText(pointOfView.getCategory());
-		final Text subject = getSmallText(pointOfView.getSubject());
-		final Group handlerGroup = pointOfView.getHandlerGroup();
+		final Text caseDate = getSmallText(dateFormat.format(new Date(viewpoint.getCreated().getTime())));
+		Text caseNumber = getSmallText(viewpoint.getPrimaryKey().toString());
+		final Text category = getSmallText(viewpoint.getCategory());
+		final Text subject = getSmallText(viewpoint.getSubject());
+		final Group handlerGroup = viewpoint.getHandlerGroup();
 		final Text group = getSmallText(handlerGroup != null ? handlerGroup.getName() : "-");
 		
 		if (row % 2 == 0)
@@ -191,8 +191,8 @@ public class AdminUserCases extends UserCases {
 		if (getViewpointPage() != -1) {
 			try {
 				ViewpointBusiness viewpointBusiness = (ViewpointBusiness) IBOLookup.getServiceInstance(iwc, ViewpointBusiness.class);
-				Link pointOfViewLink = viewpointBusiness.getLinkToPageForPointOfView(getViewpointPage(), pointOfView);
-				caseNumber = getStyleLink(pointOfViewLink, STYLENAME_SMALL_LINK);
+				Link viewpointLink = viewpointBusiness.getLinkToPageForViewpoint(getViewpointPage(), viewpoint);
+				caseNumber = getStyleLink(viewpointLink, STYLENAME_SMALL_LINK);
 			}
 			catch (IBOLookupException ex) {
 				log(Level.INFO, "[AdminUserCases] Pointof ViewBusiness is not installed");

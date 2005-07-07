@@ -389,13 +389,13 @@ public class UserCases extends CommuneBlock {
 		
 		try {
 			ViewpointBusiness viewpointBusiness = (ViewpointBusiness) IBOLookup.getServiceInstance(iwc, ViewpointBusiness.class);
-			String caseCodeKeyPointOfView = viewpointBusiness.getCaseCodeKeyForPointOfView();
-			if (useCase.getCode().equalsIgnoreCase(caseCodeKeyPointOfView)) {
+			String caseCodeKeyViewpoint = viewpointBusiness.getCaseCodeKeyForViewpoint();
+			if (useCase.getCode().equalsIgnoreCase(caseCodeKeyViewpoint)) {
 				Viewpoint viewpoint = viewpointBusiness.findViewpoint(Integer.parseInt(useCase.getPrimaryKey().toString()));
 				caseType = getSmallText(viewpoint.getCategory());
 				if (getViewpointPage() != -1) {
-					Link pointOfViewLink = viewpointBusiness.getLinkToPageForPointOfView(getViewpointPage(), viewpoint);
-					caseNumber = getStyleLink(new Link(pointOfViewLink), STYLENAME_SMALL_LINK);
+					Link viewpointLink = viewpointBusiness.getLinkToPageForViewpoint(getViewpointPage(), viewpoint);
+					caseNumber = getStyleLink(new Link(viewpointLink), STYLENAME_SMALL_LINK);
 				}
 			}
 		}
