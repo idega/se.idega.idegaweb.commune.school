@@ -13,7 +13,7 @@
   </classpathentry>
   <classpathentry kind="var" path="MAVEN_REPO/jta/jars/jta-spec1_0_1.jar">
   </classpathentry>
-  <classpathentry kind="var" path="MAVEN_REPO/itext/jars/itext-0.99.jar">
+  <classpathentry kind="var" path="MAVEN_REPO/itextpdf/jars/itext-paulo-139.jar">
   </classpathentry>
   <classpathentry kind="var" path="MAVEN_REPO/poi/jars/poi-2.5-final-20040428.jar">
   </classpathentry>
