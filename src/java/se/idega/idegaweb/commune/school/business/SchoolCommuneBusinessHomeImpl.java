@@ -1,11 +1,8 @@
 /*
- * $Id: SchoolCommuneBusinessHomeImpl.java 1.1 10.1.2005 laddi Exp $
- * Created on 10.1.2005
+ * Created on 2005-jul-13
  *
- * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
- *
- * This software is the proprietary information of Idega hf.
- * Use is subject to license terms.
+ * To change the template for this generated file go to
+ * Window - Preferences - Java - Code Generation - Code and Comments
  */
 package se.idega.idegaweb.commune.school.business;
 
@@ -15,15 +12,14 @@ package se.idega.idegaweb.commune.school.business;
 
 import com.idega.business.IBOHomeImpl;
 
-
 /**
- * Last modified: $Date: 2004/06/28 09:09:50 $ by $Author: laddi $
- * 
- * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.1 $
+ * @author Malin
+ *
+ * To change the template for this generated type comment go to
+ * Window - Preferences - Java - Code Generation - Code and Comments
  */
-public class SchoolCommuneBusinessHomeImpl extends IBOHomeImpl implements SchoolCommuneBusinessHome {
-
+public class SchoolCommuneBusinessHomeImpl extends IBOHomeImpl implements
+		SchoolCommuneBusinessHome {
 	protected Class getBeanInterfaceClass() {
 		return SchoolCommuneBusiness.class;
 	}

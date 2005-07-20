@@ -186,12 +186,17 @@ public abstract class SchoolCommuneBlock extends CommuneBlock {
 	}
 	
 	protected DropdownMenu getSchoolSeasons(boolean setToSubmit) throws RemoteException {
+		return getSchoolSeasons(setToSubmit, business.getSchoolBusiness().getCategoryElementarySchool());
+	}
+	
+	protected DropdownMenu getSchoolSeasons(boolean setToSubmit, SchoolCategory schoolCategory) throws RemoteException {
 		DropdownMenu menu = new DropdownMenu(session.getParameterSchoolSeasonID());
 		if (setToSubmit) {
 			menu.setToSubmit();
 		}
 		
-		Collection seasons = business.getSchoolBusiness().findAllSchoolSeasons(business.getSchoolBusiness().getCategoryElementarySchool());
+		//Collection seasons = business.getSchoolBusiness().findAllSchoolSeasons(business.getSchoolBusiness().getCategoryElementarySchool());
+		Collection seasons = business.getSchoolBusiness().findAllSchoolSeasons(schoolCategory);
 		if ( !seasons.isEmpty() ) {
 			Iterator iter = seasons.iterator();
 			while (iter.hasNext()) {

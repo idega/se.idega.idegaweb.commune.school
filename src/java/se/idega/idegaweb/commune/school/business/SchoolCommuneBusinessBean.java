@@ -36,6 +36,7 @@ import com.idega.block.process.business.CaseBusinessBean;
 import com.idega.block.school.business.SchoolBusiness;
 import com.idega.block.school.business.SchoolYearComparator;
 import com.idega.block.school.data.School;
+import com.idega.block.school.data.SchoolCategory;
 import com.idega.block.school.data.SchoolClass;
 import com.idega.block.school.data.SchoolClassMember;
 import com.idega.block.school.data.SchoolClassMemberHome;
@@ -168,8 +169,15 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 	}
 
 	public boolean isAlreadyInSchool(int userID, int schoolID, int seasonID) throws RemoteException {
+	return isAlreadyInSchool(userID, schoolID, seasonID, getSchoolBusiness().getCategoryElementarySchool().getCategory());	
+	}
+	
+	public boolean isAlreadyInSchool(int userID, int schoolID, int seasonID, String schoolCategory) throws RemoteException {
 		try {
-			Collection types = getSchoolBusiness().getSchoolTypeHome().findAllByCategory(getSchoolBusiness().getCategoryElementarySchool().getCategory(), false);
+			if (schoolCategory == null){
+				schoolCategory = getSchoolBusiness().getCategoryElementarySchool().getCategory();
+			}
+			Collection types = getSchoolBusiness().getSchoolTypeHome().findAllByCategory(schoolCategory, false);
 			SchoolClassMember member = getSchoolBusiness().getSchoolClassMemberHome().findByUserAndSchoolAndSeason(userID, schoolID, seasonID, types);
 			if (member != null) return true;
 			return false;

@@ -28,6 +28,7 @@ public class SchoolCommuneSessionBean extends IBOSessionBean implements SchoolCo
 	protected static final String PARAMETER_STUDENT_ID = "sch_st_id";
 	protected static final String PARAMETER_STUDENT__UNIQUE_ID = "sch_st_uq_id";
 	protected static final String PARAMETER_GROUP_IDS = "sch_group_ids";
+	protected static final String PARAMETER_STUDY_PATH_ID = "sch_study_path_ids";
 	
 	protected int _schoolID = -1;
 	protected School _school = null;
@@ -37,6 +38,7 @@ public class SchoolCommuneSessionBean extends IBOSessionBean implements SchoolCo
 	protected int _studentID = -1;
 	private String _studentUniqueID = null;
 	private int _userID = -1;
+	private int _studyPathID = -1;
 	
 	private String[] _schoolGroupIDs = null;
 
@@ -119,6 +121,23 @@ public class SchoolCommuneSessionBean extends IBOSessionBean implements SchoolCo
 	public int getSchoolYearID() {
 		return _schoolYearID;
 	}
+	
+	/**
+	 * Returns the studyPathID.
+	 * @return int
+	 */
+	public int getStudyPathID() {
+		return _studyPathID;
+	}
+	
+	/**
+	 * Sets the studyPathID.
+	 * @param studyPathID The studyPathID to set
+	 */
+	public void setStudyPathID(int studyPathID) {
+		_studyPathID = studyPathID;
+	}
+
 
 	/**
 	 * Sets the schoolClassID.
@@ -157,6 +176,14 @@ public class SchoolCommuneSessionBean extends IBOSessionBean implements SchoolCo
 		_schoolYearID = schoolYearID;
 	}
 
+	/**
+	 * Returns the SchoolID parameter.
+	 * @return String
+	 */
+	public String getParameterStudyPathID() {
+		return PARAMETER_STUDY_PATH_ID;
+	}
+	
 	/**
 	 * Returns the SchoolID parameter.
 	 * @return String

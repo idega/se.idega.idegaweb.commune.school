@@ -1,5 +1,5 @@
 /*
- * Created on 2005-maj-18
+ * Created on 2005-jun-07
  *
  * To change the template for this generated file go to
  * Window - Preferences - Java - Code Generation - Code and Comments
@@ -53,6 +53,16 @@ public interface SchoolCommuneSession extends IBOSession {
 	public int getSchoolYearID() throws java.rmi.RemoteException;
 
 	/**
+	 * @see se.idega.idegaweb.commune.school.business.SchoolCommuneSessionBean#getStudyPathID
+	 */
+	public int getStudyPathID() throws java.rmi.RemoteException;
+
+	/**
+	 * @see se.idega.idegaweb.commune.school.business.SchoolCommuneSessionBean#setStudyPathID
+	 */
+	public void setStudyPathID(int studyPathID) throws java.rmi.RemoteException;
+
+	/**
 	 * @see se.idega.idegaweb.commune.school.business.SchoolCommuneSessionBean#setSchoolClassID
 	 */
 	public void setSchoolClassID(int schoolClassID)
@@ -74,6 +84,11 @@ public interface SchoolCommuneSession extends IBOSession {
 	 */
 	public void setSchoolYearID(int schoolYearID)
 			throws java.rmi.RemoteException;
+
+	/**
+	 * @see se.idega.idegaweb.commune.school.business.SchoolCommuneSessionBean#getParameterStudyPathID
+	 */
+	public String getParameterStudyPathID() throws java.rmi.RemoteException;
 
 	/**
 	 * @see se.idega.idegaweb.commune.school.business.SchoolCommuneSessionBean#getParameterSchoolID
