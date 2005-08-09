@@ -7,9 +7,8 @@
 package se.idega.idegaweb.commune.school.presentation;
 
 import java.rmi.RemoteException;
-
 import se.idega.idegaweb.commune.presentation.CitizenChildren;
-
+import se.idega.idegaweb.commune.school.event.CommuneSchoolEventListener;
 import com.idega.block.school.business.SchoolBusiness;
 import com.idega.business.IBOLookup;
 import com.idega.business.IBORuntimeException;
@@ -65,5 +64,9 @@ public class SchoolChildren extends CitizenChildren {
 		catch (RemoteException re) {
 			throw new IBORuntimeException(re);
 		}
+	}
+	
+	protected Class getEventListener() {
+		return CommuneSchoolEventListener.class;
 	}
 }

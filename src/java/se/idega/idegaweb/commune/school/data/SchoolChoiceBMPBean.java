@@ -199,6 +199,9 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 	public void setChildId(int id) {
 		setColumn(CHILD, id);
 	}
+	public void setChild(User child) {
+		setColumn(CHILD, child);
+	}
 	public int getCurrentSchoolId() {
 		return getIntColumnValue(CURRENT_SCHOOL);
 	}
@@ -216,6 +219,9 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 	}
 	public void setSchoolSeasonId(int id) {
 		setColumn(SCHOOL_SEASON, id);
+	}
+	public void setSchoolSeason(SchoolSeason season) {
+		setColumn(SCHOOL_SEASON, season);
 	}
 	public int getSchoolTypeId() {
 		return getIntColumnValue(SCHOOL_TYPE);
@@ -235,6 +241,12 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 	public void setChosenSchoolId(int id) {
 		setColumn(CHOSEN_SCHOOL, id);
 	}
+	public void setSchool(School school) {
+		setColumn(CHOSEN_SCHOOL, school);
+	}
+	public void setSchool(Object schoolPK) {
+		setColumn(CHOSEN_SCHOOL, schoolPK);
+	}
 	public SchoolYear getSchoolYear() {
 		return (SchoolYear) getColumnValue(SCHOOL_YEAR);
 	}
@@ -244,6 +256,12 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 	public void setSchoolYear(int schoolYearID) {
 		setColumn(SCHOOL_YEAR, schoolYearID);
 	}
+	public void setSchoolYear(SchoolYear year) {
+		setColumn(SCHOOL_YEAR, year);
+	}
+	public void setSchoolYear(Object yearPK) {
+		setColumn(SCHOOL_YEAR, yearPK);
+	}
 	public SchoolYear getCurrentSchoolYear() {
 		return (SchoolYear) getColumnValue(CURRENT_SCHOOL_YEAR);
 	}
@@ -252,6 +270,9 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 	}
 	public void setCurrentSchoolYear(int schoolYearID) {
 		setColumn(CURRENT_SCHOOL_YEAR, schoolYearID);
+	}
+	public void setCurrentSchoolYear(SchoolYear year) {
+		setColumn(CURRENT_SCHOOL_YEAR, year);
 	}
 	public int getWorkSituation1() {
 		return getIntColumnValue(WORK_SITUATION_1);
@@ -546,6 +567,10 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 		return super.idoFindPKsBySQL(sql.toString());
 	}
 	
+	public Object ejbFindByChildAndChoiceNumberAndSeason(User child,int choiceNumber, SchoolSeason season) throws javax.ejb.FinderException {
+		return super.idoFindOnePKByQuery(idoQueryGetSelect().appendWhereEquals(CHILD,child).appendAndEquals(SCHOOL_SEASON,season).appendAndEquals(CHOICEORDER,choiceNumber) );
+	}
+
 	public Object ejbFindByChildAndChoiceNumberAndSeason(Integer childID,Integer choiceNumber, Integer seasonID) throws javax.ejb.FinderException {
 		return super.idoFindOnePKByQuery(idoQueryGetSelect().appendWhereEquals(CHILD,childID).appendAndEquals(SCHOOL_SEASON,seasonID).appendAndEquals(CHOICEORDER,choiceNumber) );
 	}
