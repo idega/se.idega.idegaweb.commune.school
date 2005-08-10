@@ -1,5 +1,5 @@
 /*
- * $Id: SchoolAreaCollectionHandler.java,v 1.2 2005/08/10 15:04:30 thomas Exp $
+ * $Id: SchoolAreaCollectionHandler.java,v 1.3 2005/08/10 15:14:57 thomas Exp $
  * Created on May 10, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -28,14 +28,16 @@ import com.idega.presentation.remotescripting.RemoteScriptingResults;
 
 
 /**
- * Last modified: $Date: 2005/08/10 15:04:30 $ by $Author: thomas $
+ * Last modified: $Date: 2005/08/10 15:14:57 $ by $Author: thomas $
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class SchoolAreaCollectionHandler implements RemoteScriptCollection {
 	
 	public static final String PARAMETER_SCHOOL_YEAR = "sb_school_year";
+	
+	public static final String IW_BUNDLE_IDENTIFIER = "se.idega.idegaweb.commune.school";
 
 	/* (non-Javadoc)
 	 * @see com.idega.presentation.remotescripting.RemoteScriptCollection#getResults(com.idega.presentation.IWContext)
@@ -49,7 +51,7 @@ public class SchoolAreaCollectionHandler implements RemoteScriptCollection {
 	}
 	
 	private RemoteScriptingResults handleCourseUpdate(IWContext iwc, String sourceName, String sourceID) {
-		IWResourceBundle iwrb = iwc.getIWMainApplication().getBundle(SchoolConstants.IW_BUNDLE_IDENTIFIER).getResourceBundle(iwc);
+		IWResourceBundle iwrb = iwc.getIWMainApplication().getBundle(IW_BUNDLE_IDENTIFIER).getResourceBundle(iwc);
 		
     Collection ids = new ArrayList();
 		ids.add("-1");
