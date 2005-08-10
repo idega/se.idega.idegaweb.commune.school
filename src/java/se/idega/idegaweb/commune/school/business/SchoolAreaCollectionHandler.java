@@ -1,5 +1,5 @@
 /*
- * $Id: SchoolAreaCollectionHandler.java,v 1.1 2005/08/09 16:36:28 laddi Exp $
+ * $Id: SchoolAreaCollectionHandler.java,v 1.2 2005/08/10 15:04:30 thomas Exp $
  * Created on May 10, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import javax.ejb.FinderException;
-import se.idega.idegaweb.commune.school.presentation.SchoolBlock;
 import com.idega.block.school.business.SchoolBusiness;
 import com.idega.block.school.data.School;
 import com.idega.business.IBOLookup;
@@ -29,12 +28,14 @@ import com.idega.presentation.remotescripting.RemoteScriptingResults;
 
 
 /**
- * Last modified: $Date: 2005/08/09 16:36:28 $ by $Author: laddi $
+ * Last modified: $Date: 2005/08/10 15:04:30 $ by $Author: thomas $
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class SchoolAreaCollectionHandler implements RemoteScriptCollection {
+	
+	public static final String PARAMETER_SCHOOL_YEAR = "sb_school_year";
 
 	/* (non-Javadoc)
 	 * @see com.idega.presentation.remotescripting.RemoteScriptCollection#getResults(com.idega.presentation.IWContext)
@@ -55,7 +56,7 @@ public class SchoolAreaCollectionHandler implements RemoteScriptCollection {
     Collection names = new ArrayList();
 		names.add(iwrb.getLocalizedString("select_school","Select school"));
     
-		Object yearPK = iwc.getParameter(SchoolBlock.PARAMETER_SCHOOL_YEAR);
+		Object yearPK = iwc.getParameter(PARAMETER_SCHOOL_YEAR);
 		
 		try {
 			Collection courses = getBusiness(iwc).getSchoolHome().findAllByAreaAndTypesAndYear(Integer.parseInt(sourceID), getBusiness(iwc).getSchoolTypesForCategory(getBusiness(iwc).getCategoryElementarySchool(), false), Integer.parseInt(yearPK.toString()));
