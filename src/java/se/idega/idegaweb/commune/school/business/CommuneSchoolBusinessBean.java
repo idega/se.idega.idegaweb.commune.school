@@ -1,5 +1,5 @@
 /*
- * $Id: CommuneSchoolBusinessBean.java,v 1.2 2005/08/10 11:23:14 thomas Exp $
+ * $Id: CommuneSchoolBusinessBean.java,v 1.3 2005/08/10 13:02:28 thomas Exp $
  * Created on Aug 3, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -19,6 +19,7 @@ import javax.ejb.CreateException;
 import javax.ejb.FinderException;
 import javax.transaction.UserTransaction;
 import se.idega.idegaweb.commune.business.CommuneUserBusiness;
+import se.idega.idegaweb.commune.childcare.business.AfterSchoolBusiness;
 import se.idega.idegaweb.commune.message.business.MessageBusiness;
 import se.idega.idegaweb.commune.school.data.SchoolChoice;
 import se.idega.idegaweb.commune.school.data.SchoolChoiceHome;
@@ -47,10 +48,10 @@ import com.idega.util.PersonalIDFormatter;
 
 
 /**
- * Last modified: $Date: 2005/08/10 11:23:14 $ by $Author: thomas $
+ * Last modified: $Date: 2005/08/10 13:02:28 $ by $Author: thomas $
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class CommuneSchoolBusinessBean extends CaseBusinessBean  implements CaseBusiness, CommuneSchoolBusiness{
 
@@ -60,6 +61,15 @@ public class CommuneSchoolBusinessBean extends CaseBusinessBean  implements Case
 	
 	private static final String PROPERTY_DEFAULT_SCHOOL_TYPE = "default_school_type";
 
+	public AfterSchoolBusiness getAfterSchoolBusiness() {
+		try {
+			return (AfterSchoolBusiness) this.getServiceInstance(AfterSchoolBusiness.class);
+		}
+		catch (RemoteException e) {
+			throw new IBORuntimeException(e.getMessage());
+		}
+	}
+	
 	private CommuneUserBusiness getUserBusiness() {
 		try {
 			return (CommuneUserBusiness) this.getServiceInstance(CommuneUserBusiness.class);
