@@ -1,5 +1,5 @@
 /*
- * $Id: SchoolExportBusinessBean.java,v 1.8 2005/05/11 07:15:37 laddi Exp $
+ * $Id: SchoolExportBusinessBean.java,v 1.9 2005/08/17 14:01:20 palli Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -12,14 +12,9 @@ package se.idega.idegaweb.commune.school.business;
 import java.io.ByteArrayInputStream;
 import java.rmi.RemoteException;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 
 import javax.ejb.FinderException;
-
-import se.idega.idegaweb.commune.school.data.ProcapitaSchool;
-import se.idega.idegaweb.commune.school.data.ProcapitaSchoolHome;
 
 import com.idega.block.school.business.SchoolBusiness;
 import com.idega.block.school.data.School;
@@ -28,28 +23,28 @@ import com.idega.block.school.data.SchoolClass;
 import com.idega.block.school.data.SchoolClassMember;
 import com.idega.block.school.data.SchoolClassMemberHome;
 import com.idega.block.school.data.SchoolSeason;
+import com.idega.block.school.data.SchoolYear;
 import com.idega.business.IBOLookupException;
 import com.idega.business.IBORuntimeException;
 import com.idega.core.file.data.ICFile;
 import com.idega.core.file.data.ICFileBMPBean;
 import com.idega.core.file.data.ICFileHome;
-import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
 import com.idega.user.data.User;
 
 /** 
  * Business logic for exporting student placement text files.
  * <p>
- * Last modified: $Date: 2005/05/11 07:15:37 $ by $Author: laddi $
+ * Last modified: $Date: 2005/08/17 14:01:20 $ by $Author: palli $
  *
  * @author Anders Lindman
- * @version $Revision: 1.8 $
+ * @version $Revision: 1.9 $
  */
 public class SchoolExportBusinessBean extends com.idega.business.IBOServiceBean implements SchoolExportBusiness  {
 	 
 	private final static String EXPORT_FOLDER_NAME = "School Export Files";
 	
-	private Map _procapitaSchoolNames = null;
+//	private Map _procapitaSchoolNames = null;
 	
 	/**
 	 * Returns a school business instance. 
@@ -189,7 +184,7 @@ public class SchoolExportBusinessBean extends com.idega.business.IBOServiceBean 
 		if (placements == null) {
 			return "no placements found.";
 		}
-		_procapitaSchoolNames = null;
+//		_procapitaSchoolNames = null;
 		StringBuffer sb = new StringBuffer();
 		Iterator iter = placements.iterator();
 		int line = 0;
@@ -198,9 +193,9 @@ public class SchoolExportBusinessBean extends com.idega.business.IBOServiceBean 
 			User student = placement.getStudent();
 			SchoolClass schoolClass = placement.getSchoolClass();
 			School school = schoolClass.getSchool();
+			SchoolYear year = placement.getSchoolYear();
 			
 			String personalId = student.getPersonalID();
-			String lastName = student.getLastName();
 			String s = student.getMiddleName();
 			if (s == null) {
 				s = "";
@@ -209,21 +204,16 @@ public class SchoolExportBusinessBean extends com.idega.business.IBOServiceBean 
 			}
 			String firstName = student.getFirstName() + s;
 			String givenName = student.getLastName() + ", " + student.getFirstName();
-			String middleName = " ";
-			String schoolName = getSchoolName(school);
+			String schoolID = ((Integer)school.getPrimaryKey()).toString();
 			String schoolClassName = schoolClass.getName();
-			String addressProtection = " ";
-			String email = " ";
+			String schoolYearName = year.getSchoolYearName();
 			
 			sb.append(personalId).append(";");
-			sb.append(lastName).append(";");
 			sb.append(firstName).append(";");
 			sb.append(givenName).append(";");
-			sb.append(middleName).append(";");
-			sb.append(schoolName).append(";");
-			sb.append(schoolClassName).append(";");
-			sb.append(addressProtection).append(";");
-			sb.append(email).append("\r\n");
+			sb.append(schoolID).append(";");
+			sb.append(schoolYearName).append(";");			
+			sb.append(schoolClassName).append("\r\n");
 			
 			line++;
 			if (line % 100 == 0) {
@@ -241,7 +231,7 @@ public class SchoolExportBusinessBean extends com.idega.business.IBOServiceBean 
 		try {
 			ICFileHome fileHome = (ICFileHome) com.idega.data.IDOLookup.getHome(ICFile.class);
 			ICFile exportFolder = fileHome.findByFileName(EXPORT_FOLDER_NAME);
-			exportFiles = exportFolder.getChildrenIterator();
+			exportFiles = exportFolder.getChildrenIterator(ICFileBMPBean.getColumnNameCreationDate(), true);
 		} catch (Exception e) {
 			log(e);
 		}
@@ -251,7 +241,7 @@ public class SchoolExportBusinessBean extends com.idega.business.IBOServiceBean 
 	/*
 	 * Returns the name of school according to the Procapita system.
 	 */
-	private String getSchoolName(School school) {
+/*	private String getSchoolName(School school) {
 		String name = null;
 		if (_procapitaSchoolNames == null) {
 			_procapitaSchoolNames = new HashMap();
@@ -271,5 +261,5 @@ public class SchoolExportBusinessBean extends com.idega.business.IBOServiceBean 
 		}
 		
 		return name;
-	}
+	}*/
 }
