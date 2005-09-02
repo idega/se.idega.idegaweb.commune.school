@@ -34,7 +34,6 @@ import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
 import com.idega.presentation.Table;
 import com.idega.presentation.text.Link;
-import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.DropdownMenu;
 import com.idega.presentation.ui.Window;
 /**
@@ -233,7 +232,7 @@ public abstract class SchoolCommuneBlock extends CommuneBlock {
 						menu.addDisabledMenuElement("-1", type.getSchoolTypeName());
 						schoolTypeID = element.getSchoolTypeId();
 					}
-					menu.addMenuElement(element.getPrimaryKey().toString(), Text.NON_BREAKING_SPACE + Text.NON_BREAKING_SPACE + Text.NON_BREAKING_SPACE + element.getSchoolYearName());
+					menu.addMenuElement(element.getPrimaryKey().toString(), " - " + element.getSchoolYearName());
 				}
 			}
 			else {
