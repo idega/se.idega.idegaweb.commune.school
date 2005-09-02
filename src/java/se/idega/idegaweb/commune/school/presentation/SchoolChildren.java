@@ -31,7 +31,9 @@ public class SchoolChildren extends CitizenChildren {
 	 */
 	protected boolean getShowChild(IWContext iwc, User child) {
 		try {
+			System.out.print("[SchoolChildren] checking child : "+child.getName());
 			boolean hasPlacements = getSchoolBusiness(iwc).hasSchoolPlacements(((Integer)child.getPrimaryKey()).intValue());
+			System.out.println("[SchoolChildren] hasPlacement = "+hasPlacements);
 			if (hasPlacements) {
 				return _showWithPlacement;
 			}
@@ -46,9 +48,9 @@ public class SchoolChildren extends CitizenChildren {
 	/**
 	 * @return Returns the showWithPlacement.
 	 */
-	public boolean isShowWithPlacement() {
-		return this._showWithPlacement;
-	}
+//	public boolean isShowWithPlacement() {
+//		return this._showWithPlacement;
+//	}
 	
 	/**
 	 * @param showWithPlacement The showWithPlacement to set.
