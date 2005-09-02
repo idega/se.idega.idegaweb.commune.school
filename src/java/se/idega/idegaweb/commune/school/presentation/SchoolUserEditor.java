@@ -78,11 +78,11 @@ public class SchoolUserEditor extends com.idega.block.school.presentation.School
 	}
 	
 	private int getSchoolAdminGroupId() throws RemoteException {
-		String groupId = schoolBusiness.getGroupID(SCHOOL_ADMINISTATION_GROUP_PARAMETER_NAME);
+		String groupId = schoolBusiness.getPropertyValue(SCHOOL_ADMINISTATION_GROUP_PARAMETER_NAME);
 		if (groupId == null) {
 			groupId = getCommuneBundle().getProperty(SCHOOL_ADMINISTATION_GROUP_PARAMETER_NAME);
 			if (groupId != null) {
-				schoolBusiness.setGroupID(SCHOOL_ADMINISTATION_GROUP_PARAMETER_NAME, groupId);
+				schoolBusiness.setProperty(SCHOOL_ADMINISTATION_GROUP_PARAMETER_NAME, groupId);
 			}
 		}
 		if (groupId != null) {
@@ -92,11 +92,11 @@ public class SchoolUserEditor extends com.idega.block.school.presentation.School
 	}
 	
 	private int getChildCareAdminGroupId() throws RemoteException {
-		String groupId = schoolBusiness.getGroupID(CHILDCARE_ADMINISTATION_GROUP_PARAMETER_NAME);
+		String groupId = schoolBusiness.getPropertyValue(CHILDCARE_ADMINISTATION_GROUP_PARAMETER_NAME);
 		if (groupId == null) {
 			groupId = getCommuneBundle().getProperty(CHILDCARE_ADMINISTATION_GROUP_PARAMETER_NAME);
 			if (groupId != null) {
-				schoolBusiness.setGroupID(CHILDCARE_ADMINISTATION_GROUP_PARAMETER_NAME, groupId);
+				schoolBusiness.setProperty(CHILDCARE_ADMINISTATION_GROUP_PARAMETER_NAME, groupId);
 			}
 		}
 		if (groupId != null) {
