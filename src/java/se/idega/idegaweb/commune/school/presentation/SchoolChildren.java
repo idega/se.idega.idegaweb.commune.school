@@ -26,6 +26,10 @@ public class SchoolChildren extends CitizenChildren {
 
 	private boolean _showWithPlacement = false;
 	
+	public SchoolChildren() {
+		super();
+	}
+	
 	/* (non-Javadoc)
 	 * @see se.idega.idegaweb.commune.presentation.CitizenChildren#getShowChild(com.idega.user.data.User)
 	 */
