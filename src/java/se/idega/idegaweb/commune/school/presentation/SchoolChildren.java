@@ -57,7 +57,7 @@ public class SchoolChildren extends CitizenChildren {
 		this._showWithPlacement = showWithPlacement;
 	}
 	
-	private SchoolBusiness getSchoolBusiness(IWApplicationContext iwac) {
+	protected SchoolBusiness getSchoolBusiness(IWApplicationContext iwac) {
 		try {
 			return (SchoolBusiness) IBOLookup.getServiceInstance(iwac, SchoolBusiness.class);
 		}
