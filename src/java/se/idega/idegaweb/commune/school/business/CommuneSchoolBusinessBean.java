@@ -1,5 +1,5 @@
 /*
- * $Id: CommuneSchoolBusinessBean.java,v 1.4 2005/08/10 15:10:27 thomas Exp $
+ * $Id: CommuneSchoolBusinessBean.java,v 1.5 2005/09/02 02:34:35 gimmi Exp $
  * Created on Aug 3, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -48,10 +48,10 @@ import com.idega.util.PersonalIDFormatter;
 
 
 /**
- * Last modified: $Date: 2005/08/10 15:10:27 $ by $Author: thomas $
+ * Last modified: $Date: 2005/09/02 02:34:35 $ by $Author: gimmi $
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public class CommuneSchoolBusinessBean extends CaseBusinessBean  implements CaseBusiness, CommuneSchoolBusiness{
 
@@ -271,7 +271,14 @@ public class CommuneSchoolBusinessBean extends CaseBusinessBean  implements Case
 		try {
 			trans.begin();
 			
-			int schoolTypeID = new Integer(this.getBundle().getProperty(PROPERTY_DEFAULT_SCHOOL_TYPE, "-1")).intValue();
+			String stID = getSchoolBusiness().getPropertyValue(PROPERTY_DEFAULT_SCHOOL_TYPE);
+			int schoolTypeID = -1;
+			if (stID == null) {
+				schoolTypeID = new Integer(this.getBundle().getProperty(PROPERTY_DEFAULT_SCHOOL_TYPE, "-1")).intValue();
+				getSchoolBusiness().setProperty(PROPERTY_DEFAULT_SCHOOL_TYPE, Integer.toString(schoolTypeID));
+			} else {
+				schoolTypeID = Integer.parseInt(stID);
+			}
 			
 			IWTimestamp timeNow = new IWTimestamp();
 			saveChoice(user, child, schoolPK, seasonPK, yearPK, schoolTypeID, language, message, getCaseStatusPlaced(), null, 1, timeNow);
@@ -311,7 +318,14 @@ public class CommuneSchoolBusinessBean extends CaseBusinessBean  implements Case
 			CaseStatus status = null;
 			SchoolChoice choice = null;
 			int choiceNumber = 1;
-			int schoolTypeID = new Integer(this.getBundle().getProperty(PROPERTY_DEFAULT_SCHOOL_TYPE, "-1")).intValue();
+			String stID = getSchoolBusiness().getPropertyValue(PROPERTY_DEFAULT_SCHOOL_TYPE);
+			int schoolTypeID = -1;
+			if (stID == null) {
+				schoolTypeID = new Integer(this.getBundle().getProperty(PROPERTY_DEFAULT_SCHOOL_TYPE, "-1")).intValue();
+				getSchoolBusiness().setProperty(PROPERTY_DEFAULT_SCHOOL_TYPE, Integer.toString(schoolTypeID));
+			} else {
+				schoolTypeID = Integer.parseInt(stID);
+			}
 			
 			IWTimestamp timeNow = new IWTimestamp();
 			int i = 0;
