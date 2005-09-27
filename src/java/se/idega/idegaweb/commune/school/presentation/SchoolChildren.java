@@ -24,7 +24,7 @@ import com.idega.user.data.User;
  */
 public class SchoolChildren extends CitizenChildren {
 
-	private boolean _showWithPlacement = false;
+	private Boolean _showWithPlacement;
 	
 	public SchoolChildren() {
 		super();
@@ -35,14 +35,16 @@ public class SchoolChildren extends CitizenChildren {
 	 */
 	protected boolean getShowChild(IWContext iwc, User child) {
 		try {
-			System.out.print("[SchoolChildren] checking child : "+child.getName());
+			if (_showWithPlacement == null) {
+				return true;
+			}
+			
 			boolean hasPlacements = getSchoolBusiness(iwc).hasSchoolPlacements(((Integer)child.getPrimaryKey()).intValue());
-			System.out.println("[SchoolChildren] hasPlacement = "+hasPlacements);
 			if (hasPlacements) {
-				return _showWithPlacement;
+				return _showWithPlacement.booleanValue();
 			}
 			else
-				return !_showWithPlacement;
+				return !_showWithPlacement.booleanValue();
 		}
 		catch (RemoteException re) {
 			return false;
@@ -60,7 +62,7 @@ public class SchoolChildren extends CitizenChildren {
 	 * @param showWithPlacement The showWithPlacement to set.
 	 */
 	public void setShowWithPlacement(boolean showWithPlacement) {
-		this._showWithPlacement = showWithPlacement;
+		this._showWithPlacement = new Boolean(showWithPlacement);
 	}
 	
 	protected SchoolBusiness getSchoolBusiness(IWApplicationContext iwac) {

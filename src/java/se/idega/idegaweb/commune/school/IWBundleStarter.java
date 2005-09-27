@@ -5,8 +5,10 @@ import se.idega.idegaweb.commune.school.business.SchoolChoiceBusiness;
 import se.idega.idegaweb.commune.school.business.SchoolChoiceCaseBusiness;
 import se.idega.idegaweb.commune.school.business.SchoolConstants;
 import com.idega.block.process.business.CaseCodeManager;
+import com.idega.block.school.presentation.SchoolBlock;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWBundleStartable;
+import com.idega.idegaweb.include.GlobalIncludeManager;
 import com.idega.repository.data.ImplementorRepository;
 
 /**
@@ -21,6 +23,9 @@ import com.idega.repository.data.ImplementorRepository;
 public class IWBundleStarter implements IWBundleStartable {
 	
 	public void start(IWBundle starterBundle) {
+		GlobalIncludeManager includeManager = GlobalIncludeManager.getInstance();
+		includeManager.addBundleStyleSheet(SchoolBlock.IW_BUNDLE_IDENTIFIER, "/style/commune.css");
+
 		CaseCodeManager caseCodeManager = CaseCodeManager.getInstance();
 		caseCodeManager.addCaseBusinessForCode( SchoolConstants.SCHOOL_CHOICE_CASE_CODE_KEY, SchoolChoiceBusiness.class);
 		// other bundles are also adding implementors e.g. se.idega.idegaweb.commune.adulteducation
