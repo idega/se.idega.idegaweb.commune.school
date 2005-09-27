@@ -1,11 +1,11 @@
 package se.idega.idegaweb.commune.school;
 
+import se.idega.idegaweb.commune.business.Constants;
 import se.idega.idegaweb.commune.school.business.SchoolCaseBusiness;
 import se.idega.idegaweb.commune.school.business.SchoolChoiceBusiness;
 import se.idega.idegaweb.commune.school.business.SchoolChoiceCaseBusiness;
 import se.idega.idegaweb.commune.school.business.SchoolConstants;
 import com.idega.block.process.business.CaseCodeManager;
-import com.idega.block.school.presentation.SchoolBlock;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWBundleStartable;
 import com.idega.idegaweb.include.GlobalIncludeManager;
@@ -24,7 +24,7 @@ public class IWBundleStarter implements IWBundleStartable {
 	
 	public void start(IWBundle starterBundle) {
 		GlobalIncludeManager includeManager = GlobalIncludeManager.getInstance();
-		includeManager.addBundleStyleSheet(SchoolBlock.IW_BUNDLE_IDENTIFIER, "/style/commune.css");
+		includeManager.addBundleStyleSheet(Constants.IW_BUNDLE_IDENTIFIER, "/style/commune.css");
 
 		CaseCodeManager caseCodeManager = CaseCodeManager.getInstance();
 		caseCodeManager.addCaseBusinessForCode( SchoolConstants.SCHOOL_CHOICE_CASE_CODE_KEY, SchoolChoiceBusiness.class);
