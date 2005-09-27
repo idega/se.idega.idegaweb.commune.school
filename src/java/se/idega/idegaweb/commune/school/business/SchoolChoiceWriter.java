@@ -7,22 +7,17 @@ import java.rmi.RemoteException;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Locale;
-
 import javax.servlet.http.HttpServletRequest;
-
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-
 import se.idega.idegaweb.commune.business.CommuneUserBusiness;
 import se.idega.idegaweb.commune.presentation.CommuneBlock;
 import se.idega.idegaweb.commune.school.data.SchoolChoice;
 import se.idega.idegaweb.commune.school.data.SchoolChoiceBMPBean;
-import se.idega.util.PIDChecker;
-
 import com.idega.block.school.data.School;
 import com.idega.business.IBOLookup;
 import com.idega.core.location.data.Address;
@@ -179,7 +174,7 @@ public class SchoolChoiceWriter implements MediaWritable {
 			    row.createCell((short)cellColumn).setCellValue(address.getStreetAddress());
 		    cellColumn++;
 		    
-		    if (PIDChecker.getInstance().isFemale(applicant.getPersonalID()))
+		    if (applicant.getGender().isFemaleGender())
 		    	row.createCell((short)cellColumn++).setCellValue(iwrb.getLocalizedString("school.girl", "Girl"));
 		    else
 		    	row.createCell((short)cellColumn++).setCellValue(iwrb.getLocalizedString("school.boy", "Boy"));
