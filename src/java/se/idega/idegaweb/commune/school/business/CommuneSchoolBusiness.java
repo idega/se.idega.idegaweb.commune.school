@@ -1,6 +1,6 @@
 /*
- * $Id: CommuneSchoolBusiness.java,v 1.4 2005/08/10 15:10:27 thomas Exp $
- * Created on Aug 7, 2005
+ * $Id: CommuneSchoolBusiness.java,v 1.5 2005/10/02 21:11:06 laddi Exp $
+ * Created on Oct 2, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
  *
@@ -10,7 +10,8 @@
 package se.idega.idegaweb.commune.school.business;
 
 import java.util.Collection;
-
+import javax.ejb.FinderException;
+import se.idega.idegaweb.commune.school.data.SchoolChoice;
 import com.idega.block.process.business.CaseBusiness;
 import com.idega.block.school.data.School;
 import com.idega.block.school.data.SchoolClass;
@@ -24,17 +25,12 @@ import com.idega.user.data.User;
 
 
 /**
- * Last modified: $Date: 2005/08/10 15:10:27 $ by $Author: thomas $
+ * Last modified: $Date: 2005/10/02 21:11:06 $ by $Author: laddi $
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public interface CommuneSchoolBusiness extends IBOService, CaseBusiness {
-
-//	/**
-//	 * @see se.idega.idegaweb.commune.school.business.CommuneSchoolBusinessBean#getAfterSchoolBusiness
-//	 */
-//	public AfterSchoolBusiness getAfterSchoolBusiness() throws java.rmi.RemoteException;
 
 	/**
 	 * @see se.idega.idegaweb.commune.school.business.CommuneSchoolBusinessBean#canDisplaySchoolImages
@@ -65,6 +61,11 @@ public interface CommuneSchoolBusiness extends IBOService, CaseBusiness {
 	 * @see se.idega.idegaweb.commune.school.business.CommuneSchoolBusinessBean#hasSchoolPlacing
 	 */
 	public boolean hasSchoolPlacing(User user, SchoolSeason season) throws java.rmi.RemoteException;
+
+	/**
+	 * @see se.idega.idegaweb.commune.school.business.CommuneSchoolBusinessBean#hasAfterSchoolCarePlacing
+	 */
+	public boolean hasAfterSchoolCarePlacing(User user, SchoolSeason season) throws java.rmi.RemoteException;
 
 	/**
 	 * @see se.idega.idegaweb.commune.school.business.CommuneSchoolBusinessBean#getSchoolPlacing
@@ -107,6 +108,17 @@ public interface CommuneSchoolBusiness extends IBOService, CaseBusiness {
 	 */
 	public boolean saveHomeSchoolChoice(User user, User child, Object schoolPK, Object seasonPK, Object yearPK,
 			String language, String message) throws IDOCreateException, java.rmi.RemoteException;
+
+	/**
+	 * @see se.idega.idegaweb.commune.school.business.CommuneSchoolBusinessBean#getChoices
+	 */
+	public Collection getChoices(User child, SchoolSeason season) throws java.rmi.RemoteException;
+
+	/**
+	 * @see se.idega.idegaweb.commune.school.business.CommuneSchoolBusinessBean#getChoice
+	 */
+	public SchoolChoice getChoice(User child, SchoolSeason season, int choiceNumber) throws FinderException,
+			java.rmi.RemoteException;
 
 	/**
 	 * @see se.idega.idegaweb.commune.school.business.CommuneSchoolBusinessBean#saveChoices

@@ -1,5 +1,5 @@
 /*
- * $Id: CommuneSchoolBusinessBean.java,v 1.5 2005/09/02 02:34:35 gimmi Exp $
+ * $Id: CommuneSchoolBusinessBean.java,v 1.6 2005/10/02 21:11:06 laddi Exp $
  * Created on Aug 3, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -48,10 +48,10 @@ import com.idega.util.PersonalIDFormatter;
 
 
 /**
- * Last modified: $Date: 2005/09/02 02:34:35 $ by $Author: gimmi $
+ * Last modified: $Date: 2005/10/02 21:11:06 $ by $Author: laddi $
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
 public class CommuneSchoolBusinessBean extends CaseBusinessBean  implements CaseBusiness, CommuneSchoolBusiness{
 
@@ -152,6 +152,19 @@ public class CommuneSchoolBusinessBean extends CaseBusinessBean  implements Case
 	public boolean hasSchoolPlacing(User user, SchoolSeason season) {
 		try {
 			return getSchoolBusiness().getSchoolClassMemberHome().getNumberOfPlacingsBySeasonAndSchoolCategory(user, season, getSchoolBusiness().getCategoryElementarySchool()) > 0;
+		}
+		catch (IDOException ie) {
+			ie.printStackTrace();
+			return false;
+		}
+		catch (RemoteException re) {
+			throw new IBORuntimeException(re);
+		}
+	}
+	
+	public boolean hasAfterSchoolCarePlacing(User user, SchoolSeason season) {
+		try {
+			return getSchoolBusiness().getSchoolClassMemberHome().getNumberOfPlacingsBySeasonAndSchoolCategory(user, season, getSchoolBusiness().getCategoryChildcare()) > 0;
 		}
 		catch (IDOException ie) {
 			ie.printStackTrace();
@@ -305,6 +318,21 @@ public class CommuneSchoolBusinessBean extends CaseBusinessBean  implements Case
 			ex.printStackTrace();
 			throw new IDOCreateException(ex);
 		}
+	}
+	
+	public Collection getChoices(User child, SchoolSeason season) {
+		try {
+			String[] statuses = { getCaseStatusPlaced().getStatus(), getCaseStatusDeleted().getStatus() };
+			return getSchoolChoiceHome().findByChildAndSeason(((Integer) child.getPrimaryKey()).intValue(), ((Integer) season.getPrimaryKey()).intValue(), statuses);
+		}
+		catch (FinderException fe) {
+			fe.printStackTrace();
+			return new ArrayList();
+		}
+	}
+	
+	public SchoolChoice getChoice(User child, SchoolSeason season, int choiceNumber) throws FinderException {
+		return getSchoolChoiceHome().findByChildAndChoiceNumberAndSeason(child, choiceNumber, season);
 	}
 	
 	public boolean saveChoices(User user, User child, Collection schools, Object seasonPK, Object yearPK, String language, String message) throws IDOCreateException {
