@@ -1,5 +1,5 @@
 /*
- * $Id: CommuneSchoolBusinessBean.java,v 1.6 2005/10/02 21:11:06 laddi Exp $
+ * $Id: CommuneSchoolBusinessBean.java,v 1.7 2005/10/07 13:17:28 laddi Exp $
  * Created on Aug 3, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -43,15 +43,16 @@ import com.idega.data.IDOException;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
 import com.idega.user.data.User;
+import com.idega.util.Age;
 import com.idega.util.IWTimestamp;
 import com.idega.util.PersonalIDFormatter;
 
 
 /**
- * Last modified: $Date: 2005/10/02 21:11:06 $ by $Author: laddi $
+ * Last modified: $Date: 2005/10/07 13:17:28 $ by $Author: laddi $
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  */
 public class CommuneSchoolBusinessBean extends CaseBusinessBean  implements CaseBusiness, CommuneSchoolBusiness{
 
@@ -140,7 +141,7 @@ public class CommuneSchoolBusinessBean extends CaseBusinessBean  implements Case
 		try {
 			Address address = getUserBusiness().getUsersMainAddress(user);
 			if (address != null) {
-				return getHomeSchoolForAddress(address);
+				return getHomeSchoolForAddress(user, address);
 			}
 			return null;
 		}
@@ -199,10 +200,29 @@ public class CommuneSchoolBusinessBean extends CaseBusinessBean  implements Case
 		return school != null;
 	}
 	
-	public School getHomeSchoolForAddress(Address address) {
+	public School getHomeSchoolForAddress(User user, Address address) {
 		try {
 			SchoolDistrict district = getSchoolBusiness().getSchoolDistrictHome().findByAddress(address.getStreetAddress());
-			return district.getSchool();
+			SchoolYear year = null;
+			try {
+				year = getSchoolYearForUser(user);
+			}
+			catch (FinderException fe) {
+				//No year found for age;
+			}
+			
+			if (year == null) {
+				return district.getSchool();
+			}
+			else {
+				School school = district.getSchool();
+				if (getSchoolBusiness().hasSchoolRelationToYear(school, year)) {
+					return school;
+				}
+				else {
+					return school.getJuniorHighSchool();
+				}
+			}
 		}
 		catch (FinderException fe) {
 			fe.printStackTrace();
@@ -481,6 +501,16 @@ public class CommuneSchoolBusinessBean extends CaseBusinessBean  implements Case
 		}
 		catch (RemoteException re) {
 			re.printStackTrace();
+		}
+	}
+	
+	public SchoolYear getSchoolYearForUser(User user) throws FinderException {
+		try {
+			Age age = new Age(user.getDateOfBirth());
+			return getSchoolBusiness().getSchoolYearHome().findByAge(getSchoolBusiness().getCategoryElementarySchool(), age.getYears());
+		}
+		catch (RemoteException re) {
+			throw new IBORuntimeException(re);
 		}
 	}
 }

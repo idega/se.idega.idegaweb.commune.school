@@ -1,6 +1,6 @@
 /*
- * $Id: CommuneSchoolBusiness.java,v 1.5 2005/10/02 21:11:06 laddi Exp $
- * Created on Oct 2, 2005
+ * $Id: CommuneSchoolBusiness.java,v 1.6 2005/10/07 13:17:28 laddi Exp $
+ * Created on Oct 7, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
  *
@@ -25,10 +25,10 @@ import com.idega.user.data.User;
 
 
 /**
- * Last modified: $Date: 2005/10/02 21:11:06 $ by $Author: laddi $
+ * Last modified: $Date: 2005/10/07 13:17:28 $ by $Author: laddi $
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
 public interface CommuneSchoolBusiness extends IBOService, CaseBusiness {
 
@@ -85,7 +85,7 @@ public interface CommuneSchoolBusiness extends IBOService, CaseBusiness {
 	/**
 	 * @see se.idega.idegaweb.commune.school.business.CommuneSchoolBusinessBean#getHomeSchoolForAddress
 	 */
-	public School getHomeSchoolForAddress(Address address) throws java.rmi.RemoteException;
+	public School getHomeSchoolForAddress(User user, Address address) throws java.rmi.RemoteException;
 
 	/**
 	 * @see se.idega.idegaweb.commune.school.business.CommuneSchoolBusinessBean#getDefaultGroup
@@ -136,4 +136,9 @@ public interface CommuneSchoolBusiness extends IBOService, CaseBusiness {
 	 */
 	public void storeChildAfterSchoolCareInformation(User child, boolean canDisplayImage,
 			String otherAfterSchoolCareInformation) throws java.rmi.RemoteException;
+
+	/**
+	 * @see se.idega.idegaweb.commune.school.business.CommuneSchoolBusinessBean#getSchoolYearForUser
+	 */
+	public SchoolYear getSchoolYearForUser(User user) throws FinderException, java.rmi.RemoteException;
 }
