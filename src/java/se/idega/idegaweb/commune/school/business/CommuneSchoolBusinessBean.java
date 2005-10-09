@@ -1,5 +1,5 @@
 /*
- * $Id: CommuneSchoolBusinessBean.java,v 1.7 2005/10/07 13:17:28 laddi Exp $
+ * $Id: CommuneSchoolBusinessBean.java,v 1.8 2005/10/09 15:01:42 laddi Exp $
  * Created on Aug 3, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -49,10 +49,10 @@ import com.idega.util.PersonalIDFormatter;
 
 
 /**
- * Last modified: $Date: 2005/10/07 13:17:28 $ by $Author: laddi $
+ * Last modified: $Date: 2005/10/09 15:01:42 $ by $Author: laddi $
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.8 $
  */
 public class CommuneSchoolBusinessBean extends CaseBusinessBean  implements CaseBusiness, CommuneSchoolBusiness{
 
@@ -452,8 +452,13 @@ public class CommuneSchoolBusinessBean extends CaseBusinessBean  implements Case
 		choice.store();
 		
 		if (status.equals(getCaseStatusPreliminary())) {
-			String subject = getLocalizedString("music_school.choice_received_subject", "Music school choice received");
-			String body = getLocalizedString("music_school.choice_received_body", "{1} has received the application for a music school placing for {0}, {2}.  The application will be handled as soon as possible.");
+			String subject = getLocalizedString("application.choice_received_subject", "School choice received");
+			String body = getLocalizedString("application.choice_received_body", "{1} has received the application for a school placing for {0}, {2}.  The application will be handled as soon as possible.");
+			sendMessageToParents(choice, subject, body);
+		}
+		else if (status.equals(getCaseStatusPlaced())) {
+			String subject = getLocalizedString("application.home_school_choice_received_subject", "Home school choice received");
+			String body = getLocalizedString("application.home_school_choice_received_body", "{1} has received the application for a school placing for {0}, {2}.  The application has been handled and your child has a placing at the school.");
 			sendMessageToParents(choice, subject, body);
 		}
 
