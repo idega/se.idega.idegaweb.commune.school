@@ -24,7 +24,7 @@ import se.idega.idegaweb.commune.business.CommuneUserBusiness;
 import se.idega.idegaweb.commune.care.business.CareBusiness;
 import se.idega.idegaweb.commune.care.data.ProviderAccountingProperties;
 import se.idega.idegaweb.commune.care.data.ProviderAccountingPropertiesHome;
-import se.idega.idegaweb.commune.message.business.MessageBusiness;
+import se.idega.idegaweb.commune.message.business.CommuneMessageBusiness;
 import se.idega.idegaweb.commune.school.data.SchoolChoice;
 import se.idega.idegaweb.commune.user.data.Citizen;
 import se.idega.idegaweb.commune.user.data.CitizenHome;
@@ -644,8 +644,8 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 		}
 	}
 
-	private MessageBusiness getMessageBusiness() throws RemoteException {
-		return (MessageBusiness) getServiceInstance( MessageBusiness.class);
+	private CommuneMessageBusiness getMessageBusiness() throws RemoteException {
+		return (CommuneMessageBusiness) getServiceInstance( CommuneMessageBusiness.class);
 	}
 
 	private CommuneUserBusiness getCommuneUserBusiness() throws RemoteException {

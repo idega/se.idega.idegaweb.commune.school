@@ -1,5 +1,5 @@
 /*
- * $Id: CommuneSchoolBusinessBean.java,v 1.8 2005/10/09 15:01:42 laddi Exp $
+ * $Id: CommuneSchoolBusinessBean.java,v 1.9 2005/10/13 18:36:11 laddi Exp $
  * Created on Aug 3, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -20,7 +20,7 @@ import javax.ejb.FinderException;
 import javax.transaction.UserTransaction;
 import se.idega.idegaweb.commune.business.CommuneUserBusiness;
 
-import se.idega.idegaweb.commune.message.business.MessageBusiness;
+import se.idega.idegaweb.commune.message.business.CommuneMessageBusiness;
 import se.idega.idegaweb.commune.school.data.SchoolChoice;
 import se.idega.idegaweb.commune.school.data.SchoolChoiceHome;
 import com.idega.block.process.business.CaseBusiness;
@@ -49,10 +49,10 @@ import com.idega.util.PersonalIDFormatter;
 
 
 /**
- * Last modified: $Date: 2005/10/09 15:01:42 $ by $Author: laddi $
+ * Last modified: $Date: 2005/10/13 18:36:11 $ by $Author: laddi $
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.8 $
+ * @version $Revision: 1.9 $
  */
 public class CommuneSchoolBusinessBean extends CaseBusinessBean  implements CaseBusiness, CommuneSchoolBusiness{
 
@@ -89,9 +89,9 @@ public class CommuneSchoolBusinessBean extends CaseBusinessBean  implements Case
 		}
 	}
 	
-	private MessageBusiness getMessageBusiness() {
+	private CommuneMessageBusiness getMessageBusiness() {
 		try {
-			return (MessageBusiness) this.getServiceInstance(MessageBusiness.class);
+			return (CommuneMessageBusiness) this.getServiceInstance(CommuneMessageBusiness.class);
 		}
 		catch (RemoteException e) {
 			throw new IBORuntimeException(e.getMessage());

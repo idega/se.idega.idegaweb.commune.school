@@ -13,7 +13,7 @@ import javax.ejb.EJBException;
 import javax.ejb.FinderException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
-import se.idega.idegaweb.commune.message.business.MessageBusiness;
+import se.idega.idegaweb.commune.message.business.CommuneMessageBusiness;
 import se.idega.idegaweb.commune.message.business.MessagePdfHandler;
 import se.idega.idegaweb.commune.message.data.PrintMessage;
 import se.idega.idegaweb.commune.presentation.CommuneBlock;
@@ -276,7 +276,7 @@ public class SchoolChoiceMessagePdfHandler implements MessagePdfHandler,BundleRe
 	 */
 	public void registerInBundle(IWBundle bundle, ICObject ico) throws RegisterException {
 		try {
-			MessageBusiness msgBuiz =(MessageBusiness) IBOLookup.getServiceInstance(bundle.getApplication().getIWApplicationContext(),MessageBusiness.class);
+			CommuneMessageBusiness msgBuiz =(CommuneMessageBusiness) IBOLookup.getServiceInstance(bundle.getApplication().getIWApplicationContext(),CommuneMessageBusiness.class);
 			msgBuiz.createMessageHandlerInfo(this,ico);
 		}
 		catch (Exception e) {

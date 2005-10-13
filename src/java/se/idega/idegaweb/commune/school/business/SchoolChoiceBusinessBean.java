@@ -30,7 +30,7 @@ import se.idega.idegaweb.commune.care.data.CurrentSchoolSeason;
 import se.idega.idegaweb.commune.care.data.CurrentSchoolSeasonHome;
 import se.idega.idegaweb.commune.care.resource.business.ResourceBusiness;
 import se.idega.idegaweb.commune.care.resource.data.ResourceClassMember;
-import se.idega.idegaweb.commune.message.business.MessageBusiness;
+import se.idega.idegaweb.commune.message.business.CommuneMessageBusiness;
 import se.idega.idegaweb.commune.printing.business.DocumentBusiness;
 import se.idega.idegaweb.commune.school.data.SchoolChoice;
 import se.idega.idegaweb.commune.school.data.SchoolChoiceHome;
@@ -139,8 +139,8 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	public SchoolBusiness getSchoolBusiness() throws java.rmi.RemoteException {
 		return (SchoolBusiness) this.getServiceInstance(SchoolBusiness.class);
 	}
-	public MessageBusiness getMessageBusiness() throws RemoteException {
-		return (MessageBusiness) this.getServiceInstance(MessageBusiness.class);
+	public CommuneMessageBusiness getMessageBusiness() throws RemoteException {
+		return (CommuneMessageBusiness) this.getServiceInstance(CommuneMessageBusiness.class);
 	}
 
 	public FamilyLogic getMemberFamilyLogic() throws RemoteException {

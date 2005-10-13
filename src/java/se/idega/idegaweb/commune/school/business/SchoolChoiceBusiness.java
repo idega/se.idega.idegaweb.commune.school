@@ -1,5 +1,5 @@
 /*
- * $Id: SchoolChoiceBusiness.java,v 1.77 2005/01/17 11:28:51 laddi Exp $
+ * $Id: SchoolChoiceBusiness.java,v 1.78 2005/10/13 18:36:11 laddi Exp $
  * Created on 18.11.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -22,7 +22,7 @@ import javax.ejb.CreateException;
 import javax.ejb.FinderException;
 
 import se.idega.idegaweb.commune.business.CommuneUserBusiness;
-import se.idega.idegaweb.commune.message.business.MessageBusiness;
+import se.idega.idegaweb.commune.message.business.CommuneMessageBusiness;
 import se.idega.idegaweb.commune.school.data.SchoolChoice;
 import se.idega.idegaweb.commune.school.data.SchoolChoiceHome;
 import se.idega.idegaweb.commune.school.data.SchoolChoiceReminder;
@@ -44,10 +44,10 @@ import com.idega.util.IWTimestamp;
 
 /**
  * 
- *  Last modified: $Date: 2005/01/17 11:28:51 $ by $Author: laddi $
+ *  Last modified: $Date: 2005/10/13 18:36:11 $ by $Author: laddi $
  * 
  * @author <a href="mailto:aron@idega.com">aron</a>
- * @version $Revision: 1.77 $
+ * @version $Revision: 1.78 $
  */
 public interface SchoolChoiceBusiness extends IBOService, CaseBusiness {
     /**
@@ -63,7 +63,7 @@ public interface SchoolChoiceBusiness extends IBOService, CaseBusiness {
     /**
      * @see se.idega.idegaweb.commune.school.business.SchoolChoiceBusinessBean#getMessageBusiness
      */
-    public MessageBusiness getMessageBusiness() throws RemoteException;
+    public CommuneMessageBusiness getMessageBusiness() throws RemoteException;
 
     /**
      * @see se.idega.idegaweb.commune.school.business.SchoolChoiceBusinessBean#getMemberFamilyLogic

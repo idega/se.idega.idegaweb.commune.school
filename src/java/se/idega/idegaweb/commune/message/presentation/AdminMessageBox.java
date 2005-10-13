@@ -12,10 +12,10 @@ import java.util.Collection;
 
 import javax.ejb.FinderException;
 
-import se.idega.idegaweb.commune.message.data.Message;
 import se.idega.idegaweb.commune.school.business.SchoolChoiceBusiness;
 import se.idega.idegaweb.commune.school.data.SchoolChoice;
 
+import com.idega.block.process.message.data.Message;
 import com.idega.block.school.data.School;
 import com.idega.business.IBOLookup;
 import com.idega.presentation.IWContext;
