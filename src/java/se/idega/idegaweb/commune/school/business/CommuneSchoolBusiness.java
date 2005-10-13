@@ -1,6 +1,6 @@
 /*
- * $Id: CommuneSchoolBusiness.java,v 1.6 2005/10/07 13:17:28 laddi Exp $
- * Created on Oct 7, 2005
+ * $Id: CommuneSchoolBusiness.java,v 1.7 2005/10/13 20:07:53 laddi Exp $
+ * Created on Oct 13, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
  *
@@ -25,10 +25,10 @@ import com.idega.user.data.User;
 
 
 /**
- * Last modified: $Date: 2005/10/07 13:17:28 $ by $Author: laddi $
+ * Last modified: $Date: 2005/10/13 20:07:53 $ by $Author: laddi $
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  */
 public interface CommuneSchoolBusiness extends IBOService, CaseBusiness {
 
@@ -113,6 +113,11 @@ public interface CommuneSchoolBusiness extends IBOService, CaseBusiness {
 	 * @see se.idega.idegaweb.commune.school.business.CommuneSchoolBusinessBean#getChoices
 	 */
 	public Collection getChoices(User child, SchoolSeason season) throws java.rmi.RemoteException;
+
+	/**
+	 * @see se.idega.idegaweb.commune.school.business.CommuneSchoolBusinessBean#getAllChoices
+	 */
+	public Collection getAllChoices(User child, SchoolSeason season) throws java.rmi.RemoteException;
 
 	/**
 	 * @see se.idega.idegaweb.commune.school.business.CommuneSchoolBusinessBean#getChoice

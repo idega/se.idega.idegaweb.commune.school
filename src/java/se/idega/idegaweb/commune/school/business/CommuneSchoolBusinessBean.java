@@ -1,5 +1,5 @@
 /*
- * $Id: CommuneSchoolBusinessBean.java,v 1.9 2005/10/13 18:36:11 laddi Exp $
+ * $Id: CommuneSchoolBusinessBean.java,v 1.10 2005/10/13 20:07:53 laddi Exp $
  * Created on Aug 3, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -49,10 +49,10 @@ import com.idega.util.PersonalIDFormatter;
 
 
 /**
- * Last modified: $Date: 2005/10/13 18:36:11 $ by $Author: laddi $
+ * Last modified: $Date: 2005/10/13 20:07:53 $ by $Author: laddi $
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.9 $
+ * @version $Revision: 1.10 $
  */
 public class CommuneSchoolBusinessBean extends CaseBusinessBean  implements CaseBusiness, CommuneSchoolBusiness{
 
@@ -343,6 +343,17 @@ public class CommuneSchoolBusinessBean extends CaseBusinessBean  implements Case
 	public Collection getChoices(User child, SchoolSeason season) {
 		try {
 			String[] statuses = { getCaseStatusPlaced().getStatus(), getCaseStatusDeleted().getStatus() };
+			return getSchoolChoiceHome().findByChildAndSeason(((Integer) child.getPrimaryKey()).intValue(), ((Integer) season.getPrimaryKey()).intValue(), statuses);
+		}
+		catch (FinderException fe) {
+			fe.printStackTrace();
+			return new ArrayList();
+		}
+	}
+	
+	public Collection getAllChoices(User child, SchoolSeason season) {
+		try {
+			String[] statuses = { getCaseStatusDeleted().getStatus() };
 			return getSchoolChoiceHome().findByChildAndSeason(((Integer) child.getPrimaryKey()).intValue(), ((Integer) season.getPrimaryKey()).intValue(), statuses);
 		}
 		catch (FinderException fe) {
