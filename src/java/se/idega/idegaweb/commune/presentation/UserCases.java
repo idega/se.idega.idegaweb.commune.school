@@ -71,30 +71,31 @@ public class UserCases extends CommuneBlock {
 	private int _numberOfCases = 10;
 
 	public final static String MYCASES_KEY = "usercases.myCases";
-	public final static String MYCASES_DEFAULT = "Mina ärenden";
+	public final static String MYCASES_DEFAULT = "My Cases";
 	public final static String CASENUMBER_KEY = "usercases.caseNumber";
-	public final static String CASENUMBER_DEFAULT = "Ärendenummer";
+	public final static String CASENUMBER_DEFAULT = "Case number";
 	public final static String CONCERNING_KEY = "usercases.concerning";
-	public final static String CONCERNING_DEFAULT = "Avser";
+	public final static String CONCERNING_DEFAULT = "Regarding";
 	public final static String NAME_KEY = "usercases.name";
-	public final static String NAME_DEFAULT = "Namn";
+	public final static String NAME_DEFAULT = "Name";
 	public final static String DATE_KEY = "usercases.date";
-	public final static String DATE_DEFAULT = "Datum";
+	public final static String DATE_DEFAULT = "Date";
 	public final static String MANAGER_KEY = "usercases.manager";
-	public final static String MANAGER_DEFAULT = "Handläggare";
+	public final static String MANAGER_DEFAULT = "Manager";
 	public final static String STATUS_KEY = "usercases.status";
 	public final static String STATUS_DEFAULT = "Status";
 	public final static String NOONGOINGCASES_KEY = "usercases.noOngoingCases";
-	public final static String NOONGOINGCASES_DEFAULT = "Inga pågående ärenden";
+	public final static String NOONGOINGCASES_DEFAULT = "Unhandled cases";
 	public final static String UNHANDLEDCASESINMYGROUPS_KEY = "usercases.unhandledCasesInMyGroups";
-	public final static String UNHANDLEDCASESINMYGROUPS_DEFAULT = "Pågående ärenden i mina grupper";
+	public final static String UNHANDLEDCASESINMYGROUPS_DEFAULT = "My group's unhandled cases";
 	public final static String SUBJECT_KEY = "usercases.subject";
-	public final static String SUBJECT_DEFAULT = "Rubrik";
+	public final static String SUBJECT_DEFAULT = "Subject";
 	public final static String HANDLERGROUP_KEY = "usercases.handlerGroup";
-	public final static String HANDLERGROUP_DEFAULT = "Handläggargrupp";
+	public final static String HANDLERGROUP_DEFAULT = "Handler group";
 
 	public final static String PARAMETER_START_CASE = "case_start_nr";
 	public final static String PARAMETER_END_CASE = "case_end_nr";
+
 	
 	private boolean iUseUserInSession = false;
 	
@@ -427,11 +428,9 @@ public class UserCases extends CommuneBlock {
 		messageList.setNoWrap(column, row);
 		ICPage page = getPage(caseCode, caseStatus.getStatus());
 		if (page != null) {
-			Link link = getSmallLink(useCase.getPrimaryKey().toString());
-			String parameter = caseBusiness.getPrimaryKeyParameter();
-			if (parameter != null) {
-				link.addParameter(parameter, useCase.getPrimaryKey().toString());
-			}
+			String caseNR = useCase.getPrimaryKey().toString();
+			Link link = getSmallLink(caseNR);
+			
 			Class eventListener = caseBusiness.getEventListener();
 			if (eventListener != null) {
 				link.setEventListener(eventListener);
@@ -440,6 +439,8 @@ public class UserCases extends CommuneBlock {
 			if (parameters != null) {
 				link.setParameter(parameters);
 			}
+			
+			link.addParameter(caseBusiness.getSelectedCaseParameter(),caseNR);
 			link.setPage(page);
 			messageList.add(link, column, row);
 		}
