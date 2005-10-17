@@ -73,6 +73,7 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 	public final static String FREETIMETHISSCHOOL = "child_care_this_school";
 	public final static String FREETIMEOTHER = "child_care_other";
 	public final static String EXTRA_MESSAGE = "extra_message";
+	public final static String PRIORITY = "priority";
 	
 	public final static String LANGUAGECHOICE = "language_choice";
 	public final static String SCHOOLCHOICEDATE = "school_choice_date";
@@ -159,6 +160,7 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 		this.addAttribute(FREETIMETHISSCHOOL, "School catalogue", Boolean.class);
 		this.addAttribute(FREETIMEOTHER, "School catalogue", String.class, 255);
 		this.addAttribute(EXTRA_MESSAGE, "Extra choice message", String.class, 255);
+		this.addAttribute(PRIORITY, "Placement priority", Boolean.class);
 		
 		this.addAttribute(HAS_RECEIVED_PLACEMENT_MESSAGE, "Placement message", Boolean.class);
 		this.addAttribute(HAS_RECEIVED_CONFIRMATION_MESSAGE, "Confirmation message", Boolean.class);
@@ -397,6 +399,14 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 	public void setExtraChoiceMessage(String extraMessage) {
 		setColumn(EXTRA_MESSAGE, extraMessage);
 	}
+	
+	public boolean getPriority() {
+		return getBooleanColumnValue(PRIORITY);
+	}
+	
+	public void setPriority(boolean prior) {
+		setColumn(PRIORITY,prior);
+	}			
 
 	public int ejbHomeCountBySchoolIDAndSeasonIDAndStatus(int schoolId, int seasonId, String[] statuses) throws IDOException {
 		try {

@@ -1,16 +1,13 @@
-/*
- * $Id: SchoolChoice.java,v 1.32 2005/08/09 16:36:28 laddi Exp $
- * Created on Aug 3, 2005
- *
- * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
- *
- * This software is the proprietary information of Idega hf.
- * Use is subject to license terms.
+/**
+ * 
  */
 package se.idega.idegaweb.commune.school.data;
 
 import java.sql.Date;
 import java.sql.Timestamp;
+
+
+
 import com.idega.block.process.data.Case;
 import com.idega.block.school.data.School;
 import com.idega.block.school.data.SchoolSeason;
@@ -20,15 +17,11 @@ import com.idega.data.IDOEntity;
 import com.idega.data.IDOQuery;
 import com.idega.user.data.User;
 
-
 /**
- * Last modified: $Date: 2005/08/09 16:36:28 $ by $Author: laddi $
- * 
- * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.32 $
+ * @author Maris_O
+ *
  */
 public interface SchoolChoice extends IDOEntity, Case {
-
 	/**
 	 * @see se.idega.idegaweb.commune.school.data.SchoolChoiceBMPBean#getCaseStatusCreated
 	 */
@@ -410,27 +403,45 @@ public interface SchoolChoice extends IDOEntity, Case {
 	public void setExtraChoiceMessage(String extraMessage);
 
 	/**
-	 * @see se.idega.idegaweb.commune.school.data.SchoolChoiceBMPBean#getIDOQuery
+	 * @see se.idega.idegaweb.commune.school.data.SchoolChoiceBMPBean#getPriority
 	 */
-	public IDOQuery getIDOQuery(int schoolID, int seasonID, int gradeYear, int[] choiceOrder, String[] validStatuses,
-			String searchStringForUser, boolean selectCount, boolean selectOnlyChildIDs, int orderBy);
+	public boolean getPriority();
+
+	/**
+	 * @see se.idega.idegaweb.commune.school.data.SchoolChoiceBMPBean#setPriority
+	 */
+	public void setPriority(boolean prior);
 
 	/**
 	 * @see se.idega.idegaweb.commune.school.data.SchoolChoiceBMPBean#getIDOQuery
 	 */
-	public IDOQuery getIDOQuery(int schoolID, int seasonID, int schoolYear, int[] choiceOrder, String[] validStatuses,
-			String searchStringForUser, boolean selectCount, boolean selectOnlyChildIDs, int orderBy, int placementType);
+	public IDOQuery getIDOQuery(int schoolID, int seasonID, int gradeYear,
+			int[] choiceOrder, String[] validStatuses,
+			String searchStringForUser, boolean selectCount,
+			boolean selectOnlyChildIDs, int orderBy);
 
 	/**
 	 * @see se.idega.idegaweb.commune.school.data.SchoolChoiceBMPBean#getIDOQuery
 	 */
-	public IDOQuery getIDOQuery(int schoolID, int seasonID, int schoolYear, int[] choiceOrder, String[] validStatuses,
-			String searchStringForUser, boolean selectCount, boolean selectOnlyChildIDs, boolean searchOnAddr, int orderBy,
+	public IDOQuery getIDOQuery(int schoolID, int seasonID, int schoolYear,
+			int[] choiceOrder, String[] validStatuses,
+			String searchStringForUser, boolean selectCount,
+			boolean selectOnlyChildIDs, int orderBy, int placementType);
+
+	/**
+	 * @see se.idega.idegaweb.commune.school.data.SchoolChoiceBMPBean#getIDOQuery
+	 */
+	public IDOQuery getIDOQuery(int schoolID, int seasonID, int schoolYear,
+			int[] choiceOrder, String[] validStatuses,
+			String searchStringForUser, boolean selectCount,
+			boolean selectOnlyChildIDs, boolean searchOnAddr, int orderBy,
 			int placementType);
 
 	/**
 	 * @see se.idega.idegaweb.commune.school.data.SchoolChoiceBMPBean#getSQLForChildrenWithouWithoutSchoolChoice
 	 */
-	public String getSQLForChildrenWithouWithoutSchoolChoice(SchoolSeason season, SchoolYear year, boolean onlyInCommune,
+	public String getSQLForChildrenWithouWithoutSchoolChoice(
+			SchoolSeason season, SchoolYear year, boolean onlyInCommune,
 			boolean onlyLastGrade, int maxAge, boolean count);
+
 }

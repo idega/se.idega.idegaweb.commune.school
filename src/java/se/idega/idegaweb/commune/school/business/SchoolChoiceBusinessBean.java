@@ -1,6 +1,7 @@
 package se.idega.idegaweb.commune.school.business;
 
 import is.idega.block.family.business.FamilyLogic;
+import is.idega.block.family.business.NoChildrenFound;
 import is.idega.block.family.business.NoCustodianFound;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -39,7 +40,9 @@ import se.idega.idegaweb.commune.school.data.SchoolChoiceReminderHome;
 import com.idega.block.process.data.Case;
 import com.idega.block.process.data.CaseStatus;
 import com.idega.block.school.business.SchoolBusiness;
+import com.idega.block.school.business.SchoolBusinessBean;
 import com.idega.block.school.data.School;
+import com.idega.block.school.data.SchoolCategory;
 import com.idega.block.school.data.SchoolClass;
 import com.idega.block.school.data.SchoolClassMember;
 import com.idega.block.school.data.SchoolClassMemberHome;
@@ -47,6 +50,7 @@ import com.idega.block.school.data.SchoolSeason;
 import com.idega.block.school.data.SchoolUser;
 import com.idega.block.school.data.SchoolYear;
 import com.idega.block.school.data.SchoolYearHome;
+import com.idega.block.school.data.SchoolYearPlaces;
 import com.idega.business.IBOLookup;
 import com.idega.business.IBOLookupException;
 import com.idega.business.IBORuntimeException;
@@ -489,6 +493,12 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		 sendMessageToParentOrChild(choice, choice.getOwner(), choice.getChild(), getPreliminaryMessageSubject(), getPreliminaryMessageBody(choice),SchoolChoiceMessagePdfHandler.CODE_PRELIMINARY);
 		 //			getMessageBusiness().createUserMessage(choice.getOwner(), getPreliminaryMessageSubject(), getPreliminaryMessageBody(choice));
 		 }*/
+		
+		choice.setPriority(hasPriority(provider,choice.getOwner()));
+			
+		
+		
+		
 		if (parentCase != null)
 			choice.setParentCase(parentCase);
 		try {
@@ -521,6 +531,42 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		
 		
 		return choice;
+	}
+	
+	/**
+	 * TODO:  implement this method
+	 * @param provider
+	 * @param parent
+	 * @return
+	 */
+	private boolean hasPriority(School provider, User parent) {
+		boolean priority = false;
+
+		try {
+			SchoolBusinessBean schoolBean = new SchoolBusinessBean();
+			is.idega.block.family.business.FamilyLogic ml = this
+					.getMemberFamilyLogic();
+
+			Collection children = ml.getChildrenFor(parent);
+
+			for (Iterator iter = children.iterator(); iter.hasNext();) {
+				User child = (User) iter.next();
+				child.getDateOfBirth();
+				boolean xxx = schoolBean.hasActivePlacement(((Integer) child
+						.getPrimaryKey()).intValue(), ((Integer) provider
+						.getPrimaryKey()).intValue(), schoolBean
+						.getCategoryElementarySchool());
+				SchoolYearPlaces syp = schoolBean.getSchoolYearPlaces(provider);
+			}
+		}
+
+		catch (RemoteException re) {
+			throw new IBORuntimeException(re);
+		} catch (NoChildrenFound ex) {
+			throw new IBORuntimeException(ex);
+		}
+
+		return priority;
 	}
 
 	private void handleSchoolChangeHeadMasters(SchoolChoice choice, User child, int oldSchoolID, int newSchoolID) throws RemoteException {
