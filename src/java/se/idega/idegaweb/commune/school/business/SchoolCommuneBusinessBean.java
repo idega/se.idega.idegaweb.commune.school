@@ -708,7 +708,7 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 		final Collection schools = new ArrayList();
 		try {
 			final ProviderAccountingPropertiesHome pHome = (ProviderAccountingPropertiesHome) IDOLookup.getHome(ProviderAccountingProperties.class);
-			final Collection schoolIds = pHome.findAllIdsByPaymentByInvoice(true);
+			final Collection schoolIds = pHome.findAllByPaymentByInvoice(true);
 			final SchoolHome sHome = (SchoolHome) IDOLookup.getHome(School.class);
 			schools.addAll(sHome.findByPrimaryKeyCollection(schoolIds));
 		}
