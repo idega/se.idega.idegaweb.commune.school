@@ -49,7 +49,6 @@ import com.idega.block.school.data.SchoolSeason;
 import com.idega.block.school.data.SchoolUser;
 import com.idega.block.school.data.SchoolYear;
 import com.idega.block.school.data.SchoolYearHome;
-import com.idega.block.school.data.SchoolYearPlaces;
 import com.idega.business.IBOLookup;
 import com.idega.business.IBOLookupException;
 import com.idega.business.IBORuntimeException;
@@ -551,11 +550,11 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 			for (Iterator iter = children.iterator(); iter.hasNext();) {
 				User child = (User) iter.next();
 				child.getDateOfBirth();
-				boolean xxx = schoolBean.hasActivePlacement(((Integer) child
+				schoolBean.hasActivePlacement(((Integer) child
 						.getPrimaryKey()).intValue(), ((Integer) provider
 						.getPrimaryKey()).intValue(), schoolBean
 						.getCategoryElementarySchool());
-				SchoolYearPlaces syp = schoolBean.getSchoolYearPlaces(provider);
+				schoolBean.getSchoolYearPlaces(provider);
 			}
 		}
 
