@@ -42,7 +42,6 @@ import com.idega.block.process.data.CaseStatus;
 import com.idega.block.school.business.SchoolBusiness;
 import com.idega.block.school.business.SchoolBusinessBean;
 import com.idega.block.school.data.School;
-import com.idega.block.school.data.SchoolCategory;
 import com.idega.block.school.data.SchoolClass;
 import com.idega.block.school.data.SchoolClassMember;
 import com.idega.block.school.data.SchoolClassMemberHome;
