@@ -1,6 +1,6 @@
 /*
- * $Id: CommuneSchoolBusiness.java,v 1.7 2005/10/13 20:07:53 laddi Exp $
- * Created on Oct 13, 2005
+ * $Id: CommuneSchoolBusiness.java,v 1.8 2005/10/18 20:14:24 laddi Exp $
+ * Created on Oct 18, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
  *
@@ -25,10 +25,10 @@ import com.idega.user.data.User;
 
 
 /**
- * Last modified: $Date: 2005/10/13 20:07:53 $ by $Author: laddi $
+ * Last modified: $Date: 2005/10/18 20:14:24 $ by $Author: laddi $
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.8 $
  */
 public interface CommuneSchoolBusiness extends IBOService, CaseBusiness {
 
@@ -40,7 +40,7 @@ public interface CommuneSchoolBusiness extends IBOService, CaseBusiness {
 	/**
 	 * @see se.idega.idegaweb.commune.school.business.CommuneSchoolBusinessBean#canDisplayAfterSchoolCareImages
 	 */
-	public boolean canDisplayAfterSchoolCareImages(User child) throws java.rmi.RemoteException;
+	public Boolean canDisplayAfterSchoolCareImages(User child) throws java.rmi.RemoteException;
 
 	/**
 	 * @see se.idega.idegaweb.commune.school.business.CommuneSchoolBusinessBean#getAfterSchoolCareOtherInformation
