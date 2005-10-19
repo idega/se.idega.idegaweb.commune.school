@@ -7,6 +7,7 @@
 package se.idega.idegaweb.commune.school.presentation;
 
 import java.rmi.RemoteException;
+import java.util.Collection;
 
 import javax.ejb.EJBException;
 
@@ -46,6 +47,15 @@ public class StudentFinder extends CommuneUserFinder {
 			return false;
 		}
 	}
+	
+	protected Collection getUsers(IWContext iwc, String searchString) throws RemoteException {
+		return getUserBusiness(iwc).findSchoolChildrenBySearchCondition(searchString);
+	}
+	
+	protected Collection getUser(IWContext iwc, String firstName, String middleName, String lastName, String pid) throws RemoteException {
+		return getUserBusiness(iwc).findSchoolChildrenByConditions(firstName, middleName, lastName, pid);
+	}
+
 
 	/* (non-Javadoc)
 	 * @see se.idega.idegaweb.commune.presentation.CommuneUserFinder#getParameterName(com.idega.presentation.IWContext)
