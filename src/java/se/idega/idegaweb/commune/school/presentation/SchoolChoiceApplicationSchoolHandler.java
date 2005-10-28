@@ -1,5 +1,5 @@
 /*
- * $Id: SchoolChoiceApplicationSchoolHandler.java,v 1.1 2005/10/28 14:54:40 gimmi Exp $
+ * $Id: SchoolChoiceApplicationSchoolHandler.java,v 1.2 2005/10/28 17:30:51 gimmi Exp $
  * Created on Oct 28, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -13,12 +13,14 @@ import java.rmi.RemoteException;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Vector;
+import se.idega.idegaweb.commune.presentation.CommuneBlock;
 import com.idega.block.school.business.SchoolBusiness;
 import com.idega.block.school.data.School;
 import com.idega.business.IBOLookup;
 import com.idega.business.IBOLookupException;
 import com.idega.business.IBORuntimeException;
 import com.idega.idegaweb.IWApplicationContext;
+import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.remotescripting.RemoteScriptCollection;
 import com.idega.presentation.remotescripting.RemoteScriptHandler;
@@ -35,6 +37,9 @@ public class SchoolChoiceApplicationSchoolHandler implements RemoteScriptCollect
 
 		Vector ids = new Vector();
 		Vector names = new Vector();
+		ids.add("-1");
+		IWResourceBundle iwrb = iwc.getIWMainApplication().getBundle(CommuneBlock.IW_BUNDLE_IDENTIFIER).getResourceBundle(iwc);
+		names.add(iwrb.getLocalizedString("choose_school", "Choose School"));
 		
 		Collection coll;
 		try {
