@@ -1,5 +1,5 @@
 /*
- * $Id: SchoolAreaCollectionHandler.java,v 1.3 2005/08/10 15:14:57 thomas Exp $
+ * $Id: SchoolAreaCollectionHandler.java,v 1.4 2005/10/28 14:54:03 gimmi Exp $
  * Created on May 10, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -28,46 +28,46 @@ import com.idega.presentation.remotescripting.RemoteScriptingResults;
 
 
 /**
- * Last modified: $Date: 2005/08/10 15:14:57 $ by $Author: thomas $
+ * Last modified: $Date: 2005/10/28 14:54:03 $ by $Author: gimmi $
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class SchoolAreaCollectionHandler implements RemoteScriptCollection {
 	
 	public static final String PARAMETER_SCHOOL_YEAR = "sb_school_year";
 	
 	public static final String IW_BUNDLE_IDENTIFIER = "se.idega.idegaweb.commune.school";
-
+	
 	/* (non-Javadoc)
 	 * @see com.idega.presentation.remotescripting.RemoteScriptCollection#getResults(com.idega.presentation.IWContext)
 	 */
 	public RemoteScriptingResults getResults(IWContext iwc) {
 		String sourceName = iwc.getParameter(RemoteScriptHandler.PARAMETER_SOURCE_PARAMETER_NAME);
-
+		
 		String sourceID = iwc.getParameter(sourceName);
-
-	  return handleCourseUpdate(iwc, sourceName, sourceID);
+		
+		return handleCourseUpdate(iwc, sourceName, sourceID);
 	}
 	
 	private RemoteScriptingResults handleCourseUpdate(IWContext iwc, String sourceName, String sourceID) {
 		IWResourceBundle iwrb = iwc.getIWMainApplication().getBundle(IW_BUNDLE_IDENTIFIER).getResourceBundle(iwc);
 		
-    Collection ids = new ArrayList();
+		Collection ids = new ArrayList();
+		Collection names = new ArrayList();
 		ids.add("-1");
-    Collection names = new ArrayList();
 		names.add(iwrb.getLocalizedString("select_school","Select school"));
-    
+		
 		Object yearPK = iwc.getParameter(PARAMETER_SCHOOL_YEAR);
 		
 		try {
 			Collection courses = getBusiness(iwc).getSchoolHome().findAllByAreaAndTypesAndYear(Integer.parseInt(sourceID), getBusiness(iwc).getSchoolTypesForCategory(getBusiness(iwc).getCategoryElementarySchool(), false), Integer.parseInt(yearPK.toString()));
-	    Iterator iter = courses.iterator();
-	    while (iter.hasNext()) {
-	    		School school = (School) iter.next();
-	    		ids.add(school.getPrimaryKey().toString());
-	    		names.add(school.getSchoolName());
-	    }
+			Iterator iter = courses.iterator();
+			while (iter.hasNext()) {
+				School school = (School) iter.next();
+				ids.add(school.getPrimaryKey().toString());
+				names.add(school.getSchoolName());
+			}
 		}
 		catch (FinderException fe) {
 			fe.printStackTrace();
@@ -76,10 +76,10 @@ public class SchoolAreaCollectionHandler implements RemoteScriptCollection {
 			re.printStackTrace();
 		}
 		
-    RemoteScriptingResults rsr = new RemoteScriptingResults(RemoteScriptHandler.getLayerName(sourceName, "id"), ids);
-    rsr.addLayer(RemoteScriptHandler.getLayerName(sourceName, "name"), names);
-
-    return rsr;
+		RemoteScriptingResults rsr = new RemoteScriptingResults(RemoteScriptHandler.getLayerName(sourceName, "id"), ids);
+		rsr.addLayer(RemoteScriptHandler.getLayerName(sourceName, "name"), names);
+		
+		return rsr;
 	}
 	
 	private SchoolBusiness getBusiness(IWApplicationContext iwac) {
