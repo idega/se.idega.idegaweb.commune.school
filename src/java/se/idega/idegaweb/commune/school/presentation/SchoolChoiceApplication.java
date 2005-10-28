@@ -183,7 +183,6 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	
 	Map schoolsByType = null;
 
-	private boolean hasPreviousSchool = false;
 	private boolean schoolChange = false;
 	private boolean[] canApply = { false, false, false};
 	private Age age;
@@ -393,12 +392,12 @@ public class SchoolChoiceApplication extends CommuneBlock {
 						}
 					}
 
-					if (valType == -1) {
-						if (hasPreviousSchool)
-							valType = 4;
-						else
-							valType = 5;
-					}
+//					if (valType == -1) {
+//						if (hasPreviousSchool)
+//							valType = 4;
+//						else
+//							valType = 5;
+//					}
 
 					// Application has been saved
 
@@ -771,21 +770,16 @@ public class SchoolChoiceApplication extends CommuneBlock {
 						schoolClassMember = schBuiz.getSchoolBusiness().getSchoolClassMemberHome().findLatestByUserAndSchCategory(child, schBuiz.getSchoolBusiness().getCategoryChildcare());
 					}
 					catch (FinderException fe) {
-						hasPreviousSchool = false;
 						return;
 					}
 				}
 				else {
-					hasPreviousSchool = false;
 					return;
 				}
 			}
 
 			schoolClass = schoolClassMember.getSchoolClass();
 			school = schoolClass.getSchool();
-			if (school != null) {
-				hasPreviousSchool = true;
-			}
 			if (school != null) {
 				schoolArea = school.getSchoolArea();
 			}
@@ -796,7 +790,6 @@ public class SchoolChoiceApplication extends CommuneBlock {
 			valPreYear = schoolClassMember.getSchoolYearId();
 		}
 		catch (RemoteException re) {
-			hasPreviousSchool = false;
 		}
 	}
 
