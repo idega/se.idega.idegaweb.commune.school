@@ -2,24 +2,18 @@ package se.idega.idegaweb.commune.school.presentation;
 
 import is.idega.block.family.business.FamilyLogic;
 import is.idega.block.family.business.NoCustodianFound;
-
 import java.rmi.RemoteException;
 import java.text.DateFormat;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
-
 import javax.ejb.FinderException;
 import javax.faces.component.UIComponent;
-
 import se.idega.idegaweb.commune.care.business.CareBusiness;
 import se.idega.idegaweb.commune.care.presentation.ChildContracts;
 import se.idega.idegaweb.commune.presentation.CitizenChildren;
@@ -28,9 +22,7 @@ import se.idega.idegaweb.commune.school.business.SchoolChoiceBusiness;
 import se.idega.idegaweb.commune.school.business.SchoolCommuneBusiness;
 import se.idega.idegaweb.commune.school.data.SchoolChoice;
 import se.idega.util.PIDChecker;
-
 import com.idega.block.navigation.presentation.UserHomeLink;
-import com.idega.block.school.business.SchoolBusiness;
 import com.idega.block.school.data.School;
 import com.idega.block.school.data.SchoolArea;
 import com.idega.block.school.data.SchoolCategoryBMPBean;
@@ -159,15 +151,11 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	private int valFirstSchool = -1;
 	private int valSecondSchool = -1;
 	private int valThirdSchool = -1;
-	private int valFirstArea = -1;
-	private int valSecondArea = -1;
-	private int valThirdArea = -1;
 	//private int valPreGrade = -1;
 	private int valYear = -1;
 	private int valPreYear = -1;
 	private int valPreSchool = -1;
 	private int valType = -1;
-	private int valTypeFirstTime = -1;
 	private int childId = -1;
 	private int valCaseOwner = -1;
 	private int valMethod = 1; // Citizen:1; Quick: 2; Automatic: 3
@@ -176,7 +164,6 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	private String[] valExtraChoiceMessages = new String[3];
 	private boolean showAgree = false;
 	protected boolean quickAdmin = false;
-	private int _reloadYear = -1;
 	//private boolean hasPermisson = false;
 	
 	SchoolChoiceBusiness schBuiz;
@@ -303,9 +290,6 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		//debugParameters(iwc);
 		childId = getChildId(iwc);
 		
-		if (iwc.isParameterSet(prmYearReload)){
-			_reloadYear = Integer.parseInt(iwc.getParameter(prmYearReload));
-		}
 	/*	
 		String ID = null;
 		ID = iwc.getParameter(prmChildId);
@@ -377,12 +361,10 @@ public class SchoolChoiceApplication extends CommuneBlock {
 								SchoolChoice element = (SchoolChoice) iter.next();
 								School school = element.getChosenSchool();
 								int schoolID = ((Integer) school.getPrimaryKey()).intValue();
-								int areaID = school.getSchoolAreaId();
 								valExtraChoiceMessages[count - 1] = element.getExtraChoiceMessage();
 
 								if (count == 1) {
 									valFirstSchool = schoolID;
-									valFirstArea = areaID;
 									/*
 									 * if (element.getFreetimeInThisSchool()) valSixyearCare =
 									 * true; else if (element.getFreetimeOther() != null)
@@ -398,17 +380,14 @@ public class SchoolChoiceApplication extends CommuneBlock {
 									custodiansAgree = element.getCustodiansAgree();
 									if (valType == -1)
 										valType = element.getSchoolTypeId();
-									valTypeFirstTime = element.getSchoolTypeId();
 									valYear = element.getSchoolYearID();
 								}
 								else if (count == 2) {
 									valSecondSchool = schoolID;
-									valSecondArea = areaID;
 									count++;
 								}
 								else {
 									valThirdSchool = schoolID;
-									valThirdArea = areaID;
 									count++;
 								}
 							}
@@ -565,14 +544,10 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		valFirstSchool = iwc.isParameterSet(prmFirstSchool) ? Integer.parseInt(iwc.getParameter(prmFirstSchool)) : -1;
 		valSecondSchool = iwc.isParameterSet(prmSecondSchool) ? Integer.parseInt(iwc.getParameter(prmSecondSchool)) : -1;
 		valThirdSchool = iwc.isParameterSet(prmThirdSchool) ? Integer.parseInt(iwc.getParameter(prmThirdSchool)) : -1;
-		valFirstArea = iwc.isParameterSet(prmFirstArea) ? Integer.parseInt(iwc.getParameter(prmFirstArea)) : -1;
-		valSecondArea = iwc.isParameterSet(prmSecondArea) ? Integer.parseInt(iwc.getParameter(prmSecondArea)) : -1;
-		valThirdArea = iwc.isParameterSet(prmThirdArea) ? Integer.parseInt(iwc.getParameter(prmThirdArea)) : -1;
 		valYear = iwc.isParameterSet(prmYear) ? Integer.parseInt(iwc.getParameter(prmYear)) : -1;
 		valPreYear = iwc.isParameterSet(prmPreYear) ? Integer.parseInt(iwc.getParameter(prmPreYear)) : -1;
 		valPreSchool = iwc.isParameterSet(prmPreSchool) ? Integer.parseInt(iwc.getParameter(prmPreSchool)) : -1;
 		valType = iwc.isParameterSet(prmType) ? Integer.parseInt(iwc.getParameter(prmType)) : -1;
-		valTypeFirstTime = valType;
 		valCaseOwner = iwc.isParameterSet(prmParentId) ? Integer.parseInt(iwc.getParameter(prmParentId)) : -1;
 		valNativeLangIsChecked = iwc.isParameterSet(prmNativeLangIsChecked) ? true : false;
 		valNativeLang = iwc.isParameterSet(prmNativeLang) ? Integer.parseInt(iwc.getParameter(prmNativeLang)) : -1;
@@ -655,41 +630,41 @@ public class SchoolChoiceApplication extends CommuneBlock {
 			S.addVariable("sportOrMusicSchools", "new Array('2', '3', '4')");
 			S.addFunction("getAlertIfSportsOrMusicSchool", getAlertIfSportsOrMusicSchool());
 
-			S.addFunction("initFilter", getInitFilterScript());
-			S.addFunction("setSelected", getSetSelectedScript());
+//			S.addFunction("initFilter", getInitFilterScript());
+//			S.addFunction("setSelected", getSetSelectedScript());
 
-			S.addFunction("changeFilter", getFilterScript());
-			S.addFunction("changeFilter2", getFilterScript2(iwc));
+//			S.addFunction("changeFilter", getFilterScript());
+//			S.addFunction("changeFilter2", getFilterScript2(iwc));
 			
-			S.addFunction("changeSchools", getSchoolYearScript());
+//			S.addFunction("changeSchools", getSchoolYearScript());
 
 			if (valType > 0) {
-				Script initScript = myForm.getAssociatedFormScript();
-				if (initScript == null) {
-					initScript = new Script();
-					myForm.setAssociatedFormScript(initScript);
-				}
+//				Script initScript = myForm.getAssociatedFormScript();
+//				if (initScript == null) {
+//					initScript = new Script();
+//					myForm.setAssociatedFormScript(initScript);
+//				}
 
-				String initFunction = getInitFilterCallerScript(prmType, prmFirstArea, prmFirstSchool, valType, valFirstArea, valFirstSchool, false, 1);
-				String initFunction2 = getInitFilterCallerScript(prmType, prmSecondArea, prmSecondSchool, valType, valSecondArea, valSecondSchool, false, 2);
-				String initFunction3 = getInitFilterCallerScript(prmType, prmThirdArea, prmThirdSchool, valType, valThirdArea, valThirdSchool, false, 3);
+//				String initFunction = getInitFilterCallerScript(prmType, prmFirstArea, prmFirstSchool, valType, valFirstArea, valFirstSchool, false, 1);
+//				String initFunction2 = getInitFilterCallerScript(prmType, prmSecondArea, prmSecondSchool, valType, valSecondArea, valSecondSchool, false, 2);
+//				String initFunction3 = getInitFilterCallerScript(prmType, prmThirdArea, prmThirdSchool, valType, valThirdArea, valThirdSchool, false, 3);
 
-				if (!schoolChange) {
-					initScript.addFunction("sch_init3", initFunction3);
-					getParentPage().setOnLoad(initFunction3);
-					initScript.addFunction("sch_init2", initFunction2);
-					getParentPage().setOnLoad(initFunction2);
-				}
-				
-				initScript.addFunction("sch_init", initFunction);
-				getParentPage().setOnLoad(initFunction);
-				
-				if (!schoolChange) {
-					initScript.addFunction("sch_init3_a", initFunction3);
-				}
-				else {
-					initScript.addFunction("sch_init_a", initFunction);
-				}
+//				if (!schoolChange) {
+//					initScript.addFunction("sch_init3", initFunction3);
+//					getParentPage().setOnLoad(initFunction3);
+//					initScript.addFunction("sch_init2", initFunction2);
+//					getParentPage().setOnLoad(initFunction2);
+//				}
+//				
+//				initScript.addFunction("sch_init", initFunction);
+//				getParentPage().setOnLoad(initFunction);
+//				
+//				if (!schoolChange) {
+//					initScript.addFunction("sch_init3_a", initFunction3);
+//				}
+//				else {
+//					initScript.addFunction("sch_init_a", initFunction);
+//				}
 			}
 		}
 
@@ -1030,15 +1005,17 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		table.add(getHeader(iwrb.getLocalizedString("school.choice_for_schoolyear", "Choice for the schoolyear")), 1, 1);
 
 		DropdownMenu typeDrop = getTypeDrop(prmType, true, false);
-		typeDrop.setOnChange(getFilterCallerScript(prmType, prmFirstArea, prmFirstSchool, 1, false));
+//		typeDrop.setOnChange(getFilterCallerScript(prmType, prmFirstArea, prmFirstSchool, 1, false));
 
 		DropdownMenu drpGrade = (DropdownMenu) getStyledInterface(new DropdownMenu(prmYear));
 		drpGrade.addMenuElementFirst("-1", iwrb.getLocalizedString("school.select_year", "Select year"));
 		
+		RemoteScriptHandler yearRemoteScriptHandler = new RemoteScriptHandler(typeDrop, drpGrade);
+		
 		try {
-			RemoteScriptHandler rsh = new RemoteScriptHandler(typeDrop, drpGrade);
-			rsh.setRemoteScriptCollectionClass(SchoolYearSelectorCollectionHandler.class);
-			add(rsh);
+//			RemoteScriptHandler rsh = new RemoteScriptHandler(typeDrop, drpGrade);
+			yearRemoteScriptHandler.setRemoteScriptCollectionClass(SchoolYearSelectorCollectionHandler.class);
+			add(yearRemoteScriptHandler);
 		}
 		catch (IllegalAccessException iae) {
 			iae.printStackTrace();
@@ -1062,7 +1039,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		}
 
 		
-		drpGrade.setOnChange(getSchoolGradeScript(prmYear, prmYearReload, prmRealSubmit));
+//		drpGrade.setOnChange(getSchoolGradeScript(prmYear, prmYearReload, prmRealSubmit));
 		drpGrade.setAsNotEmpty(iwrb.getLocalizedString("school.school_year_must_select", "You must select a school year"));
 		
 		
@@ -1077,10 +1054,33 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		txtLangChoice.addMenuElement("school.language_swedish_english", localize("school.language_swedish_english", "Swedish/English"));
 		if (valLanguage != null) txtLangChoice.setSelectedElement(valLanguage);
 
-		DropdownMenu drpFirstArea = getDropdown(prmFirstArea, prmType, prmFirstArea, prmFirstSchool, 2, iwrb.getLocalizedString("school.area_first", "School Area...................."));
+		DropdownMenu drpFirstArea = getDropdown(prmFirstArea, iwrb.getLocalizedString("school.area_first", "School Area...................."));
 		DropdownMenu drpFirstSchool = (DropdownMenu) getStyledInterface(new DropdownMenu(prmFirstSchool));
 		drpFirstSchool.addMenuElementFirst("-1", iwrb.getLocalizedString("school.school_first", "School........................."));
 		drpFirstSchool.setOnChange("alertIfSportsOrMusicSchool(this)");
+
+		try {
+			RemoteScriptHandler rsh = new RemoteScriptHandler(drpGrade, drpFirstArea);
+			rsh.setRemoteScriptCollectionClass(SchoolChoiceApplicationSchoolAreaHandler.class);
+			rsh.setToClear(drpFirstSchool, iwrb.getLocalizedString("choose_school", "Choose School"));
+			add(rsh);
+			
+			RemoteScriptHandler rsh2 = new RemoteScriptHandler(drpFirstArea, drpFirstSchool);
+			rsh2.setRemoteScriptCollectionClass(SchoolChoiceApplicationSchoolHandler.class);
+			add(rsh2);
+		
+			if (yearRemoteScriptHandler != null) {
+				yearRemoteScriptHandler.setToClear(drpFirstArea, iwrb.getLocalizedString("choose_area", "Choose Area"));
+				yearRemoteScriptHandler.setToClear(drpFirstSchool, iwrb.getLocalizedString("choose_school", "Choose School"));
+			}
+		}
+		catch (IllegalAccessException iae) {
+			iae.printStackTrace();
+		}
+		catch (InstantiationException ie) {
+			ie.printStackTrace();
+		}
+
 
 		int row = 2;
 		table.add(getSmallHeader(iwrb.getLocalizedString("school.school_type", "SchoolType") + ":"), 1, row);
@@ -1108,19 +1108,54 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		}
 
 		if (!this.schoolChange) {
-			typeDrop.setOnChange(getFilterCallerScript(prmType, prmSecondArea, prmSecondSchool, 1, false));
-			typeDrop.setOnChange(getFilterCallerScript(prmType, prmThirdArea, prmThirdSchool, 1, false));
+//			typeDrop.setOnChange(getFilterCallerScript(prmType, prmSecondArea, prmSecondSchool, 1, false));
+//			typeDrop.setOnChange(getFilterCallerScript(prmType, prmThirdArea, prmThirdSchool, 1, false));
 
-			DropdownMenu drpSecondArea = getDropdown(prmSecondArea, prmType, prmSecondArea, prmSecondSchool, 2, iwrb.getLocalizedString("school.area_second", "School Area...................."));
+			DropdownMenu drpSecondArea = getDropdown(prmSecondArea, iwrb.getLocalizedString("school.area_second", "School Area...................."));
 			DropdownMenu drpSecondSchool = (DropdownMenu) getStyledInterface(new DropdownMenu(prmSecondSchool));
 			drpSecondSchool.addMenuElementFirst("-1", iwrb.getLocalizedString("school.school_second", "School........................."));
 			drpSecondSchool.setOnChange("alertIfSportsOrMusicSchool(this)");
 
-			DropdownMenu drpThirdArea = getDropdown(prmThirdArea, prmType, prmThirdArea, prmThirdSchool, 2, iwrb.getLocalizedString("school.area_third", "School Area...................."));
+			DropdownMenu drpThirdArea = getDropdown(prmThirdArea, iwrb.getLocalizedString("school.area_third", "School Area...................."));
 			DropdownMenu drpThirdSchool = (DropdownMenu) getStyledInterface(new DropdownMenu(prmThirdSchool));
 			drpThirdSchool.addMenuElementFirst("-1", iwrb.getLocalizedString("school.school_third", "School........................."));
 			drpThirdSchool.setOnChange("alertIfSportsOrMusicSchool(this)");
 
+			try {
+				RemoteScriptHandler rsh = new RemoteScriptHandler(drpFirstSchool, drpSecondArea);
+				rsh.setRemoteScriptCollectionClass(SchoolChoiceApplicationSchoolAreaHandler.class);
+				rsh.setToClear(drpSecondSchool, iwrb.getLocalizedString("choose_school", "Choose School"));
+				add(rsh);
+				
+				RemoteScriptHandler rsh2 = new RemoteScriptHandler(drpSecondArea, drpSecondSchool);
+				rsh2.setRemoteScriptCollectionClass(SchoolChoiceApplicationSchoolHandler.class);
+				add(rsh2);
+			
+				RemoteScriptHandler rsh3 = new RemoteScriptHandler(drpSecondSchool, drpThirdArea);
+				rsh3.setRemoteScriptCollectionClass(SchoolChoiceApplicationSchoolAreaHandler.class);
+				rsh3.setToClear(drpThirdSchool, iwrb.getLocalizedString("choose_school", "Choose School"));
+				add(rsh3);
+				
+				RemoteScriptHandler rsh4 = new RemoteScriptHandler(drpThirdArea, drpThirdSchool);
+				rsh4.setRemoteScriptCollectionClass(SchoolChoiceApplicationSchoolHandler.class);
+				add(rsh4);
+			
+				if (yearRemoteScriptHandler != null) {
+					yearRemoteScriptHandler.setToClear(drpSecondArea, iwrb.getLocalizedString("choose_area", "Choose Area"));
+					yearRemoteScriptHandler.setToClear(drpSecondSchool, iwrb.getLocalizedString("choose_school", "Choose School"));
+
+					yearRemoteScriptHandler.setToClear(drpThirdArea, iwrb.getLocalizedString("choose_area", "Choose Area"));
+					yearRemoteScriptHandler.setToClear(drpThirdSchool, iwrb.getLocalizedString("choose_school", "Choose School"));
+				}
+			}
+			catch (IllegalAccessException iae) {
+				iae.printStackTrace();
+			}
+			catch (InstantiationException ie) {
+				ie.printStackTrace();
+			}
+
+			
 			table.add(getSmallHeader(iwrb.getLocalizedString("school.second_choice", "Second choice") + ":"), 1, row);
 			table.add(drpSecondArea, 3, row);
 			table.add(drpSecondSchool, 5, row++);
@@ -1244,10 +1279,9 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		return table;
 	}
 
-	private DropdownMenu getDropdown(String name, String type, String area, String school, int index, String firstElement) {
+	private DropdownMenu getDropdown(String name, String firstElement) {
 		DropdownMenu menu = (DropdownMenu) getStyledInterface(new DropdownMenu(name));
 		menu.addMenuElementFirst("-1", firstElement);
-		menu.setOnChange(getFilterCallerScript(type, area, school, index, false));
 		return menu;
 	}
 
@@ -1357,289 +1391,6 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		}
 
 		return schYears;
-	}
-
-	private Collection getSchoolAreasWithType(int type) {
-		try {
-			return schCommBiz.getSchoolBusiness().findAllSchoolAreasByType(type);
-		}
-		catch (Exception ex) {
-			ex.printStackTrace();
-		}
-		return null;
-	}
-
-	private Collection getSchoolByAreaAndType(IWContext iwc, int area, int type) {
-		try {
-			SchoolBusiness sBuiz = (SchoolBusiness) IBOLookup.getServiceInstance(iwc, SchoolBusiness.class);
-			Collection c = sBuiz.findAllSchoolsByAreaAndType(area, type);
-			return c;
-
-		}
-		catch (RemoteException ex) {
-			ex.printStackTrace();
-		}
-		return null;
-	}
-	private String getSchoolGradeScript(String grade, String hidden, String realSubmit){
-		StringBuffer script = new StringBuffer("changeSchools(");
-		script.append("findObj('").append(grade).append("')");
-		script.append(",");
-		script.append("findObj('").append(hidden).append("')");
-		script.append(",");
-		script.append("findObj('").append(realSubmit).append("')");
-		script.append(")");
-		return script.toString();
-		
-	}
-	private String getFilterCallerScript(String typeName, String areaName, String schoolName, int Type, boolean showAll) {
-		StringBuffer script = new StringBuffer("changeFilter(");
-		script.append(Type);
-		script.append(",");
-		script.append("findObj('").append(typeName).append("')");
-		script.append(",");
-		script.append("findObj('").append(areaName).append("')");
-		script.append(",");
-		script.append("findObj('").append(schoolName).append("')");
-		script.append(",");
-		script.append(showAll);
-		script.append(")");
-		return script.toString();
-	}
-
-	private String getInitFilterCallerScript(String typeName, String areaName, String schoolName, int typeSel, int areaSel, int schoolSel, boolean showAll, int choiceSel) {
-		StringBuffer script = new StringBuffer("initFilter(");
-		int school = -1;
-		script.append("findObj('").append(typeName).append("')");
-		script.append(",");
-		script.append("findObj('").append(areaName).append("')");
-		script.append(",");
-		script.append("findObj('").append(schoolName).append("')");
-		script.append(",");
-		script.append(typeSel);
-		script.append(",");
-		script.append(areaSel);
-		script.append(",");
-		if (choiceSel == 1) {
-			school = valFirstSchool;
-		}
-		else if (choiceSel == 2){
-			school = valSecondSchool;	
-		}
-		else {
-			school = valThirdSchool;	
-		}
-		
-		if (_reloadYear != -1){
-			script.append(school);
-		}else{
-			script.append(schoolSel);	
-		}		
-		script.append(",");
-		script.append(showAll);
-		script.append(")");
-		return script.toString();
-	}
-
-	private String getFilterScript() {
-		StringBuffer s = new StringBuffer();
-		s.append("function changeFilter(index,type,area,school,showAll){").append(" \n\t");
-		s.append("changeFilter2(index,type,area,school,-1,showAll);").append("\n").append("}");
-		return s.toString();
-	}
-	private String getSchoolYearScript() {
-		StringBuffer s = new StringBuffer();
-		s.append("function changeSchools(grade, hiddenSchGrade, realSubmit){").append(" \n\t");
-		s.append("var gradeSelect = grade;").append(" \n\t");
-		s.append("var hiddenSchoolgrade = hiddenSchGrade;").append(" \n\t");
-		s.append("var selectedGrade = gradeSelect.options[gradeSelect.selectedIndex].value;").append(" \n\t");
-		s.append("hiddenSchGrade.value = selectedGrade;").append(" \n\t");
-		s.append("realSubmit.value = 0;").append(" \n\t");
-		s.append("document.forms[1].submit();").append(" \n\t");
-		
-		s.append("}").append("\n\t\t\t");
-		
-		return s.toString();
-	}
-
-	private String getFilterScript2(IWContext iwc) throws java.rmi.RemoteException {
-		StringBuffer s = new StringBuffer();
-		s.append("function changeFilter2(index,type,area,school,selectedValue,showAll){").append(" \n\t");
-		s.append("var typeSelect = type;").append(" \n\t");
-		s.append("var areaSelect = area;").append(" \n\t");
-		s.append("var schoolSelect = school;").append(" \n\t");
-		s.append("var selectedType = typeSelect.options[typeSelect.selectedIndex].value;").append(" \n\t");
-		s.append("var selected = 0;").append(" \n\t");
-		s.append("if(index == 1){").append(" \n\t\t");
-		s.append("selected = typeSelect.options[typeSelect.selectedIndex].value;").append("\n\t\t");
-		s.append("areaSelect.options.length = 0;").append("\n\t\t");
-		s.append("schoolSelect.options.length = 0;").append("\n\t\t");
-		s.append("if (selectedType == -2)\n\t\t");
-		s.append("\tareaSelect.options[areaSelect.options.length] = new Option(\"");
-		s.append("\",\"-1\",true,true);").append("\n\t\t");
-		s.append("else\n\t\t");
-		s.append("\tareaSelect.options[areaSelect.options.length] = new Option(\"");
-		s.append(iwrb.getLocalizedString("choose_area", "Choose Area")).append("\",\"-1\",true,true);").append("\n\t\t");
-		s.append("}else if(index == 2){").append(" \n\t\t");
-		s.append("selected = areaSelect.options[areaSelect.selectedIndex].value;").append("\n\t\t");
-		s.append("if (selectedValue > -1) \n\t\t\tselected = selectedValue;").append("\n\t\t");
-		s.append("schoolSelect.options.length = 0;").append("\n\t\t");
-		s.append("if (selectedType == -2)\n\t\t");
-		s.append("\tschoolSelect.options[schoolSelect.options.length] = new Option(\"");
-		s.append("\",\"-1\",true,true);").append("\n\t\t");
-		s.append("else\n\t\t");
-		s.append("\tschoolSelect.options[schoolSelect.options.length] = new Option(\"");
-		s.append(iwrb.getLocalizedString("choose_school", "Choose School")).append("\",\"-1\",true,true);").append("\n\t");
-		s.append("} else if(index == 3){").append("\n\t\t");
-		s.append("selected = schoolSelect.options[schoolSelect.selectedIndex].value;").append("\n\t");
-		s.append("if (selectedValue > -1) \n\t\t\tselected = selectedValue;").append("\n\t\t");
-		s.append("}").append("\n\t\t\t");
-
-		// Data Filling ::
-
-		StringBuffer t = new StringBuffer("if(index==1){\n\t");
-		StringBuffer a = new StringBuffer("else if(index==2){\n\t");
-		StringBuffer c = new StringBuffer("else if(index==3){\n\t");
-
-		schoolsByType = new HashMap();
-
-		Collection Types = this.schoolTypes;
-		if (Types != null && !Types.isEmpty()) {
-			Iterator iter = Types.iterator();
-			SchoolType type;
-			SchoolArea area;
-			School school;
-			Collection areas;
-			Collection schools;
-			Collection schoolsInType;
-
-			SchoolYear yearAppliedFor = null;
-			if (iwc.isParameterSet(prmYearReload)){
-				yearAppliedFor = schCommBiz.getSchoolYear(Integer.parseInt(iwc.getParameter(prmYearReload)), 1);
-			}
-			else {
-				if (schoolYear != null) {
-					if (this._useOngoingSeason) {
-						yearAppliedFor = schoolYear;
-					}
-					else {
-						yearAppliedFor = schCommBiz.getNextSchoolYear(schoolYear);
-					}
-				}				
-			}
-			// iterate through schooltypes
-			while (iter.hasNext()) {
-				type = (SchoolType) iter.next();
-				//if (age.getYears() <= type.getMaxSchoolAge()) {
-
-				Integer tPK = (Integer) type.getPrimaryKey();
-				//System.err.println("checking type "+tPK.toString());
-				areas = getSchoolAreasWithType(tPK.intValue());
-				if (areas != null && !areas.isEmpty()) {
-					Iterator iter2 = areas.iterator();
-					t.append("if(selected == \"").append(tPK.toString()).append("\"){").append("\n\t\t");
-
-					Hashtable aHash = new Hashtable();
-
-					schoolsInType = new ArrayList();
-
-					// iterate through areas whithin types
-					while (iter2.hasNext()) {
-						area = (SchoolArea) iter2.next();
-						Integer aPK = (Integer) area.getPrimaryKey();
-						// System.err.println("checking area "+aPK.toString());
-						if (!aHash.containsKey(aPK)) {
-							aHash.put(aPK, aPK);
-							schools = getSchoolByAreaAndType(iwc, aPK.intValue(), tPK.intValue());
-							if (schools != null) {
-								schoolsInType.addAll(schools);
-								Iterator iter3 = schools.iterator();
-								a.append("if(selected == \"").append(aPK.toString()).append("\" && selectedType == \"").append(tPK.toString()).append("\"){").append("\n\t\t");
-								Hashtable hash = new Hashtable();
-								// iterator through schools whithin area and
-								// type
-								while (iter3.hasNext()) {
-									school = (School) iter3.next();
-									boolean hasRelation = true;
-									if (yearAppliedFor != null) {
-										hasRelation = schBuiz.getSchoolBusiness().hasSchoolRelationToYear(school, yearAppliedFor);
-									}
-									String pk = school.getPrimaryKey().toString();
-									//System.err.println("checking school
-									// "+pk.toString());
-									boolean invisibleForCitizen = false;
-									invisibleForCitizen = school.getInvisibleForCitizen();
-									if (!hash.containsKey(pk) && !invisibleForCitizen) {
-										if (!hasRelation) a.append("if (showAll == true)\n\t\t\t");
-										a.append("schoolSelect.options[schoolSelect.options.length] = new Option(\"");
-										a.append(school.getSchoolName()).append("\",\"");
-										a.append(pk).append("\");\n\t\t");
-										hash.put(pk, pk);
-									}
-
-								}
-								a.append("}\n\t\t");
-							}
-						}
-						else {
-							System.err.println("shools empty");
-						}
-						t.append("areaSelect.options[areaSelect.options.length] = new Option(\"");
-						t.append(area.getSchoolAreaName()).append("\",\"");
-						t.append(area.getPrimaryKey().toString()).append("\");").append("\n\t\t");
-
-					}
-					t.append("}\n\t");
-					schoolsByType.put(tPK, schoolsInType);
-				}
-				else {
-					System.err.println("areas empty");
-					schoolsByType.put(tPK, new ArrayList());
-				}
-			}
-		}
-		else
-			System.err.println("types empty");
-
-		s.append("\n\n");
-
-		t.append("\n\t }");
-		a.append("\n\t }");
-		c.append("\n\t }");
-
-		s.append(t.toString());
-		s.append(a.toString());
-		s.append(c.toString());
-		s.append("\n}");
-
-		return s.toString();
-	}
-
-	public String getInitFilterScript() {
-		StringBuffer s = new StringBuffer();
-		s.append("function initFilter(type,area,school,type_sel,area_sel,school_sel,showAll){ \n  ");
-		s.append("changeFilter2(1,type,area,school,type_sel,showAll); \n  ");
-		if (valTypeFirstTime > 0){
-			s.append("setSelected(type,type_sel); \n  ");	
-		}		
-		s.append("changeFilter2(2,type,area,school,area_sel,showAll); \n  ");
-		s.append("setSelected(area,area_sel); \n  ");
-		s.append("changeFilter2(3,type,area,school,school_sel,showAll); \n  ");
-		s.append("setSelected(school,school_sel); \n  ");
-		s.append("}");
-		return s.toString();
-	}
-
-	public String getSetSelectedScript() {
-		StringBuffer s = new StringBuffer();
-		s.append("function setSelected(input,selectedValue) { \n");
-		s.append("\tif (input.length > 1) { \n");
-		s.append("\t\tfor (var a = 0; a < input.length; a++) { \n");
-		s.append("\t\t\tif (input.options[a].value == selectedValue) \n");
-		s.append("\t\t\t\tinput.options[a].selected = true; \n");
-		s.append("\t\t} \n ");
-		s.append("\t} \n}");
-		return s.toString();
 	}
 
 	public String getSchoolCheckScript() {
