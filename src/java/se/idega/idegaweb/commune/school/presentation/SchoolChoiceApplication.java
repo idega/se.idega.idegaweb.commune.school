@@ -11,7 +11,6 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 import javax.ejb.FinderException;
 import javax.faces.component.UIComponent;
 import se.idega.idegaweb.commune.care.business.CareBusiness;
@@ -1009,11 +1008,20 @@ public class SchoolChoiceApplication extends CommuneBlock {
 
 		DropdownMenu drpGrade = (DropdownMenu) getStyledInterface(new DropdownMenu(prmYear));
 		drpGrade.addMenuElementFirst("-1", iwrb.getLocalizedString("school.select_year", "Select year"));
+		if (valType > 0) {
+			typeDrop.setSelectedElement(valType);
+			try {
+				Collection schoolYears = schBuiz.getSchoolYearHome().findAllSchoolYearBySchoolType(valType);
+				drpGrade.addMenuElements(schoolYears);
+			}
+			catch (FinderException e) {
+				e.printStackTrace();
+			}
+		}
 		
 		RemoteScriptHandler yearRemoteScriptHandler = new RemoteScriptHandler(typeDrop, drpGrade);
 		
 		try {
-//			RemoteScriptHandler rsh = new RemoteScriptHandler(typeDrop, drpGrade);
 			yearRemoteScriptHandler.setRemoteScriptCollectionClass(SchoolYearSelectorCollectionHandler.class);
 			add(yearRemoteScriptHandler);
 		}
@@ -1024,17 +1032,20 @@ public class SchoolChoiceApplication extends CommuneBlock {
 			ie.printStackTrace();
 		}
 
+		
+		
 		/*if (_reloadYear != -1){
 			drpGrade.setSelectedElement(String.valueOf(_reloadYear));
-		}else*/ if (valYear > -1) {
-			Collection coll = getSchoolYears();
-			if (coll != null) {
-				Iterator iter = coll.iterator();
-				while (iter.hasNext()) {
-					SchoolYear element = (SchoolYear) iter.next();
-					drpGrade.addMenuElement(element.getPrimaryKey().toString(), element.getName());
-				}
-			}
+		}else*/ 
+		if (valYear > -1) {
+//			Collection coll = getSchoolYears();
+//			if (coll != null) {
+//				Iterator iter = coll.iterator();
+//				while (iter.hasNext()) {
+//					SchoolYear element = (SchoolYear) iter.next();
+//					drpGrade.addMenuElement(element.getPrimaryKey().toString(), element.getName());
+//				}
+//			}
 			drpGrade.setSelectedElement(String.valueOf(valYear));	
 		}
 
@@ -1058,6 +1069,20 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		DropdownMenu drpFirstSchool = (DropdownMenu) getStyledInterface(new DropdownMenu(prmFirstSchool));
 		drpFirstSchool.addMenuElementFirst("-1", iwrb.getLocalizedString("school.school_first", "School........................."));
 		drpFirstSchool.setOnChange("alertIfSportsOrMusicSchool(this)");
+
+
+		Collection schoolAreas = null;
+		if (valType > 0) {
+			schoolAreas = schBuiz.getSchoolBusiness().findAllSchoolAreasByType(valType);
+		}
+		if (valFirstSchool > 0 && schoolAreas != null) {
+			int areaID = Integer.parseInt(schBuiz.getSchool(valFirstSchool).getSchoolArea().getPrimaryKey().toString());
+			drpFirstArea.addMenuElements(schoolAreas);
+			drpFirstArea.setSelectedElement(areaID);
+			Collection schools = schBuiz.getSchoolBusiness().findAllSchoolsByAreaAndTypeAndYear(areaID, valType, valYear);
+			drpFirstSchool.addMenuElements(schools);
+			drpFirstSchool.setSelectedElement(valFirstSchool);
+		}
 
 		try {
 			RemoteScriptHandler rsh = new RemoteScriptHandler(drpGrade, drpFirstArea);
@@ -1121,6 +1146,23 @@ public class SchoolChoiceApplication extends CommuneBlock {
 			drpThirdSchool.addMenuElementFirst("-1", iwrb.getLocalizedString("school.school_third", "School........................."));
 			drpThirdSchool.setOnChange("alertIfSportsOrMusicSchool(this)");
 
+			if (valSecondSchool > 0) {
+				int areaID = Integer.parseInt(schBuiz.getSchool(valSecondSchool).getSchoolArea().getPrimaryKey().toString());
+				drpSecondArea.addMenuElements(schoolAreas);
+				drpSecondArea.setSelectedElement(schBuiz.getSchool(valSecondSchool).getSchoolArea().getPrimaryKey().toString());
+				Collection schools = schBuiz.getSchoolBusiness().findAllSchoolsByAreaAndTypeAndYear(areaID, valType, valYear);
+				drpSecondSchool.addMenuElements(schools);
+				drpSecondSchool.setSelectedElement(valSecondSchool);
+			}
+			if (valThirdSchool > 0) {
+				int areaID = Integer.parseInt(schBuiz.getSchool(valThirdSchool).getSchoolArea().getPrimaryKey().toString());
+				drpThirdArea.addMenuElements(schoolAreas);
+				drpThirdArea.setSelectedElement(schBuiz.getSchool(valThirdSchool).getSchoolArea().getPrimaryKey().toString());
+				Collection schools = schBuiz.getSchoolBusiness().findAllSchoolsByAreaAndTypeAndYear(areaID, valType, valYear);
+				drpThirdSchool.addMenuElements(schools);
+				drpThirdSchool.setSelectedElement(valThirdSchool);
+			}
+			
 			try {
 				RemoteScriptHandler rsh = new RemoteScriptHandler(drpFirstSchool, drpSecondArea);
 				rsh.setRemoteScriptCollectionClass(SchoolChoiceApplicationSchoolAreaHandler.class);
@@ -1355,43 +1397,6 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		return null;
 	}
 
-	private Collection getSchoolYears() {
-		Collection tmpVec;
-		Vector schYears = null;
-		schYears = new Vector();
-		try {
-			// Add school years for school type "Forskola"
-			SchoolType preSch = schCommBiz.getSchoolBusiness().getSchoolTypeHome().findByTypeKey("sch_type.school_type_forskoleklass");
-			int preID = ((Integer) preSch.getPrimaryKey()).intValue();
-			tmpVec = schCommBiz.getSchoolBusiness().findAllSchoolYearsBySchoolType(preID);
-
-			for (Iterator iter = tmpVec.iterator(); iter.hasNext();) {
-				SchoolYear element = (SchoolYear) iter.next();
-				schYears.add(element);
-			}
-		}
-		catch (Exception e) {
-			logWarning("Error loading school years for school type pre school class");
-			log(e);
-		}
-
-		try {
-			// Add school years for school type "Grundskola"
-			SchoolType elemSch = schCommBiz.getSchoolBusiness().getSchoolTypeHome().findByTypeKey("sch_type.school_type_grundskola");
-			int elemID = ((Integer) elemSch.getPrimaryKey()).intValue();
-			tmpVec = schCommBiz.getSchoolBusiness().findAllSchoolYearsBySchoolType(elemID);
-			for (Iterator iter = tmpVec.iterator(); iter.hasNext();) {
-				SchoolYear element = (SchoolYear) iter.next();
-				schYears.add(element);
-			}
-		}
-		catch (Exception e) {
-			logWarning("Error loading school years for school type elementary school");
-			log(e);
-		}
-
-		return schYears;
-	}
 
 	public String getSchoolCheckScript() {
 		StringBuffer s = new StringBuffer();
