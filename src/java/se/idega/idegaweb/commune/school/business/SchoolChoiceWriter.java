@@ -73,8 +73,8 @@ public class SchoolChoiceWriter implements MediaWritable {
 				season = Integer.parseInt(req.getParameter(prmSeasonId));
 				school = Integer.parseInt(req.getParameter(prmSchoolId));
 				grade = Integer.parseInt(req.getParameter(prmGrade));				
-				setShowPriorityColumn(Boolean.parseBoolean(req.getParameter(PARAMETER_SHOW_PRIORITY_COLUMN)));
-								
+				setShowPriorityColumn(Boolean.valueOf(req.getParameter(PARAMETER_SHOW_PRIORITY_COLUMN)).booleanValue());
+				
 				buffer = writeXLS(school, season, grade);
 			}
 		}
