@@ -52,10 +52,12 @@ public class SchoolChoiceWriter implements MediaWritable {
 	public final static String prmSeasonId = "season_id";
 	public final static String prmSchoolId = "school_id";
 	public final static String prmGrade = "grade";
+	public final static String PARAMETER_SHOW_PRIORITY_COLUMN = "show_priority_column";
 	
 	private int season;
 	private int school;
 	private int grade;
+	private boolean showPriorityColumn = false;
 	
 	public SchoolChoiceWriter() {
 	}
@@ -70,8 +72,9 @@ public class SchoolChoiceWriter implements MediaWritable {
 			if (req.getParameter(prmSeasonId) != null && req.getParameter(prmSchoolId) != null) {
 				season = Integer.parseInt(req.getParameter(prmSeasonId));
 				school = Integer.parseInt(req.getParameter(prmSchoolId));
-				grade = Integer.parseInt(req.getParameter(prmGrade));
-				
+				grade = Integer.parseInt(req.getParameter(prmGrade));				
+				setShowPriorityColumn(Boolean.parseBoolean(req.getParameter(PARAMETER_SHOW_PRIORITY_COLUMN)));
+								
 				buffer = writeXLS(school, season, grade);
 			}
 		}
@@ -109,54 +112,60 @@ public class SchoolChoiceWriter implements MediaWritable {
 			showLanguage = true;
 		
 		if (!students.isEmpty()) {
-	    HSSFWorkbook wb = new HSSFWorkbook();
-	    HSSFSheet sheet = wb.createSheet(iwrb.getLocalizedString("school.school_choices","School choices"));
-	    sheet.setColumnWidth((short)0, (short) (30 * 256));
-	    sheet.setColumnWidth((short)1, (short) (14 * 256));
-	    sheet.setColumnWidth((short)2, (short) (30 * 256));
-	    sheet.setColumnWidth((short)3, (short) (14 * 256));
+		    HSSFWorkbook wb = new HSSFWorkbook();
+		    HSSFSheet sheet = wb.createSheet(iwrb.getLocalizedString("school.school_choices","School choices"));
+		    sheet.setColumnWidth((short)0, (short) (30 * 256));
+		    sheet.setColumnWidth((short)1, (short) (14 * 256));
+		    sheet.setColumnWidth((short)2, (short) (30 * 256));
+		    sheet.setColumnWidth((short)3, (short) (14 * 256));
 			sheet.setColumnWidth((short)4, (short) (30 * 256));
 			sheet.setColumnWidth((short)5, (short) (14 * 256));
 			sheet.setColumnWidth((short)6, (short) (14 * 256));
 			HSSFFont font = wb.createFont();
-	    font.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
-	    font.setFontHeightInPoints((short)12);
-	    HSSFCellStyle style = wb.createCellStyle();
-	    style.setFont(font);
-
+		    font.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
+		    font.setFontHeightInPoints((short)12);
+		    HSSFCellStyle style = wb.createCellStyle();
+		    style.setFont(font);
+	
 			int cellRow = 0;
 			int cellColumn = 0;
 			HSSFRow row = sheet.createRow(cellRow++);
 			HSSFCell cell = row.createCell((short)cellColumn++);
-	    cell.setCellValue(iwrb.getLocalizedString("school.name","Name"));
-	    cell.setCellStyle(style);
-	    cell = row.createCell((short)cellColumn++);
-	    cell.setCellValue(iwrb.getLocalizedString("school.personal_id","Personal ID"));
-	    cell.setCellStyle(style);
-	    cell = row.createCell((short)cellColumn++);
-	    cell.setCellValue(iwrb.getLocalizedString("school.address","Address"));
-	    cell.setCellStyle(style);
+		    cell.setCellValue(iwrb.getLocalizedString("school.name","Name"));
+		    cell.setCellStyle(style);
+		    cell = row.createCell((short)cellColumn++);
+		    cell.setCellValue(iwrb.getLocalizedString("school.personal_id","Personal ID"));
+		    cell.setCellStyle(style);
+		    cell = row.createCell((short)cellColumn++);
+		    cell.setCellValue(iwrb.getLocalizedString("school.address","Address"));
+		    cell.setCellStyle(style);
 			cell = row.createCell((short)cellColumn++);
 			cell.setCellValue(iwrb.getLocalizedString("school.gender","Gender"));
 			cell.setCellStyle(style);
-	    cell = row.createCell((short)cellColumn++);
-	    cell.setCellValue(iwrb.getLocalizedString("school.from_school","From School"));
-	    cell.setCellStyle(style);
-	    if (showLanguage) {
 		    cell = row.createCell((short)cellColumn++);
-		    cell.setCellValue(iwrb.getLocalizedString("school.language","Language"));
+		    cell.setCellValue(iwrb.getLocalizedString("school.from_school","From School"));
 		    cell.setCellStyle(style);
+		    if (showLanguage) {
+			    cell = row.createCell((short)cellColumn++);
+			    cell.setCellValue(iwrb.getLocalizedString("school.language","Language"));
+			    cell.setCellStyle(style);
 			}
-	    cell = row.createCell((short)cellColumn++);
-	    cell.setCellValue(iwrb.getLocalizedString("school.created","Created"));
-	    cell.setCellStyle(style);
+		    cell = row.createCell((short)cellColumn++);
+		    cell.setCellValue(iwrb.getLocalizedString("school.created","Created"));
+		    cell.setCellStyle(style);
+		    
+		    if(this.getShowPriorityColumn()) {
+			    cell = row.createCell((short)cellColumn++);
+			    cell.setCellValue(iwrb.getLocalizedString("school_choice.has_priority", "Has priority"));
+			    cell.setCellStyle(style);	    
+		    }
 	    
-	    SchoolChoice choice;
-	    School school;
-	    User applicant;
-	    Address address;
-	    IWTimestamp created;
-	    
+		    SchoolChoice choice;
+		    School school;
+		    User applicant;
+		    Address address;
+		    IWTimestamp created;
+		    
 			Iterator iter = students.iterator();
 			while (iter.hasNext()) {
 				row = sheet.createRow(cellRow++);
@@ -169,31 +178,37 @@ public class SchoolChoiceWriter implements MediaWritable {
 				
 				Name name = new Name(applicant.getFirstName(), applicant.getMiddleName(), applicant.getLastName());
 				row.createCell((short)cellColumn++).setCellValue(name.getName(locale, true));
-		    row.createCell((short)cellColumn++).setCellValue(PersonalIDFormatter.format(applicant.getPersonalID(), locale));
-		    if (address != null)
-			    row.createCell((short)cellColumn).setCellValue(address.getStreetAddress());
-		    cellColumn++;
-		    
-		    if (applicant.getGender().isFemaleGender())
-		    	row.createCell((short)cellColumn++).setCellValue(iwrb.getLocalizedString("school.girl", "Girl"));
-		    else
-		    	row.createCell((short)cellColumn++).setCellValue(iwrb.getLocalizedString("school.boy", "Boy"));
-
-		    if (school != null) {
-		    	String schoolName = school.getName();
-		    	if (choice.getStatus().equalsIgnoreCase(SchoolChoiceBMPBean.CASE_STATUS_MOVED))
-		    		schoolName += " (" + iwrb.getLocalizedString("school.moved", "Moved") + ")";
-		    	row.createCell((short)cellColumn).setCellValue(schoolName);
-		    }
-		    cellColumn++;
-		    
-		    if (showLanguage) {
-		    	if (choice.getLanguageChoice() != null)
-		    		row.createCell((short)cellColumn).setCellValue(iwrb.getLocalizedString(choice.getLanguageChoice(),""));
-		    	cellColumn++;
-		    }
-		    
-		    row.createCell((short)cellColumn++).setCellValue(created.getLocaleDate(locale, IWTimestamp.SHORT));
+			    row.createCell((short)cellColumn++).setCellValue(PersonalIDFormatter.format(applicant.getPersonalID(), locale));
+			    if (address != null)
+				    row.createCell((short)cellColumn).setCellValue(address.getStreetAddress());
+			    cellColumn++;
+			    
+			    if (applicant.getGender().isFemaleGender())
+			    	row.createCell((short)cellColumn++).setCellValue(iwrb.getLocalizedString("school.girl", "Girl"));
+			    else
+			    	row.createCell((short)cellColumn++).setCellValue(iwrb.getLocalizedString("school.boy", "Boy"));
+	
+			    if (school != null) {
+			    	String schoolName = school.getName();
+			    	if (choice.getStatus().equalsIgnoreCase(SchoolChoiceBMPBean.CASE_STATUS_MOVED))
+			    		schoolName += " (" + iwrb.getLocalizedString("school.moved", "Moved") + ")";
+			    	row.createCell((short)cellColumn).setCellValue(schoolName);
+			    }
+			    cellColumn++;
+			    
+			    if (showLanguage) {
+			    	if (choice.getLanguageChoice() != null)
+			    		row.createCell((short)cellColumn).setCellValue(iwrb.getLocalizedString(choice.getLanguageChoice(),""));
+			    	cellColumn++;
+			    }
+			    
+			    row.createCell((short)cellColumn++).setCellValue(created.getLocaleDate(locale, IWTimestamp.SHORT));
+			    
+			    if (this.getShowPriorityColumn()) {
+			    	String priority = choice.getPriority() ? iwrb.getLocalizedString("school_choice.yes", "Yes") : iwrb.getLocalizedString("school_choice.no", "No");
+			    	row.createCell((short)cellColumn++).setCellValue(priority);
+			    }
+			    
 			}
 			wb.write(mos);
 		}
@@ -207,5 +222,13 @@ public class SchoolChoiceWriter implements MediaWritable {
 
 	protected CommuneUserBusiness getCommuneUserBusiness(IWApplicationContext iwc) throws RemoteException {
 		return (CommuneUserBusiness) IBOLookup.getServiceInstance(iwc, CommuneUserBusiness.class);	
+	}
+
+	public boolean getShowPriorityColumn() {
+		return showPriorityColumn;
+	}
+
+	public void setShowPriorityColumn(boolean showPriorityColumn) {
+		this.showPriorityColumn = showPriorityColumn;
 	}
 }

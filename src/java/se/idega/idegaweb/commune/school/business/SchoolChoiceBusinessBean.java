@@ -492,10 +492,11 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		 //			getMessageBusiness().createUserMessage(choice.getOwner(), getPreliminaryMessageSubject(), getPreliminaryMessageBody(choice));
 		 }*/
 		
-		choice.setPriority(hasPriority(provider,choice.getOwner()));
-			
-		
-		
+		//TODO: spec says: In Danderyd, all children applying to elementary school have priority 
+		//if an older sibling is placed with the same provider.
+		//shouldn't we check, if child applies to elemetary school?
+		User applyingChild = getUserBusiness().getUser(new Integer(childId)); 
+		choice.setPriority(hasPriority(provider, choice.getOwner(), applyingChild));		
 		
 		if (parentCase != null)
 			choice.setParentCase(parentCase);
@@ -532,29 +533,62 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	}
 	
 	/**
-	 * TODO:  implement this method
+	 * Child has priority, if he's older sibling will be 
+	 * going to the same school in this year
+	 * 
 	 * @param provider
 	 * @param parent
 	 * @return
 	 */
-	private boolean hasPriority(School provider, User parent) {
+	private boolean hasPriority(School provider, User parent, User applyingChild) {
 		boolean priority = false;
-
+				
+		Integer applyingChildId = (Integer) applyingChild.getPrimaryKey();
+		Date applyingChildDateOfBirth = applyingChild.getDateOfBirth();
+		
 		try {
 			SchoolBusinessBean schoolBean = new SchoolBusinessBean();
-			is.idega.block.family.business.FamilyLogic ml = this
-					.getMemberFamilyLogic();
-
-			Collection children = ml.getChildrenFor(parent);
+			
+			FamilyLogic familyLogic = this.getMemberFamilyLogic();
+			Collection children = familyLogic.getChildrenFor(parent);
 
 			for (Iterator iter = children.iterator(); iter.hasNext();) {
 				User child = (User) iter.next();
-				child.getDateOfBirth();
-				schoolBean.hasActivePlacement(((Integer) child
-						.getPrimaryKey()).intValue(), ((Integer) provider
-						.getPrimaryKey()).intValue(), schoolBean
-						.getCategoryElementarySchool());
+				
+				//check, if current child is not the same applying child
+				Integer childId = (Integer) child.getPrimaryKey();				
+				if (childId.equals(applyingChildId)) {
+					continue;
+				}
+				
+				//check, if current child is older as applying child
+				Date childDateOfBirth = child.getDateOfBirth();
+				if(! applyingChildDateOfBirth.before(childDateOfBirth)) {
+					continue;
+				}
+				
+				//check, if current child has active placement to the same school
+				Integer providerId = (Integer) provider.getPrimaryKey();				
+				boolean hasActivePlacement = schoolBean.hasActivePlacement(
+						childId.intValue(), 
+						providerId.intValue(), 
+						schoolBean.getCategoryElementarySchool()); //see spec: ... all children applying to elementary school ...
+				if (! hasActivePlacement) {
+					continue;
+				}
+				
+				//check, if the school that the sibling goes to offers the next school year
+				//TODO
+				
+				
+				//finally, if current child escaped all the traps above, return true
+				priority = true;
+				
+				
+				/* this is from Maris O. code
 				schoolBean.getSchoolYearPlaces(provider);
+				*/
+				
 			}
 		}
 

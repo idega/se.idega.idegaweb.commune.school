@@ -87,6 +87,10 @@ public class SchoolReportBusinessBean extends IBOSessionBean implements SchoolRe
 	}
 	
 	public ReportableCollection getGroupReport(Collection schoolGroups, Collection columnNames, String freeText, Boolean showNativeLanguage, Boolean showSecondLanguage, Boolean showTerminated) {
+		return getGroupReport(schoolGroups, columnNames, freeText, showNativeLanguage, showSecondLanguage, showTerminated, null);
+	}	
+	
+	public ReportableCollection getGroupReport(Collection schoolGroups, Collection columnNames, String freeText, Boolean showNativeLanguage, Boolean showSecondLanguage, Boolean showTerminated, Boolean showAllChildrenNoMatterPriority) {
 		fillColumns(columnNames);
 		initializeBundlesIfNeeded();
 		Locale currentLocale = this.getUserContext().getCurrentLocale();
@@ -232,6 +236,19 @@ public class SchoolReportBusinessBean extends IBOSessionBean implements SchoolRe
 				if (showSecondLanguage != null) {
 					if (showSecondLanguage.booleanValue() != hasSecondLanguage) {
 						continue;
+					}
+				}
+				
+				if (showAllChildrenNoMatterPriority != null) {
+					if (showAllChildrenNoMatterPriority.booleanValue() == false) { 
+						//that means, only children with no priority
+						
+						//evaluation, whether student has priority or not
+						boolean studentHasPriority = false;
+						
+						if (studentHasPriority) {
+							continue;
+						}						
 					}
 				}
 				
