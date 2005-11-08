@@ -57,6 +57,7 @@ import com.idega.core.file.data.ICFileHome;
 import com.idega.data.IDOCreateException;
 import com.idega.data.IDOException;
 import com.idega.data.IDOLookup;
+import com.idega.data.IDORelationshipException;
 import com.idega.data.IDOStoreException;
 import com.idega.idegaweb.IWPropertyList;
 import com.idega.io.MemoryFileBuffer;
@@ -494,7 +495,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		
 		//TODO: spec says: In Danderyd, all children applying to elementary school have priority 
 		//if an older sibling is placed with the same provider.
-		//shouldn't we check, if child applies to elemetary school?
+		//shouldn't we check, if child applies to elementary school?
 		User applyingChild = getUserBusiness().getUser(new Integer(childId)); 
 		choice.setPriority(hasPriority(provider, choice.getOwner(), applyingChild));		
 		
@@ -562,10 +563,11 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 				}
 				
 				//check, if current child is older as applying child
+				// in other words, if current child birth date is before applying child birth date, than it is OK, else not OK
 				Date childDateOfBirth = child.getDateOfBirth();
-				if(! applyingChildDateOfBirth.before(childDateOfBirth)) {
+				if(! childDateOfBirth.before(applyingChildDateOfBirth)) {
 					continue;
-				}
+				}				
 				
 				//check, if current child has active placement to the same school
 				Integer providerId = (Integer) provider.getPrimaryKey();				
@@ -577,17 +579,37 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 					continue;
 				}
 				
-				//check, if the school that the sibling goes to offers the next school year
-				//TODO
+				//check, if the school that the sibling goes to offers 
+				//the next school year for that sibling
 				
+				// 1. get school years, which are offered by the school
+				// TODO:	we only need elementary school years? 
+				//	Malin: yes, elementary school years are fine.
+				// but there is no method to get them, so later, later
+				Collection schoolYears = provider.findRelatedSchoolYears(); // contains SchoolYear objects
+								 
+				// 2. get the school year the child is in now,
+				// TODO: does this method really return the current class? 
+				SchoolClassMember schoolClassMember = getSchoolClassMemberHome().findLatestByUserAndSchool(childId.intValue(), providerId.intValue());					
+				SchoolYear schoolYear = schoolClassMember.getSchoolYear();		
+				 
+				// 3.	check, if there is next school year for that child 
+				int ageForNextYear = schoolYear.getSchoolYearAge() + 1;
+				boolean hasNextYear = false;
+				for (Iterator iter2 = schoolYears.iterator(); iter2.hasNext();) {
+					SchoolYear sy = (SchoolYear) iter2.next();
+					if (sy.getSchoolYearAge() == ageForNextYear) {
+						hasNextYear = true;
+						break;
+					}
+				}
+				if(!hasNextYear){
+					continue;
+				}
 				
-				//finally, if current child escaped all the traps above, return true
+				//current child escaped all the traps above
 				priority = true;
-				
-				
-				/* this is from Maris O. code
-				schoolBean.getSchoolYearPlaces(provider);
-				*/
+				break;
 				
 			}
 		}
@@ -596,6 +618,10 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 			throw new IBORuntimeException(re);
 		} catch (NoChildrenFound ex) {
 			throw new IBORuntimeException(ex);
+		} catch (FinderException e) {
+			throw new IBORuntimeException(e);
+		} catch (IDORelationshipException e) {
+			throw new IBORuntimeException(e);
 		}
 
 		return priority;
