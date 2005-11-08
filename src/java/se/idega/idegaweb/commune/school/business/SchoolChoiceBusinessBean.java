@@ -582,14 +582,12 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 				//check, if the school that the sibling goes to offers 
 				//the next school year for that sibling
 				
-				// 1. get school years, which are offered by the school
-				// TODO:	we only need elementary school years? 
-				//	Malin: yes, elementary school years are fine.
+				// 1. get school years, which are offered by the school				 
+				//Malin: yes, elementary school years are fine.
 				// but there is no method to get them, so later, later
 				Collection schoolYears = provider.findRelatedSchoolYears(); // contains SchoolYear objects
 								 
-				// 2. get the school year the child is in now,
-				// TODO: does this method really return the current class? 
+				// 2. get the school year the child is in now,				 
 				SchoolClassMember schoolClassMember = getSchoolClassMemberHome().findLatestByUserAndSchool(childId.intValue(), providerId.intValue());					
 				SchoolYear schoolYear = schoolClassMember.getSchoolYear();		
 				 
