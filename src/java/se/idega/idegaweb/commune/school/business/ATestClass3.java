@@ -1,6 +1,6 @@
 package se.idega.idegaweb.commune.school.business;
 
-public class ATestClass2 {
+public class ATestClass3 {
 
 	/**
 	 * @param args
