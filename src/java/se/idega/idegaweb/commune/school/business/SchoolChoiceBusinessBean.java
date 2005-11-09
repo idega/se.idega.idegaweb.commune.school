@@ -563,7 +563,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 				}
 				
 				//check, if current child is older as applying child
-				// in other words, if current child birth date is before applying child birth date, than it is OK, else not OK
+				//  in other words, if current child birth date is before applying child birth date, than it is OK, else not OK
 				Date childDateOfBirth = child.getDateOfBirth();
 				if(! childDateOfBirth.before(applyingChildDateOfBirth)) {
 					continue;
