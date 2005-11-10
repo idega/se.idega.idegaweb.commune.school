@@ -155,8 +155,8 @@ public class SchoolChoiceWriter implements MediaWritable {
 		    cell.setCellStyle(style);
 		    
 		    if(this.getShowPriorityColumn()) {
-			    cell = row.createCell((short)cellColumn++);
-			    cell.setCellValue(iwrb.getLocalizedString("school_choice.has_priority", "Has priority"));
+			    cell = row.createCell((short)cellColumn++);			    
+			    cell.setCellValue(iwrb.getLocalizedString("school_choice.priority", "Priority"));
 			    cell.setCellStyle(style);	    
 		    }
 	    
