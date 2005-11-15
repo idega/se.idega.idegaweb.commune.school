@@ -222,7 +222,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	//private String prmChildIdAdmin = CitizenChildren.getChildIDParameterName() + "_admin";
 	private String _childId = null;
 	
-	
+	private boolean usePriority = false;
 	
 	
 	/**
@@ -242,21 +242,16 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		
 		//userbuiz = (UserBusiness) IBOLookup.getServiceInstance(iwc, UserBusiness.class);
 		//schCommBiz = (SchoolCommuneBusiness) IBOLookup.getServiceInstance(iwc, SchoolCommuneBusiness.class);
-		
-		
-			if (_useAsAdmin) {
-				if (!iwc.isParameterSet(prmAction)) {
-					add (createMainTable (getUserSearchFormTable (iwc)));
-				}
-				else{
-						control(iwc);	
-				}
+				
+		if (_useAsAdmin) {
+			if (!iwc.isParameterSet(prmAction)) {
+				add(createMainTable(getUserSearchFormTable(iwc)));
+			} else {
+				control(iwc);
 			}
-			else {
-					control(iwc);
-			}	
-		
-		
+		} else {
+			control(iwc);
+		}			
 		
 	}
 
@@ -284,6 +279,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		}
 		return hasPermission;
 	}
+	
 	public void control(IWContext iwc) throws Exception {
 		//debugParameters(iwc);
 		childId = getChildId(iwc);
@@ -516,7 +512,8 @@ public class SchoolChoiceApplication extends CommuneBlock {
 			// schoolChange, valSixyearCare, valAutoAssign, valCustodiansAgree,
 			// valSendCatalogue, valPlacementDate, season);
 						
-			schBuiz.createSchoolChoices(valCaseOwner, childId, valType, valPreSchool, valFirstSchool, valSecondSchool, valThirdSchool, valYear, valPreYear, valMethod, -1, -1, valLanguage, valMessage, schoolChange, valSixyearCare, valAutoAssign, valCustodiansAgree, valSendCatalogue, valPlacementDate, season, valNativeLangIsChecked, valNativeLang, valExtraChoiceMessages, _useAsAdmin);
+			schBuiz.createSchoolChoices(valCaseOwner, childId, valType, valPreSchool, valFirstSchool, valSecondSchool, valThirdSchool, valYear, valPreYear, valMethod, -1, -1, valLanguage, valMessage, schoolChange, valSixyearCare, valAutoAssign, valCustodiansAgree, valSendCatalogue, valPlacementDate, season, valNativeLangIsChecked, valNativeLang, valExtraChoiceMessages, _useAsAdmin, usePriority);
+			
 			return true;
 			
 		}
@@ -995,6 +992,17 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		table.setWidthAndHeightToHundredPercent();
 		table.setWidth(5, 1, "100%");
 		table.add(getHeader(iwrb.getLocalizedString("school.choice_for_schoolyear", "Choice for the schoolyear")), 1, 1);
+		
+		// quick hack by dainis
+		boolean useHack = false;
+		if(useHack){
+			this.valType = 4;
+			this.valYear = 4;
+			
+			this.valFirstSchool = 81;
+			this.valSecondSchool = 81;
+			this.valThirdSchool = 81;
+		}
 
 		DropdownMenu typeDrop = getTypeDrop(prmType, true, false);
 //		typeDrop.setOnChange(getFilterCallerScript(prmType, prmFirstArea, prmFirstSchool, 1, false));
@@ -1068,6 +1076,8 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		if (valType > 0) {
 			schoolAreas = schBuiz.getSchoolBusiness().findAllSchoolAreasByType(valType);
 		}
+		 
+		//old code, problably buggy 
 		if (valFirstSchool > 0 && schoolAreas != null) {
 			int areaID = Integer.parseInt(schBuiz.getSchool(valFirstSchool).getSchoolArea().getPrimaryKey().toString());
 			drpFirstArea.addMenuElements(schoolAreas);
@@ -1075,7 +1085,23 @@ public class SchoolChoiceApplication extends CommuneBlock {
 			Collection schools = schBuiz.getSchoolBusiness().findAllSchoolsByAreaAndTypeAndYear(areaID, valType, valYear);
 			drpFirstSchool.addMenuElements(schools);
 			drpFirstSchool.setSelectedElement(valFirstSchool);
-		}
+		}		
+		
+		/*
+		//new code by Dainis 2005-11-08
+		if (schoolAreas != null) {
+			drpFirstArea.addMenuElements(schoolAreas);			
+
+			int areaID = Integer.parseInt(schBuiz.getSchool(valFirstSchool).getSchoolArea().getPrimaryKey().toString());
+			drpFirstArea.setSelectedElement(areaID);
+			
+			Collection schools = schBuiz.getSchoolBusiness().findAllSchoolsByAreaAndTypeAndYear(areaID, valType, valYear);
+			drpFirstSchool.addMenuElements(schools);
+			if (valFirstSchool > 0) {
+				drpFirstSchool.setSelectedElement(valFirstSchool);
+			}
+		}	
+		*/	
 
 		try {
 			RemoteScriptHandler rsh = new RemoteScriptHandler(drpGrade, drpFirstArea);
@@ -1888,5 +1914,13 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	 */
 	public void setOutsideOfCommunePage(ICPage page) {
 		this._outsideCommunePage = page;
+	}
+
+	public boolean getUsePriority() {
+		return usePriority;
+	}
+
+	public void setUsePriority(boolean usePriority) {
+		this.usePriority = usePriority;
 	}
 }
