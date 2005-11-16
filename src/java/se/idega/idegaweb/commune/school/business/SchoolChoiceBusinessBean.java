@@ -552,7 +552,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	 * @param parent
 	 * @return
 	 */
-	private boolean hasPriority(School provider, User parent, User applyingChild) {
+	public boolean hasPriority(School provider, User parent, User applyingChild) {
 		boolean priority = false;
 				
 		Integer applyingChildId = (Integer) applyingChild.getPrimaryKey();

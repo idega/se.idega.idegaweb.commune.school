@@ -157,6 +157,12 @@ public interface SchoolChoiceBusiness extends IBOService, CaseBusiness {
 			throws IDOCreateException, java.rmi.RemoteException;
 
 	/**
+	 * @see se.idega.idegaweb.commune.school.business.SchoolChoiceBusinessBean#hasPriority
+	 */
+	public boolean hasPriority(School provider, User parent, User applyingChild)
+			throws java.rmi.RemoteException;
+
+	/**
 	 * @see se.idega.idegaweb.commune.school.business.SchoolChoiceBusinessBean#createCurrentSchoolSeason
 	 */
 	public void createCurrentSchoolSeason(Integer newKey, Integer oldKey)
