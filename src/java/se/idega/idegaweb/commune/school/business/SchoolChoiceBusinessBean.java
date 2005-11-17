@@ -573,12 +573,14 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 					continue;
 				}
 				
+				/* commented out 2005.11.17 by Dainis in behalf of Asa request
 				//check, if current child is older as applying child
 				//  in other words, if current child birth date is before applying child birth date, than it is OK, else not OK
 				Date childDateOfBirth = child.getDateOfBirth();
 				if(! childDateOfBirth.before(applyingChildDateOfBirth)) {
 					continue;
 				}				
+				*/
 				
 				//check, if current child has active placement to the same school
 				Integer providerId = (Integer) provider.getPrimaryKey();				
