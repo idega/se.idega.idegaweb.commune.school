@@ -22,6 +22,7 @@ import com.idega.block.process.data.CaseBMPBean;
 import com.idega.block.school.data.School;
 import com.idega.block.school.data.SchoolClassBMPBean;
 import com.idega.block.school.data.SchoolSeason;
+import com.idega.block.school.data.SchoolStudyPath;
 import com.idega.block.school.data.SchoolType;
 import com.idega.block.school.data.SchoolYear;
 import com.idega.data.IDOCompositePrimaryKeyException;
@@ -87,6 +88,8 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 
 	public final static String HAS_RECEIVED_PLACEMENT_MESSAGE = "placement_message";
 	public final static String HAS_RECEIVED_CONFIRMATION_MESSAGE = "confirmation_message";
+	
+	public final static String HANDICRAFT_ID = "handicraft_id"; // relation to sch_study_path.study_path_id
 
 	public final static String CASE_STATUS_CREATED = "UBEH";
 	public final static String CASE_STATUS_QUIET = "TYST";
@@ -164,6 +167,8 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 		
 		this.addAttribute(HAS_RECEIVED_PLACEMENT_MESSAGE, "Placement message", Boolean.class);
 		this.addAttribute(HAS_RECEIVED_CONFIRMATION_MESSAGE, "Confirmation message", Boolean.class);
+		
+		this.addManyToOneRelationship(HANDICRAFT_ID, SchoolStudyPath.class);
 
 		addIndex("IDX_COMM_SCH_CHOICE_2", new String[]{getIDColumnName(), CHILD});
 		addIndex("IDX_COMM_SCH_CHOICE_3", new String[]{getIDColumnName(), CHOSEN_SCHOOL});
@@ -406,7 +411,23 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 	
 	public void setPriority(boolean prior) {
 		setColumn(PRIORITY,prior);
-	}			
+	}
+	
+	public SchoolStudyPath getHandicraft() {
+		return (SchoolStudyPath) getColumnValue(HANDICRAFT_ID);
+	}
+	
+	public int getHandicraftId() {
+		return getIntColumnValue(HANDICRAFT_ID);
+	}
+	
+	public void setHandicraft(SchoolStudyPath path) {
+		setColumn(HANDICRAFT_ID, path);
+	}
+	
+	public void setHandicraftId(int schoolStudyPathId) {
+		setColumn(HANDICRAFT_ID, schoolStudyPathId);
+	}	
 
 	public int ejbHomeCountBySchoolIDAndSeasonIDAndStatus(int schoolId, int seasonId, String[] statuses) throws IDOException {
 		try {
