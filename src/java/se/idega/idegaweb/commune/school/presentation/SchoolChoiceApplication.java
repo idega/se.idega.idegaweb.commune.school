@@ -28,6 +28,7 @@ import com.idega.block.school.data.SchoolCategoryBMPBean;
 import com.idega.block.school.data.SchoolClass;
 import com.idega.block.school.data.SchoolClassMember;
 import com.idega.block.school.data.SchoolSeason;
+import com.idega.block.school.data.SchoolStudyPath;
 import com.idega.block.school.data.SchoolType;
 import com.idega.block.school.data.SchoolTypeHome;
 import com.idega.block.school.data.SchoolYear;
@@ -127,6 +128,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	//private String prmSchoolChange = prefix + "scl_chg";
 	private String prmSixYearCare = prefix + "six_car";
 	private String prmLanguage = prefix + "cho_lng";
+	private String prmHandicraft = prefix + "handicraft";	
 	private String prmAfterschool = prefix + "aft_schl";
 	private String prmAction = prefix + "snd_frm";
 	private String prmChildId = CitizenChildren.getChildIDParameterName();
@@ -147,6 +149,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	private boolean valCustodiansAgree = false;
 	private String valMessage = "";
 	private String valLanguage = "";
+	private int valHandicraft = -1; 
 	private int valFirstSchool = -1;
 	private int valSecondSchool = -1;
 	private int valThirdSchool = -1;
@@ -179,7 +182,6 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	SchoolType schoolType = null;
 	SchoolSeason season = null;
 	SchoolSeason seasonNew = null;
-
 	
 	Map schoolsByType = null;
 
@@ -222,8 +224,9 @@ public class SchoolChoiceApplication extends CommuneBlock {
 	//private String prmChildIdAdmin = CitizenChildren.getChildIDParameterName() + "_admin";
 	private String _childId = null;
 	
-	private boolean usePriority = false;
-	
+	private boolean usePriority = false;	
+	private boolean showHandicraftChoice = false; 	
+	private int studyPathGroupId = 0; 	
 	
 	/**
 	 * @param ongoingSeason
@@ -366,6 +369,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 									 */
 									valSixyearCare = element.getKeepChildrenCare();
 									if (element.getLanguageChoice() != null) valLanguage = element.getLanguageChoice();
+									if (element.getHandicraft() != null) valHandicraft = ((Integer)element.getHandicraft().getPrimaryKey()).intValue();
 									if (element.getMessage() != null) valMessage = element.getMessage();
 									count++;
 									owner = element.getOwner();
@@ -512,7 +516,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 			// schoolChange, valSixyearCare, valAutoAssign, valCustodiansAgree,
 			// valSendCatalogue, valPlacementDate, season);
 						
-			schBuiz.createSchoolChoices(valCaseOwner, childId, valType, valPreSchool, valFirstSchool, valSecondSchool, valThirdSchool, valYear, valPreYear, valMethod, -1, -1, valLanguage, valMessage, schoolChange, valSixyearCare, valAutoAssign, valCustodiansAgree, valSendCatalogue, valPlacementDate, season, valNativeLangIsChecked, valNativeLang, valExtraChoiceMessages, _useAsAdmin, usePriority);
+			schBuiz.createSchoolChoices(valCaseOwner, childId, valType, valPreSchool, valFirstSchool, valSecondSchool, valThirdSchool, valYear, valPreYear, valMethod, -1, -1, valLanguage, valMessage, schoolChange, valSixyearCare, valAutoAssign, valCustodiansAgree, valSendCatalogue, valPlacementDate, season, valNativeLangIsChecked, valNativeLang, valExtraChoiceMessages, _useAsAdmin, usePriority, valHandicraft);
 			
 			return true;
 			
@@ -535,6 +539,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		valCustodiansAgree = iwc.isParameterSet(prmFirstSchool) ? Boolean.valueOf(iwc.getParameter(prmCustodiansAgree)).booleanValue() : false;
 		valMessage = iwc.getParameter(prmMessage);
 		valLanguage = iwc.getParameter(prmLanguage);
+		valHandicraft = iwc.isParameterSet(prmHandicraft) ? Integer.parseInt(iwc.getParameter(prmHandicraft)) : -1;		
 		valPlacementDate = iwc.isParameterSet(prmPlacementDate) ? new IWTimestamp(iwc.getParameter(prmPlacementDate)).getDate() : null;
 		valFirstSchool = iwc.isParameterSet(prmFirstSchool) ? Integer.parseInt(iwc.getParameter(prmFirstSchool)) : -1;
 		valSecondSchool = iwc.isParameterSet(prmSecondSchool) ? Integer.parseInt(iwc.getParameter(prmSecondSchool)) : -1;
@@ -1273,7 +1278,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 			table.mergeCells(3, row, 5, row++);
 			hasLanguageSelection = true;
 		}
-
+		
 		if (_useOngoingSeason) {
 			IWTimestamp stamp = new IWTimestamp();
 			stamp.addDays(1);
@@ -1319,6 +1324,23 @@ public class SchoolChoiceApplication extends CommuneBlock {
 			}
 			table.setHeight(row++, 5);
 		}
+				
+		// handicraft
+		if (this.getShowHandicraftChoice()) { 
+			// handicraft choice message link
+			table.mergeCells(1, row, 5, row);
+			table.add(getHeader(iwrb.getLocalizedString("school.choice.handicraft.information_on_handicraft", "Information on handicraft")), 1, row);
+			table.add(Text.getNonBrakingSpace(), 1, row);
+			Link msgLinkForHandicraft = new Link(this.getInformationIcon(localize("school.handicraft.form_message_link_text", "Handicraft message")));
+			msgLinkForHandicraft.setToOpenAlert(localize("school.handicraft.message", "Localized Handicraft message... "));
+			table.add(msgLinkForHandicraft, 1, row++);						
+		
+			table.setHeight(row++, 5);
+			table.add(getSmallHeader(iwrb.getLocalizedString("school.handicraft.handicraft", "Handicraft") + ":"), 1, row);
+			table.add(this.getHandicraftMeny(), 3, row);
+			table.mergeCells(3, row, 5, row++);
+		}
+		// end of handicraft		
 
 		// School choice message link
 		table.mergeCells(1, row, 5, row);
@@ -1340,6 +1362,24 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		return table;
 	}
 
+	private DropdownMenu getHandicraftMeny() throws RemoteException {
+		DropdownMenu handicraftChoice = (DropdownMenu) getStyledInterface(new DropdownMenu(prmHandicraft));
+		handicraftChoice.addMenuElement(-1, localize("school.handicraft.choice_of_handicraft", "Choice of handicraft"));
+		
+		Collection handicraftOptions = schBuiz.findHandicraftOptions(this.getStudyPathGroupId());
+		if (!handicraftOptions.isEmpty()) {
+			SchoolStudyPath path = null;
+			for (Iterator iter = handicraftOptions.iterator(); iter.hasNext();) {
+				path = (SchoolStudyPath) iter.next();					
+				handicraftChoice.addMenuElement(((Integer) path.getPrimaryKey()).intValue(), localize(path.getLocalizedKey(), path.getLocalizedKey()));
+			}				
+		}			
+		if (valHandicraft > -1) handicraftChoice.setSelectedElement(String.valueOf(valHandicraft));
+		
+		handicraftChoice.setAsNotEmpty(iwrb.getLocalizedString("school.handicraft.handicraft_required_message", "Handicraft must be chosen"));
+		return handicraftChoice;
+	}
+
 	private DropdownMenu getDropdown(String name, String firstElement) {
 		DropdownMenu menu = (DropdownMenu) getStyledInterface(new DropdownMenu(name));
 		menu.addMenuElementFirst("-1", firstElement);
@@ -1348,7 +1388,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 
 	private DropdownMenu getNativeLanguagesDropdown() {
 		DropdownMenu drop = (DropdownMenu) getStyledInterface(new DropdownMenu(prmNativeLang));
-		drop.addMenuElement("-1", localize("school.drp_chose_native_lang", "- Chose languge -"));
+		drop.addMenuElement("-1", localize("school.drp_chose_native_lang", "- Choose language -"));
 		try {
 			Collection langs = getICLanguageHome().findAll();
 			if (langs != null) {
@@ -1922,5 +1962,24 @@ public class SchoolChoiceApplication extends CommuneBlock {
 
 	public void setUsePriority(boolean usePriority) {
 		this.usePriority = usePriority;
+	}
+
+	
+	public boolean getShowHandicraftChoice() {
+		return showHandicraftChoice;
+	}
+	
+	public void setShowHandicraftChoice(boolean showHandicraftChoice) {
+		this.showHandicraftChoice = showHandicraftChoice;
+	}
+
+	
+	public int getStudyPathGroupId() {
+		return studyPathGroupId;
+	}
+
+	
+	public void setStudyPathGroupId(int studyPathGroupId) {
+		this.studyPathGroupId = studyPathGroupId;
 	}
 }
