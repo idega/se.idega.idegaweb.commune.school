@@ -46,6 +46,10 @@ import com.idega.block.school.data.SchoolClass;
 import com.idega.block.school.data.SchoolClassMember;
 import com.idega.block.school.data.SchoolClassMemberHome;
 import com.idega.block.school.data.SchoolSeason;
+import com.idega.block.school.data.SchoolStudyPath;
+import com.idega.block.school.data.SchoolStudyPathGroup;
+import com.idega.block.school.data.SchoolStudyPathGroupHome;
+import com.idega.block.school.data.SchoolStudyPathHome;
 import com.idega.block.school.data.SchoolUser;
 import com.idega.block.school.data.SchoolYear;
 import com.idega.block.school.data.SchoolYearHome;
@@ -57,6 +61,7 @@ import com.idega.core.file.data.ICFileHome;
 import com.idega.data.IDOCreateException;
 import com.idega.data.IDOException;
 import com.idega.data.IDOLookup;
+import com.idega.data.IDOLookupException;
 import com.idega.data.IDORelationshipException;
 import com.idega.data.IDOStoreException;
 import com.idega.idegaweb.IWPropertyList;
@@ -276,7 +281,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 
 	
 	public List createSchoolChoices(int userId, int childId, int school_type_id, int current_school, int chosen_school_1, int chosen_school_2, int chosen_school_3, int schoolYearID, int currentYearID, int method, int workSituation1, int workSituation2, String language, String message, boolean changeOfSchool, boolean keepChildrenCare, boolean autoAssign, boolean custodiansAgree, boolean schoolCatalogue, Date placementDate, SchoolSeason season, boolean nativeLangIsChecked, int nativeLang, String[] extraMessages, boolean useAsAdmin) throws IDOCreateException {
-		return createSchoolChoices(userId, childId, school_type_id, current_school, chosen_school_1, chosen_school_2, chosen_school_3, schoolYearID, currentYearID, method, workSituation1, workSituation2, language, message, changeOfSchool, keepChildrenCare, autoAssign, custodiansAgree, schoolCatalogue, placementDate, season, nativeLangIsChecked, nativeLang, extraMessages, useAsAdmin, false);
+		return createSchoolChoices(userId, childId, school_type_id, current_school, chosen_school_1, chosen_school_2, chosen_school_3, schoolYearID, currentYearID, method, workSituation1, workSituation2, language, message, changeOfSchool, keepChildrenCare, autoAssign, custodiansAgree, schoolCatalogue, placementDate, season, nativeLangIsChecked, nativeLang, extraMessages, useAsAdmin, false, -1);
 	}
 	
 	/**
@@ -307,7 +312,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	 * @return @throws
 	 *         IDOCreateException
 	 */
-	public List createSchoolChoices(int userId, int childId, int school_type_id, int current_school, int chosen_school_1, int chosen_school_2, int chosen_school_3, int schoolYearID, int currentYearID, int method, int workSituation1, int workSituation2, String language, String message, boolean changeOfSchool, boolean keepChildrenCare, boolean autoAssign, boolean custodiansAgree, boolean schoolCatalogue, Date placementDate, SchoolSeason season, boolean nativeLangIsChecked, int nativeLang, String[] extraMessages, boolean useAsAdmin, boolean usePriority) throws IDOCreateException {
+	public List createSchoolChoices(int userId, int childId, int school_type_id, int current_school, int chosen_school_1, int chosen_school_2, int chosen_school_3, int schoolYearID, int currentYearID, int method, int workSituation1, int workSituation2, String language, String message, boolean changeOfSchool, boolean keepChildrenCare, boolean autoAssign, boolean custodiansAgree, boolean schoolCatalogue, Date placementDate, SchoolSeason season, boolean nativeLangIsChecked, int nativeLang, String[] extraMessages, boolean useAsAdmin, boolean usePriority, int handicraftId) throws IDOCreateException {
 		boolean isInSCPeriod = isInSchoolChoicePeriod();		
 		if (placementDate != null) {
 			
@@ -361,7 +366,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 			IWTimestamp stamp = new IWTimestamp();
 			
 			for (int i = 0; i < caseCount; i++) {
-				choice = createSchoolChoice(stamp, userId, childId, school_type_id, current_school, schoolIds[i], schoolYearID, currentYearID, i + 1, method, workSituation1, workSituation2, language, message, time, changeOfSchool, keepChildrenCare, autoAssign, custodiansAgree, schoolCatalogue, i == 0 ? first : other, choice, placementDate, season, extraMessages[i], usePriority);
+				choice = createSchoolChoice(stamp, userId, childId, school_type_id, current_school, schoolIds[i], schoolYearID, currentYearID, i + 1, method, workSituation1, workSituation2, language, message, time, changeOfSchool, keepChildrenCare, autoAssign, custodiansAgree, schoolCatalogue, i == 0 ? first : other, choice, placementDate, season, extraMessages[i], usePriority, handicraftId);
 				returnList.add(choice);
 			}
 			if (useAsAdmin){
@@ -409,10 +414,10 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	}
 	
 	private SchoolChoice createSchoolChoice(IWTimestamp stamp, int userId, int childId, int school_type_id, int current_school, int chosen_school, int schoolYearID, int currentYearID, int choiceOrder, int method, int workSituation1, int workSituation2, String language, String message, java.sql.Timestamp choiceDate, boolean changeOfSchool, boolean keepChildrenCare, boolean autoAssign, boolean custodiansAgree, boolean schoolCatalogue, CaseStatus caseStatus, Case parentCase, Date placementDate, SchoolSeason season, String extraMessage) throws CreateException, RemoteException {
-		return createSchoolChoice(stamp, userId, childId, school_type_id, current_school, chosen_school, schoolYearID, currentYearID, choiceOrder, method, workSituation1, workSituation2, language, message, choiceDate, changeOfSchool, keepChildrenCare, autoAssign, custodiansAgree, schoolCatalogue, caseStatus, parentCase, placementDate, season, extraMessage, false);	
+		return createSchoolChoice(stamp, userId, childId, school_type_id, current_school, chosen_school, schoolYearID, currentYearID, choiceOrder, method, workSituation1, workSituation2, language, message, choiceDate, changeOfSchool, keepChildrenCare, autoAssign, custodiansAgree, schoolCatalogue, caseStatus, parentCase, placementDate, season, extraMessage, false, -1);	
 	}
 	
-	private SchoolChoice createSchoolChoice(IWTimestamp stamp, int userId, int childId, int school_type_id, int current_school, int chosen_school, int schoolYearID, int currentYearID, int choiceOrder, int method, int workSituation1, int workSituation2, String language, String message, java.sql.Timestamp choiceDate, boolean changeOfSchool, boolean keepChildrenCare, boolean autoAssign, boolean custodiansAgree, boolean schoolCatalogue, CaseStatus caseStatus, Case parentCase, Date placementDate, SchoolSeason season, String extraMessage, boolean usePriority) throws CreateException, RemoteException {
+	private SchoolChoice createSchoolChoice(IWTimestamp stamp, int userId, int childId, int school_type_id, int current_school, int chosen_school, int schoolYearID, int currentYearID, int choiceOrder, int method, int workSituation1, int workSituation2, String language, String message, java.sql.Timestamp choiceDate, boolean changeOfSchool, boolean keepChildrenCare, boolean autoAssign, boolean custodiansAgree, boolean schoolCatalogue, CaseStatus caseStatus, Case parentCase, Date placementDate, SchoolSeason season, String extraMessage, boolean usePriority, int handicraftId) throws CreateException, RemoteException {
 		if (season == null) {
 			try {
 				season = getCareBusiness().getCurrentSeason();
@@ -508,6 +513,10 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 			//shouldn't we check, if child applies to elementary school?
 			User applyingChild = getUserBusiness().getUser(new Integer(childId)); 
 			choice.setPriority(hasPriority(provider, choice.getOwner(), applyingChild));	
+		}
+		
+		if (handicraftId > 0) {
+			choice.setHandicraftId(handicraftId);
 		}
 		
 		if (parentCase != null)
@@ -2147,6 +2156,44 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	}
 	
 	
-
+	/**
+	 * <p>
+	 * Returns Collection of SchoolStudyPath's or empty Vector if no paths found or exception occurs. 
+	 * </p>
+	 * @param schoolStudyPathGroupId id of the school study path group, to which school study paths belong
+	 * @return
+	 * @throws RemoteException
+	 */
+	public Collection findHandicraftOptions(int schoolStudyPathGroupId) throws RemoteException {		
+		SchoolStudyPathGroup pathGroup;
+		try {
+			pathGroup = this.getSchoolStudyPathGroupHome().findByPrimaryKey(new Integer(schoolStudyPathGroupId));
+			return this.getSchoolStudyPathHome().findBySchoolStudyPathGroup(pathGroup);
+		}
+		catch (FinderException e) {
+			e.printStackTrace();
+			return new Vector();
+		}
+	}	
+	
+	private SchoolStudyPathHome getSchoolStudyPathHome() {
+		try {
+			return (SchoolStudyPathHome) IDOLookup.getHome(SchoolStudyPath.class);
+		}		
+		catch (IDOLookupException e) {			
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	private SchoolStudyPathGroupHome getSchoolStudyPathGroupHome() {
+		try {
+			return (SchoolStudyPathGroupHome) IDOLookup.getHome(SchoolStudyPathGroup.class);
+		}		
+		catch (IDOLookupException e) {			
+			e.printStackTrace();
+			return null;
+		}
+	}	
 		
 }

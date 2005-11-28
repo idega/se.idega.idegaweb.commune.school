@@ -23,6 +23,7 @@ import com.idega.block.datareport.util.ReportableField;
 import com.idega.block.school.business.SchoolBusiness;
 import com.idega.block.school.data.School;
 import com.idega.block.school.data.SchoolClassMember;
+import com.idega.block.school.data.SchoolStudyPath;
 import com.idega.block.school.data.SchoolYear;
 import com.idega.business.IBOLookup;
 import com.idega.business.IBORuntimeException;
@@ -212,6 +213,14 @@ public class SchoolReportBusinessBean extends IBOSessionBean implements SchoolRe
 			reportCollection.addField(yearsWithLanguage);
 		}
 		
+		ReportableField handicraft = new ReportableField(FIELD_HANDICRAFT, String.class);
+		handicraft.setLocalizedName(getLocalizedString("school.handicraft.choice_of_handicraft", "Choice of handicraft"), currentLocale);
+		handicraft.setMaxNumberOfCharacters(100);
+		if (displayColumn(FIELD_HANDICRAFT)) {
+			_fields.add(handicraft);
+			reportCollection.addField(handicraft);
+		}
+		
 		int numberOfStudents = 0;
 		
 		try {
@@ -359,6 +368,14 @@ public class SchoolReportBusinessBean extends IBOSessionBean implements SchoolRe
 					}
 					else {
 						data.addData(yearsWithLanguage, "-");
+					}
+				}
+				
+				if (displayColumn(FIELD_HANDICRAFT)) {
+					SchoolStudyPath handicraftPath = student.getHandicraft();
+					if (handicraftPath != null) {
+						String s = _iwrb.getLocalizedString(handicraftPath.getLocalizedKey(), handicraftPath.getLocalizedKey());
+						data.addData(handicraft, s);
 					}
 				}
 				
