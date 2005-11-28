@@ -28,6 +28,7 @@ import se.idega.util.SchoolClassMemberComparatorForSweden;
 import com.idega.block.school.business.SchoolBusiness;
 import com.idega.block.school.data.SchoolClass;
 import com.idega.block.school.data.SchoolClassMember;
+import com.idega.block.school.data.SchoolStudyPath;
 import com.idega.business.IBOLookup;
 import com.idega.core.contact.data.Phone;
 import com.idega.core.location.data.Address;
@@ -82,6 +83,9 @@ public class SchoolClassWriter implements MediaWritable {
 	public final static String XLS = "xls";
 	public final static String PDF = "pdf";
 	
+	public final static String PARAMETER_SHOW_HANDICRAFT_COLUMN = "show_handicraft_column";
+	private boolean showHandicraftColumn = false;
+	
 	public SchoolClassWriter() {
 	}
 	
@@ -98,7 +102,8 @@ public class SchoolClassWriter implements MediaWritable {
 				schoolName = schoolBusiness.getSchool(new Integer(schoolClass.getSchoolId())).getSchoolName();
 				seasonName = schoolBusiness.getSchoolSeason(new Integer(schoolClass.getSchoolSeasonId())).getSchoolSeasonName();
 				yearName = schoolBusiness.getSchoolYear(new Integer(req.getParameter(prmYearId))).getSchoolYearName();
-				groupName = schoolClass.getSchoolClassName();
+				groupName = schoolClass.getSchoolClassName();				
+				setShowHandicraftColumn(Boolean.valueOf(req.getParameter(PARAMETER_SHOW_HANDICRAFT_COLUMN)).booleanValue());
 				
 				String type = req.getParameter(prmPrintType);
 				if (type.equals(PDF)) {
@@ -106,7 +111,8 @@ public class SchoolClassWriter implements MediaWritable {
 				}
 				else if (type.equals(XLS)) {
 					buffer = writeXLS(schoolClass);
-				}
+				}			
+				
 			}
 		}
 		catch (Exception e) {
@@ -136,67 +142,68 @@ public class SchoolClassWriter implements MediaWritable {
 	public MemoryFileBuffer writeXLS(SchoolClass schoolClass) throws Exception {
 		MemoryFileBuffer buffer = new MemoryFileBuffer();
 		MemoryOutputStream mos = new MemoryOutputStream(buffer);
-		List students = new Vector(schoolBusiness.findStudentsInClass(((Integer)schoolClass.getPrimaryKey()).intValue()));
-
+		List students = new Vector(
+				schoolBusiness.findStudentsInClass(((Integer) schoolClass.getPrimaryKey()).intValue()));
 		if (!students.isEmpty()) {
 			Map studentMap = careBusiness.getStudentList(students);
-			Collections.sort(students, SchoolClassMemberComparatorForSweden.getComparatorSortByName( locale, userBusiness, studentMap));
+			Collections.sort(students, SchoolClassMemberComparatorForSweden.getComparatorSortByName(locale,
+					userBusiness, studentMap));
+			HSSFWorkbook wb = new HSSFWorkbook();
+			HSSFSheet sheet = wb.createSheet(schoolClass.getName());
+			sheet.setColumnWidth((short) 0, (short) (30 * 256));
+			sheet.setColumnWidth((short) 1, (short) (14 * 256));
+			sheet.setColumnWidth((short) 2, (short) (30 * 256));
+			sheet.setColumnWidth((short) 3, (short) (14 * 256));
+			sheet.setColumnWidth((short) 4, (short) (14 * 256));
+			if (isShowHandicraftColumn()) sheet.setColumnWidth((short) 5, (short) (14 * 256));
 			
-	    HSSFWorkbook wb = new HSSFWorkbook();
-	    HSSFSheet sheet = wb.createSheet(schoolClass.getName());
-	    sheet.setColumnWidth((short)0, (short) (30 * 256));
-	    sheet.setColumnWidth((short)1, (short) (14 * 256));
-	    sheet.setColumnWidth((short)2, (short) (30 * 256));
-	    sheet.setColumnWidth((short)3, (short) (14 * 256));
-			sheet.setColumnWidth((short)4, (short) (14 * 256));
-	    HSSFFont font = wb.createFont();
-	    font.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
-	    font.setFontHeightInPoints((short)12);
-	    HSSFCellStyle style = wb.createCellStyle();
-	    style.setFont(font);
-
+			HSSFFont font = wb.createFont();
+			font.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
+			font.setFontHeightInPoints((short) 12);
+			HSSFCellStyle style = wb.createCellStyle();
+			style.setFont(font);
 			int cellRow = 0;
 			HSSFRow row = sheet.createRow(cellRow++);
-			HSSFCell cell = row.createCell((short)0);
+			HSSFCell cell = row.createCell((short) 0);
 			cell.setCellValue(schoolName);
 			cell.setCellStyle(style);
-			cell = row.createCell((short)1);
-			
+			cell = row.createCell((short) 1);
 			row = sheet.createRow(cellRow++);
-			cell = row.createCell((short)0);
+			cell = row.createCell((short) 0);
 			cell.setCellValue(seasonName);
 			cell.setCellStyle(style);
-			
 			row = sheet.createRow(cellRow++);
-			cell = row.createCell((short)0);
+			cell = row.createCell((short) 0);
 			cell.setCellValue(yearName + " - " + groupName);
 			cell.setCellStyle(style);
-			
 			row = sheet.createRow(cellRow++);
-			
-	    row = sheet.createRow(cellRow++);
-	    cell = row.createCell((short)0);
-	    cell.setCellValue(iwrb.getLocalizedString("school.name","Name"));
-	    cell.setCellStyle(style);
-	    cell = row.createCell((short)1);
-	    cell.setCellValue(iwrb.getLocalizedString("school.personal_id","Personal ID"));
-	    cell.setCellStyle(style);
-	    cell = row.createCell((short)2);
-	    cell.setCellValue(iwrb.getLocalizedString("school.address","Address"));
-	    cell.setCellStyle(style);
-			cell = row.createCell((short)3);
-			cell.setCellValue(iwrb.getLocalizedString("school.postal_code","Postal code"));
+			row = sheet.createRow(cellRow++);
+			cell = row.createCell((short) 0);
+			cell.setCellValue(iwrb.getLocalizedString("school.name", "Name"));
 			cell.setCellStyle(style);
-	    cell = row.createCell((short)4);
-	    cell.setCellValue(iwrb.getLocalizedString("school.phone","Phone"));
-	    cell.setCellStyle(style);
-
+			cell = row.createCell((short) 1);
+			cell.setCellValue(iwrb.getLocalizedString("school.personal_id", "Personal ID"));
+			cell.setCellStyle(style);
+			cell = row.createCell((short) 2);
+			cell.setCellValue(iwrb.getLocalizedString("school.address", "Address"));
+			cell.setCellStyle(style);
+			cell = row.createCell((short) 3);
+			cell.setCellValue(iwrb.getLocalizedString("school.postal_code", "Postal code"));
+			cell.setCellStyle(style);
+			cell = row.createCell((short) 4);
+			cell.setCellValue(iwrb.getLocalizedString("school.phone", "Phone"));
+			cell.setCellStyle(style);	
+			if (isShowHandicraftColumn()) {
+				cell = row.createCell((short) 5);
+				cell.setCellValue(iwrb.getLocalizedString("school.handicraft.handicraft", "Handicraft"));
+				cell.setCellStyle(style);
+			}
+			
 			User student;
 			Address address;
 			PostalCode postalCode = null;
 			Phone phone;
 			SchoolClassMember studentMember;
-			
 			Iterator iter = students.iterator();
 			while (iter.hasNext()) {
 				row = sheet.createRow(cellRow++);
@@ -206,17 +213,24 @@ public class SchoolClassWriter implements MediaWritable {
 				if (address != null)
 					postalCode = address.getPostalCode();
 				phone = userBusiness.getChildHomePhone(student);
-
 				Name name = new Name(student.getFirstName(), student.getMiddleName(), student.getLastName());
-		    row.createCell((short)0).setCellValue(name.getName(locale, true));
-		    row.createCell((short)1).setCellValue(PersonalIDFormatter.format(student.getPersonalID(), locale));
-		    if (address != null) {
-			    row.createCell((short)2).setCellValue(address.getStreetAddress());
-			    if (postalCode != null)
-						row.createCell((short)3).setCellValue(postalCode.getPostalAddress());
-		    }
-			  if (phone != null)
-			    row.createCell((short)4).setCellValue(phone.getNumber());
+				row.createCell((short) 0).setCellValue(name.getName(locale, true));
+				row.createCell((short) 1).setCellValue(PersonalIDFormatter.format(student.getPersonalID(), locale));
+				if (address != null) {
+					row.createCell((short) 2).setCellValue(address.getStreetAddress());
+					if (postalCode != null)
+						row.createCell((short) 3).setCellValue(postalCode.getPostalAddress());
+				}
+				if (phone != null)
+					row.createCell((short) 4).setCellValue(phone.getNumber());
+				
+				if (this.isShowHandicraftColumn()) {
+					SchoolStudyPath handicraft = studentMember.getHandicraft();
+					if (handicraft != null)
+						row.createCell((short) 5).setCellValue(
+								iwrb.getLocalizedString(handicraft.getLocalizedKey(), handicraft.getLocalizedKey()));
+				}
+				
 			}
 			wb.write(mos);
 		}
@@ -240,9 +254,9 @@ public class SchoolClassWriter implements MediaWritable {
 			document.addSubject(schoolClass.getName());
 			document.open();
 			
-			document.add(new Phrase(schoolName+"\n", new Font(Font.HELVETICA, 12, Font.BOLD)));
-			document.add(new Phrase(seasonName+"\n", new Font(Font.HELVETICA, 12, Font.BOLD)));
-			document.add(new Phrase(yearName+" - "+groupName+"\n", new Font(Font.HELVETICA, 12, Font.BOLD)));
+			document.add(new Phrase(schoolName + "\n", new Font(Font.HELVETICA, 12, Font.BOLD)));
+			document.add(new Phrase(seasonName + "\n", new Font(Font.HELVETICA, 12, Font.BOLD)));
+			document.add(new Phrase(yearName + " - " + groupName + "\n", new Font(Font.HELVETICA, 12, Font.BOLD)));
 			document.add(new Phrase("\n", new Font(Font.HELVETICA, 12, Font.BOLD)));
 			
 			User student;
@@ -253,7 +267,22 @@ public class SchoolClassWriter implements MediaWritable {
 			Cell cell;
 			
 			String[] headers = {iwrb.getLocalizedString("school.name","Name"), iwrb.getLocalizedString("school.personal_id","Personal ID"), iwrb.getLocalizedString("school.address","Address"), iwrb.getLocalizedString("school.postal_code","Postal code"), iwrb.getLocalizedString("school.phone","Phone")};
-			int[] sizes = { 30, 14, 24, 20, 12 };
+			int[] sizes = { 30, 14, 24, 20, 12};
+			
+			if (this.isShowHandicraftColumn()) {
+				String[] headersWithHandicraft = new String[headers.length + 1];
+				int[] sizesWithHandicraft = new int[sizes.length + 1];
+				
+				System.arraycopy(headers, 0, headersWithHandicraft, 0, headers.length);
+				headersWithHandicraft[headers.length] = iwrb.getLocalizedString("school.handicraft", "Handicraft");
+				
+				System.arraycopy(sizes, 0, sizesWithHandicraft, 0, sizes.length);
+				sizesWithHandicraft[sizes.length] = 20;
+				
+				headers = headersWithHandicraft;
+				sizes = sizesWithHandicraft;
+			}
+			
 
 			Table datatable = getTable(headers, sizes);
 			Iterator iter = students.iterator();
@@ -293,7 +322,18 @@ public class SchoolClassWriter implements MediaWritable {
 					phoneNumber = phone.getNumber();
 				cell = new Cell(new Phrase(phoneNumber, new Font(Font.HELVETICA, 9, Font.NORMAL)));
 				cell.setBorder(Rectangle.NO_BORDER);
-				datatable.addCell(cell);
+				datatable.addCell(cell);				
+				
+				if (this.showHandicraftColumn) {
+					String handicraftName = "";
+					SchoolStudyPath handicraft = studentMember.getHandicraft();
+					if (handicraft != null)
+						handicraftName = iwrb.getLocalizedString(handicraft.getLocalizedKey(),
+								handicraft.getLocalizedKey());
+					cell = new Cell(new Phrase(handicraftName, new Font(Font.HELVETICA, 9, Font.NORMAL)));
+					cell.setBorder(Rectangle.NO_BORDER);
+					datatable.addCell(cell);
+				}
 
 				if (!writer.fitsPage(datatable)) {
 					datatable.deleteLastRow();
@@ -340,5 +380,15 @@ public class SchoolClassWriter implements MediaWritable {
 
 	protected CommuneUserBusiness getCommuneUserBusiness(IWApplicationContext iwc) throws RemoteException {
 		return (CommuneUserBusiness) IBOLookup.getServiceInstance(iwc, CommuneUserBusiness.class);	
+	}
+
+	
+	public boolean isShowHandicraftColumn() {
+		return showHandicraftColumn;
+	}
+
+	
+	public void setShowHandicraftColumn(boolean showHandicraftColumn) {
+		this.showHandicraftColumn = showHandicraftColumn;
 	}
 }
