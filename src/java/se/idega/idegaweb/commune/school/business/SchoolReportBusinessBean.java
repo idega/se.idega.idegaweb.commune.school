@@ -214,7 +214,7 @@ public class SchoolReportBusinessBean extends IBOSessionBean implements SchoolRe
 		}
 		
 		ReportableField handicraft = new ReportableField(FIELD_HANDICRAFT, String.class);
-		handicraft.setLocalizedName(getLocalizedString(FIELD_HANDICRAFT, "Handicraft"), currentLocale);
+		handicraft.setLocalizedName(getLocalizedString("school.handicraft.choice_of_handicraft", "Choice of handicraft"), currentLocale);
 		handicraft.setMaxNumberOfCharacters(100);
 		if (displayColumn(FIELD_HANDICRAFT)) {
 			_fields.add(handicraft);
