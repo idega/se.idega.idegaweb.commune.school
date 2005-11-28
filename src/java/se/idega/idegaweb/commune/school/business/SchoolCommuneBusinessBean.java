@@ -542,6 +542,10 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 				schoolMember.setLanguage(oldStudentInfo.getLanguage());
 				doUpdate = true;
 			}
+			if (oldStudentInfo.getHandicraft()!= null) {
+				schoolMember.setHandicraft(oldStudentInfo.getHandicraft());
+				doUpdate = true;
+			}
 
 			if (doUpdate) schoolMember.store();
 		}
