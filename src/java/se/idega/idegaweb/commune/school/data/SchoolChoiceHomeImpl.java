@@ -6,11 +6,8 @@ package se.idega.idegaweb.commune.school.data;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.util.Collection;
-
 import javax.ejb.FinderException;
-
 import se.idega.idegaweb.commune.school.business.MailReceiver;
-
 import com.idega.block.process.data.Case;
 import com.idega.block.school.data.SchoolSeason;
 import com.idega.block.school.data.SchoolYear;
@@ -18,12 +15,18 @@ import com.idega.data.IDOException;
 import com.idega.data.IDOFactory;
 import com.idega.user.data.User;
 
+
 /**
- * @author Maris_O
- *
+ * <p>
+ * TODO Dainis Describe Type SchoolChoiceHomeImpl
+ * </p>
+ *  Last modified: $Date: 2005/11/28 18:43:13 $ by $Author: dainis $
+ * 
+ * @author <a href="mailto:Dainis@idega.com">Dainis</a>
+ * @version $Revision: 1.51.2.1 $
  */
-public class SchoolChoiceHomeImpl extends IDOFactory implements
-		SchoolChoiceHome {
+public class SchoolChoiceHomeImpl extends IDOFactory implements SchoolChoiceHome {
+
 	protected Class getEntityInterfaceClass() {
 		return SchoolChoice.class;
 	}
@@ -32,216 +35,179 @@ public class SchoolChoiceHomeImpl extends IDOFactory implements
 		return (SchoolChoice) super.createIDO();
 	}
 
-	public SchoolChoice findByPrimaryKey(Object pk)
-			throws javax.ejb.FinderException {
+	public SchoolChoice findByPrimaryKey(Object pk) throws javax.ejb.FinderException {
 		return (SchoolChoice) super.findByPrimaryKeyIDO(pk);
 	}
 
-	public int countBySchoolIDAndSeasonIDAndStatus(int schoolId, int seasonId,
-			String[] statuses) throws IDOException {
+	public int countBySchoolIDAndSeasonIDAndStatus(int schoolId, int seasonId, String[] statuses) throws IDOException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-		int theReturn = ((SchoolChoiceBMPBean) entity)
-				.ejbHomeCountBySchoolIDAndSeasonIDAndStatus(schoolId, seasonId,
-						statuses);
+		int theReturn = ((SchoolChoiceBMPBean) entity).ejbHomeCountBySchoolIDAndSeasonIDAndStatus(schoolId, seasonId,
+				statuses);
 		this.idoCheckInPooledEntity(entity);
 		return theReturn;
 	}
 
-	public Collection findBySchoolIDAndSeasonIDAndStatus(int schoolId,
-			int seasonId, String[] statuses, int returningEntries,
-			int startingEntries) throws FinderException {
+	public Collection findBySchoolIDAndSeasonIDAndStatus(int schoolId, int seasonId, String[] statuses,
+			int returningEntries, int startingEntries) throws FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-		java.util.Collection ids = ((SchoolChoiceBMPBean) entity)
-				.ejbFindBySchoolIDAndSeasonIDAndStatus(schoolId, seasonId,
-						statuses, returningEntries, startingEntries);
+		java.util.Collection ids = ((SchoolChoiceBMPBean) entity).ejbFindBySchoolIDAndSeasonIDAndStatus(schoolId,
+				seasonId, statuses, returningEntries, startingEntries);
 		this.idoCheckInPooledEntity(entity);
 		return this.getEntityCollectionForPrimaryKeys(ids);
 	}
 
-	public Collection findByChosenSchoolId(int chosenSchoolId,
-			int schoolSeasonId) throws javax.ejb.FinderException {
+	public Collection findByChosenSchoolId(int chosenSchoolId, int schoolSeasonId) throws javax.ejb.FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-		java.util.Collection ids = ((SchoolChoiceBMPBean) entity)
-				.ejbFindByChosenSchoolId(chosenSchoolId, schoolSeasonId);
+		java.util.Collection ids = ((SchoolChoiceBMPBean) entity).ejbFindByChosenSchoolId(chosenSchoolId,
+				schoolSeasonId);
 		this.idoCheckInPooledEntity(entity);
 		return this.getEntityCollectionForPrimaryKeys(ids);
 	}
 
-	public Collection findByChildId(int childId)
+	public Collection findByChildId(int childId) throws javax.ejb.FinderException {
+		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+		java.util.Collection ids = ((SchoolChoiceBMPBean) entity).ejbFindByChildId(childId);
+		this.idoCheckInPooledEntity(entity);
+		return this.getEntityCollectionForPrimaryKeys(ids);
+	}
+
+	public Collection findByChildId(int childId, int schoolSeasonId) throws javax.ejb.FinderException {
+		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+		java.util.Collection ids = ((SchoolChoiceBMPBean) entity).ejbFindByChildId(childId, schoolSeasonId);
+		this.idoCheckInPooledEntity(entity);
+		return this.getEntityCollectionForPrimaryKeys(ids);
+	}
+
+	public Collection findByCodeAndStatus(String caseCode, String[] caseStatus, int schoolId, int schoolSeasonId)
 			throws javax.ejb.FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-		java.util.Collection ids = ((SchoolChoiceBMPBean) entity)
-				.ejbFindByChildId(childId);
+		java.util.Collection ids = ((SchoolChoiceBMPBean) entity).ejbFindByCodeAndStatus(caseCode, caseStatus,
+				schoolId, schoolSeasonId);
 		this.idoCheckInPooledEntity(entity);
 		return this.getEntityCollectionForPrimaryKeys(ids);
 	}
 
-	public Collection findByChildId(int childId, int schoolSeasonId)
-			throws javax.ejb.FinderException {
+	public Collection findAllWithLanguageWithinSeason(SchoolSeason season, String[] caseStatus) throws FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-		java.util.Collection ids = ((SchoolChoiceBMPBean) entity)
-				.ejbFindByChildId(childId, schoolSeasonId);
+		java.util.Collection ids = ((SchoolChoiceBMPBean) entity).ejbFindAllWithLanguageWithinSeason(season, caseStatus);
 		this.idoCheckInPooledEntity(entity);
 		return this.getEntityCollectionForPrimaryKeys(ids);
 	}
 
-	public Collection findByCodeAndStatus(String caseCode, String[] caseStatus,
-			int schoolId, int schoolSeasonId) throws javax.ejb.FinderException {
+	public Collection findByCodeAndStatus(String caseCode, String[] caseStatus, int schoolId, int schoolSeasonId,
+			String ordered) throws javax.ejb.FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-		java.util.Collection ids = ((SchoolChoiceBMPBean) entity)
-				.ejbFindByCodeAndStatus(caseCode, caseStatus, schoolId,
-						schoolSeasonId);
+		java.util.Collection ids = ((SchoolChoiceBMPBean) entity).ejbFindByCodeAndStatus(caseCode, caseStatus,
+				schoolId, schoolSeasonId, ordered);
 		this.idoCheckInPooledEntity(entity);
 		return this.getEntityCollectionForPrimaryKeys(ids);
 	}
 
-	public Collection findAllWithLanguageWithinSeason(SchoolSeason season,
-			String[] caseStatus) throws FinderException {
+	public int getNumberOfApplications(String caseStatus, int schoolID, int schoolSeasonID) throws IDOException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-		java.util.Collection ids = ((SchoolChoiceBMPBean) entity)
-				.ejbFindAllWithLanguageWithinSeason(season, caseStatus);
-		this.idoCheckInPooledEntity(entity);
-		return this.getEntityCollectionForPrimaryKeys(ids);
-	}
-
-	public Collection findByCodeAndStatus(String caseCode, String[] caseStatus,
-			int schoolId, int schoolSeasonId, String ordered)
-			throws javax.ejb.FinderException {
-		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-		java.util.Collection ids = ((SchoolChoiceBMPBean) entity)
-				.ejbFindByCodeAndStatus(caseCode, caseStatus, schoolId,
-						schoolSeasonId, ordered);
-		this.idoCheckInPooledEntity(entity);
-		return this.getEntityCollectionForPrimaryKeys(ids);
-	}
-
-	public int getNumberOfApplications(String caseStatus, int schoolID,
-			int schoolSeasonID) throws IDOException {
-		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-		int theReturn = ((SchoolChoiceBMPBean) entity)
-				.ejbHomeGetNumberOfApplications(caseStatus, schoolID,
-						schoolSeasonID);
+		int theReturn = ((SchoolChoiceBMPBean) entity).ejbHomeGetNumberOfApplications(caseStatus, schoolID,
+				schoolSeasonID);
 		this.idoCheckInPooledEntity(entity);
 		return theReturn;
 	}
 
-	public int getNumberOfApplications(String caseStatus, int schoolID,
-			int schoolSeasonID, int schoolYearID) throws IDOException {
+	public int getNumberOfApplications(String caseStatus, int schoolID, int schoolSeasonID, int schoolYearID)
+			throws IDOException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-		int theReturn = ((SchoolChoiceBMPBean) entity)
-				.ejbHomeGetNumberOfApplications(caseStatus, schoolID,
-						schoolSeasonID, schoolYearID);
+		int theReturn = ((SchoolChoiceBMPBean) entity).ejbHomeGetNumberOfApplications(caseStatus, schoolID,
+				schoolSeasonID, schoolYearID);
 		this.idoCheckInPooledEntity(entity);
 		return theReturn;
 	}
 
 	public int getNumberOfHandledMoves(int seasonID) throws IDOException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-		int theReturn = ((SchoolChoiceBMPBean) entity)
-				.ejbHomeGetNumberOfHandledMoves(seasonID);
+		int theReturn = ((SchoolChoiceBMPBean) entity).ejbHomeGetNumberOfHandledMoves(seasonID);
 		this.idoCheckInPooledEntity(entity);
 		return theReturn;
 	}
 
 	public int getNumberOfUnHandledMoves(int seasonID) throws IDOException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-		int theReturn = ((SchoolChoiceBMPBean) entity)
-				.ejbHomeGetNumberOfUnHandledMoves(seasonID);
+		int theReturn = ((SchoolChoiceBMPBean) entity).ejbHomeGetNumberOfUnHandledMoves(seasonID);
 		this.idoCheckInPooledEntity(entity);
 		return theReturn;
 	}
 
-	public Collection findByChildAndSeason(int childID, int seasonID,
-			String[] notInStatuses) throws javax.ejb.FinderException {
+	public Collection findByChildAndSeason(int childID, int seasonID, String[] notInStatuses)
+			throws javax.ejb.FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-		java.util.Collection ids = ((SchoolChoiceBMPBean) entity)
-				.ejbFindByChildAndSeason(childID, seasonID, notInStatuses);
+		java.util.Collection ids = ((SchoolChoiceBMPBean) entity).ejbFindByChildAndSeason(childID, seasonID,
+				notInStatuses);
 		this.idoCheckInPooledEntity(entity);
 		return this.getEntityCollectionForPrimaryKeys(ids);
 	}
 
-	public Collection findAllPlacedBySeason(int seasonID)
-			throws javax.ejb.FinderException {
+	public Collection findAllPlacedBySeason(int seasonID) throws javax.ejb.FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-		java.util.Collection ids = ((SchoolChoiceBMPBean) entity)
-				.ejbFindAllPlacedBySeason(seasonID);
+		java.util.Collection ids = ((SchoolChoiceBMPBean) entity).ejbFindAllPlacedBySeason(seasonID);
 		this.idoCheckInPooledEntity(entity);
 		return this.getEntityCollectionForPrimaryKeys(ids);
 	}
 
-	public SchoolChoice findByChildAndChoiceNumberAndSeason(User child,
-			int choiceNumber, SchoolSeason season)
+	public SchoolChoice findByChildAndChoiceNumberAndSeason(User child, int choiceNumber, SchoolSeason season)
 			throws javax.ejb.FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-		Object pk = ((SchoolChoiceBMPBean) entity)
-				.ejbFindByChildAndChoiceNumberAndSeason(child, choiceNumber,
-						season);
+		Object pk = ((SchoolChoiceBMPBean) entity).ejbFindByChildAndChoiceNumberAndSeason(child, choiceNumber, season);
 		this.idoCheckInPooledEntity(entity);
 		return this.findByPrimaryKey(pk);
 	}
 
-	public SchoolChoice findByChildAndChoiceNumberAndSeason(Integer childID,
-			Integer choiceNumber, Integer seasonID)
+	public SchoolChoice findByChildAndChoiceNumberAndSeason(Integer childID, Integer choiceNumber, Integer seasonID)
 			throws javax.ejb.FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-		Object pk = ((SchoolChoiceBMPBean) entity)
-				.ejbFindByChildAndChoiceNumberAndSeason(childID, choiceNumber,
-						seasonID);
+		Object pk = ((SchoolChoiceBMPBean) entity).ejbFindByChildAndChoiceNumberAndSeason(childID, choiceNumber,
+				seasonID);
 		this.idoCheckInPooledEntity(entity);
 		return this.findByPrimaryKey(pk);
 	}
 
-	public Collection findBySeason(int seasonId)
-			throws javax.ejb.FinderException {
+	public Collection findBySeason(int seasonId) throws javax.ejb.FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-		java.util.Collection ids = ((SchoolChoiceBMPBean) entity)
-				.ejbFindBySeason(seasonId);
+		java.util.Collection ids = ((SchoolChoiceBMPBean) entity).ejbFindBySeason(seasonId);
 		this.idoCheckInPooledEntity(entity);
 		return this.getEntityCollectionForPrimaryKeys(ids);
 	}
 
-	public Collection findBySeasonAndSchoolYear(SchoolSeason season,
-			SchoolYear year) throws javax.ejb.FinderException {
+	public Collection findBySeasonAndSchoolYear(SchoolSeason season, SchoolYear year) throws javax.ejb.FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-		java.util.Collection ids = ((SchoolChoiceBMPBean) entity)
-				.ejbFindBySeasonAndSchoolYear(season, year);
+		java.util.Collection ids = ((SchoolChoiceBMPBean) entity).ejbFindBySeasonAndSchoolYear(season, year);
 		this.idoCheckInPooledEntity(entity);
 		return this.getEntityCollectionForPrimaryKeys(ids);
 	}
 
-	public int getCountByChildAndSchool(int childID, int schoolID)
-			throws IDOException {
+	public int getCountByChildAndSchool(int childID, int schoolID) throws IDOException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-		int theReturn = ((SchoolChoiceBMPBean) entity)
-				.ejbHomeGetCountByChildAndSchool(childID, schoolID);
+		int theReturn = ((SchoolChoiceBMPBean) entity).ejbHomeGetCountByChildAndSchool(childID, schoolID);
 		this.idoCheckInPooledEntity(entity);
 		return theReturn;
 	}
 
-	public int getCountByChildAndSchoolAndStatus(int childID, int schoolID,
-			String[] caseStatus) throws IDOException {
+	public int getCountByChildAndSchoolAndStatus(int childID, int schoolID, String[] caseStatus) throws IDOException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-		int theReturn = ((SchoolChoiceBMPBean) entity)
-				.ejbHomeGetCountByChildAndSchoolAndStatus(childID, schoolID,
-						caseStatus);
+		int theReturn = ((SchoolChoiceBMPBean) entity).ejbHomeGetCountByChildAndSchoolAndStatus(childID, schoolID,
+				caseStatus);
 		this.idoCheckInPooledEntity(entity);
 		return theReturn;
 	}
 
-	public Collection findByChildAndSchool(int childID, int schoolID)
-			throws javax.ejb.FinderException {
+	public Collection findByChildAndSchool(int childID, int schoolID) throws javax.ejb.FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-		java.util.Collection ids = ((SchoolChoiceBMPBean) entity)
-				.ejbFindByChildAndSchool(childID, schoolID);
+		java.util.Collection ids = ((SchoolChoiceBMPBean) entity).ejbFindByChildAndSchool(childID, schoolID);
 		this.idoCheckInPooledEntity(entity);
 		return this.getEntityCollectionForPrimaryKeys(ids);
 	}
 
-	public Collection findByChildAndSchoolAndSeason(int childID, int schoolID,
-			int seasonID) throws javax.ejb.FinderException {
+	public Collection findByChildAndSchoolAndSeason(int childID, int schoolID, int seasonID)
+			throws javax.ejb.FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-		java.util.Collection ids = ((SchoolChoiceBMPBean) entity)
-				.ejbFindByChildAndSchoolAndSeason(childID, schoolID, seasonID);
+		java.util.Collection ids = ((SchoolChoiceBMPBean) entity).ejbFindByChildAndSchoolAndSeason(childID, schoolID,
+				seasonID);
 		this.idoCheckInPooledEntity(entity);
 		return this.getEntityCollectionForPrimaryKeys(ids);
 	}
@@ -253,225 +219,179 @@ public class SchoolChoiceHomeImpl extends IDOFactory implements
 		return this.getEntityCollectionForPrimaryKeys(ids);
 	}
 
-	public Collection findChoices(int schoolID, int seasonID, int gradeYear,
-			String[] validStatuses, String searchStringForUser, int orderBy,
-			int numberOfEntries, int startingEntry) throws FinderException {
+	public Collection findChoices(int schoolID, int seasonID, int gradeYear, String[] validStatuses,
+			String searchStringForUser, int orderBy, int numberOfEntries, int startingEntry) throws FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-		java.util.Collection ids = ((SchoolChoiceBMPBean) entity)
-				.ejbFindChoices(schoolID, seasonID, gradeYear, validStatuses,
-						searchStringForUser, orderBy, numberOfEntries,
-						startingEntry);
+		java.util.Collection ids = ((SchoolChoiceBMPBean) entity).ejbFindChoices(schoolID, seasonID, gradeYear,
+				validStatuses, searchStringForUser, orderBy, numberOfEntries, startingEntry);
 		this.idoCheckInPooledEntity(entity);
 		return this.getEntityCollectionForPrimaryKeys(ids);
 	}
 
 	public int getCount(String[] validStatuses) throws IDOException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-		int theReturn = ((SchoolChoiceBMPBean) entity)
-				.ejbHomeGetCount(validStatuses);
+		int theReturn = ((SchoolChoiceBMPBean) entity).ejbHomeGetCount(validStatuses);
 		this.idoCheckInPooledEntity(entity);
 		return theReturn;
 	}
 
-	public int getCount(String[] validStatuses, int seasonID)
-			throws IDOException {
+	public int getCount(String[] validStatuses, int seasonID) throws IDOException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-		int theReturn = ((SchoolChoiceBMPBean) entity).ejbHomeGetCount(
-				validStatuses, seasonID);
+		int theReturn = ((SchoolChoiceBMPBean) entity).ejbHomeGetCount(validStatuses, seasonID);
 		this.idoCheckInPooledEntity(entity);
 		return theReturn;
 	}
 
-	public int getCount(int schoolId, String[] validStatuses)
-			throws IDOException {
+	public int getCount(int schoolId, String[] validStatuses) throws IDOException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-		int theReturn = ((SchoolChoiceBMPBean) entity).ejbHomeGetCount(
-				schoolId, validStatuses);
+		int theReturn = ((SchoolChoiceBMPBean) entity).ejbHomeGetCount(schoolId, validStatuses);
 		this.idoCheckInPooledEntity(entity);
 		return theReturn;
 	}
 
-	public int getCount(SchoolSeason schoolSeason, Date startDate, Date endDate)
-			throws IDOException {
+	public int getCount(SchoolSeason schoolSeason, Date startDate, Date endDate) throws IDOException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-		int theReturn = ((SchoolChoiceBMPBean) entity).ejbHomeGetCount(
-				schoolSeason, startDate, endDate);
+		int theReturn = ((SchoolChoiceBMPBean) entity).ejbHomeGetCount(schoolSeason, startDate, endDate);
 		this.idoCheckInPooledEntity(entity);
 		return theReturn;
 	}
 
-	public int getCount(int schoolId, int seasonID, String[] validStatuses)
-			throws IDOException {
+	public int getCount(int schoolId, int seasonID, String[] validStatuses) throws IDOException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-		int theReturn = ((SchoolChoiceBMPBean) entity).ejbHomeGetCount(
-				schoolId, seasonID, validStatuses);
+		int theReturn = ((SchoolChoiceBMPBean) entity).ejbHomeGetCount(schoolId, seasonID, validStatuses);
 		this.idoCheckInPooledEntity(entity);
 		return theReturn;
 	}
 
-	public int getCount(int schoolID, int seasonID, int gradeYear,
-			int[] choiceOrder, String[] validStatuses,
+	public int getCount(int schoolID, int seasonID, int gradeYear, int[] choiceOrder, String[] validStatuses,
 			String searchStringForUser) throws IDOException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-		int theReturn = ((SchoolChoiceBMPBean) entity).ejbHomeGetCount(
-				schoolID, seasonID, gradeYear, choiceOrder, validStatuses,
-				searchStringForUser);
+		int theReturn = ((SchoolChoiceBMPBean) entity).ejbHomeGetCount(schoolID, seasonID, gradeYear, choiceOrder,
+				validStatuses, searchStringForUser);
 		this.idoCheckInPooledEntity(entity);
 		return theReturn;
 	}
 
-	public int getCount(int schoolID, int seasonID, int gradeYear,
-			int[] choiceOrder, String[] validStatuses,
+	public int getCount(int schoolID, int seasonID, int gradeYear, int[] choiceOrder, String[] validStatuses,
 			String searchStringForUser, int placementType) throws IDOException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-		int theReturn = ((SchoolChoiceBMPBean) entity).ejbHomeGetCount(
-				schoolID, seasonID, gradeYear, choiceOrder, validStatuses,
-				searchStringForUser, placementType);
+		int theReturn = ((SchoolChoiceBMPBean) entity).ejbHomeGetCount(schoolID, seasonID, gradeYear, choiceOrder,
+				validStatuses, searchStringForUser, placementType);
 		this.idoCheckInPooledEntity(entity);
 		return theReturn;
 	}
 
-	public int getCountOutsideInterval(int schoolID, int seasonID,
-			int gradeYear, int[] choiceOrder, String[] validStatuses,
-			String searchStringForUser, Date from, Date to) throws IDOException {
+	public int getCountOutsideInterval(int schoolID, int seasonID, int gradeYear, int[] choiceOrder,
+			String[] validStatuses, String searchStringForUser, Date from, Date to) throws IDOException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-		int theReturn = ((SchoolChoiceBMPBean) entity)
-				.ejbHomeGetCountOutsideInterval(schoolID, seasonID, gradeYear,
-						choiceOrder, validStatuses, searchStringForUser, from,
-						to);
+		int theReturn = ((SchoolChoiceBMPBean) entity).ejbHomeGetCountOutsideInterval(schoolID, seasonID, gradeYear,
+				choiceOrder, validStatuses, searchStringForUser, from, to);
 		this.idoCheckInPooledEntity(entity);
 		return theReturn;
 	}
 
-	public Collection findChoices(int schoolID, int seasonID, int gradeYear,
-			int[] choiceOrder, String[] validStatuses,
-			String searchStringForUser, int orderBy, int numberOfEntries,
-			int startingEntry) throws FinderException {
+	public Collection findChoices(int schoolID, int seasonID, int gradeYear, int[] choiceOrder, String[] validStatuses,
+			String searchStringForUser, int orderBy, int numberOfEntries, int startingEntry) throws FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-		java.util.Collection ids = ((SchoolChoiceBMPBean) entity)
-				.ejbFindChoices(schoolID, seasonID, gradeYear, choiceOrder,
-						validStatuses, searchStringForUser, orderBy,
-						numberOfEntries, startingEntry);
+		java.util.Collection ids = ((SchoolChoiceBMPBean) entity).ejbFindChoices(schoolID, seasonID, gradeYear,
+				choiceOrder, validStatuses, searchStringForUser, orderBy, numberOfEntries, startingEntry);
 		this.idoCheckInPooledEntity(entity);
 		return this.getEntityCollectionForPrimaryKeys(ids);
 	}
 
-	public Collection findChoices(int schoolID, int seasonID, int gradeYear,
-			int[] choiceOrder, String[] validStatuses,
-			String searchStringForUser, int orderBy, int numberOfEntries,
-			int startingEntry, int placementType) throws FinderException {
-		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-		java.util.Collection ids = ((SchoolChoiceBMPBean) entity)
-				.ejbFindChoices(schoolID, seasonID, gradeYear, choiceOrder,
-						validStatuses, searchStringForUser, orderBy,
-						numberOfEntries, startingEntry, placementType);
-		this.idoCheckInPooledEntity(entity);
-		return this.getEntityCollectionForPrimaryKeys(ids);
-	}
-
-	public Collection findBySchoolAndSeasonAndGrade(int schoolID, int seasonID,
-			int schoolYear) throws FinderException {
-		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-		java.util.Collection ids = ((SchoolChoiceBMPBean) entity)
-				.ejbFindBySchoolAndSeasonAndGrade(schoolID, seasonID,
-						schoolYear);
-		this.idoCheckInPooledEntity(entity);
-		return this.getEntityCollectionForPrimaryKeys(ids);
-	}
-
-	public Collection findBySchoolAndFreeTime(int schoolId, int schoolSeasonID,
-			boolean freeTimeInSchool) throws FinderException {
-		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-		java.util.Collection ids = ((SchoolChoiceBMPBean) entity)
-				.ejbFindBySchoolAndFreeTime(schoolId, schoolSeasonID,
-						freeTimeInSchool);
-		this.idoCheckInPooledEntity(entity);
-		return this.getEntityCollectionForPrimaryKeys(ids);
-	}
-
-	public Collection findChoicesInClassAndSeasonAndSchool(int classID,
-			int seasonID, int schoolID, boolean confirmation)
+	public Collection findChoices(int schoolID, int seasonID, int gradeYear, int[] choiceOrder, String[] validStatuses,
+			String searchStringForUser, int orderBy, int numberOfEntries, int startingEntry, int placementType)
 			throws FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-		java.util.Collection ids = ((SchoolChoiceBMPBean) entity)
-				.ejbFindChoicesInClassAndSeasonAndSchool(classID, seasonID,
-						schoolID, confirmation);
+		java.util.Collection ids = ((SchoolChoiceBMPBean) entity).ejbFindChoices(schoolID, seasonID, gradeYear,
+				choiceOrder, validStatuses, searchStringForUser, orderBy, numberOfEntries, startingEntry, placementType);
+		this.idoCheckInPooledEntity(entity);
+		return this.getEntityCollectionForPrimaryKeys(ids);
+	}
+
+	public Collection findBySchoolAndSeasonAndGrade(int schoolID, int seasonID, int schoolYear) throws FinderException {
+		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+		java.util.Collection ids = ((SchoolChoiceBMPBean) entity).ejbFindBySchoolAndSeasonAndGrade(schoolID, seasonID,
+				schoolYear);
+		this.idoCheckInPooledEntity(entity);
+		return this.getEntityCollectionForPrimaryKeys(ids);
+	}
+
+	public Collection findBySchoolAndFreeTime(int schoolId, int schoolSeasonID, boolean freeTimeInSchool)
+			throws FinderException {
+		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+		java.util.Collection ids = ((SchoolChoiceBMPBean) entity).ejbFindBySchoolAndFreeTime(schoolId, schoolSeasonID,
+				freeTimeInSchool);
+		this.idoCheckInPooledEntity(entity);
+		return this.getEntityCollectionForPrimaryKeys(ids);
+	}
+
+	public Collection findChoicesInClassAndSeasonAndSchool(int classID, int seasonID, int schoolID, boolean confirmation)
+			throws FinderException {
+		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+		java.util.Collection ids = ((SchoolChoiceBMPBean) entity).ejbFindChoicesInClassAndSeasonAndSchool(classID,
+				seasonID, schoolID, confirmation);
 		this.idoCheckInPooledEntity(entity);
 		return this.getEntityCollectionForPrimaryKeys(ids);
 	}
 
 	public int getNumberOfChoices(int userID, int seasonID) throws IDOException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-		int theReturn = ((SchoolChoiceBMPBean) entity)
-				.ejbHomeGetNumberOfChoices(userID, seasonID);
+		int theReturn = ((SchoolChoiceBMPBean) entity).ejbHomeGetNumberOfChoices(userID, seasonID);
 		this.idoCheckInPooledEntity(entity);
 		return theReturn;
 	}
 
-	public int getNumberOfChoices(int userID, int seasonID,
-			String[] notInStatuses) throws IDOException {
+	public int getNumberOfChoices(int userID, int seasonID, String[] notInStatuses) throws IDOException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-		int theReturn = ((SchoolChoiceBMPBean) entity)
-				.ejbHomeGetNumberOfChoices(userID, seasonID, notInStatuses);
+		int theReturn = ((SchoolChoiceBMPBean) entity).ejbHomeGetNumberOfChoices(userID, seasonID, notInStatuses);
 		this.idoCheckInPooledEntity(entity);
 		return theReturn;
 	}
 
-	public int getMoveChoices(int userID, int schoolID, int seasonID)
-			throws IDOException {
+	public int getMoveChoices(int userID, int schoolID, int seasonID) throws IDOException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-		int theReturn = ((SchoolChoiceBMPBean) entity).ejbHomeGetMoveChoices(
-				userID, schoolID, seasonID);
+		int theReturn = ((SchoolChoiceBMPBean) entity).ejbHomeGetMoveChoices(userID, schoolID, seasonID);
 		this.idoCheckInPooledEntity(entity);
 		return theReturn;
 	}
 
-	public int getChoices(int userID, int seasonID, String[] notInStatus)
-			throws IDOException {
+	public int getChoices(int userID, int seasonID, String[] notInStatus) throws IDOException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-		int theReturn = ((SchoolChoiceBMPBean) entity).ejbHomeGetChoices(
-				userID, seasonID, notInStatus);
+		int theReturn = ((SchoolChoiceBMPBean) entity).ejbHomeGetChoices(userID, seasonID, notInStatus);
 		this.idoCheckInPooledEntity(entity);
 		return theReturn;
 	}
 
-	public int getChoices(int userID, int schoolID, int seasonID,
-			String[] notInStatus) throws IDOException {
+	public int getChoices(int userID, int schoolID, int seasonID, String[] notInStatus) throws IDOException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-		int theReturn = ((SchoolChoiceBMPBean) entity).ejbHomeGetChoices(
-				userID, schoolID, seasonID, notInStatus);
+		int theReturn = ((SchoolChoiceBMPBean) entity).ejbHomeGetChoices(userID, schoolID, seasonID, notInStatus);
 		this.idoCheckInPooledEntity(entity);
 		return theReturn;
 	}
 
 	public Collection findByParent(Case parent) throws FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-		java.util.Collection ids = ((SchoolChoiceBMPBean) entity)
-				.ejbFindByParent(parent);
+		java.util.Collection ids = ((SchoolChoiceBMPBean) entity).ejbFindByParent(parent);
 		this.idoCheckInPooledEntity(entity);
 		return this.getEntityCollectionForPrimaryKeys(ids);
 	}
 
-	public int countChildrenWithoutSchoolChoice(SchoolSeason season,
-			SchoolYear year, boolean onlyInCommune, boolean onlyLastGrade,
-			int maxAge) throws SQLException {
+	public int countChildrenWithoutSchoolChoice(SchoolSeason season, SchoolYear year, boolean onlyInCommune,
+			boolean onlyLastGrade, int maxAge) throws SQLException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-		int theReturn = ((SchoolChoiceBMPBean) entity)
-				.ejbHomeCountChildrenWithoutSchoolChoice(season, year,
-						onlyInCommune, onlyLastGrade, maxAge);
+		int theReturn = ((SchoolChoiceBMPBean) entity).ejbHomeCountChildrenWithoutSchoolChoice(season, year,
+				onlyInCommune, onlyLastGrade, maxAge);
 		this.idoCheckInPooledEntity(entity);
 		return theReturn;
 	}
 
-	public MailReceiver[] getChildrenWithoutSchoolChoice(SchoolSeason season,
-			SchoolYear year, boolean onlyInCommune, boolean onlyLastGrade,
-			int maxAge) throws FinderException {
+	public MailReceiver[] getChildrenWithoutSchoolChoice(SchoolSeason season, SchoolYear year, boolean onlyInCommune,
+			boolean onlyLastGrade, int maxAge) throws FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-		MailReceiver[] theReturn = ((SchoolChoiceBMPBean) entity)
-				.ejbHomeGetChildrenWithoutSchoolChoice(season, year,
-						onlyInCommune, onlyLastGrade, maxAge);
+		MailReceiver[] theReturn = ((SchoolChoiceBMPBean) entity).ejbHomeGetChildrenWithoutSchoolChoice(season, year,
+				onlyInCommune, onlyLastGrade, maxAge);
 		this.idoCheckInPooledEntity(entity);
 		return theReturn;
 	}
-
 }
