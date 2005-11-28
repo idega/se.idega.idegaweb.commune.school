@@ -1329,10 +1329,10 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		if (this.getShowHandicraftChoice()) { 
 			// handicraft choice message link
 			table.mergeCells(1, row, 5, row);
-			table.add(getHeader(iwrb.getLocalizedString("school.handicraft.information", "Information on handicraft")), 1, row);
+			table.add(getHeader(iwrb.getLocalizedString("school.choice.handicraft.information_on_handicraft", "Information on handicraft")), 1, row);
 			table.add(Text.getNonBrakingSpace(), 1, row);
-			Link msgLinkForHandicraft = new Link(this.getInformationIcon(localize("school.handicraft.form_message_text", "Handicraft message")));
-			msgLinkForHandicraft.setToOpenAlert(localize("school.handicraft.message", "Localized Handicraft message ... "));
+			Link msgLinkForHandicraft = new Link(this.getInformationIcon(localize("school.handicraft.form_message_link_text", "Handicraft message")));
+			msgLinkForHandicraft.setToOpenAlert(localize("school.handicraft.message", "Localized Handicraft message... "));
 			table.add(msgLinkForHandicraft, 1, row++);						
 		
 			table.setHeight(row++, 5);
@@ -1364,7 +1364,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 
 	private DropdownMenu getHandicraftMeny() throws RemoteException {
 		DropdownMenu handicraftChoice = (DropdownMenu) getStyledInterface(new DropdownMenu(prmHandicraft));
-		handicraftChoice.addMenuElement(-1, localize("school.handicraft.handicraft", "Handicraft"));
+		handicraftChoice.addMenuElement(-1, localize("school.handicraft.choice_of_handicraft", "Choice of handicraft"));
 		
 		Collection handicraftOptions = schBuiz.findHandicraftOptions(this.getStudyPathGroupId());
 		if (!handicraftOptions.isEmpty()) {

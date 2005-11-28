@@ -195,7 +195,7 @@ public class SchoolClassWriter implements MediaWritable {
 			cell.setCellStyle(style);	
 			if (isShowHandicraftColumn()) {
 				cell = row.createCell((short) 5);
-				cell.setCellValue(iwrb.getLocalizedString("school.handicraft", "Handicraft"));
+				cell.setCellValue(iwrb.getLocalizedString("school.handicraft.handicraft", "Handicraft"));
 				cell.setCellStyle(style);
 			}
 			
