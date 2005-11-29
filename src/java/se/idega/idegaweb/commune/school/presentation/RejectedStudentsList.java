@@ -288,6 +288,7 @@ public class RejectedStudentsList extends SchoolCommuneBlock {
 		link.addParameter(RejectedStudentsListWriter.PARAMETER_SCHOOL_ID, super.getSchoolID());
 		link.addParameter(RejectedStudentsListWriter.PARAMETER_SCHOOL_SEASON_ID, super.getSchoolSeasonID());
 		return link;
-	}	
+	}	 
+	
 	
 }
