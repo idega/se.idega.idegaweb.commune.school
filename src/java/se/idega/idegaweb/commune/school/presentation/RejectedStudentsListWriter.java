@@ -337,5 +337,6 @@ public class RejectedStudentsListWriter extends DownloadWriter implements MediaW
 		}
 		else
 			System.err.println("buffer is null");
-	}	
+	}
+	
 }
