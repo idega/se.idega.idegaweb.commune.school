@@ -1323,10 +1323,10 @@ public class SchoolChoiceApplication extends CommuneBlock {
 				table.add(getSmallHeader(Text.getNonBrakingSpace() + iwrb.getLocalizedString("school.not_want_after_school_care", "I do not want afterschool care")), 1, row++);
 			}
 			table.setHeight(row++, 5);
-		}
-				
-		// handicraft
-		if (this.getShowHandicraftChoice()) { 
+		}				
+	
+		if (this.getShowHandicraftChoice() && this.age.getYears() >= 13) { //btw: 1. this should be property?    2. it should be dinamically connected with year input field or so? 
+			
 			// handicraft choice message link
 			table.mergeCells(1, row, 5, row);
 			table.add(getHeader(iwrb.getLocalizedString("school.choice.handicraft.information_on_handicraft", "Information on handicraft")), 1, row);
