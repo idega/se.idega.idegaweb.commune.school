@@ -1,17 +1,19 @@
 package se.idega.idegaweb.commune.school.presentation;
 
+import is.idega.block.family.business.FamilyLogic;
+import is.idega.block.family.business.NoCustodianFound;
 import java.rmi.RemoteException;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Locale;
-
+import se.idega.idegaweb.commune.business.CommuneUserBusiness;
 import se.idega.idegaweb.commune.school.business.SchoolChoiceBusiness;
 import se.idega.idegaweb.commune.school.data.SchoolChoice;
 import se.idega.idegaweb.commune.school.data.SchoolChoiceHome;
 import se.idega.util.PIDChecker;
-
 import com.idega.block.school.data.School;
 import com.idega.business.IBOLookup;
+import com.idega.core.contact.data.Email;
 import com.idega.core.contact.data.Phone;
 import com.idega.core.location.data.Address;
 import com.idega.data.IDOLookup;
@@ -19,7 +21,9 @@ import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Table;
+import com.idega.presentation.text.DownloadLink;
 import com.idega.presentation.text.Link;
+import com.idega.user.business.NoEmailFoundException;
 import com.idega.user.business.NoPhoneFoundException;
 import com.idega.user.data.User;
 import com.idega.util.PersonalIDFormatter;
@@ -75,28 +79,32 @@ public class RejectedStudentsList extends SchoolCommuneBlock {
 	}
 	
 	private Table getPagesTable() {
-		Table table = new Table(3, 1);
+		Table table = new Table(3, 2);
 		table.setCellpadding(getCellpadding());
 		table.setCellspacing(getCellspacing());
+		//table.setBorder(2);
 		table.setWidth("100%");
 		table.setWidth(1, "33%");
 		table.setWidth(3, "33%");
 		Link lNext = getSmallLink(localize("next", "Next"));
 		Link lPrev = getSmallLink(localize("previous", "Previous"));
 		
+		table.setAlignment(3, 1, Table.HORIZONTAL_ALIGN_RIGHT);
+		table.add(getXlsLink(), 3, 1);
+		
 		if (currentStartEntry != 0) {
 			lPrev.addParameter(PARAMETER_NEXT_START_ENTRY, Integer.toString(currentStartEntry - ENTRIES_PER_PAGE));
-			table.add(lPrev, 1, 1);
+			table.add(lPrev, 1, 2);
 		} else {
-			table.add(getSmallText(localize("previous", "Previous")), 1, 1);
+			table.add(getSmallText(localize("previous", "Previous")), 1, 2);
 		}
-		table.setAlignment(1, 1, Table.HORIZONTAL_ALIGN_LEFT);
+		table.setAlignment(1, 2, Table.HORIZONTAL_ALIGN_LEFT);
 		
-		table.setAlignment(2, 1, Table.HORIZONTAL_ALIGN_CENTER);
+		table.setAlignment(2, 2, Table.HORIZONTAL_ALIGN_CENTER);
 		if (totalChoices == 0) {
-			table.add(getSmallHeader("0/"+  ((totalChoices / ENTRIES_PER_PAGE)+1) ), 2, 1);
+			table.add(getSmallHeader("0/"+  ((totalChoices / ENTRIES_PER_PAGE)+1) ), 2, 2);
 		} else {
-			table.add(getSmallHeader(  ((currentStartEntry/totalChoices)+1)  +"/"+  ((totalChoices / ENTRIES_PER_PAGE)+1) ), 2, 1);
+			table.add(getSmallHeader(  ((currentStartEntry/totalChoices)+1)  +"/"+  ((totalChoices / ENTRIES_PER_PAGE)+1) ), 2, 2);
 		}
 		
 		//table.add(getSmallHeader(  ((21/20)+1)   +"/"+  (Math.ceil(1 / 10)) ), 2, 1);
@@ -104,9 +112,9 @@ public class RejectedStudentsList extends SchoolCommuneBlock {
 			lNext.addParameter(PARAMETER_NEXT_START_ENTRY, Integer.toString(currentStartEntry + ENTRIES_PER_PAGE));
 			table.add(lNext, 3, 1);
 		} else {
-			table.add(getSmallText(localize("next", "Next")), 3, 1);
+			table.add(getSmallText(localize("next", "Next")), 3, 2);
 		}
-		table.setAlignment(3, 1, Table.HORIZONTAL_ALIGN_RIGHT);
+		table.setAlignment(3, 2, Table.HORIZONTAL_ALIGN_RIGHT);
 		
 		return table;
 	}
@@ -160,7 +168,18 @@ public class RejectedStudentsList extends SchoolCommuneBlock {
 				}
 				
 				name = getBusiness().getUserBusiness().getNameLastFirst(applicant, true);
-				table.add(getSmallText(name), column++, row);
+				
+				String emails = this.getParentsEmails(iwc, applicant);				
+				if (emails!= null) {
+					Link emailLink = this.getSmallLink(name);
+					emailLink.setURL("mailto: " + emails);
+					emailLink.setSessionId(false);
+					table.add(emailLink, column++, row);
+				} else {
+					table.add(getSmallText(name), column++, row);
+				}
+				
+				
 				if (applicant.getPersonalID() != null) {
 					table.add(getSmallText(PersonalIDFormatter.format(applicant.getPersonalID(), locale)), column++, row);
 				}
@@ -225,5 +244,50 @@ public class RejectedStudentsList extends SchoolCommuneBlock {
 		return (SchoolChoiceBusiness) IBOLookup.getServiceInstance(iwac, SchoolChoiceBusiness.class);
 	}
 	
+	private String getParentsEmails(IWContext iwc, User child) throws RemoteException {
+		String emails = null;
+		Email email;
+
+		try {
+			Collection parents = getMemberFamilyLogic(iwc).getCustodiansFor(child);
+			
+			if (parents != null && !parents.isEmpty()) {
+				Iterator iterPar = parents.iterator();
+				while (iterPar.hasNext()) {
+					User parent = (User) iterPar.next();					
+					try {
+						email = getCommuneUserBusiness(iwc).getUsersMainEmail(parent);
+						if (email != null && email.getEmailAddress() != null && !email.getEmailAddress().equals(" ")) {							
+							if (emails != null)
+								emails = emails + "; " + email.getEmailAddress();
+							else										
+								emails = email.getEmailAddress();							
+						}														
+					}
+					catch (NoEmailFoundException nef) {
+						log(nef);
+					}					
+				}
+			}
+		}catch (NoCustodianFound ncf) {
+		}
+		return emails;
+	}
+	
+	private FamilyLogic getMemberFamilyLogic(IWContext iwc) throws RemoteException {
+		return (FamilyLogic) com.idega.business.IBOLookup.getServiceInstance(iwc, FamilyLogic.class);
+	}
+	
+	private CommuneUserBusiness getCommuneUserBusiness(IWContext iwc) throws RemoteException {
+		return (CommuneUserBusiness) com.idega.business.IBOLookup.getServiceInstance(iwc, CommuneUserBusiness.class);
+	}
+	
+	protected Link getXlsLink() {
+		DownloadLink link = new DownloadLink(getBundle().getImage("shared/xls.gif"));
+		link.setMediaWriterClass(RejectedStudentsListWriter.class);
+		link.addParameter(RejectedStudentsListWriter.PARAMETER_SCHOOL_ID, super.getSchoolID());
+		link.addParameter(RejectedStudentsListWriter.PARAMETER_SCHOOL_SEASON_ID, super.getSchoolSeasonID());
+		return link;
+	}	
 	
 }
