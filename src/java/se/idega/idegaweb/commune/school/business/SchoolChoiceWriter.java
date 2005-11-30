@@ -19,6 +19,7 @@ import se.idega.idegaweb.commune.presentation.CommuneBlock;
 import se.idega.idegaweb.commune.school.data.SchoolChoice;
 import se.idega.idegaweb.commune.school.data.SchoolChoiceBMPBean;
 import com.idega.block.school.data.School;
+import com.idega.block.school.data.SchoolStudyPath;
 import com.idega.business.IBOLookup;
 import com.idega.core.location.data.Address;
 import com.idega.idegaweb.IWApplicationContext;
@@ -53,11 +54,13 @@ public class SchoolChoiceWriter implements MediaWritable {
 	public final static String prmSchoolId = "school_id";
 	public final static String prmGrade = "grade";
 	public final static String PARAMETER_SHOW_PRIORITY_COLUMN = "show_priority_column";
+	public final static String PARAMETER_SHOW_HANDICRAFT_COLUMN = "show_handicraft_column";
 	
 	private int season;
 	private int school;
 	private int grade;
 	private boolean showPriorityColumn = false;
+	private boolean showHandicraftColumn = false;
 	
 	public SchoolChoiceWriter() {
 	}
@@ -73,8 +76,8 @@ public class SchoolChoiceWriter implements MediaWritable {
 				season = Integer.parseInt(req.getParameter(prmSeasonId));
 				school = Integer.parseInt(req.getParameter(prmSchoolId));
 				grade = Integer.parseInt(req.getParameter(prmGrade));				
-				setShowPriorityColumn(Boolean.valueOf(req.getParameter(PARAMETER_SHOW_PRIORITY_COLUMN)).booleanValue());
-				
+				this.setShowPriorityColumn(Boolean.valueOf(req.getParameter(PARAMETER_SHOW_PRIORITY_COLUMN)).booleanValue());
+				this.setShowHandicraftColumn(Boolean.valueOf(req.getParameter(PARAMETER_SHOW_HANDICRAFT_COLUMN)).booleanValue());
 				buffer = writeXLS(school, season, grade);
 			}
 		}
@@ -159,6 +162,12 @@ public class SchoolChoiceWriter implements MediaWritable {
 			    cell.setCellValue(iwrb.getLocalizedString("school_choice.priority", "Priority"));
 			    cell.setCellStyle(style);	    
 		    }
+		    
+		    if(this.isShowHandicraftColumn()) {
+			    cell = row.createCell((short)cellColumn++);			    
+			    cell.setCellValue(iwrb.getLocalizedString("school.handicraft", "Handicraft"));
+			    cell.setCellStyle(style);	    
+		    }		    
 	    
 		    SchoolChoice choice;
 		    School school;
@@ -209,6 +218,13 @@ public class SchoolChoiceWriter implements MediaWritable {
 			    	row.createCell((short)cellColumn++).setCellValue(priority);
 			    }
 			    
+			    if (this.isShowHandicraftColumn()) {
+					SchoolStudyPath handicraft = choice.getHandicraft();
+					if (handicraft != null)
+						row.createCell((short) cellColumn++).setCellValue(
+								iwrb.getLocalizedString(handicraft.getLocalizedKey(), handicraft.getLocalizedKey()));
+				}
+			    
 			}
 			wb.write(mos);
 		}
@@ -231,4 +247,12 @@ public class SchoolChoiceWriter implements MediaWritable {
 	public void setShowPriorityColumn(boolean showPriorityColumn) {
 		this.showPriorityColumn = showPriorityColumn;
 	}
+	
+	public boolean isShowHandicraftColumn() {
+		return showHandicraftColumn;
+	}
+	
+	public void setShowHandicraftColumn(boolean showHandicraftColumn) {
+		this.showHandicraftColumn = showHandicraftColumn;
+	}	
 }
