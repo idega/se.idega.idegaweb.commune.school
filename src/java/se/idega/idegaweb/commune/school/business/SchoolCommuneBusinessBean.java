@@ -594,7 +594,14 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 			String ready = properties.getProperty(propertyName);
 			if (ready != null) {
 				seasonStart.setDay(Integer.parseInt(ready.substring(0, 2)));
-				seasonStart.setMonth(Integer.parseInt(ready.substring(3)));
+				if(ready.length() != 10) { //property set using dd.mm format
+					seasonStart.setMonth(Integer.parseInt(ready.substring(3)));
+				} 
+				else { //property set using dd.mm.yyyy format
+					seasonStart.setMonth(Integer.parseInt(ready.substring(3,5)));
+					seasonStart.setYear(Integer.parseInt(ready.substring(6,10)));
+				}
+				
 				if (timeNow.isEarlierThan(seasonStart)) return false;
 			}
 		}
