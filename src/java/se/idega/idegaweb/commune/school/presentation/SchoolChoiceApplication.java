@@ -1628,7 +1628,14 @@ public class SchoolChoiceApplication extends CommuneBlock {
 				if (changeStart != null) {
 					IWTimestamp change = new IWTimestamp(seasonStart);
 					change.setDay(Integer.parseInt(changeStart.substring(0, 2)));
-					change.setMonth(Integer.parseInt(changeStart.substring(3)));
+					
+					if (changeStart.length() != 10) {
+						change.setMonth(Integer.parseInt(changeStart.substring(3)));
+					} else {
+						change.setMonth(Integer.parseInt(changeStart.substring(3,5)));
+						change.setMonth(Integer.parseInt(changeStart.substring(6,10)));
+					}
+					
 					if (dateNow.isLaterThan(change)) {
 						checkCanApply[2] = true;
 					}
