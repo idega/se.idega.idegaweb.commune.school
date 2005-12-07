@@ -1547,10 +1547,10 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		= new IWTimestamp (getCareBusiness().getCurrentSeason ().getSchoolSeasonStart ());
 		final IWTimestamp result = new IWTimestamp (seasonStart);
 		result.setDay (Integer.parseInt (valueAsString.substring (0, 2)));
-		result.setMonth (Integer.parseInt (valueAsString.substring (3, 2)));
+		result.setMonth (Integer.parseInt (valueAsString.substring (3, 5)));
 		
 		if (valueAsString.length() == 10) { // the property is set in format dd.mm.yyyy
-			result.setYear(Integer.parseInt(valueAsString.substring(6, 4)));
+			result.setYear(Integer.parseInt(valueAsString.substring(6, 10)));
 		}
 		
 		return result;
