@@ -1,5 +1,5 @@
 /*
- * $Id: CommuneSchoolBusinessBean.java,v 1.11 2005/10/18 20:14:24 laddi Exp $
+ * $Id: CommuneSchoolBusinessBean.java,v 1.12 2006/01/13 04:15:34 laddi Exp $
  * Created on Aug 3, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -49,10 +49,10 @@ import com.idega.util.PersonalIDFormatter;
 
 
 /**
- * Last modified: $Date: 2005/10/18 20:14:24 $ by $Author: laddi $
+ * Last modified: $Date: 2006/01/13 04:15:34 $ by $Author: laddi $
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.11 $
+ * @version $Revision: 1.12 $
  */
 public class CommuneSchoolBusinessBean extends CaseBusinessBean  implements CaseBusiness, CommuneSchoolBusiness{
 
@@ -522,6 +522,9 @@ public class CommuneSchoolBusinessBean extends CaseBusinessBean  implements Case
 	
 	public SchoolYear getSchoolYearForUser(User user) throws FinderException {
 		try {
+			if (user.getDateOfBirth() == null) {
+				throw new FinderException();
+			}
 			Age age = new Age(user.getDateOfBirth());
 			return getSchoolBusiness().getSchoolYearHome().findByAge(getSchoolBusiness().getCategoryElementarySchool(), age.getYears());
 		}
