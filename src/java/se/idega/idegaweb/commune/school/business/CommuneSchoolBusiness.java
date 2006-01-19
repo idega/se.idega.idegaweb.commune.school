@@ -1,8 +1,8 @@
 /*
- * $Id: CommuneSchoolBusiness.java,v 1.8 2005/10/18 20:14:24 laddi Exp $
- * Created on Oct 18, 2005
+ * $Id: CommuneSchoolBusiness.java,v 1.9 2006/01/19 10:32:54 laddi Exp $
+ * Created on Jan 19, 2006
  *
- * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
+ * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
  *
  * This software is the proprietary information of Idega hf.
  * Use is subject to license terms.
@@ -25,10 +25,13 @@ import com.idega.user.data.User;
 
 
 /**
- * Last modified: $Date: 2005/10/18 20:14:24 $ by $Author: laddi $
+ * <p>
+ * TODO laddi Describe Type CommuneSchoolBusiness
+ * </p>
+ *  Last modified: $Date: 2006/01/19 10:32:54 $ by $Author: laddi $
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.8 $
+ * @version $Revision: 1.9 $
  */
 public interface CommuneSchoolBusiness extends IBOService, CaseBusiness {
 
@@ -41,6 +44,16 @@ public interface CommuneSchoolBusiness extends IBOService, CaseBusiness {
 	 * @see se.idega.idegaweb.commune.school.business.CommuneSchoolBusinessBean#canDisplayAfterSchoolCareImages
 	 */
 	public Boolean canDisplayAfterSchoolCareImages(User child) throws java.rmi.RemoteException;
+
+	/**
+	 * @see se.idega.idegaweb.commune.school.business.CommuneSchoolBusinessBean#canParticipateInChurchRecreation
+	 */
+	public boolean canParticipateInChurchRecreation(User child) throws java.rmi.RemoteException;
+
+	/**
+	 * @see se.idega.idegaweb.commune.school.business.CommuneSchoolBusinessBean#canContactElementarySchoolForInformation
+	 */
+	public boolean canContactElementarySchoolForInformation(User child) throws java.rmi.RemoteException;
 
 	/**
 	 * @see se.idega.idegaweb.commune.school.business.CommuneSchoolBusinessBean#getAfterSchoolCareOtherInformation
@@ -95,8 +108,7 @@ public interface CommuneSchoolBusiness extends IBOService, CaseBusiness {
 	/**
 	 * @see se.idega.idegaweb.commune.school.business.CommuneSchoolBusinessBean#getDefaultGroup
 	 */
-	public SchoolClass getDefaultGroup(School school, SchoolSeason season, SchoolYear year)
-			throws java.rmi.RemoteException;
+	public SchoolClass getDefaultGroup(School school, SchoolSeason season, SchoolYear year) throws java.rmi.RemoteException;
 
 	/**
 	 * @see se.idega.idegaweb.commune.school.business.CommuneSchoolBusinessBean#getSchoolYears
@@ -106,8 +118,7 @@ public interface CommuneSchoolBusiness extends IBOService, CaseBusiness {
 	/**
 	 * @see se.idega.idegaweb.commune.school.business.CommuneSchoolBusinessBean#saveHomeSchoolChoice
 	 */
-	public boolean saveHomeSchoolChoice(User user, User child, Object schoolPK, Object seasonPK, Object yearPK,
-			String language, String message) throws IDOCreateException, java.rmi.RemoteException;
+	public boolean saveHomeSchoolChoice(User user, User child, Object schoolPK, Object seasonPK, Object yearPK, String language, String message) throws IDOCreateException, java.rmi.RemoteException;
 
 	/**
 	 * @see se.idega.idegaweb.commune.school.business.CommuneSchoolBusinessBean#getChoices
@@ -122,14 +133,12 @@ public interface CommuneSchoolBusiness extends IBOService, CaseBusiness {
 	/**
 	 * @see se.idega.idegaweb.commune.school.business.CommuneSchoolBusinessBean#getChoice
 	 */
-	public SchoolChoice getChoice(User child, SchoolSeason season, int choiceNumber) throws FinderException,
-			java.rmi.RemoteException;
+	public SchoolChoice getChoice(User child, SchoolSeason season, int choiceNumber) throws FinderException, java.rmi.RemoteException;
 
 	/**
 	 * @see se.idega.idegaweb.commune.school.business.CommuneSchoolBusinessBean#saveChoices
 	 */
-	public boolean saveChoices(User user, User child, Collection schools, Object seasonPK, Object yearPK,
-			String language, String message) throws IDOCreateException, java.rmi.RemoteException;
+	public boolean saveChoices(User user, User child, Collection schools, Object seasonPK, Object yearPK, String language, String message) throws IDOCreateException, java.rmi.RemoteException;
 
 	/**
 	 * @see se.idega.idegaweb.commune.school.business.CommuneSchoolBusinessBean#storeChildSchoolInformation
@@ -139,8 +148,7 @@ public interface CommuneSchoolBusiness extends IBOService, CaseBusiness {
 	/**
 	 * @see se.idega.idegaweb.commune.school.business.CommuneSchoolBusinessBean#storeChildAfterSchoolCareInformation
 	 */
-	public void storeChildAfterSchoolCareInformation(User child, boolean canDisplayImage,
-			String otherAfterSchoolCareInformation) throws java.rmi.RemoteException;
+	public void storeChildAfterSchoolCareInformation(User child, boolean canDisplayImage, boolean canParticipateInChurchRecreation, boolean canContactElementarySchoolForInformation, String otherAfterSchoolCareInformation) throws java.rmi.RemoteException;
 
 	/**
 	 * @see se.idega.idegaweb.commune.school.business.CommuneSchoolBusinessBean#getSchoolYearForUser

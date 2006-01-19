@@ -1,5 +1,5 @@
 /*
- * $Id: CommuneSchoolBusinessBean.java,v 1.13 2006/01/19 09:33:14 laddi Exp $
+ * $Id: CommuneSchoolBusinessBean.java,v 1.14 2006/01/19 10:32:54 laddi Exp $
  * Created on Aug 3, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -49,16 +49,18 @@ import com.idega.util.PersonalIDFormatter;
 
 
 /**
- * Last modified: $Date: 2006/01/19 09:33:14 $ by $Author: laddi $
+ * Last modified: $Date: 2006/01/19 10:32:54 $ by $Author: laddi $
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.13 $
+ * @version $Revision: 1.14 $
  */
 public class CommuneSchoolBusinessBean extends CaseBusinessBean  implements CaseBusiness, CommuneSchoolBusiness{
 
 	public static final String METADATA_CAN_DISPLAY_SCHOOL_IMAGE = "can_display_school_image";
 	public static final String METADATA_CAN_DISPLAY_AFTER_SCHOOL_CARE_IMAGE = "can_display_after_school_care_image";
 	public static final String METADATA_OTHER_INFORMATION = "after_school_care_information";
+	public static final String METADATA_CAN_PARTICIPATE_IN_CHURCH_RECREATION = "can_participate_in_church_recreation";
+	public static final String METADATA_CAN_CONTACT_ELEMENTARY_SCHOOL_FOR_INFORMATION = "can_contact_elementary_school_for_information";
 	
 	private static final String PROPERTY_DEFAULT_SCHOOL_TYPE = "default_school_type";
 
@@ -121,6 +123,22 @@ public class CommuneSchoolBusinessBean extends CaseBusinessBean  implements Case
 			return new Boolean(meta);
 		}
 		return null;
+	}
+	
+	public boolean canParticipateInChurchRecreation(User child) {
+		String meta = child.getMetaData(METADATA_CAN_PARTICIPATE_IN_CHURCH_RECREATION);
+		if (meta != null) {
+			return new Boolean(meta).booleanValue();
+		}
+		return true;
+	}
+	
+	public boolean canContactElementarySchoolForInformation(User child) {
+		String meta = child.getMetaData(METADATA_CAN_CONTACT_ELEMENTARY_SCHOOL_FOR_INFORMATION);
+		if (meta != null) {
+			return new Boolean(meta).booleanValue();
+		}
+		return true;
 	}
 	
 	public String getAfterSchoolCareOtherInformation(User child) {
@@ -480,8 +498,10 @@ public class CommuneSchoolBusinessBean extends CaseBusinessBean  implements Case
 		child.store();
 	}
 
-	public void storeChildAfterSchoolCareInformation(User child, boolean canDisplayImage, String otherAfterSchoolCareInformation) {
+	public void storeChildAfterSchoolCareInformation(User child, boolean canDisplayImage, boolean canParticipateInChurchRecreation, boolean canContactElementarySchoolForInformation, String otherAfterSchoolCareInformation) {
 		child.setMetaData(METADATA_CAN_DISPLAY_AFTER_SCHOOL_CARE_IMAGE, String.valueOf(canDisplayImage));
+		child.setMetaData(METADATA_CAN_PARTICIPATE_IN_CHURCH_RECREATION, String.valueOf(canParticipateInChurchRecreation));
+		child.setMetaData(METADATA_CAN_CONTACT_ELEMENTARY_SCHOOL_FOR_INFORMATION, String.valueOf(canContactElementarySchoolForInformation));
 		child.setMetaData(METADATA_OTHER_INFORMATION, otherAfterSchoolCareInformation);
 		child.store();
 	}
