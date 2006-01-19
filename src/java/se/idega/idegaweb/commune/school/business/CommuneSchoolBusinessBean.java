@@ -1,5 +1,5 @@
 /*
- * $Id: CommuneSchoolBusinessBean.java,v 1.12 2006/01/13 04:15:34 laddi Exp $
+ * $Id: CommuneSchoolBusinessBean.java,v 1.13 2006/01/19 09:33:14 laddi Exp $
  * Created on Aug 3, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -49,10 +49,10 @@ import com.idega.util.PersonalIDFormatter;
 
 
 /**
- * Last modified: $Date: 2006/01/13 04:15:34 $ by $Author: laddi $
+ * Last modified: $Date: 2006/01/19 09:33:14 $ by $Author: laddi $
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.12 $
+ * @version $Revision: 1.13 $
  */
 public class CommuneSchoolBusinessBean extends CaseBusinessBean  implements CaseBusiness, CommuneSchoolBusiness{
 
@@ -314,7 +314,11 @@ public class CommuneSchoolBusinessBean extends CaseBusinessBean  implements Case
 			}
 			
 			IWTimestamp timeNow = new IWTimestamp();
-			saveChoice(user, child, schoolPK, seasonPK, yearPK, schoolTypeID, language, message, getCaseStatusPlaced(), null, 1, timeNow);
+			SchoolChoice choice = saveChoice(user, child, schoolPK, seasonPK, yearPK, schoolTypeID, language, message, getCaseStatusPlaced(), null, 1, timeNow);
+			String subject = getLocalizedString("application.home_school_choice_received_subject", "Home school choice received");
+			String body = getLocalizedString("application.home_school_choice_received_body", "{1} has received the application for a school placing for {0}, {2}.  The application has been handled and your child has a placing at the school.");
+			sendMessageToParents(choice, subject, body);
+
 			SchoolClass group = getDefaultGroup(schoolPK, seasonPK, yearPK);
 			
 			SchoolClassMember student = getSchoolBusiness().storeSchoolClassMember(group, child);
@@ -465,11 +469,6 @@ public class CommuneSchoolBusinessBean extends CaseBusinessBean  implements Case
 		if (status.equals(getCaseStatusPreliminary())) {
 			String subject = getLocalizedString("application.choice_received_subject", "School choice received");
 			String body = getLocalizedString("application.choice_received_body", "{1} has received the application for a school placing for {0}, {2}.  The application will be handled as soon as possible.");
-			sendMessageToParents(choice, subject, body);
-		}
-		else if (status.equals(getCaseStatusPlaced())) {
-			String subject = getLocalizedString("application.home_school_choice_received_subject", "Home school choice received");
-			String body = getLocalizedString("application.home_school_choice_received_body", "{1} has received the application for a school placing for {0}, {2}.  The application has been handled and your child has a placing at the school.");
 			sendMessageToParents(choice, subject, body);
 		}
 
