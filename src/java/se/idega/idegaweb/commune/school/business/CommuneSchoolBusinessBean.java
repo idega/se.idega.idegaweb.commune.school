@@ -1,5 +1,5 @@
 /*
- * $Id: CommuneSchoolBusinessBean.java,v 1.14 2006/01/19 10:32:54 laddi Exp $
+ * $Id: CommuneSchoolBusinessBean.java,v 1.15 2006/01/19 11:44:50 laddi Exp $
  * Created on Aug 3, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -49,10 +49,10 @@ import com.idega.util.PersonalIDFormatter;
 
 
 /**
- * Last modified: $Date: 2006/01/19 10:32:54 $ by $Author: laddi $
+ * Last modified: $Date: 2006/01/19 11:44:50 $ by $Author: laddi $
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.14 $
+ * @version $Revision: 1.15 $
  */
 public class CommuneSchoolBusinessBean extends CaseBusinessBean  implements CaseBusiness, CommuneSchoolBusiness{
 
@@ -127,7 +127,7 @@ public class CommuneSchoolBusinessBean extends CaseBusinessBean  implements Case
 	
 	public boolean canParticipateInChurchRecreation(User child) {
 		String meta = child.getMetaData(METADATA_CAN_PARTICIPATE_IN_CHURCH_RECREATION);
-		if (meta != null) {
+		if (meta != null && meta.length() > 0) {
 			return new Boolean(meta).booleanValue();
 		}
 		return true;
@@ -135,7 +135,7 @@ public class CommuneSchoolBusinessBean extends CaseBusinessBean  implements Case
 	
 	public boolean canContactElementarySchoolForInformation(User child) {
 		String meta = child.getMetaData(METADATA_CAN_CONTACT_ELEMENTARY_SCHOOL_FOR_INFORMATION);
-		if (meta != null) {
+		if (meta != null && meta.length() > 0) {
 			return new Boolean(meta).booleanValue();
 		}
 		return true;
