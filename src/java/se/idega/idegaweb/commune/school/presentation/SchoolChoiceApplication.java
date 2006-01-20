@@ -8,6 +8,7 @@ import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -1323,9 +1324,14 @@ public class SchoolChoiceApplication extends CommuneBlock {
 				table.add(getSmallHeader(Text.getNonBrakingSpace() + iwrb.getLocalizedString("school.not_want_after_school_care", "I do not want afterschool care")), 1, row++);
 			}
 			table.setHeight(row++, 5);
-		}				
-	
-		if (this.getShowHandicraftChoice() && this.age.getYears() >= 13) { //btw: 1. this should be property?    2. it should be dinamically connected with year input field or so? 
+		}
+		
+		IWTimestamp stamp = new IWTimestamp();		
+		stamp.setDay(31);
+		stamp.setMonth(12);
+		Date endOfYear = stamp.getDate(); //xxxx-12-31
+		
+		if (this.getShowHandicraftChoice() && this.age.getYears(endOfYear) >= 13) { // show handicraft choice if the child is getting 13 (or more) years old before this year ends 
 			
 			// handicraft choice message link
 			table.mergeCells(1, row, 5, row);
