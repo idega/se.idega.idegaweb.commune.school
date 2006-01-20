@@ -1331,7 +1331,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 		stamp.setMonth(12);
 		Date endOfYear = stamp.getDate(); //xxxx-12-31
 		
-		if (this.getShowHandicraftChoice() && this.age.getYears(endOfYear) >= 13) { // show handicraft choice if the child is getting 13 (or more) years old before this year ends 
+		if (this.getShowHandicraftChoice() && this.age.getYears(endOfYear) >= 13) { // show handicraft choice if the child is getting 13 (or more) years old before current year ends 
 			
 			// handicraft choice message link
 			table.mergeCells(1, row, 5, row);
