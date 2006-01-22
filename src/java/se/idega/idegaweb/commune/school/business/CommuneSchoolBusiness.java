@@ -1,6 +1,6 @@
 /*
- * $Id: CommuneSchoolBusiness.java,v 1.9 2006/01/19 10:32:54 laddi Exp $
- * Created on Jan 19, 2006
+ * $Id: CommuneSchoolBusiness.java,v 1.10 2006/01/22 16:25:11 laddi Exp $
+ * Created on Jan 22, 2006
  *
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
  *
@@ -28,10 +28,10 @@ import com.idega.user.data.User;
  * <p>
  * TODO laddi Describe Type CommuneSchoolBusiness
  * </p>
- *  Last modified: $Date: 2006/01/19 10:32:54 $ by $Author: laddi $
+ *  Last modified: $Date: 2006/01/22 16:25:11 $ by $Author: laddi $
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.9 $
+ * @version $Revision: 1.10 $
  */
 public interface CommuneSchoolBusiness extends IBOService, CaseBusiness {
 
@@ -134,6 +134,11 @@ public interface CommuneSchoolBusiness extends IBOService, CaseBusiness {
 	 * @see se.idega.idegaweb.commune.school.business.CommuneSchoolBusinessBean#getChoice
 	 */
 	public SchoolChoice getChoice(User child, SchoolSeason season, int choiceNumber) throws FinderException, java.rmi.RemoteException;
+
+	/**
+	 * @see se.idega.idegaweb.commune.school.business.CommuneSchoolBusinessBean#getSchoolChoice
+	 */
+	public SchoolChoice getSchoolChoice(Object primaryKey) throws FinderException, java.rmi.RemoteException;
 
 	/**
 	 * @see se.idega.idegaweb.commune.school.business.CommuneSchoolBusinessBean#saveChoices

@@ -1,5 +1,5 @@
 /*
- * $Id: CommuneSchoolBusinessBean.java,v 1.15 2006/01/19 11:44:50 laddi Exp $
+ * $Id: CommuneSchoolBusinessBean.java,v 1.16 2006/01/22 16:25:11 laddi Exp $
  * Created on Aug 3, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -49,10 +49,10 @@ import com.idega.util.PersonalIDFormatter;
 
 
 /**
- * Last modified: $Date: 2006/01/19 11:44:50 $ by $Author: laddi $
+ * Last modified: $Date: 2006/01/22 16:25:11 $ by $Author: laddi $
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.15 $
+ * @version $Revision: 1.16 $
  */
 public class CommuneSchoolBusinessBean extends CaseBusinessBean  implements CaseBusiness, CommuneSchoolBusiness{
 
@@ -386,6 +386,10 @@ public class CommuneSchoolBusinessBean extends CaseBusinessBean  implements Case
 	
 	public SchoolChoice getChoice(User child, SchoolSeason season, int choiceNumber) throws FinderException {
 		return getSchoolChoiceHome().findByChildAndChoiceNumberAndSeason(child, choiceNumber, season);
+	}
+	
+	public SchoolChoice getSchoolChoice(Object primaryKey) throws FinderException {
+		return getSchoolChoiceHome().findByPrimaryKey(primaryKey);
 	}
 	
 	public boolean saveChoices(User user, User child, Collection schools, Object seasonPK, Object yearPK, String language, String message) throws IDOCreateException {
