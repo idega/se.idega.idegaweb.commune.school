@@ -50,6 +50,8 @@ import com.idega.block.school.data.SchoolStudyPath;
 import com.idega.block.school.data.SchoolStudyPathGroup;
 import com.idega.block.school.data.SchoolStudyPathGroupHome;
 import com.idega.block.school.data.SchoolStudyPathHome;
+import com.idega.block.school.data.SchoolType;
+import com.idega.block.school.data.SchoolTypeHome;
 import com.idega.block.school.data.SchoolUser;
 import com.idega.block.school.data.SchoolYear;
 import com.idega.block.school.data.SchoolYearHome;
@@ -609,8 +611,10 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 				// but there is no method to get them, so later, later
 				Collection schoolYears = provider.findRelatedSchoolYears(); // contains SchoolYear objects
 								 
-				// 2. get the school year the child is in now,				 
-				SchoolClassMember schoolClassMember = getSchoolClassMemberHome().findLatestByUserAndSchool(childId.intValue(), providerId.intValue());					
+				// 2. get the school year the child is in now, and type must be elementary_school					
+				Collection types = getSchoolBusiness().getSchoolTypesForCategory(schoolBean.getCategoryElementarySchool(), false); //false means do not show freetime types
+				SchoolClassMember schoolClassMember = getSchoolClassMemberHome().findLatestByUserAndSchool(childId.intValue(), providerId.intValue(), types);					
+				
 				SchoolYear schoolYear = schoolClassMember.getSchoolYear();		
 				 
 				// 3.	check, if there is next school year for that child 
