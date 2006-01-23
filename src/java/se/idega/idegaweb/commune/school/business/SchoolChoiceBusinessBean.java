@@ -50,8 +50,6 @@ import com.idega.block.school.data.SchoolStudyPath;
 import com.idega.block.school.data.SchoolStudyPathGroup;
 import com.idega.block.school.data.SchoolStudyPathGroupHome;
 import com.idega.block.school.data.SchoolStudyPathHome;
-import com.idega.block.school.data.SchoolType;
-import com.idega.block.school.data.SchoolTypeHome;
 import com.idega.block.school.data.SchoolUser;
 import com.idega.block.school.data.SchoolYear;
 import com.idega.block.school.data.SchoolYearHome;
