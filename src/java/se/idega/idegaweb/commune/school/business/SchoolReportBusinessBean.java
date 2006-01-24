@@ -67,8 +67,9 @@ public class SchoolReportBusinessBean extends IBOSessionBean implements SchoolRe
 			_columnsToDisplay = new ArrayList();
 			_columnsToDisplay.add(FIELD_PERSONAL_ID);
 			_columnsToDisplay.add(FIELD_NAME);
-			_columnsToDisplay.add(FIELD_ADDRESS);
+			//_columnsToDisplay.add(FIELD_ADDRESS);
 			_columnsToDisplay.add(FIELD_GENDER);
+			_columnsToDisplay.add(FIELD_EXTRA_MESSAGE);
 		}
 		else {
 			_columnsToDisplay = columns;
@@ -115,7 +116,7 @@ public class SchoolReportBusinessBean extends IBOSessionBean implements SchoolRe
 			_fields.add(name);
 			reportCollection.addField(name);
 		}
-		
+		/*
 		ReportableField address = new ReportableField(FIELD_ADDRESS, String.class);
 		address.setLocalizedName(getLocalizedString(FIELD_ADDRESS, "Address"), currentLocale);
 		address.setMaxNumberOfCharacters(30);
@@ -123,7 +124,7 @@ public class SchoolReportBusinessBean extends IBOSessionBean implements SchoolRe
 			_fields.add(address);
 			reportCollection.addField(address);
 		}
-		
+		*/
 		ReportableField zipCode = new ReportableField(FIELD_ZIP_CODE, String.class);
 		zipCode.setLocalizedName(getLocalizedString(FIELD_ZIP_CODE, "Zip code"), currentLocale);
 		if (displayColumn(FIELD_ZIP_CODE)) {
@@ -279,6 +280,11 @@ public class SchoolReportBusinessBean extends IBOSessionBean implements SchoolRe
 					data.addData(name, userName.getName(defaultLocale, true));
 				}
 
+				if (displayColumn(FIELD_EXTRA_MESSAGE)) {
+					String userName = new String(user.getExtraInfo());
+					data.addData(name, userName);
+				}
+/*
 				if (homeAddress != null) {
 					if (displayColumn(FIELD_ADDRESS)) {
 						data.addData(address, homeAddress.getStreetAddress());
@@ -295,6 +301,7 @@ public class SchoolReportBusinessBean extends IBOSessionBean implements SchoolRe
 						}
 					}
 				}
+				*/
 				if (mail != null) {
 					if (displayColumn(FIELD_EMAIL)) {
 						data.addData(email, mail.getEmailAddress());
@@ -418,7 +425,7 @@ public class SchoolReportBusinessBean extends IBOSessionBean implements SchoolRe
 			_fields.add(name);
 			reportCollection.addField(name);
 		}
-		
+	
 		ReportableField address = new ReportableField(FIELD_ADDRESS, String.class);
 		address.setLocalizedName(getLocalizedString(FIELD_ADDRESS, "Address"), currentLocale);
 		if (displayColumn(FIELD_ADDRESS)) {
@@ -480,6 +487,13 @@ public class SchoolReportBusinessBean extends IBOSessionBean implements SchoolRe
 		if (displayColumn(FIELD_MESSAGE)) {
 			_fields.add(message);
 			reportCollection.addField(message);
+		}
+		
+		ReportableField extra_message = new ReportableField(FIELD_EXTRA_MESSAGE, String.class);
+		extra_message.setLocalizedName(getLocalizedString(FIELD_EXTRA_MESSAGE, "Extra_message"), currentLocale);
+		if (displayColumn(FIELD_EXTRA_MESSAGE)) {
+			_fields.add(extra_message);
+			reportCollection.addField(extra_message);
 		}
 		
 		ReportableField language = new ReportableField(FIELD_LANGUAGE_CHOICE, String.class);
@@ -618,6 +632,12 @@ public class SchoolReportBusinessBean extends IBOSessionBean implements SchoolRe
 					}
 				}
 				
+				if (displayColumn(FIELD_EXTRA_MESSAGE)) {
+					if (choice.getExtraChoiceMessage()!= null) {
+						data.addData(extra_message, choice.getExtraChoiceMessage());
+					}
+				}
+
 				if (parent != null) {
 					if (displayColumn(FIELD_CUSTODIAN)) {
 						Name parentName = new Name(parent.getFirstName(), parent.getMiddleName(), parent.getLastName());
