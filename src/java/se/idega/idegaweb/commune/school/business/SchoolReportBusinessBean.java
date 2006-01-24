@@ -116,7 +116,7 @@ public class SchoolReportBusinessBean extends IBOSessionBean implements SchoolRe
 			_fields.add(name);
 			reportCollection.addField(name);
 		}
-		/*
+		
 		ReportableField address = new ReportableField(FIELD_ADDRESS, String.class);
 		address.setLocalizedName(getLocalizedString(FIELD_ADDRESS, "Address"), currentLocale);
 		address.setMaxNumberOfCharacters(30);
@@ -124,7 +124,7 @@ public class SchoolReportBusinessBean extends IBOSessionBean implements SchoolRe
 			_fields.add(address);
 			reportCollection.addField(address);
 		}
-		*/
+		
 		ReportableField zipCode = new ReportableField(FIELD_ZIP_CODE, String.class);
 		zipCode.setLocalizedName(getLocalizedString(FIELD_ZIP_CODE, "Zip code"), currentLocale);
 		if (displayColumn(FIELD_ZIP_CODE)) {
@@ -284,7 +284,7 @@ public class SchoolReportBusinessBean extends IBOSessionBean implements SchoolRe
 					String userName = new String(user.getExtraInfo());
 					data.addData(name, userName);
 				}
-/*
+
 				if (homeAddress != null) {
 					if (displayColumn(FIELD_ADDRESS)) {
 						data.addData(address, homeAddress.getStreetAddress());
@@ -301,7 +301,7 @@ public class SchoolReportBusinessBean extends IBOSessionBean implements SchoolRe
 						}
 					}
 				}
-				*/
+				
 				if (mail != null) {
 					if (displayColumn(FIELD_EMAIL)) {
 						data.addData(email, mail.getEmailAddress());
