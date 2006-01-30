@@ -1,6 +1,6 @@
 /*
- * $Id: CommuneSchoolBusiness.java,v 1.10 2006/01/22 16:25:11 laddi Exp $
- * Created on Jan 22, 2006
+ * $Id: CommuneSchoolBusiness.java,v 1.11 2006/01/30 15:57:24 laddi Exp $
+ * Created on Jan 30, 2006
  *
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
  *
@@ -28,10 +28,10 @@ import com.idega.user.data.User;
  * <p>
  * TODO laddi Describe Type CommuneSchoolBusiness
  * </p>
- *  Last modified: $Date: 2006/01/22 16:25:11 $ by $Author: laddi $
+ *  Last modified: $Date: 2006/01/30 15:57:24 $ by $Author: laddi $
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.10 $
+ * @version $Revision: 1.11 $
  */
 public interface CommuneSchoolBusiness extends IBOService, CaseBusiness {
 
@@ -114,6 +114,16 @@ public interface CommuneSchoolBusiness extends IBOService, CaseBusiness {
 	 * @see se.idega.idegaweb.commune.school.business.CommuneSchoolBusinessBean#getSchoolYears
 	 */
 	public Collection getSchoolYears() throws java.rmi.RemoteException;
+
+	/**
+	 * @see se.idega.idegaweb.commune.school.business.CommuneSchoolBusinessBean#approveApplications
+	 */
+	public boolean approveApplications(Object[] pks, School school, SchoolSeason season, String subject, String body, User performer) throws java.rmi.RemoteException;
+
+	/**
+	 * @see se.idega.idegaweb.commune.school.business.CommuneSchoolBusinessBean#rejectApplications
+	 */
+	public boolean rejectApplications(Object[] pks, String subject, String body, User performer) throws java.rmi.RemoteException;
 
 	/**
 	 * @see se.idega.idegaweb.commune.school.business.CommuneSchoolBusinessBean#saveHomeSchoolChoice

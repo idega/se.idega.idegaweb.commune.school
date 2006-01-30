@@ -1,5 +1,5 @@
 /*
- * $Id: CommuneSchoolBusinessBean.java,v 1.17 2006/01/27 09:19:07 laddi Exp $
+ * $Id: CommuneSchoolBusinessBean.java,v 1.18 2006/01/30 15:57:24 laddi Exp $
  * Created on Aug 3, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -19,7 +19,6 @@ import javax.ejb.CreateException;
 import javax.ejb.FinderException;
 import javax.transaction.UserTransaction;
 import se.idega.idegaweb.commune.business.CommuneUserBusiness;
-
 import se.idega.idegaweb.commune.message.business.CommuneMessageBusiness;
 import se.idega.idegaweb.commune.school.data.SchoolChoice;
 import se.idega.idegaweb.commune.school.data.SchoolChoiceHome;
@@ -49,10 +48,10 @@ import com.idega.util.PersonalIDFormatter;
 
 
 /**
- * Last modified: $Date: 2006/01/27 09:19:07 $ by $Author: laddi $
+ * Last modified: $Date: 2006/01/30 15:57:24 $ by $Author: laddi $
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.17 $
+ * @version $Revision: 1.18 $
  */
 public class CommuneSchoolBusinessBean extends CaseBusinessBean  implements CaseBusiness, CommuneSchoolBusiness{
 
@@ -314,6 +313,105 @@ public class CommuneSchoolBusinessBean extends CaseBusinessBean  implements Case
 		catch (RemoteException re) {
 			throw new IBORuntimeException(re);
 		}
+	}
+	
+	public boolean approveApplications(Object[] pks, School school, SchoolSeason season, String subject, String body, User performer) {
+		UserTransaction trans = getSessionContext().getUserTransaction();
+
+		try {
+			trans.begin();
+			
+			String stID = getSchoolBusiness().getPropertyValue(PROPERTY_DEFAULT_SCHOOL_TYPE);
+			int schoolTypeID = -1;
+			if (stID == null) {
+				schoolTypeID = new Integer(this.getBundle().getProperty(PROPERTY_DEFAULT_SCHOOL_TYPE, "-1")).intValue();
+				getSchoolBusiness().setProperty(PROPERTY_DEFAULT_SCHOOL_TYPE, Integer.toString(schoolTypeID));
+			}
+			else {
+				schoolTypeID = Integer.parseInt(stID);
+			}
+			
+			IWTimestamp timeNow = new IWTimestamp();
+			
+			for (int i = 0; i < pks.length; i++) {
+				Object object = pks[i];
+				SchoolChoice choice = getSchoolChoice(object);
+				SchoolYear year = choice.getSchoolYear();
+				User child = choice.getChild();
+				
+				changeCaseStatus(choice, getCaseStatusPlaced().getStatus(), performer);
+				sendMessageToParents(choice, subject, body);
+
+				SchoolClass group = getDefaultGroup(school, season, year);
+				
+				SchoolClassMember student = getSchoolBusiness().storeSchoolClassMember(group, child);
+				student.setSchoolYear(year);
+				student.setNotes(choice.getMessage());
+				student.setSchoolTypeId(schoolTypeID);
+				student.setRegistrationCreatedDate(timeNow.getTimestamp());
+				student.setRegisterDate(choice.getPlacementDate() != null ? new IWTimestamp(choice.getPlacementDate()).getTimestamp() : new IWTimestamp(season.getSchoolSeasonStart()).getTimestamp());
+				student.store();
+			}
+			
+			trans.commit();
+
+			return true;
+		}
+		catch (Exception ex) {
+			try {
+				trans.rollback();
+			}
+			catch (javax.transaction.SystemException e) {
+				e.printStackTrace();
+			}
+			ex.printStackTrace();
+		}
+		
+		return false;
+	}
+	
+	public boolean rejectApplications(Object[] pks, String subject, String body, User performer) {
+		UserTransaction trans = getSessionContext().getUserTransaction();
+
+		try {
+			trans.begin();
+			
+			for (int i = 0; i < pks.length; i++) {
+				Object object = pks[i];
+				SchoolChoice choice = getSchoolChoice(object);
+				
+				sendMessageToParents(choice, subject, body);
+
+				changeCaseStatus(choice, getCaseStatusDenied().getStatus(), performer);
+				
+				Collection children = choice.getChildren();
+				if (children != null && !children.isEmpty()) {
+					Iterator iter = children.iterator();
+					while (iter.hasNext()) {
+						Case element = (Case) iter.next();
+						if (element.getCode().equals("MBSKOLV")) {
+							changeCaseStatus(element, getCaseStatusPreliminary().getStatus(), performer);
+							break;
+						}
+					}
+				}
+			}
+			
+			trans.commit();
+
+			return true;
+		}
+		catch (Exception ex) {
+			try {
+				trans.rollback();
+			}
+			catch (javax.transaction.SystemException e) {
+				e.printStackTrace();
+			}
+			ex.printStackTrace();
+		}
+		
+		return false;
 	}
 	
 	public boolean saveHomeSchoolChoice(User user, User child, Object schoolPK, Object seasonPK, Object yearPK, String language, String message) throws IDOCreateException {
