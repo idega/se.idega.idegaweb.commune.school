@@ -1,5 +1,5 @@
 /*
- * $Id: CommuneSchoolBusinessBean.java,v 1.18 2006/01/30 15:57:24 laddi Exp $
+ * $Id: CommuneSchoolBusinessBean.java,v 1.19 2006/02/01 09:30:40 laddi Exp $
  * Created on Aug 3, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -37,6 +37,8 @@ import com.idega.business.IBOLookup;
 import com.idega.business.IBOLookupException;
 import com.idega.business.IBORuntimeException;
 import com.idega.core.location.data.Address;
+import com.idega.core.location.data.Commune;
+import com.idega.core.location.data.PostalCode;
 import com.idega.data.IDOCreateException;
 import com.idega.data.IDOException;
 import com.idega.data.IDOLookup;
@@ -48,10 +50,10 @@ import com.idega.util.PersonalIDFormatter;
 
 
 /**
- * Last modified: $Date: 2006/01/30 15:57:24 $ by $Author: laddi $
+ * Last modified: $Date: 2006/02/01 09:30:40 $ by $Author: laddi $
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.18 $
+ * @version $Revision: 1.19 $
  */
 public class CommuneSchoolBusinessBean extends CaseBusinessBean  implements CaseBusiness, CommuneSchoolBusiness{
 
@@ -158,7 +160,13 @@ public class CommuneSchoolBusinessBean extends CaseBusinessBean  implements Case
 		try {
 			Address address = getUserBusiness().getUsersMainAddress(user);
 			if (address != null) {
-				return getHomeSchoolForAddress(user, address);
+				PostalCode code = address.getPostalCode();
+				if (code != null) {
+					Commune commune = code.getCommune();
+					if (commune != null && commune.getIsDefault()) {
+						return getHomeSchoolForAddress(user, address);
+					}
+				}
 			}
 			return null;
 		}
