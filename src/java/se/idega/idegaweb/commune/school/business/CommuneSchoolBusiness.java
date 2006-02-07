@@ -1,6 +1,6 @@
 /*
- * $Id: CommuneSchoolBusiness.java,v 1.11 2006/01/30 15:57:24 laddi Exp $
- * Created on Jan 30, 2006
+ * $Id: CommuneSchoolBusiness.java,v 1.12 2006/02/07 15:48:51 laddi Exp $
+ * Created on Feb 7, 2006
  *
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
  *
@@ -28,10 +28,10 @@ import com.idega.user.data.User;
  * <p>
  * TODO laddi Describe Type CommuneSchoolBusiness
  * </p>
- *  Last modified: $Date: 2006/01/30 15:57:24 $ by $Author: laddi $
+ *  Last modified: $Date: 2006/02/07 15:48:51 $ by $Author: laddi $
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.11 $
+ * @version $Revision: 1.12 $
  */
 public interface CommuneSchoolBusiness extends IBOService, CaseBusiness {
 
@@ -74,6 +74,11 @@ public interface CommuneSchoolBusiness extends IBOService, CaseBusiness {
 	 * @see se.idega.idegaweb.commune.school.business.CommuneSchoolBusinessBean#hasSchoolPlacing
 	 */
 	public boolean hasSchoolPlacing(User user, SchoolSeason season) throws java.rmi.RemoteException;
+
+	/**
+	 * @see se.idega.idegaweb.commune.school.business.CommuneSchoolBusinessBean#hasSchoolChoice
+	 */
+	public boolean hasSchoolChoice(User user, SchoolSeason season) throws java.rmi.RemoteException;
 
 	/**
 	 * @see se.idega.idegaweb.commune.school.business.CommuneSchoolBusinessBean#hasAfterSchoolCarePlacing
