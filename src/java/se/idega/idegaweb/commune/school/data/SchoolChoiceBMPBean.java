@@ -947,7 +947,7 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 				query.appendOrderBy("pc.created desc,u.last_name,u.first_name,u.middle_name");
 		}
 		else {
-			query.appendOrderBy("pc.created desc,u.last_name,u.first_name,u.middle_name");
+			query.appendOrderBy("pc.created desc,u.first_name,u.middle_name,u.last_name");
 		}
 
 //		System.out.println(query.toString());
