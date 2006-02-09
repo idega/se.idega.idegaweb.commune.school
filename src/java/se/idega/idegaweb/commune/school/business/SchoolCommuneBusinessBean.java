@@ -509,19 +509,19 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 			choice = (SchoolChoice) iter.next();
 			student = choice.getChild();
 
-			if (confirmation) {
+			Object[] arguments = { student.getName()};
+			newBody = MessageFormat.format(body, arguments);
+
+			if ((confirmation)&&(!choice.getHasReceivedConfirmationMessage())) {
+				sendMessageToParents(choice, subject, newBody, true);
 				choice.setHasReceivedConfirmationMessage(true);
 			}
-			else {
+			if ((!confirmation)&&(!choice.getHasReceivedPlacementMessage())) {
+				sendMessageToParents(choice, subject, newBody, true);
 				choice.setHasReceivedPlacementMessage(true);
 			}
 			choice.store();
 
-			//Object[] arguments = { student.getNameLastFirst(true)};
-			Object[] arguments = { student.getName()};
-			newBody = MessageFormat.format(body, arguments);
-
-			sendMessageToParents(choice, subject, newBody, true);
 		}
 	}
 
