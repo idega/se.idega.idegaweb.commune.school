@@ -690,10 +690,10 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 		sql.append(CHOSEN_SCHOOL);
 		sql.append(" = ");
 		sql.append(schoolID);
+		sql.append(" order by comm_sch_choice.school_choice_date desc ");
 		//System.out.println(sql.toString());
 		return super.idoFindPKsBySQL(sql.toString());
 	}
-
 	public Collection ejbFindAll() throws FinderException {
 		return this.idoFindPKsBySQL("select * from " + getEntityName());
 	}
@@ -945,6 +945,9 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 				query.appendOrderBy("csc.language_choice,u.last_name,u.first_name,u.middle_name");
 			else if (orderBy == CREATED_SORT)
 				query.appendOrderBy("pc.created desc,u.last_name,u.first_name,u.middle_name");
+		}
+		else {
+			query.appendOrderBy("pc.created desc,u.first_name,u.middle_name,u.last_name");
 		}
 
 //		System.out.println(query.toString());
