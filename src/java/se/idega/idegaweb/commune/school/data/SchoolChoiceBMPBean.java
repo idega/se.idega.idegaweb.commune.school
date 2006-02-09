@@ -690,10 +690,10 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 		sql.append(CHOSEN_SCHOOL);
 		sql.append(" = ");
 		sql.append(schoolID);
+		sql.append(" order by comm_sch_choice.school_choice_date desc ");
 		//System.out.println(sql.toString());
 		return super.idoFindPKsBySQL(sql.toString());
 	}
-
 	public Collection ejbFindAll() throws FinderException {
 		return this.idoFindPKsBySQL("select * from " + getEntityName());
 	}
