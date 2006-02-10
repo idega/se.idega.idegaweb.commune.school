@@ -17,6 +17,9 @@ import se.cubecon.bun24.viewpoint.data.Viewpoint;
 import se.idega.idegaweb.commune.business.CommuneCaseBusiness;
 import se.idega.idegaweb.commune.care.data.AfterSchoolChoiceBMPBean;
 import se.idega.idegaweb.commune.school.business.SchoolCaseBusiness;
+import se.idega.idegaweb.commune.school.business.SchoolChoiceBusiness;
+import se.idega.idegaweb.commune.school.data.SchoolChoice;
+import se.idega.idegaweb.commune.school.data.SchoolChoiceBMPBean;
 import com.idega.block.process.business.CaseBusiness;
 import com.idega.block.process.business.CaseCodeManager;
 import com.idega.block.process.data.Case;
@@ -95,9 +98,11 @@ public class UserCases extends CommuneBlock {
 
 	public final static String PARAMETER_START_CASE = "case_start_nr";
 	public final static String PARAMETER_END_CASE = "case_end_nr";
-
+	
 	
 	private boolean iUseUserInSession = false;
+	
+	private boolean showPlacedOnlyIFPlacementMessageSent = false; 
 	
 	public String getBundleIdentifier() {
 		return IW_BUNDLE_IDENTIFIER;
@@ -363,11 +368,23 @@ public class UserCases extends CommuneBlock {
 		
 		PresentationObject status = null;
 		
-		// special case at the beginning
+		// special cases at the beginning
 		String caseCodeAS = new AfterSchoolChoiceBMPBean().getCaseCodeKey();
+		String caseCodeSc = new SchoolChoiceBMPBean().getCaseCodeKey();
+		SchoolChoiceBusiness schBuiz = (SchoolChoiceBusiness) IBOLookup.getServiceInstance(iwc, SchoolChoiceBusiness.class);
+		
 		if (caseCode.equals(caseCodeAS) && !getShowStatusAfterSchoolCare()) {
 			status = getSmallText("-");
 		}
+		else if (this.showPlacedOnlyIFPlacementMessageSent && caseCode.equals(caseCodeSc)
+				&& useCase.getCaseStatus().equals(caseStatusPlaced)) { 
+			SchoolChoice choice = schBuiz.getSchoolChoice(((Integer) useCase.getPrimaryKey()).intValue());
+			if (choice != null && !choice.getHasReceivedPlacementMessage())
+				status = getStatus(iwc, caseStatusOpen);
+			else
+				status = getStatus(iwc, caseStatus);
+			
+		}  
 		else {
 			List list = ImplementorRepository.getInstance().newInstances(SchoolCaseBusiness.class, this.getClass());
 			Iterator iterator = list.iterator();
@@ -632,5 +649,13 @@ public class UserCases extends CommuneBlock {
 	
 	public void setUseUserInSession(boolean useUserInSession) {
 		iUseUserInSession = useUserInSession;
+	}
+	
+	public boolean getShowPlacedOnlyIFPlacementMessageSent() {
+		return showPlacedOnlyIFPlacementMessageSent;
+	}
+	
+	public void setShowPlacedOnlyIFPlacementMessageSent(boolean showPlacedOnlyIFPlacementMessageSent) {
+		this.showPlacedOnlyIFPlacementMessageSent = showPlacedOnlyIFPlacementMessageSent;
 	}
 }
