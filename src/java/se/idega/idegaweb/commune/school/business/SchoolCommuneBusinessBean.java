@@ -186,6 +186,19 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 		}
 	}
 
+	public boolean isPlacedAtSchool(User user, School school) {
+		try {
+			return (getSchoolBusiness().getSchoolClassMemberHome().getNumberOfPlacingsAtSchool(user, school) > 0);
+		}
+		catch (RemoteException re) {
+			throw new IBORuntimeException(re);
+		}
+		catch (IDOException ie) {
+			ie.printStackTrace();
+			return false;
+		}
+	}
+	
 	public boolean isPlacedAtSchool(int userID, int schoolID) {
 		try {
 			return (getSchoolBusiness().getSchoolClassMemberHome().getNumberOfPlacingsAtSchool(userID, schoolID) > 0);
