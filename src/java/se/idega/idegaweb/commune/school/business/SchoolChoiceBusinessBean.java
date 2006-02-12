@@ -843,9 +843,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 			}
 			else {
 				User appParent = application.getOwner();
-				if (getUserBusiness().getMemberFamilyLogic().isChildInCustodyOf(child, appParent)) {
-					getMessageBusiness().createUserMessage(application, appParent,  null,null,applyingSubject, MessageFormat.format(applyingBody, arguments), true,applyingCode);
-				}
+				User parent2 = null;
 
 				try {
 					Collection parents = getUserBusiness().getMemberFamilyLogic().getCustodiansFor(child);
@@ -855,15 +853,85 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 						if (parent.equals(appParent)) {
 							continue;
 						}
-						if (!getUserBusiness().haveSameAddress(parent, appParent) && 
-								!getMemberFamilyLogic().isSpouseOf(parent, appParent) &&
-								!getMemberFamilyLogic().isCohabitantOf(parent, appParent)) {
-							getMessageBusiness().createUserMessage(application, parent,null,null, nonApplyingSubject, MessageFormat.format(nonApplyingBody, arguments), true,nonApplyingCode);
+						else parent2 = parent;
+					}
+				
+				if(parent2 == null){
+					if (getUserBusiness().getMemberFamilyLogic().isChildInCustodyOf(child, appParent)) {
+						getMessageBusiness().createUserMessage(application, appParent,  null,null,applyingSubject, MessageFormat.format(applyingBody, arguments), true,applyingCode);
+					}
+				}
+				else{
+					boolean messageWasSended = false;
+					boolean sendLetterIfNoEmail = false;
+					if(appParent.getEmails() != null){
+						if (getUserBusiness().getMemberFamilyLogic().isChildInCustodyOf(child, appParent)) {
+							getMessageBusiness().createUserMessage(application, appParent,  null,null,applyingSubject, MessageFormat.format(applyingBody, arguments), true,applyingCode);
+							messageWasSended = true;
+						}	
+						if(!messageWasSended) sendLetterIfNoEmail = true;
+						if (!getUserBusiness().haveSameAddress(parent2, appParent) && 
+								!getMemberFamilyLogic().isSpouseOf(parent2, appParent) &&
+								!getMemberFamilyLogic().isCohabitantOf(parent2, appParent)) {
+							getMessageBusiness().createUserMessage(application, parent2,null,null, nonApplyingSubject, MessageFormat.format(nonApplyingBody, arguments), sendLetterIfNoEmail,nonApplyingCode);
 						}
 						else if (sendToAllParents){
-							getMessageBusiness().createUserMessage(application, parent,null,null, applyingSubject, MessageFormat.format(applyingBody, arguments), true,applyingCode);
+							getMessageBusiness().createUserMessage(application, parent2,null,null, applyingSubject, MessageFormat.format(applyingBody, arguments), sendLetterIfNoEmail,applyingCode);
 						}
+					}	
+					else{
+						if(parent2.getEmails()!=null){
+							if (getUserBusiness().getMemberFamilyLogic().isChildInCustodyOf(child, appParent)) {
+								getMessageBusiness().createUserMessage(application, appParent,  null,null,applyingSubject, MessageFormat.format(applyingBody, arguments), false,applyingCode);
+							}
+							if (!getUserBusiness().haveSameAddress(parent2, appParent) && 
+								!getMemberFamilyLogic().isSpouseOf(parent2, appParent) &&
+								!getMemberFamilyLogic().isCohabitantOf(parent2, appParent)) {
+									getMessageBusiness().createUserMessage(application, parent2,null,null, nonApplyingSubject, MessageFormat.format(nonApplyingBody, arguments), true,nonApplyingCode);
+							}
+							else if (sendToAllParents){
+								getMessageBusiness().createUserMessage(application, parent2,null,null, applyingSubject, MessageFormat.format(applyingBody, arguments), true,applyingCode);
+							}
+							
+						}
+						else{
+							if(getUserBusiness().haveSameAddress(parent2, appParent)){
+								if (getUserBusiness().getMemberFamilyLogic().isChildInCustodyOf(child, appParent)) {
+									getMessageBusiness().createUserMessage(application, appParent,  null,null,applyingSubject, MessageFormat.format(applyingBody, arguments), true,applyingCode);
+									messageWasSended = true;
+								}	
+								if(!messageWasSended) sendLetterIfNoEmail = true;
+								if (!getUserBusiness().haveSameAddress(parent2, appParent) && 
+									!getMemberFamilyLogic().isSpouseOf(parent2, appParent) &&
+									!getMemberFamilyLogic().isCohabitantOf(parent2, appParent)) {
+										getMessageBusiness().createUserMessage(application, parent2,null,null, nonApplyingSubject, MessageFormat.format(nonApplyingBody, arguments), sendLetterIfNoEmail,nonApplyingCode);
+								}
+								else if (sendToAllParents){
+									getMessageBusiness().createUserMessage(application, parent2,null,null, applyingSubject, MessageFormat.format(applyingBody, arguments), sendLetterIfNoEmail,applyingCode);
+								}
+							}
+							else{
+								if (getUserBusiness().getMemberFamilyLogic().isChildInCustodyOf(child, appParent)) {
+									getMessageBusiness().createUserMessage(application, appParent,  null,null,applyingSubject, MessageFormat.format(applyingBody, arguments), true,applyingCode);
+								}
+								if (!getUserBusiness().haveSameAddress(parent2, appParent) && 
+									!getMemberFamilyLogic().isSpouseOf(parent2, appParent) &&
+									!getMemberFamilyLogic().isCohabitantOf(parent2, appParent)) {
+										getMessageBusiness().createUserMessage(application, parent2,null,null, nonApplyingSubject, MessageFormat.format(nonApplyingBody, arguments), true,nonApplyingCode);
+								}
+								else if (sendToAllParents){
+									getMessageBusiness().createUserMessage(application, parent2,null,null, applyingSubject, MessageFormat.format(applyingBody, arguments), true,applyingCode);
+								}
+								
+							}
+						}
+						
 					}
+						
+				}
+					
+					
+					
 				}
 				catch (NoCustodianFound ncf) {
 					ncf.printStackTrace();
