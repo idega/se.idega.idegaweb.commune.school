@@ -524,6 +524,12 @@ public class SchoolReportBusinessBean extends IBOSessionBean implements SchoolRe
 			reportCollection.addField(alternateAddress);
 		}
 		
+		ReportableField handicraft = new ReportableField(FIELD_HANDICRAFT, String.class);
+		alternateAddress.setLocalizedName(getLocalizedString(FIELD_HANDICRAFT, "Handicraft"), currentLocale);
+		if (displayColumn(FIELD_HANDICRAFT)) {
+			_fields.add(handicraft);
+			reportCollection.addField(handicraft);
+		}
 		int numberOfChoices = 0;
 
 		try {
@@ -638,6 +644,12 @@ public class SchoolReportBusinessBean extends IBOSessionBean implements SchoolRe
 					}
 				}
 
+				if (displayColumn(FIELD_HANDICRAFT)) {
+					if (choice.getHandicraft()!= null) {
+						data.addData(handicraft, choice.getHandicraft());
+					}
+				}
+				
 				if (parent != null) {
 					if (displayColumn(FIELD_CUSTODIAN)) {
 						Name parentName = new Name(parent.getFirstName(), parent.getMiddleName(), parent.getLastName());
@@ -652,6 +664,9 @@ public class SchoolReportBusinessBean extends IBOSessionBean implements SchoolRe
 					}
 				}
 				
+
+
+			
 				reportCollection.add(data);
 				numberOfChoices++;
 			}
