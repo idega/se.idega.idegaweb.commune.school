@@ -832,7 +832,7 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 	
 	public Collection ejbFindChoices(int schoolID, int seasonID, int gradeYear, int[] choiceOrder, String[] validStatuses, String searchStringForUser, int orderBy, int numberOfEntries, int startingEntry, int placementType) throws FinderException {
 		IDOQuery query = getIDOQuery(schoolID, seasonID, gradeYear, choiceOrder, validStatuses, searchStringForUser, false, false, false, orderBy, placementType);
-        String sql = query.toString();   	
+        //String sql = query.toString();   	
 		return this.idoFindPKsByQuery(query, numberOfEntries, startingEntry);
 	}
 
