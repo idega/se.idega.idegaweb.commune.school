@@ -421,6 +421,55 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 		return getIntColumnValue(HANDICRAFT_ID);
 	}
 	
+	public String getFromSchool(int schoolId,int seasonId, int childId) {
+		
+		String fromSchool = null;
+		StringBuffer query = new StringBuffer("select SCH_SCHOOL.SCH_SCHOOL_ID,SCH_SCHOOL.SCHOOL_NAME from ");
+		query.append("SCH_SCHOOL,SCH_SCHOOL_CLASS,SCH_CLASS_MEMBER,SCH_SCHOOL_SEASON ");
+		query.append("where SCH_SCHOOL.SCH_SCHOOL_ID=SCH_SCHOOL_CLASS.SCHOOL_ID ");
+		query.append("and SCH_SCHOOL_SEASON.SCH_SCHOOL_SEASON_ID=SCH_SCHOOL_CLASS.SCH_SCHOOL_SEASON_ID ");
+		query.append("and SCH_CLASS_MEMBER.SCH_SCHOOL_CLASS_ID = SCH_SCHOOL_CLASS.sch_school_class_id ");
+		query.append("and SCH_CLASS_MEMBER.IC_USER_ID=");
+        query.append(childId);
+		query.append(" and SCH_SCHOOL_CLASS.LOCKED_DATE< (select SEASON_END from SCH_SCHOOL_SEASON where SCH_SCHOOL_SEASON_ID=");
+		query.append(seasonId);
+		query.append(" ) order by SCH_SCHOOL_CLASS.LOCKED_DATE DESC ");
+
+        Connection conn = null;
+        Statement  stmt = null;
+        ResultSet rs = null;
+
+		try {
+			conn = getConnection();
+			stmt = conn.createStatement();
+			rs = stmt.executeQuery(query.toString());
+			while(rs.next()){
+				if(rs.getInt(1)!=schoolId){
+					fromSchool = rs.getString(2);
+					break;
+				}
+			}   
+
+	    }
+		catch (SQLException e) {
+            e.printStackTrace();
+        }
+        finally{
+            try {
+                if(rs!=null)
+                    rs.close();
+                if(stmt!=null)
+                    stmt.close();
+            } catch (SQLException e1) {
+                e1.printStackTrace();
+            }
+            if(conn!=null)
+                freeConnection(conn);
+        }
+		
+		return fromSchool;
+	}
+
 	public void setHandicraft(SchoolStudyPath path) {
 		setColumn(HANDICRAFT_ID, path);
 	}
@@ -675,6 +724,7 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 		return super.idoFindPKsByQuery(query);
 	}
 	
+	
 	public Collection ejbFindByChildAndSchoolAndSeason(int childID, int schoolID, int seasonID) throws javax.ejb.FinderException {
 		StringBuffer sql = new StringBuffer("select * from ");
 		sql.append(SCHOOLCHOICE);
@@ -782,6 +832,7 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 	
 	public Collection ejbFindChoices(int schoolID, int seasonID, int gradeYear, int[] choiceOrder, String[] validStatuses, String searchStringForUser, int orderBy, int numberOfEntries, int startingEntry, int placementType) throws FinderException {
 		IDOQuery query = getIDOQuery(schoolID, seasonID, gradeYear, choiceOrder, validStatuses, searchStringForUser, false, false, false, orderBy, placementType);
+        String sql = query.toString();   	
 		return this.idoFindPKsByQuery(query, numberOfEntries, startingEntry);
 	}
 
@@ -789,7 +840,7 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 		return getIDOQuery(schoolID, seasonID, gradeYear, choiceOrder, validStatuses, searchStringForUser, selectCount, selectOnlyChildIDs, orderBy, -1);
 		
 	}
-	
+
 	public IDOQuery getIDOQuery(int schoolID, int seasonID, int schoolYear, int[] choiceOrder, String[] validStatuses, String searchStringForUser, boolean selectCount, boolean selectOnlyChildIDs, int orderBy, int placementType) {
 		return getIDOQuery(schoolID, seasonID, schoolYear, choiceOrder, validStatuses, searchStringForUser, selectCount, selectOnlyChildIDs, false, orderBy, placementType);
 	}
