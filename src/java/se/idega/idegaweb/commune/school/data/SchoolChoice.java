@@ -18,12 +18,12 @@ import com.idega.user.data.User;
 
 /**
  * <p>
- * TODO Dainis Describe Type SchoolChoice
+ * TODO is Describe Type SchoolChoice
  * </p>
- *  Last modified: $Date: 2005/11/27 17:04:41 $ by $Author: dainis $
+ *  Last modified: $Date: 2006/02/14 15:39:03 $ by $Author: igors $
  * 
- * @author <a href="mailto:Dainis@idega.com">Dainis</a>
- * @version $Revision: 1.34 $
+ * @author <a href="mailto:is@idega.com">is</a>
+ * @version $Revision: 1.35 $
  */
 public interface SchoolChoice extends IDOEntity, Case {
 
@@ -421,6 +421,16 @@ public interface SchoolChoice extends IDOEntity, Case {
 	 * @see se.idega.idegaweb.commune.school.data.SchoolChoiceBMPBean#getHandicraft
 	 */
 	public SchoolStudyPath getHandicraft();
+
+	/**
+	 * @see se.idega.idegaweb.commune.school.data.SchoolChoiceBMPBean#getHandicraftId
+	 */
+	public int getHandicraftId();
+
+	/**
+	 * @see se.idega.idegaweb.commune.school.data.SchoolChoiceBMPBean#getFromSchool
+	 */
+	public String getFromSchool(int schoolId, int seasonId, int childId);
 
 	/**
 	 * @see se.idega.idegaweb.commune.school.data.SchoolChoiceBMPBean#setHandicraft

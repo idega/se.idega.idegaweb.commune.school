@@ -18,12 +18,12 @@ import com.idega.user.data.User;
 
 /**
  * <p>
- * TODO Dainis Describe Type SchoolChoiceHome
+ * TODO is Describe Type SchoolChoiceHome
  * </p>
- *  Last modified: $Date: 2005/11/27 17:04:41 $ by $Author: dainis $
+ *  Last modified: $Date: 2006/02/14 15:39:37 $ by $Author: igors $
  * 
- * @author <a href="mailto:Dainis@idega.com">Dainis</a>
- * @version $Revision: 1.51 $
+ * @author <a href="mailto:is@idega.com">is</a>
+ * @version $Revision: 1.52 $
  */
 public interface SchoolChoiceHome extends IDOHome {
 
