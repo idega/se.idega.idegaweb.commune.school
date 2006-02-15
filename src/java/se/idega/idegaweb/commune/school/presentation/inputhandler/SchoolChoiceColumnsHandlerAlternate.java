@@ -33,5 +33,7 @@ public class SchoolChoiceColumnsHandlerAlternate extends SchoolChoiceColumnsHand
 		addMenuElement(SchoolReportBusiness.FIELD_CUSTODIAN, getLocalizedString(iwrb, SchoolReportBusiness.FIELD_CUSTODIAN, "Custodian"));
 		addMenuElement(SchoolReportBusiness.FIELD_ALTERNATE_ADDRESS, getLocalizedString(iwrb, SchoolReportBusiness.FIELD_ALTERNATE_ADDRESS, "Alternate address"));
 		addMenuElement(SchoolReportBusiness.FIELD_EXTRA_MESSAGE, getLocalizedString(iwrb, SchoolReportBusiness.FIELD_EXTRA_MESSAGE, "Extra message"));
+		addMenuElement(SchoolReportBusiness.FIELD_HANDICRAFT, getLocalizedString(iwrb, SchoolReportBusiness.FIELD_HANDICRAFT, "Choice of handicraft"));
+
 	}
 }
