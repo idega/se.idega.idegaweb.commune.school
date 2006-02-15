@@ -67,9 +67,8 @@ public class SchoolReportBusinessBean extends IBOSessionBean implements SchoolRe
 			_columnsToDisplay = new ArrayList();
 			_columnsToDisplay.add(FIELD_PERSONAL_ID);
 			_columnsToDisplay.add(FIELD_NAME);
-			//_columnsToDisplay.add(FIELD_ADDRESS);
+			_columnsToDisplay.add(FIELD_ADDRESS);
 			_columnsToDisplay.add(FIELD_GENDER);
-			_columnsToDisplay.add(FIELD_EXTRA_MESSAGE);
 		}
 		else {
 			_columnsToDisplay = columns;
@@ -525,7 +524,7 @@ public class SchoolReportBusinessBean extends IBOSessionBean implements SchoolRe
 		}
 		
 		ReportableField handicraft = new ReportableField(FIELD_HANDICRAFT, String.class);
-		alternateAddress.setLocalizedName(getLocalizedString(FIELD_HANDICRAFT, "Choice of handicraft"), currentLocale);
+		handicraft.setLocalizedName(getLocalizedString(FIELD_HANDICRAFT, "Choice of handicraft"), currentLocale);
 		if (displayColumn(FIELD_HANDICRAFT)) {
 			_fields.add(handicraft);
 			reportCollection.addField(handicraft);
