@@ -56,7 +56,7 @@ public class SchoolGroupColumnsHandler extends SelectionBox implements HiddenInp
 		addMenuElement(SchoolReportBusiness.FIELD_CUSTODIAN, getLocalizedString(iwrb, SchoolReportBusiness.FIELD_CUSTODIAN, "Custodian"));
 		addMenuElement(SchoolReportBusiness.FIELD_ALTERNATE_ADDRESS, getLocalizedString(iwrb, SchoolReportBusiness.FIELD_ALTERNATE_ADDRESS, "Alternate address"));
 		addMenuElement(SchoolReportBusiness.FIELD_YEARS_WITH_LANGUAGE, getLocalizedString(iwrb, SchoolReportBusiness.FIELD_YEARS_WITH_LANGUAGE, "Years with language"));
-		addMenuElement(SchoolReportBusiness.FIELD_HANDICRAFT, getLocalizedString(iwrb, "school.handicraft.choice_of_handicraft", "Choice of handicraft"));
+		addMenuElement(SchoolReportBusiness.FIELD_HANDICRAFT, getLocalizedString(iwrb, SchoolReportBusiness.FIELD_HANDICRAFT, "Choice of handicraft"));
 	}
 	
 	/* (non-Javadoc)
