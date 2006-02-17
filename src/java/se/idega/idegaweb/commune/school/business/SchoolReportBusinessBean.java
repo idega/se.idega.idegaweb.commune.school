@@ -624,6 +624,12 @@ public class SchoolReportBusinessBean extends IBOSessionBean implements SchoolRe
 					if (previousSchool != null) {
 						data.addData(fromSchool, previousSchool.getSchoolName());
 					}
+					else{
+					     String schoolName = choice.getFromSchool(choice.getChosenSchoolId(),choice.getSchoolSeasonId(),choice.getChildId());
+					     if(schoolName==null) schoolName = choice.getChosenSchool().getName();
+						 data.addData(fromSchool, schoolName);
+					}
+
 				}
 
 				if (displayColumn(FIELD_APPLICATION_DATE)) {
