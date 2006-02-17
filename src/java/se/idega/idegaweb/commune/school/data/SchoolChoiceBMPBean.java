@@ -74,6 +74,7 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 	public final static String FREETIMETHISSCHOOL = "child_care_this_school";
 	public final static String FREETIMEOTHER = "child_care_other";
 	public final static String EXTRA_MESSAGE = "extra_message";
+	
 	public final static String PRIORITY = "priority";
 	
 	public final static String LANGUAGECHOICE = "language_choice";
@@ -212,6 +213,7 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 	public int getCurrentSchoolId() {
 		return getIntColumnValue(CURRENT_SCHOOL);
 	}
+
 	public School getCurrentSchool() {
 		return (School) getColumnValue(CURRENT_SCHOOL);
 	}
@@ -424,17 +426,23 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 	public String getFromSchool(int schoolId,int seasonId, int childId) {
 		
 		String fromSchool = null;
-		StringBuffer query = new StringBuffer("select SCH_SCHOOL.SCH_SCHOOL_ID,SCH_SCHOOL.SCHOOL_NAME from ");
-		query.append("SCH_SCHOOL,SCH_SCHOOL_CLASS,SCH_CLASS_MEMBER,SCH_SCHOOL_SEASON ");
-		query.append("where SCH_SCHOOL.SCH_SCHOOL_ID=SCH_SCHOOL_CLASS.SCHOOL_ID ");
-		query.append("and SCH_SCHOOL_SEASON.SCH_SCHOOL_SEASON_ID=SCH_SCHOOL_CLASS.SCH_SCHOOL_SEASON_ID ");
-		query.append("and SCH_CLASS_MEMBER.SCH_SCHOOL_CLASS_ID = SCH_SCHOOL_CLASS.sch_school_class_id ");
-		query.append("and SCH_CLASS_MEMBER.IC_USER_ID=");
+		StringBuffer query = new StringBuffer(" SELECT SCH_SCHOOL.SCHOOL_NAME  ");
+		query.append(" FROM comm_sch_choice csc, IC_USER u, PROC_CASE pc , SCH_CLASS_MEMBER,SCH_SCHOOL_CLASS,SCH_SCHOOL  ");
+		query.append(" WHERE u.IC_USER_ID=csc.child_id  ");
+		query.append(" and SCH_CLASS_MEMBER.IC_USER_ID=u.IC_USER_ID  ");
+		query.append(" and SCH_CLASS_MEMBER.SCH_SCHOOL_CLASS_ID = SCH_SCHOOL_CLASS.sch_school_class_id  ");
+		query.append(" and SCH_SCHOOL.SCH_SCHOOL_ID=SCH_SCHOOL_CLASS.SCHOOL_ID  ");
+		query.append(" AND csc.COMM_SCH_CHOICE_ID=pc.PROC_CASE_ID  ");
+		query.append(" AND pc.CASE_STATUS IN ('PLAC','PREL','FLYT')  ");
+		query.append(" AND pc.CASE_CODE='MBSKOLV'  ");
+		query.append(" and u.IC_USER_ID =");
         query.append(childId);
-		query.append(" and SCH_SCHOOL_CLASS.LOCKED_DATE< (select SEASON_END from SCH_SCHOOL_SEASON where SCH_SCHOOL_SEASON_ID=");
-		query.append(seasonId);
-		query.append(" ) order by SCH_SCHOOL_CLASS.LOCKED_DATE DESC ");
-
+		query.append(" and SCH_SCHOOL.SCH_SCHOOL_ID!= ");
+		query.append(schoolId);
+		query.append(" and csc.school_season_id ="); 
+	    query.append(seasonId);				
+		query.append(" order by csc.SCHOOL_CHOICE_DATE DESC ");
+		
         Connection conn = null;
         Statement  stmt = null;
         ResultSet rs = null;
@@ -444,10 +452,8 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery(query.toString());
 			while(rs.next()){
-				if(rs.getInt(1)!=schoolId){
-					fromSchool = rs.getString(2);
+					fromSchool = rs.getString(1);
 					break;
-				}
 			}   
 
 	    }
@@ -832,7 +838,6 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 	
 	public Collection ejbFindChoices(int schoolID, int seasonID, int gradeYear, int[] choiceOrder, String[] validStatuses, String searchStringForUser, int orderBy, int numberOfEntries, int startingEntry, int placementType) throws FinderException {
 		IDOQuery query = getIDOQuery(schoolID, seasonID, gradeYear, choiceOrder, validStatuses, searchStringForUser, false, false, false, orderBy, placementType);
-        //String sql = query.toString();   	
 		return this.idoFindPKsByQuery(query, numberOfEntries, startingEntry);
 	}
 
@@ -878,6 +883,7 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 		query.append(getEntityName()).append(" csc");
 		query.append(", ").append(UserBMPBean.TABLE_NAME).append(" u");
 		query.append(", ").append(CaseBMPBean.TABLE_NAME).append(" pc");
+
 		if(searchOnAddr){
 			query.append(", ic_address a, ic_user_address ua");
 		}

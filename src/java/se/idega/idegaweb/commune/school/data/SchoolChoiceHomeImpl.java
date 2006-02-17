@@ -20,10 +20,10 @@ import com.idega.user.data.User;
  * <p>
  * TODO is Describe Type SchoolChoiceHomeImpl
  * </p>
- *  Last modified: $Date: 2006/02/14 15:51:45 $ by $Author: igors $
+ *  Last modified: $Date: 2006/02/17 16:50:33 $ by $Author: igors $
  * 
  * @author <a href="mailto:is@idega.com">is</a>
- * @version $Revision: 1.51.2.2 $
+ * @version $Revision: 1.51.2.3 $
  */
 public class SchoolChoiceHomeImpl extends IDOFactory implements SchoolChoiceHome {
 
