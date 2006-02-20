@@ -113,6 +113,8 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 	private static final String[] CASE_STATUS_KEYS = { "UBEH", "TYST", "PREL", "PLAC", "GROU", "FLYT" };
 	private static final String[] CASE_STATUS_DESCRIPTIONS = { "Case open", "Sleep", "Preliminary", "Placed", "Grouped", "Moved" };
 
+	private static final int DO_NOT_ADD_ORDER_BY = -200;
+
 	public String getCaseStatusCreated() {
 		return "UBEH";
 	}
@@ -825,7 +827,7 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 	}
 	
 	public int ejbHomeGetCountOutsideInterval(int schoolID, int seasonID, int gradeYear, int[] choiceOrder, String[] validStatuses, String searchStringForUser, Date from, Date to) throws IDOException {
-		IDOQuery query = getIDOQuery(schoolID, seasonID, gradeYear, choiceOrder, validStatuses, searchStringForUser, true, false, -1);
+		IDOQuery query = getIDOQuery(schoolID, seasonID, gradeYear, choiceOrder, validStatuses, searchStringForUser, true, false, DO_NOT_ADD_ORDER_BY);
 		query.appendAnd().appendLeftParenthesis().append(SCHOOLCHOICEDATE).appendLessThanSign().appendWithinSingleQuotes(from)
 		.appendOr().append(SCHOOLCHOICEDATE).appendGreaterThanSign().appendWithinSingleQuotes(to).appendRightParenthesis();
 		return this.idoGetNumberOfRecords(query);
@@ -989,22 +991,24 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 			query.appendRightParenthesis();
 		}
 		
-		if (orderBy != -1) {
-			if (orderBy == NAME_SORT)
-				query.appendOrderBy("u.last_name,u.first_name,u.middle_name");
-			else if (orderBy == ADDRESS_SORT)
-				query.appendOrderBy("a.street_name,a.street_number,u.last_name,u.first_name,u.middle_name");
-			else if (orderBy == GENDER_SORT)
-				query.appendOrderBy("u.ic_gender_id,u.last_name,u.first_name,u.middle_name");
-			else if (orderBy == PERSONAL_ID_SORT)
-				query.appendOrderBy("u.personal_id,u.last_name,u.first_name,u.middle_name");
-			else if (orderBy == LANGUAGE_SORT)
-				query.appendOrderBy("csc.language_choice,u.last_name,u.first_name,u.middle_name");
-			else if (orderBy == CREATED_SORT)
-				query.appendOrderBy("pc.created desc,u.last_name,u.first_name,u.middle_name");
-		}
-		else {
-			query.appendOrderBy("pc.created desc,u.first_name,u.middle_name,u.last_name");
+		if (orderBy != DO_NOT_ADD_ORDER_BY) {
+			if (orderBy != -1) {
+				if (orderBy == NAME_SORT)
+					query.appendOrderBy("u.last_name,u.first_name,u.middle_name");
+				else if (orderBy == ADDRESS_SORT)
+					query.appendOrderBy("a.street_name,a.street_number,u.last_name,u.first_name,u.middle_name");
+				else if (orderBy == GENDER_SORT)
+					query.appendOrderBy("u.ic_gender_id,u.last_name,u.first_name,u.middle_name");
+				else if (orderBy == PERSONAL_ID_SORT)
+					query.appendOrderBy("u.personal_id,u.last_name,u.first_name,u.middle_name");
+				else if (orderBy == LANGUAGE_SORT)
+					query.appendOrderBy("csc.language_choice,u.last_name,u.first_name,u.middle_name");
+				else if (orderBy == CREATED_SORT)
+					query.appendOrderBy("pc.created desc,u.last_name,u.first_name,u.middle_name");
+			}
+			else {
+				query.appendOrderBy("pc.created desc,u.first_name,u.middle_name,u.last_name");
+			}
 		}
 
 //		System.out.println(query.toString());
