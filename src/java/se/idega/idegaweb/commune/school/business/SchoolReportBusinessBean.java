@@ -650,7 +650,7 @@ public class SchoolReportBusinessBean extends IBOSessionBean implements SchoolRe
 				}
 
 				if (displayColumn(FIELD_HANDICRAFT)) {
-					if (choice.getHandicraft().getDescription()!=null){
+					if (choice.getHandicraft()!=null){
 						data.addData(handicraft,choice.getHandicraft().getDescription());
 					}
 				}
