@@ -1,5 +1,5 @@
 /*
- * $Id: CommuneSchoolBusiness.java,v 1.12 2006/02/07 15:48:51 laddi Exp $
+ * $Id: CommuneSchoolBusiness.java,v 1.13 2006/02/21 22:50:02 laddi Exp $
  * Created on Feb 7, 2006
  *
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -28,10 +28,10 @@ import com.idega.user.data.User;
  * <p>
  * TODO laddi Describe Type CommuneSchoolBusiness
  * </p>
- *  Last modified: $Date: 2006/02/07 15:48:51 $ by $Author: laddi $
+ *  Last modified: $Date: 2006/02/21 22:50:02 $ by $Author: laddi $
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.12 $
+ * @version $Revision: 1.13 $
  */
 public interface CommuneSchoolBusiness extends IBOService, CaseBusiness {
 
@@ -158,7 +158,7 @@ public interface CommuneSchoolBusiness extends IBOService, CaseBusiness {
 	/**
 	 * @see se.idega.idegaweb.commune.school.business.CommuneSchoolBusinessBean#saveChoices
 	 */
-	public boolean saveChoices(User user, User child, Collection schools, Object seasonPK, Object yearPK, String language, String message) throws IDOCreateException, java.rmi.RemoteException;
+	public boolean saveChoices(User user, User child, Collection schools, Object seasonPK, Object yearPK, String language, String message, java.sql.Date placementDate) throws IDOCreateException, java.rmi.RemoteException;
 
 	/**
 	 * @see se.idega.idegaweb.commune.school.business.CommuneSchoolBusinessBean#storeChildSchoolInformation
