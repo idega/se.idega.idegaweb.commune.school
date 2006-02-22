@@ -1,5 +1,5 @@
 /*
- * $Id: CommuneSchoolBusinessBean.java,v 1.21 2006/02/21 22:50:02 laddi Exp $
+ * $Id: CommuneSchoolBusinessBean.java,v 1.22 2006/02/22 01:07:02 laddi Exp $
  * Created on Aug 3, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -51,10 +51,10 @@ import com.idega.util.PersonalIDFormatter;
 
 
 /**
- * Last modified: $Date: 2006/02/21 22:50:02 $ by $Author: laddi $
+ * Last modified: $Date: 2006/02/22 01:07:02 $ by $Author: laddi $
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.21 $
+ * @version $Revision: 1.22 $
  */
 public class CommuneSchoolBusinessBean extends CaseBusinessBean  implements CaseBusiness, CommuneSchoolBusiness{
 
@@ -300,7 +300,7 @@ public class CommuneSchoolBusinessBean extends CaseBusinessBean  implements Case
 					group.setSchool(school);
 					group.setSchoolSeason(season);
 					group.setValid(true);
-					group.setSchoolClassName(season.getName() + " - " + year.getName());
+					group.setSchoolClassName(year.getName());
 					group.store();
 					
 					try {
