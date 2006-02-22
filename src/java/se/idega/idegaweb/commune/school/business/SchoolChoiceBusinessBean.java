@@ -2239,7 +2239,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	 * @return
 	 * @throws RemoteException
 	 */
-	public Collection findHandicraftOptions(int schoolStudyPathGroupId) throws RemoteException {		
+	public Collection findHandicraftOptions(int schoolStudyPathGroupId) {		
 		SchoolStudyPathGroup pathGroup;
 		try {
 			pathGroup = this.getSchoolStudyPathGroupHome().findByPrimaryKey(new Integer(schoolStudyPathGroupId));
