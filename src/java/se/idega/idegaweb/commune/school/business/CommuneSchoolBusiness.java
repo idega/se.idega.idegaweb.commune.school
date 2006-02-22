@@ -1,5 +1,5 @@
 /*
- * $Id: CommuneSchoolBusiness.java,v 1.13 2006/02/21 22:50:02 laddi Exp $
+ * $Id: CommuneSchoolBusiness.java,v 1.14 2006/02/22 08:36:05 laddi Exp $
  * Created on Feb 7, 2006
  *
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -10,6 +10,7 @@
 package se.idega.idegaweb.commune.school.business;
 
 import java.util.Collection;
+import java.util.Locale;
 import javax.ejb.FinderException;
 import se.idega.idegaweb.commune.school.data.SchoolChoice;
 import com.idega.block.process.business.CaseBusiness;
@@ -28,10 +29,10 @@ import com.idega.user.data.User;
  * <p>
  * TODO laddi Describe Type CommuneSchoolBusiness
  * </p>
- *  Last modified: $Date: 2006/02/21 22:50:02 $ by $Author: laddi $
+ *  Last modified: $Date: 2006/02/22 08:36:05 $ by $Author: laddi $
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.13 $
+ * @version $Revision: 1.14 $
  */
 public interface CommuneSchoolBusiness extends IBOService, CaseBusiness {
 
@@ -158,7 +159,10 @@ public interface CommuneSchoolBusiness extends IBOService, CaseBusiness {
 	/**
 	 * @see se.idega.idegaweb.commune.school.business.CommuneSchoolBusinessBean#saveChoices
 	 */
-	public boolean saveChoices(User user, User child, Collection schools, Object seasonPK, Object yearPK, String language, String message, java.sql.Date placementDate) throws IDOCreateException, java.rmi.RemoteException;
+	public SchoolChoice saveChoices(User user, User child, Collection schools, Object seasonPK, Object yearPK, String language, String message, java.sql.Date placementDate) throws IDOCreateException, java.rmi.RemoteException;
+
+	public void sendMessageToProvider(SchoolChoice application, String subject, String message, Locale locale, User sender);
+	public void sendMessageToProvider(SchoolChoice application, String subject, String message, Locale locale);
 
 	/**
 	 * @see se.idega.idegaweb.commune.school.business.CommuneSchoolBusinessBean#storeChildSchoolInformation

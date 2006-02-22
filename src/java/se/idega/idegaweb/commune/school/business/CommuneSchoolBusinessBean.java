@@ -1,5 +1,5 @@
 /*
- * $Id: CommuneSchoolBusinessBean.java,v 1.22 2006/02/22 01:07:02 laddi Exp $
+ * $Id: CommuneSchoolBusinessBean.java,v 1.23 2006/02/22 08:36:05 laddi Exp $
  * Created on Aug 3, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -16,6 +16,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Locale;
 import javax.ejb.CreateException;
 import javax.ejb.FinderException;
 import javax.transaction.UserTransaction;
@@ -33,6 +34,7 @@ import com.idega.block.school.data.SchoolClass;
 import com.idega.block.school.data.SchoolClassMember;
 import com.idega.block.school.data.SchoolDistrict;
 import com.idega.block.school.data.SchoolSeason;
+import com.idega.block.school.data.SchoolUser;
 import com.idega.block.school.data.SchoolYear;
 import com.idega.business.IBOLookup;
 import com.idega.business.IBOLookupException;
@@ -51,10 +53,10 @@ import com.idega.util.PersonalIDFormatter;
 
 
 /**
- * Last modified: $Date: 2006/02/22 01:07:02 $ by $Author: laddi $
+ * Last modified: $Date: 2006/02/22 08:36:05 $ by $Author: laddi $
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.22 $
+ * @version $Revision: 1.23 $
  */
 public class CommuneSchoolBusinessBean extends CaseBusinessBean  implements CaseBusiness, CommuneSchoolBusiness{
 
@@ -510,7 +512,7 @@ public class CommuneSchoolBusinessBean extends CaseBusinessBean  implements Case
 		return getSchoolChoiceHome().findByPrimaryKey(primaryKey);
 	}
 	
-	public boolean saveChoices(User user, User child, Collection schools, Object seasonPK, Object yearPK, String language, String message, Date placementDate) throws IDOCreateException {
+	public SchoolChoice saveChoices(User user, User child, Collection schools, Object seasonPK, Object yearPK, String language, String message, Date placementDate) throws IDOCreateException {
 		UserTransaction trans = getSessionContext().getUserTransaction();
 
 		try {
@@ -529,6 +531,7 @@ public class CommuneSchoolBusinessBean extends CaseBusinessBean  implements Case
 			} else {
 				schoolTypeID = Integer.parseInt(stID);
 			}
+			SchoolChoice firstChoice = null;
 			
 			IWTimestamp timeNow = new IWTimestamp();
 			int i = 0;
@@ -544,12 +547,15 @@ public class CommuneSchoolBusinessBean extends CaseBusinessBean  implements Case
 					}
 					
 					choice = saveChoice(user, child, element, seasonPK, yearPK, schoolTypeID, language, message, placementDate, status, choice, choiceNumber++, timeNow);
+					if (firstChoice == null) {
+						firstChoice = choice;
+					}
 					i++;
 				}
 			}
 			trans.commit();
 
-			return true;
+			return firstChoice;
 		}
 		catch (Exception ex) {
 			try {
@@ -662,6 +668,31 @@ public class CommuneSchoolBusinessBean extends CaseBusinessBean  implements Case
 		}
 	}
 	
+	public void sendMessageToProvider(SchoolChoice application, String subject, String message, Locale locale, User sender) {
+		try {
+			Collection users = getSchoolBusiness().getSchoolUsers(application.getChosenSchool());
+			User child = application.getChild();
+			Object[] arguments = { child.getName(), application.getChosenSchool().getSchoolName(), application.getPlacementDate() != null ? new IWTimestamp(application.getPlacementDate()).getLocaleDate(locale, IWTimestamp.SHORT) : "", PersonalIDFormatter.format(child.getPersonalID(), locale) };
+
+			if (users != null) {
+				CommuneMessageBusiness messageBiz = getMessageBusiness();
+				Iterator it = users.iterator();
+				while (it.hasNext()) {
+					SchoolUser providerUser = (SchoolUser) it.next();
+					User user = providerUser.getUser();
+					messageBiz.createUserMessage(application, user, sender, subject, MessageFormat.format(message, arguments), false);
+				}
+			}
+		}
+		catch (RemoteException re) {
+			re.printStackTrace();
+		}
+	}
+
+	public void sendMessageToProvider(SchoolChoice application, String subject, String message, Locale locale) {
+		sendMessageToProvider(application, subject, message, locale, null);
+	}
+
 	public SchoolYear getSchoolYearForUser(User user) throws FinderException {
 		try {
 			if (user.getDateOfBirth() == null) {
