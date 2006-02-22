@@ -990,6 +990,13 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 			*/
 			query.appendRightParenthesis();
 		}
+		if (needAnd) {
+			query.appendAnd();
+		}
+		
+		query.append("csc.school_choice_date=(SELECT max(school_choice_date) FROM comm_sch_choice where child_id=u.IC_USER_ID and school_id=");
+		query.append(schoolID);
+		query.append(")");
 		
 		if (orderBy != DO_NOT_ADD_ORDER_BY) {
 			if (orderBy != -1) {
