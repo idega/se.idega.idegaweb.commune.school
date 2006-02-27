@@ -1,5 +1,5 @@
 /*
- * $Id: CommuneSchoolBusinessBean.java,v 1.23 2006/02/22 08:36:05 laddi Exp $
+ * $Id: CommuneSchoolBusinessBean.java,v 1.24 2006/02/27 08:10:22 laddi Exp $
  * Created on Aug 3, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -53,10 +53,10 @@ import com.idega.util.PersonalIDFormatter;
 
 
 /**
- * Last modified: $Date: 2006/02/22 08:36:05 $ by $Author: laddi $
+ * Last modified: $Date: 2006/02/27 08:10:22 $ by $Author: laddi $
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.23 $
+ * @version $Revision: 1.24 $
  */
 public class CommuneSchoolBusinessBean extends CaseBusinessBean  implements CaseBusiness, CommuneSchoolBusiness{
 
@@ -672,7 +672,7 @@ public class CommuneSchoolBusinessBean extends CaseBusinessBean  implements Case
 		try {
 			Collection users = getSchoolBusiness().getSchoolUsers(application.getChosenSchool());
 			User child = application.getChild();
-			Object[] arguments = { child.getName(), application.getChosenSchool().getSchoolName(), application.getPlacementDate() != null ? new IWTimestamp(application.getPlacementDate()).getLocaleDate(locale, IWTimestamp.SHORT) : "", PersonalIDFormatter.format(child.getPersonalID(), locale) };
+			Object[] arguments = { child.getName(), application.getChosenSchool().getSchoolName(), application.getPlacementDate() != null ? new IWTimestamp(application.getPlacementDate()).getLocaleDate(locale, IWTimestamp.SHORT) : "", PersonalIDFormatter.format(child.getPersonalID(), locale), application.getSchoolSeason().getSchoolSeasonName() };
 
 			if (users != null) {
 				CommuneMessageBusiness messageBiz = getMessageBusiness();
