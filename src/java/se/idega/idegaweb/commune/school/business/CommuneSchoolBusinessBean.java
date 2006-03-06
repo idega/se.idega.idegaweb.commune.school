@@ -1,5 +1,5 @@
 /*
- * $Id: CommuneSchoolBusinessBean.java,v 1.24 2006/02/27 08:10:22 laddi Exp $
+ * $Id: CommuneSchoolBusinessBean.java,v 1.25 2006/03/06 13:02:01 tryggvil Exp $
  * Created on Aug 3, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -15,8 +15,10 @@ import java.sql.Date;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Locale;
+import java.util.Map;
 import javax.ejb.CreateException;
 import javax.ejb.FinderException;
 import javax.transaction.UserTransaction;
@@ -26,6 +28,8 @@ import se.idega.idegaweb.commune.school.data.SchoolChoice;
 import se.idega.idegaweb.commune.school.data.SchoolChoiceHome;
 import com.idega.block.process.business.CaseBusiness;
 import com.idega.block.process.business.CaseBusinessBean;
+import com.idega.block.process.business.CaseChangeEvent;
+import com.idega.block.process.business.CaseChangeListener;
 import com.idega.block.process.data.Case;
 import com.idega.block.process.data.CaseStatus;
 import com.idega.block.school.business.SchoolBusiness;
@@ -53,10 +57,10 @@ import com.idega.util.PersonalIDFormatter;
 
 
 /**
- * Last modified: $Date: 2006/02/27 08:10:22 $ by $Author: laddi $
+ * Last modified: $Date: 2006/03/06 13:02:01 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.24 $
+ * @version $Revision: 1.25 $
  */
 public class CommuneSchoolBusinessBean extends CaseBusinessBean  implements CaseBusiness, CommuneSchoolBusiness{
 
@@ -361,8 +365,6 @@ public class CommuneSchoolBusinessBean extends CaseBusinessBean  implements Case
 				SchoolYear year = choice.getSchoolYear();
 				User child = choice.getChild();
 				
-				changeCaseStatus(choice, getCaseStatusPlaced().getStatus(), performer);
-				sendMessageToParents(choice, subject, body);
 
 				SchoolClass group = getDefaultGroup(school, season, year);
 				
@@ -373,6 +375,15 @@ public class CommuneSchoolBusinessBean extends CaseBusinessBean  implements Case
 				student.setRegistrationCreatedDate(timeNow.getTimestamp());
 				student.setRegisterDate(choice.getPlacementDate() != null ? new IWTimestamp(choice.getPlacementDate()).getTimestamp() : new IWTimestamp(season.getSchoolSeasonStart()).getTimestamp());
 				student.store();
+				
+				Map attributes = new HashMap();
+				attributes.put("schoolPlacement",student);
+				
+				changeCaseStatus(choice, getCaseStatusPlaced().getStatus(), performer,attributes);
+				sendMessageToParents(choice, subject, body);
+				
+				//onApplicationApproval(choice,student);
+				
 			}
 			
 			trans.commit();
@@ -391,7 +402,7 @@ public class CommuneSchoolBusinessBean extends CaseBusinessBean  implements Case
 		
 		return false;
 	}
-	
+
 	public boolean rejectApplications(Object[] pks, String subject, String body, User performer) {
 		UserTransaction trans = getSessionContext().getUserTransaction();
 
