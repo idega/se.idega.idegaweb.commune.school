@@ -1335,5 +1335,9 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
         }
         return null;
 	}
+	
+	public Collection ejbFindAllCasesByMetaData(String metadataKey,String metadataValue) throws FinderException{
+		return super.ejbFindAllCasesByMetaData(metadataKey,metadataValue);
+	}
 
 }

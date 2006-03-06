@@ -20,10 +20,10 @@ import com.idega.user.data.User;
  * <p>
  * TODO is Describe Type SchoolChoiceHome
  * </p>
- *  Last modified: $Date: 2006/02/17 16:39:51 $ by $Author: igors $
+ *  Last modified: $Date: 2006/03/06 12:49:13 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:is@idega.com">is</a>
- * @version $Revision: 1.53 $
+ * @version $Revision: 1.54 $
  */
 public interface SchoolChoiceHome extends IDOHome {
 
@@ -274,4 +274,9 @@ public interface SchoolChoiceHome extends IDOHome {
 	 */
 	public MailReceiver[] getChildrenWithoutSchoolChoice(SchoolSeason season, SchoolYear year, boolean onlyInCommune,
 			boolean onlyLastGrade, int maxAge) throws FinderException;
+	
+	/**
+	 * @see se.idega.idegaweb.commune.school.data.SchoolChoiceBMPBean#ejbFindAllCasesByMetaData
+	 */
+	public Collection findAllCasesByMetaData(String metadataKey,String metadataValue) throws FinderException;
 }
