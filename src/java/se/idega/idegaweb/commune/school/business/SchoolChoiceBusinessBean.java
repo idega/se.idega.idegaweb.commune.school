@@ -202,7 +202,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 
 			int previousSeasonID = getCommuneSchoolBusiness().getPreviousSchoolSeasonID(getCommuneSchoolBusiness().getCurrentSchoolSeasonID());
 			//if (previousSeasonID != -1)
-			//	getCommuneSchoolBusiness().setNeedsSpecialAttention(childId, previousSeasonID, true); // 2006/03/15 ACCORDING N66 SPEC 
+			//	getCommuneSchoolBusiness().setNeedsSpecialAttention(childId, previousSeasonID, true);
 
 			return choice;
 		}
@@ -2239,7 +2239,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	 * @return
 	 * @throws RemoteException
 	 */
-	public Collection findHandicraftOptions(int schoolStudyPathGroupId) throws RemoteException {		
+	public Collection findHandicraftOptions(int schoolStudyPathGroupId) {		
 		SchoolStudyPathGroup pathGroup;
 		try {
 			pathGroup = this.getSchoolStudyPathGroupHome().findByPrimaryKey(new Integer(schoolStudyPathGroupId));
