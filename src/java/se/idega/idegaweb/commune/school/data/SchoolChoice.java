@@ -20,10 +20,10 @@ import com.idega.user.data.User;
  * <p>
  * TODO is Describe Type SchoolChoice
  * </p>
- *  Last modified: $Date: 2006/02/17 16:50:33 $ by $Author: igors $
+ *  Last modified: $Date: 2006/03/15 16:28:55 $ by $Author: igors $
  * 
  * @author <a href="mailto:is@idega.com">is</a>
- * @version $Revision: 1.33.2.3 $
+ * @version $Revision: 1.33.2.4 $
  */
 public interface SchoolChoice extends IDOEntity, Case {
 
