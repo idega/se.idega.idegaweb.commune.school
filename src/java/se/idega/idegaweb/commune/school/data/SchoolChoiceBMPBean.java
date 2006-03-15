@@ -885,6 +885,7 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 		query.append(getEntityName()).append(" csc");
 		query.append(", ").append(UserBMPBean.TABLE_NAME).append(" u");
 		query.append(", ").append(CaseBMPBean.TABLE_NAME).append(" pc");
+
 		if(searchOnAddr){
 			query.append(", ic_address a, ic_user_address ua");
 		}
@@ -989,27 +990,36 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 			*/
 			query.appendRightParenthesis();
 		}
+		if (needAnd) {
+			query.appendAnd();
+		}
 		
-		if (orderBy != -1) {
-			if (orderBy == NAME_SORT)
-				query.appendOrderBy("u.last_name,u.first_name,u.middle_name");
-			else if (orderBy == ADDRESS_SORT)
-				query.appendOrderBy("a.street_name,a.street_number,u.last_name,u.first_name,u.middle_name");
-			else if (orderBy == GENDER_SORT)
-				query.appendOrderBy("u.ic_gender_id,u.last_name,u.first_name,u.middle_name");
-			else if (orderBy == PERSONAL_ID_SORT)
-				query.appendOrderBy("u.personal_id,u.last_name,u.first_name,u.middle_name");
-			else if (orderBy == LANGUAGE_SORT)
-				query.appendOrderBy("csc.language_choice,u.last_name,u.first_name,u.middle_name");
-			else if (orderBy == CREATED_SORT)
-				query.appendOrderBy("pc.created desc,u.last_name,u.first_name,u.middle_name");
+		query.append("csc.school_choice_date=(SELECT max(school_choice_date) FROM comm_sch_choice where child_id=u.IC_USER_ID and school_id=");
+		query.append(schoolID);
+		query.append(")");
+		
+		if (orderBy != DO_NOT_ADD_ORDER_BY) {
+			if (orderBy != -1) {
+				if (orderBy == NAME_SORT)
+					query.appendOrderBy("u.last_name,u.first_name,u.middle_name");
+				else if (orderBy == ADDRESS_SORT)
+					query.appendOrderBy("a.street_name,a.street_number,u.last_name,u.first_name,u.middle_name");
+				else if (orderBy == GENDER_SORT)
+					query.appendOrderBy("u.ic_gender_id,u.last_name,u.first_name,u.middle_name");
+				else if (orderBy == PERSONAL_ID_SORT)
+					query.appendOrderBy("u.personal_id,u.last_name,u.first_name,u.middle_name");
+				else if (orderBy == LANGUAGE_SORT)
+					query.appendOrderBy("csc.language_choice,u.last_name,u.first_name,u.middle_name");
+				else if (orderBy == CREATED_SORT)
+					query.appendOrderBy("pc.created desc,u.last_name,u.first_name,u.middle_name");
+			}
+			else {
+				query.appendOrderBy("pc.created desc,u.first_name,u.middle_name,u.last_name");
+			}
 		}
 		else {
 			query.appendOrderBy("pc.created desc,u.last_name,u.first_name,u.middle_name");
 		}
-
-//		System.out.println(query.toString());
-
 		return query;
 	}
 
