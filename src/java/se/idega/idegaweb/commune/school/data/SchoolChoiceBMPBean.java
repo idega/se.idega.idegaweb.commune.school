@@ -1017,8 +1017,12 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 				query.appendOrderBy("pc.created desc,u.first_name,u.middle_name,u.last_name");
 			}
 		}
+		else {
+			query.appendOrderBy("pc.created desc,u.last_name,u.first_name,u.middle_name");
+		}
 
 //		System.out.println(query.toString());
+
 		return query;
 	}
 
@@ -1334,6 +1338,10 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
         		throw new FinderException(e.getMessage());
         }
         return null;
+	}
+	
+	public Collection ejbFindAllCasesByMetaData(String metadataKey,String metadataValue) throws FinderException{
+		return super.ejbFindAllCasesByMetaData(metadataKey,metadataValue);
 	}
 
 }
