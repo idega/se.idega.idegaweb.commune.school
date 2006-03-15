@@ -201,8 +201,8 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 			handleSchoolChangeHeadMasters(choice, getUser(childId), current_school, chosen_school);
 
 			int previousSeasonID = getCommuneSchoolBusiness().getPreviousSchoolSeasonID(getCommuneSchoolBusiness().getCurrentSchoolSeasonID());
-			if (previousSeasonID != -1)
-				getCommuneSchoolBusiness().setNeedsSpecialAttention(childId, previousSeasonID, true);
+			//if (previousSeasonID != -1)
+			//	getCommuneSchoolBusiness().setNeedsSpecialAttention(childId, previousSeasonID, true); // 2006/03/15 ACCORDING N66 SPEC 
 
 			return choice;
 		}
