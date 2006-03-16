@@ -1020,6 +1020,9 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 		else {
 			query.appendOrderBy("pc.created desc,u.last_name,u.first_name,u.middle_name");
 		}
+
+//		System.out.println(query.toString());
+
 		return query;
 	}
 
@@ -1336,9 +1339,9 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
         }
         return null;
 	}
-	
-	public Collection ejbFindAllCasesByMetaData(String metadataKey,String metadataValue) throws FinderException{
-		return super.ejbFindAllCasesByMetaData(metadataKey,metadataValue);
-	}
+//  disabled by Igors because of PLATFORM_2 compiled error 	
+//	public Collection ejbFindAllCasesByMetaData(String metadataKey,String metadataValue) throws FinderException{
+//		return super.ejbFindAllCasesByMetaData(metadataKey,metadataValue);
+//	}
 
 }
