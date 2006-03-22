@@ -1,5 +1,5 @@
 /*
- * $Id: CommuneSchoolBusinessBean.java,v 1.26 2006/03/08 16:07:03 laddi Exp $
+ * $Id: CommuneSchoolBusinessBean.java,v 1.27 2006/03/22 09:12:31 laddi Exp $
  * Created on Aug 3, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -59,10 +59,10 @@ import com.idega.util.PersonalIDFormatter;
 
 
 /**
- * Last modified: $Date: 2006/03/08 16:07:03 $ by $Author: laddi $
+ * Last modified: $Date: 2006/03/22 09:12:31 $ by $Author: laddi $
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.26 $
+ * @version $Revision: 1.27 $
  */
 public class CommuneSchoolBusinessBean extends CaseBusinessBean  implements CaseBusiness, CommuneSchoolBusiness{
 
@@ -586,6 +586,24 @@ public class CommuneSchoolBusinessBean extends CaseBusinessBean  implements Case
 		SchoolSeason season = null;
 		try {
 			season = getSchoolBusiness().getSchoolSeason(new Integer(seasonPK.toString()));
+			
+			if (placementDate != null) {
+				try {
+					SchoolSeason placementSeason = getSchoolBusiness().getSchoolSeasonHome().findSeasonByDate(getSchoolBusiness().getCategoryElementarySchool(), placementDate);
+					season = placementSeason;
+				}
+				catch (FinderException fe) {
+					log(fe);
+					
+					try {
+						SchoolSeason placementSeason = getSchoolBusiness().getSchoolSeasonHome().findNextSeason(getSchoolBusiness().getCategoryElementarySchool(), placementDate);
+						season = placementSeason;
+					}
+					catch (FinderException fe1) {
+						log(fe1);
+					}
+				}
+			}
 		}
 		catch (RemoteException fe) {
 			season = null;
