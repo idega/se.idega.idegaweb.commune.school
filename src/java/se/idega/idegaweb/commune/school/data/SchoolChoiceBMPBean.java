@@ -31,6 +31,13 @@ import com.idega.data.IDOException;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
 import com.idega.data.IDOQuery;
+import com.idega.data.IDORelationshipException;
+import com.idega.data.MetaDataCapable;
+import com.idega.data.query.CountColumn;
+import com.idega.data.query.InCriteria;
+import com.idega.data.query.MatchCriteria;
+import com.idega.data.query.SelectQuery;
+import com.idega.data.query.Table;
 import com.idega.user.business.UserStatusBusinessBean;
 import com.idega.user.data.Status;
 import com.idega.user.data.StatusHome;
@@ -52,7 +59,7 @@ import com.idega.util.text.StreetAddress;
  * @version 1.0
  */
 
-public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolChoice, Case {
+public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolChoice, Case, MetaDataCapable {
 
 	final static public String SCHOOLCHOICE = "comm_sch_choice";
 
@@ -1344,4 +1351,22 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 //		return super.ejbFindAllCasesByMetaData(metadataKey,metadataValue);
 //	}
 
+	public int ejbHomeGetChoiceStatistics(SchoolSeason season, String[] statuses, int choiceNumber) throws IDOException {
+		Table choice = new Table(this, "c");
+		Table process = new Table(Case.class, "p");
+		
+		SelectQuery query = new SelectQuery(choice);
+		query.addColumn(new CountColumn(choice, this.getIDColumnName()));
+		try {
+			query.addJoin(choice, process);
+		}
+		catch (IDORelationshipException ile) {
+			throw new IDOException(ile.getMessage());
+		}
+		query.addCriteria(new InCriteria(process, "CASE_STATUS", statuses));
+		query.addCriteria(new MatchCriteria(choice, SCHOOL_SEASON, MatchCriteria.EQUALS, season));
+		query.addCriteria(new MatchCriteria(choice, CHOICEORDER, MatchCriteria.EQUALS, choiceNumber));
+
+		return idoGetNumberOfRecords(query.toString());
+	}	
 }

@@ -1,13 +1,22 @@
-/**
- * 
+/*
+ * $Id: SchoolChoiceHome.java,v 1.55 2006/03/27 15:39:21 laddi Exp $
+ * Created on Mar 27, 2006
+ *
+ * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
+ *
+ * This software is the proprietary information of Idega hf.
+ * Use is subject to license terms.
  */
 package se.idega.idegaweb.commune.school.data;
 
 import java.sql.Date;
 import java.sql.SQLException;
 import java.util.Collection;
+
 import javax.ejb.FinderException;
+
 import se.idega.idegaweb.commune.school.business.MailReceiver;
+
 import com.idega.block.process.data.Case;
 import com.idega.block.school.data.SchoolSeason;
 import com.idega.block.school.data.SchoolYear;
@@ -18,12 +27,12 @@ import com.idega.user.data.User;
 
 /**
  * <p>
- * TODO is Describe Type SchoolChoiceHome
+ * TODO laddi Describe Type SchoolChoiceHome
  * </p>
- *  Last modified: $Date: 2006/03/06 12:49:13 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2006/03/27 15:39:21 $ by $Author: laddi $
  * 
- * @author <a href="mailto:is@idega.com">is</a>
- * @version $Revision: 1.54 $
+ * @author <a href="mailto:laddi@idega.com">laddi</a>
+ * @version $Revision: 1.55 $
  */
 public interface SchoolChoiceHome extends IDOHome {
 
@@ -39,8 +48,7 @@ public interface SchoolChoiceHome extends IDOHome {
 	/**
 	 * @see se.idega.idegaweb.commune.school.data.SchoolChoiceBMPBean#ejbFindBySchoolIDAndSeasonIDAndStatus
 	 */
-	public Collection findBySchoolIDAndSeasonIDAndStatus(int schoolId, int seasonId, String[] statuses,
-			int returningEntries, int startingEntries) throws FinderException;
+	public Collection findBySchoolIDAndSeasonIDAndStatus(int schoolId, int seasonId, String[] statuses, int returningEntries, int startingEntries) throws FinderException;
 
 	/**
 	 * @see se.idega.idegaweb.commune.school.data.SchoolChoiceBMPBean#ejbFindByChosenSchoolId
@@ -60,8 +68,7 @@ public interface SchoolChoiceHome extends IDOHome {
 	/**
 	 * @see se.idega.idegaweb.commune.school.data.SchoolChoiceBMPBean#ejbFindByCodeAndStatus
 	 */
-	public Collection findByCodeAndStatus(String caseCode, String[] caseStatus, int schoolId, int schoolSeasonId)
-			throws javax.ejb.FinderException;
+	public Collection findByCodeAndStatus(String caseCode, String[] caseStatus, int schoolId, int schoolSeasonId) throws javax.ejb.FinderException;
 
 	/**
 	 * @see se.idega.idegaweb.commune.school.data.SchoolChoiceBMPBean#ejbFindAllWithLanguageWithinSeason
@@ -71,8 +78,7 @@ public interface SchoolChoiceHome extends IDOHome {
 	/**
 	 * @see se.idega.idegaweb.commune.school.data.SchoolChoiceBMPBean#ejbFindByCodeAndStatus
 	 */
-	public Collection findByCodeAndStatus(String caseCode, String[] caseStatus, int schoolId, int schoolSeasonId,
-			String ordered) throws javax.ejb.FinderException;
+	public Collection findByCodeAndStatus(String caseCode, String[] caseStatus, int schoolId, int schoolSeasonId, String ordered) throws javax.ejb.FinderException;
 
 	/**
 	 * @see se.idega.idegaweb.commune.school.data.SchoolChoiceBMPBean#ejbHomeGetNumberOfApplications
@@ -82,8 +88,7 @@ public interface SchoolChoiceHome extends IDOHome {
 	/**
 	 * @see se.idega.idegaweb.commune.school.data.SchoolChoiceBMPBean#ejbHomeGetNumberOfApplications
 	 */
-	public int getNumberOfApplications(String caseStatus, int schoolID, int schoolSeasonID, int schoolYearID)
-			throws IDOException;
+	public int getNumberOfApplications(String caseStatus, int schoolID, int schoolSeasonID, int schoolYearID) throws IDOException;
 
 	/**
 	 * @see se.idega.idegaweb.commune.school.data.SchoolChoiceBMPBean#ejbHomeGetNumberOfHandledMoves
@@ -98,8 +103,7 @@ public interface SchoolChoiceHome extends IDOHome {
 	/**
 	 * @see se.idega.idegaweb.commune.school.data.SchoolChoiceBMPBean#ejbFindByChildAndSeason
 	 */
-	public Collection findByChildAndSeason(int childID, int seasonID, String[] notInStatuses)
-			throws javax.ejb.FinderException;
+	public Collection findByChildAndSeason(int childID, int seasonID, String[] notInStatuses) throws javax.ejb.FinderException;
 
 	/**
 	 * @see se.idega.idegaweb.commune.school.data.SchoolChoiceBMPBean#ejbFindAllPlacedBySeason
@@ -109,14 +113,12 @@ public interface SchoolChoiceHome extends IDOHome {
 	/**
 	 * @see se.idega.idegaweb.commune.school.data.SchoolChoiceBMPBean#ejbFindByChildAndChoiceNumberAndSeason
 	 */
-	public SchoolChoice findByChildAndChoiceNumberAndSeason(User child, int choiceNumber, SchoolSeason season)
-			throws javax.ejb.FinderException;
+	public SchoolChoice findByChildAndChoiceNumberAndSeason(User child, int choiceNumber, SchoolSeason season) throws javax.ejb.FinderException;
 
 	/**
 	 * @see se.idega.idegaweb.commune.school.data.SchoolChoiceBMPBean#ejbFindByChildAndChoiceNumberAndSeason
 	 */
-	public SchoolChoice findByChildAndChoiceNumberAndSeason(Integer childID, Integer choiceNumber, Integer seasonID)
-			throws javax.ejb.FinderException;
+	public SchoolChoice findByChildAndChoiceNumberAndSeason(Integer childID, Integer choiceNumber, Integer seasonID) throws javax.ejb.FinderException;
 
 	/**
 	 * @see se.idega.idegaweb.commune.school.data.SchoolChoiceBMPBean#ejbFindBySeason
@@ -146,8 +148,7 @@ public interface SchoolChoiceHome extends IDOHome {
 	/**
 	 * @see se.idega.idegaweb.commune.school.data.SchoolChoiceBMPBean#ejbFindByChildAndSchoolAndSeason
 	 */
-	public Collection findByChildAndSchoolAndSeason(int childID, int schoolID, int seasonID)
-			throws javax.ejb.FinderException;
+	public Collection findByChildAndSchoolAndSeason(int childID, int schoolID, int seasonID) throws javax.ejb.FinderException;
 
 	/**
 	 * @see se.idega.idegaweb.commune.school.data.SchoolChoiceBMPBean#ejbFindAll
@@ -157,8 +158,7 @@ public interface SchoolChoiceHome extends IDOHome {
 	/**
 	 * @see se.idega.idegaweb.commune.school.data.SchoolChoiceBMPBean#ejbFindChoices
 	 */
-	public Collection findChoices(int schoolID, int seasonID, int gradeYear, String[] validStatuses,
-			String searchStringForUser, int orderBy, int numberOfEntries, int startingEntry) throws FinderException;
+	public Collection findChoices(int schoolID, int seasonID, int gradeYear, String[] validStatuses, String searchStringForUser, int orderBy, int numberOfEntries, int startingEntry) throws FinderException;
 
 	/**
 	 * @see se.idega.idegaweb.commune.school.data.SchoolChoiceBMPBean#ejbHomeGetCount
@@ -188,33 +188,27 @@ public interface SchoolChoiceHome extends IDOHome {
 	/**
 	 * @see se.idega.idegaweb.commune.school.data.SchoolChoiceBMPBean#ejbHomeGetCount
 	 */
-	public int getCount(int schoolID, int seasonID, int gradeYear, int[] choiceOrder, String[] validStatuses,
-			String searchStringForUser) throws IDOException;
+	public int getCount(int schoolID, int seasonID, int gradeYear, int[] choiceOrder, String[] validStatuses, String searchStringForUser) throws IDOException;
 
 	/**
 	 * @see se.idega.idegaweb.commune.school.data.SchoolChoiceBMPBean#ejbHomeGetCount
 	 */
-	public int getCount(int schoolID, int seasonID, int gradeYear, int[] choiceOrder, String[] validStatuses,
-			String searchStringForUser, int placementType) throws IDOException;
+	public int getCount(int schoolID, int seasonID, int gradeYear, int[] choiceOrder, String[] validStatuses, String searchStringForUser, int placementType) throws IDOException;
 
 	/**
 	 * @see se.idega.idegaweb.commune.school.data.SchoolChoiceBMPBean#ejbHomeGetCountOutsideInterval
 	 */
-	public int getCountOutsideInterval(int schoolID, int seasonID, int gradeYear, int[] choiceOrder,
-			String[] validStatuses, String searchStringForUser, Date from, Date to) throws IDOException;
+	public int getCountOutsideInterval(int schoolID, int seasonID, int gradeYear, int[] choiceOrder, String[] validStatuses, String searchStringForUser, Date from, Date to) throws IDOException;
 
 	/**
 	 * @see se.idega.idegaweb.commune.school.data.SchoolChoiceBMPBean#ejbFindChoices
 	 */
-	public Collection findChoices(int schoolID, int seasonID, int gradeYear, int[] choiceOrder, String[] validStatuses,
-			String searchStringForUser, int orderBy, int numberOfEntries, int startingEntry) throws FinderException;
+	public Collection findChoices(int schoolID, int seasonID, int gradeYear, int[] choiceOrder, String[] validStatuses, String searchStringForUser, int orderBy, int numberOfEntries, int startingEntry) throws FinderException;
 
 	/**
 	 * @see se.idega.idegaweb.commune.school.data.SchoolChoiceBMPBean#ejbFindChoices
 	 */
-	public Collection findChoices(int schoolID, int seasonID, int gradeYear, int[] choiceOrder, String[] validStatuses,
-			String searchStringForUser, int orderBy, int numberOfEntries, int startingEntry, int placementType)
-			throws FinderException;
+	public Collection findChoices(int schoolID, int seasonID, int gradeYear, int[] choiceOrder, String[] validStatuses, String searchStringForUser, int orderBy, int numberOfEntries, int startingEntry, int placementType) throws FinderException;
 
 	/**
 	 * @see se.idega.idegaweb.commune.school.data.SchoolChoiceBMPBean#ejbFindBySchoolAndSeasonAndGrade
@@ -224,14 +218,12 @@ public interface SchoolChoiceHome extends IDOHome {
 	/**
 	 * @see se.idega.idegaweb.commune.school.data.SchoolChoiceBMPBean#ejbFindBySchoolAndFreeTime
 	 */
-	public Collection findBySchoolAndFreeTime(int schoolId, int schoolSeasonID, boolean freeTimeInSchool)
-			throws FinderException;
+	public Collection findBySchoolAndFreeTime(int schoolId, int schoolSeasonID, boolean freeTimeInSchool) throws FinderException;
 
 	/**
 	 * @see se.idega.idegaweb.commune.school.data.SchoolChoiceBMPBean#ejbFindChoicesInClassAndSeasonAndSchool
 	 */
-	public Collection findChoicesInClassAndSeasonAndSchool(int classID, int seasonID, int schoolID, boolean confirmation)
-			throws FinderException;
+	public Collection findChoicesInClassAndSeasonAndSchool(int classID, int seasonID, int schoolID, boolean confirmation) throws FinderException;
 
 	/**
 	 * @see se.idega.idegaweb.commune.school.data.SchoolChoiceBMPBean#ejbHomeGetNumberOfChoices
@@ -266,15 +258,18 @@ public interface SchoolChoiceHome extends IDOHome {
 	/**
 	 * @see se.idega.idegaweb.commune.school.data.SchoolChoiceBMPBean#ejbHomeCountChildrenWithoutSchoolChoice
 	 */
-	public int countChildrenWithoutSchoolChoice(SchoolSeason season, SchoolYear year, boolean onlyInCommune,
-			boolean onlyLastGrade, int maxAge) throws SQLException;
+	public int countChildrenWithoutSchoolChoice(SchoolSeason season, SchoolYear year, boolean onlyInCommune, boolean onlyLastGrade, int maxAge) throws SQLException;
 
 	/**
 	 * @see se.idega.idegaweb.commune.school.data.SchoolChoiceBMPBean#ejbHomeGetChildrenWithoutSchoolChoice
 	 */
-	public MailReceiver[] getChildrenWithoutSchoolChoice(SchoolSeason season, SchoolYear year, boolean onlyInCommune,
-			boolean onlyLastGrade, int maxAge) throws FinderException;
-	
+	public MailReceiver[] getChildrenWithoutSchoolChoice(SchoolSeason season, SchoolYear year, boolean onlyInCommune, boolean onlyLastGrade, int maxAge) throws FinderException;
+
+	/**
+	 * @see se.idega.idegaweb.commune.school.data.SchoolChoiceBMPBean#ejbHomeGetChoiceStatistics
+	 */
+	public int getChoiceStatistics(SchoolSeason season, String[] statuses, int choiceNumber) throws IDOException;
+
 	/**
 	 * @see se.idega.idegaweb.commune.school.data.SchoolChoiceBMPBean#ejbFindAllCasesByMetaData
 	 */

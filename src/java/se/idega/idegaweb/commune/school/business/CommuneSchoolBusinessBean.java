@@ -1,5 +1,5 @@
 /*
- * $Id: CommuneSchoolBusinessBean.java,v 1.27 2006/03/22 09:12:31 laddi Exp $
+ * $Id: CommuneSchoolBusinessBean.java,v 1.28 2006/03/27 15:39:21 laddi Exp $
  * Created on Aug 3, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -59,10 +59,10 @@ import com.idega.util.PersonalIDFormatter;
 
 
 /**
- * Last modified: $Date: 2006/03/22 09:12:31 $ by $Author: laddi $
+ * Last modified: $Date: 2006/03/27 15:39:21 $ by $Author: laddi $
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.27 $
+ * @version $Revision: 1.28 $
  */
 public class CommuneSchoolBusinessBean extends CaseBusinessBean  implements CaseBusiness, CommuneSchoolBusiness{
 
@@ -119,6 +119,17 @@ public class CommuneSchoolBusinessBean extends CaseBusinessBean  implements Case
 		}
 	}
 	
+	public int getNumberOfApplications(SchoolSeason season, int choiceNumber) {
+		try {
+			String[] statuses = { getCaseStatusPreliminary().getStatus(), getCaseStatusPlaced().getStatus() };
+			return getSchoolChoiceHome().getChoiceStatistics(season, statuses, choiceNumber);
+		}
+		catch (IDOException ie) {
+			ie.printStackTrace();
+			return 0;
+		}
+	}
+
 	public boolean canDisplaySchoolImages(User child) {
 		String meta = child.getMetaData(METADATA_CAN_DISPLAY_SCHOOL_IMAGE);
 		if (meta != null) {

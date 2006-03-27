@@ -1,6 +1,6 @@
 /*
- * $Id: CommuneSchoolBusinessHome.java,v 1.9 2006/02/07 15:48:51 laddi Exp $
- * Created on Feb 7, 2006
+ * $Id: CommuneSchoolBusinessHome.java,v 1.10 2006/03/27 15:39:21 laddi Exp $
+ * Created on Mar 27, 2006
  *
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
  *
@@ -9,6 +9,10 @@
  */
 package se.idega.idegaweb.commune.school.business;
 
+
+
+
+
 import com.idega.business.IBOHome;
 
 
@@ -16,12 +20,13 @@ import com.idega.business.IBOHome;
  * <p>
  * TODO laddi Describe Type CommuneSchoolBusinessHome
  * </p>
- *  Last modified: $Date: 2006/02/07 15:48:51 $ by $Author: laddi $
+ *  Last modified: $Date: 2006/03/27 15:39:21 $ by $Author: laddi $
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.9 $
+ * @version $Revision: 1.10 $
  */
 public interface CommuneSchoolBusinessHome extends IBOHome {
 
 	public CommuneSchoolBusiness create() throws javax.ejb.CreateException, java.rmi.RemoteException;
+
 }
