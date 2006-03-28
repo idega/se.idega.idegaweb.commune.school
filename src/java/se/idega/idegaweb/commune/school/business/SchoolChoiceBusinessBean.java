@@ -1595,17 +1595,29 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 
 	public IWTimestamp getSchoolChoiceStartDate () throws RemoteException,
 	FinderException {
-		return getTimestampFromProperty ("choice_start_date");
+		IWTimestamp stamp = getTimestampFromProperty ("choice_start_date");
+		if (stamp == null) {
+			stamp = new IWTimestamp(1, 1, 2000);
+		}
+		return stamp;
 	}
 
 	public IWTimestamp getSchoolChoiceEndDate () throws RemoteException,
 	FinderException {
-		return getTimestampFromProperty ("choice_end_date");
+		IWTimestamp stamp = getTimestampFromProperty ("choice_end_date");
+		if (stamp == null) {
+			stamp = new IWTimestamp(01, 01, 2000);
+		}
+		return stamp;
 	}
 	
 	public IWTimestamp getSchoolChoiceCriticalDate () throws RemoteException,
 	FinderException {
-		return getTimestampFromProperty ("choice_critical_date");
+		IWTimestamp stamp = getTimestampFromProperty ("choice_critical_date");
+		if (stamp == null) {
+			stamp = new IWTimestamp(01, 01, 2000);
+		}
+		return stamp;
 	}
 
 	private IWTimestamp getTimestampFromProperty (final String key)
@@ -1613,17 +1625,20 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		final IWPropertyList properties = getIWApplicationContext ()
 		.getSystemProperties ().getProperties ("school_properties");
 		final String valueAsString = properties.getProperty(key);
-		final IWTimestamp seasonStart
-		= new IWTimestamp (getCareBusiness().getCurrentSeason ().getSchoolSeasonStart ());
-		final IWTimestamp result = new IWTimestamp (seasonStart);
-		result.setDay (Integer.parseInt (valueAsString.substring (0, 2)));
-		result.setMonth (Integer.parseInt (valueAsString.substring (3, 5)));
-		
-		if (valueAsString.length() == 10) { // the property is set in format dd.mm.yyyy
-			result.setYear(Integer.parseInt(valueAsString.substring(6, 10)));
+		if (valueAsString != null) {
+			final IWTimestamp seasonStart
+			= new IWTimestamp (getCareBusiness().getCurrentSeason ().getSchoolSeasonStart ());
+			final IWTimestamp result = new IWTimestamp (seasonStart);
+			result.setDay (Integer.parseInt (valueAsString.substring (0, 2)));
+			result.setMonth (Integer.parseInt (valueAsString.substring (3, 5)));
+			
+			if (valueAsString.length() == 10) { // the property is set in format dd.mm.yyyy
+				result.setYear(Integer.parseInt(valueAsString.substring(6, 10)));
+			}
+			
+			return result;
 		}
-		
-		return result;
+		return null;
 	}
 
 	public Collection getApplicantsForSchoolAndSeasonAndGrade(int schoolID, int seasonID, int schoolYearID) throws RemoteException {
