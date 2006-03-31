@@ -1,5 +1,5 @@
 /*
- * $Id: CommuneSchoolBusinessBean.java,v 1.28 2006/03/27 15:39:21 laddi Exp $
+ * $Id: CommuneSchoolBusinessBean.java,v 1.29 2006/03/31 12:28:04 laddi Exp $
  * Created on Aug 3, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -59,18 +59,12 @@ import com.idega.util.PersonalIDFormatter;
 
 
 /**
- * Last modified: $Date: 2006/03/27 15:39:21 $ by $Author: laddi $
+ * Last modified: $Date: 2006/03/31 12:28:04 $ by $Author: laddi $
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.28 $
+ * @version $Revision: 1.29 $
  */
 public class CommuneSchoolBusinessBean extends CaseBusinessBean  implements CaseBusiness, CommuneSchoolBusiness{
-
-	public static final String METADATA_CAN_DISPLAY_SCHOOL_IMAGE = "can_display_school_image";
-	public static final String METADATA_CAN_DISPLAY_AFTER_SCHOOL_CARE_IMAGE = "can_display_after_school_care_image";
-	public static final String METADATA_OTHER_INFORMATION = "after_school_care_information";
-	public static final String METADATA_CAN_PARTICIPATE_IN_CHURCH_RECREATION = "can_participate_in_church_recreation";
-	public static final String METADATA_CAN_CONTACT_ELEMENTARY_SCHOOL_FOR_INFORMATION = "can_contact_elementary_school_for_information";
 	
 	private static final String PROPERTY_DEFAULT_SCHOOL_TYPE = "default_school_type";
 
@@ -130,42 +124,6 @@ public class CommuneSchoolBusinessBean extends CaseBusinessBean  implements Case
 		}
 	}
 
-	public boolean canDisplaySchoolImages(User child) {
-		String meta = child.getMetaData(METADATA_CAN_DISPLAY_SCHOOL_IMAGE);
-		if (meta != null) {
-			return new Boolean(meta).booleanValue();
-		}
-		return false;
-	}
-	
-	public Boolean canDisplayAfterSchoolCareImages(User child) {
-		String meta = child.getMetaData(METADATA_CAN_DISPLAY_AFTER_SCHOOL_CARE_IMAGE);
-		if (meta != null) {
-			return new Boolean(meta);
-		}
-		return null;
-	}
-	
-	public boolean canParticipateInChurchRecreation(User child) {
-		String meta = child.getMetaData(METADATA_CAN_PARTICIPATE_IN_CHURCH_RECREATION);
-		if (meta != null && meta.length() > 0) {
-			return new Boolean(meta).booleanValue();
-		}
-		return true;
-	}
-	
-	public boolean canContactElementarySchoolForInformation(User child) {
-		String meta = child.getMetaData(METADATA_CAN_CONTACT_ELEMENTARY_SCHOOL_FOR_INFORMATION);
-		if (meta != null && meta.length() > 0) {
-			return new Boolean(meta).booleanValue();
-		}
-		return true;
-	}
-	
-	public String getAfterSchoolCareOtherInformation(User child) {
-		return child.getMetaData(METADATA_OTHER_INFORMATION);
-	}
-	
 	public Collection getSchoolYearsInSchool(School school) {
 		try {
 			return school.findRelatedSchoolYearsSortedByName();
@@ -662,19 +620,6 @@ public class CommuneSchoolBusinessBean extends CaseBusinessBean  implements Case
 		}
 
 		return choice;
-	}
-	
-	public void storeChildSchoolInformation(User child, boolean canDisplayImage) {
-		child.setMetaData(METADATA_CAN_DISPLAY_SCHOOL_IMAGE, String.valueOf(canDisplayImage));
-		child.store();
-	}
-
-	public void storeChildAfterSchoolCareInformation(User child, boolean canDisplayImage, boolean canParticipateInChurchRecreation, boolean canContactElementarySchoolForInformation, String otherAfterSchoolCareInformation) {
-		child.setMetaData(METADATA_CAN_DISPLAY_AFTER_SCHOOL_CARE_IMAGE, String.valueOf(canDisplayImage));
-		child.setMetaData(METADATA_CAN_PARTICIPATE_IN_CHURCH_RECREATION, String.valueOf(canParticipateInChurchRecreation));
-		child.setMetaData(METADATA_CAN_CONTACT_ELEMENTARY_SCHOOL_FOR_INFORMATION, String.valueOf(canContactElementarySchoolForInformation));
-		child.setMetaData(METADATA_OTHER_INFORMATION, otherAfterSchoolCareInformation);
-		child.store();
 	}
 
 	private void sendMessageToParents(SchoolChoice choice, String subject, String body) {

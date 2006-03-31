@@ -1,6 +1,6 @@
 /*
- * $Id: CommuneSchoolBusinessHomeImpl.java,v 1.10 2006/03/27 15:39:21 laddi Exp $
- * Created on Mar 27, 2006
+ * $Id: CommuneSchoolBusinessHomeImpl.java,v 1.11 2006/03/31 12:28:04 laddi Exp $
+ * Created on Mar 30, 2006
  *
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
  *
@@ -20,10 +20,10 @@ import com.idega.business.IBOHomeImpl;
  * <p>
  * TODO laddi Describe Type CommuneSchoolBusinessHomeImpl
  * </p>
- *  Last modified: $Date: 2006/03/27 15:39:21 $ by $Author: laddi $
+ *  Last modified: $Date: 2006/03/31 12:28:04 $ by $Author: laddi $
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.10 $
+ * @version $Revision: 1.11 $
  */
 public class CommuneSchoolBusinessHomeImpl extends IBOHomeImpl implements CommuneSchoolBusinessHome {
 
