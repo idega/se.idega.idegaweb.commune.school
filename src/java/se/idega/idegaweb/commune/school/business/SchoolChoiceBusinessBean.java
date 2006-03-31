@@ -39,6 +39,7 @@ import se.idega.idegaweb.commune.school.data.SchoolChoiceReminder;
 import se.idega.idegaweb.commune.school.data.SchoolChoiceReminderHome;
 import com.idega.block.process.data.Case;
 import com.idega.block.process.data.CaseStatus;
+import com.idega.block.process.message.data.Message;
 import com.idega.block.school.business.SchoolBusiness;
 import com.idega.block.school.business.SchoolBusinessBean;
 import com.idega.block.school.data.School;
@@ -855,89 +856,69 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 						}
 						else parent2 = parent;
 					}
-				
-				if(parent2 == null){
-					if (getUserBusiness().getMemberFamilyLogic().isChildInCustodyOf(child, appParent)) {
-						getMessageBusiness().createUserMessage(application, appParent,  null,null,applyingSubject, MessageFormat.format(applyingBody, arguments), true,applyingCode);
-					}
-				}
-				else{
-					boolean messageWasSended = false;
-					boolean sendLetterIfNoEmail = false;
-					if(appParent.getEmails() != null){
-						if (getUserBusiness().getMemberFamilyLogic().isChildInCustodyOf(child, appParent)) {
-							getMessageBusiness().createUserMessage(application, appParent,  null,null,applyingSubject, MessageFormat.format(applyingBody, arguments), true,applyingCode);
-							messageWasSended = true;
-						}	
-						if(!messageWasSended) sendLetterIfNoEmail = true;
-						if (!getUserBusiness().haveSameAddress(parent2, appParent) && 
-								!getMemberFamilyLogic().isSpouseOf(parent2, appParent) &&
-								!getMemberFamilyLogic().isCohabitantOf(parent2, appParent)) {
-							getMessageBusiness().createUserMessage(application, parent2,null,null, nonApplyingSubject, MessageFormat.format(nonApplyingBody, arguments), sendLetterIfNoEmail,nonApplyingCode);
-						}
-						else if (sendToAllParents){
-							getMessageBusiness().createUserMessage(application, parent2,null,null, applyingSubject, MessageFormat.format(applyingBody, arguments), sendLetterIfNoEmail,applyingCode);
-						}
-					}	
-					else{
-						if(parent2.getEmails()!=null){
-							if (getUserBusiness().getMemberFamilyLogic().isChildInCustodyOf(child, appParent)) {
-								getMessageBusiness().createUserMessage(application, appParent,  null,null,applyingSubject, MessageFormat.format(applyingBody, arguments), false,applyingCode);
-							}
-							if (!getUserBusiness().haveSameAddress(parent2, appParent) && 
-								!getMemberFamilyLogic().isSpouseOf(parent2, appParent) &&
-								!getMemberFamilyLogic().isCohabitantOf(parent2, appParent)) {
-									getMessageBusiness().createUserMessage(application, parent2,null,null, nonApplyingSubject, MessageFormat.format(nonApplyingBody, arguments), true,nonApplyingCode);
-							}
-							else if (sendToAllParents){
-								getMessageBusiness().createUserMessage(application, parent2,null,null, applyingSubject, MessageFormat.format(applyingBody, arguments), true,applyingCode);
-							}
-							
+					if(parent2 == null){
+						if((appParent.getEmails() != null) &&(!appParent.getEmails().isEmpty()) ){
+//							Message message = getMessageBusiness().createUserMessage(application, appParent,  null,null,applyingSubject, MessageFormat.format(applyingBody, arguments), true,applyingCode);
+							Message message = getMessageBusiness().createUserMessage(application, appParent,null,null,applyingSubject,MessageFormat.format(applyingBody, arguments), null, null, false,null,false,true); 
+							message.setParentCase(application);
+						 	message.store();
 						}
 						else{
-							if(getUserBusiness().haveSameAddress(parent2, appParent)){
-								if (getUserBusiness().getMemberFamilyLogic().isChildInCustodyOf(child, appParent)) {
-									getMessageBusiness().createUserMessage(application, appParent,  null,null,applyingSubject, MessageFormat.format(applyingBody, arguments), true,applyingCode);
-									messageWasSended = true;
-								}	
-								if(!messageWasSended) sendLetterIfNoEmail = true;
-								if (!getUserBusiness().haveSameAddress(parent2, appParent) && 
-									!getMemberFamilyLogic().isSpouseOf(parent2, appParent) &&
-									!getMemberFamilyLogic().isCohabitantOf(parent2, appParent)) {
-										getMessageBusiness().createUserMessage(application, parent2,null,null, nonApplyingSubject, MessageFormat.format(nonApplyingBody, arguments), sendLetterIfNoEmail,nonApplyingCode);
-								}
-								else if (sendToAllParents){
-									getMessageBusiness().createUserMessage(application, parent2,null,null, applyingSubject, MessageFormat.format(applyingBody, arguments), sendLetterIfNoEmail,applyingCode);
-								}
+						 	Message message = getMessageBusiness().createUserMessage(application, appParent,null,null,applyingSubject,MessageFormat.format(applyingBody, arguments), null, null, true,null,true,true);
+					     	message.setParentCase(application);
+						 	message.store();
+						}				
+					}
+					else{
+						if(getUserBusiness().haveSameAddress(parent2, appParent)){
+							if((appParent.getEmails() != null) &&(!appParent.getEmails().isEmpty()) ){
+								Message message = getMessageBusiness().createUserMessage(application, appParent,null,null,applyingSubject,MessageFormat.format(applyingBody, arguments), null, null, false,null,false,true); 
+								message.setParentCase(application);
+							 	message.store();
 							}
 							else{
-								if (getUserBusiness().getMemberFamilyLogic().isChildInCustodyOf(child, appParent)) {
-									getMessageBusiness().createUserMessage(application, appParent,  null,null,applyingSubject, MessageFormat.format(applyingBody, arguments), true,applyingCode);
-								}
-								if (!getUserBusiness().haveSameAddress(parent2, appParent) && 
-									!getMemberFamilyLogic().isSpouseOf(parent2, appParent) &&
-									!getMemberFamilyLogic().isCohabitantOf(parent2, appParent)) {
-										getMessageBusiness().createUserMessage(application, parent2,null,null, nonApplyingSubject, MessageFormat.format(nonApplyingBody, arguments), true,nonApplyingCode);
-								}
-								else if (sendToAllParents){
-									getMessageBusiness().createUserMessage(application, parent2,null,null, applyingSubject, MessageFormat.format(applyingBody, arguments), true,applyingCode);
-								}
-								
+							 	Message message = getMessageBusiness().createUserMessage(application, appParent,null,null,applyingSubject,MessageFormat.format(applyingBody, arguments), null, null, true,null,true,true);
+						     	message.setParentCase(application);
+							 	message.store();
 							}
-						}
+							Message message = getMessageBusiness().createUserMessage(application, parent2,null,null,applyingSubject,MessageFormat.format(applyingBody, arguments), null, null, false,null,false,true); 
+							message.setParentCase(application);
+						 	message.store();
+						} 
+						else { // not same address
+							if((appParent.getEmails() != null) &&(!appParent.getEmails().isEmpty()) ){
+								Message message = getMessageBusiness().createUserMessage(application, appParent,null,null,applyingSubject,MessageFormat.format(applyingBody, arguments), null, null, false,null,false,true); 
+								message.setParentCase(application);
+							 	message.store();
+							}
+							else{
+							 	Message message = getMessageBusiness().createUserMessage(application, appParent,null,null,applyingSubject,MessageFormat.format(applyingBody, arguments), null, null, true,null,true,true);
+						     	message.setParentCase(application);
+							 	message.store();
+							}
+
+							if((parent2.getEmails() != null) &&(!parent2.getEmails().isEmpty()) ){
+								Message message = getMessageBusiness().createUserMessage(application, parent2,null,null,applyingSubject,MessageFormat.format(applyingBody, arguments), null, null, false,null,false,true); 
+								message.setParentCase(application);
+							 	message.store();
+							}
+							else{
+							 	Message message = getMessageBusiness().createUserMessage(application, parent2,null,null,applyingSubject,MessageFormat.format(applyingBody, arguments), null, null, true,null,true,true);
+						     	message.setParentCase(application);
+							 	message.store();
+							}
+
+						} // end not same address
+
+					}	// end parent2!=null
 						
-					}
-						
-				}
+				} // end try
 					
-					
-					
-				}
 				catch (NoCustodianFound ncf) {
 					ncf.printStackTrace();
 				}
 
-			}
+			}// end else
 		}
 		catch (RemoteException re) {
 			re.printStackTrace();
