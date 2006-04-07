@@ -688,9 +688,11 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 
 	public void resetSchoolClassStatus(int schoolClassID) throws RemoteException {
 		SchoolClass schoolClass = getSchoolBusiness().findSchoolClass(new Integer(schoolClassID));
-		schoolClass.setLocked(false);
-		schoolClass.setReady(false);
-		schoolClass.store();
+		if(schoolClass!=null){
+			schoolClass.setLocked(false);
+			schoolClass.setReady(false);
+			schoolClass.store();
+		}	
 	}
 
 	public boolean removeSubGroupPlacements(int userID, int schoolID, int seasonID) {
