@@ -69,11 +69,11 @@ public class RejectedStudentsListWriter extends DownloadWriter implements MediaW
 	
 	public void init(HttpServletRequest req, IWContext iwc) {
 		
-		locale = iwc.getApplicationSettings().getApplicationLocale();
-		iwrb = iwc.getIWMainApplication().getBundle(CommuneBlock.IW_BUNDLE_IDENTIFIER).getResourceBundle(locale);
+		this.locale = iwc.getApplicationSettings().getApplicationLocale();
+		this.iwrb = iwc.getIWMainApplication().getBundle(CommuneBlock.IW_BUNDLE_IDENTIFIER).getResourceBundle(this.locale);
 		
-        schoolID = Integer.parseInt(req.getParameter(PARAMETER_SCHOOL_ID));
-		seasonID = Integer.parseInt(req.getParameter(PARAMETER_SCHOOL_SEASON_ID));
+        this.schoolID = Integer.parseInt(req.getParameter(PARAMETER_SCHOOL_ID));
+		this.seasonID = Integer.parseInt(req.getParameter(PARAMETER_SCHOOL_SEASON_ID));
 		
 		try {
 			this.buffer = writeXls(iwc);
@@ -120,7 +120,7 @@ public class RejectedStudentsListWriter extends DownloadWriter implements MediaW
     				row.createCell((short) 0).setCellValue(name);
     				
     				if (applicant.getPersonalID() != null) {    					
-    					row.createCell((short) 1).setCellValue(PersonalIDFormatter.format(applicant.getPersonalID(), locale));
+    					row.createCell((short) 1).setCellValue(PersonalIDFormatter.format(applicant.getPersonalID(), this.locale));
     				}    				
     				
     				String emails = this.getParentsEmails(iwc, applicant);
@@ -147,10 +147,10 @@ public class RejectedStudentsListWriter extends DownloadWriter implements MediaW
     				
     				String genderString = null;
 					if (PIDChecker.getInstance().isFemale(applicant.getPersonalID())) {
-						genderString = iwrb.getLocalizedString("school.girl", "Girl");
+						genderString = this.iwrb.getLocalizedString("school.girl", "Girl");
 					}
 					else {
-						genderString = iwrb.getLocalizedString("school.boy", "Boy");
+						genderString = this.iwrb.getLocalizedString("school.boy", "Boy");
 					}
 					row.createCell((short) 7).setCellValue(genderString);
 
@@ -215,7 +215,7 @@ public class RejectedStudentsListWriter extends DownloadWriter implements MediaW
 		try {
 			scHome = (SchoolChoiceHome) IDOLookup.getHome(SchoolChoice.class);
 			String[] statuses = new String[] {getSchoolChoiceBusiness(iwc).getCaseStatusDenied().getStatus()};
-			schoolChoices = scHome.findBySchoolIDAndSeasonIDAndStatus(schoolID, seasonID, statuses, ENTRIES_PER_PAGE, currentStartEntry);
+			schoolChoices = scHome.findBySchoolIDAndSeasonIDAndStatus(this.schoolID, this.seasonID, statuses, this.ENTRIES_PER_PAGE, this.currentStartEntry);
 		}
 		catch (IDOLookupException e) {
 			e.printStackTrace();
@@ -246,16 +246,16 @@ public class RejectedStudentsListWriter extends DownloadWriter implements MediaW
         
         // here we could create array of strings, I mean headers
         String[] headers = { 
-        		iwrb.getLocalizedString("school.child", "Child"), 
-        		iwrb.getLocalizedString("school.personal_id", "Personal ID"), 
-        		iwrb.getLocalizedString("school.e-mail", "Email"), 
-        		iwrb.getLocalizedString("school.address", "Address"),
-        		iwrb.getLocalizedString("school.zip_code", "Zip code"), 
-        		iwrb.getLocalizedString("school.city", "City"), 
-        		iwrb.getLocalizedString("school.phone", "Phone"), 
-        		iwrb.getLocalizedString("school.gender", "Gender"),
-        		iwrb.getLocalizedString("school.last_provider", "Last provider"), 
-        		iwrb.getLocalizedString("school.rejection_date", "Rejection date")};
+        		this.iwrb.getLocalizedString("school.child", "Child"), 
+        		this.iwrb.getLocalizedString("school.personal_id", "Personal ID"), 
+        		this.iwrb.getLocalizedString("school.e-mail", "Email"), 
+        		this.iwrb.getLocalizedString("school.address", "Address"),
+        		this.iwrb.getLocalizedString("school.zip_code", "Zip code"), 
+        		this.iwrb.getLocalizedString("school.city", "City"), 
+        		this.iwrb.getLocalizedString("school.phone", "Phone"), 
+        		this.iwrb.getLocalizedString("school.gender", "Gender"),
+        		this.iwrb.getLocalizedString("school.last_provider", "Last provider"), 
+        		this.iwrb.getLocalizedString("school.rejection_date", "Rejection date")};
         
         int[] headerWidths = { 30, 14, 25, 25, 10, 16, 16, 8, 30, 16 };
         
@@ -296,10 +296,12 @@ public class RejectedStudentsListWriter extends DownloadWriter implements MediaW
 					try {
 						email = getCommuneUserBusiness(iwc).getUsersMainEmail(parent);
 						if (email != null && email.getEmailAddress() != null && !email.getEmailAddress().equals(" ")) {							
-							if (emails != null)
+							if (emails != null) {
 								emails = emails + ", " + email.getEmailAddress();
-							else										
-								emails = email.getEmailAddress();							
+							}
+							else {
+								emails = email.getEmailAddress();
+							}							
 						}														
 					}
 					catch (NoEmailFoundException nef) {
@@ -321,21 +323,23 @@ public class RejectedStudentsListWriter extends DownloadWriter implements MediaW
 	}
 	
 	public String getMimeType() {
-		if (buffer != null)
-			return buffer.getMimeType();
+		if (this.buffer != null) {
+			return this.buffer.getMimeType();
+		}
 		return super.getMimeType();
 	}
 	
 	public void writeTo(OutputStream out) throws IOException {
-		if (buffer != null) {
-			MemoryInputStream mis = new MemoryInputStream(buffer);
+		if (this.buffer != null) {
+			MemoryInputStream mis = new MemoryInputStream(this.buffer);
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			while (mis.available() > 0) {
 				baos.write(mis.read());
 			}
 			baos.writeTo(out);
 		}
-		else
+		else {
 			System.err.println("buffer is null");
+		}
 	}	
 }

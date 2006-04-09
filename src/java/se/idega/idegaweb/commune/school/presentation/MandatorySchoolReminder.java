@@ -96,9 +96,9 @@ public class MandatorySchoolReminder extends CommuneBlock {
 	}
 
 	private void parseAction(IWContext iwc) {
-		_action = iwc.getParameter(PRM_ACTION);
-		if (_action == null) {
-			_action = ACTION_INITIALIZE;
+		this._action = iwc.getParameter(PRM_ACTION);
+		if (this._action == null) {
+			this._action = ACTION_INITIALIZE;
 		}
 	}
 
@@ -109,23 +109,23 @@ public class MandatorySchoolReminder extends CommuneBlock {
 		// DateFormat.getDateInstance(DateFormat.SHORT,iwc.getCurrentLocale());
 		// Date date = IWTimestamp.getTimestampRightNow();
 
-		_fieldTable = new Table(2, 2);
+		this._fieldTable = new Table(2, 2);
 		// _fieldTable.setBorder(1);
 
 		//
-		_fieldTable.add(getFieldLabel(iwrb.getLocalizedString("MandatorySchoolReminder.date", "Date:")), 1, 1);
+		this._fieldTable.add(getFieldLabel(iwrb.getLocalizedString("MandatorySchoolReminder.date", "Date:")), 1, 1);
 		// TextInput dateInput = new TextInput(PRM_DATE);
 		// dateInput.setContent(df.format(date));
 		// setStyle(dateInput);
 		// _fieldTable.add(dateInput,2,1);
 
-		dateInputDD = new DateInput(PRM_DATE_STRING);
-		dateInputDD.setToCurrentDate();
+		this.dateInputDD = new DateInput(PRM_DATE_STRING);
+		this.dateInputDD.setToCurrentDate();
 		// monthInput.setToShowDay(false);
-		dateInputDD.setToDisplayDayLast(true);
+		this.dateInputDD.setToDisplayDayLast(true);
 
 		int currentYear = java.util.Calendar.getInstance().get(java.util.Calendar.YEAR);
-		dateInputDD.setYearRange(currentYear - 1, currentYear + 1);
+		this.dateInputDD.setYearRange(currentYear - 1, currentYear + 1);
 
 		// String date = iwc.getParameter(PARAM_DATE);
 		// if(date!=null){
@@ -134,7 +134,7 @@ public class MandatorySchoolReminder extends CommuneBlock {
 
 		// InputContainer dateDD = getInputContainer(PARAM_DATE,"Month",
 		// dateInputDD);
-		_fieldTable.add(dateInputDD, 1, 1);
+		this._fieldTable.add(this.dateInputDD, 1, 1);
 
 		// choose schoolseason
 		// _fieldTable.add(getFieldLabel(iwrb.getLocalizedString("school_season",
@@ -145,9 +145,9 @@ public class MandatorySchoolReminder extends CommuneBlock {
 		// _fieldTable.add(seasonDropdown,2,1);
 
 		InterfaceObject generateButton = (InterfaceObject) getSubmitButton(iwrb.getLocalizedString("MandatorySchoolReminder.search", " Search "), ACTION_SELECT_SCHOOL_SEASON);
-		_fieldTable.add(generateButton, 1, 2);
-		_fieldTable.mergeCells(1, 2, 2, 2);
-		_fieldTable.setColumnAlignment(1, Table.HORIZONTAL_ALIGN_RIGHT);
+		this._fieldTable.add(generateButton, 1, 2);
+		this._fieldTable.mergeCells(1, 2, 2, 2);
+		this._fieldTable.setColumnAlignment(1, Table.HORIZONTAL_ALIGN_RIGHT);
 
 	}
 
@@ -159,13 +159,13 @@ public class MandatorySchoolReminder extends CommuneBlock {
 			parseAction(iwc);
 			parseDate(iwc);
 
-			if (_action.equals(ACTION_INITIALIZE)) {
+			if (this._action.equals(ACTION_INITIALIZE)) {
 				lineUpSeasonSelection(iwrb);
 				Form form = new Form();
-				form.add(_fieldTable);
+				form.add(this._fieldTable);
 				this.add(form);
 			}
-			else if (_action.equals(ACTION_SELECT_SCHOOL_SEASON)) {
+			else if (this._action.equals(ACTION_SELECT_SCHOOL_SEASON)) {
 				// DateFormat df =
 				// DateFormat.getDateInstance(DateFormat.SHORT,iwc.getCurrentLocale());
 
@@ -186,15 +186,15 @@ public class MandatorySchoolReminder extends CommuneBlock {
 				this.add(form);
 
 			}
-			else if (_action.equals(ACTION_GET_REPORT)) {
+			else if (this._action.equals(ACTION_GET_REPORT)) {
 
 				presentResultAsReport(iwc, iwrb);
 
 			}
-			else if (_action.equals(ACTION_CANCEL)) {
+			else if (this._action.equals(ACTION_CANCEL)) {
 				lineUpSeasonSelection(iwrb);
 				Form form = new Form();
-				form.add(_fieldTable);
+				form.add(this._fieldTable);
 				this.add(form);
 			}
 		}
@@ -247,7 +247,7 @@ public class MandatorySchoolReminder extends CommuneBlock {
 
 			DateFormat df = new SimpleDateFormat("yyyy-mm-dd");
 			// DateFormat.getDateInstance(DateFormat.SHORT,iwc.getCurrentLocale());
-			_selectedDate = df.parse(date);
+			this._selectedDate = df.parse(date);
 		}
 
 	}
@@ -288,7 +288,7 @@ public class MandatorySchoolReminder extends CommuneBlock {
 				int countResult = -1;
 
 				try {
-					countResult = sBusiness.getSchoolClassMemberHome().getNumberOfUsersNotAssignedToClassOnGivenDateNew(communeGroup, new java.sql.Date(_selectedDate.getTime()), currentSeason, firstDateOfBirth.getDate(), lastDateOfBirth.getDate());
+					countResult = sBusiness.getSchoolClassMemberHome().getNumberOfUsersNotAssignedToClassOnGivenDateNew(communeGroup, new java.sql.Date(this._selectedDate.getTime()), currentSeason, firstDateOfBirth.getDate(), lastDateOfBirth.getDate());
 				}
 				catch (IDOException e) {
 					e.printStackTrace();
@@ -334,7 +334,7 @@ public class MandatorySchoolReminder extends CommuneBlock {
 
 		System.out.println("Getting coll of childrens");
 
-		System.out.println("Date is " + _selectedDate);
+		System.out.println("Date is " + this._selectedDate);
 		JRDataSource dataSource = getDataSource(iwc, currentSeason);
 		System.out.println("Getting map");
 		ReportDescription description = getReportDescription(iwrb, df, dataSource);
@@ -352,12 +352,12 @@ public class MandatorySchoolReminder extends CommuneBlock {
 	 * @return
 	 */
 	private String generateReport(JasperReportBusiness jasperBusiness, JRDataSource dataSource, ReportDescription description) {
-		description.put(DynamicReportDesign.PRM_REPORT_NAME, _reportName);
+		description.put(DynamicReportDesign.PRM_REPORT_NAME, this._reportName);
 		// System.out.println("[MandatorySchoolReminder]: in generate report....");
 		// if(dataSource instanceof ReportableCollection){
 		// System.out.println("[MandatorySchoolReminder]: instanceof
 		// ReportableCollection");
-		return jasperBusiness.getSimpleExcelReport(dataSource, _reportName, description);
+		return jasperBusiness.getSimpleExcelReport(dataSource, this._reportName, description);
 		// } else {
 		// System.out.println("[MandatorySchoolReminder]: instanceof "+dataSource);
 		// JasperPrint print =
@@ -386,7 +386,7 @@ public class MandatorySchoolReminder extends CommuneBlock {
 
 		if (_dataSource != null && _dataSource instanceof ReportableCollection) {
 			ReportableCollection reportData = ((ReportableCollection) _dataSource);
-			reportData.addExtraHeaderParameterAtBeginning("label_selected_date", iwrb.getLocalizedString("MandatorySchoolReminder.label_selected_date", "Date"), "selected_date", dateFormat.format(_selectedDate));
+			reportData.addExtraHeaderParameterAtBeginning("label_selected_date", iwrb.getLocalizedString("MandatorySchoolReminder.label_selected_date", "Date"), "selected_date", dateFormat.format(this._selectedDate));
 			description = reportData.getReportDescription();
 		}
 		return description;
@@ -399,7 +399,7 @@ public class MandatorySchoolReminder extends CommuneBlock {
 	 */
 	private JRDataSource getDataSource(IWContext iwc, SchoolSeason currentSeason) throws IDOLookupException, RemoteException, IDOException, FinderException, CreateException {
 		SchoolCommuneBusiness business = (SchoolCommuneBusiness) IBOLookup.getServiceInstance(iwc, SchoolCommuneBusiness.class);
-		return business.getReportOfUsersNotRegisteredInAnyClass(iwc.getCurrentLocale(), _selectedDate, currentSeason);
+		return business.getReportOfUsersNotRegisteredInAnyClass(iwc.getCurrentLocale(), this._selectedDate, currentSeason);
 	}
 
 	/**
@@ -437,7 +437,7 @@ public class MandatorySchoolReminder extends CommuneBlock {
 	}
 
 	public void setReportName(String name) {
-		_reportName = name;
+		this._reportName = name;
 	}
 
 	private class MandatorySchoolReminderException extends Exception {
@@ -453,7 +453,7 @@ public class MandatorySchoolReminder extends CommuneBlock {
 
 		public MandatorySchoolReminderException(String tecnicalMessage, Throwable cause, String localizedMessage) {
 			this(tecnicalMessage, cause);
-			_localizedMessage = localizedMessage;
+			this._localizedMessage = localizedMessage;
 			// _localizedKey = localizedKey;
 			// _defaultUserFriendlyMessage = defaultUserFriendlyMessage;
 		}
@@ -464,9 +464,9 @@ public class MandatorySchoolReminder extends CommuneBlock {
 		 */
 		public MandatorySchoolReminderException(String message, Throwable cause) {
 			super(message);
-			_localizedMessage = message;
+			this._localizedMessage = message;
 			// jdk 1.3 - 1.4 fix
-			_cause = cause;
+			this._cause = cause;
 		}
 
 		/**
@@ -478,11 +478,11 @@ public class MandatorySchoolReminder extends CommuneBlock {
 
 		// jdk 1.3 - 1.4 fix
 		public Throwable getCause() {
-			return _cause;
+			return this._cause;
 		}
 
 		public String getLocalizedMessage() {
-			return _localizedMessage;
+			return this._localizedMessage;
 		}
 	}
 }

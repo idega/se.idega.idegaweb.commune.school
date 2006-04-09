@@ -44,19 +44,19 @@ public class RejectedStudentsList extends SchoolCommuneBlock {
 	
 	public void init(IWContext iwc) throws Exception {
 		SchoolChoiceHome scHome = (SchoolChoiceHome) IDOLookup.getHome(SchoolChoice.class);
-		if (iwc.isParameterSet(PARAMETER_NEXT_START_ENTRY)) {
+		if (iwc.isParameterSet(this.PARAMETER_NEXT_START_ENTRY)) {
 			try {
-				currentStartEntry = Integer.parseInt(iwc.getParameter(PARAMETER_NEXT_START_ENTRY));
+				this.currentStartEntry = Integer.parseInt(iwc.getParameter(this.PARAMETER_NEXT_START_ENTRY));
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
-		iwrb = super.getResourceBundle();
+		this.iwrb = super.getResourceBundle();
 		int schoolID = super.getSchoolID();
 		int seasonID = super.getSchoolSeasonID();
 		String[] statuses = new String[] {getSchoolChoiceBusiness(iwc).getCaseStatusDenied().getStatus()};
-		schoolChoices = scHome.findBySchoolIDAndSeasonIDAndStatus(schoolID, seasonID, statuses, ENTRIES_PER_PAGE, currentStartEntry);
-		totalChoices = scHome.countBySchoolIDAndSeasonIDAndStatus(schoolID, seasonID, statuses);
+		this.schoolChoices = scHome.findBySchoolIDAndSeasonIDAndStatus(schoolID, seasonID, statuses, this.ENTRIES_PER_PAGE, this.currentStartEntry);
+		this.totalChoices = scHome.countBySchoolIDAndSeasonIDAndStatus(schoolID, seasonID, statuses);
 		drawTable(iwc);
 	}
 	
@@ -68,10 +68,10 @@ public class RejectedStudentsList extends SchoolCommuneBlock {
 			table.setCellpaddingLeft(1, 1, 12);
 			table.setCellpaddingRight(1, 1, 12);
 		}
-		if (tableWidth == null) {
+		if (this.tableWidth == null) {
 			table.setWidth(getWidth());
 		} else {
-			table.setWidth(tableWidth);
+			table.setWidth(this.tableWidth);
 		}
 		table.setHeight(2, 3);
 		table.add(getStudentList(iwc), 1, 3);
@@ -92,8 +92,8 @@ public class RejectedStudentsList extends SchoolCommuneBlock {
 		table.setAlignment(3, 1, Table.HORIZONTAL_ALIGN_RIGHT);
 		table.add(getXlsLink(), 3, 1);
 		
-		if (currentStartEntry != 0) {
-			lPrev.addParameter(PARAMETER_NEXT_START_ENTRY, Integer.toString(currentStartEntry - ENTRIES_PER_PAGE));
+		if (this.currentStartEntry != 0) {
+			lPrev.addParameter(this.PARAMETER_NEXT_START_ENTRY, Integer.toString(this.currentStartEntry - this.ENTRIES_PER_PAGE));
 			table.add(lPrev, 1, 2);
 		} else {
 			table.add(getSmallText(localize("previous", "Previous")), 1, 2);
@@ -101,15 +101,15 @@ public class RejectedStudentsList extends SchoolCommuneBlock {
 		table.setAlignment(1, 2, Table.HORIZONTAL_ALIGN_LEFT);
 		
 		table.setAlignment(2, 2, Table.HORIZONTAL_ALIGN_CENTER);
-		if (totalChoices == 0) {
-			table.add(getSmallHeader("0/"+  ((totalChoices / ENTRIES_PER_PAGE)+1) ), 2, 2);
+		if (this.totalChoices == 0) {
+			table.add(getSmallHeader("0/"+  ((this.totalChoices / this.ENTRIES_PER_PAGE)+1) ), 2, 2);
 		} else {
-			table.add(getSmallHeader(  ((currentStartEntry/totalChoices)+1)  +"/"+  ((totalChoices / ENTRIES_PER_PAGE)+1) ), 2, 2);
+			table.add(getSmallHeader(  ((this.currentStartEntry/this.totalChoices)+1)  +"/"+  ((this.totalChoices / this.ENTRIES_PER_PAGE)+1) ), 2, 2);
 		}
 		
 		//table.add(getSmallHeader(  ((21/20)+1)   +"/"+  (Math.ceil(1 / 10)) ), 2, 1);
-		if (currentStartEntry < (totalChoices - ENTRIES_PER_PAGE)) {
-			lNext.addParameter(PARAMETER_NEXT_START_ENTRY, Integer.toString(currentStartEntry + ENTRIES_PER_PAGE));
+		if (this.currentStartEntry < (this.totalChoices - this.ENTRIES_PER_PAGE)) {
+			lNext.addParameter(this.PARAMETER_NEXT_START_ENTRY, Integer.toString(this.currentStartEntry + this.ENTRIES_PER_PAGE));
 			table.add(lNext, 3, 1);
 		} else {
 			table.add(getSmallText(localize("next", "Next")), 3, 2);
@@ -147,7 +147,7 @@ public class RejectedStudentsList extends SchoolCommuneBlock {
 		SchoolChoice choice;
 		String name = null;
 		Locale locale = iwc.getCurrentLocale();
-		for (Iterator iter = schoolChoices.iterator(); iter.hasNext(); ) {
+		for (Iterator iter = this.schoolChoices.iterator(); iter.hasNext(); ) {
 			choice = (SchoolChoice) iter.next();
 			column = 1;
 			++row;
@@ -208,8 +208,9 @@ public class RejectedStudentsList extends SchoolCommuneBlock {
 				}
 				if (school != null) {
 					String schoolName = school.getName();
-					if (schoolName.length() > 20)
+					if (schoolName.length() > 20) {
 						schoolName = schoolName.substring(0, 20) + "...";
+					}
 					table.add(getSmallText(schoolName), column++, row);
 				}
 				
@@ -228,7 +229,7 @@ public class RejectedStudentsList extends SchoolCommuneBlock {
 		}
 		++row;
 		table.setHeight(row++, 3);
-		table.add(getSmallText(localize("school.total_students","Total students")+" : "+totalChoices), 1, row);
+		table.add(getSmallText(localize("school.total_students","Total students")+" : "+this.totalChoices), 1, row);
 		table.mergeCells(1, row, 4, row);
 		if (useStyleNames()) {
 			table.setCellpaddingLeft(1, row, 12);
@@ -258,10 +259,12 @@ public class RejectedStudentsList extends SchoolCommuneBlock {
 					try {
 						email = getCommuneUserBusiness(iwc).getUsersMainEmail(parent);
 						if (email != null && email.getEmailAddress() != null && !email.getEmailAddress().equals(" ")) {							
-							if (emails != null)
+							if (emails != null) {
 								emails = emails + "; " + email.getEmailAddress();
-							else										
-								emails = email.getEmailAddress();							
+							}
+							else {
+								emails = email.getEmailAddress();
+							}							
 						}														
 					}
 					catch (NoEmailFoundException nef) {

@@ -1,5 +1,5 @@
 /*
- * $Id: Cell.java,v 1.4 2004/01/23 08:36:03 anders Exp $
+ * $Id: Cell.java,v 1.5 2006/04/09 11:39:54 laddi Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -15,10 +15,10 @@ import java.rmi.RemoteException;
  * Holder for report cell values. A report cell holds methods, parameters, type and
  * the parent report model for calculating the cell's value.
  * <p>
- * Last modified: $Date: 2004/01/23 08:36:03 $ by $Author: anders $
+ * Last modified: $Date: 2006/04/09 11:39:54 $ by $Author: laddi $
  *
  * @author Anders Lindman
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public class Cell {
 
@@ -58,63 +58,63 @@ public class Cell {
 				Object rowParameter,
 				Object columnParameter,
 				int cellType) {
-		_reportModel = reportModel;
-		_row = row;
-		_column = column;
-		_rowMethod = rowMethod;
-		_columnMethod = columnMethod;
-		_rowParameter = rowParameter;
-		_columnParameter = columnParameter;
-		_cellType = cellType;
+		this._reportModel = reportModel;
+		this._row = row;
+		this._column = column;
+		this._rowMethod = rowMethod;
+		this._columnMethod = columnMethod;
+		this._rowParameter = rowParameter;
+		this._columnParameter = columnParameter;
+		this._cellType = cellType;
 	}	
 	
 	/**
 	 * Returns the row position in the report model for this cell.
 	 */
 	protected int getRow() {
-		return _row;
+		return this._row;
 	}
 	
 	/**
 	 * Returns the column position in the report model for this cell.
 	 */
 	protected int getColumn() {
-		return _column;
+		return this._column;
 	}
 	
 	/**
 	 * Returns the row method for this cell.
 	 */
 	protected int getRowMethod() {
-		return _rowMethod;
+		return this._rowMethod;
 	}
 	
 	/**
 	 * Returns the column method for this cell.
 	 */
 	protected int getColumnMethod() {
-		return _columnMethod;
+		return this._columnMethod;
 	}
 	
 	/**
 	 * Returns the row parameter for this cell.
 	 */
 	protected Object getRowParameter() {
-		return _rowParameter;
+		return this._rowParameter;
 	}
 	
 	/**
 	 * Returns the column parameter for this cell.
 	 */
 	protected Object getColumnParameter() {
-		return _columnParameter;
+		return this._columnParameter;
 	}
 	
 	/**
 	 * Returns the type for this cell.
 	 */
 	public int getCellType() {
-		return _cellType;
+		return this._cellType;
 	}
 	
 	/**
@@ -128,14 +128,14 @@ public class Cell {
 	 * Returns the numeric value for this cell.
 	 */
 	public float getFloatValue() {
-		if (_value == VALUE_UNDEFINED) {
+		if (this._value == VALUE_UNDEFINED) {
 			try {
-				_value = _reportModel.calculate(this);
+				this._value = this._reportModel.calculate(this);
 			} catch (RemoteException e) {
-				_reportModel.log(e.getMessage());
+				this._reportModel.log(e.getMessage());
 			}
 		}
-		return _value;
+		return this._value;
 	}
 	
 	/**
@@ -143,8 +143,8 @@ public class Cell {
 	 */
 	public String getStringValue() {
 		String s = null;
-		if (_cellType == CELLTYPE_ROW_HEADER) {
-			s = _rowParameter.toString();
+		if (this._cellType == CELLTYPE_ROW_HEADER) {
+			s = this._rowParameter.toString();
 		}
 		return s;
 	}

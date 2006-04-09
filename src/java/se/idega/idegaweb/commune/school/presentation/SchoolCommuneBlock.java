@@ -67,10 +67,10 @@ public abstract class SchoolCommuneBlock extends CommuneBlock {
 	
 	public void main(IWContext iwc) throws Exception{
 		setResourceBundle(getResourceBundle(iwc));
-		business = getSchoolCommuneBusiness(iwc);
-		session = getSchoolCommuneSession(iwc);
-		sBusiness = getSchoolBusiness(iwc);
-		careBusiness = getCareBusiness(iwc);
+		this.business = getSchoolCommuneBusiness(iwc);
+		this.session = getSchoolCommuneSession(iwc);
+		this.sBusiness = getSchoolBusiness(iwc);
+		this.careBusiness = getCareBusiness(iwc);
 		initialize(iwc);
 
 		init(iwc);
@@ -79,18 +79,18 @@ public abstract class SchoolCommuneBlock extends CommuneBlock {
 	public abstract void init(IWContext iwc) throws Exception;
 	
 	protected void initialize(IWContext iwc) throws RemoteException {
-		_schoolID = session.getSchoolID();	
-		_schoolSeasonID = session.getSchoolSeasonID();
-		_schoolYearID = session.getSchoolYearID();
-		_schoolClassID = session.getSchoolClassID();
+		this._schoolID = this.session.getSchoolID();	
+		this._schoolSeasonID = this.session.getSchoolSeasonID();
+		this._schoolYearID = this.session.getSchoolYearID();
+		this._schoolClassID = this.session.getSchoolClassID();
 
-		if ( _schoolSeasonID == -1 ) {
-			_schoolSeasonID = getSchoolCommuneBusiness(iwc).getCurrentSchoolSeasonID();
-			session.setSchoolSeasonID(_schoolSeasonID);
+		if ( this._schoolSeasonID == -1 ) {
+			this._schoolSeasonID = getSchoolCommuneBusiness(iwc).getCurrentSchoolSeasonID();
+			this.session.setSchoolSeasonID(this._schoolSeasonID);
 		}
 		
-		if (_schoolYearID == -1) {
-			_schoolClassID = -1;
+		if (this._schoolYearID == -1) {
+			this._schoolClassID = -1;
 		}
 	}
 	
@@ -100,10 +100,10 @@ public abstract class SchoolCommuneBlock extends CommuneBlock {
 	 * @return AccountingSession
 	 */
 	public AccountingSession getAccountingSession() {
-		if(accountingSession==null){
+		if(this.accountingSession==null){
 			try
 			{
-				accountingSession = (AccountingSession)IBOLookup.getSessionInstance(IWContext.getInstance(),AccountingSession.class);
+				this.accountingSession = (AccountingSession)IBOLookup.getSessionInstance(IWContext.getInstance(),AccountingSession.class);
 			}
 			catch (IBOLookupException e)
 			{
@@ -116,7 +116,7 @@ public abstract class SchoolCommuneBlock extends CommuneBlock {
 				e.printStackTrace();
 			}
 		}
-		return accountingSession;
+		return this.accountingSession;
 	}
 		
 	
@@ -134,18 +134,18 @@ public abstract class SchoolCommuneBlock extends CommuneBlock {
 	 */
 	protected DropdownMenu getSchools(boolean onlyCentralizedAdministrated, String category) throws RemoteException {
 		
-		DropdownMenu menu = new DropdownMenu(session.getParameterSchoolID());
+		DropdownMenu menu = new DropdownMenu(this.session.getParameterSchoolID());
 		menu.setToSubmit();
 		Collection schools = null;
-		Collection schoolTypeIds = sBusiness.findAllSchoolTypesInCategory(category);
+		Collection schoolTypeIds = this.sBusiness.findAllSchoolTypesInCategory(category);
 		if (schoolTypeIds == null){
 			schoolTypeIds = new java.util.HashSet();
 		}
 				
 		if (onlyCentralizedAdministrated) {
-			schools = business.getSchoolBusiness().findAllCentralizedAdministratedByType(schoolTypeIds);			
+			schools = this.business.getSchoolBusiness().findAllCentralizedAdministratedByType(schoolTypeIds);			
 		} else {
-			schools = business.getSchoolBusiness().findAllSchoolsByType(schoolTypeIds);
+			schools = this.business.getSchoolBusiness().findAllSchoolsByType(schoolTypeIds);
 		}
 		Iterator iter = schools.iterator();
 		while (iter.hasNext()) {
@@ -185,17 +185,17 @@ public abstract class SchoolCommuneBlock extends CommuneBlock {
 	}
 	
 	protected DropdownMenu getSchoolSeasons(boolean setToSubmit) throws RemoteException {
-		return getSchoolSeasons(setToSubmit, business.getSchoolBusiness().getCategoryElementarySchool());
+		return getSchoolSeasons(setToSubmit, this.business.getSchoolBusiness().getCategoryElementarySchool());
 	}
 	
 	protected DropdownMenu getSchoolSeasons(boolean setToSubmit, SchoolCategory schoolCategory) throws RemoteException {
-		DropdownMenu menu = new DropdownMenu(session.getParameterSchoolSeasonID());
+		DropdownMenu menu = new DropdownMenu(this.session.getParameterSchoolSeasonID());
 		if (setToSubmit) {
 			menu.setToSubmit();
 		}
 		
 		//Collection seasons = business.getSchoolBusiness().findAllSchoolSeasons(business.getSchoolBusiness().getCategoryElementarySchool());
-		Collection seasons = business.getSchoolBusiness().findAllSchoolSeasons(schoolCategory);
+		Collection seasons = this.business.getSchoolBusiness().findAllSchoolSeasons(schoolCategory);
 		if ( !seasons.isEmpty() ) {
 			Iterator iter = seasons.iterator();
 			while (iter.hasNext()) {
@@ -210,18 +210,19 @@ public abstract class SchoolCommuneBlock extends CommuneBlock {
 //			menu.addMenuElement(-1, "");	
 		}
 		
-		if ( _schoolSeasonID != -1 )
-			menu.setSelectedElement(_schoolSeasonID);
+		if ( this._schoolSeasonID != -1 ) {
+			menu.setSelectedElement(this._schoolSeasonID);
+		}
 		
 		return (DropdownMenu) getStyledInterface(menu);	
 	}
 	protected DropdownMenu getSchoolYears() throws RemoteException {
-		DropdownMenu menu = new DropdownMenu(session.getParameterSchoolYearID());
+		DropdownMenu menu = new DropdownMenu(this.session.getParameterSchoolYearID());
 		menu.setToSubmit();
 		int schoolTypeID = -1;
 		
-		if ( _schoolID != -1 ) {
-			List years = new Vector(business.getSchoolBusiness().findAllSchoolYearsInSchool(_schoolID));
+		if ( this._schoolID != -1 ) {
+			List years = new Vector(this.business.getSchoolBusiness().findAllSchoolYearsInSchool(this._schoolID));
 			if ( !years.isEmpty() ) {
 	      Collections.sort(years,new SchoolYearComparator());
 				Iterator iter = years.iterator();
@@ -236,22 +237,23 @@ public abstract class SchoolCommuneBlock extends CommuneBlock {
 				}
 			}
 			else {
-				_schoolYearID = -1;
+				this._schoolYearID = -1;
 			}
 		}
 		
-		if ( _schoolYearID != -1 )
-			menu.setSelectedElement(_schoolYearID);
+		if ( this._schoolYearID != -1 ) {
+			menu.setSelectedElement(this._schoolYearID);
+		}
 		
 		return (DropdownMenu) getStyledInterface(menu);
 	}
 
 	protected DropdownMenu getSchoolClasses() throws RemoteException {
-		DropdownMenu menu = new DropdownMenu(session.getParameterSchoolClassID());
+		DropdownMenu menu = new DropdownMenu(this.session.getParameterSchoolClassID());
 		menu.setToSubmit();
 		
-		if ( _schoolID != -1 && _schoolSeasonID != -1 && _schoolYearID != -1 ) {
-			List classes = new ArrayList(business.getSchoolBusiness().findSchoolClassesBySchoolAndSeasonAndYear(_schoolID, _schoolSeasonID, _schoolYearID));
+		if ( this._schoolID != -1 && this._schoolSeasonID != -1 && this._schoolYearID != -1 ) {
+			List classes = new ArrayList(this.business.getSchoolBusiness().findSchoolClassesBySchoolAndSeasonAndYear(this._schoolID, this._schoolSeasonID, this._schoolYearID));
 			if ( !classes.isEmpty() ) {
 	      Collections.sort(classes,new SchoolClassComparator());
 				Iterator iter = classes.iterator();
@@ -271,7 +273,7 @@ public abstract class SchoolCommuneBlock extends CommuneBlock {
 				}
 			}
 			else {
-				_schoolClassID = -1;
+				this._schoolClassID = -1;
 //				menu.addMenuElement(-1, "");	
 			}
 		}
@@ -279,8 +281,9 @@ public abstract class SchoolCommuneBlock extends CommuneBlock {
 //			menu.addMenuElement(-1, "");	
 		}
 		
-		if ( _schoolClassID != -1 )
-			menu.setSelectedElement(_schoolClassID);
+		if ( this._schoolClassID != -1 ) {
+			menu.setSelectedElement(this._schoolClassID);
+		}
 		
 		return (DropdownMenu) getStyledInterface(menu);	
 	}
@@ -331,7 +334,7 @@ public abstract class SchoolCommuneBlock extends CommuneBlock {
 	 * @return int
 	 */
 	public int getSchoolClassID() {
-		return _schoolClassID;
+		return this._schoolClassID;
 	}
 
 	/**
@@ -339,7 +342,7 @@ public abstract class SchoolCommuneBlock extends CommuneBlock {
 	 * @return int
 	 */
 	public int getSchoolID() {
-		return _schoolID;
+		return this._schoolID;
 	}
 
 	/**
@@ -347,7 +350,7 @@ public abstract class SchoolCommuneBlock extends CommuneBlock {
 	 * @return int
 	 */
 	public int getSchoolSeasonID() {
-		return _schoolSeasonID;
+		return this._schoolSeasonID;
 	}
 
 	/**
@@ -355,17 +358,17 @@ public abstract class SchoolCommuneBlock extends CommuneBlock {
 	 * @return int
 	 */
 	public int getSchoolYearID() {
-		return _schoolYearID;
+		return this._schoolYearID;
 	}
 
 
 	public SchoolBusiness getSchoolBusiness() {
-		return sBusiness;
+		return this.sBusiness;
 	}
 	
 	
 	public CareBusiness getCareBusiness() {
-		return careBusiness;
+		return this.careBusiness;
 	}
 	
 	/**
@@ -373,7 +376,7 @@ public abstract class SchoolCommuneBlock extends CommuneBlock {
 	 * @return SchoolCommuneBusiness
 	 */
 	public SchoolCommuneBusiness getBusiness() {
-		return business;
+		return this.business;
 	}
 
 	/**
@@ -381,7 +384,7 @@ public abstract class SchoolCommuneBlock extends CommuneBlock {
 	 * @return SchoolCommuneSession
 	 */
 	public SchoolCommuneSession getSession() {
-		return session;
+		return this.session;
 	}
 
 	/**
@@ -389,7 +392,7 @@ public abstract class SchoolCommuneBlock extends CommuneBlock {
 	 * @param schoolClassID The schoolClassID to set
 	 */
 	public void setSchoolClassID(int schoolClassID) {
-		_schoolClassID = schoolClassID;
+		this._schoolClassID = schoolClassID;
 	}
 	
 	protected Table getLegendTable() {

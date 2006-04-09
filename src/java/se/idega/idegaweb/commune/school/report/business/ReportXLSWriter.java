@@ -1,5 +1,5 @@
 /*
- * $Id: ReportXLSWriter.java,v 1.1 2004/02/27 10:20:39 anders Exp $
+ * $Id: ReportXLSWriter.java,v 1.2 2006/04/09 11:39:54 laddi Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -21,10 +21,10 @@ import com.idega.util.poi.POIUtility;
 /** 
  * Creates report files in MS Excel format.
  * <p>
- * Last modified: $Date: 2004/02/27 10:20:39 $ by $Author: anders $
+ * Last modified: $Date: 2006/04/09 11:39:54 $ by $Author: laddi $
  *
  * @author Anders Lindman
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class ReportXLSWriter {
 
@@ -40,9 +40,9 @@ public class ReportXLSWriter {
 	 * @param reportTitle the title text for the report 
 	 */	
 	public ReportXLSWriter(Table table, String filename, String reportTitle) {
-		_table = table;
-		_filename = filename;
-		_reportTitle = reportTitle;
+		this._table = table;
+		this._filename = filename;
+		this._reportTitle = reportTitle;
 	}	
 	
 	/**
@@ -76,13 +76,13 @@ public class ReportXLSWriter {
 				
 		try {
 			try {
-				exportFile = fileHome.findByFileName(_filename);
+				exportFile = fileHome.findByFileName(this._filename);
 				if (exportFile != null) {
 					exportFile.remove();
 				}
 			} catch (FinderException e) {}
 
-			exportFile =  POIUtility.createICFileFromTable(_table, _filename, _reportTitle);
+			exportFile =  POIUtility.createICFileFromTable(this._table, this._filename, this._reportTitle);
 
 			reportFolder.addChild(exportFile);
 		} catch (Exception e) {

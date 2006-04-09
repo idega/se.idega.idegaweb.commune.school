@@ -1,5 +1,5 @@
 /*
- * $Id: StudentAddressLabelsWriter.java,v 1.12 2006/04/08 10:47:05 laddi Exp $
+ * $Id: StudentAddressLabelsWriter.java,v 1.13 2006/04/09 11:39:53 laddi Exp $
  * 
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  * 
@@ -51,10 +51,10 @@ import com.lowagie.text.pdf.PdfWriter;
 /**
  * This MediaWritable class generates a PDF stream with student address labels.
  * <p>
- * Last modified: $Date: 2006/04/08 10:47:05 $ by $Author: laddi $
+ * Last modified: $Date: 2006/04/09 11:39:53 $ by $Author: laddi $
  * 
  * @author Anders Lindman
- * @version $Revision: 1.12 $
+ * @version $Revision: 1.13 $
  * @see com.idega.io.MediaWritable
  */
 public class StudentAddressLabelsWriter {
@@ -142,7 +142,7 @@ public class StudentAddressLabelsWriter {
 			MemoryInputStream mis = new MemoryInputStream(buffer);
 
 			try {
-				exportFile = fileHome.findByFileName(filename);
+				exportFile = fileHome.findByFileName(this.filename);
 				if (exportFile != null) {
 					exportFile.remove();
 				}
@@ -155,7 +155,7 @@ public class StudentAddressLabelsWriter {
 			IWBundle iwb = iwac.getIWMainApplication().getBundle(Constants.IW_BUNDLE_IDENTIFIER);
 			if (iwb.getProperty("LabelWriter.dumpFileToCacheFolder") != null) {
 				String folder = iwac.getIWMainApplication().getRealPath(iwac.getIWMainApplication().getCacheDirectoryURI() + "/prints");
-				java.io.File tfile = com.idega.util.FileUtil.getFileAndCreateIfNotExists(folder, filename);
+				java.io.File tfile = com.idega.util.FileUtil.getFileAndCreateIfNotExists(folder, this.filename);
 				java.io.FileOutputStream fos = new java.io.FileOutputStream(tfile);
 				java.io.ByteArrayOutputStream baos = new java.io.ByteArrayOutputStream();
 				while (mis.available() > 0) {
@@ -169,7 +169,7 @@ public class StudentAddressLabelsWriter {
 
 			exportFile.setFileValue(mis);
 			exportFile.setMimeType(buffer.getMimeType());
-			exportFile.setName(filename);
+			exportFile.setName(this.filename);
 			exportFile.setFileSize(buffer.length());
 			exportFile.store();
 
@@ -190,22 +190,22 @@ public class StudentAddressLabelsWriter {
 		SchoolClassMember student;
 		MailReceiver receiver;
 		Integer classID;
-		SchoolBusiness schoolBuiz = business.getSchoolBusiness();
+		SchoolBusiness schoolBuiz = this.business.getSchoolBusiness();
 		for (int i = 0; i < schoolClassIds.length; i++) {
-			schoolClass = business.getSchoolBusiness().findSchoolClass(new Integer(schoolClassIds[i]));
+			schoolClass = this.business.getSchoolBusiness().findSchoolClass(new Integer(schoolClassIds[i]));
 			classID = Integer.valueOf(schoolClassIds[i]);
 			students = schoolBuiz.findStudentsInClass(classID.intValue());
 			Iterator iter = students.iterator();
 			while (iter.hasNext()) {
 				student = (SchoolClassMember) iter.next();
-				receiver = new MailReceiver(null, userBusiness, new Integer(student.getClassMemberId()));
+				receiver = new MailReceiver(null, this.userBusiness, new Integer(student.getClassMemberId()));
 				receivers.add(receiver);
 			}
 		}
 
 		if (schoolClassIds.length > 0 && schoolClassIds[0] != null) {
 			try {
-				schoolClass = business.getSchoolBusiness().findSchoolClass(new Integer(schoolClassIds[0]));
+				schoolClass = this.business.getSchoolBusiness().findSchoolClass(new Integer(schoolClassIds[0]));
 			}
 			catch (NumberFormatException e) {
 			}
@@ -214,10 +214,10 @@ public class StudentAddressLabelsWriter {
 		}
 
 		if (schoolClass != null) {
-			filename = "student_address_labels_" + schoolClass.getSchoolId() + ".pdf";
+			this.filename = "student_address_labels_" + schoolClass.getSchoolId() + ".pdf";
 		}
 		else {
-			filename = "student_address_labels_all.pdf";
+			this.filename = "student_address_labels_all.pdf";
 		}
 
 		return receivers;
@@ -228,8 +228,8 @@ public class StudentAddressLabelsWriter {
 	 * Creates PDF address labels for the specified school classes.
 	 */
 	protected MemoryFileBuffer getPDFBuffer(IWApplicationContext iwac, Collection receivers) throws Exception {
-		business = getSchoolCommuneBusiness(iwac);
-		userBusiness = getCommuneUserBusiness(iwac);
+		this.business = getSchoolCommuneBusiness(iwac);
+		this.userBusiness = getCommuneUserBusiness(iwac);
 
 		IWResourceBundle iwrb = iwac.getIWMainApplication().getBundle(CommuneBlock.IW_BUNDLE_IDENTIFIER).getResourceBundle(iwac.getApplicationSettings().getApplicationLocale());
 
@@ -244,7 +244,7 @@ public class StudentAddressLabelsWriter {
 		document.addSubject("Student address labels");
 		document.open();
 
-		font = new Font(Font.HELVETICA, 9, Font.BOLD);
+		this.font = new Font(Font.HELVETICA, 9, Font.BOLD);
 
 		int studentCount = 0;
 
@@ -293,19 +293,19 @@ public class StudentAddressLabelsWriter {
 		table.getDefaultCell().setPadding(3);
 		PdfPCell cell;
 
-		cell = new PdfPCell(new Phrase(iwrb.getLocalizedString(KEY_TO_CUSTODIAN_FOR, "To custodian for") + ":", font));
+		cell = new PdfPCell(new Phrase(iwrb.getLocalizedString(KEY_TO_CUSTODIAN_FOR, "To custodian for") + ":", this.font));
 		cell.setBorder(Rectangle.NO_BORDER);
 		table.addCell(cell);
 
-		cell = new PdfPCell(new Phrase(student.getStudentName(), font));
+		cell = new PdfPCell(new Phrase(student.getStudentName(), this.font));
 		cell.setBorder(Rectangle.NO_BORDER);
 		table.addCell(cell);
 
-		cell = new PdfPCell(new Phrase(student.getStreetAddress(), font));
+		cell = new PdfPCell(new Phrase(student.getStreetAddress(), this.font));
 		cell.setBorder(Rectangle.NO_BORDER);
 		table.addCell(cell);
 
-		cell = new PdfPCell(new Phrase(student.getPostalAddress(), font));
+		cell = new PdfPCell(new Phrase(student.getPostalAddress(), this.font));
 		cell.setBorder(Rectangle.NO_BORDER);
 		table.addCell(cell);
 
@@ -315,8 +315,8 @@ public class StudentAddressLabelsWriter {
 	}
 
 	protected MemoryFileBuffer getXLSBuffer(IWApplicationContext iwac, Collection receivers) throws Exception {
-		business = getSchoolCommuneBusiness(iwac);
-		userBusiness = getCommuneUserBusiness(iwac);
+		this.business = getSchoolCommuneBusiness(iwac);
+		this.userBusiness = getCommuneUserBusiness(iwac);
 
 		IWResourceBundle iwrb = iwac.getIWMainApplication().getBundle(CommuneBlock.IW_BUNDLE_IDENTIFIER).getResourceBundle(iwac.getApplicationSettings().getApplicationLocale());
 
@@ -341,20 +341,24 @@ public class StudentAddressLabelsWriter {
 		while (iter.hasNext()) {
 			receiver = (MailReceiver) iter.next();
 			row = sheet.getRow(rowCount);
-			if (row == null)
+			if (row == null) {
 				row = sheet.createRow(rowCount);
+			}
 			row.createCell((short) col).setCellValue(header);
 			row = sheet.getRow(rowCount + 1);
-			if (row == null)
+			if (row == null) {
 				row = sheet.createRow(rowCount + 1);
+			}
 			row.createCell((short) col).setCellValue(receiver.getStudentName());
 			row = sheet.getRow(rowCount + 2);
-			if (row == null)
+			if (row == null) {
 				row = sheet.createRow(rowCount + 2);
+			}
 			row.createCell((short) col).setCellValue(receiver.getStreetAddress());
 			row = sheet.getRow(rowCount + 3);
-			if (row == null)
+			if (row == null) {
 				row = sheet.createRow(rowCount + 3);
+			}
 			row.createCell((short) col).setCellValue(receiver.getPostalAddress());
 
 			col++;
@@ -372,14 +376,16 @@ public class StudentAddressLabelsWriter {
 	}
 
 	protected SchoolCommuneBusiness getSchoolCommuneBusiness(IWApplicationContext iwc) throws RemoteException {
-		if (business == null)
-			business = (SchoolCommuneBusiness) IBOLookup.getServiceInstance(iwc, SchoolCommuneBusiness.class);
-		return business;
+		if (this.business == null) {
+			this.business = (SchoolCommuneBusiness) IBOLookup.getServiceInstance(iwc, SchoolCommuneBusiness.class);
+		}
+		return this.business;
 	}
 
 	protected CommuneUserBusiness getCommuneUserBusiness(IWApplicationContext iwc) throws RemoteException {
-		if (userBusiness == null)
-			userBusiness = (CommuneUserBusiness) IBOLookup.getServiceInstance(iwc, CommuneUserBusiness.class);
-		return userBusiness;
+		if (this.userBusiness == null) {
+			this.userBusiness = (CommuneUserBusiness) IBOLookup.getServiceInstance(iwc, CommuneUserBusiness.class);
+		}
+		return this.userBusiness;
 	}
 }

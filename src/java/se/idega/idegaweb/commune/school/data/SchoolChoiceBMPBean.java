@@ -471,15 +471,18 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
         }
         finally{
             try {
-                if(rs!=null)
-                    rs.close();
-                if(stmt!=null)
-                    stmt.close();
+                if(rs!=null) {
+									rs.close();
+								}
+                if(stmt!=null) {
+									stmt.close();
+								}
             } catch (SQLException e1) {
                 e1.printStackTrace();
             }
-            if(conn!=null)
-                freeConnection(conn);
+            if(conn!=null) {
+							freeConnection(conn);
+						}
         }
 		
 		return fromSchool;
@@ -531,8 +534,9 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 		if (statuses != null && statuses.length > 0) {
 			query.append(" and c.CASE_STATUS in (");
 			for (int i = 0; i < statuses.length; i++) {
-				if (i > 0)
+				if (i > 0) {
 					query.append(",");
+				}
 				query.append("'");
 				query.append(statuses[i]);
 				query.append("'");
@@ -584,8 +588,9 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 		sql.append(" and ").append(SCHOOL_SEASON).append(" = ").append(schoolSeasonId);
 		sql.append(" and c.CASE_STATUS in (");
 		for (int i = 0; i < caseStatus.length; i++) {
-			if (i > 0)
+			if (i > 0) {
 				sql.append(",");
+			}
 			sql.append("'");
 			sql.append(caseStatus[i]);
 			sql.append("'");
@@ -607,8 +612,9 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 		sql.append(",").append(CaseBMPBean.TABLE_NAME).append(" c ");
 		sql.append(" where s.COMM_SCH_CHOICE_ID = c.PROC_CASE_ID ");
 		sql.append(" and c.CASE_CODE = '").append(SchoolConstants.SCHOOL_CHOICE_CASE_CODE_KEY).append("'");
-		if (schoolID != -1)
+		if (schoolID != -1) {
 			sql.append(" and s.SCHOOL_ID = ").append(schoolID);
+		}
 		sql.append(" and s.").append(SCHOOL_SEASON).append(" = ").append(schoolSeasonID);
 		sql.append(" and c.CASE_STATUS = '").append(caseStatus).append("'");
 
@@ -621,8 +627,9 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 		sql.append(",").append(CaseBMPBean.TABLE_NAME).append(" c ");
 		sql.append(" where s.COMM_SCH_CHOICE_ID = c.PROC_CASE_ID ");
 		sql.append(" and c.CASE_CODE = '").append(SchoolConstants.SCHOOL_CHOICE_CASE_CODE_KEY).append("'");
-		if (schoolID != -1)
+		if (schoolID != -1) {
 			sql.append(" and s.SCHOOL_ID = ").append(schoolID);
+		}
 		sql.append(" and s.").append(SCHOOL_SEASON).append(" = ").append(schoolSeasonID);
 		sql.append(" and s.").append(SCHOOL_YEAR).append(" = ").append(schoolYearID);
 		sql.append(" and c.CASE_STATUS = '").append(caseStatus).append("'");
@@ -1007,18 +1014,24 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 		
 		if (orderBy != DO_NOT_ADD_ORDER_BY) {
 			if (orderBy != -1) {
-				if (orderBy == NAME_SORT)
+				if (orderBy == NAME_SORT) {
 					query.appendOrderBy("u.last_name,u.first_name,u.middle_name");
-				else if (orderBy == ADDRESS_SORT)
+				}
+				else if (orderBy == ADDRESS_SORT) {
 					query.appendOrderBy("a.street_name,a.street_number,u.last_name,u.first_name,u.middle_name");
-				else if (orderBy == GENDER_SORT)
+				}
+				else if (orderBy == GENDER_SORT) {
 					query.appendOrderBy("u.ic_gender_id,u.last_name,u.first_name,u.middle_name");
-				else if (orderBy == PERSONAL_ID_SORT)
+				}
+				else if (orderBy == PERSONAL_ID_SORT) {
 					query.appendOrderBy("u.personal_id,u.last_name,u.first_name,u.middle_name");
-				else if (orderBy == LANGUAGE_SORT)
+				}
+				else if (orderBy == LANGUAGE_SORT) {
 					query.appendOrderBy("csc.language_choice,u.last_name,u.first_name,u.middle_name");
-				else if (orderBy == CREATED_SORT)
+				}
+				else if (orderBy == CREATED_SORT) {
 					query.appendOrderBy("pc.created desc,u.last_name,u.first_name,u.middle_name");
+				}
 			}
 			else {
 				query.appendOrderBy("pc.created desc,u.first_name,u.middle_name,u.last_name");
@@ -1055,10 +1068,12 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 		sql.appendAnd();
 		sql.append(FREETIMETHISSCHOOL);
 		sql.appendEqualSign();
-		if (freeTimeInSchool)
+		if (freeTimeInSchool) {
 			sql.appendWithinSingleQuotes("Y");
-		else
+		}
+		else {
 			sql.appendWithinSingleQuotes("N");
+		}
 		sql.appendAnd().append("pc.PROC_CASE_ID").appendEqualSign().append("sc.COMM_SCH_CHOICE_ID");
 		sql.appendAnd().append("pc.CASE_STATUS").appendIn().appendLeftParenthesis().appendWithinSingleQuotes("PREL");
 		sql.append(",").appendWithinSingleQuotes("PLAC").append(",").appendWithinSingleQuotes("FLYT").appendRightParenthesis();
@@ -1161,9 +1176,10 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
             e1.printStackTrace();
         }
         IDOQuery sql = idoQuery();
-        if(count)
-            sql.append(" select count( *) ").append("\n");
-        else{
+        if(count) {
+					sql.append(" select count( *) ").append("\n");
+				}
+				else{
             sql.append(" select distinct u.ic_user_id, u.personal_id, u.first_name,u.middle_name, u.last_name, ").append("\n");
             sql.append(" a.street_name,a.street_number, p.postal_code, p.name , c.commune_name, c.default_commune, ").append("\n");
             sql.append(" mom.ic_user_id, mom.first_name,mom.middle_name,mom.last_name, ").append("\n");
@@ -1263,8 +1279,9 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
                 }
             }
 //        }
-        if(onlyInCommune)
-            sql.append(" and c.default_commune  = 'Y'").append("\n");
+        if(onlyInCommune) {
+					sql.append(" and c.default_commune  = 'Y'").append("\n");
+				}
         sql.append(" and us.status_id is null ").append("\n");
         logSQL(sql.toString());
         return sql.toString();
@@ -1310,9 +1327,10 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
                      // parents
                      int parent1 = rs.getInt(12);
                      int parent2 = rs.getInt(16);
-                     if(parent1!=0)
-                         receiver.setParentName(new Name(rs.getString(13),rs.getString(14),rs.getString(15)).getName());
-                     else if(parent2!=0){
+                     if(parent1!=0) {
+											receiver.setParentName(new Name(rs.getString(13),rs.getString(14),rs.getString(15)).getName());
+										}
+										else if(parent2!=0){
                          receiver.setParentName(new Name(rs.getString(17),rs.getString(18),rs.getString(19)).getName());
                      }
                      else{
@@ -1330,15 +1348,18 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
             }
             finally{
                 try {
-                    if(rs!=null)
-                        rs.close();
-                    if(stmt!=null)
-                        stmt.close();
+                    if(rs!=null) {
+											rs.close();
+										}
+                    if(stmt!=null) {
+											stmt.close();
+										}
                 } catch (SQLException e1) {
                     e1.printStackTrace();
                 }
-                if(conn!=null)
-                    freeConnection(conn);
+                if(conn!=null) {
+									freeConnection(conn);
+								}
             }
           
 	    }catch (EJBException e) {

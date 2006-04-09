@@ -199,12 +199,15 @@ public class SchoolChoiceMessagePdfHandler implements MessagePdfHandler,BundleRe
 				SchoolChoice choice1=null,choice2=null,choice3=null;
 				List choices =schoolChoiceService.getConnectedSchoolchoices(choice);
 				int size =choices.size();
-				if(size>=1)
+				if(size>=1) {
 					choice1 = (SchoolChoice)choices.get(0);
-				if(size>=2)
+				}
+				if(size>=2) {
 					choice2 = (SchoolChoice)choices.get(1);
-				if(size>=3)
+				}
+				if(size>=3) {
 					choice3 = (SchoolChoice)choices.get(2);
+				}
 				
 				
 				//DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT,dpc.getLocale());

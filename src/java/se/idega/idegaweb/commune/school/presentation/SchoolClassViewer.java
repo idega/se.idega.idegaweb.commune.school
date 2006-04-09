@@ -51,8 +51,9 @@ public class SchoolClassViewer extends SchoolCommuneBlock {
 		catch (IDORelationshipException e1) {
 			schoolYears = new ArrayList();
 		}
-		if (!schoolYears.isEmpty())
+		if (!schoolYears.isEmpty()) {
 			Collections.sort(schoolYears, new SchoolYearComparator());
+		}
 		
 		table.add(getSmallHeader(localize("school.school_season", "Season") + ":"), 1, row);
 		table.add(Text.getNonBrakingSpace(), 1, row);

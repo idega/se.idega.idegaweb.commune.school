@@ -89,24 +89,24 @@ public class CentralPlacementChildCareContracts extends Window {
 		// row 1
 		mainTable.setWidth(col, 1, "2px");
 		mainTable.setWidth(col+3, 1, "2px");
-		mainTable.setRowColor(1, FRAME_COLOR);
+		mainTable.setRowColor(1, this.FRAME_COLOR);
 		mainTable.setAlignment(col+1, 1, Table.HORIZONTAL_ALIGN_CENTER);
 		mainTable.setVerticalAlignment(col+1, 1, Table.VERTICAL_ALIGN_MIDDLE);
 		mainTable.setRowHeight(1, "20");
 		// row 2
-		mainTable.setColor(col, 2, FRAME_COLOR);
+		mainTable.setColor(col, 2, this.FRAME_COLOR);
 		mainTable.mergeCells(col+1, 2, col+2, 2);
-		mainTable.setColor(col+3, 2, FRAME_COLOR);
+		mainTable.setColor(col+3, 2, this.FRAME_COLOR);
 		// row 3		
-		mainTable.setRowColor(3, FRAME_COLOR);
+		mainTable.setRowColor(3, this.FRAME_COLOR);
 		mainTable.setRowHeight(3, "2px");
 
 		//  *** WINDOW HEADING ***
-		Text heading1 = new Text(iwrb.getLocalizedString(KEY_WINDOW_HEADING_1, 
+		Text heading1 = new Text(this.iwrb.getLocalizedString(KEY_WINDOW_HEADING_1, 
 												"edit window opened from"));
-		Text heading2 = new Text(iwrb.getLocalizedString(KEY_WINDOW_HEADING_2, 
+		Text heading2 = new Text(this.iwrb.getLocalizedString(KEY_WINDOW_HEADING_2, 
 												"Central Placement Editor"));
-		Text reloadMsg = new Text(iwrb.getLocalizedString(KEY_WINDOW_HEADING_RELOAD_MSG, 
+		Text reloadMsg = new Text(this.iwrb.getLocalizedString(KEY_WINDOW_HEADING_RELOAD_MSG, 
 												"Press to close this window and reload Central Placement Editor"));
 									
 		heading1.setFontStyle(STYLE_SMALL_TEXT);
@@ -117,7 +117,7 @@ public class CentralPlacementChildCareContracts extends Window {
 		mainTable.add(Text.getBreak(), col+1, 1);
 		mainTable.add(heading2, col+1, 1);
 		
-		Image buttonImg = iwrb.getLocalizedImageButton(KEY_BUTTON_CLOSE_AND_RELOAD, 
+		Image buttonImg = this.iwrb.getLocalizedImageButton(KEY_BUTTON_CLOSE_AND_RELOAD, 
 																			"Close and reload");
 		SubmitButton button = new SubmitButton(buttonImg);
 		Form closeAndReloadForm = new Form();
@@ -131,46 +131,46 @@ public class CentralPlacementChildCareContracts extends Window {
 	private void setMainTableContent(PresentationObject obj) {
 		int col = 2;
 		int row = 2;
-		mainTable.add(obj, col, row);
+		this.mainTable.add(obj, col, row);
 	}
 	
 	private Table getInnerTable() {
-		innerTable = new Table(1, 4);
-		innerTable.setBorder(0);
-		innerTable.setWidth(Table.HUNDRED_PERCENT);
-		innerTable.setHeight(Table.HUNDRED_PERCENT);
-		innerTable.setCellpadding(2);
-		innerTable.setCellspacing(0);
+		this.innerTable = new Table(1, 4);
+		this.innerTable.setBorder(0);
+		this.innerTable.setWidth(Table.HUNDRED_PERCENT);
+		this.innerTable.setHeight(Table.HUNDRED_PERCENT);
+		this.innerTable.setCellpadding(2);
+		this.innerTable.setCellspacing(0);
 		int col = 1;
 		int row = 1;
 		
 		//  *** TABLE HEADING ***
-		Text heading = new Text(iwrb.getLocalizedString(KEY_HEADING_CC_CONTRACTS, 
+		Text heading = new Text(this.iwrb.getLocalizedString(KEY_HEADING_CC_CONTRACTS, 
 																				 "Childcare child contracts"));
 		heading.setFontStyle(STYLE_SMALL_HEADER);		
 
-		innerTable.add(heading, col, row);
-		innerTable.setColor(col, row, INNER_HEADING_BGCOLOR);
-		innerTable.setAlignment(col, row, Table.HORIZONTAL_ALIGN_CENTER);
-		innerTable.setRowVerticalAlignment(row, Table.VERTICAL_ALIGN_MIDDLE);
-		innerTable.setRowHeight(row++, "18");
+		this.innerTable.add(heading, col, row);
+		this.innerTable.setColor(col, row, this.INNER_HEADING_BGCOLOR);
+		this.innerTable.setAlignment(col, row, Table.HORIZONTAL_ALIGN_CENTER);
+		this.innerTable.setRowVerticalAlignment(row, Table.VERTICAL_ALIGN_MIDDLE);
+		this.innerTable.setRowHeight(row++, "18");
 		
 		// empty space row
-		innerTable.add(transGIF, col, row);
-		innerTable.setRowHeight(row, "20");
+		this.innerTable.add(this.transGIF, col, row);
+		this.innerTable.setRowHeight(row, "20");
 		
 		// *** ROW 3 WILL CARRY THE CONTENT
 		
 		// bottom row to fill up empty space at the bottom
-		innerTable.add(transGIF, col, innerTable.getRows());
-		innerTable.setRowHeight(4, Table.HUNDRED_PERCENT);
+		this.innerTable.add(this.transGIF, col, this.innerTable.getRows());
+		this.innerTable.setRowHeight(4, Table.HUNDRED_PERCENT);
 
-		return innerTable;
+		return this.innerTable;
 	}
 
 	private void setInnerTableContent(PresentationObject obj) {
 		int col = 1;
-		innerTable.add(obj, col, 3);
+		this.innerTable.add(obj, col, 3);
 	}
 
 
@@ -186,19 +186,19 @@ public class CentralPlacementChildCareContracts extends Window {
 	 * @see com.idega.presentation.PresentationObject#main(IWContext)
 	 */
 	public void main(IWContext iwc) throws Exception {
-		iwrb = getResourceBundle(iwc);
+		this.iwrb = getResourceBundle(iwc);
 		if (iwc.isParameterSet(PARAM_CLOSE_AND_RELOAD)) {
 			reloadParentAndClose();
 		} else {
-			mainTable = getMainTable();
-			innerTable = getInnerTable();
+			this.mainTable = getMainTable();
+			this.innerTable = getInnerTable();
 			ChildContracts childContracts = (ChildContracts) ImplementorRepository.getInstance().newInstanceOrNull(ChildContracts.class, this.getClass());
 			if (childContracts != null) {
 				PresentationObject childContractsPresentation = childContracts.getPresentation();
 				setInnerTableContent(childContractsPresentation);
 			}
-			setMainTableContent(innerTable);
-			add(mainTable);
+			setMainTableContent(this.innerTable);
+			add(this.mainTable);
 		}
 	}
 	

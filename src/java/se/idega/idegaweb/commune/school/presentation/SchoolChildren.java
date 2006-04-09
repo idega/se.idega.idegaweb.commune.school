@@ -35,16 +35,17 @@ public class SchoolChildren extends CitizenChildren {
 	 */
 	protected boolean getShowChild(IWContext iwc, User child) {
 		try {
-			if (_showWithPlacement == null) {
+			if (this._showWithPlacement == null) {
 				return true;
 			}
 			
 			boolean hasPlacements = getSchoolBusiness(iwc).hasSchoolPlacements(((Integer)child.getPrimaryKey()).intValue());
 			if (hasPlacements) {
-				return _showWithPlacement.booleanValue();
+				return this._showWithPlacement.booleanValue();
 			}
-			else
-				return !_showWithPlacement.booleanValue();
+			else {
+				return !this._showWithPlacement.booleanValue();
+			}
 		}
 		catch (RemoteException re) {
 			return false;

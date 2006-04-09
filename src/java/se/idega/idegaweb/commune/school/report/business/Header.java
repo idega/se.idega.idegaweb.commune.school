@@ -1,5 +1,5 @@
 /*
- * $Id: Header.java,v 1.4 2004/01/23 09:23:00 anders Exp $
+ * $Id: Header.java,v 1.5 2006/04/09 11:39:54 laddi Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -13,10 +13,10 @@ package se.idega.idegaweb.commune.school.report.business;
  * Holds report header localization keys. Headers can be organized in
  * a hierarchical way.
  * <p>
- * Last modified: $Date: 2004/01/23 09:23:00 $ by $Author: anders $
+ * Last modified: $Date: 2006/04/09 11:39:54 $ by $Author: laddi $
  *
  * @author Anders Lindman
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public class Header {
 	
@@ -43,8 +43,8 @@ public class Header {
 	 * @param headerType the type of header (row/column, normal/heading e t c) 
 	 */	
 	public Header(String localizationKey, int headerType) {
-		_localizationKey = localizationKey;
-		_headerType = headerType;
+		this._localizationKey = localizationKey;
+		this._headerType = headerType;
 	}
 	
 	/**
@@ -55,34 +55,34 @@ public class Header {
 	 */	
 	public Header(String localizationKey, int headerType, int nrOfChildren) {
 		this(localizationKey, headerType);
-		_children = new Header[nrOfChildren];
+		this._children = new Header[nrOfChildren];
 	}
 	
 	/**
 	 * Returns the localization key for this header.
 	 */
 	public String getLocalizationKey() {
-		return _localizationKey;
+		return this._localizationKey;
 	}
 	
 	/**
 	 * Returns the type for this header.
 	 */
 	public int getHeaderType() {
-		return _headerType;
+		return this._headerType;
 	}
 	
 	/**
 	 * Returns the children for this header.
 	 */
 	public Header[] getChildren() {
-		return _children;
+		return this._children;
 	}
 	
 	/**
 	 * Sets the specified child header.
 	 */
 	protected void setChild(int childIndex, Header header) {
-		_children[childIndex] = header;
+		this._children[childIndex] = header;
 	}
 }

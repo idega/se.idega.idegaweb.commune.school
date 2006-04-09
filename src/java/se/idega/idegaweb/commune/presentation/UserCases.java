@@ -144,7 +144,7 @@ public class UserCases extends CommuneBlock {
 		add(mainTable); 
 		
 		boolean showList = false;
-		if (iUseUserInSession) {
+		if (this.iUseUserInSession) {
 			showList = getUserSession(iwc).getUser() != null;
 		}
 		else {
@@ -154,7 +154,7 @@ public class UserCases extends CommuneBlock {
 		if (showList) {
 		
 			User user = null;
-			if (iUseUserInSession) {
+			if (this.iUseUserInSession) {
 				user = getUserSession(iwc).getUser();
 			}
 			else {
@@ -165,7 +165,7 @@ public class UserCases extends CommuneBlock {
 			CollectionNavigator navigator = getNavigator(iwc, user);
 
 			//Finding cases
-			List cases = getCases(iwc, user, _startCase, _numberOfCases);
+			List cases = getCases(iwc, user, this._startCase, this._numberOfCases);
 					
 			if (cases != null & !cases.isEmpty()) {
 				Table table = new Table();
@@ -174,7 +174,7 @@ public class UserCases extends CommuneBlock {
 				table.setWidth(Table.HUNDRED_PERCENT);
 				table.setColumns(getLastColumn());
 
-				if (useStyleNames) {
+				if (this.useStyleNames) {
 					table.setRowStyleClass(1, getHeadingRowClass());
 					table.mergeCells(1, 1, table.getColumns() - 2, 1);
 					table.add(localize("case.cases", "Cases"), 1, 1);
@@ -213,8 +213,8 @@ public class UserCases extends CommuneBlock {
 				mainTable.add(form, 1, 1);
 			}
 			else {
-				if (useStyleNames) { 
-					mainTable.setCellpaddingLeft(1, 1, firstColumnPadding);
+				if (this.useStyleNames) { 
+					mainTable.setCellpaddingLeft(1, 1, this.firstColumnPadding);
 				}
 				mainTable.add(getSmallHeader(localize(NOONGOINGCASES_KEY, NOONGOINGCASES_DEFAULT)), 1, 1);
 			}
@@ -242,9 +242,9 @@ public class UserCases extends CommuneBlock {
 	}
 
 	protected int addTableHeader(Table table, int row) {
-		if (useStyleNames) {
+		if (this.useStyleNames) {
 			table.setAlignment(getNumberColumn(), row, Table.HORIZONTAL_ALIGN_CENTER);
-			table.setCellpaddingLeft(getNumberColumn(), row, firstColumnPadding);
+			table.setCellpaddingLeft(getNumberColumn(), row, this.firstColumnPadding);
 			table.setRowStyleClass(row, getStyleName(STYLENAME_HEADER_ROW));
 		}
 		else {
@@ -256,7 +256,7 @@ public class UserCases extends CommuneBlock {
 			table.add(getSmallHeader(localize(NAME_KEY, NAME_DEFAULT)), getNameColumn(), row);
 		}
 		table.add(getSmallHeader(localize(DATE_KEY, DATE_DEFAULT)), getDateColumn(), row);
-		if (_showManager) {
+		if (this._showManager) {
 			table.add(getSmallHeader(localize(MANAGER_KEY, MANAGER_DEFAULT)), getManagerColumn(), row);
 		}
 		table.add(getSmallHeader(localize(STATUS_KEY, STATUS_DEFAULT)), getStatusColumn(), row);
@@ -264,8 +264,8 @@ public class UserCases extends CommuneBlock {
 	}
 
 	protected ICPage getPage(String caseCode, String caseStatus) {
-		if (pageMap != null) {
-			Object object = pageMap.get(caseCode);
+		if (this.pageMap != null) {
+			Object object = this.pageMap.get(caseCode);
 			if (object != null) {
 				if (object instanceof ICPage) {
 					return (ICPage) object;
@@ -280,24 +280,24 @@ public class UserCases extends CommuneBlock {
 	}
 	
 	public void setPage(String caseCode, String caseStatus, ICPage page) {
-		if (pageMap == null) {
-			pageMap = new HashMap();
+		if (this.pageMap == null) {
+			this.pageMap = new HashMap();
 		}
 		
-		Map statusMap = (Map) pageMap.get(caseCode);
+		Map statusMap = (Map) this.pageMap.get(caseCode);
 		if (statusMap == null) {
 			statusMap = new HashMap();
 		}
 		statusMap.put(caseStatus, page);
-		pageMap.put(caseCode, statusMap);
+		this.pageMap.put(caseCode, statusMap);
 	}
 	
 	public void setPage(String caseCode, ICPage page) {
-		if (pageMap == null) {
-			pageMap = new HashMap();
+		if (this.pageMap == null) {
+			this.pageMap = new HashMap();
 		}
 		
-		pageMap.put(caseCode, page);
+		this.pageMap.put(caseCode, page);
 	}
 	
 	protected List getCases(IWContext iwc, User user, int startingCase, int numberOfCases) throws RemoteException, FinderException, Exception {
@@ -379,10 +379,12 @@ public class UserCases extends CommuneBlock {
 		else if (this.showPlacedOnlyIFPlacementMessageSent && caseCode.equals(caseCodeSc)
 				&& useCase.getCaseStatus().equals(caseStatusPlaced)) { 
 			SchoolChoice choice = schBuiz.getSchoolChoice(((Integer) useCase.getPrimaryKey()).intValue());
-			if (choice != null && !choice.getHasReceivedPlacementMessage())
+			if (choice != null && !choice.getHasReceivedPlacementMessage()) {
 				status = getStatus(iwc, caseStatusOpen);
-			else
+			}
+			else {
 				status = getStatus(iwc, caseStatus);
+			}
 			
 		}  
 		else {
@@ -422,9 +424,9 @@ public class UserCases extends CommuneBlock {
 			// nothing to do, sometimes point of view bundle is not installed
 		}
 
-		if (useStyleNames) {
+		if (this.useStyleNames) {
 			messageList.setAlignment(getNumberColumn(), row, Table.HORIZONTAL_ALIGN_CENTER);
-			messageList.setCellpaddingLeft(getNumberColumn(), row, firstColumnPadding);
+			messageList.setCellpaddingLeft(getNumberColumn(), row, this.firstColumnPadding);
 			if (row % 2 == 0) {
 				messageList.setRowStyleClass(row, getStyleName(STYLENAME_LIGHT_ROW));
 			}
@@ -482,13 +484,13 @@ public class UserCases extends CommuneBlock {
 		}
 
 		column = getDateColumn();
-		if (_dateWidth != null) {
-			messageList.setWidth(column, _dateWidth);
+		if (this._dateWidth != null) {
+			messageList.setWidth(column, this._dateWidth);
 		}
 		messageList.setNoWrap(column, row);
 		messageList.add(date, column, row);
 
-		if (_showManager) {
+		if (this._showManager) {
 			column = getManagerColumn();
 			messageList.setNoWrap(column, row);
 			messageList.add(manager, column, row);
@@ -519,7 +521,7 @@ public class UserCases extends CommuneBlock {
 		return getDateColumn() + 1;
 	}	
 	int getStatusColumn(){
-		return (_showManager ? getManagerColumn() + 1 : getDateColumn() + 1);
+		return (this._showManager ? getManagerColumn() + 1 : getDateColumn() + 1);
 	}	
 	int getLastColumn(){
 		return getStatusColumn();
@@ -529,9 +531,9 @@ public class UserCases extends CommuneBlock {
 		CollectionNavigator navigator = new CollectionNavigator(getNumberOfCases(iwc, user));
 		navigator.setTextStyle(STYLENAME_SMALL_TEXT);
 		navigator.setLinkStyle(STYLENAME_SMALL_LINK);
-		navigator.setNumberOfEntriesPerPage(_numberOfCases);
+		navigator.setNumberOfEntriesPerPage(this._numberOfCases);
 		navigator.setPadding(getCellpadding());
-		_startCase = navigator.getStart(iwc);
+		this._startCase = navigator.getStart(iwc);
 		
 		return navigator;
 	}
@@ -546,38 +548,38 @@ public class UserCases extends CommuneBlock {
 
 
 	public void setViewpointPage(final ICPage page) {
-		viewpointPageId = ((Integer)page.getPrimaryKey()).intValue();
+		this.viewpointPageId = ((Integer)page.getPrimaryKey()).intValue();
 	}
 
 	public int getViewpointPage() {
-		return viewpointPageId;
+		return this.viewpointPageId;
 	}
 
 	public void setReminderPage(final ICPage page) {
-		reminderPageId = ((Integer)page.getPrimaryKey()).intValue();
+		this.reminderPageId = ((Integer)page.getPrimaryKey()).intValue();
 	}
 
 	public int getReminderPage() {
-		return reminderPageId;
+		return this.reminderPageId;
 	}
 
 	public void setManagerPage(ICPage page) {
-		manager_page_id = ((Integer)page.getPrimaryKey()).intValue();
+		this.manager_page_id = ((Integer)page.getPrimaryKey()).intValue();
 	}
 
 	public void setManagerPage(int ib_page_id) {
-		manager_page_id = ib_page_id;
+		this.manager_page_id = ib_page_id;
 	}
 
 	public int getManagerPage() {
-		return manager_page_id;
+		return this.manager_page_id;
 	}
 	/**
 	 * Sets the showName.
 	 * @param showName The showName to set
 	 */
 	public void setShowName(boolean showName) {
-		_showName = showName;
+		this._showName = showName;
 	}
 
 	/**
@@ -585,7 +587,7 @@ public class UserCases extends CommuneBlock {
 	 * @param showName The showName to set
 	 */
 	public void setShowManager(boolean showManager) {
-		_showManager = showManager;
+		this._showManager = showManager;
 	}
 
 	/**
@@ -593,18 +595,18 @@ public class UserCases extends CommuneBlock {
 	 * @return boolean
 	 */
 	public boolean isShowName() {
-		return _showName;
+		return this._showName;
 	}
 
 	/**
 	 * @param width
 	 */
 	public void setDateWidth(String width) {
-		_dateWidth = width;
+		this._dateWidth = width;
 	}
 	
 	public String getDateWidth() {
-		return _dateWidth;
+		return this._dateWidth;
 	}	
 
 	/**
@@ -615,7 +617,7 @@ public class UserCases extends CommuneBlock {
 	}
 	
 	public void setShowStatusAfterSchoolCare(boolean showStatusAfterschoolCare) {
-		_showStatusAfterschoolCare = showStatusAfterschoolCare;
+		this._showStatusAfterschoolCare = showStatusAfterschoolCare;
 	}
 
 	/**
@@ -623,7 +625,7 @@ public class UserCases extends CommuneBlock {
 	 * @return boolean
 	 */
 	public boolean getShowStatusAfterSchoolCare() {
-		return _showStatusAfterschoolCare;
+		return this._showStatusAfterschoolCare;
 	}
 	
 	/**
@@ -648,11 +650,11 @@ public class UserCases extends CommuneBlock {
 	}
 	
 	public void setUseUserInSession(boolean useUserInSession) {
-		iUseUserInSession = useUserInSession;
+		this.iUseUserInSession = useUserInSession;
 	}
 	
 	public boolean getShowPlacedOnlyIFPlacementMessageSent() {
-		return showPlacedOnlyIFPlacementMessageSent;
+		return this.showPlacedOnlyIFPlacementMessageSent;
 	}
 	
 	public void setShowPlacedOnlyIFPlacementMessageSent(boolean showPlacedOnlyIFPlacementMessageSent) {

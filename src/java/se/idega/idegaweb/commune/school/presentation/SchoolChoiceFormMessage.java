@@ -15,8 +15,8 @@ import com.idega.presentation.Table;
 /**
  * @author 
  * @author <br><a href="mailto:gobom@wmdata.com">Göran Borgman</a><br>
- * Last modified: $Date: 2003/11/30 14:10:48 $ by $Author: laddi $
- * @version $Revision: 1.3 $
+ * Last modified: $Date: 2006/04/09 11:39:53 $ by $Author: laddi $
+ * @version $Revision: 1.4 $
  */
 public class SchoolChoiceFormMessage extends CommuneBlock {
 	// *** Localization keys ***
@@ -29,35 +29,35 @@ public class SchoolChoiceFormMessage extends CommuneBlock {
 	private int mainTableRow;
 
 	public void main(IWContext iwc) throws Exception {
-		mainTable = getMainTable();		
+		this.mainTable = getMainTable();		
 		setMainTableContent(getMessageTable());
-		add(mainTable);
+		add(this.mainTable);
 	}
 
 	private Table getMainTable() {
-		mainTable = new Table();
-		mainTable.setBorder(0);
-		mainTable.setWidthAndHeightToHundredPercent();
-		mainTable.setCellpadding(0);
-		mainTable.setCellspacing(0);
+		this.mainTable = new Table();
+		this.mainTable.setBorder(0);
+		this.mainTable.setWidthAndHeightToHundredPercent();
+		this.mainTable.setCellpadding(0);
+		this.mainTable.setCellspacing(0);
 		int col = 1;
-		mainTableRow = 1;
+		this.mainTableRow = 1;
 		
 		//  *** WINDOW HEADING ***
-		mainTable.add(
+		this.mainTable.add(
 			getLocalizedSmallHeader(KEY_WINDOW_HEADING, "School choice message"), 
-																														col, mainTableRow);
-		mainTable.setColor(col, mainTableRow, getHeaderColor());
-		mainTable.setAlignment(col, mainTableRow, Table.HORIZONTAL_ALIGN_CENTER);
-		mainTable.setRowVerticalAlignment(mainTableRow, Table.VERTICAL_ALIGN_MIDDLE);
-		mainTable.setRowHeight(mainTableRow++, "20");
+																														col, this.mainTableRow);
+		this.mainTable.setColor(col, this.mainTableRow, getHeaderColor());
+		this.mainTable.setAlignment(col, this.mainTableRow, Table.HORIZONTAL_ALIGN_CENTER);
+		this.mainTable.setRowVerticalAlignment(this.mainTableRow, Table.VERTICAL_ALIGN_MIDDLE);
+		this.mainTable.setRowHeight(this.mainTableRow++, "20");
 
-		return mainTable;
+		return this.mainTable;
 	}
 
 	private void setMainTableContent(PresentationObject obj) {
 		int col = 1;
-		mainTable.add(obj, col, mainTableRow++);
+		this.mainTable.add(obj, col, this.mainTableRow++);
 	}
 
 	public Table getMessageTable() {

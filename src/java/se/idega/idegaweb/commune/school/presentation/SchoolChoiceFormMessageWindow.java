@@ -56,7 +56,7 @@ public class SchoolChoiceFormMessageWindow extends Window {
 		mainTable.mergeCells(1, 1, 3, 1);
 		
 		// Add close button on row 2
-		Image buttonImg = iwrb.getLocalizedImageButton(KEY_BUTTON_CLOSE, "Close");
+		Image buttonImg = this.iwrb.getLocalizedImageButton(KEY_BUTTON_CLOSE, "Close");
 		SubmitButton button = new SubmitButton(buttonImg);
 		Form closeForm = new Form();
 		closeForm.add(button);
@@ -73,19 +73,20 @@ public class SchoolChoiceFormMessageWindow extends Window {
 	private void setMainTableContent(PresentationObject obj) {
 		int col = 1;
 		int row = 1;
-		mainTable.add(obj, col, row);
+		this.mainTable.add(obj, col, row);
 	}
 	
 	/**
 	 * @see com.idega.presentation.PresentationObject#main(IWContext)
 	 */
 	public void main(IWContext iwc) throws Exception {
-		if (iwc.isParameterSet(PARAM_CLOSE))
+		if (iwc.isParameterSet(PARAM_CLOSE)) {
 			close();
-		iwrb = getResourceBundle(iwc);
-		mainTable = getMainTable();
+		}
+		this.iwrb = getResourceBundle(iwc);
+		this.mainTable = getMainTable();
 		setMainTableContent(new SchoolChoiceFormMessage());
-		add(mainTable);
+		add(this.mainTable);
 	}
 	
 }

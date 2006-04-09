@@ -37,14 +37,14 @@ public class AdminMessageBox extends MessageBox {
 	 * @see MessageBox
 	 */
 	Collection getMessages(IWContext iwc, User user, int numberOfEntries, int startingEntry) throws Exception{
-		return getMessageBusiness(iwc).findMessages(user, _groups, numberOfEntries, startingEntry);
+		return getMessageBusiness(iwc).findMessages(user, this._groups, numberOfEntries, startingEntry);
 	}
 	
 	int getNumberOfMessages(IWContext iwc, User user) {
 		try {
 			UserBusiness userBusiness = (UserBusiness) IBOLookup.getServiceInstance(iwc, UserBusiness.class);
-			_groups = userBusiness.getUserGroups(user);
-			return getMessageBusiness(iwc).getNumberOfMessages(user, _groups);
+			this._groups = userBusiness.getUserGroups(user);
+			return getMessageBusiness(iwc).getNumberOfMessages(user, this._groups);
 		}
 		catch (Exception e) {
 			return 0;

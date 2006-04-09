@@ -56,30 +56,32 @@ public class CurrentSchoolSeasonEditor extends Block {
     }
     else if(iwc.isParameterSet("sch_delete_season")){
       int id = Integer.parseInt(iwc.getParameter("sch_delete_season"));
-      sabBean.removeSchoolSeason(id);
+      this.sabBean.removeSchoolSeason(id);
       F.add(getListTable());
     }
-    else
-      F.add(getListTable());
+		else {
+			F.add(getListTable());
+		}
 
      add(F);
 
   }
 
   private void initBeans(IWContext iwc) throws java.rmi.RemoteException{
-    sabBean = (SchoolBusiness) IBOLookup.getServiceInstance(iwc,SchoolBusiness.class);
-    socBean = (SchoolChoiceBusiness) IBOLookup.getServiceInstance(iwc,SchoolChoiceBusiness.class);
-    careBean = (CareBusiness) IBOLookup.getServiceInstance(iwc,CareBusiness.class);
+    this.sabBean = (SchoolBusiness) IBOLookup.getServiceInstance(iwc,SchoolBusiness.class);
+    this.socBean = (SchoolChoiceBusiness) IBOLookup.getServiceInstance(iwc,SchoolChoiceBusiness.class);
+    this.careBean = (CareBusiness) IBOLookup.getServiceInstance(iwc,CareBusiness.class);
   }
 
   private void saveArea(IWContext iwc)throws java.rmi.RemoteException{
     if(iwc.isParameterSet("sch_current_season")){
       Integer New = new Integer(iwc.getParameter("new_current"));
       Integer old  = New;
-      if(iwc.isParameterSet("old_current"))
-        old = new Integer(iwc.getParameter("old_current"));
+      if(iwc.isParameterSet("old_current")) {
+				old = new Integer(iwc.getParameter("old_current"));
+			}
       if(iwc.getParameter("sch_current_season").equals("true")){
-        socBean.createCurrentSchoolSeason(New,old);
+        this.socBean.createCurrentSchoolSeason(New,old);
       }
     }
   }
@@ -91,8 +93,8 @@ public class CurrentSchoolSeasonEditor extends Block {
     Collection SchoolSeasons = new java.util.Vector(0);
     SchoolSeason current = null;
     try{
-      SchoolSeasons = sabBean.findAllSchoolSeasons(sabBean.getCategoryElementarySchool());
-      current = careBean.getCurrentSeason();
+      SchoolSeasons = this.sabBean.findAllSchoolSeasons(this.sabBean.getCategoryElementarySchool());
+      current = this.careBean.getCurrentSeason();
       T.add(new HiddenInput("old_current",current.getPrimaryKey().toString()));
 
     }
@@ -103,11 +105,11 @@ public class CurrentSchoolSeasonEditor extends Block {
 
     }
     row++;
-    T.add(tFormat.format(iwrb.getLocalizedString("name","Name"),TextFormat.HEADER),1,row);
-    T.add(tFormat.format(iwrb.getLocalizedString("start","Start"),TextFormat.HEADER),2,row);
-    T.add(tFormat.format(iwrb.getLocalizedString("end","End"),TextFormat.HEADER),3,row);
-    T.add(tFormat.format(iwrb.getLocalizedString("due_date","Duedate"),TextFormat.HEADER),4,row);
-    T.add(tFormat.format(iwrb.getLocalizedString("current","Current"),TextFormat.HEADER),5,row);
+    T.add(this.tFormat.format(this.iwrb.getLocalizedString("name","Name"),TextFormat.HEADER),1,row);
+    T.add(this.tFormat.format(this.iwrb.getLocalizedString("start","Start"),TextFormat.HEADER),2,row);
+    T.add(this.tFormat.format(this.iwrb.getLocalizedString("end","End"),TextFormat.HEADER),3,row);
+    T.add(this.tFormat.format(this.iwrb.getLocalizedString("due_date","Duedate"),TextFormat.HEADER),4,row);
+    T.add(this.tFormat.format(this.iwrb.getLocalizedString("current","Current"),TextFormat.HEADER),5,row);
     row++;
 
     java.util.Iterator iter = SchoolSeasons.iterator();
@@ -120,28 +122,29 @@ public class CurrentSchoolSeasonEditor extends Block {
 
       butt = (RadioButton)button.clone();
       butt.setValue(sarea.getPrimaryKey().toString());
-      if(current!=null && current.getPrimaryKey().equals(sarea.getPrimaryKey()))
-        butt.setSelected();
+      if(current!=null && current.getPrimaryKey().equals(sarea.getPrimaryKey())) {
+				butt.setSelected();
+			}
 
-      T.add(tFormat.format(sarea.getSchoolSeasonName()),1,row);
-      T.add(tFormat.format(dFormat.format(sarea.getSchoolSeasonStart())),2,row);
-      T.add(tFormat.format(dFormat.format(sarea.getSchoolSeasonEnd())),3,row);
-      T.add(tFormat.format(dFormat.format(sarea.getChoiceEndDate())),4,row);
+      T.add(this.tFormat.format(sarea.getSchoolSeasonName()),1,row);
+      T.add(this.tFormat.format(this.dFormat.format(sarea.getSchoolSeasonStart())),2,row);
+      T.add(this.tFormat.format(this.dFormat.format(sarea.getSchoolSeasonEnd())),3,row);
+      T.add(this.tFormat.format(this.dFormat.format(sarea.getChoiceEndDate())),4,row);
       T.add(butt,5,row);
       }
       catch(Exception ex){}
       row++;
     }
-    T.add(new SubmitButton(iwrb.getLocalizedImageButton("save","Save"),"sch_current_season","true"),3,6);
+    T.add(new SubmitButton(this.iwrb.getLocalizedImageButton("save","Save"),"sch_current_season","true"),3,6);
     return T;
   }
 
 
   public void main(IWContext iwc)throws Exception{
-    iwb = getBundle(iwc);
-    iwrb = getResourceBundle(iwc);
-    tFormat = TextFormat.getInstance();
-    dFormat = DateFormat.getDateInstance(DateFormat.SHORT,iwc.getCurrentLocale());
+    this.iwb = getBundle(iwc);
+    this.iwrb = getResourceBundle(iwc);
+    this.tFormat = TextFormat.getInstance();
+    this.dFormat = DateFormat.getDateInstance(DateFormat.SHORT,iwc.getCurrentLocale());
     control(iwc);
   }
 }

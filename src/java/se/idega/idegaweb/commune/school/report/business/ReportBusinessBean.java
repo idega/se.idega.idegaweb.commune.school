@@ -1,5 +1,5 @@
 /*
- * $Id: ReportBusinessBean.java,v 1.35 2005/05/11 07:15:37 laddi Exp $
+ * $Id: ReportBusinessBean.java,v 1.36 2006/04/09 11:39:54 laddi Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -29,10 +29,10 @@ import com.idega.block.school.data.SchoolStudyPathHome;
 /** 
  * Business logic for school reports.
  * <p>
- * Last modified: $Date: 2005/05/11 07:15:37 $ by $Author: laddi $
+ * Last modified: $Date: 2006/04/09 11:39:54 $ by $Author: laddi $
  *
  * @author Anders Lindman
- * @version $Revision: 1.35 $
+ * @version $Revision: 1.36 $
  */
 public class ReportBusinessBean extends com.idega.business.IBOServiceBean implements ReportBusiness  {
 
@@ -68,13 +68,13 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 	 * @param reportModelClass the report model Class to instantiate 
 	 */
 	public ReportModel createReportModel(Class reportModelClass) {
-		_currentSchoolSeason = null;
-		_schoolSeasonId = -1;
-		_schoolSeasonStartYear = -1;
-		_schools = null;
-		_schoolAreas = null;
-		_schoolsByArea = null;
-		_studyPaths = null;
+		this._currentSchoolSeason = null;
+		this._schoolSeasonId = -1;
+		this._schoolSeasonStartYear = -1;
+		this._schools = null;
+		this._schoolAreas = null;
+		this._schoolsByArea = null;
+		this._studyPaths = null;
 		ReportModel reportModel = null;		
 		try {
 			Class[] constructorArgumentTypes = { ReportBusiness.class };
@@ -133,67 +133,67 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 	 * Returns the current school season.
 	 */
 	public SchoolSeason getCurrentSchoolSeason() {
-		if (_currentSchoolSeason == null) {
+		if (this._currentSchoolSeason == null) {
 			try {
 				SchoolBusiness sb = getSchoolBusiness();
-				_currentSchoolSeason = sb.getCurrentSchoolSeason(sb.getCategoryElementarySchool());
+				this._currentSchoolSeason = sb.getCurrentSchoolSeason(sb.getCategoryElementarySchool());
 			} catch (Exception e) {}
 		}
-		return _currentSchoolSeason;
+		return this._currentSchoolSeason;
 	}
 	
 	/**
 	 * Returns the current school season id.
 	 */
 	public int getSchoolSeasonId() {
-		if (_schoolSeasonId == -1) {
+		if (this._schoolSeasonId == -1) {
 			try {
-				_schoolSeasonId = ((Integer) getCurrentSchoolSeason().getPrimaryKey()).intValue();
+				this._schoolSeasonId = ((Integer) getCurrentSchoolSeason().getPrimaryKey()).intValue();
 			} catch (Exception e) {}
 		}
-		return _schoolSeasonId;
+		return this._schoolSeasonId;
 	}
 	
 	/**
 	 * Returns the year for the current school season start. 
 	 */
 	public int getSchoolSeasonStartYear() {
-		if (_schoolSeasonStartYear == -1) {
+		if (this._schoolSeasonStartYear == -1) {
 			SchoolSeason ss = getCurrentSchoolSeason();
 			try {
 				String s = ss.getSchoolSeasonStart().toString();
-				_schoolSeasonStartYear = Integer.parseInt(s.substring(0, 4));
+				this._schoolSeasonStartYear = Integer.parseInt(s.substring(0, 4));
 			} catch (Exception e) {}
 		}
-		return _schoolSeasonStartYear;
+		return this._schoolSeasonStartYear;
 	}
 	
 	/**
 	 * Returns all school areas for elemtary schools. 
 	 */
 	public Collection getElementarySchoolAreas() {
-		if (_schoolAreas == null) {
+		if (this._schoolAreas == null) {
 			try {
 				SchoolAreaHome home = getSchoolBusiness().getSchoolAreaHome();
-				_schoolAreas = home.findAllBySchoolTypeAndCity(SCHOOL_TYPE_ELEMENTARY_SCHOOL, "Nacka");
+				this._schoolAreas = home.findAllBySchoolTypeAndCity(SCHOOL_TYPE_ELEMENTARY_SCHOOL, "Nacka");
 			} catch (Exception e) {}
 		}
-		return _schoolAreas;
+		return this._schoolAreas;
 	}
 	
 	/**
 	 * Returns all school areas for compulsory schools. 
 	 */
 	public Collection getCompulsorySchoolAreas() {
-		if (_schoolAreas == null) {
+		if (this._schoolAreas == null) {
 			SchoolHome schoolHome = null;
 			try {
 				schoolHome = getSchoolHome();
 				SchoolAreaHome home = getSchoolBusiness().getSchoolAreaHome();
-				_schoolAreas = home.findAllBySchoolTypeAndCity(SCHOOL_TYPE_COMPULSORY_SCHOOL, "Nacka");
+				this._schoolAreas = home.findAllBySchoolTypeAndCity(SCHOOL_TYPE_COMPULSORY_SCHOOL, "Nacka");
 			} catch (Exception e) {}
 			ArrayList areas = new ArrayList();
-			Iterator iter = _schoolAreas.iterator();
+			Iterator iter = this._schoolAreas.iterator();
 			while (iter.hasNext()) {
 				SchoolArea area = (SchoolArea) iter.next();
 				int areaId = ((Integer) area.getPrimaryKey()).intValue();
@@ -207,16 +207,16 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 					}
 				} catch (Exception e) {}
 			}
-			_schoolAreas = areas;
+			this._schoolAreas = areas;
 		}
-		return _schoolAreas;
+		return this._schoolAreas;
 	}
 	
 	/**
 	 * Returns all school areas for private schools. 
 	 */
 	public Collection getPrivateSchoolAreas() {
-		if (_schoolAreas == null) {
+		if (this._schoolAreas == null) {
 			Collection managementTypes = new ArrayList();
 			managementTypes.add("COMPANY");
 			managementTypes.add("FOUNDATION");
@@ -225,11 +225,11 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 			try {
 				schoolHome = getSchoolHome();
 				SchoolAreaHome home = getSchoolBusiness().getSchoolAreaHome();
-				_schoolAreas = home.findAllBySchoolTypeCityAndManagementTypes(SCHOOL_TYPE_ELEMENTARY_SCHOOL, 
+				this._schoolAreas = home.findAllBySchoolTypeCityAndManagementTypes(SCHOOL_TYPE_ELEMENTARY_SCHOOL, 
 						"Nacka", managementTypes);
 			} catch (Exception e) {}
 			ArrayList areas = new ArrayList();
-			Iterator iter = _schoolAreas.iterator();
+			Iterator iter = this._schoolAreas.iterator();
 			while (iter.hasNext()) {
 				SchoolArea area = (SchoolArea) iter.next();
 				int areaId = ((Integer) area.getPrimaryKey()).intValue();
@@ -244,16 +244,16 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 					}
 				} catch (Exception e) {}
 			}
-			_schoolAreas = areas;
+			this._schoolAreas = areas;
 		}
-		return _schoolAreas;
+		return this._schoolAreas;
 	}
 	
 	/**
 	 * Returns all school areas for pre school operation. 
 	 */
 	public Collection getPreSchoolOperationAreas() {
-		if (_schoolAreas == null) {
+		if (this._schoolAreas == null) {
 			Collection managementTypes = new ArrayList();
 			managementTypes.add("COMMUNE");
 			managementTypes.add("COMPANY");
@@ -269,10 +269,10 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 			try {
 				schoolHome = getSchoolHome();
 				SchoolAreaHome home = getSchoolBusiness().getSchoolAreaHome();
-				_schoolAreas = home.findAllSchoolAreas();
+				this._schoolAreas = home.findAllSchoolAreas();
 			} catch (Exception e) {}
 			ArrayList areas = new ArrayList();
-			Iterator iter = _schoolAreas.iterator();
+			Iterator iter = this._schoolAreas.iterator();
 			while (iter.hasNext()) {
 				SchoolArea area = (SchoolArea) iter.next();
 				int areaId = ((Integer) area.getPrimaryKey()).intValue();
@@ -287,16 +287,16 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 					}
 				} catch (Exception e) {}
 			}
-			_schoolAreas = areas;
+			this._schoolAreas = areas;
 		}
-		return _schoolAreas;
+		return this._schoolAreas;
 	}
 	
 	/**
 	 * Returns all school areas for after schools for 6 years children. 
 	 */
 	public Collection getAfterSchool6Areas() {
-		if (_schoolAreas == null) {
+		if (this._schoolAreas == null) {
 			Collection managementTypes = new ArrayList();
 			managementTypes.add("COMMUNE");
 			managementTypes.add("COMPANY");
@@ -310,10 +310,10 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 			try {
 				schoolHome = getSchoolHome();
 				SchoolAreaHome home = getSchoolBusiness().getSchoolAreaHome();
-				_schoolAreas = home.findAllSchoolAreas();
+				this._schoolAreas = home.findAllSchoolAreas();
 			} catch (Exception e) {}
 			ArrayList areas = new ArrayList();
-			Iterator iter = _schoolAreas.iterator();
+			Iterator iter = this._schoolAreas.iterator();
 			while (iter.hasNext()) {
 				SchoolArea area = (SchoolArea) iter.next();
 				int areaId = ((Integer) area.getPrimaryKey()).intValue();
@@ -328,16 +328,16 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 					}
 				} catch (Exception e) {}
 			}
-			_schoolAreas = areas;
+			this._schoolAreas = areas;
 		}
-		return _schoolAreas;
+		return this._schoolAreas;
 	}
 	
 	/**
 	 * Returns all school areas for after schools for 7-9 years children. 
 	 */
 	public Collection getAfterSchool7_9Areas() {
-		if (_schoolAreas == null) {
+		if (this._schoolAreas == null) {
 			Collection managementTypes = new ArrayList();
 			managementTypes.add("COMMUNE");
 			managementTypes.add("COMPANY");
@@ -351,10 +351,10 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 			try {
 				schoolHome = getSchoolHome();
 				SchoolAreaHome home = getSchoolBusiness().getSchoolAreaHome();
-				_schoolAreas = home.findAllSchoolAreas();
+				this._schoolAreas = home.findAllSchoolAreas();
 			} catch (Exception e) {}
 			ArrayList areas = new ArrayList();
-			Iterator iter = _schoolAreas.iterator();
+			Iterator iter = this._schoolAreas.iterator();
 			while (iter.hasNext()) {
 				SchoolArea area = (SchoolArea) iter.next();
 				int areaId = ((Integer) area.getPrimaryKey()).intValue();
@@ -369,9 +369,9 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 					}
 				} catch (Exception e) {}
 			}
-			_schoolAreas = areas;
+			this._schoolAreas = areas;
 		}
-		return _schoolAreas;
+		return this._schoolAreas;
 	}
 
 	/**
@@ -399,24 +399,24 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 	 * Returns all child care providers.
 	 */
 	public Collection getChildCareProviders() {
-		if (_schools == null) {
+		if (this._schools == null) {
 			try {
 				SchoolBusiness sb = getSchoolBusiness();
-				_schools = sb.findAllSchoolsByCategory(SCHOOL_CATEGORY_CHILD_CARE);
+				this._schools = sb.findAllSchoolsByCategory(SCHOOL_CATEGORY_CHILD_CARE);
 			} catch (Exception e) {
 				log(e);
 			}
 		}
-		return _schools;
+		return this._schools;
 	}
 	
 	/**
 	 * Returns all elementary for the specified area. 
 	 */
 	public Collection getElementarySchools(SchoolArea schoolArea) {
-		if (_schoolsByArea == null) {
+		if (this._schoolsByArea == null) {
 			try {
-				_schoolsByArea = new TreeMap();
+				this._schoolsByArea = new TreeMap();
 				SchoolHome schoolHome = getSchoolHome();
 				Collection areas = getElementarySchoolAreas();
 				Iterator areaIter = areas.iterator();
@@ -428,14 +428,14 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 							SCHOOL_TYPE_ELEMENTARY_SCHOOL,
 							MANAGEMENT_TYPE_COMMUNE,
 							NACKA_COMMUNE_ID);
-					_schoolsByArea.put(area.getName(), schools);
+					this._schoolsByArea.put(area.getName(), schools);
 				}
 			} catch (Exception e) {
 				log(e);
 			}
 		}
-		if (_schoolsByArea != null) {
-			return (Collection) _schoolsByArea.get(schoolArea.getName());
+		if (this._schoolsByArea != null) {
+			return (Collection) this._schoolsByArea.get(schoolArea.getName());
 		} else {
 			return new ArrayList();
 		}
@@ -445,9 +445,9 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 	 * Returns all compulsory for the specified area. 
 	 */
 	public Collection getCompulsorySchools(SchoolArea schoolArea) {
-		if (_schoolsByArea == null) {
+		if (this._schoolsByArea == null) {
 			try {
-				_schoolsByArea = new TreeMap();
+				this._schoolsByArea = new TreeMap();
 				SchoolHome schoolHome = getSchoolHome();
 				Collection areas = getCompulsorySchoolAreas();
 				Iterator areaIter = areas.iterator();
@@ -458,14 +458,14 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 							schoolAreaId,
 							SCHOOL_TYPE_COMPULSORY_SCHOOL,
 							NACKA_COMMUNE_ID);
-					_schoolsByArea.put(area.getName(), schools);
+					this._schoolsByArea.put(area.getName(), schools);
 				}
 			} catch (Exception e) {
 				log(e);
 			}
 		}
-		if (_schoolsByArea != null) {
-			return (Collection) _schoolsByArea.get(schoolArea.getName());
+		if (this._schoolsByArea != null) {
+			return (Collection) this._schoolsByArea.get(schoolArea.getName());
 		} else {
 			return new ArrayList();
 		}
@@ -475,9 +475,9 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 	 * Returns all private for the specified area. 
 	 */
 	public Collection getPrivateSchools(SchoolArea schoolArea) {
-		if (_schoolsByArea == null) {
+		if (this._schoolsByArea == null) {
 			try {
-				_schoolsByArea = new TreeMap();
+				this._schoolsByArea = new TreeMap();
 				Collection managementTypes = new ArrayList();
 				managementTypes.add("COMPANY");
 				managementTypes.add("FOUNDATION");
@@ -493,14 +493,14 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 							SCHOOL_TYPE_ELEMENTARY_SCHOOL,
 							managementTypes,
 							NACKA_COMMUNE_ID);
-					_schoolsByArea.put(area.getName(), schools);
+					this._schoolsByArea.put(area.getName(), schools);
 				}
 			} catch (Exception e) {
 				log(e);
 			}
 		}
-		if (_schoolsByArea != null) {
-			return (Collection) _schoolsByArea.get(schoolArea.getName());
+		if (this._schoolsByArea != null) {
+			return (Collection) this._schoolsByArea.get(schoolArea.getName());
 		} else {
 			return new ArrayList();
 		}
@@ -510,7 +510,7 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 	 * Returns all compulsory high schools. 
 	 */
 	public Collection getCompulsoryHighSchools() {
-		if (_schools == null) {
+		if (this._schools == null) {
 			ArrayList l = new ArrayList();
 			try {
 				SchoolHome home = getSchoolBusiness().getSchoolHome();
@@ -522,91 +522,91 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 						l.add(school);
 					}
 				}
-				_schools = l;
+				this._schools = l;
 			} catch (Exception e) {}
 		}
-		return _schools;
+		return this._schools;
 	}
 	
 	/**
 	 * Returns all private high schools. 
 	 */
 	public Collection getPrivateHighSchools() {
-		if (_schools == null) {
+		if (this._schools == null) {
 			try {
-				_schools = new ArrayList();
+				this._schools = new ArrayList();
 				SchoolHome home = getSchoolBusiness().getSchoolHome();
 				School s1 = home.findBySchoolName("Cybergymnasiet");
 				School s2 = home.findBySchoolName("Kunskapsgymnasiet  i Orminge");
 				School s3 = home.findBySchoolName("Mediagymnasiet");
-				_schools.add(s1);
-				_schools.add(s2);
-				_schools.add(s3);
+				this._schools.add(s1);
+				this._schools.add(s2);
+				this._schools.add(s3);
 			} catch (Exception e) {
 				log(e);
 			}
 		}
-		return _schools;
+		return this._schools;
 	}
 	
 	/**
 	 * Returns all Nacka commune high schools. 
 	 */
 	public Collection getNackaCommuneHighSchools() {
-		if (_schools == null) {
+		if (this._schools == null) {
 			try {
-				_schools = new ArrayList();
+				this._schools = new ArrayList();
 				SchoolHome home = getSchoolBusiness().getSchoolHome();
 				School s1 = home.findBySchoolName("Internationella Skolan i Nacka");
 				School s2 = home.findBySchoolName("Nacka Gymnasium A-enheten");
 				School s3 = home.findBySchoolName("Nacka Gymnasium B-enheten");
 				School s4 = home.findBySchoolName("Nacka Gymnasium C-enheten");
 				School s5 = home.findByPrimaryKey(new Integer(1938)); // Saltsjobadens Samskola
-				_schools.add(s1);
-				_schools.add(s2);
-				_schools.add(s3);
-				_schools.add(s4);
-				_schools.add(s5);
+				this._schools.add(s1);
+				this._schools.add(s2);
+				this._schools.add(s3);
+				this._schools.add(s4);
+				this._schools.add(s5);
 			} catch (Exception e) {
 				log(e);
 				e.printStackTrace();
 			}
 		}
-		return _schools;
+		return this._schools;
 	}
 	
 	/**
 	 * Returns all study paths. 
 	 */
 	public Collection getAllStudyPaths() {
-		if (_studyPaths == null) {
+		if (this._studyPaths == null) {
 			try {
 				SchoolStudyPathHome home = (SchoolStudyPathHome) com.idega.data.IDOLookup.getHome(SchoolStudyPath.class);
-				_studyPaths = home.findAllStudyPathsByCodeLength(2);
+				this._studyPaths = home.findAllStudyPathsByCodeLength(2);
 			} catch (Exception e) {}
 		}
-		return _studyPaths;
+		return this._studyPaths;
 	}
 	
 	/**
 	 * Returns all study paths including sub paths (directions). 
 	 */
 	public Collection getAllStudyPathsIncludingDirections() {
-		if (_studyPaths == null) {
+		if (this._studyPaths == null) {
 			try {
-				_studyPaths = new ArrayList();
+				this._studyPaths = new ArrayList();
 				SchoolStudyPathHome home = (SchoolStudyPathHome) com.idega.data.IDOLookup.getHome(SchoolStudyPath.class);
 				Collection c = home.findAllStudyPaths();
 				Iterator iter = c.iterator();
 				while (iter.hasNext()) {
 					SchoolStudyPath sp = (SchoolStudyPath) iter.next();
 					if (sp.getDescription().length() > 3) {
-						_studyPaths.add(sp);
+						this._studyPaths.add(sp);
 					}
 				}
 			} catch (Exception e) {}
 		}
-		return _studyPaths;
+		return this._studyPaths;
 	}
 
 	/**

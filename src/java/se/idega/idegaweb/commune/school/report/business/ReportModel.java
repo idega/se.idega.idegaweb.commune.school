@@ -1,5 +1,5 @@
 /*
- * $Id: ReportModel.java,v 1.34 2004/09/24 07:50:05 malin Exp $
+ * $Id: ReportModel.java,v 1.35 2006/04/09 11:39:54 laddi Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -21,10 +21,10 @@ import com.idega.util.database.ConnectionBroker;
  * This abstract class holds cell and header values for school statistics reports.
  * Subclasses implements methods for generating report data and cell value calculations.
  * <p>
- * Last modified: $Date: 2004/09/24 07:50:05 $ by $Author: malin $
+ * Last modified: $Date: 2006/04/09 11:39:54 $ by $Author: laddi $
  *
  * @author Anders Lindman
- * @version $Revision: 1.34 $
+ * @version $Revision: 1.35 $
  */
 public abstract class ReportModel {
 
@@ -156,8 +156,8 @@ public abstract class ReportModel {
 	 * Constructs a report model with the specified report business logic. 
 	 */	
 	public ReportModel(ReportBusiness reportBusiness) {
-		_reportBusiness = reportBusiness;
-		_queryCache = new HashMap();
+		this._reportBusiness = reportBusiness;
+		this._queryCache = new HashMap();
 	}
 
 	/**
@@ -172,19 +172,19 @@ public abstract class ReportModel {
 	 * Sets the size of this report. 
 	 */
 	protected void setReportSize(int rowSize, int columnSize) {
-		_rowSize = rowSize;
-		_columnSize = columnSize;
+		this._rowSize = rowSize;
+		this._columnSize = columnSize;
 	}
 
 	/*
 	 * Initializes the model information (headers and cells).
 	 */
 	private void init() {
-		if (_cells == null) {
+		if (this._cells == null) {
 			initReportSize();
-			_cells = new Cell[_rowSize][_columnSize];
-			_rowHeaders = buildRowHeaders();
-			_columnHeaders = buildColumnHeaders();
+			this._cells = new Cell[this._rowSize][this._columnSize];
+			this._rowHeaders = buildRowHeaders();
+			this._columnHeaders = buildColumnHeaders();
 			buildCells();							
 		}
 	}
@@ -193,21 +193,21 @@ public abstract class ReportModel {
 	 * Returns the number of rows in this report model. 
 	 */
 	public int getRowSize() {
-		return _rowSize;
+		return this._rowSize;
 	}
 	
 	/**
 	 * Returns the number of columns in this report model. 
 	 */
 	public int getColumnSize() {
-		return _columnSize;
+		return this._columnSize;
 	}
 	
 	/**
 	 * Returns the report business for this report model.
 	 */
 	ReportBusiness getReportBusiness() {
-		return _reportBusiness;
+		return this._reportBusiness;
 	}
 	
 	/**
@@ -215,7 +215,7 @@ public abstract class ReportModel {
 	 */
 	public Header[] getRowHeaders() {
 		init();
-		return _rowHeaders;
+		return this._rowHeaders;
 	}
 	
 	/**
@@ -223,7 +223,7 @@ public abstract class ReportModel {
 	 */
 	public Header[] getColumnHeaders() {
 		init();
-		return _columnHeaders;
+		return this._columnHeaders;
 	}
 	
 	/**
@@ -231,7 +231,7 @@ public abstract class ReportModel {
 	 */
 	public Cell getCell(int row, int column) {
 		init();
-		return _cells[row][column];
+		return this._cells[row][column];
 	}
 
 	/**
@@ -239,7 +239,7 @@ public abstract class ReportModel {
 	 */
 	public void log(String msg) {
 		try {
-			_reportBusiness.log(msg);
+			this._reportBusiness.log(msg);
 		} catch (RemoteException e) {
 			// Failed to access the system log, using System.err to log message
 			System.err.println(msg);
@@ -250,24 +250,24 @@ public abstract class ReportModel {
 	 * Returns a database connection. 
 	 */
 	protected Connection getConnection() {
-		if (_connection == null) {
-			_connection = ConnectionBroker.getConnection();
+		if (this._connection == null) {
+			this._connection = ConnectionBroker.getConnection();
 		}
-		return _connection;
+		return this._connection;
 	}
 	
 	/**
 	 * Returns the prepared query for the specified key. 
 	 */
 	protected PreparedQuery getQuery(String key) {
-		return (PreparedQuery) _queryCache.get(key);
+		return (PreparedQuery) this._queryCache.get(key);
 	}
 	
 	/**
 	 * Sets the prepared query with the specified key. 
 	 */
 	protected void setQuery(String key, PreparedQuery query) {
-		_queryCache.put(key, query);
+		this._queryCache.put(key, query);
 	}
 	
 	/**
@@ -275,23 +275,23 @@ public abstract class ReportModel {
 	 */
 	protected void setCell(int row, int column, Cell cell) {
 		init();
-		_cells[row][column] = cell;
+		this._cells[row][column] = cell;
 	}
 
 	/**
 	 * Closes used resources for this report model.
 	 */
 	public void close() {
-		Iterator iter = _queryCache.values().iterator();
+		Iterator iter = this._queryCache.values().iterator();
 		while (iter.hasNext()) {
 			PreparedQuery query = (PreparedQuery) iter.next();
 			query.close();
 		}
-		if (_connection != null) {
-			ConnectionBroker.freeConnection(_connection);
+		if (this._connection != null) {
+			ConnectionBroker.freeConnection(this._connection);
 		}
-		_queryCache = new HashMap();
-		_connection = null;
+		this._queryCache = new HashMap();
+		this._connection = null;
 	}
 	
 	/**

@@ -35,8 +35,8 @@ public class SchoolUserEditor extends com.idega.block.school.presentation.School
 
 	public SchoolUserEditor(IWContext iwc) throws RemoteException{
 		super(iwc);
-		schoolBusiness = (SchoolBusiness) IBOLookup.getServiceInstance(iwc, SchoolBusiness.class);
-		groupBusiness = (GroupBusiness) IBOLookup.getServiceInstance(iwc, GroupBusiness.class);
+		this.schoolBusiness = (SchoolBusiness) IBOLookup.getServiceInstance(iwc, SchoolBusiness.class);
+		this.groupBusiness = (GroupBusiness) IBOLookup.getServiceInstance(iwc, GroupBusiness.class);
 	}
 	
 	public String getBundleIdentifier(){
@@ -63,7 +63,7 @@ public class SchoolUserEditor extends com.idega.block.school.presentation.School
 						groupId = getChildCareAdminGroupId();	
 					}
 					if (userType != SchoolUserBusinessBean.USER_TYPE_TEACHER && groupId > 0) {
-						groupBusiness.addUser(groupId, user);
+						this.groupBusiness.addUser(groupId, user);
 					} 
 				}
 			} 
@@ -78,11 +78,11 @@ public class SchoolUserEditor extends com.idega.block.school.presentation.School
 	}
 	
 	private int getSchoolAdminGroupId() throws RemoteException {
-		String groupId = schoolBusiness.getPropertyValue(SCHOOL_ADMINISTATION_GROUP_PARAMETER_NAME);
+		String groupId = this.schoolBusiness.getPropertyValue(this.SCHOOL_ADMINISTATION_GROUP_PARAMETER_NAME);
 		if (groupId == null) {
-			groupId = getCommuneBundle().getProperty(SCHOOL_ADMINISTATION_GROUP_PARAMETER_NAME);
+			groupId = getCommuneBundle().getProperty(this.SCHOOL_ADMINISTATION_GROUP_PARAMETER_NAME);
 			if (groupId != null) {
-				schoolBusiness.setProperty(SCHOOL_ADMINISTATION_GROUP_PARAMETER_NAME, groupId);
+				this.schoolBusiness.setProperty(this.SCHOOL_ADMINISTATION_GROUP_PARAMETER_NAME, groupId);
 			}
 		}
 		if (groupId != null) {
@@ -92,11 +92,11 @@ public class SchoolUserEditor extends com.idega.block.school.presentation.School
 	}
 	
 	private int getChildCareAdminGroupId() throws RemoteException {
-		String groupId = schoolBusiness.getPropertyValue(CHILDCARE_ADMINISTATION_GROUP_PARAMETER_NAME);
+		String groupId = this.schoolBusiness.getPropertyValue(this.CHILDCARE_ADMINISTATION_GROUP_PARAMETER_NAME);
 		if (groupId == null) {
-			groupId = getCommuneBundle().getProperty(CHILDCARE_ADMINISTATION_GROUP_PARAMETER_NAME);
+			groupId = getCommuneBundle().getProperty(this.CHILDCARE_ADMINISTATION_GROUP_PARAMETER_NAME);
 			if (groupId != null) {
-				schoolBusiness.setProperty(CHILDCARE_ADMINISTATION_GROUP_PARAMETER_NAME, groupId);
+				this.schoolBusiness.setProperty(this.CHILDCARE_ADMINISTATION_GROUP_PARAMETER_NAME, groupId);
 			}
 		}
 		if (groupId != null) {
@@ -110,8 +110,8 @@ public class SchoolUserEditor extends com.idega.block.school.presentation.School
 	}
 	
 	public void main(IWContext iwc) throws RemoteException {
-		groupBusiness = (GroupBusiness) IBOLookup.getServiceInstance(iwc, GroupBusiness.class);
-		schoolBusiness = (SchoolBusiness) IBOLookup.getServiceInstance(iwc, SchoolBusiness.class);
+		this.groupBusiness = (GroupBusiness) IBOLookup.getServiceInstance(iwc, GroupBusiness.class);
+		this.schoolBusiness = (SchoolBusiness) IBOLookup.getServiceInstance(iwc, SchoolBusiness.class);
 		
 		CATEGORY_SCHOOL = getSchoolUserBusiness(iwc).getSchoolBusiness().getElementarySchoolSchoolCategory();
 		CATEGORY_CHILDCARE = getSchoolUserBusiness(iwc).getSchoolBusiness().getChildCareSchoolCategory();

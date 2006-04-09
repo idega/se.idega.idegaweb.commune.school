@@ -17,10 +17,10 @@ import com.idega.user.data.Group;
 import com.idega.user.data.User;
 
 /**
- * Last modified: $Date: 2005/02/10 12:00:15 $ by $Author: laddi $
+ * Last modified: $Date: 2006/04/09 11:39:53 $ by $Author: laddi $
  *
  * @author <a href="http://www.staffannoteberg.com">Staffan Nöteberg</a>
- * @version $Revision: 1.14 $
+ * @version $Revision: 1.15 $
  */
 public class SchoolChoiceReminderBMPBean extends AbstractCaseBMPBean implements SchoolChoiceReminder, Case {
 	private static final String ENTITY_NAME = "sch_reminder";
@@ -129,8 +129,9 @@ public class SchoolChoiceReminderBMPBean extends AbstractCaseBMPBean implements 
 			final int groupId = ((Integer) groups[i].getPrimaryKey()).intValue();
 			query.append("pc.handler_group_id = '" + groupId + "'");
 			// special notice for super admin group, i.e. 1
-			if (groupId == 1)
+			if (groupId == 1) {
 				query.append(" or 1 = 1");
+			}
 		}
 		query.append(")");
 		final Collection primaryKeys = idoFindPKsByQuery(query);

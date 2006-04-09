@@ -22,7 +22,7 @@ import se.idega.idegaweb.commune.school.data.SchoolStatisticsData;
 /**
  * School marks business
  * <p>
- * $Id: SchoolMarksBusinessBean.java,v 1.12 2004/01/28 13:42:37 staffan Exp $
+ * $Id: SchoolMarksBusinessBean.java,v 1.13 2006/04/09 11:39:54 laddi Exp $
  *
  * I will add some comments on the school marks calculation technique here later.
  * However I am waiting for Nacka to present me that specification.
@@ -181,10 +181,10 @@ public class SchoolMarksBusinessBean extends com.idega.business.IBOServiceBean i
 			totalMerit = 0;
 			meritCount = 0;
 			
-			_gNumber = 0;
-			_vgNumber = 0;
-			_mvgNumber = 0;
-			_ig1Number = 0;
+			this._gNumber = 0;
+			this._vgNumber = 0;
+			this._mvgNumber = 0;
+			this._ig1Number = 0;
 			
 			resetSchoolValues(); 
 			
@@ -206,11 +206,11 @@ public class SchoolMarksBusinessBean extends com.idega.business.IBOServiceBean i
 			float mvg = Float.parseFloat(""+MERITE_VG);
 			float mmvg = Float.parseFloat(""+MERITE_MVG);
 
-			float fg = Float.parseFloat(""+_gNumber);
-			float fvg = Float.parseFloat(""+_vgNumber);
-			float fmvg = Float.parseFloat(""+_mvgNumber);
+			float fg = Float.parseFloat(""+this._gNumber);
+			float fvg = Float.parseFloat(""+this._vgNumber);
+			float fmvg = Float.parseFloat(""+this._mvgNumber);
 			
-			System.out.println("GNUMBER VGNUMBER MVGNUMBER"+_gNumber+" " +_vgNumber + " "+_mvgNumber);
+			System.out.println("GNUMBER VGNUMBER MVGNUMBER"+this._gNumber+" " +this._vgNumber + " "+this._mvgNumber);
 			System.out.println("MERITCOUND TOTALMERIT"+meritCount+" " +totalMerit);
 			
 			
@@ -228,11 +228,11 @@ public class SchoolMarksBusinessBean extends com.idega.business.IBOServiceBean i
 			ap.percent = " ";
 			saveAuthPoints(scbCode, ap);
 
-			mns.number = "" + (_gNumber + _vgNumber + _mvgNumber);
+			mns.number = "" + (this._gNumber + this._vgNumber + this._mvgNumber);
 			mns.percent = " ";
 			saveMarksNumberShare(scbCode, mns);
 
-			mf.number = "" + (_ig1Number);
+			mf.number = "" + (this._ig1Number);
 			mf.percent = " ";
 			saveMarksFailed(scbCode, mf);
 			
@@ -275,61 +275,61 @@ public class SchoolMarksBusinessBean extends com.idega.business.IBOServiceBean i
 		SchoolMarkValues smvSumAuth = new SchoolMarkValues();
 		SchoolMarkValues smvTotal = new SchoolMarkValues();
 
-		int sumEng = _sumEnglishEG + _sumEnglishG + _sumEnglishVG + _sumEnglishMVG;
-		smvEnglish.eg.number = "" + _sumEnglishEG;
-		smvEnglish.eg.percent = "" + (((float)_sumEnglishEG / (float)sumEng)*100);
-		smvEnglish.g.number = "" + _sumEnglishG;
-		smvEnglish.g.percent = "" + (((float)_sumEnglishG / (float)sumEng)*100);
-		smvEnglish.vg.number = "" + _sumEnglishVG;
-		smvEnglish.vg.percent = "" + (((float)_sumEnglishVG / (float)sumEng)*100);
-		smvEnglish.mvg.number = "" + _sumEnglishMVG;
-		smvEnglish.mvg.percent = "" + (((float)_sumEnglishMVG / (float)sumEng)*100);
+		int sumEng = this._sumEnglishEG + this._sumEnglishG + this._sumEnglishVG + this._sumEnglishMVG;
+		smvEnglish.eg.number = "" + this._sumEnglishEG;
+		smvEnglish.eg.percent = "" + (((float)this._sumEnglishEG / (float)sumEng)*100);
+		smvEnglish.g.number = "" + this._sumEnglishG;
+		smvEnglish.g.percent = "" + (((float)this._sumEnglishG / (float)sumEng)*100);
+		smvEnglish.vg.number = "" + this._sumEnglishVG;
+		smvEnglish.vg.percent = "" + (((float)this._sumEnglishVG / (float)sumEng)*100);
+		smvEnglish.mvg.number = "" + this._sumEnglishMVG;
+		smvEnglish.mvg.percent = "" + (((float)this._sumEnglishMVG / (float)sumEng)*100);
 		smvEnglish.tot.number = "" + sumEng;  
-		smvEnglish.tot.percent = "" + 	((float)((_sumEnglishG * MERITE_G) + 
-										(_sumEnglishVG * MERITE_VG) + 
-										(_sumEnglishMVG * MERITE_MVG)) / (float) sumEng);
+		smvEnglish.tot.percent = "" + 	((float)((this._sumEnglishG * MERITE_G) + 
+										(this._sumEnglishVG * MERITE_VG) + 
+										(this._sumEnglishMVG * MERITE_MVG)) / (float) sumEng);
 
-		int sumMath = _sumMathsEG + _sumMathsG + _sumMathsVG + _sumMathsMVG;
-		smvMaths.eg.number = "" + _sumMathsEG;
-		smvMaths.eg.percent = "" + (((float)_sumMathsEG / (float)sumMath)*100);
-		smvMaths.g.number = "" + _sumMathsG;
-		smvMaths.g.percent = "" + (((float)_sumMathsG / (float)sumMath)*100);
-		smvMaths.vg.number = "" + _sumMathsVG;
-		smvMaths.vg.percent = "" + (((float)_sumMathsVG / (float)sumMath)*100);
-		smvMaths.mvg.number = "" + _sumMathsMVG;
-		smvMaths.mvg.percent = "" + (((float)_sumMathsMVG / (float)sumMath)*100);
+		int sumMath = this._sumMathsEG + this._sumMathsG + this._sumMathsVG + this._sumMathsMVG;
+		smvMaths.eg.number = "" + this._sumMathsEG;
+		smvMaths.eg.percent = "" + (((float)this._sumMathsEG / (float)sumMath)*100);
+		smvMaths.g.number = "" + this._sumMathsG;
+		smvMaths.g.percent = "" + (((float)this._sumMathsG / (float)sumMath)*100);
+		smvMaths.vg.number = "" + this._sumMathsVG;
+		smvMaths.vg.percent = "" + (((float)this._sumMathsVG / (float)sumMath)*100);
+		smvMaths.mvg.number = "" + this._sumMathsMVG;
+		smvMaths.mvg.percent = "" + (((float)this._sumMathsMVG / (float)sumMath)*100);
 		smvMaths.tot.number = "" + sumMath;  
-		smvMaths.tot.percent = "" + 	((float)((_sumMathsG * MERITE_G) + 
-										(_sumMathsVG * MERITE_VG) + 
-										(_sumMathsMVG * MERITE_MVG)) / (float) sumMath);
+		smvMaths.tot.percent = "" + 	((float)((this._sumMathsG * MERITE_G) + 
+										(this._sumMathsVG * MERITE_VG) + 
+										(this._sumMathsMVG * MERITE_MVG)) / (float) sumMath);
 
-		int sumSwe = _sumSwedishEG + _sumSwedishG + _sumSwedishVG + _sumSwedishMVG;
-		smvSwedish.eg.number = "" + _sumSwedishEG;
-		smvSwedish.eg.percent = "" + (((float)_sumSwedishEG / (float)sumSwe)*100);
-		smvSwedish.g.number = "" + _sumSwedishG;
-		smvSwedish.g.percent = "" + (((float)_sumSwedishG / (float)sumSwe)*100);
-		smvSwedish.vg.number = "" + _sumSwedishVG;
-		smvSwedish.vg.percent = "" + (((float)_sumSwedishVG / (float)sumSwe)*100);
-		smvSwedish.mvg.number = "" + _sumSwedishMVG;
-		smvSwedish.mvg.percent = "" + (((float)_sumSwedishMVG / (float)sumSwe)*100);
+		int sumSwe = this._sumSwedishEG + this._sumSwedishG + this._sumSwedishVG + this._sumSwedishMVG;
+		smvSwedish.eg.number = "" + this._sumSwedishEG;
+		smvSwedish.eg.percent = "" + (((float)this._sumSwedishEG / (float)sumSwe)*100);
+		smvSwedish.g.number = "" + this._sumSwedishG;
+		smvSwedish.g.percent = "" + (((float)this._sumSwedishG / (float)sumSwe)*100);
+		smvSwedish.vg.number = "" + this._sumSwedishVG;
+		smvSwedish.vg.percent = "" + (((float)this._sumSwedishVG / (float)sumSwe)*100);
+		smvSwedish.mvg.number = "" + this._sumSwedishMVG;
+		smvSwedish.mvg.percent = "" + (((float)this._sumSwedishMVG / (float)sumSwe)*100);
 		smvSwedish.tot.number = "" + sumSwe;  
-		smvSwedish.tot.percent = "" + 	((float)((_sumSwedishG * MERITE_G) + 
-										(_sumSwedishVG * MERITE_VG) + 
-										(_sumSwedishMVG * MERITE_MVG)) / (float) sumSwe);
+		smvSwedish.tot.percent = "" + 	((float)((this._sumSwedishG * MERITE_G) + 
+										(this._sumSwedishVG * MERITE_VG) + 
+										(this._sumSwedishMVG * MERITE_MVG)) / (float) sumSwe);
 
-		int sumSwe2 = _sumSwedish2EG + _sumSwedish2G + _sumSwedish2VG + _sumSwedish2MVG;
-		smvSwedish2.eg.number = "" + _sumSwedish2EG;
-		smvSwedish2.eg.percent = "" + (((float)_sumSwedish2EG / (float)sumSwe2)*100);
-		smvSwedish2.g.number = "" + _sumSwedish2G;
-		smvSwedish2.g.percent = "" + (((float)_sumSwedish2G / (float)sumSwe2)*100);
-		smvSwedish2.vg.number = "" + _sumSwedish2VG;
-		smvSwedish2.vg.percent = "" + (((float)_sumSwedish2VG / (float)sumSwe2)*100);
-		smvSwedish2.mvg.number = "" + _sumSwedish2MVG;
-		smvSwedish2.mvg.percent = "" + (((float)_sumSwedish2MVG / (float)sumSwe2)*100);
+		int sumSwe2 = this._sumSwedish2EG + this._sumSwedish2G + this._sumSwedish2VG + this._sumSwedish2MVG;
+		smvSwedish2.eg.number = "" + this._sumSwedish2EG;
+		smvSwedish2.eg.percent = "" + (((float)this._sumSwedish2EG / (float)sumSwe2)*100);
+		smvSwedish2.g.number = "" + this._sumSwedish2G;
+		smvSwedish2.g.percent = "" + (((float)this._sumSwedish2G / (float)sumSwe2)*100);
+		smvSwedish2.vg.number = "" + this._sumSwedish2VG;
+		smvSwedish2.vg.percent = "" + (((float)this._sumSwedish2VG / (float)sumSwe2)*100);
+		smvSwedish2.mvg.number = "" + this._sumSwedish2MVG;
+		smvSwedish2.mvg.percent = "" + (((float)this._sumSwedish2MVG / (float)sumSwe2)*100);
 		smvSwedish2.tot.number = "" + sumSwe2;  
-		smvSwedish2.tot.percent = "" + 	((float)((_sumSwedish2G * MERITE_G) + 
-										(_sumSwedish2VG * MERITE_VG) + 
-										(_sumSwedish2MVG * MERITE_MVG)) / (float) sumSwe2);
+		smvSwedish2.tot.percent = "" + 	((float)((this._sumSwedish2G * MERITE_G) + 
+										(this._sumSwedish2VG * MERITE_VG) + 
+										(this._sumSwedish2MVG * MERITE_MVG)) / (float) sumSwe2);
 
 
 		int sumAuth = Integer.parseInt(smvEnglish.tot.number) + Integer.parseInt(smvMaths.tot.number) + 
@@ -364,26 +364,26 @@ public class SchoolMarksBusinessBean extends com.idega.business.IBOServiceBean i
 									 	Float.parseFloat(smvSwedish.tot.percent) + 
 										sw2)/authDiv);
 
-		int sumTotal = _ig1Number + _gNumber + _vgNumber + _mvgNumber;
+		int sumTotal = this._ig1Number + this._gNumber + this._vgNumber + this._mvgNumber;
 
-		smvTotal.eg.number = "" + _ig1Number;
+		smvTotal.eg.number = "" + this._ig1Number;
 		smvTotal.eg.percent = "" +  (((float) (Integer.parseInt(smvTotal.eg.number))) / 
 										((float)sumTotal))*100;
 		 
-		smvTotal.g.number = "" +  _gNumber;
+		smvTotal.g.number = "" +  this._gNumber;
 		smvTotal.g.percent = "" +  (((float) (Integer.parseInt(smvTotal.g.number))) / 
 										((float)sumTotal))*100;
 		
-		smvTotal.vg.number = "" + _vgNumber;
+		smvTotal.vg.number = "" + this._vgNumber;
 		smvTotal.vg.percent = "" +  (((float) (Integer.parseInt(smvTotal.vg.number))) / 
 										((float)sumTotal))*100;
 
-		smvTotal.mvg.number = "" + _mvgNumber;
+		smvTotal.mvg.number = "" + this._mvgNumber;
 		smvTotal.mvg.percent = "" +  (((float) (Integer.parseInt(smvTotal.mvg.number))) / 
 										((float)sumTotal))*100;
 		
 		smvTotal.tot.number = "" + sumTotal;  
-		smvTotal.tot.percent = "" + ((float)((_gNumber * MERITE_G) + (_vgNumber * MERITE_VG) + (_mvgNumber * MERITE_MVG))) / ((float)(_gNumber + _vgNumber +_mvgNumber)); 	
+		smvTotal.tot.percent = "" + ((float)((this._gNumber * MERITE_G) + (this._vgNumber * MERITE_VG) + (this._mvgNumber * MERITE_MVG))) / ((float)(this._gNumber + this._vgNumber +this._mvgNumber)); 	
 		
 		boolean found = true;
 		SchoolStatisticsDataHome home = null;
@@ -954,46 +954,100 @@ public class SchoolMarksBusinessBean extends com.idega.business.IBOServiceBean i
 	 */
 	private int getStudentGValue(SchoolMarks marks) {
 		int gCount = 0;
-		if ((""+marks.getBL()).equals(MARK_G)) gCount++;
-		if ((""+marks.getEN()).equals(MARK_G)) gCount++;
-		if ((""+marks.getEN()).equals(MARK_G)) _sumEnglishG++;
-		if ((""+marks.getHKK()).equals(MARK_G)) gCount++;
-		if ((""+marks.getIDH()).equals(MARK_G)) gCount++;
-		if ((""+marks.getMA()).equals(MARK_G)) gCount++;
-		if ((""+marks.getMA()).equals(MARK_G)) _sumMathsG++;
-		if ((""+marks.getM1G()).equals(MARK_G)) gCount++;
-		if ((""+marks.getM2G()).equals(MARK_G)) gCount++;
-		if ((""+marks.getMLG()).equals(MARK_G)) gCount++;
-		if ((""+marks.getMU()).equals(MARK_G)) gCount++;
-		if ((""+marks.getNO()).equals(MARK_G)) gCount++;
-		if ((""+marks.getBI()).equals(MARK_G)) gCount++;
-		if ((""+marks.getFY()).equals(MARK_G)) gCount++;
-		if ((""+marks.getKE()).equals(MARK_G)) gCount++;
-		if ((""+marks.getSO()).equals(MARK_G)) gCount++;
-		if ((""+marks.getGE()).equals(MARK_G)) gCount++;
-		if ((""+marks.getHI()).equals(MARK_G)) gCount++;
-		if ((""+marks.getRE()).equals(MARK_G)) gCount++;
-		if ((""+marks.getSH()).equals(MARK_G)) gCount++;
-		if ((""+marks.getSL()).equals(MARK_G)) gCount++;
-		if ((""+marks.getSV()).equals(MARK_G)) gCount++;
-		if ((""+marks.getSV()).equals(MARK_G)) _sumSwedishG++;
-		if ((""+marks.getSVA()).equals(MARK_G)) gCount++;
-		if ((""+marks.getSVA()).equals(MARK_G)) _sumSwedish2G++;
-		if ((""+marks.getTN()).equals(MARK_G)) gCount++;
-		if ((""+marks.getTK()).equals(MARK_G)) gCount++;
+		if ((""+marks.getBL()).equals(this.MARK_G)) {
+			gCount++;
+		}
+		if ((""+marks.getEN()).equals(this.MARK_G)) {
+			gCount++;
+		}
+		if ((""+marks.getEN()).equals(this.MARK_G)) {
+			this._sumEnglishG++;
+		}
+		if ((""+marks.getHKK()).equals(this.MARK_G)) {
+			gCount++;
+		}
+		if ((""+marks.getIDH()).equals(this.MARK_G)) {
+			gCount++;
+		}
+		if ((""+marks.getMA()).equals(this.MARK_G)) {
+			gCount++;
+		}
+		if ((""+marks.getMA()).equals(this.MARK_G)) {
+			this._sumMathsG++;
+		}
+		if ((""+marks.getM1G()).equals(this.MARK_G)) {
+			gCount++;
+		}
+		if ((""+marks.getM2G()).equals(this.MARK_G)) {
+			gCount++;
+		}
+		if ((""+marks.getMLG()).equals(this.MARK_G)) {
+			gCount++;
+		}
+		if ((""+marks.getMU()).equals(this.MARK_G)) {
+			gCount++;
+		}
+		if ((""+marks.getNO()).equals(this.MARK_G)) {
+			gCount++;
+		}
+		if ((""+marks.getBI()).equals(this.MARK_G)) {
+			gCount++;
+		}
+		if ((""+marks.getFY()).equals(this.MARK_G)) {
+			gCount++;
+		}
+		if ((""+marks.getKE()).equals(this.MARK_G)) {
+			gCount++;
+		}
+		if ((""+marks.getSO()).equals(this.MARK_G)) {
+			gCount++;
+		}
+		if ((""+marks.getGE()).equals(this.MARK_G)) {
+			gCount++;
+		}
+		if ((""+marks.getHI()).equals(this.MARK_G)) {
+			gCount++;
+		}
+		if ((""+marks.getRE()).equals(this.MARK_G)) {
+			gCount++;
+		}
+		if ((""+marks.getSH()).equals(this.MARK_G)) {
+			gCount++;
+		}
+		if ((""+marks.getSL()).equals(this.MARK_G)) {
+			gCount++;
+		}
+		if ((""+marks.getSV()).equals(this.MARK_G)) {
+			gCount++;
+		}
+		if ((""+marks.getSV()).equals(this.MARK_G)) {
+			this._sumSwedishG++;
+		}
+		if ((""+marks.getSVA()).equals(this.MARK_G)) {
+			gCount++;
+		}
+		if ((""+marks.getSVA()).equals(this.MARK_G)) {
+			this._sumSwedish2G++;
+		}
+		if ((""+marks.getTN()).equals(this.MARK_G)) {
+			gCount++;
+		}
+		if ((""+marks.getTK()).equals(this.MARK_G)) {
+			gCount++;
+		}
 
-		if (((""+marks.getNO()).equals(MARK_G)) && 
-			((""+marks.getBI()).equals(MARK_IG2)) &&
-			((""+marks.getFY()).equals(MARK_IG2)) &&
-			((""+marks.getKE()).equals(MARK_IG2))) {
+		if (((""+marks.getNO()).equals(this.MARK_G)) && 
+			((""+marks.getBI()).equals(this.MARK_IG2)) &&
+			((""+marks.getFY()).equals(this.MARK_IG2)) &&
+			((""+marks.getKE()).equals(this.MARK_IG2))) {
 			gCount+=2;		
 		}
 
-		if (((""+marks.getSO()).equals(MARK_G)) && 
-			((""+marks.getGE()).equals(MARK_IG2)) &&
-			((""+marks.getHI()).equals(MARK_IG2)) &&
-			((""+marks.getRE()).equals(MARK_IG2)) &&
-			((""+marks.getSH()).equals(MARK_IG2))) {
+		if (((""+marks.getSO()).equals(this.MARK_G)) && 
+			((""+marks.getGE()).equals(this.MARK_IG2)) &&
+			((""+marks.getHI()).equals(this.MARK_IG2)) &&
+			((""+marks.getRE()).equals(this.MARK_IG2)) &&
+			((""+marks.getSH()).equals(this.MARK_IG2))) {
 			gCount+=3;		
 		}
 
@@ -1005,46 +1059,100 @@ public class SchoolMarksBusinessBean extends com.idega.business.IBOServiceBean i
 	 */
 	private int getStudentVgValue(SchoolMarks marks) {
 		int vgCount = 0;
-		if ((""+marks.getBL()).equals(MARK_VG)) vgCount++;
-		if ((""+marks.getEN()).equals(MARK_VG)) vgCount++;
-		if ((""+marks.getEN()).equals(MARK_VG)) _sumEnglishVG++;
-		if ((""+marks.getHKK()).equals(MARK_VG)) vgCount++;
-		if ((""+marks.getIDH()).equals(MARK_VG)) vgCount++;
-		if ((""+marks.getMA()).equals(MARK_VG)) vgCount++;
-		if ((""+marks.getMA()).equals(MARK_VG)) _sumMathsVG++;
-		if ((""+marks.getM1G()).equals(MARK_VG)) vgCount++;
-		if ((""+marks.getM2G()).equals(MARK_VG)) vgCount++;
-		if ((""+marks.getMLG()).equals(MARK_VG)) vgCount++;
-		if ((""+marks.getMU()).equals(MARK_VG)) vgCount++;
-		if ((""+marks.getNO()).equals(MARK_VG)) vgCount++;
-		if ((""+marks.getBI()).equals(MARK_VG)) vgCount++;
-		if ((""+marks.getFY()).equals(MARK_VG)) vgCount++;
-		if ((""+marks.getKE()).equals(MARK_VG)) vgCount++;
-		if ((""+marks.getSO()).equals(MARK_VG)) vgCount++;
-		if ((""+marks.getGE()).equals(MARK_VG)) vgCount++;
-		if ((""+marks.getHI()).equals(MARK_VG)) vgCount++;
-		if ((""+marks.getRE()).equals(MARK_VG)) vgCount++;
-		if ((""+marks.getSH()).equals(MARK_VG)) vgCount++;
-		if ((""+marks.getSL()).equals(MARK_VG)) vgCount++;
-		if ((""+marks.getSV()).equals(MARK_VG)) vgCount++;
-		if ((""+marks.getSV()).equals(MARK_VG)) _sumSwedishVG++;
-		if ((""+marks.getSVA()).equals(MARK_VG)) vgCount++;
-		if ((""+marks.getSVA()).equals(MARK_VG)) _sumSwedish2VG++;
-		if ((""+marks.getTN()).equals(MARK_VG)) vgCount++;
-		if ((""+marks.getTK()).equals(MARK_VG)) vgCount++;
+		if ((""+marks.getBL()).equals(this.MARK_VG)) {
+			vgCount++;
+		}
+		if ((""+marks.getEN()).equals(this.MARK_VG)) {
+			vgCount++;
+		}
+		if ((""+marks.getEN()).equals(this.MARK_VG)) {
+			this._sumEnglishVG++;
+		}
+		if ((""+marks.getHKK()).equals(this.MARK_VG)) {
+			vgCount++;
+		}
+		if ((""+marks.getIDH()).equals(this.MARK_VG)) {
+			vgCount++;
+		}
+		if ((""+marks.getMA()).equals(this.MARK_VG)) {
+			vgCount++;
+		}
+		if ((""+marks.getMA()).equals(this.MARK_VG)) {
+			this._sumMathsVG++;
+		}
+		if ((""+marks.getM1G()).equals(this.MARK_VG)) {
+			vgCount++;
+		}
+		if ((""+marks.getM2G()).equals(this.MARK_VG)) {
+			vgCount++;
+		}
+		if ((""+marks.getMLG()).equals(this.MARK_VG)) {
+			vgCount++;
+		}
+		if ((""+marks.getMU()).equals(this.MARK_VG)) {
+			vgCount++;
+		}
+		if ((""+marks.getNO()).equals(this.MARK_VG)) {
+			vgCount++;
+		}
+		if ((""+marks.getBI()).equals(this.MARK_VG)) {
+			vgCount++;
+		}
+		if ((""+marks.getFY()).equals(this.MARK_VG)) {
+			vgCount++;
+		}
+		if ((""+marks.getKE()).equals(this.MARK_VG)) {
+			vgCount++;
+		}
+		if ((""+marks.getSO()).equals(this.MARK_VG)) {
+			vgCount++;
+		}
+		if ((""+marks.getGE()).equals(this.MARK_VG)) {
+			vgCount++;
+		}
+		if ((""+marks.getHI()).equals(this.MARK_VG)) {
+			vgCount++;
+		}
+		if ((""+marks.getRE()).equals(this.MARK_VG)) {
+			vgCount++;
+		}
+		if ((""+marks.getSH()).equals(this.MARK_VG)) {
+			vgCount++;
+		}
+		if ((""+marks.getSL()).equals(this.MARK_VG)) {
+			vgCount++;
+		}
+		if ((""+marks.getSV()).equals(this.MARK_VG)) {
+			vgCount++;
+		}
+		if ((""+marks.getSV()).equals(this.MARK_VG)) {
+			this._sumSwedishVG++;
+		}
+		if ((""+marks.getSVA()).equals(this.MARK_VG)) {
+			vgCount++;
+		}
+		if ((""+marks.getSVA()).equals(this.MARK_VG)) {
+			this._sumSwedish2VG++;
+		}
+		if ((""+marks.getTN()).equals(this.MARK_VG)) {
+			vgCount++;
+		}
+		if ((""+marks.getTK()).equals(this.MARK_VG)) {
+			vgCount++;
+		}
 
-		if (((""+marks.getNO()).equals(MARK_VG)) && 
-			((""+marks.getBI()).equals(MARK_IG2)) &&
-			((""+marks.getFY()).equals(MARK_IG2)) &&
-			((""+marks.getKE()).equals(MARK_IG2))) {
+		if (((""+marks.getNO()).equals(this.MARK_VG)) && 
+			((""+marks.getBI()).equals(this.MARK_IG2)) &&
+			((""+marks.getFY()).equals(this.MARK_IG2)) &&
+			((""+marks.getKE()).equals(this.MARK_IG2))) {
 			vgCount+=2;		
 		}
 
-		if (((""+marks.getSO()).equals(MARK_VG)) && 
-			((""+marks.getGE()).equals(MARK_IG2)) &&
-			((""+marks.getHI()).equals(MARK_IG2)) &&
-			((""+marks.getRE()).equals(MARK_IG2)) &&
-			((""+marks.getSH()).equals(MARK_IG2))) {
+		if (((""+marks.getSO()).equals(this.MARK_VG)) && 
+			((""+marks.getGE()).equals(this.MARK_IG2)) &&
+			((""+marks.getHI()).equals(this.MARK_IG2)) &&
+			((""+marks.getRE()).equals(this.MARK_IG2)) &&
+			((""+marks.getSH()).equals(this.MARK_IG2))) {
 			vgCount+=3;		
 		}
 
@@ -1056,46 +1164,100 @@ public class SchoolMarksBusinessBean extends com.idega.business.IBOServiceBean i
 	 */
 	private int getStudentMvgValue(SchoolMarks marks) {
 		int mvgCount = 0;
-		if ((""+marks.getBL()).equals(MARK_MVG)) mvgCount++;
-		if ((""+marks.getEN()).equals(MARK_MVG)) mvgCount++;
-		if ((""+marks.getEN()).equals(MARK_MVG)) _sumEnglishMVG++;
-		if ((""+marks.getHKK()).equals(MARK_MVG)) mvgCount++;
-		if ((""+marks.getIDH()).equals(MARK_MVG)) mvgCount++;
-		if ((""+marks.getMA()).equals(MARK_MVG)) mvgCount++;
-		if ((""+marks.getMA()).equals(MARK_MVG)) _sumMathsMVG++;
-		if ((""+marks.getM1G()).equals(MARK_MVG)) mvgCount++;
-		if ((""+marks.getM2G()).equals(MARK_MVG)) mvgCount++;
-		if ((""+marks.getMLG()).equals(MARK_MVG)) mvgCount++;
-		if ((""+marks.getMU()).equals(MARK_MVG)) mvgCount++;
-		if ((""+marks.getNO()).equals(MARK_MVG)) mvgCount++;
-		if ((""+marks.getBI()).equals(MARK_MVG)) mvgCount++;
-		if ((""+marks.getFY()).equals(MARK_MVG)) mvgCount++;
-		if ((""+marks.getKE()).equals(MARK_MVG)) mvgCount++;
-		if ((""+marks.getSO()).equals(MARK_MVG)) mvgCount++;
-		if ((""+marks.getGE()).equals(MARK_MVG)) mvgCount++;
-		if ((""+marks.getHI()).equals(MARK_MVG)) mvgCount++;
-		if ((""+marks.getRE()).equals(MARK_MVG)) mvgCount++;
-		if ((""+marks.getSH()).equals(MARK_MVG)) mvgCount++;
-		if ((""+marks.getSL()).equals(MARK_MVG)) mvgCount++;
-		if ((""+marks.getSV()).equals(MARK_MVG)) mvgCount++;
-		if ((""+marks.getSV()).equals(MARK_MVG)) _sumSwedishMVG++;
-		if ((""+marks.getSVA()).equals(MARK_MVG)) mvgCount++;
-		if ((""+marks.getSVA()).equals(MARK_MVG)) _sumSwedish2MVG++;
-		if ((""+marks.getTN()).equals(MARK_MVG)) mvgCount++;
-		if ((""+marks.getTK()).equals(MARK_MVG)) mvgCount++;
+		if ((""+marks.getBL()).equals(this.MARK_MVG)) {
+			mvgCount++;
+		}
+		if ((""+marks.getEN()).equals(this.MARK_MVG)) {
+			mvgCount++;
+		}
+		if ((""+marks.getEN()).equals(this.MARK_MVG)) {
+			this._sumEnglishMVG++;
+		}
+		if ((""+marks.getHKK()).equals(this.MARK_MVG)) {
+			mvgCount++;
+		}
+		if ((""+marks.getIDH()).equals(this.MARK_MVG)) {
+			mvgCount++;
+		}
+		if ((""+marks.getMA()).equals(this.MARK_MVG)) {
+			mvgCount++;
+		}
+		if ((""+marks.getMA()).equals(this.MARK_MVG)) {
+			this._sumMathsMVG++;
+		}
+		if ((""+marks.getM1G()).equals(this.MARK_MVG)) {
+			mvgCount++;
+		}
+		if ((""+marks.getM2G()).equals(this.MARK_MVG)) {
+			mvgCount++;
+		}
+		if ((""+marks.getMLG()).equals(this.MARK_MVG)) {
+			mvgCount++;
+		}
+		if ((""+marks.getMU()).equals(this.MARK_MVG)) {
+			mvgCount++;
+		}
+		if ((""+marks.getNO()).equals(this.MARK_MVG)) {
+			mvgCount++;
+		}
+		if ((""+marks.getBI()).equals(this.MARK_MVG)) {
+			mvgCount++;
+		}
+		if ((""+marks.getFY()).equals(this.MARK_MVG)) {
+			mvgCount++;
+		}
+		if ((""+marks.getKE()).equals(this.MARK_MVG)) {
+			mvgCount++;
+		}
+		if ((""+marks.getSO()).equals(this.MARK_MVG)) {
+			mvgCount++;
+		}
+		if ((""+marks.getGE()).equals(this.MARK_MVG)) {
+			mvgCount++;
+		}
+		if ((""+marks.getHI()).equals(this.MARK_MVG)) {
+			mvgCount++;
+		}
+		if ((""+marks.getRE()).equals(this.MARK_MVG)) {
+			mvgCount++;
+		}
+		if ((""+marks.getSH()).equals(this.MARK_MVG)) {
+			mvgCount++;
+		}
+		if ((""+marks.getSL()).equals(this.MARK_MVG)) {
+			mvgCount++;
+		}
+		if ((""+marks.getSV()).equals(this.MARK_MVG)) {
+			mvgCount++;
+		}
+		if ((""+marks.getSV()).equals(this.MARK_MVG)) {
+			this._sumSwedishMVG++;
+		}
+		if ((""+marks.getSVA()).equals(this.MARK_MVG)) {
+			mvgCount++;
+		}
+		if ((""+marks.getSVA()).equals(this.MARK_MVG)) {
+			this._sumSwedish2MVG++;
+		}
+		if ((""+marks.getTN()).equals(this.MARK_MVG)) {
+			mvgCount++;
+		}
+		if ((""+marks.getTK()).equals(this.MARK_MVG)) {
+			mvgCount++;
+		}
 
-		if (((""+marks.getNO()).equals(MARK_MVG)) && 
-			((""+marks.getBI()).equals(MARK_IG2)) &&
-			((""+marks.getFY()).equals(MARK_IG2)) &&
-			((""+marks.getKE()).equals(MARK_IG2))) {
+		if (((""+marks.getNO()).equals(this.MARK_MVG)) && 
+			((""+marks.getBI()).equals(this.MARK_IG2)) &&
+			((""+marks.getFY()).equals(this.MARK_IG2)) &&
+			((""+marks.getKE()).equals(this.MARK_IG2))) {
 			mvgCount+=2;		
 		}
 
-		if (((""+marks.getSO()).equals(MARK_MVG)) && 
-			((""+marks.getGE()).equals(MARK_IG2)) &&
-			((""+marks.getHI()).equals(MARK_IG2)) &&
-			((""+marks.getRE()).equals(MARK_IG2)) &&
-			((""+marks.getSH()).equals(MARK_IG2))) {
+		if (((""+marks.getSO()).equals(this.MARK_MVG)) && 
+			((""+marks.getGE()).equals(this.MARK_IG2)) &&
+			((""+marks.getHI()).equals(this.MARK_IG2)) &&
+			((""+marks.getRE()).equals(this.MARK_IG2)) &&
+			((""+marks.getSH()).equals(this.MARK_IG2))) {
 			mvgCount+=3;		
 		}
 
@@ -1108,33 +1270,87 @@ public class SchoolMarksBusinessBean extends com.idega.business.IBOServiceBean i
 	 */
 	private int getStudentIg1Value(SchoolMarks marks) {
 		int ig1Count = 0;
-		if ((""+marks.getBL()).equals(MARK_IG1)) ig1Count++;
-		if ((""+marks.getEN()).equals(MARK_IG1)) ig1Count++;
-		if ((""+marks.getEN()).equals(MARK_IG1)) _sumEnglishEG++;
-		if ((""+marks.getHKK()).equals(MARK_IG1)) ig1Count++;
-		if ((""+marks.getIDH()).equals(MARK_IG1)) ig1Count++;
-		if ((""+marks.getMA()).equals(MARK_IG1)) ig1Count++;
-		if ((""+marks.getMA()).equals(MARK_IG1)) _sumMathsEG++;
-		if ((""+marks.getM1G()).equals(MARK_IG1)) ig1Count++;
-		if ((""+marks.getM2G()).equals(MARK_IG1)) ig1Count++;
-		if ((""+marks.getMLG()).equals(MARK_IG1)) ig1Count++;
-		if ((""+marks.getMU()).equals(MARK_IG1)) ig1Count++;
-		if ((""+marks.getNO()).equals(MARK_IG1)) ig1Count++;
-		if ((""+marks.getBI()).equals(MARK_IG1)) ig1Count++;
-		if ((""+marks.getFY()).equals(MARK_IG1)) ig1Count++;
-		if ((""+marks.getKE()).equals(MARK_IG1)) ig1Count++;
-		if ((""+marks.getSO()).equals(MARK_IG1)) ig1Count++;
-		if ((""+marks.getGE()).equals(MARK_IG1)) ig1Count++;
-		if ((""+marks.getHI()).equals(MARK_IG1)) ig1Count++;
-		if ((""+marks.getRE()).equals(MARK_IG1)) ig1Count++;
-		if ((""+marks.getSH()).equals(MARK_IG1)) ig1Count++;
-		if ((""+marks.getSL()).equals(MARK_IG1)) ig1Count++;
-		if ((""+marks.getSV()).equals(MARK_IG1)) ig1Count++;
-		if ((""+marks.getSV()).equals(MARK_IG1)) _sumSwedishEG++;
-		if ((""+marks.getSVA()).equals(MARK_IG1)) ig1Count++;
-		if ((""+marks.getSVA()).equals(MARK_IG1)) _sumSwedish2EG++;
-		if ((""+marks.getTN()).equals(MARK_IG1)) ig1Count++;
-		if ((""+marks.getTK()).equals(MARK_IG1)) ig1Count++;
+		if ((""+marks.getBL()).equals(this.MARK_IG1)) {
+			ig1Count++;
+		}
+		if ((""+marks.getEN()).equals(this.MARK_IG1)) {
+			ig1Count++;
+		}
+		if ((""+marks.getEN()).equals(this.MARK_IG1)) {
+			this._sumEnglishEG++;
+		}
+		if ((""+marks.getHKK()).equals(this.MARK_IG1)) {
+			ig1Count++;
+		}
+		if ((""+marks.getIDH()).equals(this.MARK_IG1)) {
+			ig1Count++;
+		}
+		if ((""+marks.getMA()).equals(this.MARK_IG1)) {
+			ig1Count++;
+		}
+		if ((""+marks.getMA()).equals(this.MARK_IG1)) {
+			this._sumMathsEG++;
+		}
+		if ((""+marks.getM1G()).equals(this.MARK_IG1)) {
+			ig1Count++;
+		}
+		if ((""+marks.getM2G()).equals(this.MARK_IG1)) {
+			ig1Count++;
+		}
+		if ((""+marks.getMLG()).equals(this.MARK_IG1)) {
+			ig1Count++;
+		}
+		if ((""+marks.getMU()).equals(this.MARK_IG1)) {
+			ig1Count++;
+		}
+		if ((""+marks.getNO()).equals(this.MARK_IG1)) {
+			ig1Count++;
+		}
+		if ((""+marks.getBI()).equals(this.MARK_IG1)) {
+			ig1Count++;
+		}
+		if ((""+marks.getFY()).equals(this.MARK_IG1)) {
+			ig1Count++;
+		}
+		if ((""+marks.getKE()).equals(this.MARK_IG1)) {
+			ig1Count++;
+		}
+		if ((""+marks.getSO()).equals(this.MARK_IG1)) {
+			ig1Count++;
+		}
+		if ((""+marks.getGE()).equals(this.MARK_IG1)) {
+			ig1Count++;
+		}
+		if ((""+marks.getHI()).equals(this.MARK_IG1)) {
+			ig1Count++;
+		}
+		if ((""+marks.getRE()).equals(this.MARK_IG1)) {
+			ig1Count++;
+		}
+		if ((""+marks.getSH()).equals(this.MARK_IG1)) {
+			ig1Count++;
+		}
+		if ((""+marks.getSL()).equals(this.MARK_IG1)) {
+			ig1Count++;
+		}
+		if ((""+marks.getSV()).equals(this.MARK_IG1)) {
+			ig1Count++;
+		}
+		if ((""+marks.getSV()).equals(this.MARK_IG1)) {
+			this._sumSwedishEG++;
+		}
+		if ((""+marks.getSVA()).equals(this.MARK_IG1)) {
+			ig1Count++;
+		}
+		if ((""+marks.getSVA()).equals(this.MARK_IG1)) {
+			this._sumSwedish2EG++;
+		}
+		if ((""+marks.getTN()).equals(this.MARK_IG1)) {
+			ig1Count++;
+		}
+		if ((""+marks.getTK()).equals(this.MARK_IG1)) {
+			ig1Count++;
+		}
 		return ig1Count;
 	}
 
@@ -1181,10 +1397,10 @@ public class SchoolMarksBusinessBean extends com.idega.business.IBOServiceBean i
 		
 		totalScore += gCount * MERITE_G;
 
-		_gNumber += gCount;
-		_vgNumber += vgCount;
-		_mvgNumber += mvgCount;
-		_ig1Number += ig1Count;
+		this._gNumber += gCount;
+		this._vgNumber += vgCount;
+		this._mvgNumber += mvgCount;
+		this._ig1Number += ig1Count;
 		
 		return totalScore;
 	}
@@ -1231,28 +1447,28 @@ public class SchoolMarksBusinessBean extends com.idega.business.IBOServiceBean i
 
 	public void resetSchoolValues() {
 
-		_sumEnglishEG = 0;
-		_sumMathsEG = 0;
-		_sumSwedishEG = 0;
-		_sumSwedish2EG = 0;
+		this._sumEnglishEG = 0;
+		this._sumMathsEG = 0;
+		this._sumSwedishEG = 0;
+		this._sumSwedish2EG = 0;
 		//_sumTotalEG = 0;
 
-		_sumEnglishG = 0;
-		_sumMathsG = 0;
-		_sumSwedishG = 0;
-		_sumSwedish2G = 0;
+		this._sumEnglishG = 0;
+		this._sumMathsG = 0;
+		this._sumSwedishG = 0;
+		this._sumSwedish2G = 0;
 		//_sumTotalG = 0;
 
-		_sumEnglishVG = 0;
-		_sumMathsVG = 0;
-		_sumSwedishVG = 0;
-		_sumSwedish2VG = 0;
+		this._sumEnglishVG = 0;
+		this._sumMathsVG = 0;
+		this._sumSwedishVG = 0;
+		this._sumSwedish2VG = 0;
 		//_sumTotalVG = 0;
 
-		_sumEnglishMVG = 0;
-		_sumMathsMVG = 0;
-		_sumSwedishMVG = 0;
-		_sumSwedish2MVG = 0;
+		this._sumEnglishMVG = 0;
+		this._sumMathsMVG = 0;
+		this._sumSwedishMVG = 0;
+		this._sumSwedish2MVG = 0;
 		//_sumTotalMVG = 0;
 
 	}

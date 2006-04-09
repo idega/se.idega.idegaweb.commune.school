@@ -1,5 +1,5 @@
 /*
- * $Id: ReportBlock.java,v 1.34 2004/09/08 07:13:19 anders Exp $
+ * $Id: ReportBlock.java,v 1.35 2006/04/09 11:39:54 laddi Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -28,10 +28,10 @@ import com.idega.presentation.text.Text;
 /** 
  * This is the base class for school report blocks.
  * <p>
- * Last modified: $Date: 2004/09/08 07:13:19 $ by $Author: anders $
+ * Last modified: $Date: 2006/04/09 11:39:54 $ by $Author: laddi $
  *
  * @author Anders Lindman
- * @version $Revision: 1.34 $
+ * @version $Revision: 1.35 $
  */
 public class ReportBlock extends CommuneBlock {
 
@@ -65,7 +65,7 @@ public class ReportBlock extends CommuneBlock {
 	 * Constructs a report block with the specified report model class.
 	 */
 	public ReportBlock(Class reportModelClass) {
-		_reportModelClass = reportModelClass;
+		this._reportModelClass = reportModelClass;
 	}
 
 	/**
@@ -86,42 +86,42 @@ public class ReportBlock extends CommuneBlock {
 	 * Return property indicating if a print button is visible. 
 	 */
 	public boolean getShowPrintButton() {
-		return _showPrintButton;
+		return this._showPrintButton;
 	}
 	
 	/**
 	 * Sets property indicating if a print button is visible. 
 	 */
 	public void setShowPrintButton(boolean showPrintButton) {
-		_showPrintButton = showPrintButton;
+		this._showPrintButton = showPrintButton;
 	}
 	
 	/**
 	 * Return property indicating if the report title is visible. 
 	 */
 	public boolean getShowTitle() {
-		return _showTitle;
+		return this._showTitle;
 	}
 	
 	/**
 	 * Sets property indicating if the report title is visible. 
 	 */
 	public void setShowTitle(boolean showTitle) {
-		_showTitle = showTitle;
+		this._showTitle = showTitle;
 	}
 	
 	/**
 	 * Return property indicating if the report created date is visible. 
 	 */
 	public boolean getShowDate() {
-		return _showDate;
+		return this._showDate;
 	}
 	
 	/**
 	 * Sets property indicating if the report created date is visible. 
 	 */
 	public void setShowDate(boolean showDate) {
-		_showDate = showDate;
+		this._showDate = showDate;
 	}
 	
 	/**
@@ -166,7 +166,7 @@ public class ReportBlock extends CommuneBlock {
 			add(getErrorText(localize(KEY_SESSION_TIMEOUT, "You session has timed out. Please login again.")));
 			return;
 		}
-		if (_showPrintButton) {
+		if (this._showPrintButton) {
 //			PrintButton pb = new PrintButton(localize(KEY_PRINT, "Print"));
 //			pb = (PrintButton) getButton(pb);
 //			add(pb);
@@ -212,21 +212,21 @@ public class ReportBlock extends CommuneBlock {
 	 * Sets the report model for this block. 
 	 */
 	private void setReportModel(ReportModel reportModel) {
-		_reportModel = reportModel;
+		this._reportModel = reportModel;
 	}
 	
 	/**
 	 * Returns the report model for this block. 
 	 */
 	protected ReportModel getReportModel() {
-		return _reportModel;
+		return this._reportModel;
 	}
 
 	/**
 	 * Builds the report column headers.
 	 */
 	protected void buildColumnHeaders(Table table) {
-		Header[] headers = _reportModel.getColumnHeaders();
+		Header[] headers = this._reportModel.getColumnHeaders();
 		table.mergeCells(1, 1, 1, 2);
 		int column = 2;
 		for (int i = 0; i < headers.length; i++) {
@@ -276,7 +276,7 @@ public class ReportBlock extends CommuneBlock {
 	 * Builds the report row headers.
 	 */
 	protected void buildRowHeaders(Table table) {
-		Header[] headers = _reportModel.getRowHeaders();
+		Header[] headers = this._reportModel.getRowHeaders();
 		int row = 3;
 		String s = null;
 		for (int i = 0; i < headers.length; i++) {
@@ -293,7 +293,7 @@ public class ReportBlock extends CommuneBlock {
 					s = localize(header.getLocalizationKey(), header.getLocalizationKey());					
 				}
 				if (headerType == Header.HEADERTYPE_ROW_LABEL || headerType == Header.HEADERTYPE_ROW_SPACER) {
-					table.mergeCells(1, row, _reportModel.getColumnSize() + 1, row);
+					table.mergeCells(1, row, this._reportModel.getColumnSize() + 1, row);
 				}
 				table.add(getSmallHeader(s), 1, row);
 				table.setNoWrap(1, row);
@@ -302,7 +302,7 @@ public class ReportBlock extends CommuneBlock {
 				}
 				row++;
 			} else {
-				table.mergeCells(1, row, _reportModel.getColumnSize() + 1, row);
+				table.mergeCells(1, row, this._reportModel.getColumnSize() + 1, row);
 				table.setHeight(1, row, "26");
 				table.setVerticalAlignment(1, row, Table.VERTICAL_ALIGN_BOTTOM);
 				if (header.getHeaderType() == Header.HEADERTYPE_ROW_NONLOCALIZED_HEADER
@@ -325,7 +325,7 @@ public class ReportBlock extends CommuneBlock {
 						s = localize(child.getLocalizationKey(), child.getLocalizationKey());					
 					}
 					if (headerType == Header.HEADERTYPE_ROW_LABEL || headerType == Header.HEADERTYPE_ROW_SPACER) {
-						table.mergeCells(1, row, _reportModel.getColumnSize() + 1, row);
+						table.mergeCells(1, row, this._reportModel.getColumnSize() + 1, row);
 					}
 					table.add(getSmallHeader(s), 1, row);
 					table.setNoWrap(1, row);
@@ -344,7 +344,7 @@ public class ReportBlock extends CommuneBlock {
 	protected void buildReportCells(Table table) {
 		int cellRow = 0;
 		int tableRow = 3;
-		Header[] rowHeaders = _reportModel.getRowHeaders();
+		Header[] rowHeaders = this._reportModel.getRowHeaders();
 		NumberFormat formatter = NumberFormat.getNumberInstance();
 		formatter.setMaximumFractionDigits(1);
 		for (int i = 0; i < rowHeaders.length; i++) {
@@ -376,8 +376,8 @@ public class ReportBlock extends CommuneBlock {
 						continue;
 					}
 				}
-				for (int cellColumn = 0; cellColumn < _reportModel.getColumnSize(); cellColumn++) {
-					Cell cell = _reportModel.getCell(cellRow, cellColumn);
+				for (int cellColumn = 0; cellColumn < this._reportModel.getColumnSize(); cellColumn++) {
+					Cell cell = this._reportModel.getCell(cellRow, cellColumn);
 					Text text = null;
 					String align = Table.HORIZONTAL_ALIGN_RIGHT;
 					
@@ -410,7 +410,7 @@ public class ReportBlock extends CommuneBlock {
 				tableRow++;
 			}
 		}
-		_reportModel.close();
+		this._reportModel.close();
 	}
 
 	/*
@@ -453,7 +453,7 @@ public class ReportBlock extends CommuneBlock {
 	 * Returns the report model class to use in this block.
 	 */
 	protected Class getReportModelClass() {
-		return _reportModelClass;
+		return this._reportModelClass;
 	}
 	
 	/**

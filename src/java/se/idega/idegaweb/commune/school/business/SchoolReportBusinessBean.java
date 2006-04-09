@@ -56,28 +56,28 @@ public class SchoolReportBusinessBean extends IBOSessionBean implements SchoolRe
 	private List _fields;
 	
 	private void initializeBundlesIfNeeded() {
-		if (_iwb == null) {
-			_iwb = this.getIWApplicationContext().getIWMainApplication().getBundle(IW_BUNDLE_IDENTIFIER);
+		if (this._iwb == null) {
+			this._iwb = this.getIWApplicationContext().getIWMainApplication().getBundle(IW_BUNDLE_IDENTIFIER);
 		}
-		_iwrb = _iwb.getResourceBundle(this.getUserContext().getCurrentLocale());
+		this._iwrb = this._iwb.getResourceBundle(this.getUserContext().getCurrentLocale());
 	}
 	
 	private void fillColumns(Collection columns) {
 		if (columns.size() == 0) {
-			_columnsToDisplay = new ArrayList();
-			_columnsToDisplay.add(FIELD_PERSONAL_ID);
-			_columnsToDisplay.add(FIELD_NAME);
-			_columnsToDisplay.add(FIELD_ADDRESS);
-			_columnsToDisplay.add(FIELD_GENDER);
+			this._columnsToDisplay = new ArrayList();
+			this._columnsToDisplay.add(FIELD_PERSONAL_ID);
+			this._columnsToDisplay.add(FIELD_NAME);
+			this._columnsToDisplay.add(FIELD_ADDRESS);
+			this._columnsToDisplay.add(FIELD_GENDER);
 		}
 		else {
-			_columnsToDisplay = columns;
+			this._columnsToDisplay = columns;
 		}
-		_fields = new ArrayList();
+		this._fields = new ArrayList();
 	}
 	
 	private boolean displayColumn(String columnName) {
-		if (_columnsToDisplay.contains(columnName)) {
+		if (this._columnsToDisplay.contains(columnName)) {
 			return true;
 		}
 		return false;
@@ -96,15 +96,15 @@ public class SchoolReportBusinessBean extends IBOSessionBean implements SchoolRe
 		initializeBundlesIfNeeded();
 		Locale currentLocale = this.getUserContext().getCurrentLocale();
 		Locale defaultLocale = this.getIWMainApplication().getSettings().getDefaultLocale();
-		String nativeLanguageIDs = _iwb.getProperty(SchoolReportBusiness.PROPERTY_RESOURCE_IDS_NATIVE_LANGUAGE, "");
-		String secondLanguageIDs = _iwb.getProperty(SchoolReportBusiness.PROPERTY_RESOURCE_IDS_SECOND_LANGUAGE, "");
+		String nativeLanguageIDs = this._iwb.getProperty(SchoolReportBusiness.PROPERTY_RESOURCE_IDS_NATIVE_LANGUAGE, "");
+		String secondLanguageIDs = this._iwb.getProperty(SchoolReportBusiness.PROPERTY_RESOURCE_IDS_SECOND_LANGUAGE, "");
 		
 		ReportableCollection reportCollection = new ReportableCollection();
 		
 		ReportableField personalID = new ReportableField(FIELD_PERSONAL_ID, String.class);
 		personalID.setLocalizedName(getLocalizedString(FIELD_PERSONAL_ID, "Personal ID"), currentLocale);
 		if (displayColumn(FIELD_PERSONAL_ID)) {
-			_fields.add(personalID);
+			this._fields.add(personalID);
 			reportCollection.addField(personalID);
 		}
 		
@@ -112,7 +112,7 @@ public class SchoolReportBusinessBean extends IBOSessionBean implements SchoolRe
 		name.setLocalizedName(getLocalizedString(FIELD_NAME, "Name"), currentLocale);
 		name.setMaxNumberOfCharacters(50);
 		if (displayColumn(FIELD_NAME)) {
-			_fields.add(name);
+			this._fields.add(name);
 			reportCollection.addField(name);
 		}
 		
@@ -120,21 +120,21 @@ public class SchoolReportBusinessBean extends IBOSessionBean implements SchoolRe
 		address.setLocalizedName(getLocalizedString(FIELD_ADDRESS, "Address"), currentLocale);
 		address.setMaxNumberOfCharacters(30);
 		if (displayColumn(FIELD_ADDRESS)) {
-			_fields.add(address);
+			this._fields.add(address);
 			reportCollection.addField(address);
 		}
 		
 		ReportableField zipCode = new ReportableField(FIELD_ZIP_CODE, String.class);
 		zipCode.setLocalizedName(getLocalizedString(FIELD_ZIP_CODE, "Zip code"), currentLocale);
 		if (displayColumn(FIELD_ZIP_CODE)) {
-			_fields.add(zipCode);
+			this._fields.add(zipCode);
 			reportCollection.addField(zipCode);
 		}
 		
 		ReportableField area = new ReportableField(FIELD_AREA, String.class);
 		area.setLocalizedName(getLocalizedString(FIELD_AREA, "Area"), currentLocale);
 		if (displayColumn(FIELD_AREA)) {
-			_fields.add(area);
+			this._fields.add(area);
 			reportCollection.addField(area);
 		}
 		
@@ -142,35 +142,35 @@ public class SchoolReportBusinessBean extends IBOSessionBean implements SchoolRe
 		email.setLocalizedName(getLocalizedString(FIELD_EMAIL, "E-mail"), currentLocale);
 		email.setMaxNumberOfCharacters(40);
 		if (displayColumn(FIELD_EMAIL)) {
-			_fields.add(email);
+			this._fields.add(email);
 			reportCollection.addField(email);
 		}
 		
 		ReportableField phone = new ReportableField(FIELD_PHONE, String.class);
 		phone.setLocalizedName(getLocalizedString(FIELD_PHONE, "Phone"), currentLocale);
 		if (displayColumn(FIELD_PHONE)) {
-			_fields.add(phone);
+			this._fields.add(phone);
 			reportCollection.addField(phone);
 		}
 		
 		ReportableField gender = new ReportableField(FIELD_GENDER, String.class);
 		gender.setLocalizedName(getLocalizedString(FIELD_GENDER, "Gender"), currentLocale);
 		if (displayColumn(FIELD_GENDER)) {
-			_fields.add(gender);
+			this._fields.add(gender);
 			reportCollection.addField(gender);
 		}
 		
 		ReportableField language = new ReportableField(FIELD_LANGUAGE, String.class);
 		language.setLocalizedName(getLocalizedString(FIELD_LANGUAGE, "Language"), currentLocale);
 		if (displayColumn(FIELD_LANGUAGE)) {
-			_fields.add(language);
+			this._fields.add(language);
 			reportCollection.addField(language);
 		}
 		
 		ReportableField nativeLanguage = new ReportableField(FIELD_NATIVE_LANGUAGE, String.class);
 		nativeLanguage.setLocalizedName(getLocalizedString(FIELD_NATIVE_LANGUAGE, "Native language"), currentLocale);
 		if (displayColumn(FIELD_NATIVE_LANGUAGE)) {
-			_fields.add(nativeLanguage);
+			this._fields.add(nativeLanguage);
 			reportCollection.addField(nativeLanguage);
 		}
 		
@@ -178,14 +178,14 @@ public class SchoolReportBusinessBean extends IBOSessionBean implements SchoolRe
 		swedishLanguage.setLocalizedName(getLocalizedString(FIELD_SWEDISH_AS_SECOND_LANGUAGE, "Swedish as second language"), currentLocale);
 		swedishLanguage.setMaxNumberOfCharacters(30);
 		if (displayColumn(FIELD_SWEDISH_AS_SECOND_LANGUAGE)) {
-			_fields.add(swedishLanguage);
+			this._fields.add(swedishLanguage);
 			reportCollection.addField(swedishLanguage);
 		}
 		
 		ReportableField terminationDate = new ReportableField(FIELD_TERMINATION_DATE, String.class);
 		terminationDate.setLocalizedName(getLocalizedString(FIELD_TERMINATION_DATE, "Termination date"), currentLocale);
 		if (displayColumn(FIELD_TERMINATION_DATE)) {
-			_fields.add(terminationDate);
+			this._fields.add(terminationDate);
 			reportCollection.addField(terminationDate);
 		}
 		
@@ -193,7 +193,7 @@ public class SchoolReportBusinessBean extends IBOSessionBean implements SchoolRe
 		custodian.setLocalizedName(getLocalizedString(FIELD_CUSTODIAN, "Custodian"), currentLocale);
 		custodian.setMaxNumberOfCharacters(50);
 		if (displayColumn(FIELD_CUSTODIAN)) {
-			_fields.add(custodian);
+			this._fields.add(custodian);
 			reportCollection.addField(custodian);
 		}
 		
@@ -201,7 +201,7 @@ public class SchoolReportBusinessBean extends IBOSessionBean implements SchoolRe
 		alternateAddress.setLocalizedName(getLocalizedString(FIELD_ALTERNATE_ADDRESS, "Alternate address"), currentLocale);
 		alternateAddress.setMaxNumberOfCharacters(30);
 		if (displayColumn(FIELD_ALTERNATE_ADDRESS)) {
-			_fields.add(alternateAddress);
+			this._fields.add(alternateAddress);
 			reportCollection.addField(alternateAddress);
 		}
 		
@@ -209,7 +209,7 @@ public class SchoolReportBusinessBean extends IBOSessionBean implements SchoolRe
 		yearsWithLanguage.setLocalizedName(getLocalizedString(FIELD_YEARS_WITH_LANGUAGE, "Years with language"), currentLocale);
 		yearsWithLanguage.setMaxNumberOfCharacters(50);
 		if (displayColumn(FIELD_YEARS_WITH_LANGUAGE)) {
-			_fields.add(yearsWithLanguage);
+			this._fields.add(yearsWithLanguage);
 			reportCollection.addField(yearsWithLanguage);
 		}
 		
@@ -217,7 +217,7 @@ public class SchoolReportBusinessBean extends IBOSessionBean implements SchoolRe
 		handicraft.setLocalizedName(getLocalizedString("school.handicraft.choice_of_handicraft", "Choice of handicraft"), currentLocale);
 		handicraft.setMaxNumberOfCharacters(100);
 		if (displayColumn(FIELD_HANDICRAFT)) {
-			_fields.add(handicraft);
+			this._fields.add(handicraft);
 			reportCollection.addField(handicraft);
 		}
 		
@@ -314,16 +314,18 @@ public class SchoolReportBusinessBean extends IBOSessionBean implements SchoolRe
 				
 				if (displayColumn(FIELD_GENDER)) {
 					String genderString = null;
-					if (PIDChecker.getInstance().isFemale(user.getPersonalID()))
-						genderString = _iwrb.getLocalizedString("school.girl", "Girl");
-					else
-						genderString = _iwrb.getLocalizedString("school.boy", "Boy");
+					if (PIDChecker.getInstance().isFemale(user.getPersonalID())) {
+						genderString = this._iwrb.getLocalizedString("school.girl", "Girl");
+					}
+					else {
+						genderString = this._iwrb.getLocalizedString("school.boy", "Boy");
+					}
 					data.addData(gender, genderString);
 				}
 				
 				if (displayColumn(FIELD_LANGUAGE)) {
 					if (student.getLanguage() != null) {
-						data.addData(language, _iwrb.getLocalizedString(student.getLanguage(), student.getLanguage()));
+						data.addData(language, this._iwrb.getLocalizedString(student.getLanguage(), student.getLanguage()));
 					}
 					else {
 						data.addData(language, "-");
@@ -340,7 +342,7 @@ public class SchoolReportBusinessBean extends IBOSessionBean implements SchoolRe
 				}
 				
 				if (displayColumn(FIELD_SWEDISH_AS_SECOND_LANGUAGE)) {
-					data.addData(swedishLanguage, _iwrb.getLocalizedString(String.valueOf(hasSecondLanguage), String.valueOf(hasSecondLanguage)));
+					data.addData(swedishLanguage, this._iwrb.getLocalizedString(String.valueOf(hasSecondLanguage), String.valueOf(hasSecondLanguage)));
 				}
 				
 				if (displayColumn(FIELD_TERMINATION_DATE)) {
@@ -380,7 +382,7 @@ public class SchoolReportBusinessBean extends IBOSessionBean implements SchoolRe
 				if (displayColumn(FIELD_HANDICRAFT)) {
 					SchoolStudyPath handicraftPath = student.getHandicraft();
 					if (handicraftPath != null) {
-						String s = _iwrb.getLocalizedString(handicraftPath.getLocalizedKey(), handicraftPath.getLocalizedKey());
+						String s = this._iwrb.getLocalizedString(handicraftPath.getLocalizedKey(), handicraftPath.getLocalizedKey());
 						data.addData(handicraft, s);
 					}
 				}
@@ -397,7 +399,7 @@ public class SchoolReportBusinessBean extends IBOSessionBean implements SchoolRe
 		}
 		
 		ReportableData count = new ReportableData();
-		count.addData((ReportableField)_fields.get(0), getLocalizedString("number_of_students", "Number of students:") + " " + String.valueOf(numberOfStudents));
+		count.addData((ReportableField)this._fields.get(0), getLocalizedString("number_of_students", "Number of students:") + " " + String.valueOf(numberOfStudents));
 		reportCollection.add(count);
 		
 		return reportCollection;
@@ -414,119 +416,119 @@ public class SchoolReportBusinessBean extends IBOSessionBean implements SchoolRe
 		ReportableField personalID = new ReportableField(FIELD_PERSONAL_ID, String.class);
 		personalID.setLocalizedName(getLocalizedString(FIELD_PERSONAL_ID, "Personal ID"), currentLocale);
 		if (displayColumn(FIELD_PERSONAL_ID)) {
-			_fields.add(personalID);
+			this._fields.add(personalID);
 			reportCollection.addField(personalID);
 		}
 		
 		ReportableField name = new ReportableField(FIELD_NAME, String.class);
 		name.setLocalizedName(getLocalizedString(FIELD_NAME, "Name"), currentLocale);
 		if (displayColumn(FIELD_NAME)) {
-			_fields.add(name);
+			this._fields.add(name);
 			reportCollection.addField(name);
 		}
 	
 		ReportableField address = new ReportableField(FIELD_ADDRESS, String.class);
 		address.setLocalizedName(getLocalizedString(FIELD_ADDRESS, "Address"), currentLocale);
 		if (displayColumn(FIELD_ADDRESS)) {
-			_fields.add(address);
+			this._fields.add(address);
 			reportCollection.addField(address);
 		}
 		
 		ReportableField zipCode = new ReportableField(FIELD_ZIP_CODE, String.class);
 		zipCode.setLocalizedName(getLocalizedString(FIELD_ZIP_CODE, "Zip code"), currentLocale);
 		if (displayColumn(FIELD_ZIP_CODE)) {
-			_fields.add(zipCode);
+			this._fields.add(zipCode);
 			reportCollection.addField(zipCode);
 		}
 		
 		ReportableField area = new ReportableField(FIELD_AREA, String.class);
 		area.setLocalizedName(getLocalizedString(FIELD_AREA, "Area"), currentLocale);
 		if (displayColumn(FIELD_AREA)) {
-			_fields.add(area);
+			this._fields.add(area);
 			reportCollection.addField(area);
 		}
 		
 		ReportableField email = new ReportableField(FIELD_EMAIL, String.class);
 		email.setLocalizedName(getLocalizedString(FIELD_EMAIL, "E-mail"), currentLocale);
 		if (displayColumn(FIELD_EMAIL)) {
-			_fields.add(email);
+			this._fields.add(email);
 			reportCollection.addField(email);
 		}
 		
 		ReportableField phone = new ReportableField(FIELD_PHONE, String.class);
 		phone.setLocalizedName(getLocalizedString(FIELD_PHONE, "Phone"), currentLocale);
 		if (displayColumn(FIELD_PHONE)) {
-			_fields.add(phone);
+			this._fields.add(phone);
 			reportCollection.addField(phone);
 		}
 		
 		ReportableField gender = new ReportableField(FIELD_GENDER, String.class);
 		gender.setLocalizedName(getLocalizedString(FIELD_GENDER, "Gender"), currentLocale);
 		if (displayColumn(FIELD_GENDER)) {
-			_fields.add(gender);
+			this._fields.add(gender);
 			reportCollection.addField(gender);
 		}
 		
 		ReportableField fromSchool = new ReportableField(FIELD_FROM_SCHOOL, String.class);
 		fromSchool.setLocalizedName(getLocalizedString(FIELD_FROM_SCHOOL, "From school"), currentLocale);
 		if (displayColumn(FIELD_FROM_SCHOOL)) {
-			_fields.add(fromSchool);
+			this._fields.add(fromSchool);
 			reportCollection.addField(fromSchool);
 		}
 		
 		ReportableField applicationDate = new ReportableField(FIELD_APPLICATION_DATE, String.class);
 		applicationDate.setLocalizedName(getLocalizedString(FIELD_APPLICATION_DATE, "From school"), currentLocale);
 		if (displayColumn(FIELD_APPLICATION_DATE)) {
-			_fields.add(applicationDate);
+			this._fields.add(applicationDate);
 			reportCollection.addField(applicationDate);
 		}
 		
 		ReportableField message = new ReportableField(FIELD_MESSAGE, String.class);
 		message.setLocalizedName(getLocalizedString(FIELD_MESSAGE, "Message"), currentLocale);
 		if (displayColumn(FIELD_MESSAGE)) {
-			_fields.add(message);
+			this._fields.add(message);
 			reportCollection.addField(message);
 		}
 		
 		ReportableField extra_message = new ReportableField(FIELD_EXTRA_MESSAGE, String.class);
 		extra_message.setLocalizedName(getLocalizedString(FIELD_EXTRA_MESSAGE, "Extra_message"), currentLocale);
 		if (displayColumn(FIELD_EXTRA_MESSAGE)) {
-			_fields.add(extra_message);
+			this._fields.add(extra_message);
 			reportCollection.addField(extra_message);
 		}
 		
 		ReportableField language = new ReportableField(FIELD_LANGUAGE_CHOICE, String.class);
 		language.setLocalizedName(getLocalizedString(FIELD_LANGUAGE_CHOICE, "Language choice"), currentLocale);
 		if (displayColumn(FIELD_LANGUAGE_CHOICE)) {
-			_fields.add(language);
+			this._fields.add(language);
 			reportCollection.addField(language);
 		}
 		
 		ReportableField nativeLanguage = new ReportableField(FIELD_NATIVE_LANGUAGE, String.class);
 		nativeLanguage.setLocalizedName(getLocalizedString(FIELD_NATIVE_LANGUAGE, "Native language"), currentLocale);
 		if (displayColumn(FIELD_NATIVE_LANGUAGE)) {
-			_fields.add(nativeLanguage);
+			this._fields.add(nativeLanguage);
 			reportCollection.addField(nativeLanguage);
 		}
 		
 		ReportableField custodian = new ReportableField(FIELD_CUSTODIAN, String.class);
 		custodian.setLocalizedName(getLocalizedString(FIELD_CUSTODIAN, "Custodian"), currentLocale);
 		if (displayColumn(FIELD_CUSTODIAN)) {
-			_fields.add(custodian);
+			this._fields.add(custodian);
 			reportCollection.addField(custodian);
 		}
 		
 		ReportableField alternateAddress = new ReportableField(FIELD_ALTERNATE_ADDRESS, String.class);
 		alternateAddress.setLocalizedName(getLocalizedString(FIELD_ALTERNATE_ADDRESS, "Alternate address"), currentLocale);
 		if (displayColumn(FIELD_ALTERNATE_ADDRESS)) {
-			_fields.add(alternateAddress);
+			this._fields.add(alternateAddress);
 			reportCollection.addField(alternateAddress);
 		}
 		
 		ReportableField handicraft = new ReportableField(FIELD_HANDICRAFT, String.class);
 		handicraft.setLocalizedName(getLocalizedString(FIELD_HANDICRAFT, "Choice of handicraft"), currentLocale);
 		if (displayColumn(FIELD_HANDICRAFT)) {
-			_fields.add(handicraft);
+			this._fields.add(handicraft);
 			reportCollection.addField(handicraft);
 		}
 		int numberOfChoices = 0;
@@ -534,8 +536,9 @@ public class SchoolReportBusinessBean extends IBOSessionBean implements SchoolRe
 		try {
 			String[] validStatuses = new String[] { getSchoolChoiceBusiness().getCaseStatusPreliminary().getStatus(), getSchoolChoiceBusiness().getCaseStatusMoved().getStatus(), getSchoolChoiceBusiness().getCaseStatusPlaced().getStatus() };
 			int schoolYearAge = getSchoolCommuneBusiness().getGradeForYear(getSchoolSession().getSchoolYearID());
-			if (!getSchoolCommuneBusiness().isOngoingSeason(getSchoolSession().getSchoolSeasonID()))
+			if (!getSchoolCommuneBusiness().isOngoingSeason(getSchoolSession().getSchoolSeasonID())) {
 				schoolYearAge--;
+			}
 			Collection applicants = getSchoolChoiceBusiness().getApplicantsForSchool(getSchoolSession().getSchoolID(), getSchoolSession().getSchoolSeasonID(), schoolYearAge, validStatuses, null, SchoolChoiceComparator.NAME_SORT, -1, -1);
 			
 			Iterator iter = applicants.iterator();
@@ -600,16 +603,18 @@ public class SchoolReportBusinessBean extends IBOSessionBean implements SchoolRe
 				
 				if (displayColumn(FIELD_GENDER)) {
 					String genderString = null;
-					if (PIDChecker.getInstance().isFemale(user.getPersonalID()))
-						genderString = _iwrb.getLocalizedString("school.girl", "Girl");
-					else
-						genderString = _iwrb.getLocalizedString("school.boy", "Boy");
+					if (PIDChecker.getInstance().isFemale(user.getPersonalID())) {
+						genderString = this._iwrb.getLocalizedString("school.girl", "Girl");
+					}
+					else {
+						genderString = this._iwrb.getLocalizedString("school.boy", "Boy");
+					}
 					data.addData(gender, genderString);
 				}
 				
 				if (displayColumn(FIELD_LANGUAGE_CHOICE)) {
 					if (choice.getLanguageChoice() != null) {
-						data.addData(language, _iwrb.getLocalizedString(choice.getLanguageChoice(), choice.getLanguageChoice()));
+						data.addData(language, this._iwrb.getLocalizedString(choice.getLanguageChoice(), choice.getLanguageChoice()));
 					}
 				}
 				
@@ -626,7 +631,9 @@ public class SchoolReportBusinessBean extends IBOSessionBean implements SchoolRe
 					}
 					else{
 					     String schoolName = choice.getFromSchool(choice.getChosenSchoolId(),choice.getSchoolSeasonId(),choice.getChildId());
-					     if(schoolName==null) schoolName = choice.getChosenSchool().getName();
+					     if(schoolName==null) {
+								schoolName = choice.getChosenSchool().getName();
+							}
 						 data.addData(fromSchool, schoolName);
 					}
 
@@ -681,14 +688,14 @@ public class SchoolReportBusinessBean extends IBOSessionBean implements SchoolRe
 		}
 		
 		ReportableData count = new ReportableData();
-		count.addData((ReportableField)_fields.get(0), getLocalizedString("number_of_choices", "Number of choices:") + " " +  String.valueOf(numberOfChoices));
+		count.addData((ReportableField)this._fields.get(0), getLocalizedString("number_of_choices", "Number of choices:") + " " +  String.valueOf(numberOfChoices));
 		reportCollection.add(count);
 		
 		return reportCollection;
 	}
 	
 	private String getLocalizedString(String key, String defaultValue) {
-		return _iwrb.getLocalizedString(PREFIX + key, defaultValue);
+		return this._iwrb.getLocalizedString(PREFIX + key, defaultValue);
 	}
 	
 	private SchoolBusiness getSchoolBusiness() {

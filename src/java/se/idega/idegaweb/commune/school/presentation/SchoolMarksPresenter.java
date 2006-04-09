@@ -21,7 +21,7 @@ import se.idega.idegaweb.commune.presentation.CommuneBlock;
  * Presents school marks statistics in a formatted table (first version)
  * not approved by Nacka :-(
  * <p>
- * $Id: SchoolMarksPresenter.java,v 1.3 2003/10/06 13:08:52 kjell Exp $
+ * $Id: SchoolMarksPresenter.java,v 1.4 2006/04/09 11:39:53 laddi Exp $
  *
  * @author <a href="mailto:kjell@lindman.com">Kjell Lindman</a>
  * @version $version$
@@ -44,88 +44,88 @@ public class SchoolMarksPresenter  extends CommuneBlock {
 	}
 
 	public void setWidth(String width) {
-		blockWidth = width;
+		this.blockWidth = width;
 	}
 
 	public String setWidth() {
-		return blockWidth;
+		return this.blockWidth;
 	}
 
 	public void setHeaderColor(String color) {
-		headerColor = color;
+		this.headerColor = color;
 	}
 
 	public void setLinkStyle(String style) {
-		linkStyle = style;
+		this.linkStyle = style;
 	}
 
 	public String getHeaderColor() {
-		return headerColor;
+		return this.headerColor;
 	}
 
 	public void setHeaderStyle(String style) {
-		headerStyle = style;
+		this.headerStyle = style;
 	}
 
 	public void setTextStyle(String style) {
-		textStyle = style;
+		this.textStyle = style;
 	}
 
 	public String getHeaderStyle() {
-		return headerStyle;
+		return this.headerStyle;
 	}
 	
 	public String getLinkStyle() {
-		return linkStyle;
+		return this.linkStyle;
 	}
 
 	public String getTextStyle() {
-		return textStyle;
+		return this.textStyle;
 	}
 
 	public void main(IWContext iwc) throws Exception {
-		iwrb = getResourceBundle(iwc);
-		mainForm = new Form();
+		this.iwrb = getResourceBundle(iwc);
+		this.mainForm = new Form();
 		init(iwc);
 		try {
 			viewSchoolMarksList(iwc);
 		} catch (Exception e) {
 			super.add(new ExceptionWrapper(e, this));
 		}
-		add(mainForm);	
+		add(this.mainForm);	
 	}
 
 	private void viewSchoolMarksList(IWContext iwc) {	
 		
-		iwrb.getLocalizedString("school_marks_statistics.merite", "Meritvärde");
+		this.iwrb.getLocalizedString("school_marks_statistics.merite", "Meritvärde");
 		int row = 0;
 		
-		Table table1 = getMarksTable(iwrb.getLocalizedString("school_marks_stats.merite", "Meritvärde"),
-									 iwrb.getLocalizedString("school_marks_stats.marks", "Betygspoäng"),
-									 iwrb.getLocalizedString("school_marks_stats.auth", "Behörighetspoäng"));
+		Table table1 = getMarksTable(this.iwrb.getLocalizedString("school_marks_stats.merite", "Meritvärde"),
+									 this.iwrb.getLocalizedString("school_marks_stats.marks", "Betygspoäng"),
+									 this.iwrb.getLocalizedString("school_marks_stats.auth", "Behörighetspoäng"));
 
-		Table table2 = getMarksTable(iwrb.getLocalizedString("school_marks_stats.mvgshare", "Antal och andel G, VG, MVG"),
-									 iwrb.getLocalizedString("school_marks_stats.failed", "Antal och andel ej godkända"),
-									 iwrb.getLocalizedString("school_marks_stats.nogoal", "Antal som ej uppnått mål i beh. givamde ämne"));
+		Table table2 = getMarksTable(this.iwrb.getLocalizedString("school_marks_stats.mvgshare", "Antal och andel G, VG, MVG"),
+									 this.iwrb.getLocalizedString("school_marks_stats.failed", "Antal och andel ej godkända"),
+									 this.iwrb.getLocalizedString("school_marks_stats.nogoal", "Antal som ej uppnått mål i beh. givamde ämne"));
 										
 
 		Collection marks = null;
 		try {
-			marks = smBiz.findSchoolMarksStatistics(iwc);
+			marks = this.smBiz.findSchoolMarksStatistics(iwc);
 			Iterator iter1 = marks.iterator();
 			Iterator iter2 = marks.iterator();
 			
-			smBiz.resetMeanValues();
+			this.smBiz.resetMeanValues();
 			while (iter1.hasNext()) {
 				SchoolStatistics stat = (SchoolStatistics) iter1.next();
 
-				smBiz.sumMeriteValue(""+stat.getMeriteValue().number);
-				smBiz.sumMarksPoints(""+stat.getMarksPoints().number);
-				smBiz.sumAuthPoints(""+stat.getAuthPoints().number);
+				this.smBiz.sumMeriteValue(""+stat.getMeriteValue().number);
+				this.smBiz.sumMarksPoints(""+stat.getMarksPoints().number);
+				this.smBiz.sumAuthPoints(""+stat.getAuthPoints().number);
 
-				smBiz.sumMarksNumberShare(""+stat.getMarksNumberShare().number);
-				smBiz.sumMarksFailed(""+stat.getMarksFailed().number);
-				smBiz.sumMarksNoGoal(""+stat.getMarksNoGoal().number);
+				this.smBiz.sumMarksNumberShare(""+stat.getMarksNumberShare().number);
+				this.smBiz.sumMarksFailed(""+stat.getMarksFailed().number);
+				this.smBiz.sumMarksNoGoal(""+stat.getMarksNoGoal().number);
 					
 			}
 			row = 3;
@@ -135,24 +135,24 @@ public class SchoolMarksPresenter  extends CommuneBlock {
 				table1.add(getSmallText(stat.getSchoolName()), 1, row);
 				
 				table1.add(getSmallText(stat.getMeriteValue().number), 2, row);
-				table1.add(formatPct(stat.getMeriteValue().number, smBiz.getSumMeriteValue()), 3, row);
+				table1.add(formatPct(stat.getMeriteValue().number, this.smBiz.getSumMeriteValue()), 3, row);
 
 				table1.add(getSmallText(stat.getMarksPoints().number), 4, row);
-				table1.add(formatPct(stat.getMarksPoints().number, smBiz.getSumMarksPoints()), 5, row);
+				table1.add(formatPct(stat.getMarksPoints().number, this.smBiz.getSumMarksPoints()), 5, row);
 
 				table1.add(getSmallText(stat.getAuthPoints().number), 6, row);
-				table1.add(formatPct(stat.getAuthPoints().number, smBiz.getSumAuthPoints()), 7, row);
+				table1.add(formatPct(stat.getAuthPoints().number, this.smBiz.getSumAuthPoints()), 7, row);
 
 				table2.add(getSmallText(stat.getSchoolName()), 1, row);
 
 				table2.add(getSmallText(stat.getMarksNumberShare().number), 2, row);
-				table2.add(formatPct(stat.getMarksNumberShare().number, smBiz.getSumMarksNumberShare()), 3, row);
+				table2.add(formatPct(stat.getMarksNumberShare().number, this.smBiz.getSumMarksNumberShare()), 3, row);
 
 				table2.add(getSmallText(stat.getMarksFailed().number), 4, row);
-				table2.add(formatPct(stat.getMarksFailed().number, smBiz.getSumMarksFailed()), 5, row);
+				table2.add(formatPct(stat.getMarksFailed().number, this.smBiz.getSumMarksFailed()), 5, row);
 
 				table2.add(getSmallText(stat.getMarksNoGoal().number), 6, row);
-				table2.add(formatPct(stat.getMarksNoGoal().number, smBiz.getSumMarksNoGoal()), 7, row);
+				table2.add(formatPct(stat.getMarksNoGoal().number, this.smBiz.getSumMarksNoGoal()), 7, row);
 
 				if (row % 2 == 0) { 
 					table1.setRowColor(row, getZebraColor1());
@@ -164,15 +164,15 @@ public class SchoolMarksPresenter  extends CommuneBlock {
 				row++;
 			}
 
-			table1.add(getSmallText(iwrb.getLocalizedString("school_marks_stats.wholecom", "Hela kommunen")), 1, row+1);			
-			table1.add(getSmallText(round(smBiz.getCommuneMeanMeriteValue(), 0)), 2, row+1);
-			table1.add(getSmallText(round(smBiz.getCommuneMeanMarksPoints(), 2)), 4, row+1);
-			table1.add(getSmallText(round(smBiz.getCommuneMeanAuthPoints(), 0)), 6, row+1);
+			table1.add(getSmallText(this.iwrb.getLocalizedString("school_marks_stats.wholecom", "Hela kommunen")), 1, row+1);			
+			table1.add(getSmallText(round(this.smBiz.getCommuneMeanMeriteValue(), 0)), 2, row+1);
+			table1.add(getSmallText(round(this.smBiz.getCommuneMeanMarksPoints(), 2)), 4, row+1);
+			table1.add(getSmallText(round(this.smBiz.getCommuneMeanAuthPoints(), 0)), 6, row+1);
 
-			table2.add(getSmallText(iwrb.getLocalizedString("school_marks_stats.wholecom", "Hela kommunen")), 1, row+1);			
-			table2.add(getSmallText(round(smBiz.getCommuneMeanMarksNumberShare(), 0)), 2, row+1);
-			table2.add(getSmallText(round(smBiz.getCommuneMeanMarksFailed(), 0)), 4, row+1);
-			table2.add(getSmallText(round(smBiz.getCommuneMeanMarksNoGoal(), 0)), 6, row+1);
+			table2.add(getSmallText(this.iwrb.getLocalizedString("school_marks_stats.wholecom", "Hela kommunen")), 1, row+1);			
+			table2.add(getSmallText(round(this.smBiz.getCommuneMeanMarksNumberShare(), 0)), 2, row+1);
+			table2.add(getSmallText(round(this.smBiz.getCommuneMeanMarksFailed(), 0)), 4, row+1);
+			table2.add(getSmallText(round(this.smBiz.getCommuneMeanMarksNoGoal(), 0)), 6, row+1);
 			
 		} catch (RemoteException e) {
 			e.printStackTrace();		
@@ -204,9 +204,9 @@ public class SchoolMarksPresenter  extends CommuneBlock {
 			e.printStackTrace();		
 		}	
 */
-		mainForm.add(table1);
-		mainForm.add(new Break());
-		mainForm.add(table2);
+		this.mainForm.add(table1);
+		this.mainForm.add(new Break());
+		this.mainForm.add(table2);
 
 	}
 
@@ -253,7 +253,7 @@ public class SchoolMarksPresenter  extends CommuneBlock {
 		ret.setBorder(1);
 		ret.setCellspacing("0");
 		ret.setCellpadding("3");
-		ret.setWidth(blockWidth);
+		ret.setWidth(this.blockWidth);
 		ret.mergeCells(1, 1, 1, 2);
 
 		ret.mergeCells(2, 1, 3, 1);
@@ -264,11 +264,11 @@ public class SchoolMarksPresenter  extends CommuneBlock {
 		ret.add(getSmallText(header2), 4, 1);			
 		ret.add(getSmallText(header3), 6, 1);
 
-		ret.add(getSmallText(iwrb.getLocalizedString("school_marks_stats.value", "Värde")), 2, 2);			
+		ret.add(getSmallText(this.iwrb.getLocalizedString("school_marks_stats.value", "Värde")), 2, 2);			
 		ret.add(getSmallText("%"), 3, 2);			
-		ret.add(getSmallText(iwrb.getLocalizedString("school_marks_stats.value", "Värde")), 4, 2);			
+		ret.add(getSmallText(this.iwrb.getLocalizedString("school_marks_stats.value", "Värde")), 4, 2);			
 		ret.add(getSmallText("%"), 5, 2);			
-		ret.add(getSmallText(iwrb.getLocalizedString("school_marks_stats.value", "Värde")), 6, 2);			
+		ret.add(getSmallText(this.iwrb.getLocalizedString("school_marks_stats.value", "Värde")), 6, 2);			
 		ret.add(getSmallText("%"), 7, 2);			
 
 		ret.setColor(2, 1, "#aaaaaa");			
@@ -279,7 +279,7 @@ public class SchoolMarksPresenter  extends CommuneBlock {
 
 	private void init(IWContext iwc) {
 		try {
-			smBiz = getSchoolMarksBusiness(iwc);
+			this.smBiz = getSchoolMarksBusiness(iwc);
 		} catch (RemoteException e) {
 			e.printStackTrace();		
 		} catch (Exception e) {

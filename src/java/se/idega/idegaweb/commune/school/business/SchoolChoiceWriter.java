@@ -67,18 +67,18 @@ public class SchoolChoiceWriter implements MediaWritable {
 	
 	public void init(HttpServletRequest req, IWContext iwc) {
 		try {
-			locale = iwc.getApplicationSettings().getApplicationLocale();
-			business = getSchoolCommuneBusiness(iwc);
-			userBusiness = getCommuneUserBusiness(iwc);
-			iwrb = iwc.getIWMainApplication().getBundle(CommuneBlock.IW_BUNDLE_IDENTIFIER).getResourceBundle(locale);
+			this.locale = iwc.getApplicationSettings().getApplicationLocale();
+			this.business = getSchoolCommuneBusiness(iwc);
+			this.userBusiness = getCommuneUserBusiness(iwc);
+			this.iwrb = iwc.getIWMainApplication().getBundle(CommuneBlock.IW_BUNDLE_IDENTIFIER).getResourceBundle(this.locale);
 			
 			if (req.getParameter(prmSeasonId) != null && req.getParameter(prmSchoolId) != null) {
-				season = Integer.parseInt(req.getParameter(prmSeasonId));
-				school = Integer.parseInt(req.getParameter(prmSchoolId));
-				grade = Integer.parseInt(req.getParameter(prmGrade));				
+				this.season = Integer.parseInt(req.getParameter(prmSeasonId));
+				this.school = Integer.parseInt(req.getParameter(prmSchoolId));
+				this.grade = Integer.parseInt(req.getParameter(prmGrade));				
 				this.setShowPriorityColumn(Boolean.valueOf(req.getParameter(PARAMETER_SHOW_PRIORITY_COLUMN)).booleanValue());
 				this.setShowHandicraftColumn(Boolean.valueOf(req.getParameter(PARAMETER_SHOW_HANDICRAFT_COLUMN)).booleanValue());
-				buffer = writeXLS(school, season, grade);
+				this.buffer = writeXLS(this.school, this.season, this.grade);
 			}
 		}
 		catch (Exception e) {
@@ -87,36 +87,39 @@ public class SchoolChoiceWriter implements MediaWritable {
 	}
 	
 	public String getMimeType() {
-		if (buffer != null)
-			return buffer.getMimeType();
+		if (this.buffer != null) {
+			return this.buffer.getMimeType();
+		}
 		return "application/x-msexcel";
 	}
 	
 	public void writeTo(OutputStream out) throws IOException {
-		if (buffer != null) {
-			MemoryInputStream mis = new MemoryInputStream(buffer);
+		if (this.buffer != null) {
+			MemoryInputStream mis = new MemoryInputStream(this.buffer);
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			while (mis.available() > 0) {
 				baos.write(mis.read());
 			}
 			baos.writeTo(out);
 		}
-		else
+		else {
 			System.err.println("buffer is null");
+		}
 	}
 	
 	public MemoryFileBuffer writeXLS(int schoolID, int seasonID, int grade) throws Exception {
 		MemoryFileBuffer buffer = new MemoryFileBuffer();
 		MemoryOutputStream mos = new MemoryOutputStream(buffer);
 		String[] validStatuses = new String[] { SchoolChoiceBMPBean.CASE_STATUS_PRELIMINARY, SchoolChoiceBMPBean.CASE_STATUS_MOVED };
-		Collection students = business.getSchoolChoiceBusiness().getApplicantsForSchool(schoolID, seasonID, grade, validStatuses, null, SchoolChoiceComparator.NAME_SORT, -1, -1);
+		Collection students = this.business.getSchoolChoiceBusiness().getApplicantsForSchool(schoolID, seasonID, grade, validStatuses, null, SchoolChoiceComparator.NAME_SORT, -1, -1);
 		boolean showLanguage = false;
-		if (grade >= 12)
+		if (grade >= 12) {
 			showLanguage = true;
+		}
 		
 		if (!students.isEmpty()) {
 		    HSSFWorkbook wb = new HSSFWorkbook();
-		    HSSFSheet sheet = wb.createSheet(iwrb.getLocalizedString("school.school_choices","School choices"));
+		    HSSFSheet sheet = wb.createSheet(this.iwrb.getLocalizedString("school.school_choices","School choices"));
 		    sheet.setColumnWidth((short)0, (short) (30 * 256));
 		    sheet.setColumnWidth((short)1, (short) (14 * 256));
 		    sheet.setColumnWidth((short)2, (short) (30 * 256));
@@ -134,38 +137,38 @@ public class SchoolChoiceWriter implements MediaWritable {
 			int cellColumn = 0;
 			HSSFRow row = sheet.createRow(cellRow++);
 			HSSFCell cell = row.createCell((short)cellColumn++);
-		    cell.setCellValue(iwrb.getLocalizedString("school.name","Name"));
+		    cell.setCellValue(this.iwrb.getLocalizedString("school.name","Name"));
 		    cell.setCellStyle(style);
 		    cell = row.createCell((short)cellColumn++);
-		    cell.setCellValue(iwrb.getLocalizedString("school.personal_id","Personal ID"));
+		    cell.setCellValue(this.iwrb.getLocalizedString("school.personal_id","Personal ID"));
 		    cell.setCellStyle(style);
 		    cell = row.createCell((short)cellColumn++);
-		    cell.setCellValue(iwrb.getLocalizedString("school.address","Address"));
+		    cell.setCellValue(this.iwrb.getLocalizedString("school.address","Address"));
 		    cell.setCellStyle(style);
 			cell = row.createCell((short)cellColumn++);
-			cell.setCellValue(iwrb.getLocalizedString("school.gender","Gender"));
+			cell.setCellValue(this.iwrb.getLocalizedString("school.gender","Gender"));
 			cell.setCellStyle(style);
 		    cell = row.createCell((short)cellColumn++);
-		    cell.setCellValue(iwrb.getLocalizedString("school.from_school","From School"));
+		    cell.setCellValue(this.iwrb.getLocalizedString("school.from_school","From School"));
 		    cell.setCellStyle(style);
 		    if (showLanguage) {
 			    cell = row.createCell((short)cellColumn++);
-			    cell.setCellValue(iwrb.getLocalizedString("school.language","Language"));
+			    cell.setCellValue(this.iwrb.getLocalizedString("school.language","Language"));
 			    cell.setCellStyle(style);
 			}
 		    cell = row.createCell((short)cellColumn++);
-		    cell.setCellValue(iwrb.getLocalizedString("school.created","Created"));
+		    cell.setCellValue(this.iwrb.getLocalizedString("school.created","Created"));
 		    cell.setCellStyle(style);
 		    
 		    if(this.getShowPriorityColumn()) {
 			    cell = row.createCell((short)cellColumn++);			    
-			    cell.setCellValue(iwrb.getLocalizedString("school_choice.priority", "Priority"));
+			    cell.setCellValue(this.iwrb.getLocalizedString("school_choice.priority", "Priority"));
 			    cell.setCellStyle(style);	    
 		    }
 		    
 		    if(this.isShowHandicraftColumn()) {
 			    cell = row.createCell((short)cellColumn++);			    
-			    cell.setCellValue(iwrb.getLocalizedString("school.handicraft", "Handicraft"));
+			    cell.setCellValue(this.iwrb.getLocalizedString("school.handicraft", "Handicraft"));
 			    cell.setCellStyle(style);	    
 		    }		    
 	    
@@ -182,47 +185,53 @@ public class SchoolChoiceWriter implements MediaWritable {
 				choice = (SchoolChoice) iter.next();
 				created = new IWTimestamp(choice.getCreated());
 				applicant = choice.getChild();
-				school = business.getSchoolBusiness().getSchool(new Integer(choice.getCurrentSchoolId()));
-				address = userBusiness.getUsersMainAddress(applicant);
+				school = this.business.getSchoolBusiness().getSchool(new Integer(choice.getCurrentSchoolId()));
+				address = this.userBusiness.getUsersMainAddress(applicant);
 				
 				Name name = new Name(applicant.getFirstName(), applicant.getMiddleName(), applicant.getLastName());
-				row.createCell((short)cellColumn++).setCellValue(name.getName(locale, true));
-			    row.createCell((short)cellColumn++).setCellValue(PersonalIDFormatter.format(applicant.getPersonalID(), locale));
-			    if (address != null)
-				    row.createCell((short)cellColumn).setCellValue(address.getStreetAddress());
+				row.createCell((short)cellColumn++).setCellValue(name.getName(this.locale, true));
+			    row.createCell((short)cellColumn++).setCellValue(PersonalIDFormatter.format(applicant.getPersonalID(), this.locale));
+			    if (address != null) {
+						row.createCell((short)cellColumn).setCellValue(address.getStreetAddress());
+					}
 			    cellColumn++;
 			    
-			    if (applicant.getGender().isFemaleGender())
-			    	row.createCell((short)cellColumn++).setCellValue(iwrb.getLocalizedString("school.girl", "Girl"));
-			    else
-			    	row.createCell((short)cellColumn++).setCellValue(iwrb.getLocalizedString("school.boy", "Boy"));
+			    if (applicant.getGender().isFemaleGender()) {
+						row.createCell((short)cellColumn++).setCellValue(this.iwrb.getLocalizedString("school.girl", "Girl"));
+					}
+					else {
+						row.createCell((short)cellColumn++).setCellValue(this.iwrb.getLocalizedString("school.boy", "Boy"));
+					}
 	
 			    if (school != null) {
 			    	String schoolName = school.getName();
-			    	if (choice.getStatus().equalsIgnoreCase(SchoolChoiceBMPBean.CASE_STATUS_MOVED))
-			    		schoolName += " (" + iwrb.getLocalizedString("school.moved", "Moved") + ")";
+			    	if (choice.getStatus().equalsIgnoreCase(SchoolChoiceBMPBean.CASE_STATUS_MOVED)) {
+							schoolName += " (" + this.iwrb.getLocalizedString("school.moved", "Moved") + ")";
+						}
 			    	row.createCell((short)cellColumn).setCellValue(schoolName);
 			    }
 			    cellColumn++;
 			    
 			    if (showLanguage) {
-			    	if (choice.getLanguageChoice() != null)
-			    		row.createCell((short)cellColumn).setCellValue(iwrb.getLocalizedString(choice.getLanguageChoice(),""));
+			    	if (choice.getLanguageChoice() != null) {
+							row.createCell((short)cellColumn).setCellValue(this.iwrb.getLocalizedString(choice.getLanguageChoice(),""));
+						}
 			    	cellColumn++;
 			    }
 			    
-			    row.createCell((short)cellColumn++).setCellValue(created.getLocaleDate(locale, IWTimestamp.SHORT));
+			    row.createCell((short)cellColumn++).setCellValue(created.getLocaleDate(this.locale, IWTimestamp.SHORT));
 			    
 			    if (this.getShowPriorityColumn()) {
-			    	String priority = choice.getPriority() ? iwrb.getLocalizedString("school_choice.yes", "Yes") : iwrb.getLocalizedString("school_choice.no", "No");
+			    	String priority = choice.getPriority() ? this.iwrb.getLocalizedString("school_choice.yes", "Yes") : this.iwrb.getLocalizedString("school_choice.no", "No");
 			    	row.createCell((short)cellColumn++).setCellValue(priority);
 			    }
 			    
 			    if (this.isShowHandicraftColumn()) {
 					SchoolStudyPath handicraft = choice.getHandicraft();
-					if (handicraft != null)
+					if (handicraft != null) {
 						row.createCell((short) cellColumn++).setCellValue(
-								iwrb.getLocalizedString(handicraft.getLocalizedKey(), handicraft.getLocalizedKey()));
+								this.iwrb.getLocalizedString(handicraft.getLocalizedKey(), handicraft.getLocalizedKey()));
+					}
 				}
 			    
 			}
@@ -241,7 +250,7 @@ public class SchoolChoiceWriter implements MediaWritable {
 	}
 
 	public boolean getShowPriorityColumn() {
-		return showPriorityColumn;
+		return this.showPriorityColumn;
 	}
 
 	public void setShowPriorityColumn(boolean showPriorityColumn) {
@@ -249,7 +258,7 @@ public class SchoolChoiceWriter implements MediaWritable {
 	}
 	
 	public boolean isShowHandicraftColumn() {
-		return showHandicraftColumn;
+		return this.showHandicraftColumn;
 	}
 	
 	public void setShowHandicraftColumn(boolean showHandicraftColumn) {

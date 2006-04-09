@@ -8,7 +8,7 @@ import se.idega.idegaweb.commune.school.data.SchoolStatisticsData;
 /**
  * Helpclass to hold and calculate school marks statistics
  * <p>
- * $Id: SchoolStatistics.java,v 1.3 2003/12/13 16:51:48 kjell Exp $
+ * $Id: SchoolStatistics.java,v 1.4 2006/04/09 11:39:53 laddi Exp $
  *
  * @author <a href="mailto:kjell@lindman.com">Kjell Lindman</a>
  * @author <a href="mailto:anders.lindman@ncmedia.com">Anders Lindman</a>
@@ -25,13 +25,13 @@ public class SchoolStatistics {
 	String schoolManagementType = null;
 
 	public SchoolStatistics(IWContext iwc,  String code, String name, String smt ) {
-		scbCode = code;
-		schoolName = name;
-		schoolManagementType = smt; 
+		this.scbCode = code;
+		this.schoolName = name;
+		this.schoolManagementType = smt; 
 		try {
-			smBiz = getSchoolMarksBusiness(iwc);
-			smBiz.calculateStatistics(scbCode);
-			schoolStatisticsData = smBiz.getStoredValues(scbCode);
+			this.smBiz = getSchoolMarksBusiness(iwc);
+			this.smBiz.calculateStatistics(this.scbCode);
+			this.schoolStatisticsData = this.smBiz.getStoredValues(this.scbCode);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -39,125 +39,125 @@ public class SchoolStatistics {
 
 	
 	public String getSchoolSCBCode() {
-			return scbCode;
+			return this.scbCode;
 	}
 
 	public String getSchoolName() {
-			return schoolName;
+			return this.schoolName;
 	}
 
 	public String getSchoolManagementType() {
-			return schoolManagementType;
+			return this.schoolManagementType;
 	}
 
 	public void setSchoolSCBCode(String code) {
-			scbCode = code;
+			this.scbCode = code;
 	}
 
 	public void setSchoolName(String name) {
-			schoolName = name;
+			this.schoolName = name;
 	}
 
 	public void setSchoolManagementType(String smt) {
-		schoolManagementType = smt;
+		this.schoolManagementType = smt;
 	}
 
 	public PercentValue getMeriteValue() throws RemoteException {
 		/**
 		 * MeritVärde
 		 */
-		return smBiz.getMeritValue(schoolStatisticsData);
+		return this.smBiz.getMeritValue(this.schoolStatisticsData);
 	}
 	
 	public PercentValue getMarksPoints()  throws RemoteException {
 		/**
 		 * Betygspoäng
 		 */
-		return smBiz.getMarksPoints(schoolStatisticsData);
+		return this.smBiz.getMarksPoints(this.schoolStatisticsData);
 	}
 	
 	public PercentValue getAuthPoints()  throws RemoteException {
 		/**
 		 * Behörighetspoäng
 		 */
-		return smBiz.getAuthPoints(schoolStatisticsData) ;
+		return this.smBiz.getAuthPoints(this.schoolStatisticsData) ;
 	}
 
 	public PercentValue getMarksNumberShare()  throws RemoteException {
 		/**
 		 * Antal och andel G, VG och MVG
 		 */
-		return smBiz.getMarksNumberShare(schoolStatisticsData);
+		return this.smBiz.getMarksNumberShare(this.schoolStatisticsData);
 	}
 	
 	public PercentValue getMarksFailed()  throws RemoteException {
 		/**
 		 * Antal och andel ej godkända
 		 */
-		return smBiz.getMarksFailed(schoolStatisticsData);
+		return this.smBiz.getMarksFailed(this.schoolStatisticsData);
 	}
 
 	public PercentValue getMarksNoGoal()  throws RemoteException {
 		/**
 		 * Antal som ej uppnått mål i behörighetsgivande ämne
 		 */
-		return smBiz.getMarksNoGoal(schoolStatisticsData);
+		return this.smBiz.getMarksNoGoal(this.schoolStatisticsData);
 	}
 
 	public SchoolMarkValues getEnglishMarks()  throws RemoteException {
 		/**
 		 * English
 		 */
-		return smBiz.getEnglishMarks(schoolStatisticsData);
+		return this.smBiz.getEnglishMarks(this.schoolStatisticsData);
 	}
 
 	public SchoolMarkValues getMathsMarks()  throws RemoteException {
 		/**
 		 * Math
 		 */
-		return smBiz.getMathsMarks(schoolStatisticsData);
+		return this.smBiz.getMathsMarks(this.schoolStatisticsData);
 	}
 
 	public SchoolMarkValues getSwedishMarks()  throws RemoteException {
 		/**
 		 * Swedish
 		 */
-		return smBiz.getSwedishMarks(schoolStatisticsData);
+		return this.smBiz.getSwedishMarks(this.schoolStatisticsData);
 	}
 
 	public SchoolMarkValues getSwedish2Marks()  throws RemoteException {
 		/**
 		 * Swedish22
 		 */
-		return smBiz.getSwedish2Marks(schoolStatisticsData);
+		return this.smBiz.getSwedish2Marks(this.schoolStatisticsData);
 	}
 
 	public SchoolMarkValues getSumAuthMarks()  throws RemoteException {
 		/**
 		 * Summed Auth marks
 		 */
-		return smBiz.getSumAuthMarks(schoolStatisticsData);
+		return this.smBiz.getSumAuthMarks(this.schoolStatisticsData);
 	}
 
 	public SchoolMarkValues getTotalMarks()  throws RemoteException {
 		/**
 		 * Summed Auth marks
 		 */
-		return smBiz.getTotalMarks(schoolStatisticsData);
+		return this.smBiz.getTotalMarks(this.schoolStatisticsData);
 	}
 
 	public String getTotalAuthPoints()  {
 		/**
 		 * Summed Total Auth Point
 		 */
-		return schoolStatisticsData.getTotalAuthPoints(); 
+		return this.schoolStatisticsData.getTotalAuthPoints(); 
 	}
 
 	public String getTotalAuthStudents()  {
 		/**
 		 * Summed Total Auth Point
 		 */
-		return schoolStatisticsData.getTotalAuthStudents(); 
+		return this.schoolStatisticsData.getTotalAuthStudents(); 
 	}
 
 

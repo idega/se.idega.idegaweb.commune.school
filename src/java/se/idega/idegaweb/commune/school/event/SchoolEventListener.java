@@ -35,34 +35,41 @@ public class SchoolEventListener implements IWPageEventListener {
 	public boolean actionPerformed(IWContext iwc) {
 		try {
 			SchoolCommuneSession session = getSchoolCommuneSession(iwc);
-			_schoolID = session.getSchoolID();	
+			this._schoolID = session.getSchoolID();	
 	
-			if (iwc.isParameterSet(session.getParameterSchoolID()))
-				_schoolID = Integer.parseInt(iwc.getParameter(session.getParameterSchoolID()));
+			if (iwc.isParameterSet(session.getParameterSchoolID())) {
+				this._schoolID = Integer.parseInt(iwc.getParameter(session.getParameterSchoolID()));
+			}
 			
-			if (iwc.isParameterSet(session.getParameterSchoolSeasonID()))
-				_schoolSeasonID = Integer.parseInt(iwc.getParameter(session.getParameterSchoolSeasonID()));
+			if (iwc.isParameterSet(session.getParameterSchoolSeasonID())) {
+				this._schoolSeasonID = Integer.parseInt(iwc.getParameter(session.getParameterSchoolSeasonID()));
+			}
 			
-			if (iwc.isParameterSet(session.getParameterSchoolYearID()))
-				_schoolYearID = Integer.parseInt(iwc.getParameter(session.getParameterSchoolYearID()));
+			if (iwc.isParameterSet(session.getParameterSchoolYearID())) {
+				this._schoolYearID = Integer.parseInt(iwc.getParameter(session.getParameterSchoolYearID()));
+			}
 			
-			if (iwc.isParameterSet(session.getParameterSchoolClassID()))
-				_schoolClassID = Integer.parseInt(iwc.getParameter(session.getParameterSchoolClassID()));
+			if (iwc.isParameterSet(session.getParameterSchoolClassID())) {
+				this._schoolClassID = Integer.parseInt(iwc.getParameter(session.getParameterSchoolClassID()));
+			}
 			
-			if (iwc.isParameterSet(session.getParameterStudentID()))
-				_studentID = Integer.parseInt(iwc.getParameter(session.getParameterStudentID()));
+			if (iwc.isParameterSet(session.getParameterStudentID())) {
+				this._studentID = Integer.parseInt(iwc.getParameter(session.getParameterStudentID()));
+			}
 			
-			if (iwc.isParameterSet(session.getParameterSchoolGroupIDs()))
+			if (iwc.isParameterSet(session.getParameterSchoolGroupIDs())) {
 				session.setSchoolGroupIDs(iwc.getParameterValues(session.getParameterSchoolGroupIDs()));
+			}
 			
-			if ( _schoolClassID != -1 && _schoolYearID != -1 )
+			if ( this._schoolClassID != -1 && this._schoolYearID != -1 ) {
 				validateSchoolClass(iwc);
+			}
 				
-			session.setSchoolClassID(_schoolClassID);
-			session.setSchoolID(_schoolID);
-			session.setSchoolSeasonID(_schoolSeasonID);
-			session.setSchoolYearID(_schoolYearID);
-			session.setStudentID(_studentID);
+			session.setSchoolClassID(this._schoolClassID);
+			session.setSchoolID(this._schoolID);
+			session.setSchoolSeasonID(this._schoolSeasonID);
+			session.setSchoolYearID(this._schoolYearID);
+			session.setStudentID(this._studentID);
 			return true;
 		}
 		catch (RemoteException re) {
@@ -71,14 +78,14 @@ public class SchoolEventListener implements IWPageEventListener {
 	}
 
 	private void validateSchoolClass(IWContext iwc) throws RemoteException {
-		SchoolClass schoolClass = getSchoolCommuneBusiness(iwc).getSchoolBusiness().findSchoolClass(new Integer(_schoolClassID));
-		SchoolYear schoolYear = getSchoolCommuneBusiness(iwc).getSchoolBusiness().getSchoolYear(new Integer(_schoolYearID));
+		SchoolClass schoolClass = getSchoolCommuneBusiness(iwc).getSchoolBusiness().findSchoolClass(new Integer(this._schoolClassID));
+		SchoolYear schoolYear = getSchoolCommuneBusiness(iwc).getSchoolBusiness().getSchoolYear(new Integer(this._schoolYearID));
 		if (!schoolClass.hasRelationToSchoolYear(schoolYear) ) {
-			Collection schoolClasses = getSchoolCommuneBusiness(iwc).getSchoolBusiness().findSchoolClassesBySchoolAndSeasonAndYear(_schoolID, _schoolSeasonID, _schoolYearID);
+			Collection schoolClasses = getSchoolCommuneBusiness(iwc).getSchoolBusiness().findSchoolClassesBySchoolAndSeasonAndYear(this._schoolID, this._schoolSeasonID, this._schoolYearID);
 			if ( !schoolClasses.isEmpty() ) {
 				Iterator iter = schoolClasses.iterator();
 				while (iter.hasNext()) {
-					_schoolClassID = ((Integer)((SchoolClass) iter.next()).getPrimaryKey()).intValue();
+					this._schoolClassID = ((Integer)((SchoolClass) iter.next()).getPrimaryKey()).intValue();
 					continue;
 				}
 			}

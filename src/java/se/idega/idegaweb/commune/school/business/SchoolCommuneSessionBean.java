@@ -59,19 +59,19 @@ public class SchoolCommuneSessionBean extends IBOSessionBean implements SchoolCo
 			User user = getUserContext().getCurrentUser();
 			int userID = ((Integer)user.getPrimaryKey()).intValue();
 			
-			if (_userID == userID) {
-				if (_schoolID != -1) {
-					return _schoolID;
+			if (this._userID == userID) {
+				if (this._schoolID != -1) {
+					return this._schoolID;
 				}
 				else {
 					return getSchoolIDFromUser(user);
 				}
 			}
 			else {
-				_userID = userID;
-				_schoolSeasonID = getSchoolCommuneBusiness().getCurrentSchoolSeasonID();
-				_schoolYearID = -1;
-				_schoolClassID = -1;
+				this._userID = userID;
+				this._schoolSeasonID = getSchoolCommuneBusiness().getCurrentSchoolSeasonID();
+				this._schoolYearID = -1;
+				this._schoolClassID = -1;
 				return getSchoolIDFromUser(user);
 			}
 		}
@@ -81,21 +81,21 @@ public class SchoolCommuneSessionBean extends IBOSessionBean implements SchoolCo
 	}
 	
 	private int getSchoolIDFromUser(User user) throws RemoteException {
-		_schoolID = -1;
+		this._schoolID = -1;
 		if (user != null) {
 			try {
 				School school = getCommuneUserBusiness().getFirstManagingSchoolForUser(user);
 				if (school != null) {
-					_school = school;
-					_schoolID = ((Integer) school.getPrimaryKey()).intValue();
+					this._school = school;
+					this._schoolID = ((Integer) school.getPrimaryKey()).intValue();
 				}
 			}
 			catch (FinderException fe) {
-				_school = null;
-				_schoolID = -1;
+				this._school = null;
+				this._schoolID = -1;
 			}
 		}
-		return _schoolID;
+		return this._schoolID;
 	}
 
 	/**
@@ -103,7 +103,7 @@ public class SchoolCommuneSessionBean extends IBOSessionBean implements SchoolCo
 	 * @return int
 	 */
 	public int getSchoolClassID() {
-		return _schoolClassID;
+		return this._schoolClassID;
 	}
 
 	/**
@@ -111,7 +111,7 @@ public class SchoolCommuneSessionBean extends IBOSessionBean implements SchoolCo
 	 * @return int
 	 */
 	public int getSchoolSeasonID() {
-		return _schoolSeasonID;
+		return this._schoolSeasonID;
 	}
 
 	/**
@@ -119,7 +119,7 @@ public class SchoolCommuneSessionBean extends IBOSessionBean implements SchoolCo
 	 * @return int
 	 */
 	public int getSchoolYearID() {
-		return _schoolYearID;
+		return this._schoolYearID;
 	}
 	
 	/**
@@ -127,7 +127,7 @@ public class SchoolCommuneSessionBean extends IBOSessionBean implements SchoolCo
 	 * @return int
 	 */
 	public int getStudyPathID() {
-		return _studyPathID;
+		return this._studyPathID;
 	}
 	
 	/**
@@ -135,7 +135,7 @@ public class SchoolCommuneSessionBean extends IBOSessionBean implements SchoolCo
 	 * @param studyPathID The studyPathID to set
 	 */
 	public void setStudyPathID(int studyPathID) {
-		_studyPathID = studyPathID;
+		this._studyPathID = studyPathID;
 	}
 
 
@@ -144,7 +144,7 @@ public class SchoolCommuneSessionBean extends IBOSessionBean implements SchoolCo
 	 * @param schoolClassID The schoolClassID to set
 	 */
 	public void setSchoolClassID(int schoolClassID) {
-		_schoolClassID = schoolClassID;
+		this._schoolClassID = schoolClassID;
 	}
 
 	/**
@@ -153,11 +153,11 @@ public class SchoolCommuneSessionBean extends IBOSessionBean implements SchoolCo
 	 */
 	public void setSchoolID(int schoolID) {
 		//Fix for bug #nacp81  Roar 02.09.03
-		if (_schoolID != schoolID){
+		if (this._schoolID != schoolID){
 			setSchoolClassID(-1);
 		}
 		//end fix
-		_schoolID = schoolID;
+		this._schoolID = schoolID;
 	}
 
 	/**
@@ -165,7 +165,7 @@ public class SchoolCommuneSessionBean extends IBOSessionBean implements SchoolCo
 	 * @param schoolSeasonID The schoolSeasonID to set
 	 */
 	public void setSchoolSeasonID(int schoolSeasonID) {
-		_schoolSeasonID = schoolSeasonID;
+		this._schoolSeasonID = schoolSeasonID;
 	}
 
 	/**
@@ -173,7 +173,7 @@ public class SchoolCommuneSessionBean extends IBOSessionBean implements SchoolCo
 	 * @param schoolYearID The schoolYearID to set
 	 */
 	public void setSchoolYearID(int schoolYearID) {
-		_schoolYearID = schoolYearID;
+		this._schoolYearID = schoolYearID;
 	}
 
 	/**

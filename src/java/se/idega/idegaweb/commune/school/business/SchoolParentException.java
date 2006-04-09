@@ -15,21 +15,21 @@ public class SchoolParentException extends Exception {
   String defTrans;
   
   public SchoolParentException(String localizationKey, String defaultText) {
-    key = localizationKey;
-    defTrans = defaultText;
+    this.key = localizationKey;
+    this.defTrans = defaultText;
   }
 
 	/**
 	 * @return 
 	 */
 	public String getDefTrans() {
-		return defTrans;
+		return this.defTrans;
 	}
 
 	/**
 	 * @return
 	 */
 	public String getKey() {
-		return key;
+		return this.key;
 	}
 }

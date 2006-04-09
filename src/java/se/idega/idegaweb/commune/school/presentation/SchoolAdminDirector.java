@@ -40,28 +40,28 @@ public class SchoolAdminDirector extends CommuneBlock {
 	
 
 	private void init(IWContext iwc) throws RemoteException{
-		usrBuiz =(UserBusiness) IBOLookup.getServiceInstance(iwc,UserBusiness.class);
-		grpBuiz = (GroupBusiness) IBOLookup.getServiceInstance(iwc,GroupBusiness.class);
-		schoolBuiz = (SchoolBusiness) IBOLookup.getServiceInstance(iwc,SchoolBusiness.class);
+		this.usrBuiz =(UserBusiness) IBOLookup.getServiceInstance(iwc,UserBusiness.class);
+		this.grpBuiz = (GroupBusiness) IBOLookup.getServiceInstance(iwc,GroupBusiness.class);
+		this.schoolBuiz = (SchoolBusiness) IBOLookup.getServiceInstance(iwc,SchoolBusiness.class);
 		
 	}
 
 	public void main(IWContext iwc) throws Exception{
-		iwrb = getResourceBundle(iwc);
+		this.iwrb = getResourceBundle(iwc);
 		
-		if(iwc.isLoggedOn() && schoolChoiceApproverPageId!=null){
+		if(iwc.isLoggedOn() && this.schoolChoiceApproverPageId!=null){
 			init(iwc);
 			int userId = iwc.getUserId();
-			User user = usrBuiz.getUser(userId);
-			Group rootGroup = schoolBuiz.getRootSchoolAdministratorGroup();
+			User user = this.usrBuiz.getUser(userId);
+			Group rootGroup = this.schoolBuiz.getRootSchoolAdministratorGroup();
 			// if user is a SchoolAdministrator
 			if(user.hasRelationTo(rootGroup)){
-				Collection schools = schoolBuiz.getSchoolHome().findAllBySchoolGroup(user);
+				Collection schools = this.schoolBuiz.getSchoolHome().findAllBySchoolGroup(user);
 				if(!schools.isEmpty()){
 					Table T = new Table();
 					int row = 1;
 					int col = 1;
-					T.add(new Text(iwrb.getLocalizedString("school_choice.links_to_choice_approvers","Links to school choice approvers")),col,row++);
+					T.add(new Text(this.iwrb.getLocalizedString("school_choice.links_to_choice_approvers","Links to school choice approvers")),col,row++);
 					
 					Iterator iter = schools.iterator();
 					while(iter.hasNext()){

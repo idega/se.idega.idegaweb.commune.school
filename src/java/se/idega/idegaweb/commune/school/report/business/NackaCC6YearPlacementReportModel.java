@@ -1,5 +1,5 @@
 /*
- * $Id: NackaCC6YearPlacementReportModel.java,v 1.7 2005/01/20 12:47:11 anders Exp $
+ * $Id: NackaCC6YearPlacementReportModel.java,v 1.8 2006/04/09 11:39:54 laddi Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -23,10 +23,10 @@ import com.idega.block.school.data.SchoolArea;
  * Report model for child care after school and daycare placements 
  * for 6 years children in Nacka.
  * <p>
- * Last modified: $Date: 2005/01/20 12:47:11 $ by $Author: anders $
+ * Last modified: $Date: 2006/04/09 11:39:54 $ by $Author: laddi $
  *
  * @author Anders Lindman
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.8 $
  */
 public class NackaCC6YearPlacementReportModel extends ReportModel {
 
@@ -62,8 +62,8 @@ public class NackaCC6YearPlacementReportModel extends ReportModel {
 	 */
 	public NackaCC6YearPlacementReportModel(ReportBusiness reportBusiness) {
 		super(reportBusiness);
-		_communeSchoolsByArea = new TreeMap();
-		_privateSchoolsByArea = new TreeMap();
+		this._communeSchoolsByArea = new TreeMap();
+		this._privateSchoolsByArea = new TreeMap();
 	}
 	
 	/**
@@ -93,11 +93,11 @@ public class NackaCC6YearPlacementReportModel extends ReportModel {
 				int areaId = ((Integer) area.getPrimaryKey()).intValue();
 				
 				Collection communeSchools = rb.getCommuneSchools(areaId, schoolTypes, communeManagementTypes);
-				_communeSchoolsByArea.put(areaName, communeSchools);
+				this._communeSchoolsByArea.put(areaName, communeSchools);
 				rowSize += communeSchools.size();
 				
 				Collection privateSchools = rb.getCommuneSchools(areaId, schoolTypes, privateManagementTypes);
-				_privateSchoolsByArea.put(areaName, privateSchools);
+				this._privateSchoolsByArea.put(areaName, privateSchools);
 				rowSize += privateSchools.size();
 				
 				rowSize += 4; // Sum + family daycare * 2
@@ -120,8 +120,8 @@ public class NackaCC6YearPlacementReportModel extends ReportModel {
 			while (areaIter.hasNext()) {
 				SchoolArea area = (SchoolArea) areaIter.next();
 				String areaName = area.getName();
-				Collection communeSchools = (Collection) _communeSchoolsByArea.get(areaName);
-				Collection privateSchools = (Collection) _privateSchoolsByArea.get(areaName);
+				Collection communeSchools = (Collection) this._communeSchoolsByArea.get(areaName);
+				Collection privateSchools = (Collection) this._privateSchoolsByArea.get(areaName);
 				int nrOfRows = communeSchools.size() + privateSchools.size() + 7;
 				Header areaHeader = new Header(areaName, Header.HEADERTYPE_ROW_NONLOCALIZED_HEADER, nrOfRows);
 				
@@ -218,7 +218,7 @@ public class NackaCC6YearPlacementReportModel extends ReportModel {
 							columnMethod, areaId, columnParameter, cellType);
 					setCell(row++, column, cell);
 					
-					Collection communeSchools = (Collection) _communeSchoolsByArea.get(areaName);
+					Collection communeSchools = (Collection) this._communeSchoolsByArea.get(areaName);
 					Iterator communeIter = communeSchools.iterator();
 					while (communeIter.hasNext()) {
 						School school = (School) communeIter.next();
@@ -236,7 +236,7 @@ public class NackaCC6YearPlacementReportModel extends ReportModel {
 							columnMethod, areaId, columnParameter, cellType);
 					setCell(row++, column, cell);
 
-					Collection privateSchools = (Collection) _privateSchoolsByArea.get(areaName);
+					Collection privateSchools = (Collection) this._privateSchoolsByArea.get(areaName);
 					Iterator privateIter = privateSchools.iterator();
 					while (privateIter.hasNext()) {
 						School school = (School) privateIter.next();

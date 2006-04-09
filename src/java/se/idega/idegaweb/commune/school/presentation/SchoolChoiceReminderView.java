@@ -53,11 +53,11 @@ import com.idega.user.data.User;
  * and entity ejb classes in {@link se.idega.idegaweb.commune.school.data}.
  * <p>
  * <p>
- * Last modified: $Date: 2004/11/18 19:18:38 $ by $Author: aron $
+ * Last modified: $Date: 2006/04/09 11:39:53 $ by $Author: laddi $
  *
  * @author <a href="http://www.staffannoteberg.com">Staffan Nöteberg</a>
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.46 $
+ * @version $Revision: 1.47 $
  * @see javax.ejb
  */
 public class SchoolChoiceReminderView extends CommuneBlock {
@@ -478,9 +478,9 @@ public class SchoolChoiceReminderView extends CommuneBlock {
         submitTable.add (getStyledInterface(new SubmitButton(localize ("scr_print_address_stickers","Print stickers"), ACTION_KEY, CREATE_STICKERS)), 2, 1);
         submitTable.add (getStyledInterface(new SubmitButton(localize (DELETE_KEY, DELETE_DEFAULT), ACTION_KEY, DELETE_KEY)), 3, 1);
         submitTable.add (getStyledInterface(new SubmitButton(localize (CANCEL_KEY, CANCEL_DEFAULT))), 4, 1);
-        if(stickerFile!=null){
+        if(this.stickerFile!=null){
             DownloadLink stickers = new DownloadLink(getSmallText(localize("scr_print_address_stickers_file","Address stickers")));
-            stickers.setFile(stickerFile);
+            stickers.setFile(this.stickerFile);
             submitTable.add(stickers,2,2);
             
         }
@@ -712,7 +712,7 @@ public class SchoolChoiceReminderView extends CommuneBlock {
         
         StudentAddressLabelsWriter labelWriter = new StudentAddressLabelsWriter();
         try {
-            stickerFile = labelWriter.createXLSFile(iwc,checkedReceivers,"reminder_"+reminderId+".xls");
+            this.stickerFile = labelWriter.createXLSFile(iwc,checkedReceivers,"reminder_"+reminderId+".xls");
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -20,7 +20,7 @@ public class SchoolContentItemEditorButton extends SchoolContentItem {
 //		System.out.println("SchoolContentItemEditButton : hasContentEdit = "+super.getSchoolContentBusiness(_iwc).hasEditPermission(_school, super._iwc));
 		
 		
-		Link link = SchoolContentEditor.getLink(_school, _iwrb.getLocalizedImageButton("content_editor","Content Editor"));
+		Link link = SchoolContentEditor.getLink(this._school, this._iwrb.getLocalizedImageButton("content_editor","Content Editor"));
 		
 		if (hasEditPermission()) {
 			return link;
@@ -34,8 +34,8 @@ public class SchoolContentItemEditorButton extends SchoolContentItem {
 		}
 		else{
 			try{
-				User user = _iwc.getCurrentUser();
-				return super.getSchoolBusiness(_iwc).hasEditPermission(user, _school);
+				User user = this._iwc.getCurrentUser();
+				return super.getSchoolBusiness(this._iwc).hasEditPermission(user, this._school);
 			}
 			catch(NotLoggedOnException nle){
 				

@@ -1,5 +1,5 @@
 /*
- * $Id: NackaHighSchoolStudyPathPlacementReportModel.java,v 1.14 2004/02/24 07:40:48 anders Exp $
+ * $Id: NackaHighSchoolStudyPathPlacementReportModel.java,v 1.15 2006/04/09 11:39:54 laddi Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -19,10 +19,10 @@ import com.idega.block.school.data.SchoolStudyPath;
 /** 
  * Report model for high school placements for all study paths.
  * <p>
- * Last modified: $Date: 2004/02/24 07:40:48 $ by $Author: anders $
+ * Last modified: $Date: 2006/04/09 11:39:54 $ by $Author: laddi $
  *
  * @author Anders Lindman
- * @version $Revision: 1.14 $
+ * @version $Revision: 1.15 $
  */
 public class NackaHighSchoolStudyPathPlacementReportModel extends ReportModel {
 
@@ -297,8 +297,8 @@ public class NackaHighSchoolStudyPathPlacementReportModel extends ReportModel {
 	 * Returns a filtered list with only Nacka study paths. 
 	 */
 	private Collection getStudyPaths() throws RemoteException {
-		if (_studyPaths == null) {
-			_studyPaths = new ArrayList();
+		if (this._studyPaths == null) {
+			this._studyPaths = new ArrayList();
 			ReportBusiness rb = getReportBusiness();
 			Collection c = rb.getAllStudyPathsIncludingDirections();
 			Iterator iter = c.iterator();
@@ -307,10 +307,10 @@ public class NackaHighSchoolStudyPathPlacementReportModel extends ReportModel {
 				String code = sp.getCode();
 				int count = getHighSchoolPlacementCount(code);
 				if (count > 0) {
-					_studyPaths.add(sp);
+					this._studyPaths.add(sp);
 				}
 			}			
 		}
-		return _studyPaths;
+		return this._studyPaths;
 	}
 }

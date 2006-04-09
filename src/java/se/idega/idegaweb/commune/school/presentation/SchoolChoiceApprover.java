@@ -68,20 +68,21 @@ public class SchoolChoiceApprover extends CommuneBlock {
 	private School school;
 
 	public void control(IWContext iwc) throws RemoteException {
-		if ( iwc.getApplicationSettings().getIfDebug() )
+		if ( iwc.getApplicationSettings().getIfDebug() ) {
 			debugParameters(iwc);
+		}
 		init(iwc);
 		parse(iwc);
 		String[] statusToSearch = { "UBEH", "PLAC", "PREL" };
 		String code = SchoolConstants.SCHOOL_CHOICE_CASE_CODE_KEY;
-		if (schoolId > 0) {
-			if(iwc.isParameterSet(prmPupilInfo)){
-				Integer choiceId = new Integer(iwc.getParameter(prmPupilInfo));
+		if (this.schoolId > 0) {
+			if(iwc.isParameterSet(this.prmPupilInfo)){
+				Integer choiceId = new Integer(iwc.getParameter(this.prmPupilInfo));
 				SchoolChoice choice = null;
 				User child = null;
 				try {
-					choice = choiceBean.getSchoolChoice(choiceId.intValue());
-					child = userBean.getUser(choice.getChildId());
+					choice = this.choiceBean.getSchoolChoice(choiceId.intValue());
+					child = this.userBean.getUser(choice.getChildId());
 				}
 				catch (Exception e) {
 					// empty
@@ -94,75 +95,78 @@ public class SchoolChoiceApprover extends CommuneBlock {
 			}
 			else{
 				try {
-					seasonId = ((Integer)careBean.getCurrentSeason().getPrimaryKey()).intValue();
-					school = schoolBean.getSchool(new Integer(schoolId));
-					if (pupilList)
-						cases = choiceBean.getSchoolChoiceHome().findByCodeAndStatus(code, statusToSearch, schoolId,seasonId,"group_place");
-					else
-						cases = choiceBean.getSchoolChoiceHome().findByCodeAndStatus(code, statusToSearch, schoolId,seasonId);
+					this.seasonId = ((Integer)this.careBean.getCurrentSeason().getPrimaryKey()).intValue();
+					this.school = this.schoolBean.getSchool(new Integer(this.schoolId));
+					if (this.pupilList) {
+						this.cases = this.choiceBean.getSchoolChoiceHome().findByCodeAndStatus(code, statusToSearch, this.schoolId,this.seasonId,"group_place");
+					}
+					else {
+						this.cases = this.choiceBean.getSchoolChoiceHome().findByCodeAndStatus(code, statusToSearch, this.schoolId,this.seasonId);
+					}
 				}
 				catch (javax.ejb.FinderException ex) {
 					ex.printStackTrace();
 				}
-				if (cases != null){
-					if(pupilList){
+				if (this.cases != null){
+					if(this.pupilList){
 						add(getPupilList(iwc));
 					}
-					else
+					else {
 						add(getChoiceList(iwc));
+					}
 				}
 				
 			}
 		}
 		else {
-			add(tf.format(iwrb.getLocalizedString("school_choice.no_school_chosen"), TextFormat.HEADER));
+			add(this.tf.format(this.iwrb.getLocalizedString("school_choice.no_school_chosen"), TextFormat.HEADER));
 		}
 
 	}
 
 	public void init(IWContext iwc) throws RemoteException {
-		userBean = (UserBusiness) IBOLookup.getServiceInstance(iwc, UserBusiness.class);
-		schoolBean = (SchoolBusiness) IBOLookup.getServiceInstance(iwc, SchoolBusiness.class);
-		choiceBean = (SchoolChoiceBusiness) IBOLookup.getServiceInstance(iwc, SchoolChoiceBusiness.class);
-		careBean = (CareBusiness) IBOLookup.getServiceInstance(iwc,CareBusiness.class);
+		this.userBean = (UserBusiness) IBOLookup.getServiceInstance(iwc, UserBusiness.class);
+		this.schoolBean = (SchoolBusiness) IBOLookup.getServiceInstance(iwc, SchoolBusiness.class);
+		this.choiceBean = (SchoolChoiceBusiness) IBOLookup.getServiceInstance(iwc, SchoolChoiceBusiness.class);
+		this.careBean = (CareBusiness) IBOLookup.getServiceInstance(iwc,CareBusiness.class);
 		//msgBean = (MessageBusiness) IBOLookup.getServiceInstance(iwc,MessageBusiness.class);
 		
-		schoolId = getSchoolCommuneSession(iwc).getSchoolID();
-		pupilList = iwc.isParameterSet(prmPupilView);
+		this.schoolId = getSchoolCommuneSession(iwc).getSchoolID();
+		this.pupilList = iwc.isParameterSet(this.prmPupilView);
 	}
 	
 	public void parse(IWContext iwc) throws RemoteException {
 		// saving preliminaries or placering actions
-		if(iwc.isParameterSet(prmSave) && iwc.getParameter(prmSave).equals("true")){
+		if(iwc.isParameterSet(this.prmSave) && iwc.getParameter(this.prmSave).equals("true")){
 			// preliminary handling
-			if(iwc.isParameterSet(prmPrelimIds)){
-				String[] ids = iwc.getParameterValues(prmPrelimIds);
+			if(iwc.isParameterSet(this.prmPrelimIds)){
+				String[] ids = iwc.getParameterValues(this.prmPrelimIds);
 				for (int i = 0; i < ids.length; i++) {
 					Integer pk = new Integer(ids[i]);
-					choiceBean.preliminaryAction(pk, iwc.getCurrentUser());
+					this.choiceBean.preliminaryAction(pk, iwc.getCurrentUser());
 					// create message
 					//msgBean.createUserMessage();
 				}
 			}
 			// placering handling
-			if(iwc.isParameterSet(prmGroupPrms)){
-				String[] prmNames = iwc.getParameterValues(prmGroupPrms);
-				int startIndex = prmGroupChoice.length();
+			if(iwc.isParameterSet(this.prmGroupPrms)){
+				String[] prmNames = iwc.getParameterValues(this.prmGroupPrms);
+				int startIndex = this.prmGroupChoice.length();
 				for (int i = 0; i < prmNames.length; i++) {
 					String prm = prmNames[i];
 					String val = iwc.getParameter(prm);
 					if(!"".equals(val)){
 						String pk  = prm.substring(startIndex);
-						choiceBean.groupPlaceAction(new Integer(pk),iwc.getCurrentUser());
+						this.choiceBean.groupPlaceAction(new Integer(pk),iwc.getCurrentUser());
 					}
 				}
 			}
 		
 		}
 		// no room action
-		else if(iwc.isParameterSet(prmNoRoom)){
-			Integer pk = new Integer(iwc.getParameter(prmNoRoom));
-			choiceBean.noRoomAction(pk, iwc.getCurrentUser());
+		else if(iwc.isParameterSet(this.prmNoRoom)){
+			Integer pk = new Integer(iwc.getParameter(this.prmNoRoom));
+			this.choiceBean.noRoomAction(pk, iwc.getCurrentUser());
 		}
 	}
 
@@ -172,59 +176,59 @@ public class SchoolChoiceApprover extends CommuneBlock {
 		T.setUseTop(false);
 		T.setUseBottom(false);
 		T.setUseTitles(false);
-		T.add(tf.format(iwrb.getLocalizedString("school_choice.child", "Child"), TextFormat.HEADER), 1, 1);
-		T.add(tf.format(iwrb.getLocalizedString("school_choice.grade", "Grade"), TextFormat.HEADER), 2, 1);
-		T.add(tf.format(iwrb.getLocalizedString("school_choice.choice_date", "Choice date"), TextFormat.HEADER), 3, 1);
-		T.add(tf.format(iwrb.getLocalizedString("school_choice.change_from", "Change from"), TextFormat.HEADER), 4, 1);
-		T.add(tf.format(iwrb.getLocalizedString("school_choice.preliminary", "Preliminary"), TextFormat.HEADER), 5, 1);
-		T.add(tf.format(iwrb.getLocalizedString("school_choice.not_room", "No room"), TextFormat.HEADER), 7, 1);
-		T.add(tf.format(iwrb.getLocalizedString("school_choice.group_place", "Group"), TextFormat.HEADER), 6, 1);
+		T.add(this.tf.format(this.iwrb.getLocalizedString("school_choice.child", "Child"), TextFormat.HEADER), 1, 1);
+		T.add(this.tf.format(this.iwrb.getLocalizedString("school_choice.grade", "Grade"), TextFormat.HEADER), 2, 1);
+		T.add(this.tf.format(this.iwrb.getLocalizedString("school_choice.choice_date", "Choice date"), TextFormat.HEADER), 3, 1);
+		T.add(this.tf.format(this.iwrb.getLocalizedString("school_choice.change_from", "Change from"), TextFormat.HEADER), 4, 1);
+		T.add(this.tf.format(this.iwrb.getLocalizedString("school_choice.preliminary", "Preliminary"), TextFormat.HEADER), 5, 1);
+		T.add(this.tf.format(this.iwrb.getLocalizedString("school_choice.not_room", "No room"), TextFormat.HEADER), 7, 1);
+		T.add(this.tf.format(this.iwrb.getLocalizedString("school_choice.group_place", "Group"), TextFormat.HEADER), 6, 1);
 
-		Iterator iter = cases.iterator();
+		Iterator iter = this.cases.iterator();
 		SchoolChoice choice;
 		User child;
 		int row = 2;
 		while (iter.hasNext()) {
 			choice = (SchoolChoice) iter.next();
 			String sid = choice.getPrimaryKey().toString();
-			child = userBean.getUser(choice.getChildId());
+			child = this.userBean.getUser(choice.getChildId());
 			T.add(getPupilInfoLink(iwc, child,choice), 1, row);
 			//T.add(tf.format(choice.getGrade()), 2, row);
-			T.add(tf.format(df.format(choice.getSchoolChoiceDate())), 3, row);
+			T.add(this.tf.format(this.df.format(choice.getSchoolChoiceDate())), 3, row);
 			if (choice.getChangeOfSchool()) {
-				School changeFromSchool = schoolBean.getSchool(new Integer(choice.getCurrentSchoolId()));
-				T.add(tf.format(changeFromSchool.getSchoolName()), 4, row);
+				School changeFromSchool = this.schoolBean.getSchool(new Integer(choice.getCurrentSchoolId()));
+				T.add(this.tf.format(changeFromSchool.getSchoolName()), 4, row);
 
 			}
 			String status = choice.getCaseStatus().getStatus();
 			// Preliminary part ( check boxes ) Or Denial
 			if (status.equals(choice.getCaseStatusCreated())) {
-				CheckBox prelimCheck = new CheckBox(prmPrelimIds);
+				CheckBox prelimCheck = new CheckBox(this.prmPrelimIds);
 				prelimCheck.setValue(sid);
 				T.add(prelimCheck, 5, row);
 
-				SubmitButton denyChoice = new SubmitButton(iwrb.getLocalizedImageButton(" no_room", "No room"), prmNoRoom, sid);
+				SubmitButton denyChoice = new SubmitButton(this.iwrb.getLocalizedImageButton(" no_room", "No room"), this.prmNoRoom, sid);
 				T.add(denyChoice, 7, row);
 			}
 			// Class Placing Change to dropdown from Schoolblock class entity
 			else if (status.equals(choice.getCaseStatusPreliminary())) {
-				String prmName = prmGroupChoice+sid;
-				T.add(new HiddenInput(prmGroupPrms,prmName),6,row);
+				String prmName = this.prmGroupChoice+sid;
+				T.add(new HiddenInput(this.prmGroupPrms,prmName),6,row);
 				TextInput groupChoice = new TextInput(prmName);
 				groupChoice.setLength(8);
 				T.add(groupChoice, 6, row);
 			}
 			else if (status.equals(choice.getCaseStatusPlaced())) {
 				
-				T.add(tf.format(choice.getGroupPlace()), 6, row);
+				T.add(this.tf.format(choice.getGroupPlace()), 6, row);
 			}
 
 			row++;
 		}
-		SubmitButton save = new SubmitButton(iwrb.getLocalizedImageButton("save","Save"),prmSave,"true");
-		Link L  = new Link(iwrb.getLocalizedImageButton("show_pupil_list","Show pupillist"));
+		SubmitButton save = new SubmitButton(this.iwrb.getLocalizedImageButton("save","Save"),this.prmSave,"true");
+		Link L  = new Link(this.iwrb.getLocalizedImageButton("show_pupil_list","Show pupillist"));
 		L.addParameter(prmSchoolId,this.schoolId);
-		L.addParameter(prmPupilView,"true");
+		L.addParameter(this.prmPupilView,"true");
 		T.add(new HiddenInput(prmSchoolId,String.valueOf( this.schoolId) ) );
 		T.addButton(save);
 		T.addButton(L);
@@ -239,32 +243,32 @@ public class SchoolChoiceApprover extends CommuneBlock {
 		T.setUseTop(false);
 		T.setUseBottom(false);
 		T.setUseTitles(false);
-		T.add(tf.format(iwrb.getLocalizedString("school_choice.child", "Child"), TextFormat.HEADER), 1, 1);
-		T.add(tf.format(iwrb.getLocalizedString("school_choice.group_place", "Group"), TextFormat.HEADER), 2, 1);
-		T.add(tf.format(iwrb.getLocalizedString("school_choice.choice_date", "Choice date"), TextFormat.HEADER), 3, 1);
-		T.add(tf.format(iwrb.getLocalizedString("school_choice.change_from", "Change from"), TextFormat.HEADER), 4, 1);
-		T.add(tf.format(iwrb.getLocalizedString("school_choice.regroup_place", "Regroup"), TextFormat.HEADER), 5, 1);
+		T.add(this.tf.format(this.iwrb.getLocalizedString("school_choice.child", "Child"), TextFormat.HEADER), 1, 1);
+		T.add(this.tf.format(this.iwrb.getLocalizedString("school_choice.group_place", "Group"), TextFormat.HEADER), 2, 1);
+		T.add(this.tf.format(this.iwrb.getLocalizedString("school_choice.choice_date", "Choice date"), TextFormat.HEADER), 3, 1);
+		T.add(this.tf.format(this.iwrb.getLocalizedString("school_choice.change_from", "Change from"), TextFormat.HEADER), 4, 1);
+		T.add(this.tf.format(this.iwrb.getLocalizedString("school_choice.regroup_place", "Regroup"), TextFormat.HEADER), 5, 1);
 
-		Iterator iter = cases.iterator();
+		Iterator iter = this.cases.iterator();
 		SchoolChoice choice;
 		User child;
 		int row = 2;
 		while (iter.hasNext()) {
 			choice = (SchoolChoice) iter.next();
 			String sid = choice.getPrimaryKey().toString();
-			child = userBean.getUser(choice.getChildId());
+			child = this.userBean.getUser(choice.getChildId());
 			String status = choice.getCaseStatus().getStatus();
 			if (status.equals(choice.getCaseStatusPlaced())) {
 				T.add(getPupilInfoLink(iwc, child,choice), 1, row);
-				T.add(tf.format(choice.getGroupPlace()), 2, row);
-				T.add(tf.format(df.format(choice.getSchoolChoiceDate())), 3, row);
+				T.add(this.tf.format(choice.getGroupPlace()), 2, row);
+				T.add(this.tf.format(this.df.format(choice.getSchoolChoiceDate())), 3, row);
 				if (choice.getChangeOfSchool()) {
-					School changeFromSchool = schoolBean.getSchool(new Integer(choice.getCurrentSchoolId()));
-					T.add(tf.format(changeFromSchool.getSchoolName()), 4, row);
+					School changeFromSchool = this.schoolBean.getSchool(new Integer(choice.getCurrentSchoolId()));
+					T.add(this.tf.format(changeFromSchool.getSchoolName()), 4, row);
 	
 				}
-				String prmName = prmGroupChoice+sid;
-				T.add(new HiddenInput(prmGroupPrms,prmName),5,row);
+				String prmName = this.prmGroupChoice+sid;
+				T.add(new HiddenInput(this.prmGroupPrms,prmName),5,row);
 				TextInput groupChoice = new TextInput(prmName);
 				groupChoice.setLength(8);
 				T.add(groupChoice, 5, row);
@@ -273,11 +277,11 @@ public class SchoolChoiceApprover extends CommuneBlock {
 
 			row++;
 		}
-		SubmitButton save = new SubmitButton(iwrb.getLocalizedImageButton("save","Save"),prmSave,"true");
+		SubmitButton save = new SubmitButton(this.iwrb.getLocalizedImageButton("save","Save"),this.prmSave,"true");
 		
-		Link L = new Link(iwrb.getLocalizedString("back","Back"));
+		Link L = new Link(this.iwrb.getLocalizedString("back","Back"));
 		L.addParameter(prmSchoolId,this.schoolId);
-		T.add(new HiddenInput(prmPupilView,"true"));
+		T.add(new HiddenInput(this.prmPupilView,"true"));
 		T.add(new HiddenInput(prmSchoolId,String.valueOf( this.schoolId) ) );
 		
 		T.addButton(save);
@@ -296,17 +300,17 @@ public class SchoolChoiceApprover extends CommuneBlock {
 			
 			
 			int row = 1;
-			T.add(tf.format(iwrb.getLocalizedString("child","Child"),TextFormat.HEADER),1,row);		
-			T.add(tf.format(iwrb.getLocalizedString("address","Address"),TextFormat.HEADER),2,row);
+			T.add(this.tf.format(this.iwrb.getLocalizedString("child","Child"),TextFormat.HEADER),1,row);		
+			T.add(this.tf.format(this.iwrb.getLocalizedString("address","Address"),TextFormat.HEADER),2,row);
 			row++;
 			Name name = new Name(child.getFirstName(), child.getMiddleName(), child.getLastName());
-			T.add(tf.format(name.getName(iwc.getApplicationSettings().getDefaultLocale())),1,row);
+			T.add(this.tf.format(name.getName(iwc.getApplicationSettings().getDefaultLocale())),1,row);
 			Collection addresses  = child.getAddresses();
 			if(!addresses.isEmpty()){
 				Iterator iter = addresses.iterator();
 				if(iter.hasNext()){
 					Address addr = (Address) iter.next();
-					T.add(tf.format(addr.getStreetAddress()),2,row);
+					T.add(this.tf.format(addr.getStreetAddress()),2,row);
 				}
 			}
 			row++;
@@ -321,11 +325,11 @@ public class SchoolChoiceApprover extends CommuneBlock {
 	        		int count = 1;
 	        		while(piter.hasNext()){
 	        			User p = (User) piter.next();
-	        			T.add(tf.format(iwrb.getLocalizedString( "custodian","Custodian")+" "+count,TextFormat.HEADER),1,row);
-	        			T.add(tf.format(iwrb.getLocalizedString("phone","Phone"),TextFormat.HEADER),2,row);
+	        			T.add(this.tf.format(this.iwrb.getLocalizedString( "custodian","Custodian")+" "+count,TextFormat.HEADER),1,row);
+	        			T.add(this.tf.format(this.iwrb.getLocalizedString("phone","Phone"),TextFormat.HEADER),2,row);
 	        			row++;
 	      				name = new Name(p.getFirstName(), p.getMiddleName(), p.getLastName());
-	        			T.add(tf.format(name.getName(iwc.getApplicationSettings().getDefaultLocale())),1,row);
+	        			T.add(this.tf.format(name.getName(iwc.getApplicationSettings().getDefaultLocale())),1,row);
 	        			row++;
 	        			row++;
 	        			count++;
@@ -345,36 +349,37 @@ public class SchoolChoiceApprover extends CommuneBlock {
 		Table T = new Table();
 		T.setCellpadding(3);
 		int row = 1;
-		T.add(tf.format(iwrb.getLocalizedString("personal_id","Personal ID"),TextFormat.HEADER),1,row);
+		T.add(this.tf.format(this.iwrb.getLocalizedString("personal_id","Personal ID"),TextFormat.HEADER),1,row);
 			String personalID = PersonalIDFormatter.format(child.getPersonalID(),iwc.getIWMainApplication().getSettings().getApplicationLocale());
-			T.add(tf.format(personalID),2,row);
+			T.add(this.tf.format(personalID),2,row);
 			row++;
 			if(choice!=null){
-				T.add(tf.format(iwrb.getLocalizedString("school_choice.grade","Grade"),TextFormat.HEADER),1,row);
+				T.add(this.tf.format(this.iwrb.getLocalizedString("school_choice.grade","Grade"),TextFormat.HEADER),1,row);
 				//T.add(tf.format(choice.getGrade()),2,row);
 				row++;
-				T.add(tf.format(iwrb.getLocalizedString("school_choice.choice_date", "Choice date"),TextFormat.HEADER),1,row);
-				T.add(tf.format(df.format( choice.getSchoolChoiceDate() ) ),2,row);
+				T.add(this.tf.format(this.iwrb.getLocalizedString("school_choice.choice_date", "Choice date"),TextFormat.HEADER),1,row);
+				T.add(this.tf.format(this.df.format( choice.getSchoolChoiceDate() ) ),2,row);
 				row++;
 				
-				T.add(tf.format(iwrb.getLocalizedString("school_choice.change_from", "Change from"),TextFormat.HEADER),1,row);
+				T.add(this.tf.format(this.iwrb.getLocalizedString("school_choice.change_from", "Change from"),TextFormat.HEADER),1,row);
 				if (choice.getChangeOfSchool()) {
-						School changeFromSchool = schoolBean.getSchool(new Integer(choice.getCurrentSchoolId()));
-						T.add(tf.format(changeFromSchool.getSchoolName()), 2, row);
+						School changeFromSchool = this.schoolBean.getSchool(new Integer(choice.getCurrentSchoolId()));
+						T.add(this.tf.format(changeFromSchool.getSchoolName()), 2, row);
 		
 				}
 				row++;
-				T.add(tf.format(iwrb.getLocalizedString("school_choice.language", "Language"),TextFormat.HEADER),1,row);
+				T.add(this.tf.format(this.iwrb.getLocalizedString("school_choice.language", "Language"),TextFormat.HEADER),1,row);
 				String language = choice.getLanguageChoice();
-				if(language!=null)
-					T.add(tf.format(language),2,row);
+				if(language!=null) {
+					T.add(this.tf.format(language),2,row);
+				}
 				row++;
 			}
 		return T;
 	}
 	
 	private PresentationObject getBackLink(){
-		Link back = new Link(tf.format(iwrb.getLocalizedString("back","Back")));
+		Link back = new Link(this.tf.format(this.iwrb.getLocalizedString("back","Back")));
 			back.addParameter(prmSchoolId,this.schoolId);
 		return back;
 	}
@@ -384,24 +389,24 @@ public class SchoolChoiceApprover extends CommuneBlock {
 		T.setColor("#ffffcc");
 		T.setCellpadding(6);
 		T.setWidth(600);
-		T.add(tf.format(iwrb.getLocalizedString("school","School"),TextFormat.HEADER),1,1);
-		T.add(tf.format(school.getSchoolName()),1,2);
-		T.add(tf.format(iwrb.getLocalizedString("letter_address","Letter address"),TextFormat.HEADER),2,1);
+		T.add(this.tf.format(this.iwrb.getLocalizedString("school","School"),TextFormat.HEADER),1,1);
+		T.add(this.tf.format(this.school.getSchoolName()),1,2);
+		T.add(this.tf.format(this.iwrb.getLocalizedString("letter_address","Letter address"),TextFormat.HEADER),2,1);
 		//Address addr = school.getSchoolAddress();
 		//T.add(tf.format(addr.getStreetAddress()+" , "+addr.getPostalAddress() ),2,2);
-		T.add(tf.format(school.getSchoolAddress()),2,2);
-		T.add(tf.format(iwrb.getLocalizedString("phone","Phone"),TextFormat.HEADER),1,4);
-		T.add(tf.format(school.getSchoolPhone()),1,5);
-		T.add(tf.format(iwrb.getLocalizedString("school_address","School address"),TextFormat.HEADER),2,4);
-		T.add(tf.format(school.getSchoolAddress()),2,5);
+		T.add(this.tf.format(this.school.getSchoolAddress()),2,2);
+		T.add(this.tf.format(this.iwrb.getLocalizedString("phone","Phone"),TextFormat.HEADER),1,4);
+		T.add(this.tf.format(this.school.getSchoolPhone()),1,5);
+		T.add(this.tf.format(this.iwrb.getLocalizedString("school_address","School address"),TextFormat.HEADER),2,4);
+		T.add(this.tf.format(this.school.getSchoolAddress()),2,5);
 		
 		return T;
 	}
 	
 	private Link getPupilInfoLink(IWContext iwc, User child,SchoolChoice choice) {
 		Name name = new Name(child.getFirstName(), child.getMiddleName(), child.getLastName());
-		Link L = new Link(tf.format(name.getName(iwc.getApplicationSettings().getDefaultLocale())));
-		L.addParameter(prmPupilInfo,choice.getPrimaryKey().toString());
+		Link L = new Link(this.tf.format(name.getName(iwc.getApplicationSettings().getDefaultLocale())));
+		L.addParameter(this.prmPupilInfo,choice.getPrimaryKey().toString());
 		return L;
 	}
 	
@@ -415,9 +420,9 @@ public class SchoolChoiceApprover extends CommuneBlock {
 	
 	public void main(IWContext iwc) throws RemoteException{
 		//iwb = getBundle(iwc);
-		iwrb = getResourceBundle(iwc);
-		tf = TextFormat.getInstance();
-		df = DateFormat.getDateInstance(DateFormat.SHORT, iwc.getCurrentLocale());
+		this.iwrb = getResourceBundle(iwc);
+		this.tf = TextFormat.getInstance();
+		this.df = DateFormat.getDateInstance(DateFormat.SHORT, iwc.getCurrentLocale());
 		control(iwc);
 	}
 }

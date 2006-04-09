@@ -1,5 +1,5 @@
 /*
- * $Id: NackaCommuneHighSchoolPlacementReportModel.java,v 1.14 2004/02/17 21:24:52 anders Exp $
+ * $Id: NackaCommuneHighSchoolPlacementReportModel.java,v 1.15 2006/04/09 11:39:54 laddi Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -20,10 +20,10 @@ import com.idega.block.school.data.SchoolStudyPath;
 /** 
  * Report model for Nacka high school student placements.
  * <p>
- * Last modified: $Date: 2004/02/17 21:24:52 $ by $Author: anders $
+ * Last modified: $Date: 2006/04/09 11:39:54 $ by $Author: laddi $
  *
  * @author Anders Lindman
- * @version $Revision: 1.14 $
+ * @version $Revision: 1.15 $
  */
 public class NackaCommuneHighSchoolPlacementReportModel extends ReportModel {
 
@@ -112,18 +112,18 @@ public class NackaCommuneHighSchoolPlacementReportModel extends ReportModel {
 		try {
 			ReportBusiness rb = getReportBusiness();
 			Collection schools = rb.getNackaCommuneHighSchools();
-			_schools = new School[3];
-			_nackaGymnasium = new School[3];
+			this._schools = new School[3];
+			this._nackaGymnasium = new School[3];
 			int schoolIndex = 0;
 			int nackaGymnasiumIndex = 0;
 			Iterator iter = schools.iterator();
 			boolean nackaGymnasiumFound = false;
 			while (iter.hasNext()) {
 				School school = (School) iter.next();
-				_schools[schoolIndex] = school;
+				this._schools[schoolIndex] = school;
 				String name = school.getName();
 				if (name.length() > 15 && name.substring(0, 15).equals("Nacka Gymnasium")) {
-					_nackaGymnasium[nackaGymnasiumIndex++] = school;
+					this._nackaGymnasium[nackaGymnasiumIndex++] = school;
 					if (nackaGymnasiumFound) {
 						continue;
 					} else {
@@ -298,7 +298,7 @@ public class NackaCommuneHighSchoolPlacementReportModel extends ReportModel {
 							value += getCell(row, 1).getFloatValue();
 							value += getCell(row, 2).getFloatValue();
 						} else {
-							value = getHighSchoolNackaCommunePlacementCount(_schools[0], schoolYearName, studyPathPrefix);
+							value = getHighSchoolNackaCommunePlacementCount(this._schools[0], schoolYearName, studyPathPrefix);
 						}
 						break;
 					case COLUMN_METHOD_SCHOOL_2:
@@ -316,7 +316,7 @@ public class NackaCommuneHighSchoolPlacementReportModel extends ReportModel {
 							value += getCell(row, 9).getFloatValue();
 							value += getCell(row, 10).getFloatValue();
 						} else {
-							value = getHighSchoolNackaCommunePlacementCount(_schools[2], schoolYearName, studyPathPrefix);
+							value = getHighSchoolNackaCommunePlacementCount(this._schools[2], schoolYearName, studyPathPrefix);
 						}
 						break;
 					case COLUMN_METHOD_TOTAL:
@@ -401,7 +401,7 @@ public class NackaCommuneHighSchoolPlacementReportModel extends ReportModel {
 			query.setSelectCountDistinctUsers();
 			query.setPlacements(rb.getSchoolSeasonId());
 			query.setSchoolTypeHighSchool();
-			query.setSchools(_nackaGymnasium);
+			query.setSchools(this._nackaGymnasium);
 			query.setSchoolYearName(); // parameter 1
 			query.setStudyPathPrefix(); // parameter 2
 			query.prepare();
@@ -482,8 +482,8 @@ public class NackaCommuneHighSchoolPlacementReportModel extends ReportModel {
 	 * Returns a filtered list with only Nacka study paths. 
 	 */
 	private Collection getStudyPaths() throws RemoteException {
-		if (_studyPaths == null) {
-			_studyPaths = new ArrayList();
+		if (this._studyPaths == null) {
+			this._studyPaths = new ArrayList();
 			ReportBusiness rb = getReportBusiness();
 			Collection c = rb.getAllStudyPaths();
 			Iterator iter = c.iterator();
@@ -492,10 +492,10 @@ public class NackaCommuneHighSchoolPlacementReportModel extends ReportModel {
 				String code = sp.getCode();
 				int count = getHighSchoolPlacementCount(code);
 				if (count > 0) {
-					_studyPaths.add(sp);
+					this._studyPaths.add(sp);
 				}
 			}			
 		}
-		return _studyPaths;
+		return this._studyPaths;
 	}
 }

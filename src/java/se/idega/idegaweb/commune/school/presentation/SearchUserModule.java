@@ -100,83 +100,89 @@ public class SearchUserModule extends CommuneBlock {
 	private boolean showSearchParamsAfterSearch;
 
 	public SearchUserModule() {
-		textFontStyleName = null;
-		headerFontStyleName = null;
-		buttonStyleName = null;
-		warningStyleName = null;
-		interfaceStyleName = null;
-		textFontStyle = "font-weight:plain;";
-		headerFontStyle = "font-weight:bold;";
-		warningFontStyle = "font-weight:bold;fon-color:#FF0000";
-		buttonStyle =
+		this.textFontStyleName = null;
+		this.headerFontStyleName = null;
+		this.buttonStyleName = null;
+		this.warningStyleName = null;
+		this.interfaceStyleName = null;
+		this.textFontStyle = "font-weight:plain;";
+		this.headerFontStyle = "font-weight:bold;";
+		this.warningFontStyle = "font-weight:bold;fon-color:#FF0000";
+		this.buttonStyle =
 			"color:#000000;font-size:10px;font-family:Verdana,Arial,Helvetica,sans-serif;font-weight:normal;border-width:1px;border-style:solid;border-color:#000000;";
-		interfaceStyle =
+		this.interfaceStyle =
 			"color:#000000;font-size:10px;font-family:Verdana,Arial,Helvetica,sans-serif;font-weight:normal;border-width:1px;border-style:solid;border-color:#000000;";
-		userID = null;
-		user = null;
-		usersFound = null;
-		hasManyUsers = false;
-		showFirstNameInSearch = true;
-		showMiddleNameInSearch = true;
-		showLastNameInSearch = true;
-		showPersonalIDInSearch = true;
-		maxFoundUserRows = 20;
-		maxFoundUserCols = 3;
-		bundleIdentifer = null;
-		processed = false;
-		maintainedParameters = new Vector();
-		personalIDLength = 10;
-		firstNameLength = 10;
-		middleNameLength = 10;
-		lastNameLength = 10;
-		stacked = true;
-		firstLetterCaseInsensitive = true;
-		skipResultsForOneFound = true;
-		OwnFormContainer = true;
-		showResetButton = true;
-		showButtons = true;
-		uniqueIdentifier = "unique";
-		showOverFlowMessage = true;
-		addedButtons = null;
-		showSearchParamsAfterSearch = false;
+		this.userID = null;
+		this.user = null;
+		this.usersFound = null;
+		this.hasManyUsers = false;
+		this.showFirstNameInSearch = true;
+		this.showMiddleNameInSearch = true;
+		this.showLastNameInSearch = true;
+		this.showPersonalIDInSearch = true;
+		this.maxFoundUserRows = 20;
+		this.maxFoundUserCols = 3;
+		this.bundleIdentifer = null;
+		this.processed = false;
+		this.maintainedParameters = new Vector();
+		this.personalIDLength = 10;
+		this.firstNameLength = 10;
+		this.middleNameLength = 10;
+		this.lastNameLength = 10;
+		this.stacked = true;
+		this.firstLetterCaseInsensitive = true;
+		this.skipResultsForOneFound = true;
+		this.OwnFormContainer = true;
+		this.showResetButton = true;
+		this.showButtons = true;
+		this.uniqueIdentifier = "unique";
+		this.showOverFlowMessage = true;
+		this.addedButtons = null;
+		this.showSearchParamsAfterSearch = false;
 	}
 
 	private void initStyleNames() {
-		if (textFontStyleName == null)
-			textFontStyleName = getStyleName("Text");
-		if (headerFontStyleName == null)
-			headerFontStyleName = getStyleName("Header");
-		if (buttonStyleName == null)
-			buttonStyleName = getStyleName("Button");
-		if (warningStyleName == null)
-			warningStyleName = getStyleName("Warning");
-		if (interfaceStyleName == null)
-			interfaceStyleName = getStyleName("Interface");
+		if (this.textFontStyleName == null) {
+			this.textFontStyleName = getStyleName("Text");
+		}
+		if (this.headerFontStyleName == null) {
+			this.headerFontStyleName = getStyleName("Header");
+		}
+		if (this.buttonStyleName == null) {
+			this.buttonStyleName = getStyleName("Button");
+		}
+		if (this.warningStyleName == null) {
+			this.warningStyleName = getStyleName("Warning");
+		}
+		if (this.interfaceStyleName == null) {
+			this.interfaceStyleName = getStyleName("Interface");
+		}
 	}
 
 	public void main(IWContext iwc) throws Exception {
 		initStyleNames();
-		iwrb = getResourceBundle(iwc);
+		this.iwrb = getResourceBundle(iwc);
 		String message = null;
 		try {
 			process(iwc);
 		} catch (RemoteException e) {
 			e.printStackTrace();
 			message =
-				iwrb.getLocalizedString("usrch.service_available", "Search service not available");
+				this.iwrb.getLocalizedString("usrch.service_available", "Search service not available");
 		} catch (FinderException e) {
 			e.printStackTrace();
-			message = iwrb.getLocalizedString("usrch.no_user_found", "No user found");
+			message = this.iwrb.getLocalizedString("usrch.no_user_found", "No user found");
 		}
 		Table T = new Table();
 		T.add(presentateCurrentUserSearch(), 1, 1);
-		if (!skipResultsForOneFound || hasManyUsers)
+		if (!this.skipResultsForOneFound || this.hasManyUsers) {
 			T.add(presentateFoundUsers(), 1, 2);
+		}
 		if (message != null) {
 			Text tMessage = new Text(message);
 			T.add(tMessage, 1, 3);
 		}
-		if (OwnFormContainer) {
+		if (this.OwnFormContainer) {
 			Form form = new Form();
 			form.add(T);
 			add(form);
@@ -187,31 +193,34 @@ public class SearchUserModule extends CommuneBlock {
 	}
 
 	public void process(IWContext iwc) throws FinderException, RemoteException {
-		if (processed)
+		if (this.processed) {
 			return;
-		if (iwc.isParameterSet(SEARCH_COMMITTED + uniqueIdentifier)) {
+		}
+		if (iwc.isParameterSet(SEARCH_COMMITTED + this.uniqueIdentifier)) {
 			processSearch(iwc);
 		}
-		else if (iwc.isParameterSet("usrch_user_id_" + uniqueIdentifier))
-			userID = Integer.valueOf(iwc.getParameter("usrch_user_id_" + uniqueIdentifier));
-		if (userID != null)
+		else if (iwc.isParameterSet("usrch_user_id_" + this.uniqueIdentifier)) {
+			this.userID = Integer.valueOf(iwc.getParameter("usrch_user_id_" + this.uniqueIdentifier));
+		}
+		if (this.userID != null) {
 			try {
 				UserHome home = (UserHome) IDOLookup.getHome(User.class);
-				user = home.findByPrimaryKey(userID);
+				this.user = home.findByPrimaryKey(this.userID);
 			} catch (IDOLookupException e) {
 				log(e);
-				logWarning("No child found for userID: " + userID);
+				logWarning("No child found for userID: " + this.userID);
 			}
-		processed = true;
+		}
+		this.processed = true;
 	}
 
 	private void processSearch(IWContext iwc)
 		throws IDOLookupException, FinderException, RemoteException {
 		UserHome home = (UserHome) IDOLookup.getHome(User.class);
-		String first = iwc.getParameter("usrch_search_fname" + uniqueIdentifier);
-		String middle = iwc.getParameter("usrch_search_mname" + uniqueIdentifier);
-		String last = iwc.getParameter("usrch_search_lname" + uniqueIdentifier);
-		String pid = iwc.getParameter("usrch_search_pid" + uniqueIdentifier);
+		String first = iwc.getParameter("usrch_search_fname" + this.uniqueIdentifier);
+		String middle = iwc.getParameter("usrch_search_mname" + this.uniqueIdentifier);
+		String last = iwc.getParameter("usrch_search_lname" + this.uniqueIdentifier);
+		String pid = iwc.getParameter("usrch_search_pid" + this.uniqueIdentifier);
 		
 		
 		if (pid != null && pid.length() > 0) {
@@ -233,25 +242,29 @@ public class SearchUserModule extends CommuneBlock {
 		}
 		
 		
-		if (firstLetterCaseInsensitive) {
-			if (first != null)
+		if (this.firstLetterCaseInsensitive) {
+			if (first != null) {
 				first = TextSoap.capitalize(first);
-			if (middle != null)
+			}
+			if (middle != null) {
 				middle = TextSoap.capitalize(middle);
-			if (last != null)
+			}
+			if (last != null) {
 				last = TextSoap.capitalize(last);
+			}
 		}
-		usersFound =
+		this.usersFound =
 			home.findUsersByConditions(first, middle, last, pid, null, null, -1, -1, -1, -1, null ,null ,true, true);
-		if (user == null && usersFound != null)
-			if (!usersFound.isEmpty()) {
-				hasManyUsers = usersFound.size() > 1;
-				if (!hasManyUsers) {
-					user = (User) usersFound.iterator().next();
+		if (this.user == null && this.usersFound != null) {
+			if (!this.usersFound.isEmpty()) {
+				this.hasManyUsers = this.usersFound.size() > 1;
+				if (!this.hasManyUsers) {
+					this.user = (User) this.usersFound.iterator().next();
 				}				
 			} else {
 				// No user found
 			}
+		}
 	}
 
 	private Table presentateCurrentUserSearch() {
@@ -259,96 +272,110 @@ public class SearchUserModule extends CommuneBlock {
 		int row = 1;
 		int col = 1;
 		String clearAction = "";
-		if (showPersonalIDInSearch) {
-			Text tPersonalID = new Text(iwrb.getLocalizedString("usrch_search_pid", "Personal ID"));
+		if (this.showPersonalIDInSearch) {
+			Text tPersonalID = new Text(this.iwrb.getLocalizedString("usrch_search_pid", "Personal ID"));
 			//Text tPersonalID =this.getLocalizedSmallHeader("usrch_search_pid", "Personal ID");
-			tPersonalID.setStyleClass(headerFontStyleName);
+			tPersonalID.setStyleClass(this.headerFontStyleName);
 			//tPersonalID.setStyleClass(getSmallHeaderFontStyle());
 			searchTable.add(tPersonalID, col, row);
-			TextInput input = new TextInput("usrch_search_pid" + uniqueIdentifier);
-			input.setStyleClass(interfaceStyleName);
-			input.setLength(personalIDLength);
+			TextInput input = new TextInput("usrch_search_pid" + this.uniqueIdentifier);
+			input.setStyleClass(this.interfaceStyleName);
+			input.setLength(this.personalIDLength);
 		// Empty user fields after search
-		if (user != null && user.getPersonalID() != null && showSearchParamsAfterSearch)
-				input.setContent(user.getPersonalID());
-			if (stacked)
-				searchTable.add(input, col++, row + 1);
-			else
-				searchTable.add(input, ++col, row);
-			clearAction =
-				clearAction + "this.form.usrch_search_pid" + uniqueIdentifier + ".value ='' ;";
+		if (this.user != null && this.user.getPersonalID() != null && this.showSearchParamsAfterSearch) {
+			input.setContent(this.user.getPersonalID());
 		}
-		if (showLastNameInSearch) {
-			Text tLastName = new Text(iwrb.getLocalizedString("usrch_search_lname", "Last name"));
-			tLastName.setStyleClass(headerFontStyleName);
+			if (this.stacked) {
+				searchTable.add(input, col++, row + 1);
+			}
+			else {
+				searchTable.add(input, ++col, row);
+			}
+			clearAction =
+				clearAction + "this.form.usrch_search_pid" + this.uniqueIdentifier + ".value ='' ;";
+		}
+		if (this.showLastNameInSearch) {
+			Text tLastName = new Text(this.iwrb.getLocalizedString("usrch_search_lname", "Last name"));
+			tLastName.setStyleClass(this.headerFontStyleName);
 			searchTable.add(tLastName, col, row);
-			TextInput input = new TextInput("usrch_search_lname" + uniqueIdentifier);
-			input.setStyleClass(interfaceStyleName);
-			input.setLength(lastNameLength);
+			TextInput input = new TextInput("usrch_search_lname" + this.uniqueIdentifier);
+			input.setStyleClass(this.interfaceStyleName);
+			input.setLength(this.lastNameLength);
 			// Empty user fields after search
-			if (user != null && user.getLastName() != null && showSearchParamsAfterSearch)
-				input.setContent(user.getLastName());
-			if (stacked)
+			if (this.user != null && this.user.getLastName() != null && this.showSearchParamsAfterSearch) {
+				input.setContent(this.user.getLastName());
+			}
+			if (this.stacked) {
 				searchTable.add(input, col++, row + 1);
-			else
+			}
+			else {
 				searchTable.add(input, ++col, row);
+			}
 			clearAction =
-				clearAction + "this.form.usrch_search_lname" + uniqueIdentifier + ".value ='' ;";
+				clearAction + "this.form.usrch_search_lname" + this.uniqueIdentifier + ".value ='' ;";
 		}
-		if (showMiddleNameInSearch) {
+		if (this.showMiddleNameInSearch) {
 			Text tMiddleName =
-				new Text(iwrb.getLocalizedString("usrch_search_mname", "Middle name"));
-			tMiddleName.setStyleClass(headerFontStyleName);
+				new Text(this.iwrb.getLocalizedString("usrch_search_mname", "Middle name"));
+			tMiddleName.setStyleClass(this.headerFontStyleName);
 			searchTable.add(tMiddleName, col, row);
-			TextInput input = new TextInput("usrch_search_mname" + uniqueIdentifier);
-			input.setStyleClass(interfaceStyleName);
-			input.setLength(middleNameLength);
+			TextInput input = new TextInput("usrch_search_mname" + this.uniqueIdentifier);
+			input.setStyleClass(this.interfaceStyleName);
+			input.setLength(this.middleNameLength);
 			// Empty user fields after search
-			if (user != null && user.getMiddleName() != null && showSearchParamsAfterSearch)
-				input.setContent(user.getMiddleName());
-			if (stacked)
+			if (this.user != null && this.user.getMiddleName() != null && this.showSearchParamsAfterSearch) {
+				input.setContent(this.user.getMiddleName());
+			}
+			if (this.stacked) {
 				searchTable.add(input, col++, row + 1);
-			else
+			}
+			else {
 				searchTable.add(input, ++col, row);
+			}
 			clearAction =
-				clearAction + "this.form.usrch_search_mname" + uniqueIdentifier + ".value ='' ;";
+				clearAction + "this.form.usrch_search_mname" + this.uniqueIdentifier + ".value ='' ;";
 		}
-		if (showFirstNameInSearch) {
-			Text tFirstName = new Text(iwrb.getLocalizedString("usrch_search_fname", "First name"));
-			tFirstName.setStyleClass(headerFontStyleName);
+		if (this.showFirstNameInSearch) {
+			Text tFirstName = new Text(this.iwrb.getLocalizedString("usrch_search_fname", "First name"));
+			tFirstName.setStyleClass(this.headerFontStyleName);
 			searchTable.add(tFirstName, col, row);
-			TextInput input = new TextInput("usrch_search_fname" + uniqueIdentifier);
-			input.setStyleClass(interfaceStyleName);
-			input.setLength(firstNameLength);
+			TextInput input = new TextInput("usrch_search_fname" + this.uniqueIdentifier);
+			input.setStyleClass(this.interfaceStyleName);
+			input.setLength(this.firstNameLength);
 			// Empty user fields after search
-			if (user != null && showSearchParamsAfterSearch)
-				input.setContent(user.getFirstName());
-			if (stacked)
+			if (this.user != null && this.showSearchParamsAfterSearch) {
+				input.setContent(this.user.getFirstName());
+			}
+			if (this.stacked) {
 				searchTable.add(input, col++, row + 1);
-			else
+			}
+			else {
 				searchTable.add(input, ++col, row);
+			}
 			clearAction =
-				clearAction + "this.form.usrch_search_fname" + uniqueIdentifier + ".value ='' ;";
+				clearAction + "this.form.usrch_search_fname" + this.uniqueIdentifier + ".value ='' ;";
 		}
-		if (showButtons) {
+		if (this.showButtons) {
 			SubmitButton search = new SubmitButton(
-													iwrb.getLocalizedImageButton(KEY_BUTTON_SEARCH, "Search"),
-													SEARCH_COMMITTED + uniqueIdentifier, "true");
+													this.iwrb.getLocalizedImageButton(KEY_BUTTON_SEARCH, "Search"),
+													SEARCH_COMMITTED + this.uniqueIdentifier, "true");
 
-			search.setStyleClass(buttonStyleName);
-			if (stacked)
+			search.setStyleClass(this.buttonStyleName);
+			if (this.stacked) {
 				searchTable.add(search, col++, row + 1);
-			else
+			}
+			else {
 				searchTable.add(search, 1, row + 1);
-			if (showResetButton) {
+			}
+			if (this.showResetButton) {
 				//SubmitButton reset = new SubmitButton(
 				//											iwrb.getLocalizedString(KEY_BUTTON_RESET, "Reset"));
 
 				SubmitButton reset = new SubmitButton(
-														iwrb.getLocalizedImageButton(KEY_BUTTON_RESET, "Reset"));
+														this.iwrb.getLocalizedImageButton(KEY_BUTTON_RESET, "Reset"));
 
 
-				reset.setStyleClass(buttonStyleName);
+				reset.setStyleClass(this.buttonStyleName);
 				reset.setOnClick(clearAction + "return false;");
 				searchTable.add(reset, col++, row + 1);
 			}
@@ -361,13 +388,15 @@ public class SearchUserModule extends CommuneBlock {
 			searchTable.add(back, col++, row + 1);
 		*/	
 			
-			if (addedButtons != null && !addedButtons.isEmpty()) {
-				for (Iterator iter = addedButtons.iterator(); iter.hasNext();) {
+			if (this.addedButtons != null && !this.addedButtons.isEmpty()) {
+				for (Iterator iter = this.addedButtons.iterator(); iter.hasNext();) {
 					PresentationObject element = (PresentationObject) iter.next();
-					if (stacked)
+					if (this.stacked) {
 						searchTable.add(element, col++, row + 1);
-					else
+					}
+					else {
 						searchTable.add(element, 1, row + 1);
+					}
 				}
 
 			}
@@ -377,8 +406,8 @@ public class SearchUserModule extends CommuneBlock {
 
 	private Table presentateFoundUsers() {
 		Table T = new Table();
-		if (usersFound != null && !usersFound.isEmpty()) {
-			Iterator iter = usersFound.iterator();
+		if (this.usersFound != null && !this.usersFound.isEmpty()) {
+			Iterator iter = this.usersFound.iterator();
 			T.setCellspacing(4);
 			int row = 1;
 			int col = 1;
@@ -390,24 +419,25 @@ public class SearchUserModule extends CommuneBlock {
 				userLink.addParameter(getUniqueUserParameter((Integer) u.getPrimaryKey()));
 				addParameters(userLink);
 				T.add(userLink, colAdd + 1, row);
-				if (++row == maxFoundUserRows) {
+				if (++row == this.maxFoundUserRows) {
 					col++;
 					colAdd += 2;
 					row = 1;
 				}
-				if (col == maxFoundUserCols)
+				if (col == this.maxFoundUserCols) {
 					break;
+				}
 			}
 
-			if (showOverFlowMessage && iter.hasNext()) {
+			if (this.showOverFlowMessage && iter.hasNext()) {
 				int lastRow = T.getRows() + 1;
-				T.mergeCells(1, lastRow, maxFoundUserCols, lastRow);
+				T.mergeCells(1, lastRow, this.maxFoundUserCols, lastRow);
 				Text tOverflowMessage =
 					new Text(
-						iwrb.getLocalizedString(
+						this.iwrb.getLocalizedString(
 							"usrch_overflow_message",
 							"There are more hits in your search than shown, you have to narrow down your searchcriteria"));
-				tOverflowMessage.setStyleClass(warningStyleName);
+				tOverflowMessage.setStyleClass(this.warningStyleName);
 				T.add(tOverflowMessage, 1, lastRow);
 			}
 		}
@@ -416,55 +446,56 @@ public class SearchUserModule extends CommuneBlock {
 
 	private void addParameters(Link link) {
 		Parameter element;
-		for (Iterator iter = maintainedParameters.iterator();
+		for (Iterator iter = this.maintainedParameters.iterator();
 			iter.hasNext();
-			link.addParameter(element))
+			link.addParameter(element)) {
 			element = (Parameter) iter.next();
+		}
 
 	}
 
 	public void setShowFirstNameInSearch(boolean b) {
-		showFirstNameInSearch = b;
+		this.showFirstNameInSearch = b;
 	}
 
 	public void setShowLastNameInSearch(boolean b) {
-		showLastNameInSearch = b;
+		this.showLastNameInSearch = b;
 	}
 
 	public void setShowMiddleNameInSearch(boolean b) {
-		showMiddleNameInSearch = b;
+		this.showMiddleNameInSearch = b;
 	}
 
 	public void setShowPersonalIDInSearch(boolean b) {
-		showPersonalIDInSearch = b;
+		this.showPersonalIDInSearch = b;
 	}
 
 	public boolean isHasManyUsers() {
-		return hasManyUsers;
+		return this.hasManyUsers;
 	}
 
 	public int getMaxFoundUserCols() {
-		return maxFoundUserCols;
+		return this.maxFoundUserCols;
 	}
 
 	public int getMaxFoundUserRows() {
-		return maxFoundUserRows;
+		return this.maxFoundUserRows;
 	}
 
 	public User getUser() {
-		return user;
+		return this.user;
 	}
 
 	public Collection getUsersFound() {
-		return usersFound;
+		return this.usersFound;
 	}
 
 	public void setMaxFoundUserCols(int cols) {
-		maxFoundUserCols = cols;
+		this.maxFoundUserCols = cols;
 	}
 
 	public void setMaxFoundUserRows(int rows) {
-		maxFoundUserRows = rows;
+		this.maxFoundUserRows = rows;
 	}
 
 	public void setUser(User user) {
@@ -472,26 +503,28 @@ public class SearchUserModule extends CommuneBlock {
 	}
 
 	public void setUsersFound(Collection collection) {
-		usersFound = collection;
+		this.usersFound = collection;
 	}
 
 	public void maintainParameter(Parameter parameter) {
-		maintainedParameters.add(parameter);
+		this.maintainedParameters.add(parameter);
 	}
 
 	public String getBundleIdentifier() {
-		if (bundleIdentifer != null)
-			return bundleIdentifer;
-		else
+		if (this.bundleIdentifer != null) {
+			return this.bundleIdentifer;
+		}
+		else {
 			return BUNDLE_IDENTIFIER;
+		}
 	}
 
 	public void setBundleIdentifer(String string) {
-		bundleIdentifer = string;
+		this.bundleIdentifer = string;
 	}
 
 	public Parameter getUniqueUserParameter(Integer userID) {
-		return new Parameter(getUniqueUserParameterName(uniqueIdentifier), userID.toString());
+		return new Parameter(getUniqueUserParameterName(this.uniqueIdentifier), userID.toString());
 	}
 
 	public static String getUniqueUserParameterName(String uniqueIdentifier) {
@@ -500,177 +533,178 @@ public class SearchUserModule extends CommuneBlock {
 
 	public Map getStyleNames() {
 		HashMap map = new HashMap();
-		map.put("Header", headerFontStyle);
-		map.put("Text", textFontStyle);
-		map.put("Button", buttonStyle);
-		map.put("Warning", warningFontStyle);
-		map.put("Interface", interfaceStyle);
+		map.put("Header", this.headerFontStyle);
+		map.put("Text", this.textFontStyle);
+		map.put("Button", this.buttonStyle);
+		map.put("Warning", this.warningFontStyle);
+		map.put("Interface", this.interfaceStyle);
 		return map;
 	}
 
 	public int getFirstNameLength() {
-		return firstNameLength;
+		return this.firstNameLength;
 	}
 
 	public String getHeaderFontStyle() {
-		return headerFontStyle;
+		return this.headerFontStyle;
 	}
 
 	public int getLastNameLength() {
-		return lastNameLength;
+		return this.lastNameLength;
 	}
 
 	public int getMiddleNameLength() {
-		return middleNameLength;
+		return this.middleNameLength;
 	}
 
 	public int getPersonalIDLength() {
-		return personalIDLength;
+		return this.personalIDLength;
 	}
 
 	public boolean isShowFirstNameInSearch() {
-		return showFirstNameInSearch;
+		return this.showFirstNameInSearch;
 	}
 
 	public boolean isShowLastNameInSearch() {
-		return showLastNameInSearch;
+		return this.showLastNameInSearch;
 	}
 
 	public boolean isShowMiddleNameInSearch() {
-		return showMiddleNameInSearch;
+		return this.showMiddleNameInSearch;
 	}
 
 	public boolean isShowPersonalIDInSearch() {
-		return showPersonalIDInSearch;
+		return this.showPersonalIDInSearch;
 	}
 
 	public boolean isStacked() {
-		return stacked;
+		return this.stacked;
 	}
 
 	public String getTextFontStyle() {
-		return textFontStyle;
+		return this.textFontStyle;
 	}
 
 	public void setFirstNameLength(int length) {
-		firstNameLength = length;
+		this.firstNameLength = length;
 	}
 
 	public void setHeaderFontStyle(String style) {
-		headerFontStyle = style;
+		this.headerFontStyle = style;
 	}
 
 	public void setLastNameLength(int length) {
-		lastNameLength = length;
+		this.lastNameLength = length;
 	}
 
 	public void setMiddleNameLength(int length) {
-		middleNameLength = length;
+		this.middleNameLength = length;
 	}
 
 	public void setPersonalIDLength(int length) {
-		personalIDLength = length;
+		this.personalIDLength = length;
 	}
 
 	public void setStacked(boolean flag) {
-		stacked = flag;
+		this.stacked = flag;
 	}
 
 	public void setTextFontStyle(String style) {
-		textFontStyle = style;
+		this.textFontStyle = style;
 	}
 
 	public boolean isOwnFormContainer() {
-		return OwnFormContainer;
+		return this.OwnFormContainer;
 	}
 
 	public void setOwnFormContainer(boolean flag) {
-		OwnFormContainer = flag;
+		this.OwnFormContainer = flag;
 	}
 
 	public String getUniqueIdentifier() {
-		return uniqueIdentifier;
+		return this.uniqueIdentifier;
 	}
 
 	public void setUniqueIdentifier(String identifier) {
-		uniqueIdentifier = identifier;
+		this.uniqueIdentifier = identifier;
 	}
 
 	public String getButtonStyle() {
-		return buttonStyle;
+		return this.buttonStyle;
 	}
 
 	public String getButtonStyleName() {
-		return buttonStyleName;
+		return this.buttonStyleName;
 	}
 
 	public String getHeaderFontStyleName() {
-		return headerFontStyleName;
+		return this.headerFontStyleName;
 	}
 
 	public String getTextFontStyleName() {
-		return textFontStyleName;
+		return this.textFontStyleName;
 	}
 
 	public void setButtonStyle(String string) {
-		buttonStyle = string;
+		this.buttonStyle = string;
 	}
 
 	public void setButtonStyleName(String string) {
-		buttonStyleName = string;
+		this.buttonStyleName = string;
 	}
 
 	public void setHeaderFontStyleName(String string) {
-		headerFontStyleName = string;
+		this.headerFontStyleName = string;
 	}
 
 	public void setTextFontStyleName(String string) {
-		textFontStyleName = string;
+		this.textFontStyleName = string;
 	}
 
 	public boolean isSkipResultsForOneFound() {
-		return skipResultsForOneFound;
+		return this.skipResultsForOneFound;
 	}
 
 	public void setSkipResultsForOneFound(boolean flag) {
-		skipResultsForOneFound = flag;
+		this.skipResultsForOneFound = flag;
 	}
 
 	public boolean isShowResetButton() {
-		return showResetButton;
+		return this.showResetButton;
 	}
 
 	public void setShowResetButton(boolean b) {
-		showResetButton = b;
+		this.showResetButton = b;
 	}
 
 	public boolean isShowOverFlowMessage() {
-		return showOverFlowMessage;
+		return this.showOverFlowMessage;
 	}
 
 	public void setShowOverFlowMessage(boolean b) {
-		showOverFlowMessage = b;
+		this.showOverFlowMessage = b;
 	}
 
 	public void addButtonObject(PresentationObject obj) {
-		if (addedButtons == null)
-			addedButtons = new Vector();
-		addedButtons.add(obj);
+		if (this.addedButtons == null) {
+			this.addedButtons = new Vector();
+		}
+		this.addedButtons.add(obj);
 	}
 
 	public boolean isShowButtons() {
-		return showButtons;
+		return this.showButtons;
 	}
 
 	public void setShowButtons(boolean b) {
-		showButtons = b;
+		this.showButtons = b;
 	}
 
 	/**
 	 * @return Returns the showSearchParamsAfterSearch.
 	 */
 	public boolean isShowSearchParamsAfterSearch() {
-		return showSearchParamsAfterSearch;
+		return this.showSearchParamsAfterSearch;
 	}
 
 	/**

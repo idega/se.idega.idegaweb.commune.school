@@ -152,9 +152,10 @@ public class CentralPlacementBusinessBean extends IBOServiceBean implements Cent
 		try {
 			// school year
 			SchoolYear theYear = placement.getSchoolYear();
-			if (theYear != null)
+			if (theYear != null) {
 				buf.append(", " + iwrb.getLocalizedString(CentralPlacementEditorConstants.KEY_SCHOOL_YEAR, "school year") + " "
-								   												+ theYear.getName());						
+								   												+ theYear.getName());
+			}						
 		} catch (Exception e) {}
 		try {
 			// add school group

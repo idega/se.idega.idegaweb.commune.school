@@ -150,22 +150,22 @@ public class SchoolChoiceEditor extends SchoolCommuneBlock {
 
 	public void init(IWContext iwc) throws Exception {
 		//iwrb = getResourceBundle(iwc);
-		form = new Form();
-		form.setName(FORM_NAME);
-		form.setEventListener(SchoolEventListener.class);
+		this.form = new Form();
+		this.form.setName(FORM_NAME);
+		this.form.setEventListener(SchoolEventListener.class);
 		
 		// Parameter name returning chosen User from SearchUserModule
-		uniqueUserSearchParam = SearchUserModule.getUniqueUserParameterName(UNIQUE_SUFFIX);
+		this.uniqueUserSearchParam = SearchUserModule.getUniqueUserParameterName(UNIQUE_SUFFIX);
 		
 				
-		form.add(getMainTable());
+		this.form.add(getMainTable());
 		parse(iwc);
 		
 		getSearchResult(iwc);
 
 		//currentSeason = getCentralPlacementBusiness(iwc).getCurrentSeason();
 		// Perform actions according the _action input parameter
-		switch (_action) {
+		switch (this._action) {
 		case ACTION_REACTIVATE_CHOICE :
 			try {
 				//SchoolSeason chosenSeason = getSchoolSeasonHome().findByPrimaryKey(new Integer(getSchoolCommuneSession(iwc).getSchoolSeasonID()));
@@ -183,13 +183,13 @@ public class SchoolChoiceEditor extends SchoolCommuneBlock {
 		}
 		// Show main page tables		
 		try {
-			if (storedPlacement == null) {
+			if (this.storedPlacement == null) {
 				// Show main form parts
-				if (!_newPlacement || _cancelNewPlacement) {
+				if (!this._newPlacement || this._cancelNewPlacement) {
 					// First part with search, pupil and latest placement
 					setMainTableContent(getSearchTable(iwc));
-					setMainTableContent(getPupilTable(iwc, child));
-					setMainTableContent(getLatestPlacementTable(iwc, child));
+					setMainTableContent(getPupilTable(iwc, this.child));
+					setMainTableContent(getLatestPlacementTable(iwc, this.child));
 					//setMainTableContent(getSchoolChoiceTable(iwc, child));
 					
 				}
@@ -200,33 +200,33 @@ public class SchoolChoiceEditor extends SchoolCommuneBlock {
 			setMainTableContent(new Text("Exception thrown!"));
 		}
 
-		add(form);
+		add(this.form);
 	}
 
 	private Table getMainTable() {
-		mainTable = new Table();
-		mainTable.setBorder(0);
-		mainTable.setWidth(550);
-		mainTable.setCellpadding(0);
-		mainTable.setCellspacing(0);
+		this.mainTable = new Table();
+		this.mainTable.setBorder(0);
+		this.mainTable.setWidth(550);
+		this.mainTable.setCellpadding(0);
+		this.mainTable.setCellspacing(0);
 		int col = 1;
-		mainTableRow = 1;
+		this.mainTableRow = 1;
 		
 		//  *** WINDOW HEADING ***
-		mainTable.add(
+		this.mainTable.add(
 				getLocalizedSmallHeader(KEY_WINDOW_HEADING, "Re-activate school choice"), 
-				col, mainTableRow);
-		mainTable.setColor(col, mainTableRow, getHeaderColor());
-		mainTable.setAlignment(col, mainTableRow, Table.HORIZONTAL_ALIGN_CENTER);
-		mainTable.setRowVerticalAlignment(mainTableRow, Table.VERTICAL_ALIGN_MIDDLE);
-		mainTable.setRowHeight(mainTableRow++, "20");
+				col, this.mainTableRow);
+		this.mainTable.setColor(col, this.mainTableRow, getHeaderColor());
+		this.mainTable.setAlignment(col, this.mainTableRow, Table.HORIZONTAL_ALIGN_CENTER);
+		this.mainTable.setRowVerticalAlignment(this.mainTableRow, Table.VERTICAL_ALIGN_MIDDLE);
+		this.mainTable.setRowHeight(this.mainTableRow++, "20");
 
-		return mainTable;
+		return this.mainTable;
 	}
 
 	private void setMainTableContent(PresentationObject obj) {
 		int col = 1;
-		mainTable.add(obj, col, mainTableRow++);
+		this.mainTable.add(obj, col, this.mainTableRow++);
 		
 	}
 
@@ -241,7 +241,7 @@ public class SchoolChoiceEditor extends SchoolCommuneBlock {
 		int col = 1;
 		int row = 1;
 
-		Image space1 = (Image) transGIF.clone();
+		Image space1 = (Image) this.transGIF.clone();
 		space1.setWidth(6);
 
 		// *** HEADING Search pupil ***
@@ -265,19 +265,19 @@ public class SchoolChoiceEditor extends SchoolCommuneBlock {
 			} else if (iwc.isParameterSet("usrch_search_fname" + UNIQUE_SUFFIX)
 					|| iwc.isParameterSet("usrch_search_lname" + UNIQUE_SUFFIX)
 					|| iwc.isParameterSet("usrch_search_pid" + UNIQUE_SUFFIX)) {
-				errMsgSearch = localize(KEY_SEARCH_NO_PUPIL_FOUND, "No pupil found");
+				this.errMsgSearch = localize(KEY_SEARCH_NO_PUPIL_FOUND, "No pupil found");
 			}
 		} catch (Exception e) {}		
 		table.add(searchModule, col++, row);
 		
 		// Get current pupil from session attribute
-		child = (User) iwc.getSession().getAttribute(SESSION_KEY_CHILD);		
+		this.child = (User) iwc.getSession().getAttribute(SESSION_KEY_CHILD);		
 		
-		if (errMsgSearch != null) {
+		if (this.errMsgSearch != null) {
 			row++;
 			col = 1;
 			table.add(Text.getNonBrakingSpace(4), col, row);
-			table.add(getSmallErrorText(errMsgSearch), col, row);
+			table.add(getSmallErrorText(this.errMsgSearch), col, row);
 		}
 		
 		return table;
@@ -290,21 +290,22 @@ public class SchoolChoiceEditor extends SchoolCommuneBlock {
 		table.setBorder(0);
 		table.setCellpadding(2);
 		table.setCellspacing(0);
-		transGIF.setHeight("1");
-		transGIF.setWidth("1");
+		this.transGIF.setHeight("1");
+		this.transGIF.setWidth("1");
 		String rowHeight = "20";
 		
-		if (mainRowHeight != null)
-			rowHeight = mainRowHeight;
+		if (this.mainRowHeight != null) {
+			rowHeight = this.mainRowHeight;
+		}
 		
 		int row = 1;
 		int col = 1;
 		// add empty space row
-		table.add(transGIF, col++, row);
-		table.add(transGIF, col++, row);
-		table.add(transGIF, col++, row);
-		table.add(transGIF, col++, row);
-		table.add(transGIF, col++, row);
+		table.add(this.transGIF, col++, row);
+		table.add(this.transGIF, col++, row);
+		table.add(this.transGIF, col++, row);
+		table.add(this.transGIF, col++, row);
+		table.add(this.transGIF, col++, row);
 		// Set COLUMN WIDTH for column 1 to 5
 		table.setWidth(1, row, "100");
 		//table.setWidth(2, row, "70");
@@ -333,8 +334,9 @@ public class SchoolChoiceEditor extends SchoolCommuneBlock {
 		nameTable.setCellpadding(0);
 		nameTable.setCellspacing(0);
 		*/
-		if (child != null)
+		if (child != null) {
 			table.add(getSmallText(child.getLastName()+ ", " + child.getFirstName()), col++, row);
+		}
 		
 		// First Name       
 		//nameTable.add(getSmallHeader(localize(KEY_FIRST_LAST_NAME_LABEL, "Name: ")), col++, 1);
@@ -351,8 +353,9 @@ public class SchoolChoiceEditor extends SchoolCommuneBlock {
 		col = 1;
 		// Personal Id Number
 		table.add(getSmallHeader(localize(KEY_PERSONAL_ID_LABEL, "Personal id: ")), col++, row);
-		if (child != null)
+		if (child != null) {
 			table.add(getSmallText(child.getPersonalID()), col++, row);
+		}
 		table.setRowHeight(row, rowHeight);
 		row++;
 		col = 1;
@@ -381,8 +384,9 @@ public class SchoolChoiceEditor extends SchoolCommuneBlock {
 				for (Iterator iter = phones.iterator(); iter.hasNext(); i++) {
 					Phone phone = (Phone) iter.next();
 					pBuf.append(phone.getNumber());
-					if (i < phonesSize - 1)
+					if (i < phonesSize - 1) {
 						pBuf.append(", ");
+					}
 				}
 				pBuf.append("&nbsp;");
 				table.add(getSmallText(pBuf.toString()), col, row);
@@ -405,21 +409,22 @@ public class SchoolChoiceEditor extends SchoolCommuneBlock {
 		table.setBorder(0);
 		table.setCellpadding(2);
 		table.setCellspacing(0);
-		transGIF.setHeight("1");
-		transGIF.setWidth("1");
+		this.transGIF.setHeight("1");
+		this.transGIF.setWidth("1");
 		String rowHeight = "20";
 
-		if (mainRowHeight != null)
-			rowHeight = mainRowHeight;
+		if (this.mainRowHeight != null) {
+			rowHeight = this.mainRowHeight;
+		}
 		
 		int row = 1;
 		int col = 1;
 		// add empty space row
-		table.add(transGIF, col++, row);
-		table.add(transGIF, col++, row);
-		table.add(transGIF, col++, row);
-		table.add(transGIF, col++, row);
-		table.add(transGIF, col++, row); 
+		table.add(this.transGIF, col++, row);
+		table.add(this.transGIF, col++, row);
+		table.add(this.transGIF, col++, row);
+		table.add(this.transGIF, col++, row);
+		table.add(this.transGIF, col++, row); 
 		// Set COLUMN WIDTH for column 1 to 5
 		table.setWidth(1, row, "100");
 		table.setWidth(2, row, "100");
@@ -450,7 +455,7 @@ public class SchoolChoiceEditor extends SchoolCommuneBlock {
 		col = 1;
 		
 		// Empty space row
-		table.add(transGIF, col, row);
+		table.add(this.transGIF, col, row);
 		table.setRowHeight(row, rowHeight);
 		row++;
 		col = 1;
@@ -465,15 +470,15 @@ public class SchoolChoiceEditor extends SchoolCommuneBlock {
 	
 	protected void removeSessionChild(IWContext iwc) {
 		iwc.getSession().removeAttribute(SESSION_KEY_CHILD);
-		child = null;
+		this.child = null;
 	}
 		public Table getSchoolChoiceTable(IWContext iwc, User child) throws RemoteException {
 		Table table = new Table();
 		table.setBorder(0);
 		table.setCellpadding(2);
 		table.setCellspacing(0);
-		transGIF.setHeight("1");
-		transGIF.setWidth("1");
+		this.transGIF.setHeight("1");
+		this.transGIF.setWidth("1");
 		//String rowHeight = "20";
 		
 		//if (mainRowHeight != null)
@@ -482,9 +487,9 @@ public class SchoolChoiceEditor extends SchoolCommuneBlock {
 		int row = 1;
 		int col = 1;
 		// add empty space row
-		table.add(transGIF, col++, row);
-		table.add(transGIF, col++, row);
-		table.add(transGIF, col++, row);
+		table.add(this.transGIF, col++, row);
+		table.add(this.transGIF, col++, row);
+		table.add(this.transGIF, col++, row);
 		
 		// Set COLUMN WIDTH for column 1 and 3
 		table.setWidth(1, row, "10");
@@ -513,8 +518,9 @@ public class SchoolChoiceEditor extends SchoolCommuneBlock {
 							((Integer) choice.getPrimaryKey()).intValue();
 						table.add(new HiddenInput(PARAM_PLAC_CHOICE_ID + String.valueOf(choice.getChoiceOrder()), String.valueOf(choiceID)), 4, row);
 						if (choice.getStatus().equalsIgnoreCase("PREL") || choice.getStatus().equalsIgnoreCase("PLAC") || choice.getStatus().equalsIgnoreCase("FLYT")) {
-							if (pendingSchoolId == -1)
+							if (pendingSchoolId == -1) {
 								pendingSchoolId = choice.getChosenSchoolId();
+							}
 						}
 						if (choice.getStatus().equalsIgnoreCase("TYST") && choice.getChoiceOrder() == 1){
 							Image editImg =
@@ -593,8 +599,9 @@ public class SchoolChoiceEditor extends SchoolCommuneBlock {
 						choiceOrder = choice.getChoiceOrder();
 					}
 					
-					if (iter.hasNext())
+					if (iter.hasNext()) {
 						row++;
+					}
 				
 					
 					
@@ -620,17 +627,17 @@ public class SchoolChoiceEditor extends SchoolCommuneBlock {
 	 */
 		
 		public void getSearchResult(IWContext iwc) {
-			if (iwc.isParameterSet(uniqueUserSearchParam)) {
-				Integer userID = Integer.valueOf(iwc.getParameter(uniqueUserSearchParam));
+			if (iwc.isParameterSet(this.uniqueUserSearchParam)) {
+				Integer userID = Integer.valueOf(iwc.getParameter(this.uniqueUserSearchParam));
 				try {
-					child = getUserBusiness(iwc).getUser(userID);
+					this.child = getUserBusiness(iwc).getUser(userID);
 					// Put User object in session
-					iwc.getSession().setAttribute(SESSION_KEY_CHILD, child);
+					iwc.getSession().setAttribute(SESSION_KEY_CHILD, this.child);
 				} catch (RemoteException e) {
 					e.printStackTrace();
 				}
 			} else {
-				child = (User) iwc.getSession().getAttribute(SESSION_KEY_CHILD);
+				this.child = (User) iwc.getSession().getAttribute(SESSION_KEY_CHILD);
 			}
 		}		
 
@@ -809,7 +816,7 @@ public class SchoolChoiceEditor extends SchoolCommuneBlock {
 	private void parse(IWContext iwc) {
 		if (iwc.isParameterSet(PARAM_ACTION)) {
 			String actionStr = iwc.getParameter(PARAM_ACTION);
-			_action = Integer.parseInt(actionStr);
+			this._action = Integer.parseInt(actionStr);
 
 		}
 		

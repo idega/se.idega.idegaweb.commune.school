@@ -51,8 +51,9 @@ public class StudentPlacings extends SchoolCommuneBlock {
 		
 		int row = 1;
 		GenericButton back = (GenericButton) getStyledInterface(new GenericButton("back",localize("back","Back")));
-		if (getResponsePage() != null)
+		if (getResponsePage() != null) {
 			back.setPageToOpen(getResponsePage());
+		}
 
 		if (getSession().getStudentID() != -1) {
 			if (useStyleNames()) {
@@ -68,7 +69,7 @@ public class StudentPlacings extends SchoolCommuneBlock {
 			table.add(getSmallHeader(localize("school.placements", "Placements")), 1, row++);
 			table.setRowHeight(row++, "3");
 			table.add(getPlacingsTable(iwc), 1, row++);
-			if (showChoicesTable) {
+			if (this.showChoicesTable) {
 				table.setRowHeight(row++, "16");
 				if (useStyleNames()) {
 					table.setCellpaddingLeft(1, row, 12);
@@ -144,8 +145,9 @@ public class StudentPlacings extends SchoolCommuneBlock {
 			provider = group.getSchool();
 			type = member.getSchoolType();
 			validFrom = new IWTimestamp(member.getRegisterDate());
-			if (member.getRemovedDate() != null)
+			if (member.getRemovedDate() != null) {
 				terminated = new IWTimestamp(member.getRemovedDate());
+			}
 
 			if (useStyleNames()) {
 				if (row % 2 == 0) {
@@ -158,10 +160,12 @@ public class StudentPlacings extends SchoolCommuneBlock {
 				table.setCellpaddingRight(table.getColumns(), row, 12);
 			}
 			else  {
-				if (row % 2 == 0)
+				if (row % 2 == 0) {
 					table.setRowColor(row, getZebraColor1());
-				else
+				}
+				else {
 					table.setRowColor(row, getZebraColor2());
+				}
 			}
 	
 			table.add(getSmallText(season.getSchoolSeasonName()), column++, row);
@@ -180,10 +184,12 @@ public class StudentPlacings extends SchoolCommuneBlock {
 				table.add(getSmallText("-"), column++, row++);
 			}
 			table.add(getSmallText(validFrom.getLocaleDate(iwc.getCurrentLocale(), IWTimestamp.SHORT)), column++, row);
-			if (member.getRemovedDate() != null)
+			if (member.getRemovedDate() != null) {
 				table.add(getSmallText(terminated.getLocaleDate(iwc.getCurrentLocale(), IWTimestamp.SHORT)), column++, row++);
-			else
+			}
+			else {
 				table.add(getSmallText("-"), column++, row++);
+			}
 		}
 		table.setColumnAlignment(3, Table.HORIZONTAL_ALIGN_CENTER);
 		table.setColumnAlignment(4, Table.HORIZONTAL_ALIGN_CENTER);
@@ -264,10 +270,12 @@ public class StudentPlacings extends SchoolCommuneBlock {
 				table.setCellpaddingRight(table.getColumns(), row, 12);
 			}
 			else {
-				if (row % 2 == 0)
+				if (row % 2 == 0) {
 					table.setRowColor(row, getZebraColor1());
-				else
+				}
+				else {
 					table.setRowColor(row, getZebraColor2());
+				}
 			}
 			
 			table.add(getSmallText(season.getSchoolSeasonName()), column++, row);
@@ -329,8 +337,9 @@ public class StudentPlacings extends SchoolCommuneBlock {
 			if (address != null) {
 				table.add(getLocalizedSmallHeader("school.address","Address"), 1, row);
 				table.add(getSmallText(address.getStreetAddress()), 3, row);
-				if (address.getPostalAddress() != null)
+				if (address.getPostalAddress() != null) {
 					table.add(getSmallText(", "+address.getPostalAddress()), 3, row);
+				}
 				row++;
 			}
 			
@@ -355,8 +364,9 @@ public class StudentPlacings extends SchoolCommuneBlock {
 			
 					if (address != null) {
 						table.add(getSmallText(address.getStreetAddress()), 3, row);
-						if (address.getPostalAddress() != null)
+						if (address.getPostalAddress() != null) {
 							table.add(getSmallText(", "+address.getPostalAddress()), 3, row);
+						}
 						row++;
 					}
 					if (phone != null && phone.getNumber() != null) {

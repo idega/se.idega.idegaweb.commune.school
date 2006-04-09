@@ -1,5 +1,5 @@
 /*
- * $Id: SchoolReports.java,v 1.39 2005/06/28 13:21:16 thomas Exp $
+ * $Id: SchoolReports.java,v 1.40 2006/04/09 11:39:54 laddi Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -55,10 +55,10 @@ import com.idega.repository.data.RefactorClassRegistry;
 /** 
  * This block handles selecting and presenting school reports.
  * <p>
- * Last modified: $Date: 2005/06/28 13:21:16 $ by $Author: thomas $
+ * Last modified: $Date: 2006/04/09 11:39:54 $ by $Author: laddi $
  *
  * @author Anders Lindman
- * @version $Revision: 1.39 $
+ * @version $Revision: 1.40 $
  */
 public class SchoolReports extends CommuneBlock {
 
@@ -145,42 +145,42 @@ public class SchoolReports extends CommuneBlock {
 	 * Returns true if child care reports should be used.
 	 */
 	public boolean getChildCare() {
-		return _useChildCareReports;
+		return this._useChildCareReports;
 	}
 
 	/**
 	 * Sets if child care reports should be used.
 	 */
 	public void setChildCare(boolean useChildCareReports) {
-		_useChildCareReports = useChildCareReports;
+		this._useChildCareReports = useChildCareReports;
 	}
 
 	/**
 	 * Returns true if high school reports should be used.
 	 */
 	public boolean getHighSchool() {
-		return _useHighSchoolReports;
+		return this._useHighSchoolReports;
 	}
 
 	/**
 	 * Sets if high school reports should be used.
 	 */
 	public void setHighSchool(boolean useHighSchoolReports) {
-		_useHighSchoolReports = useHighSchoolReports;
+		this._useHighSchoolReports = useHighSchoolReports;
 	}
 
 	/**
 	 * Returns true if public reports should be used.
 	 */
 	public boolean getPublicReports() {
-		return _usePublicReports;
+		return this._usePublicReports;
 	}
 
 	/**
 	 * Sets if public reports should be used.
 	 */
 	public void setPublicReports(boolean usePublicReports) {
-		_usePublicReports = usePublicReports;
+		this._usePublicReports = usePublicReports;
 	}
 	
 	/**
@@ -250,13 +250,13 @@ public class SchoolReports extends CommuneBlock {
 			add(table);
 			return;
 		}
-		Class[] reportModelClasses = _reportModelClasses;
-		if (_useChildCareReports) {
-			reportModelClasses = _childCareReportModelClasses;
-		} else if (_useHighSchoolReports) {
-			reportModelClasses = _highSchoolReportModelClasses;
-			if (_usePublicReports) {
-				reportModelClasses = _publicHighSchoolReportModelClasses;
+		Class[] reportModelClasses = this._reportModelClasses;
+		if (this._useChildCareReports) {
+			reportModelClasses = this._childCareReportModelClasses;
+		} else if (this._useHighSchoolReports) {
+			reportModelClasses = this._highSchoolReportModelClasses;
+			if (this._usePublicReports) {
+				reportModelClasses = this._publicHighSchoolReportModelClasses;
 			}
 		}
 		Class reportModelClass = reportModelClasses[Integer.parseInt(reportIndex)];
@@ -388,8 +388,8 @@ public class SchoolReports extends CommuneBlock {
 		
 		DropdownMenu reportSelector = new DropdownMenu(PARAMETER_REPORT_INDEX);
 		reportSelector.addMenuElement(-1, localize(KEY_REPORT_SELECTOR_TITLE, "Select report"));
-		for (int i = 0; i < _reportModels.length; i++) {
-			String s = _reportModels[i].getReportTitleLocalizationKey();
+		for (int i = 0; i < this._reportModels.length; i++) {
+			String s = this._reportModels[i].getReportTitleLocalizationKey();
 			reportSelector.addMenuElement(i, localize(s, s));			
 		}
 		String selectedIndex = iwc.getParameter(PARAMETER_REPORT_INDEX);
@@ -413,19 +413,19 @@ public class SchoolReports extends CommuneBlock {
 	 * Creates all report models from the report model classes. 
 	 */
 	private void createReportModels(IWContext iwc) throws RemoteException {
-		Class[] reportModelClasses = _reportModelClasses;
-		if (_useChildCareReports) {
-			reportModelClasses = _childCareReportModelClasses;
-		} else if (_useHighSchoolReports) {
-			reportModelClasses = _highSchoolReportModelClasses;
-			if (_usePublicReports) {
-				reportModelClasses = _publicHighSchoolReportModelClasses;
+		Class[] reportModelClasses = this._reportModelClasses;
+		if (this._useChildCareReports) {
+			reportModelClasses = this._childCareReportModelClasses;
+		} else if (this._useHighSchoolReports) {
+			reportModelClasses = this._highSchoolReportModelClasses;
+			if (this._usePublicReports) {
+				reportModelClasses = this._publicHighSchoolReportModelClasses;
 			}
 		}
 		ReportBusiness rb = getReportBusiness(iwc);
-		_reportModels = new ReportModel[reportModelClasses.length];
+		this._reportModels = new ReportModel[reportModelClasses.length];
 		for (int i = 0; i < reportModelClasses.length; i++) {
-			_reportModels[i] = rb.createReportModel(reportModelClasses[i]);
+			this._reportModels[i] = rb.createReportModel(reportModelClasses[i]);
 		}
 	}
 	

@@ -1,5 +1,5 @@
 /*
- * $Id: CommuneSchoolSessionBean.java,v 1.1 2005/08/09 16:36:28 laddi Exp $
+ * $Id: CommuneSchoolSessionBean.java,v 1.2 2006/04/09 11:39:54 laddi Exp $
  * Created on Aug 3, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -18,10 +18,10 @@ import com.idega.user.data.User;
 
 
 /**
- * Last modified: $Date: 2005/08/09 16:36:28 $ by $Author: laddi $
+ * Last modified: $Date: 2006/04/09 11:39:54 $ by $Author: laddi $
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class CommuneSchoolSessionBean extends IBOSessionBean  implements CommuneSchoolSession{
 	
@@ -31,35 +31,35 @@ public class CommuneSchoolSessionBean extends IBOSessionBean  implements Commune
 	
 	public User getUser() {
 		try {
-			if (iUser == null && iUserPK != null) {
-				iUser = getUserBusiness().getUser(new Integer(iUserPK.toString()));
+			if (this.iUser == null && this.iUserPK != null) {
+				this.iUser = getUserBusiness().getUser(new Integer(this.iUserPK.toString()));
 			}
-			else if (iUser == null && iUserUniqueID != null) {
+			else if (this.iUser == null && this.iUserUniqueID != null) {
 				try {
-					iUser = getUserBusiness().getUserByUniqueId(iUserUniqueID);
+					this.iUser = getUserBusiness().getUserByUniqueId(this.iUserUniqueID);
 				}
 				catch (FinderException fe) {
 					fe.printStackTrace();
-					iUser = null;
+					this.iUser = null;
 				}
 			}
 		}
 		catch (RemoteException re) {
-			iUser = null;
+			this.iUser = null;
 		}
-		return iUser;
+		return this.iUser;
 	}
 	
 	public void setUser(Object userPK) {
-		iUserPK = userPK;
-		iUserUniqueID = null;
-		iUser = null;
+		this.iUserPK = userPK;
+		this.iUserUniqueID = null;
+		this.iUser = null;
 	}
 	
 	public void setUserUniqueID(String uniqueID) {
-		iUserUniqueID = uniqueID;
-		iUserPK = null;
-		iUser = null;
+		this.iUserUniqueID = uniqueID;
+		this.iUserPK = null;
+		this.iUser = null;
 	}
 
 	private CommuneUserBusiness getUserBusiness() {

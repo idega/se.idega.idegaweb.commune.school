@@ -24,51 +24,52 @@ public class MailReceiver implements Serializable {
 
 	MailReceiver(FamilyLogic familyLogic, UserBusiness userBusiness, Integer userId) throws RemoteException, FinderException {
 		User student = userBusiness.getUser(userId);
-		studentName = student.getName();
-		ssn = student.getPersonalID();
+		this.studentName = student.getName();
+		this.ssn = student.getPersonalID();
 		Address address = userBusiness.getUsersMainAddress(student);
 		Collection parents = null;
 		try {
-		    if(familyLogic!=null)
-			 parents = familyLogic.getCustodiansFor(student);
+		    if(familyLogic!=null) {
+					parents = familyLogic.getCustodiansFor(student);
+				}
 		}
 		catch (NoCustodianFound e) {
 			parents = null;
 		}
 		if (parents == null || parents.isEmpty()) {
-			parentName = "?";
+			this.parentName = "?";
 		}
 		else {
 			User parent = (User) parents.iterator().next();
-			parentName = parent.getName();
+			this.parentName = parent.getName();
 		}
-		streetAddress = address != null ? address.getStreetAddress() : "?";
-		postalAddress = address != null ? address.getPostalAddress() : "?";
-		isInDefaultCommune = userBusiness.isInDefaultCommune (student);
+		this.streetAddress = address != null ? address.getStreetAddress() : "?";
+		this.postalAddress = address != null ? address.getPostalAddress() : "?";
+		this.isInDefaultCommune = userBusiness.isInDefaultCommune (student);
 	}
 
 	public String getStudentName() {
-		return studentName;
+		return this.studentName;
 	}
 
 	public String getSsn() {
-		return ssn;
+		return this.ssn;
 	}
 
 	public String getParentName() {
-		return parentName;
+		return this.parentName;
 	}
 
 	public String getStreetAddress() {
-		return streetAddress;
+		return this.streetAddress;
 	}
 
 	public String getPostalAddress() {
-		return postalAddress;
+		return this.postalAddress;
 	}
 
 	public boolean isInDefaultCommune () {
-		return isInDefaultCommune;
+		return this.isInDefaultCommune;
 	}
 	
     public void setInDefaultCommune(boolean isInDefaultCommune) {

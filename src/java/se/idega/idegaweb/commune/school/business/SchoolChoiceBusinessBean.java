@@ -120,11 +120,11 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	 * @return Font
 	 */
 	private Font getDefaultTextFont() {
-		if (defaultTextFont == null) {
-			defaultTextFont = new Font(Font.HELVETICA);
-			defaultTextFont.setSize(12);
+		if (this.defaultTextFont == null) {
+			this.defaultTextFont = new Font(Font.HELVETICA);
+			this.defaultTextFont.setSize(12);
 		}
-		return defaultTextFont;
+		return this.defaultTextFont;
 	}
 	
 	/**
@@ -132,10 +132,10 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	 * @return Font
 	 */
 	private Font getDefaultParagraphFont() {
-		if (defaultParagraphFont == null) {
-			defaultParagraphFont = new Font(Font.HELVETICA, 12, Font.BOLD);
+		if (this.defaultParagraphFont == null) {
+			this.defaultParagraphFont = new Font(Font.HELVETICA, 12, Font.BOLD);
 		}
-		return defaultParagraphFont;
+		return this.defaultParagraphFont;
 	}
 
 	/*private Font getTextFont() {
@@ -263,8 +263,9 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 					previousSeasonID = getCommuneSchoolBusiness().getPreviousSchoolSeasonID(getCommuneSchoolBusiness().getCurrentSchoolSeasonID());
 				}
 				
-				if (previousSeasonID != -1)
+				if (previousSeasonID != -1) {
 					getCommuneSchoolBusiness().setNeedsSpecialAttention(childId, previousSeasonID, true);
+				}
 
 				return returnList;
 			}
@@ -464,14 +465,18 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 			throw new IDOCreateException(fex);
 		}
 		choice.setChildId(childId);
-		if (current_school > 0)
+		if (current_school > 0) {
 			choice.setCurrentSchoolId(current_school);
-		if (chosen_school != -1)
+		}
+		if (chosen_school != -1) {
 			choice.setChosenSchoolId(chosen_school);
-		if (schoolYearID != -1)
+		}
+		if (schoolYearID != -1) {
 			choice.setSchoolYear(schoolYearID);
-		if (currentYearID != -1)
+		}
+		if (currentYearID != -1) {
 			choice.setCurrentSchoolYear(currentYearID);
+		}
 		choice.setChoiceOrder(choiceOrder);
 		choice.setMethod(method);
 		choice.setWorksituation1(workSituation1);
@@ -491,8 +496,9 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 			Integer seasonId = (Integer) season.getPrimaryKey();
 			choice.setSchoolSeasonId(seasonId.intValue());
 		}
-		if (placementDate != null)
+		if (placementDate != null) {
 			choice.setPlacementDate(placementDate);
+		}
 		stamp.addSeconds(1 - choiceOrder);
 		choice.setCreated(stamp.getTimestamp());
 		choice.setCaseStatus(caseStatus);
@@ -520,8 +526,9 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 			choice.setHandicraftId(handicraftId);
 		}
 		
-		if (parentCase != null)
+		if (parentCase != null) {
 			choice.setParentCase(parentCase);
+		}
 		try {
 			choice.store();
 		}
@@ -854,7 +861,9 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 						if (parent.equals(appParent)) {
 							continue;
 						}
-						else parent2 = parent;
+						else {
+							parent2 = parent;
+						}
 					}
 					if(parent2 == null){
 						if((appParent.getEmails() != null) &&(!appParent.getEmails().isEmpty()) ){
@@ -1495,10 +1504,10 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	}
 	
 	private CareBusiness getCareBusiness() throws RemoteException {
-		if (careBusiness == null) {
-			careBusiness = (CareBusiness) getServiceInstance(CareBusiness.class);
+		if (this.careBusiness == null) {
+			this.careBusiness = (CareBusiness) getServiceInstance(CareBusiness.class);
 		}
-		return careBusiness;
+		return this.careBusiness;
 	}
 	
 	public Collection getApplicantsForSchool(int schoolID, int seasonID, int schoolYearID, String[] validStatuses, String searchString, int orderBy, int numberOfEntries, int startingEntry) throws RemoteException {

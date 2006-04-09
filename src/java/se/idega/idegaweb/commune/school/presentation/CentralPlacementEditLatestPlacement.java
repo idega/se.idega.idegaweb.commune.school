@@ -25,8 +25,8 @@ import com.idega.presentation.ui.TextInput;
 /**
  * @author 
  * @author <br><a href="mailto:gobom@wmdata.com">Göran Borgman</a><br>
- * Last modified: $Date: 2004/10/15 15:12:13 $ by $Author: thomas $
- * @version $Revision: 1.3 $
+ * Last modified: $Date: 2006/04/09 11:39:53 $ by $Author: laddi $
+ * @version $Revision: 1.4 $
  */
 public class CentralPlacementEditLatestPlacement extends CommuneBlock {
 	
@@ -51,42 +51,42 @@ public class CentralPlacementEditLatestPlacement extends CommuneBlock {
 	private String paragraphTxt;
 
 	public void main(IWContext iwc) throws Exception {
-		iwrb = getResourceBundle(iwc);
+		this.iwrb = getResourceBundle(iwc);
 		parse(iwc);
-		latestPl = getPlacement(iwc);
-		if (_action == 1) { //ACTION_SAVE) {
+		this.latestPl = getPlacement(iwc);
+		if (this._action == 1) { //ACTION_SAVE) {
 			save();			
 		}
 		Form form = new Form();
 		form.maintainParameter(PARAM_LATEST_PLACEMENT_ID);
-		mainTable = getMainTable();		
+		this.mainTable = getMainTable();		
 		setMainTableContent(getEditTable());
-		form.add(mainTable);
+		form.add(this.mainTable);
 		add(form);
 	}
 
 	private Table getMainTable() {
-		mainTable = new Table();
-		mainTable.setBorder(0);
-		mainTable.setWidthAndHeightToHundredPercent();
-		mainTable.setCellpadding(0);
-		mainTable.setCellspacing(0);
+		this.mainTable = new Table();
+		this.mainTable.setBorder(0);
+		this.mainTable.setWidthAndHeightToHundredPercent();
+		this.mainTable.setCellpadding(0);
+		this.mainTable.setCellspacing(0);
 		int col = 1;
-		mainTableRow = 1;
+		this.mainTableRow = 1;
 		
 		//  *** WINDOW HEADING ***
-		mainTable.add(getLocalizedSmallHeader(KEY_WINDOW_HEADING, "Edit Latest Placement"), col, mainTableRow);
-		mainTable.setColor(col, mainTableRow, getHeaderColor());
-		mainTable.setAlignment(col, mainTableRow, Table.HORIZONTAL_ALIGN_CENTER);
-		mainTable.setRowVerticalAlignment(mainTableRow, Table.VERTICAL_ALIGN_MIDDLE);
-		mainTable.setRowHeight(mainTableRow++, "20");
+		this.mainTable.add(getLocalizedSmallHeader(KEY_WINDOW_HEADING, "Edit Latest Placement"), col, this.mainTableRow);
+		this.mainTable.setColor(col, this.mainTableRow, getHeaderColor());
+		this.mainTable.setAlignment(col, this.mainTableRow, Table.HORIZONTAL_ALIGN_CENTER);
+		this.mainTable.setRowVerticalAlignment(this.mainTableRow, Table.VERTICAL_ALIGN_MIDDLE);
+		this.mainTable.setRowHeight(this.mainTableRow++, "20");
 
-		return mainTable;
+		return this.mainTable;
 	}
 
 	private void setMainTableContent(PresentationObject obj) {
 		int col = 1;
-		mainTable.add(obj, col, mainTableRow++);
+		this.mainTable.add(obj, col, this.mainTableRow++);
 	}
 
 	public Table getEditTable() {
@@ -115,14 +115,14 @@ public class CentralPlacementEditLatestPlacement extends CommuneBlock {
 		row++;
 		table.setRowHeight(row, "20");
 		row++;
-		SubmitButton save =  new SubmitButton(iwrb.getLocalizedImageButton("central_placement_editor.button_save",
+		SubmitButton save =  new SubmitButton(this.iwrb.getLocalizedImageButton("central_placement_editor.button_save",
 													"Save"));
 		save.setValueOnClick(PARAM_ACTION, String.valueOf(ACTION_SAVE));
 		table.add(save, 2, row);
 		
 		table.add(Text.getNonBrakingSpace(2), 2, row);
 		
-		SubmitButton cancel =  new SubmitButton(iwrb.getLocalizedImageButton("central_placement_editor.button_cancel",
+		SubmitButton cancel =  new SubmitButton(this.iwrb.getLocalizedImageButton("central_placement_editor.button_cancel",
 						"Cancel"));
 		cancel.setValueOnClick(PARAM_ACTION, String.valueOf(ACTION_CANCEL));
 		table.add(cancel, 2, row);
@@ -130,7 +130,7 @@ public class CentralPlacementEditLatestPlacement extends CommuneBlock {
 		table.add(Text.getNonBrakingSpace(2), 2, row);
 		
 		//CloseButton close = (CloseButton) getStyledInterface(new CloseButton(localize("close_window", "Close")));
-		CloseButton close = new CloseButton(iwrb.getLocalizedImageButton("close_window", "Close"));
+		CloseButton close = new CloseButton(this.iwrb.getLocalizedImageButton("close_window", "Close"));
 		
 		table.add(close, 2, row);
 		
@@ -146,21 +146,21 @@ public class CentralPlacementEditLatestPlacement extends CommuneBlock {
 	private TextInput getPlacementParagraphTextInput() {
 		TextInput txt = (TextInput) getStyledInterface(new TextInput(PARAM_PLACEMENT_PARAGRAPH));
 		txt.setLength(25);
-		if (latestPl != null && latestPl.getPlacementParagraph() != null) {
-			txt.setContent(latestPl.getPlacementParagraph());
+		if (this.latestPl != null && this.latestPl.getPlacementParagraph() != null) {
+			txt.setContent(this.latestPl.getPlacementParagraph());
 		}
 		return txt;
 	}
 	
 	private void parse(IWContext iwc) {
-		_action = iwc.isParameterSet(PARAM_ACTION) ? Integer.parseInt(iwc.getParameter(PARAM_ACTION)) : -1;
-		paragraphTxt = iwc.isParameterSet(PARAM_PLACEMENT_PARAGRAPH) ? iwc.getParameter(PARAM_PLACEMENT_PARAGRAPH) : null;
+		this._action = iwc.isParameterSet(PARAM_ACTION) ? Integer.parseInt(iwc.getParameter(PARAM_ACTION)) : -1;
+		this.paragraphTxt = iwc.isParameterSet(PARAM_PLACEMENT_PARAGRAPH) ? iwc.getParameter(PARAM_PLACEMENT_PARAGRAPH) : null;
 	}
 	
 	private void save() {
-		if (latestPl != null && paragraphTxt != null) {
-			latestPl.setPlacementParagraph(paragraphTxt);
-			latestPl.store();
+		if (this.latestPl != null && this.paragraphTxt != null) {
+			this.latestPl.setPlacementParagraph(this.paragraphTxt);
+			this.latestPl.store();
 		}
 	}
 	

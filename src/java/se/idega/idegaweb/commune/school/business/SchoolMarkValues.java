@@ -3,7 +3,7 @@ package se.idega.idegaweb.commune.school.business;
 /**
  * School mark value holder
  * <p>
- * $Id: SchoolMarkValues.java,v 1.2 2003/10/06 11:58:45 kjell Exp $
+ * $Id: SchoolMarkValues.java,v 1.3 2006/04/09 11:39:54 laddi Exp $
  *
  * @author <a href="http://www.lindman.se">Kjell Lindman</a>
  * @version $version$
@@ -23,15 +23,15 @@ public class SchoolMarkValues {
 	public int ctot;
 	
 	public SchoolMarkValues() {
-		eg = new PercentValue();
-		g = new PercentValue();
-		vg = new PercentValue();
-		mvg = new PercentValue();
-		tot = new PercentValue();
-		ceg = 0;
-		cg = 0;
-		cvg = 0;
-		cmvg = 0;
-		ctot = 0;
+		this.eg = new PercentValue();
+		this.g = new PercentValue();
+		this.vg = new PercentValue();
+		this.mvg = new PercentValue();
+		this.tot = new PercentValue();
+		this.ceg = 0;
+		this.cg = 0;
+		this.cvg = 0;
+		this.cmvg = 0;
+		this.ctot = 0;
 	}
 }

@@ -1,5 +1,5 @@
 /*
- * $Id: PreparedQuery.java,v 1.39 2005/01/20 12:47:11 anders Exp $
+ * $Id: PreparedQuery.java,v 1.40 2006/04/09 11:39:54 laddi Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -27,10 +27,10 @@ import com.idega.block.school.data.SchoolSeason;
 /** 
  * Handles the SQL logic for school report calculations.
  * <p>
- * Last modified: $Date: 2005/01/20 12:47:11 $ by $Author: anders $
+ * Last modified: $Date: 2006/04/09 11:39:54 $ by $Author: laddi $
  *
  * @author Anders Lindman
- * @version $Revision: 1.39 $
+ * @version $Revision: 1.40 $
  */
 public class PreparedQuery {
 
@@ -76,19 +76,19 @@ public class PreparedQuery {
 	 * Constructs an empty report query.
 	 */	
 	public PreparedQuery(Connection connection) {
-		_sqlFrom = new HashMap();
-		_sqlWhere = new ArrayList();
-		_parameterIndex = 1;
-		_connection = connection;
+		this._sqlFrom = new HashMap();
+		this._sqlWhere = new ArrayList();
+		this._parameterIndex = 1;
+		this._connection = connection;
 	}	
 	
 	/**
 	 * Closes this query.
 	 */
 	public void close() {
-		if (_preparedStatement != null) {
+		if (this._preparedStatement != null) {
 			try {
-				_preparedStatement.close();
+				this._preparedStatement.close();
 			} catch (SQLException e) {}
 		}
 	}
@@ -97,75 +97,75 @@ public class PreparedQuery {
 	 * Sets the query to calulate mean value for child care taker week hours.
 	 */
 	public void setSelectMeanChildCareWeekHoursCareTime() {
-		_sqlSelect = "select avg(c.care_time)";
+		this._sqlSelect = "select avg(c.care_time)";
 		
-		_sqlFrom.put(C, TABLE_C);
+		this._sqlFrom.put(C, TABLE_C);
 	}
 
 	/**
 	 * Sets the query to calulate sum for child care taker week hours.
 	 */
 	public void setSelectSumChildCareWeekHoursCareTime() {
-		_sqlSelect = "select sum(c.care_time)";
+		this._sqlSelect = "select sum(c.care_time)";
 		
-		_sqlFrom.put(C, TABLE_C);
+		this._sqlFrom.put(C, TABLE_C);
 	}
 
 	/**
 	 * Sets the query to calulate mean value for child care taker week hours.
 	 */
 	public void setSelectMeanChildCareWeekHoursCareTimeString() {
-		_sqlSelect = "select avg(c.care_time_string)";
+		this._sqlSelect = "select avg(c.care_time_string)";
 		
-		_sqlFrom.put(C, TABLE_C);
+		this._sqlFrom.put(C, TABLE_C);
 	}
 
 	/**
 	 * Sets the query to calulate sum for child care taker week hours.
 	 */
 	public void setSelectSumChildCareWeekHoursCareTimeString() {
-		_sqlSelect = "select sum(c.care_time_string)";
+		this._sqlSelect = "select sum(c.care_time_string)";
 		
-		_sqlFrom.put(C, TABLE_C);
+		this._sqlFrom.put(C, TABLE_C);
 	}
 
 	/**
 	 * Sets the query to select max study path amount.
 	 */
 	public void setSelectMaxStudyPathAmount() {
-		_sqlSelect = "select max(r.amount)";
+		this._sqlSelect = "select max(r.amount)";
 		
-		_sqlFrom.put(R, TABLE_R);
+		this._sqlFrom.put(R, TABLE_R);
 	}
 
 	/**
 	 * Sets the query to count rows.
 	 */
 	public void setSelectCount() {
-		_sqlSelect = "select count(*)";
+		this._sqlSelect = "select count(*)";
 	}
 
 	/**
 	 * Sets the query to count distinct users.
 	 */
 	public void setSelectCountDistinctUsers() {
-		_sqlSelect = "select count(distinct u.personal_id)";
+		this._sqlSelect = "select count(distinct u.personal_id)";
 
-		_sqlFrom.put(U, TABLE_U);
+		this._sqlFrom.put(U, TABLE_U);
 	}
 
 	/**
 	 * Sets the query to count rows.
 	 */
 	public void setSelectCountSubQuery() {
-		_countSubQuery = true;
+		this._countSubQuery = true;
 	}
 
 	/**
 	 * Sets the query to select distinct schools.
 	 */
 	public void setSelectDistinctSchools() {
-		_sqlSelect = "select distinct s.*";
+		this._sqlSelect = "select distinct s.*";
 	}
 	
 	/**
@@ -173,17 +173,17 @@ public class PreparedQuery {
 	 * @param schoolSeasonId the school season id for the placements to count
 	 */
 	public void setPlacements(int schoolSeasonId) {
-		String sql = "cm.register_date <= '" + _currentDate + 
-		"' and (cm. removed_date is null or cm.removed_date > '" + _currentDate + "')" + 
+		String sql = "cm.register_date <= '" + this._currentDate + 
+		"' and (cm. removed_date is null or cm.removed_date > '" + this._currentDate + "')" + 
 		" and sc.school_id = s.sch_school_id and sc.sch_school_class_id = cm.sch_school_class_id" +
 		" and sc.sch_school_season_id = " + schoolSeasonId +
 		" and cm.ic_user_id = u.ic_user_id";
-		_sqlWhere.add(sql);
+		this._sqlWhere.add(sql);
 		
-		_sqlFrom.put(CM, TABLE_CM);
-		_sqlFrom.put(SC, TABLE_SC);
-		_sqlFrom.put(S, TABLE_S);
-		_sqlFrom.put(U, TABLE_U);
+		this._sqlFrom.put(CM, TABLE_CM);
+		this._sqlFrom.put(SC, TABLE_SC);
+		this._sqlFrom.put(S, TABLE_S);
+		this._sqlFrom.put(U, TABLE_U);
 	}
 	
 	/**
@@ -198,13 +198,13 @@ public class PreparedQuery {
 				" and (ca.terminated_date is null or ca.terminated_date >= sysdate)" +
 				" and c.application_status in ('F', 'V') AND ca.VALID_FROM_DATE <= sysdate" +
 				" and cm.ic_user_id = u.ic_user_id and c.care_time_string is null";
-		_sqlWhere.add(sql);
+		this._sqlWhere.add(sql);
 		
-		_sqlFrom.put(CA, TABLE_CA);
-		_sqlFrom.put(C, TABLE_C);
-		_sqlFrom.put(CM, TABLE_CM);
-		_sqlFrom.put(S, TABLE_S);
-		_sqlFrom.put(U, TABLE_U);
+		this._sqlFrom.put(CA, TABLE_CA);
+		this._sqlFrom.put(C, TABLE_C);
+		this._sqlFrom.put(CM, TABLE_CM);
+		this._sqlFrom.put(S, TABLE_S);
+		this._sqlFrom.put(U, TABLE_U);
 	}
 	
 	/**
@@ -219,13 +219,13 @@ public class PreparedQuery {
 				" and cm.ic_user_id = u.ic_user_id" + 
 				" and c.care_time_string is null" +
 				" and c.care_time > 0";
-		_sqlWhere.add(sql);
+		this._sqlWhere.add(sql);
 		
-		_sqlFrom.put(CA, TABLE_CA);
-		_sqlFrom.put(C, TABLE_C);
-		_sqlFrom.put(CM, TABLE_CM);
-		_sqlFrom.put(S, TABLE_S);
-		_sqlFrom.put(U, TABLE_U);
+		this._sqlFrom.put(CA, TABLE_CA);
+		this._sqlFrom.put(C, TABLE_C);
+		this._sqlFrom.put(CM, TABLE_CM);
+		this._sqlFrom.put(S, TABLE_S);
+		this._sqlFrom.put(U, TABLE_U);
 	}
 	
 	/**
@@ -242,13 +242,13 @@ public class PreparedQuery {
 				" and cm.ic_user_id = u.ic_user_id" +
 				" and c.care_time_string is not null" +
 				" and c.care_time_string > 0";
-		_sqlWhere.add(sql);
+		this._sqlWhere.add(sql);
 		
-		_sqlFrom.put(CA, TABLE_CA);
-		_sqlFrom.put(C, TABLE_C);
-		_sqlFrom.put(CM, TABLE_CM);
-		_sqlFrom.put(S, TABLE_S);
-		_sqlFrom.put(U, TABLE_U);
+		this._sqlFrom.put(CA, TABLE_CA);
+		this._sqlFrom.put(C, TABLE_C);
+		this._sqlFrom.put(CM, TABLE_CM);
+		this._sqlFrom.put(S, TABLE_S);
+		this._sqlFrom.put(U, TABLE_U);
 	}
 	
 	/**
@@ -257,12 +257,12 @@ public class PreparedQuery {
 	 */
 	public int setSchool() {
 		String sql = "s.sch_school_id = ?";
-		_sqlWhere.add(sql);
+		this._sqlWhere.add(sql);
 		
-		_sqlFrom.put(S, TABLE_S);
+		this._sqlFrom.put(S, TABLE_S);
 		
-		int index = _parameterIndex;
-		_parameterIndex++;
+		int index = this._parameterIndex;
+		this._parameterIndex++;
 		return index;
 	}
 	
@@ -272,12 +272,12 @@ public class PreparedQuery {
 	 */
 	public int setSchoolArea() {
 		String sql = "s.sch_school_area_id = ?";
-		_sqlWhere.add(sql);
+		this._sqlWhere.add(sql);
 		
-		_sqlFrom.put(S, TABLE_S);
+		this._sqlFrom.put(S, TABLE_S);
 		
-		int index = _parameterIndex;
-		_parameterIndex++;
+		int index = this._parameterIndex;
+		this._parameterIndex++;
 		return index;
 	}
 	
@@ -287,12 +287,12 @@ public class PreparedQuery {
 	public void setOnlyNackaCitizens() {
 		String sql = "ua.ic_user_id = u.ic_user_id and a.ic_address_id = ua.ic_address_id" +
 				" and a.ic_address_type_id = 1 and a.ic_commune_id = 1 and cm.ic_user_id = u.ic_user_id";
-		_sqlWhere.add(sql);
+		this._sqlWhere.add(sql);
 		
-		_sqlFrom.put(U, TABLE_U);
-		_sqlFrom.put(A, TABLE_A);
-		_sqlFrom.put(UA, TABLE_UA);
-		_sqlFrom.put(CM, TABLE_CM);
+		this._sqlFrom.put(U, TABLE_U);
+		this._sqlFrom.put(A, TABLE_A);
+		this._sqlFrom.put(UA, TABLE_UA);
+		this._sqlFrom.put(CM, TABLE_CM);
 	}
 
 	/**
@@ -301,12 +301,12 @@ public class PreparedQuery {
 	public void setNotNackaCitizens() {
 		String sql = "ua.ic_user_id = u.ic_user_id and a.ic_address_id = ua.ic_address_id" +
 				" and a.ic_address_type_id = 1 and a.ic_commune_id <> 1 and cm.ic_user_id = u.ic_user_id";
-		_sqlWhere.add(sql);
+		this._sqlWhere.add(sql);
 		
-		_sqlFrom.put(U, TABLE_U);
-		_sqlFrom.put(A, TABLE_A);
-		_sqlFrom.put(UA, TABLE_UA);
-		_sqlFrom.put(CM, TABLE_CM);
+		this._sqlFrom.put(U, TABLE_U);
+		this._sqlFrom.put(A, TABLE_A);
+		this._sqlFrom.put(UA, TABLE_UA);
+		this._sqlFrom.put(CM, TABLE_CM);
 	}
 	
 	/**
@@ -315,13 +315,13 @@ public class PreparedQuery {
 	 */
 	public int setStudyPathPrefix() {
 		String sql = "cm.study_path = sp.sch_study_path_id and sp.study_path_code like ?";
-		_sqlWhere.add(sql);
+		this._sqlWhere.add(sql);
 		
-		_sqlFrom.put(CM, TABLE_CM);
-		_sqlFrom.put(SP, TABLE_SP);
+		this._sqlFrom.put(CM, TABLE_CM);
+		this._sqlFrom.put(SP, TABLE_SP);
 		
-		int index = _parameterIndex;
-		_parameterIndex++;
+		int index = this._parameterIndex;
+		this._parameterIndex++;
 		return index;
 	}
 	
@@ -330,9 +330,9 @@ public class PreparedQuery {
 	 */
 	public void setSchoolType(int schoolTypeId) {
 		String sql = "cm.sch_school_type_id = " + schoolTypeId;
-		_sqlWhere.add(sql);
+		this._sqlWhere.add(sql);
 		
-		_sqlFrom.put(CM, TABLE_CM);
+		this._sqlFrom.put(CM, TABLE_CM);
 	}
 	
 	/**
@@ -341,12 +341,12 @@ public class PreparedQuery {
 	 */
 	public int setSchoolType() {
 		String sql = "cm.sch_school_type_id = ?";
-		_sqlWhere.add(sql);
+		this._sqlWhere.add(sql);
 		
-		_sqlFrom.put(CM, TABLE_CM);
+		this._sqlFrom.put(CM, TABLE_CM);
 		
-		int index = _parameterIndex;
-		_parameterIndex++;
+		int index = this._parameterIndex;
+		this._parameterIndex++;
 		return index;
 	}
 	
@@ -356,12 +356,12 @@ public class PreparedQuery {
 	 */
 	public int setFourSchoolTypes() {
 		String sql = "(cm.sch_school_type_id = ? or cm.sch_school_type_id = ? or cm.sch_school_type_id = ? or cm.sch_school_type_id = ?)";
-		_sqlWhere.add(sql);
+		this._sqlWhere.add(sql);
 		
-		_sqlFrom.put(CM, TABLE_CM);
+		this._sqlFrom.put(CM, TABLE_CM);
 		
-		int index = _parameterIndex;
-		_parameterIndex += 4;
+		int index = this._parameterIndex;
+		this._parameterIndex += 4;
 		return index;
 	}
 	
@@ -371,14 +371,14 @@ public class PreparedQuery {
 	 */
 	public int setSchoolTypeForProvider() {
 		String sql = "s.sch_school_id = st.sch_school_id and st.sch_school_type_id = cm.sch_school_type_id and st.sch_school_type_id = ?";
-		_sqlWhere.add(sql);
+		this._sqlWhere.add(sql);
 		
-		_sqlFrom.put(S, TABLE_S);
-		_sqlFrom.put(ST, TABLE_ST);
-		_sqlFrom.put(CM, TABLE_CM);
+		this._sqlFrom.put(S, TABLE_S);
+		this._sqlFrom.put(ST, TABLE_ST);
+		this._sqlFrom.put(CM, TABLE_CM);
 		
-		int index = _parameterIndex;
-		_parameterIndex++;
+		int index = this._parameterIndex;
+		this._parameterIndex++;
 		return index;
 	}
 	
@@ -388,14 +388,14 @@ public class PreparedQuery {
 	 */
 	public int setFourSchoolTypesForProviders() {
 		String sql = "s.sch_school_id = st.sch_school_id and st.sch_school_type_id = cm.sch_school_type_id and (st.sch_school_type_id = ? or st.sch_school_type_id = ? or st.sch_school_type_id = ? or st.sch_school_type_id = ?)";
-		_sqlWhere.add(sql);
+		this._sqlWhere.add(sql);
 		
-		_sqlFrom.put(S, TABLE_S);
-		_sqlFrom.put(ST, TABLE_ST);
-		_sqlFrom.put(CM, TABLE_CM);
+		this._sqlFrom.put(S, TABLE_S);
+		this._sqlFrom.put(ST, TABLE_ST);
+		this._sqlFrom.put(CM, TABLE_CM);
 		
-		int index = _parameterIndex;
-		_parameterIndex += 4;
+		int index = this._parameterIndex;
+		this._parameterIndex += 4;
 		return index;
 	}
 	
@@ -405,13 +405,13 @@ public class PreparedQuery {
 	 */
 	public int setFourSchoolTypesForProvidersWithoutPlacements() {
 		String sql = "s.sch_school_id = st.sch_school_id and (st.sch_school_type_id = ? or st.sch_school_type_id = ? or st.sch_school_type_id = ? or st.sch_school_type_id = ?)";
-		_sqlWhere.add(sql);
+		this._sqlWhere.add(sql);
 		
-		_sqlFrom.put(S, TABLE_S);
-		_sqlFrom.put(ST, TABLE_ST);
+		this._sqlFrom.put(S, TABLE_S);
+		this._sqlFrom.put(ST, TABLE_ST);
 		
-		int index = _parameterIndex;
-		_parameterIndex += 4;
+		int index = this._parameterIndex;
+		this._parameterIndex += 4;
 		return index;
 	}
 	
@@ -420,9 +420,9 @@ public class PreparedQuery {
 	 */
 	public void setSchoolTypeElementarySchool() {
 		String sql = "cm.sch_school_type_id = 4";
-		_sqlWhere.add(sql);
+		this._sqlWhere.add(sql);
 		
-		_sqlFrom.put(CM, TABLE_CM);
+		this._sqlFrom.put(CM, TABLE_CM);
 	}
 	
 	/**
@@ -430,9 +430,9 @@ public class PreparedQuery {
 	 */
 	public void setSchoolTypeCompulsorySchool() {
 		String sql = "cm.sch_school_type_id = 28";
-		_sqlWhere.add(sql);
+		this._sqlWhere.add(sql);
 		
-		_sqlFrom.put(CM, TABLE_CM);
+		this._sqlFrom.put(CM, TABLE_CM);
 	}
 	
 	/**
@@ -440,9 +440,9 @@ public class PreparedQuery {
 	 */
 	public void setSchoolTypePreSchoolClass() {
 		String sql = "cm.sch_school_type_id = 5";
-		_sqlWhere.add(sql);
+		this._sqlWhere.add(sql);
 		
-		_sqlFrom.put(CM, TABLE_CM);
+		this._sqlFrom.put(CM, TABLE_CM);
 	}
 	
 	/**
@@ -450,9 +450,9 @@ public class PreparedQuery {
 	 */
 	public void setSchoolTypeHighSchool() {
 		String sql = "cm.sch_school_type_id = 26";
-		_sqlWhere.add(sql);
+		this._sqlWhere.add(sql);
 		
-		_sqlFrom.put(CM, TABLE_CM);
+		this._sqlFrom.put(CM, TABLE_CM);
 	}
 	
 	/**
@@ -460,9 +460,9 @@ public class PreparedQuery {
 	 */
 	public void setSchoolTypeCompulsoryHighSchool() {
 		String sql = "cm.sch_school_type_id = 27";
-		_sqlWhere.add(sql);
+		this._sqlWhere.add(sql);
 		
-		_sqlFrom.put(CM, TABLE_CM);
+		this._sqlFrom.put(CM, TABLE_CM);
 	}
 	
 	/**
@@ -470,9 +470,9 @@ public class PreparedQuery {
 	 */
 	public void setSchoolTypeGeneralPreSchool() {
 		String sql = "cm.sch_school_type_id = 33";
-		_sqlWhere.add(sql);
+		this._sqlWhere.add(sql);
 		
-		_sqlFrom.put(CM, TABLE_CM);
+		this._sqlFrom.put(CM, TABLE_CM);
 	}
 	
 	/**
@@ -480,10 +480,10 @@ public class PreparedQuery {
 	 */
 	public void setSchoolYearName(String schoolYearName) {
 		String sql = "cm.sch_school_year_id = sy.sch_school_year_id and sy.year_name = '" + schoolYearName + "'";
-		_sqlWhere.add(sql);
+		this._sqlWhere.add(sql);
 		
-		_sqlFrom.put(CM, TABLE_CM);
-		_sqlFrom.put(SY, TABLE_SY);
+		this._sqlFrom.put(CM, TABLE_CM);
+		this._sqlFrom.put(SY, TABLE_SY);
 	}
 	
 	/**
@@ -492,13 +492,13 @@ public class PreparedQuery {
 	 */
 	public int setSchoolYearName() {
 		String sql = "cm.sch_school_year_id = sy.sch_school_year_id and sy.year_name = ?";
-		_sqlWhere.add(sql);
+		this._sqlWhere.add(sql);
 		
-		_sqlFrom.put(CM, TABLE_CM);
-		_sqlFrom.put(SY, TABLE_SY);
+		this._sqlFrom.put(CM, TABLE_CM);
+		this._sqlFrom.put(SY, TABLE_SY);
 		
-		int index = _parameterIndex;
-		_parameterIndex++;
+		int index = this._parameterIndex;
+		this._parameterIndex++;
 		return index;
 	}
 	
@@ -507,10 +507,10 @@ public class PreparedQuery {
 	 */
 	public void setNotSchoolYearName(String schoolYearName) {
 		String sql = "cm.sch_school_year_id = sy.sch_school_year_id and sy.year_name <> '" + schoolYearName + "'";
-		_sqlWhere.add(sql);
+		this._sqlWhere.add(sql);
 		
-		_sqlFrom.put(CM, TABLE_CM);
-		_sqlFrom.put(SY, TABLE_SY);
+		this._sqlFrom.put(CM, TABLE_CM);
+		this._sqlFrom.put(SY, TABLE_SY);
 	}
 	
 	/**
@@ -518,9 +518,9 @@ public class PreparedQuery {
 	 */
 	public void setOnlyNackaSchools() {
 		String sql = "s.commune = 1";
-		_sqlWhere.add(sql);
+		this._sqlWhere.add(sql);
 		
-		_sqlFrom.put(S, TABLE_S);
+		this._sqlFrom.put(S, TABLE_S);
 	}
 	
 	/**
@@ -528,9 +528,9 @@ public class PreparedQuery {
 	 */
 	public void setOnlySchoolsInOtherCommunes() {
 		String sql = "s.commune <> 1";
-		_sqlWhere.add(sql);
+		this._sqlWhere.add(sql);
 		
-		_sqlFrom.put(S, TABLE_S);
+		this._sqlFrom.put(S, TABLE_S);
 	}
 	
 	/**
@@ -538,9 +538,9 @@ public class PreparedQuery {
 	 */
 	public void setOnlyPrivateSchools() {
 		String sql = "(s.management_type = 'COMPANY' or s.management_type = 'FOUNDATION' or s.management_type = 'OTHER')";
-		_sqlWhere.add(sql);
+		this._sqlWhere.add(sql);
 		
-		_sqlFrom.put(S, TABLE_S);		
+		this._sqlFrom.put(S, TABLE_S);		
 	}
 	
 	/**
@@ -548,9 +548,9 @@ public class PreparedQuery {
 	 */
 	public void setNotPrivateSchools() {
 		String sql = "s.management_type <> 'COMPANY' and s.management_type <> 'FOUNDATION' and s.management_type <> 'OTHER'";
-		_sqlWhere.add(sql);
+		this._sqlWhere.add(sql);
 		
-		_sqlFrom.put(S, TABLE_S);
+		this._sqlFrom.put(S, TABLE_S);
 	}
 	
 	/**
@@ -558,9 +558,9 @@ public class PreparedQuery {
 	 */
 	public void setOnlyCommuneSchools() {
 		String sql = "s.management_type = 'COMMUNE'";
-		_sqlWhere.add(sql);
+		this._sqlWhere.add(sql);
 		
-		_sqlFrom.put(S, TABLE_S);		
+		this._sqlFrom.put(S, TABLE_S);		
 	}
 	
 	/**
@@ -568,9 +568,9 @@ public class PreparedQuery {
 	 */
 	public void setOnlyForeignSchools() {
 		String sql = "s.school_name = 'Utlandselever'";
-		_sqlWhere.add(sql);
+		this._sqlWhere.add(sql);
 		
-		_sqlFrom.put(S, TABLE_S);
+		this._sqlFrom.put(S, TABLE_S);
 	}
 	
 	/**
@@ -578,9 +578,9 @@ public class PreparedQuery {
 	 */
 	public void setNotForeignSchools() {
 		String sql = "s.school_name <> 'Utlandselever'";
-		_sqlWhere.add(sql);
+		this._sqlWhere.add(sql);
 		
-		_sqlFrom.put(S, TABLE_S);
+		this._sqlFrom.put(S, TABLE_S);
 	}
 	
 	/**
@@ -588,9 +588,9 @@ public class PreparedQuery {
 	 */
 	public void setOnlyCountyCouncilSchools() {
 		String sql = "s.management_type = 'COUNTY COUNCIL'";
-		_sqlWhere.add(sql);
+		this._sqlWhere.add(sql);
 		
-		_sqlFrom.put(S, TABLE_S);
+		this._sqlFrom.put(S, TABLE_S);
 	}
 	
 	/**
@@ -598,9 +598,9 @@ public class PreparedQuery {
 	 */
 	public void setNotCountyCouncilSchools() {
 		String sql = "s.management_type <> 'COUNTY COUNCIL'";
-		_sqlWhere.add(sql);
+		this._sqlWhere.add(sql);
 		
-		_sqlFrom.put(S, TABLE_S);
+		this._sqlFrom.put(S, TABLE_S);
 	}
 	
 	/**
@@ -609,10 +609,10 @@ public class PreparedQuery {
 	public void setOnlyStudentsBorn(int year) {
 		String sql = "u.date_of_birth >= '" + year + "-01-01' and u.date_of_birth <= '" + year + "-12-31'" + 
 				" and cm.ic_user_id = u.ic_user_id";
-		_sqlWhere.add(sql);
+		this._sqlWhere.add(sql);
 		
-		_sqlFrom.put(U, TABLE_U);
-		_sqlFrom.put(CM, TABLE_CM);
+		this._sqlFrom.put(U, TABLE_U);
+		this._sqlFrom.put(CM, TABLE_CM);
 	}
 	
 	/**
@@ -620,9 +620,9 @@ public class PreparedQuery {
 	 */
 	public void setSchool(int schoolId) {
 		String sql = "s.sch_school_id = " + schoolId;
-		_sqlWhere.add(sql);
+		this._sqlWhere.add(sql);
 		
-		_sqlFrom.put(S, TABLE_S);
+		this._sqlFrom.put(S, TABLE_S);
 	}
 
 	/**
@@ -639,9 +639,9 @@ public class PreparedQuery {
 			}
 		}
 		sql += ")";
-		_sqlWhere.add(sql);
+		this._sqlWhere.add(sql);
 		
-		_sqlFrom.put(S, TABLE_S);
+		this._sqlFrom.put(S, TABLE_S);
 	}
 
 	/**
@@ -657,9 +657,9 @@ public class PreparedQuery {
 			}
 		}
 		sql += ")";
-		_sqlWhere.add(sql);
+		this._sqlWhere.add(sql);
 		
-		_sqlFrom.put(S, TABLE_S);
+		this._sqlFrom.put(S, TABLE_S);
 	}
 
 	/**
@@ -683,9 +683,9 @@ public class PreparedQuery {
 				sql =  "u.date_of_birth > '" + dateTo + "'";
 			}
 		}
-		_sqlWhere.add(sql);
+		this._sqlWhere.add(sql);
 		
-		_sqlFrom.put(U, TABLE_U);
+		this._sqlFrom.put(U, TABLE_U);
 	}
 
 	/**
@@ -695,22 +695,22 @@ public class PreparedQuery {
 		String sql = null;
 		String dateFrom = null;
 		String dateTo = null;
-		int currentYear = Integer.parseInt(_currentDate.substring(0, 4));
+		int currentYear = Integer.parseInt(this._currentDate.substring(0, 4));
 		if (ageFrom > 0) {
-			dateFrom = "" + (currentYear - ageFrom) + _currentDate.substring(4);
+			dateFrom = "" + (currentYear - ageFrom) + this._currentDate.substring(4);
 			sql = "u.date_of_birth <= '" + dateFrom + "'";
 		}
 		if (ageTo > 0) {
-			dateTo = "" + (currentYear - ageTo - 1) + _currentDate.substring(4);
+			dateTo = "" + (currentYear - ageTo - 1) + this._currentDate.substring(4);
 			if (sql != null) {
 				sql += " and u.date_of_birth > '" + dateTo + "'";
 			} else {
 				sql =  "u.date_of_birth > '" + dateTo + "'";
 			}
 		}
-		_sqlWhere.add(sql);
+		this._sqlWhere.add(sql);
 		
-		_sqlFrom.put(U, TABLE_U);
+		this._sqlFrom.put(U, TABLE_U);
 	}
 	
 	/**
@@ -719,12 +719,12 @@ public class PreparedQuery {
 	 */
 	public int setThreeManagementTypes() {
 		String sql = "(s.management_type = ? or s.management_type = ? or s.management_type = ?)";
-		_sqlWhere.add(sql);
+		this._sqlWhere.add(sql);
 		
-		_sqlFrom.put(S, TABLE_S);
+		this._sqlFrom.put(S, TABLE_S);
 		
-		int index = _parameterIndex;
-		_parameterIndex += 3;
+		int index = this._parameterIndex;
+		this._parameterIndex += 3;
 		return index;
 	}
 	
@@ -734,12 +734,12 @@ public class PreparedQuery {
 	 */
 	public int setFourManagementTypes() {
 		String sql = "(s.management_type = ? or s.management_type = ? or s.management_type = ? or s.management_type = ?)";
-		_sqlWhere.add(sql);
+		this._sqlWhere.add(sql);
 		
-		_sqlFrom.put(S, TABLE_S);
+		this._sqlFrom.put(S, TABLE_S);
 		
-		int index = _parameterIndex;
-		_parameterIndex += 4;
+		int index = this._parameterIndex;
+		this._parameterIndex += 4;
 		return index;
 	}
 	
@@ -749,12 +749,12 @@ public class PreparedQuery {
 	 */
 	public int setWorkSituation() {
 		String sql = "ca.work_situation = ?";
-		_sqlWhere.add(sql);
+		this._sqlWhere.add(sql);
 		
-		_sqlFrom.put(CA, TABLE_CA);
+		this._sqlFrom.put(CA, TABLE_CA);
 		
-		int index = _parameterIndex;
-		_parameterIndex++;
+		int index = this._parameterIndex;
+		this._parameterIndex++;
 		return index;
 	}
 	
@@ -764,12 +764,12 @@ public class PreparedQuery {
 	 */
 	public int setChildCareWeekHoursCareTime() {
 		String sql = "ca.care_time >= ? and ca.care_time <= ?";
-		_sqlWhere.add(sql);
+		this._sqlWhere.add(sql);
 		
-		_sqlFrom.put(CA, TABLE_CA);
+		this._sqlFrom.put(CA, TABLE_CA);
 		
-		int index = _parameterIndex;
-		_parameterIndex += 2;
+		int index = this._parameterIndex;
+		this._parameterIndex += 2;
 		return index;
 	}
 	
@@ -779,12 +779,12 @@ public class PreparedQuery {
 	 */
 	public int setChildCareWeekHoursCareTimeString() {
 		String sql = "ca.care_time_string >= ? and ca.care_time_string <= ?";
-		_sqlWhere.add(sql);
+		this._sqlWhere.add(sql);
 		
-		_sqlFrom.put(CA, TABLE_CA);
+		this._sqlFrom.put(CA, TABLE_CA);
 		
-		int index = _parameterIndex;
-		_parameterIndex += 2;
+		int index = this._parameterIndex;
+		this._parameterIndex += 2;
 		return index;
 	}
 	
@@ -794,13 +794,13 @@ public class PreparedQuery {
 	 */
 	public int setStudyPathAmount() {
 		String sql = "r.cacc_regulation_id = rc.regulation_id and rc.condition_id = 9 and rc.interval_id = ?";
-		_sqlWhere.add(sql);
+		this._sqlWhere.add(sql);
 		
-		_sqlFrom.put(R, TABLE_R);
-		_sqlFrom.put(RC, TABLE_RC);
+		this._sqlFrom.put(R, TABLE_R);
+		this._sqlFrom.put(RC, TABLE_RC);
 		
-		int index = _parameterIndex;
-		_parameterIndex++;
+		int index = this._parameterIndex;
+		this._parameterIndex++;
 		return index;
 	}
 
@@ -808,14 +808,14 @@ public class PreparedQuery {
 	 * Prepares this query by building the prepared sql statement.
 	 */
 	public void prepare() {
-		String sql = _sqlSelect;
+		String sql = this._sqlSelect;
 		
 		sql += " from ";
 		
-		Iterator tableKeys = _sqlFrom.keySet().iterator();
+		Iterator tableKeys = this._sqlFrom.keySet().iterator();
 		while (tableKeys.hasNext()) {
 			String key = (String) tableKeys.next();
-			sql += _sqlFrom.get(key) + " " + key;
+			sql += this._sqlFrom.get(key) + " " + key;
 			if (tableKeys.hasNext()) {
 				sql += ", ";
 			}
@@ -823,7 +823,7 @@ public class PreparedQuery {
 		
 		sql += " where ";
 		
-		Iterator whereClauses = _sqlWhere.iterator();
+		Iterator whereClauses = this._sqlWhere.iterator();
 		while (whereClauses.hasNext()) {
 			sql += whereClauses.next();
 			if (whereClauses.hasNext()) {
@@ -831,12 +831,12 @@ public class PreparedQuery {
 			}
 		}
 		
-		if (_countSubQuery) {
+		if (this._countSubQuery) {
 			sql = "select count(*) from (" + sql + ")"; 
 		}
-		_sql = sql;
+		this._sql = sql;
 		try {
-			_preparedStatement = _connection.prepareStatement(sql);			
+			this._preparedStatement = this._connection.prepareStatement(sql);			
 		} catch (SQLException e) {
 			System.out.println(e.getMessage());
 		}
@@ -848,7 +848,7 @@ public class PreparedQuery {
 	 */
 	public void setInt(int parameterIndex, int x) {
 		try {
-			_preparedStatement.setInt(parameterIndex, x);			
+			this._preparedStatement.setInt(parameterIndex, x);			
 		} catch (SQLException e) {
 			System.out.println("setInt(): " + e.getMessage());
 		}
@@ -859,7 +859,7 @@ public class PreparedQuery {
 	 */
 	public void setString(int parameterIndex, String x) {
 		try {
-			_preparedStatement.setString(parameterIndex, x);			
+			this._preparedStatement.setString(parameterIndex, x);			
 		} catch (SQLException e) {
 			System.out.println("setString(): " + e.getMessage());
 		}
@@ -874,7 +874,7 @@ public class PreparedQuery {
 		ResultSet resultSet = null;
 		
 		try {
-			resultSet = _preparedStatement.executeQuery();
+			resultSet = this._preparedStatement.executeQuery();
 			if (resultSet.next()) {
 				result = resultSet.getInt(1);
 			}
@@ -901,7 +901,7 @@ public class PreparedQuery {
 		ResultSet resultSet = null;
 		
 		try {
-			resultSet = _preparedStatement.executeQuery();
+			resultSet = this._preparedStatement.executeQuery();
 			if (resultSet.next()) {
 				result = resultSet.getFloat(1);
 			}
@@ -920,6 +920,6 @@ public class PreparedQuery {
 	}
 	
 	public String toString() {
-		return _sql;
+		return this._sql;
 	}
 }

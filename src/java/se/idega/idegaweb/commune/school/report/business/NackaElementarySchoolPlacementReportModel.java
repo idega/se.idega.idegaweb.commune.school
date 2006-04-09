@@ -1,5 +1,5 @@
 /*
- * $Id: NackaElementarySchoolPlacementReportModel.java,v 1.13 2004/02/26 08:25:27 anders Exp $
+ * $Id: NackaElementarySchoolPlacementReportModel.java,v 1.14 2006/04/09 11:39:54 laddi Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -22,10 +22,10 @@ import com.idega.block.school.data.SchoolArea;
 /** 
  * Report model for placements in Nacka elementary schools.
  * <p>
- * Last modified: $Date: 2004/02/26 08:25:27 $ by $Author: anders $
+ * Last modified: $Date: 2006/04/09 11:39:54 $ by $Author: laddi $
  *
  * @author Anders Lindman
- * @version $Revision: 1.13 $
+ * @version $Revision: 1.14 $
  */
 public class NackaElementarySchoolPlacementReportModel extends ReportModel {
 
@@ -56,7 +56,7 @@ public class NackaElementarySchoolPlacementReportModel extends ReportModel {
 	 */
 	public NackaElementarySchoolPlacementReportModel(ReportBusiness reportBusiness) {
 		super(reportBusiness);
-		_schools = new HashMap();
+		this._schools = new HashMap();
 	}
 	
 	/**
@@ -446,7 +446,7 @@ public class NackaElementarySchoolPlacementReportModel extends ReportModel {
 	 * Remove schools with no placements.
 	 */
 	Collection removeEmptySchools(Collection schools, SchoolArea area) throws RemoteException {
-		Collection c = (Collection) _schools.get(area);
+		Collection c = (Collection) this._schools.get(area);
 		if (c == null) {
 			c = new ArrayList();
 			Iterator iter = schools.iterator();
@@ -458,7 +458,7 @@ public class NackaElementarySchoolPlacementReportModel extends ReportModel {
 					c.add(school);
 				}
 			}
-			_schools.put(area, c);
+			this._schools.put(area, c);
 		}
 		return c;
 	}

@@ -183,10 +183,12 @@ public class AdminUserCases extends UserCases {
 		final Group handlerGroup = viewpoint.getHandlerGroup();
 		final Text group = getSmallText(handlerGroup != null ? handlerGroup.getName() : "-");
 		
-		if (row % 2 == 0)
+		if (row % 2 == 0) {
 			messageList.setRowColor(row, getZebraColor1());
-		else
+		}
+		else {
 			messageList.setRowColor(row, getZebraColor2());
+		}
 
 		if (getViewpointPage() != -1) {
 			try {
@@ -224,10 +226,12 @@ public class AdminUserCases extends UserCases {
 			caseNumber = reminderLink;
 		}
 
-		if (row % 2 == 0)
+		if (row % 2 == 0) {
 			messageList.setRowColor(row, getZebraColor1());
-		else
+		}
+		else {
 			messageList.setRowColor(row, getZebraColor2());
+		}
 
 		messageList.setNoWrap(1, row);
 		messageList.add(caseNumber, 1, row);

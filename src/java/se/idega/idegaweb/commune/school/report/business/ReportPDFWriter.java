@@ -1,5 +1,5 @@
 /*
- * $Id: ReportPDFWriter.java,v 1.14 2004/03/17 09:10:47 anders Exp $
+ * $Id: ReportPDFWriter.java,v 1.15 2006/04/09 11:39:54 laddi Exp $
  *
  * Copyright (C) 2003 Agura IT. All Rights Reserved.
  *
@@ -37,10 +37,10 @@ import com.lowagie.text.pdf.PdfWriter;
 /** 
  * Creates report files in Adobe PDF format.
  * <p>
- * Last modified: $Date: 2004/03/17 09:10:47 $ by $Author: anders $
+ * Last modified: $Date: 2006/04/09 11:39:54 $ by $Author: laddi $
  *
  * @author Anders Lindman
- * @version $Revision: 1.14 $
+ * @version $Revision: 1.15 $
  */
 public class ReportPDFWriter {
 
@@ -58,8 +58,8 @@ public class ReportPDFWriter {
 	 * @param iwrb the resource bundle to use for translating text labels
 	 */	
 	public ReportPDFWriter(ReportModel reportModel, IWResourceBundle iwrb) {
-		_reportModel = reportModel;
-		_iwrb = iwrb;
+		this._reportModel = reportModel;
+		this._iwrb = iwrb;
 	}	
 	
 	/**
@@ -90,7 +90,7 @@ public class ReportPDFWriter {
 		}
 
 		ICFile exportFile = null;
-		String filename = _reportModel.getReportTitleLocalizationKey() + ".pdf";
+		String filename = this._reportModel.getReportTitleLocalizationKey() + ".pdf";
 		
 		try {
 			MemoryFileBuffer buffer = getPDFBuffer();
@@ -127,10 +127,10 @@ public class ReportPDFWriter {
 		Document document = new Document(PageSize.A4, 50, 50, 50, 50);
 		PdfWriter writer = PdfWriter.getInstance(document, mos);
 		
-		String titleKey = _reportModel.getReportTitleLocalizationKey();
+		String titleKey = this._reportModel.getReportTitleLocalizationKey();
 		String title = localize(titleKey, titleKey);
-		_normalFont = new Font(Font.HELVETICA, 7, Font.NORMAL);
-		_boldFont = new Font(Font.HELVETICA, 7, Font.BOLD);
+		this._normalFont = new Font(Font.HELVETICA, 7, Font.NORMAL);
+		this._boldFont = new Font(Font.HELVETICA, 7, Font.BOLD);
 		
 		document.addTitle(title);
 		document.addAuthor("Agura IT Reports");
@@ -139,14 +139,14 @@ public class ReportPDFWriter {
 		
 		String dateString = new Date(System.currentTimeMillis()).toString();
 		
-		document.add(new Phrase(title + " " + dateString + "\n\n", _boldFont));
-		document.add(new Phrase("\n", _boldFont));
+		document.add(new Phrase(title + " " + dateString + "\n\n", this._boldFont));
+		document.add(new Phrase("\n", this._boldFont));
 
-		int cols = _reportModel.getColumnSize() + 1;
+		int cols = this._reportModel.getColumnSize() + 1;
 		Table table = new Table(cols);
-		_widths = new int[cols];
+		this._widths = new int[cols];
 		for (int i = 0; i < cols; i++) {
-			_widths[i] = 1;
+			this._widths[i] = 1;
 		}
 
 		table.setSpacing(1.5f);
@@ -157,15 +157,15 @@ public class ReportPDFWriter {
 
 		int totalWidth = 0;
 		for (int i = 0; i < cols; i++) {
-			_widths[i] += 1;
-			totalWidth += _widths[i];
+			this._widths[i] += 1;
+			totalWidth += this._widths[i];
 		}
 		int width = (100 * totalWidth) / 95;
 		if (width > 100) {
 			width = 100;
 		}
 		table.setWidth(width);
-		table.setWidths(_widths);
+		table.setWidths(this._widths);
 		document.add(table);
 		document.close();
 		writer.setPdfVersion(PdfWriter.VERSION_1_2);
@@ -177,7 +177,7 @@ public class ReportPDFWriter {
 	 * Builds the report column headers.
 	 */
 	protected void buildColumnHeaders(Table table) throws BadElementException {
-		Header[] headers = _reportModel.getColumnHeaders();
+		Header[] headers = this._reportModel.getColumnHeaders();
 		com.lowagie.text.Cell cell = new com.lowagie.text.Cell();
 		cell.setRowspan(2);
 		table.addCell(cell, new Point(0, 0));
@@ -192,7 +192,7 @@ public class ReportPDFWriter {
 				} else {
 					s = localize(header.getLocalizationKey(), header.getLocalizationKey());
 				}
-				cell = new com.lowagie.text.Cell(new Phrase(s, _normalFont));
+				cell = new com.lowagie.text.Cell(new Phrase(s, this._normalFont));
 				cell.setRowspan(2);
 				cell.setHorizontalAlignment(Element.ALIGN_CENTER); 
 				cell.setVerticalAlignment(Element.ALIGN_BOTTOM); 
@@ -206,7 +206,7 @@ public class ReportPDFWriter {
 				} else {
 					s = localize(header.getLocalizationKey(), header.getLocalizationKey());
 				}
-				cell = new com.lowagie.text.Cell(new Phrase(s, _normalFont));
+				cell = new com.lowagie.text.Cell(new Phrase(s, this._normalFont));
 				cell.setColspan(children.length);
 				cell.setHorizontalAlignment(Element.ALIGN_CENTER); 
 				table.addCell(cell, new Point(0, column));
@@ -221,7 +221,7 @@ public class ReportPDFWriter {
 					} else {
 						s = localize(child.getLocalizationKey(), child.getLocalizationKey());
 					}
-					cell = new com.lowagie.text.Cell(new Phrase(s, _normalFont));
+					cell = new com.lowagie.text.Cell(new Phrase(s, this._normalFont));
 					cell.setHorizontalAlignment(Element.ALIGN_CENTER); 
 					cell.setVerticalAlignment(Element.ALIGN_BOTTOM); 
 					cell.setNoWrap(true);
@@ -237,7 +237,7 @@ public class ReportPDFWriter {
 	 * Builds the report row headers.
 	 */
 	protected void buildRowHeaders(Table table) throws BadElementException {
-		Header[] headers = _reportModel.getRowHeaders();
+		Header[] headers = this._reportModel.getRowHeaders();
 		int row = 2;
 		String s = null;
 		com.lowagie.text.Cell cell = null;
@@ -254,9 +254,9 @@ public class ReportPDFWriter {
 				} else {
 					s = localize(header.getLocalizationKey(), header.getLocalizationKey());					
 				}
-				cell = new com.lowagie.text.Cell(new Phrase(s, _boldFont));
+				cell = new com.lowagie.text.Cell(new Phrase(s, this._boldFont));
 				if (headerType == Header.HEADERTYPE_ROW_LABEL || headerType == Header.HEADERTYPE_ROW_SPACER) {
-					cell.setColspan(_reportModel.getColumnSize() + 1);
+					cell.setColspan(this._reportModel.getColumnSize() + 1);
 				}
 				cell.setNoWrap(true);
 				cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
@@ -273,8 +273,8 @@ public class ReportPDFWriter {
 				} else {
 					s = localize(header.getLocalizationKey(), header.getLocalizationKey());					
 				}
-				cell = new com.lowagie.text.Cell(new Phrase(s, _normalFont));
-				cell.setColspan(_reportModel.getColumnSize() + 1);
+				cell = new com.lowagie.text.Cell(new Phrase(s, this._normalFont));
+				cell.setColspan(this._reportModel.getColumnSize() + 1);
 				cell.setLeading(16);
 				table.addCell(cell, new Point(row, 0));
 				row++;
@@ -289,9 +289,9 @@ public class ReportPDFWriter {
 					} else {
 						s = localize(child.getLocalizationKey(), child.getLocalizationKey());					
 					}
-					cell = new com.lowagie.text.Cell(new Phrase(s, _boldFont));
+					cell = new com.lowagie.text.Cell(new Phrase(s, this._boldFont));
 					if (headerType == Header.HEADERTYPE_ROW_LABEL || headerType == Header.HEADERTYPE_ROW_SPACER) {
-						cell.setColspan(_reportModel.getColumnSize() + 1);
+						cell.setColspan(this._reportModel.getColumnSize() + 1);
 					}
 					cell.setNoWrap(true);
 					cell.setVerticalAlignment(Element.ALIGN_MIDDLE); 
@@ -312,7 +312,7 @@ public class ReportPDFWriter {
 	protected void buildReportCells(Table table) throws BadElementException {
 		int cellRow = 0;
 		int tableRow = 2;
-		Header[] rowHeaders = _reportModel.getRowHeaders();
+		Header[] rowHeaders = this._reportModel.getRowHeaders();
 		NumberFormat formatter = NumberFormat.getNumberInstance();
 		formatter.setMaximumFractionDigits(1);
 		for (int i = 0; i < rowHeaders.length; i++) {
@@ -344,10 +344,10 @@ public class ReportPDFWriter {
 						continue;
 					}
 				}
-				for (int cellColumn = 0; cellColumn < _reportModel.getColumnSize(); cellColumn++) {
-					Cell cell = _reportModel.getCell(cellRow, cellColumn);
+				for (int cellColumn = 0; cellColumn < this._reportModel.getColumnSize(); cellColumn++) {
+					Cell cell = this._reportModel.getCell(cellRow, cellColumn);
 					int align = Element.ALIGN_RIGHT;
-					Font font = _normalFont;
+					Font font = this._normalFont;
 					String s = null;
 					
 					switch (cell.getCellType()) {
@@ -359,16 +359,16 @@ public class ReportPDFWriter {
 							if (s.equals("&nbsp;")) {
 								s = " ";
 							}
-							font = _boldFont;
+							font = this._boldFont;
 							align = Element.ALIGN_LEFT;
 							break;
 						case Cell.CELLTYPE_SUM:
 							s = formatNumber(cell.getValue());
-							font = _boldFont;
+							font = this._boldFont;
 							break;
 						case Cell.CELLTYPE_TOTAL:
 							s = formatNumber(cell.getValue());
-							font = _boldFont;
+							font = this._boldFont;
 							break;
 						default:
 							s = formatNumber(cell.getValue());
@@ -386,7 +386,7 @@ public class ReportPDFWriter {
 				tableRow++;
 			}
 		}
-		_reportModel.close();
+		this._reportModel.close();
 	}
 
 	/*
@@ -407,11 +407,11 @@ public class ReportPDFWriter {
 			s = text;
 		}
 		int len = s.length();
-		if (_widths[column] < len) {
+		if (this._widths[column] < len) {
 			if (s.indexOf('m') != -1) {
 				len++;
 			}
-			_widths[column] = len;
+			this._widths[column] = len;
 		}
 	}
 	
@@ -434,6 +434,6 @@ public class ReportPDFWriter {
 	 * Returns the localized text for the specified key.
 	 */
 	private String localize(String key, String defaultText) {
-		return _iwrb.getLocalizedString(key, defaultText);
+		return this._iwrb.getLocalizedString(key, defaultText);
 	}
 }

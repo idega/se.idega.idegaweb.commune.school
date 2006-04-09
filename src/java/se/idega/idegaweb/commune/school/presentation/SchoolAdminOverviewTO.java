@@ -22,56 +22,56 @@ public class SchoolAdminOverviewTO {
 	 * @return
 	 */
 	public int getClassMemberID() {
-		return classMemberID;
+		return this.classMemberID;
 	}
 
 	/**
 	 * @return
 	 */
 	public int getSchMemberID() {
-		return schMemberID;
+		return this.schMemberID;
 	}
 
 	/**
 	 * @return
 	 */
 	public int getSeasonID() {
-		return seasonID;
+		return this.seasonID;
 	}
 
 	/**
 	 * @return
 	 */
 	public int getStudentID() {
-		return studentID;
+		return this.studentID;
 	}
 
 	/**
 	 * @param i
 	 */
 	public void setClassMemberID(int i) {
-		classMemberID = i;
+		this.classMemberID = i;
 	}
 
 	/**
 	 * @param i
 	 */
 	public void setSchMemberID(int i) {
-		schMemberID = i;
+		this.schMemberID = i;
 	}
 
 	/**
 	 * @param i
 	 */
 	public void setSeasonID(int i) {
-		seasonID = i;
+		this.seasonID = i;
 	}
 
 	/**
 	 * @param i
 	 */
 	public void setStudentID(int i) {
-		studentID = i;
+		this.studentID = i;
 	}
 
 }

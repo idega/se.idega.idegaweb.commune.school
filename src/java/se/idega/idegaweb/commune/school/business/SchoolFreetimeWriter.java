@@ -81,28 +81,28 @@ public class SchoolFreetimeWriter implements MediaWritable {
 	
 	public void init(HttpServletRequest req, IWContext iwc) {
 		try {
-			locale = iwc.getApplicationSettings().getApplicationLocale();
-			business = getSchoolCommuneBusiness(iwc);
+			this.locale = iwc.getApplicationSettings().getApplicationLocale();
+			this.business = getSchoolCommuneBusiness(iwc);
 			//userBusiness = getCommuneUserBusiness(iwma.getIWApplicationContext());
-			iwrb = iwc.getIWMainApplication().getBundle(CommuneBlock.IW_BUNDLE_IDENTIFIER).getResourceBundle(locale);
+			this.iwrb = iwc.getIWMainApplication().getBundle(CommuneBlock.IW_BUNDLE_IDENTIFIER).getResourceBundle(this.locale);
 			
 			if (req.getParameter(prmSchoolId) != null && req.getParameter(prmSchoolSeasonID) != null) {
-				school = business.getSchoolBusiness().getSchool(new Integer(req.getParameter(prmSchoolId)));
-				Collection choices = business.getSchoolChoiceBusiness().findBySchoolAndFreeTime(Integer.parseInt(req.getParameter(prmSchoolId)),Integer.parseInt(req.getParameter(prmSchoolSeasonID)),true);
-				students = business.getUserMapFromChoices(choices);
-				addresses = business.getUserAddressMapFromChoicesUserIdPK(choices);
-				phones = business.getUserPhoneMapFromChoicesUserIdPK(choices);
+				this.school = this.business.getSchoolBusiness().getSchool(new Integer(req.getParameter(prmSchoolId)));
+				Collection choices = this.business.getSchoolChoiceBusiness().findBySchoolAndFreeTime(Integer.parseInt(req.getParameter(prmSchoolId)),Integer.parseInt(req.getParameter(prmSchoolSeasonID)),true);
+				this.students = this.business.getUserMapFromChoices(choices);
+				this.addresses = this.business.getUserAddressMapFromChoicesUserIdPK(choices);
+				this.phones = this.business.getUserPhoneMapFromChoicesUserIdPK(choices);
 
 				List ordered = new Vector(choices);
 		
-				Collections.sort(ordered,new SchoolChoiceComparator(SchoolChoiceComparator.NAME_SORT,null,null,students,addresses));
+				Collections.sort(ordered,new SchoolChoiceComparator(SchoolChoiceComparator.NAME_SORT,null,null,this.students,this.addresses));
 		
 				String type = req.getParameter(prmPrintType);
 				if (type.equals(PDF)) {
-					buffer = writePDF(ordered);
+					this.buffer = writePDF(ordered);
 				}
 				else if (type.equals(XLS)) {
-					buffer = writeXLS(ordered);
+					this.buffer = writeXLS(ordered);
 				}
 			}
 		}
@@ -112,22 +112,24 @@ public class SchoolFreetimeWriter implements MediaWritable {
 	}
 	
 	public String getMimeType() {
-		if (buffer != null)
-			return buffer.getMimeType();
+		if (this.buffer != null) {
+			return this.buffer.getMimeType();
+		}
 		return "application/pdf";
 	}
 	
 	public void writeTo(OutputStream out) throws IOException {
-		if (buffer != null) {
-			MemoryInputStream mis = new MemoryInputStream(buffer);
+		if (this.buffer != null) {
+			MemoryInputStream mis = new MemoryInputStream(this.buffer);
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			while (mis.available() > 0) {
 				baos.write(mis.read());
 			}
 			baos.writeTo(out);
 		}
-		else
+		else {
 			System.err.println("buffer is null");
+		}
 	}
 	
 	public MemoryFileBuffer writeXLS(List list) throws Exception {
@@ -136,7 +138,7 @@ public class SchoolFreetimeWriter implements MediaWritable {
 
 		if (!list.isEmpty()) {			
 	    HSSFWorkbook wb = new HSSFWorkbook();
-	    HSSFSheet sheet = wb.createSheet(school.getName());
+	    HSSFSheet sheet = wb.createSheet(this.school.getName());
 	    sheet.setColumnWidth((short)0, (short) (30 * 256));
 	    sheet.setColumnWidth((short)1, (short) (14 * 256));
 	    sheet.setColumnWidth((short)2, (short) (30 * 256));
@@ -148,16 +150,16 @@ public class SchoolFreetimeWriter implements MediaWritable {
 
 	    HSSFRow row = sheet.createRow(0);
 	    HSSFCell cell = row.createCell((short)0);
-	    cell.setCellValue(iwrb.getLocalizedString("school.name","Name"));
+	    cell.setCellValue(this.iwrb.getLocalizedString("school.name","Name"));
 	    cell.setCellStyle(style);
 	    cell = row.createCell((short)1);
-	    cell.setCellValue(iwrb.getLocalizedString("school.personal_id","Personal ID"));
+	    cell.setCellValue(this.iwrb.getLocalizedString("school.personal_id","Personal ID"));
 	    cell.setCellStyle(style);
 	    cell = row.createCell((short)2);
-	    cell.setCellValue(iwrb.getLocalizedString("school.address","Address"));
+	    cell.setCellValue(this.iwrb.getLocalizedString("school.address","Address"));
 	    cell.setCellStyle(style);
 	    cell = row.createCell((short)3);
-	    cell.setCellValue(iwrb.getLocalizedString("school.phone","Phone"));
+	    cell.setCellValue(this.iwrb.getLocalizedString("school.phone","Phone"));
 	    cell.setCellStyle(style);
 
 			User student;
@@ -170,17 +172,19 @@ public class SchoolFreetimeWriter implements MediaWritable {
 			while (iter.hasNext()) {
 				row = sheet.createRow(cellRow);
 				studentMember = (SchoolChoice) iter.next();
-				student = (User) students.get(new Integer(studentMember.getChildId()));
-				address = (Address) addresses.get(new Integer(studentMember.getChildId()));
-				phone = (Phone) phones.get(new Integer(studentMember.getChildId()));
+				student = (User) this.students.get(new Integer(studentMember.getChildId()));
+				address = (Address) this.addresses.get(new Integer(studentMember.getChildId()));
+				phone = (Phone) this.phones.get(new Integer(studentMember.getChildId()));
 
 				Name name = new Name(student.getFirstName(), student.getMiddleName(), student.getLastName());
-		    row.createCell((short)0).setCellValue(name.getName(locale, true));
-		    row.createCell((short)1).setCellValue(PersonalIDFormatter.format(student.getPersonalID(), locale));
-		    if (address != null)
-			    row.createCell((short)2).setCellValue(address.getStreetAddress());
-			  if (phone != null)
-			    row.createCell((short)3).setCellValue(phone.getNumber());
+		    row.createCell((short)0).setCellValue(name.getName(this.locale, true));
+		    row.createCell((short)1).setCellValue(PersonalIDFormatter.format(student.getPersonalID(), this.locale));
+		    if (address != null) {
+					row.createCell((short)2).setCellValue(address.getStreetAddress());
+				}
+			  if (phone != null) {
+					row.createCell((short)3).setCellValue(phone.getNumber());
+				}
 			  cellRow++;
 			}
 			wb.write(mos);
@@ -196,9 +200,9 @@ public class SchoolFreetimeWriter implements MediaWritable {
 		if (!list.isEmpty()) {
 			Document document = new Document(PageSize.A4, 50, 50, 50, 50);
 			PdfWriter writer = PdfWriter.getInstance(document, mos);
-			document.addTitle(school.getName());
+			document.addTitle(this.school.getName());
 			document.addAuthor("Idega Reports");
-			document.addSubject(school.getName());
+			document.addSubject(this.school.getName());
 			document.open();
 			
 			User student;
@@ -207,36 +211,38 @@ public class SchoolFreetimeWriter implements MediaWritable {
 			SchoolChoice studentMember;
 			Cell cell;
 			
-			String[] headers = {iwrb.getLocalizedString("school.name","Name"), iwrb.getLocalizedString("school.personal_id","Personal ID"), iwrb.getLocalizedString("school.address","Address"), iwrb.getLocalizedString("school.phone","Phone")};
+			String[] headers = {this.iwrb.getLocalizedString("school.name","Name"), this.iwrb.getLocalizedString("school.personal_id","Personal ID"), this.iwrb.getLocalizedString("school.address","Address"), this.iwrb.getLocalizedString("school.phone","Phone")};
 			int[] sizes = { 35, 20, 35, 10 };
 
 			Table datatable = getTable(headers, sizes);
 			Iterator iter = list.iterator();
 			while (iter.hasNext()) {
 				studentMember = (SchoolChoice) iter.next();
-				student = (User) students.get(new Integer(studentMember.getChildId()));
-				address = (Address) addresses.get(new Integer(studentMember.getChildId()));
-				phone = (Phone) phones.get(new Integer(studentMember.getChildId()));
+				student = (User) this.students.get(new Integer(studentMember.getChildId()));
+				address = (Address) this.addresses.get(new Integer(studentMember.getChildId()));
+				phone = (Phone) this.phones.get(new Integer(studentMember.getChildId()));
 
 				Name name = new Name(student.getFirstName(), student.getMiddleName(), student.getLastName());
-				cell = new Cell(new Phrase(name.getName(locale, true), new Font(Font.HELVETICA, 10, Font.BOLD)));
+				cell = new Cell(new Phrase(name.getName(this.locale, true), new Font(Font.HELVETICA, 10, Font.BOLD)));
 				cell.setBorder(Rectangle.NO_BORDER);
 				datatable.addCell(cell);
 
-				cell = new Cell(new Phrase(PersonalIDFormatter.format(student.getPersonalID(), locale), new Font(Font.HELVETICA, 10, Font.BOLD)));
+				cell = new Cell(new Phrase(PersonalIDFormatter.format(student.getPersonalID(), this.locale), new Font(Font.HELVETICA, 10, Font.BOLD)));
 				cell.setBorder(Rectangle.NO_BORDER);
 				datatable.addCell(cell);
 
 				String streetAddress = "";
-				if (address != null)
+				if (address != null) {
 					streetAddress = address.getStreetAddress();
+				}
 				cell = new Cell(new Phrase(streetAddress, new Font(Font.HELVETICA, 10, Font.BOLD)));
 				cell.setBorder(Rectangle.NO_BORDER);
 				datatable.addCell(cell);
 
 				String phoneNumber = "";
-				if (phone != null)
+				if (phone != null) {
 					phoneNumber = phone.getNumber();
+				}
 				cell = new Cell(new Phrase(phoneNumber, new Font(Font.HELVETICA, 10, Font.BOLD)));
 				cell.setBorder(Rectangle.NO_BORDER);
 				datatable.addCell(cell);
@@ -263,8 +269,9 @@ public class SchoolFreetimeWriter implements MediaWritable {
 		datatable.setSpacing(0.0f);
 		datatable.setBorder(Rectangle.NO_BORDER);
 		datatable.setWidth(100);
-		if (sizes != null)
+		if (sizes != null) {
 			datatable.setWidths(sizes);
+		}
 		for (int i = 0; i < headers.length; i++) {
 			Cell cell = new Cell(new Phrase(headers[i], new Font(Font.HELVETICA, 12, Font.BOLD)));
 			cell.setBorder(Rectangle.BOTTOM);
