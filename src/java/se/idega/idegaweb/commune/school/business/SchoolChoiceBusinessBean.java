@@ -120,11 +120,11 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	 * @return Font
 	 */
 	private Font getDefaultTextFont() {
-		if (defaultTextFont == null) {
-			defaultTextFont = new Font(Font.HELVETICA);
-			defaultTextFont.setSize(12);
+		if (this.defaultTextFont == null) {
+			this.defaultTextFont = new Font(Font.HELVETICA);
+			this.defaultTextFont.setSize(12);
 		}
-		return defaultTextFont;
+		return this.defaultTextFont;
 	}
 	
 	/**
@@ -132,10 +132,10 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	 * @return Font
 	 */
 	private Font getDefaultParagraphFont() {
-		if (defaultParagraphFont == null) {
-			defaultParagraphFont = new Font(Font.HELVETICA, 12, Font.BOLD);
+		if (this.defaultParagraphFont == null) {
+			this.defaultParagraphFont = new Font(Font.HELVETICA, 12, Font.BOLD);
 		}
-		return defaultParagraphFont;
+		return this.defaultParagraphFont;
 	}
 
 	/*private Font getTextFont() {
@@ -263,8 +263,9 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 					previousSeasonID = getCommuneSchoolBusiness().getPreviousSchoolSeasonID(getCommuneSchoolBusiness().getCurrentSchoolSeasonID());
 				}
 				
-				if (previousSeasonID != -1)
+				if (previousSeasonID != -1) {
 					getCommuneSchoolBusiness().setNeedsSpecialAttention(childId, previousSeasonID, true);
+				}
 
 				return returnList;
 			}
@@ -464,14 +465,18 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 			throw new IDOCreateException(fex);
 		}
 		choice.setChildId(childId);
-		if (current_school > 0)
+		if (current_school > 0) {
 			choice.setCurrentSchoolId(current_school);
-		if (chosen_school != -1)
+		}
+		if (chosen_school != -1) {
 			choice.setChosenSchoolId(chosen_school);
-		if (schoolYearID != -1)
+		}
+		if (schoolYearID != -1) {
 			choice.setSchoolYear(schoolYearID);
-		if (currentYearID != -1)
+		}
+		if (currentYearID != -1) {
 			choice.setCurrentSchoolYear(currentYearID);
+		}
 		choice.setChoiceOrder(choiceOrder);
 		choice.setMethod(method);
 		choice.setWorksituation1(workSituation1);
@@ -491,8 +496,9 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 			Integer seasonId = (Integer) season.getPrimaryKey();
 			choice.setSchoolSeasonId(seasonId.intValue());
 		}
-		if (placementDate != null)
+		if (placementDate != null) {
 			choice.setPlacementDate(placementDate);
+		}
 		stamp.addSeconds(1 - choiceOrder);
 		choice.setCreated(stamp.getTimestamp());
 		choice.setCaseStatus(caseStatus);
@@ -520,8 +526,9 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 			choice.setHandicraftId(handicraftId);
 		}
 		
-		if (parentCase != null)
+		if (parentCase != null) {
 			choice.setParentCase(parentCase);
+		}
 		try {
 			choice.store();
 		}
@@ -844,9 +851,13 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 			}
 			else {
 				User appParent = application.getOwner();
-				User parent2 = null;
+			    
+				
+
 
 				try {
+					if (sendToAllParents) {
+					User parent2 = null;						
 					Collection parents = getUserBusiness().getMemberFamilyLogic().getCustodiansFor(child);
 					Iterator iter = parents.iterator();
 					while (iter.hasNext()) {
@@ -858,62 +869,51 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 					}
 					if(parent2 == null){
 						if((appParent.getEmails() != null) &&(!appParent.getEmails().isEmpty()) ){
-//							Message message = getMessageBusiness().createUserMessage(application, appParent,  null,null,applyingSubject, MessageFormat.format(applyingBody, arguments), true,applyingCode);
 							Message message = getMessageBusiness().createUserMessage(application, appParent,null,null,applyingSubject,MessageFormat.format(applyingBody, arguments), null, null, false,null,false,true); 
-							message.setParentCase(application);
-						 	message.store();
 						}
 						else{
 						 	Message message = getMessageBusiness().createUserMessage(application, appParent,null,null,applyingSubject,MessageFormat.format(applyingBody, arguments), null, null, true,null,true,true);
-					     	message.setParentCase(application);
-						 	message.store();
 						}				
 					}
 					else{
 						if(getUserBusiness().haveSameAddress(parent2, appParent)){
 							if((appParent.getEmails() != null) &&(!appParent.getEmails().isEmpty()) ){
 								Message message = getMessageBusiness().createUserMessage(application, appParent,null,null,applyingSubject,MessageFormat.format(applyingBody, arguments), null, null, false,null,false,true); 
-								message.setParentCase(application);
-							 	message.store();
 							}
 							else{
 							 	Message message = getMessageBusiness().createUserMessage(application, appParent,null,null,applyingSubject,MessageFormat.format(applyingBody, arguments), null, null, true,null,true,true);
-						     	message.setParentCase(application);
-							 	message.store();
 							}
 							Message message = getMessageBusiness().createUserMessage(application, parent2,null,null,applyingSubject,MessageFormat.format(applyingBody, arguments), null, null, false,null,false,true); 
-							message.setParentCase(application);
-						 	message.store();
 						} 
 						else { // not same address
 							if((appParent.getEmails() != null) &&(!appParent.getEmails().isEmpty()) ){
 								Message message = getMessageBusiness().createUserMessage(application, appParent,null,null,applyingSubject,MessageFormat.format(applyingBody, arguments), null, null, false,null,false,true); 
-								message.setParentCase(application);
-							 	message.store();
 							}
 							else{
 							 	Message message = getMessageBusiness().createUserMessage(application, appParent,null,null,applyingSubject,MessageFormat.format(applyingBody, arguments), null, null, true,null,true,true);
-						     	message.setParentCase(application);
-							 	message.store();
 							}
 
 							if((parent2.getEmails() != null) &&(!parent2.getEmails().isEmpty()) ){
 								Message message = getMessageBusiness().createUserMessage(application, parent2,null,null,applyingSubject,MessageFormat.format(applyingBody, arguments), null, null, false,null,false,true); 
-								message.setParentCase(application);
-							 	message.store();
 							}
 							else{
 							 	Message message = getMessageBusiness().createUserMessage(application, parent2,null,null,applyingSubject,MessageFormat.format(applyingBody, arguments), null, null, true,null,true,true);
-						     	message.setParentCase(application);
-							 	message.store();
 							}
 
 						} // end not same address
 
 					}	// end parent2!=null
-						
+				   }	
+					else { // send only for one parent   
+						if((appParent.getEmails() != null) &&(!appParent.getEmails().isEmpty()) ){
+							Message message = getMessageBusiness().createUserMessage(application, appParent,null,null,applyingSubject,MessageFormat.format(applyingSubject, arguments), MessageFormat.format(applyingSubject, arguments), null, false,null,false,true); 
+						}
+						else{
+							Message message = getMessageBusiness().createUserMessage(application, appParent,null,null,applyingSubject,MessageFormat.format(applyingSubject, arguments), MessageFormat.format(applyingSubject, arguments), null, true,null,true,true);
+						}				
+					}					
 				} // end try
-					
+
 				catch (NoCustodianFound ncf) {
 					ncf.printStackTrace();
 				}
@@ -923,6 +923,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		catch (RemoteException re) {
 			re.printStackTrace();
 		}
+
 	}
 
 	/**
@@ -1092,10 +1093,10 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 					terminateOldPlacement(choice);
 				}
 				User child = choice.getChild();
-				//Object[] arguments = {child.getNameLastFirst(true), choice.getChosenSchool().getSchoolName(), PersonalIDFormatter.format(child.getPersonalID(), this.getIWApplicationContext().getApplicationSettings().getDefaultLocale())};
 				String placementDate = choice.getPlacementDate() != null ? new IWTimestamp(choice.getPlacementDate()).getLocaleDate(this.getIWApplicationContext().getApplicationSettings().getDefaultLocale(), IWTimestamp.SHORT) : "";
-				Object[] arguments = {child.getName(), choice.getChosenSchool().getSchoolName(), PersonalIDFormatter.format(child.getPersonalID(), this.getIWApplicationContext().getApplicationSettings().getDefaultLocale()), placementDate};				
-				String body = MessageFormat.format(getLocalizedString("school_choice.student_moved_from_school_body", "Dear headmaster, {0} has been moved from your school and placed at {1} from {3}."), arguments);
+				Object[] arguments = {child.getName(), choice.getChosenSchool().getSchoolName(), this.getIWApplicationContext().getApplicationSettings().getDefaultLocale(), placementDate};				
+				String body = getLocalizedString("school_choice.student_moved_from_school_body", "Dear headmaster, {0} has been moved from your school and placed at {1} from {2}."); 
+				MessageFormat.format(body, arguments);
 				this.sendMessageToSchool(choice.getCurrentSchoolId(), getLocalizedString("school_choice.student_moved_from_school_subject", "Student moved from your school"), body,SchoolChoiceMessagePdfHandler.CODE_SCHOOL_MOVEAWAY);
 			}
 			super.changeCaseStatus(choice, getCaseStatusPlaced().getStatus(), performer);
@@ -1495,10 +1496,10 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 	}
 	
 	private CareBusiness getCareBusiness() throws RemoteException {
-		if (careBusiness == null) {
-			careBusiness = (CareBusiness) getServiceInstance(CareBusiness.class);
+		if (this.careBusiness == null) {
+			this.careBusiness = (CareBusiness) getServiceInstance(CareBusiness.class);
 		}
-		return careBusiness;
+		return this.careBusiness;
 	}
 	
 	public Collection getApplicantsForSchool(int schoolID, int seasonID, int schoolYearID, String[] validStatuses, String searchString, int orderBy, int numberOfEntries, int startingEntry) throws RemoteException {
