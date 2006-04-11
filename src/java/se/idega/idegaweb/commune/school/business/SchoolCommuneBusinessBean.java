@@ -33,6 +33,7 @@ import com.idega.block.datareport.util.ReportableData;
 import com.idega.block.datareport.util.ReportableField;
 import com.idega.block.process.business.CaseBusiness;
 import com.idega.block.process.business.CaseBusinessBean;
+import com.idega.block.process.message.data.Message;
 import com.idega.block.school.business.SchoolBusiness;
 import com.idega.block.school.business.SchoolYearComparator;
 import com.idega.block.school.data.School;
@@ -178,7 +179,9 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 			}
 			Collection types = getSchoolBusiness().getSchoolTypeHome().findAllByCategory(schoolCategory, false);
 			SchoolClassMember member = getSchoolBusiness().getSchoolClassMemberHome().findByUserAndSchoolAndSeason(userID, schoolID, seasonID, types);
-			if (member != null) return true;
+			if (member != null) {
+				return true;
+			}
 			return false;
 		}
 		catch (FinderException e) {
@@ -285,7 +288,9 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 			while (it.hasNext()) {
 				choice = (SchoolChoice) it.next();
 				Phone phone = getCommuneUserBusiness().getChildHomePhone(choice.getChildId());
-				if (phone != null) coll.put(new Integer(choice.getChildId()), phone);
+				if (phone != null) {
+					coll.put(new Integer(choice.getChildId()), phone);
+				}
 			}
 		}
 
@@ -363,7 +368,9 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 			while (iter.hasNext()) {
 				SchoolChoice element = (SchoolChoice) iter.next();
 				String caseStatus = element.getCaseStatus().toString();
-				if ((caseStatus.equalsIgnoreCase("PREL") || caseStatus.equalsIgnoreCase("PLAC") || caseStatus.equalsIgnoreCase("FLYT")) && element.getChosenSchoolId() != schoolID) return true;
+				if ((caseStatus.equalsIgnoreCase("PREL") || caseStatus.equalsIgnoreCase("PLAC") || caseStatus.equalsIgnoreCase("FLYT")) && element.getChosenSchoolId() != schoolID) {
+					return true;
+				}
 			}
 		}
 
@@ -374,7 +381,9 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 		boolean[] returnValue = { false, false};
 		int numberOfChoices = getSchoolChoiceBusiness().getNumberOfApplicationsForStudents(userID, seasonID);
 		if (numberOfChoices > 0) {
-			if (numberOfChoices == 1) returnValue[1] = true;
+			if (numberOfChoices == 1) {
+				returnValue[1] = true;
+			}
 			returnValue[0] = true;
 		}
 		return returnValue;
@@ -383,7 +392,9 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 	public boolean hasMoveChoiceToOtherSchool(int userID, int schoolID, int seasonID) {
 		try {
 			int numberOfChoices = getSchoolChoiceBusiness().getSchoolChoiceHome().getMoveChoices(userID, schoolID, seasonID);
-			if (numberOfChoices > 0) return true;
+			if (numberOfChoices > 0) {
+				return true;
+			}
 			return false;
 		}
 		catch (RemoteException e) {
@@ -398,7 +409,9 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 		try {
 			String[] statuses = { getCaseStatusDeleted().getStatus(), getCaseStatusInactive().getStatus()};
 			int numberOfChoices = getSchoolChoiceBusiness().getSchoolChoiceHome().getChoices(userID, seasonID, statuses);
-			if (numberOfChoices > 0) return true;
+			if (numberOfChoices > 0) {
+				return true;
+			}
 			return false;
 		}
 		catch (RemoteException e) {
@@ -413,7 +426,9 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 		try {
 			String[] statuses = { getCaseStatusDeleted().getStatus(), getCaseStatusInactive().getStatus()};
 			int numberOfChoices = getSchoolChoiceBusiness().getSchoolChoiceHome().getChoices(userID, schoolID, seasonID, statuses);
-			if (numberOfChoices > 0) return true;
+			if (numberOfChoices > 0) {
+				return true;
+			}
 			return false;
 		}
 		catch (RemoteException e) {
@@ -430,7 +445,9 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 			while (iter.hasNext()) {
 				SchoolChoice element = (SchoolChoice) iter.next();
 				String caseStatus = element.getCaseStatus().toString();
-				if (caseStatus.equalsIgnoreCase("PREL") || caseStatus.equalsIgnoreCase("PLAC") || caseStatus.equalsIgnoreCase("FLYT")) return ((Integer) element.getPrimaryKey()).intValue();
+				if (caseStatus.equalsIgnoreCase("PREL") || caseStatus.equalsIgnoreCase("PLAC") || caseStatus.equalsIgnoreCase("FLYT")) {
+					return ((Integer) element.getPrimaryKey()).intValue();
+				}
 			}
 		}
 
@@ -484,20 +501,26 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 		SchoolYear year = getSchoolBusiness().getSchoolYear(new Integer(schoolYearID));
 		if (year != null) {
 			SchoolYear previousYear = getSchoolYear(year.getSchoolYearAge() - 1);
-			if (previousYear != null) return ((Integer) previousYear.getPrimaryKey()).intValue();
+			if (previousYear != null) {
+				return ((Integer) previousYear.getPrimaryKey()).intValue();
+			}
 		}
 		return -1;
 	}
 
 	public SchoolYear getNextSchoolYear(SchoolYear schoolYear) throws RemoteException {
 		SchoolYear nextYear = getSchoolYear(schoolYear.getSchoolYearAge() + 1);
-		if (nextYear != null) return nextYear;
+		if (nextYear != null) {
+			return nextYear;
+		}
 		return null;
 	}
 
 	public int getGradeForYear(int schoolYearID) throws RemoteException {
 		SchoolYear year = getSchoolBusiness().getSchoolYear(new Integer(schoolYearID));
-		if (year != null) return year.getSchoolYearAge();
+		if (year != null) {
+			return year.getSchoolYearAge();
+		}
 		return -1;
 	}
 
@@ -560,7 +583,9 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 				doUpdate = true;
 			}
 
-			if (doUpdate) schoolMember.store();
+			if (doUpdate) {
+				schoolMember.store();
+			}
 		}
 	}
 
@@ -601,7 +626,9 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 			SchoolSeason season = getSchoolBusiness().getSchoolSeason(new Integer(schoolClass.getSchoolSeasonId()));
 			IWTimestamp seasonStart = new IWTimestamp(season.getSchoolSeasonStart());
 			IWTimestamp timeNow = new IWTimestamp();
-			if (timeNow.getYear() == 2002) return true;
+			if (timeNow.getYear() == 2002) {
+				return true;
+			}
 
 			IWPropertyList properties = getIWApplicationContext().getSystemProperties().getProperties("school_properties");
 			String ready = properties.getProperty(propertyName);
@@ -615,7 +642,9 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 					seasonStart.setYear(Integer.parseInt(ready.substring(6,10)));
 				}
 				
-				if (timeNow.isEarlierThan(seasonStart)) return false;
+				if (timeNow.isEarlierThan(seasonStart)) {
+					return false;
+				}
 			}
 		}
 		return true;
@@ -682,7 +711,9 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 
 	public String getLocalizedSchoolTypeKey(SchoolType type) {
 		String key = type.getLocalizationKey();
-		if (key == null || key.length() == 0) key = "school.school_type_" + type.getSchoolTypeName();
+		if (key == null || key.length() == 0) {
+			key = "school.school_type_" + type.getSchoolTypeName();
+		}
 		return key;
 	}
 
@@ -844,10 +875,10 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 	}
 
 	private void initializeBundlesIfNeeded(Locale currentLocale) {
-		if (_iwb == null) {
-			_iwb = this.getIWApplicationContext().getIWMainApplication().getBundle(IW_BUNDLE_IDENTIFIER);
+		if (this._iwb == null) {
+			this._iwb = this.getIWApplicationContext().getIWMainApplication().getBundle(IW_BUNDLE_IDENTIFIER);
 		}
-		_iwrb = _iwb.getResourceBundle(currentLocale);
+		this._iwrb = this._iwb.getResourceBundle(currentLocale);
 	}
 
 	public ReportableCollection getReportOfUsersNotRegisteredInAnyClass(Locale currentLocale, Date selectedDate, SchoolSeason currentSeason) throws IDOException, RemoteException, CreateException, FinderException {
@@ -904,89 +935,89 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 		//Child - Fields
 		ReportableField childPersonalID = new ReportableField(userDef.findFieldByUniqueName(User.FIELD_PERSONAL_ID));
 		childPersonalID.setCustomMadeFieldName("child_ssn");
-		childPersonalID.setLocalizedName(_iwrb.getLocalizedString("CommuneReportBusiness.child_ssn", "Personal ID"), currentLocale);
+		childPersonalID.setLocalizedName(this._iwrb.getLocalizedString("CommuneReportBusiness.child_ssn", "Personal ID"), currentLocale);
 		reportData.addField(childPersonalID);
 
 		ReportableField childLastName = new ReportableField(userDef.findFieldByUniqueName(User.FIELD_LAST_NAME));
 		childLastName.setCustomMadeFieldName("child_last_name");
-		childLastName.setLocalizedName(_iwrb.getLocalizedString("CommuneReportBusiness.child_last_name", "LastName"), currentLocale);
+		childLastName.setLocalizedName(this._iwrb.getLocalizedString("CommuneReportBusiness.child_last_name", "LastName"), currentLocale);
 		reportData.addField(childLastName);
 
 		ReportableField childFirstName = new ReportableField(userDef.findFieldByUniqueName(User.FIELD_FIRST_NAME));
 		childFirstName.setCustomMadeFieldName("child_first_name");
-		childFirstName.setLocalizedName(_iwrb.getLocalizedString("CommuneReportBusiness.child_first_name", "FirstName"), currentLocale);
+		childFirstName.setLocalizedName(this._iwrb.getLocalizedString("CommuneReportBusiness.child_first_name", "FirstName"), currentLocale);
 		reportData.addField(childFirstName);
 
 		ReportableField childAddress = new ReportableField(addrDef.findFieldByUniqueName(Address.FIELD_STREET_NAME));
 		childAddress.setValueClass(String.class);
 		childAddress.setCustomMadeFieldName("child_address");
-		childAddress.setLocalizedName(_iwrb.getLocalizedString("CommuneReportBusiness.child_address", "Address"), currentLocale);
+		childAddress.setLocalizedName(this._iwrb.getLocalizedString("CommuneReportBusiness.child_address", "Address"), currentLocale);
 		reportData.addField(childAddress);
 
 		ReportableField childGroupInvitationDate = new ReportableField(grRelDef.findFieldByUniqueName(GroupRelation.FIELD_INITIATION_DATE));
 		childGroupInvitationDate.setValueClass(String.class);
 		childGroupInvitationDate.setCustomMadeFieldName("child_gr_initiation_date");
-		childGroupInvitationDate.setLocalizedName(_iwrb.getLocalizedString("CommuneReportBusiness.child_gr_initiation_date", "Invitiation date"), currentLocale);
+		childGroupInvitationDate.setLocalizedName(this._iwrb.getLocalizedString("CommuneReportBusiness.child_gr_initiation_date", "Invitiation date"), currentLocale);
 		reportData.addField(childGroupInvitationDate);
 
 		ReportableField lastPlacementField = new ReportableField("last_placement", String.class);
-		lastPlacementField.setLocalizedName(_iwrb.getLocalizedString("SchoolCommuneBusiness.lastPlacement", "Last known school or child care / date"), currentLocale);
+		lastPlacementField.setLocalizedName(this._iwrb.getLocalizedString("SchoolCommuneBusiness.lastPlacement", "Last known school or child care / date"), currentLocale);
 		reportData.addField(lastPlacementField);
 
 		//Parent1 - Fields
 		ReportableField parent1PersonalID = new ReportableField(userDef.findFieldByUniqueName(User.FIELD_PERSONAL_ID));
 		parent1PersonalID.setCustomMadeFieldName("parent1_ssn");
-		parent1PersonalID.setLocalizedName(_iwrb.getLocalizedString("CommuneReportBusiness.parent1_ssn", "Parent1 Personal ID"), currentLocale);
+		parent1PersonalID.setLocalizedName(this._iwrb.getLocalizedString("CommuneReportBusiness.parent1_ssn", "Parent1 Personal ID"), currentLocale);
 		reportData.addField(parent1PersonalID);
 
 		ReportableField parent1LastName = new ReportableField(userDef.findFieldByUniqueName(User.FIELD_LAST_NAME));
 		parent1LastName.setCustomMadeFieldName("parent1_last_name");
-		parent1LastName.setLocalizedName(_iwrb.getLocalizedString("CommuneReportBusiness.parent1_last_name", "Parent1 LastName"), currentLocale);
+		parent1LastName.setLocalizedName(this._iwrb.getLocalizedString("CommuneReportBusiness.parent1_last_name", "Parent1 LastName"), currentLocale);
 		reportData.addField(parent1LastName);
 
 		ReportableField parent1FirstName = new ReportableField(userDef.findFieldByUniqueName(User.FIELD_FIRST_NAME));
 		parent1FirstName.setCustomMadeFieldName("parent1_first_name");
-		parent1FirstName.setLocalizedName(_iwrb.getLocalizedString("CommuneReportBusiness.parent1_first_name", "Parent1 FirstName"), currentLocale);
+		parent1FirstName.setLocalizedName(this._iwrb.getLocalizedString("CommuneReportBusiness.parent1_first_name", "Parent1 FirstName"), currentLocale);
 		reportData.addField(parent1FirstName);
 
 		ReportableField parent1Address = new ReportableField(addrDef.findFieldByUniqueName(Address.FIELD_STREET_NAME));
 		parent1Address.setValueClass(String.class);
 		parent1Address.setCustomMadeFieldName("parent1_address");
-		parent1Address.setLocalizedName(_iwrb.getLocalizedString("CommuneReportBusiness.parent1_address", "Parent1 Address"), currentLocale);
+		parent1Address.setLocalizedName(this._iwrb.getLocalizedString("CommuneReportBusiness.parent1_address", "Parent1 Address"), currentLocale);
 		reportData.addField(parent1Address);
 
 		ReportableField parent1GroupInvitationDate = new ReportableField(grRelDef.findFieldByUniqueName(GroupRelation.FIELD_INITIATION_DATE));
 		parent1GroupInvitationDate.setValueClass(String.class);
 		parent1GroupInvitationDate.setCustomMadeFieldName("parent1_gr_initiation_date");
-		parent1GroupInvitationDate.setLocalizedName(_iwrb.getLocalizedString("CommuneReportBusiness.parent1_gr_initiation_date", "Parent1 Invitiation date"), currentLocale);
+		parent1GroupInvitationDate.setLocalizedName(this._iwrb.getLocalizedString("CommuneReportBusiness.parent1_gr_initiation_date", "Parent1 Invitiation date"), currentLocale);
 		reportData.addField(parent1GroupInvitationDate);
 
 		//Parent2 - Fields
 		ReportableField parent2PersonalID = new ReportableField(userDef.findFieldByUniqueName(User.FIELD_PERSONAL_ID));
 		parent2PersonalID.setCustomMadeFieldName("parent2_ssn");
-		parent2PersonalID.setLocalizedName(_iwrb.getLocalizedString("CommuneReportBusiness.parent2_ssn", "Parent2 Personal ID"), currentLocale);
+		parent2PersonalID.setLocalizedName(this._iwrb.getLocalizedString("CommuneReportBusiness.parent2_ssn", "Parent2 Personal ID"), currentLocale);
 		reportData.addField(parent2PersonalID);
 
 		ReportableField parent2LastName = new ReportableField(userDef.findFieldByUniqueName(User.FIELD_LAST_NAME));
 		parent2LastName.setCustomMadeFieldName("parent2_last_name");
-		parent2LastName.setLocalizedName(_iwrb.getLocalizedString("CommuneReportBusiness.parent2_last_name", "Parent2 LastName"), currentLocale);
+		parent2LastName.setLocalizedName(this._iwrb.getLocalizedString("CommuneReportBusiness.parent2_last_name", "Parent2 LastName"), currentLocale);
 		reportData.addField(parent2LastName);
 
 		ReportableField parent2FirstName = new ReportableField(userDef.findFieldByUniqueName(User.FIELD_FIRST_NAME));
 		parent2FirstName.setCustomMadeFieldName("parent2_first_name");
-		parent2FirstName.setLocalizedName(_iwrb.getLocalizedString("CommuneReportBusiness.parent2_first_name", "Parent2 FirstName"), currentLocale);
+		parent2FirstName.setLocalizedName(this._iwrb.getLocalizedString("CommuneReportBusiness.parent2_first_name", "Parent2 FirstName"), currentLocale);
 		reportData.addField(parent2FirstName);
 
 		ReportableField parent2Address = new ReportableField(addrDef.findFieldByUniqueName(Address.FIELD_STREET_NAME));
 		parent2Address.setValueClass(String.class);
 		parent2Address.setCustomMadeFieldName("parent2_address");
-		parent2Address.setLocalizedName(_iwrb.getLocalizedString("CommuneReportBusiness.parent2_address", "Parent2 Address"), currentLocale);
+		parent2Address.setLocalizedName(this._iwrb.getLocalizedString("CommuneReportBusiness.parent2_address", "Parent2 Address"), currentLocale);
 		reportData.addField(parent2Address);
 
 		ReportableField parent2GroupInvitationDate = new ReportableField(grRelDef.findFieldByUniqueName(GroupRelation.FIELD_INITIATION_DATE));
 		parent2GroupInvitationDate.setValueClass(String.class);
 		parent2GroupInvitationDate.setCustomMadeFieldName("parent2_gr_initiation_date");
-		parent2GroupInvitationDate.setLocalizedName(_iwrb.getLocalizedString("CommuneReportBusiness.parent2_gr_initiation_date", "Parent2 Invitiation date"), currentLocale);
+		parent2GroupInvitationDate.setLocalizedName(this._iwrb.getLocalizedString("CommuneReportBusiness.parent2_gr_initiation_date", "Parent2 Invitiation date"), currentLocale);
 		reportData.addField(parent2GroupInvitationDate);
 
 		IWTimestamp currentTime = IWTimestamp.RightNow();
@@ -1005,7 +1036,7 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 			reportData.add(data);
 
 			Address childAddressEntiy = _communeUserService.getUsersMainAddress(child);
-			String childAddressString = this.getAddressString(childAddressEntiy, _iwrb);
+			String childAddressString = this.getAddressString(childAddressEntiy, this._iwrb);
 			if (childAddressString != null) {
 				data.addData(childAddress, childAddressString);
 			}
@@ -1039,12 +1070,12 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 					data.addData(lastPlacementField, school.getSchoolName() + " " + sc.getSchoolClassName() + " / " + dateFormat.format(latestSCM.getRegisterDate()));
 				}
 				else {
-					data.addData(lastPlacementField, _iwrb.getLocalizedString("no_history", "No history"));
+					data.addData(lastPlacementField, this._iwrb.getLocalizedString("no_history", "No history"));
 				}
 			}
 			catch (FinderException e1) {
 				//e1.printStackTrace();
-				data.addData(lastPlacementField, _iwrb.getLocalizedString("no_history", "No history"));
+				data.addData(lastPlacementField, this._iwrb.getLocalizedString("no_history", "No history"));
 			}
 
 			try {
@@ -1072,7 +1103,7 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 						reportData.add(pData);
 
 						Address parent1AddressEntiy = _communeUserService.getUsersMainAddress(child);
-						String parent1AddressString = this.getAddressString(parent1AddressEntiy, _iwrb);
+						String parent1AddressString = this.getAddressString(parent1AddressEntiy, this._iwrb);
 						if (parent1AddressString != null) {
 							data.addData(parent1Address, parent1AddressString);
 						}
@@ -1086,7 +1117,7 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 								data.addData(parent1GroupInvitationDate, dateFormat.format(time));
 							}
 							else {
-								data.addData(parent1GroupInvitationDate, _iwrb.getLocalizedString("CommuneReportBusiness.no_time_specified", "No time specified"));
+								data.addData(parent1GroupInvitationDate, this._iwrb.getLocalizedString("CommuneReportBusiness.no_time_specified", "No time specified"));
 							}
 						}
 					}
@@ -1102,7 +1133,7 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 						reportData.add(pData);
 
 						Address parent2AddressEntiy = _communeUserService.getUsersMainAddress(child);
-						String parent2AddressString = this.getAddressString(parent2AddressEntiy, _iwrb);
+						String parent2AddressString = this.getAddressString(parent2AddressEntiy, this._iwrb);
 						if (parent2AddressString != null) {
 							data.addData(parent2Address, parent2AddressString);
 						}
@@ -1116,7 +1147,7 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 								data.addData(parent2GroupInvitationDate, dateFormat.format(time));
 							}
 							else {
-								data.addData(parent2GroupInvitationDate, _iwrb.getLocalizedString("CommuneReportBusiness.no_time_specified", "No time specified"));
+								data.addData(parent2GroupInvitationDate, this._iwrb.getLocalizedString("CommuneReportBusiness.no_time_specified", "No time specified"));
 							}
 
 						}
@@ -1132,7 +1163,7 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 
 		DateFormat dateTimeFormat = DateFormat.getDateTimeInstance(DateFormat.DEFAULT, DateFormat.DEFAULT, currentLocale);
 
-		reportData.addExtraHeaderParameter("label_current_date", _iwrb.getLocalizedString("CommuneReportBusiness.label_current_date", "Current date"), "current_date", dateTimeFormat.format(IWTimestamp.getTimestampRightNow()));
+		reportData.addExtraHeaderParameter("label_current_date", this._iwrb.getLocalizedString("CommuneReportBusiness.label_current_date", "Current date"), "current_date", dateTimeFormat.format(IWTimestamp.getTimestampRightNow()));
 
 		return reportData;
 	}
@@ -1144,27 +1175,82 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 	private void sendMessageToParents(SchoolChoice choice, String subject, String body, boolean sendToAllParents) {
 		try {
 			User child = choice.getChild();
-			//Object[] arguments = { child.getNameLastFirst(true), choice.getChosenSchool().getSchoolName()};
-			Object[] arguments = { child.getName(), choice.getChosenSchool().getSchoolName()};
-
+			// Object[] arguments = { child.getNameLastFirst(true),
+			// choice.getChosenSchool().getSchoolName()};
+			Object[] arguments = { child.getName(), choice.getChosenSchool().getSchoolName() };
 			User appParent = choice.getOwner();
-			if (getUserBusiness().getMemberFamilyLogic().isChildInCustodyOf(child, appParent)) {
-				getMessageBusiness().createUserMessage(choice, appParent, subject, MessageFormat.format(body, arguments), true);
-			}
-
+			User parent2 = null;
 			try {
-				Collection parents = getUserBusiness().getMemberFamilyLogic().getCustodiansFor(child);
-				Iterator iter = parents.iterator();
-				while (iter.hasNext()) {
-					User parent = (User) iter.next();
-					if (!getUserBusiness().haveSameAddress(parent, appParent)) {
-						getMessageBusiness().createUserMessage(choice, parent, subject, MessageFormat.format(body, arguments), true);
+				if (sendToAllParents) {
+					Collection parents = getUserBusiness().getMemberFamilyLogic().getCustodiansFor(child);
+					Iterator iter = parents.iterator();
+					while (iter.hasNext()) {
+						User parent = (User) iter.next();
+						if (!parent.equals(appParent))
+							parent2 = parent;
 					}
-					else if (sendToAllParents && !parent.equals(appParent)) {
-						getMessageBusiness().createUserMessage(choice, parent, subject, MessageFormat.format(body, arguments), false);
+					if (parent2 == null) {
+						if ((appParent.getEmails() != null) && (!appParent.getEmails().isEmpty())) {
+							Message message = getMessageBusiness().createUserMessage(choice, appParent, null, null,
+									subject, MessageFormat.format(body, arguments), null, null, false, null, false,
+									true);
+						}
+						else {
+							Message message = getMessageBusiness().createUserMessage(choice, appParent, null, null,
+									subject, MessageFormat.format(body, arguments), null, null, true, null, true, true);
+						}
+					}
+					else {
+						if (getUserBusiness().haveSameAddress(parent2, appParent)) {
+							if ((appParent.getEmails() != null) && (!appParent.getEmails().isEmpty())) {
+								Message message = getMessageBusiness().createUserMessage(choice, appParent, null, null,
+										subject, MessageFormat.format(body, arguments), null, null, false, null, false,
+										true);
+							}
+							else {
+								Message message = getMessageBusiness().createUserMessage(choice, appParent, null, null,
+										subject, MessageFormat.format(body, arguments), null, null, true, null, true,
+										true);
+							}
+							Message message = getMessageBusiness().createUserMessage(choice, parent2, null, null,
+									subject, MessageFormat.format(body, arguments), null, null, false, null, false,
+									true);
+						}
+						else { // not same address
+							if ((appParent.getEmails() != null) && (!appParent.getEmails().isEmpty())) {
+								Message message = getMessageBusiness().createUserMessage(choice, appParent, null, null,
+										subject, MessageFormat.format(body, arguments), null, null, false, null, false,
+										true);
+							}
+							else {
+								Message message = getMessageBusiness().createUserMessage(choice, appParent, null, null,
+										subject, MessageFormat.format(body, arguments), null, null, true, null, true,
+										true);
+							}
+							if ((parent2.getEmails() != null) && (!parent2.getEmails().isEmpty())) {
+								Message message = getMessageBusiness().createUserMessage(choice, parent2, null, null,
+										subject, MessageFormat.format(body, arguments), null, null, false, null, false,
+										true);
+							}
+							else {
+								Message message = getMessageBusiness().createUserMessage(choice, parent2, null, null,
+										subject, MessageFormat.format(body, arguments), null, null, true, null, true,
+										true);
+							}
+						} // end not same address
+					} // end parent2!=null
+				} // end SendToOtherParent
+				else { // send only for one parent
+					if ((appParent.getEmails() != null) && (!appParent.getEmails().isEmpty())) {
+						Message message = getMessageBusiness().createUserMessage(choice, appParent, null, null,
+								subject, MessageFormat.format(body, arguments), null, null, false, null, false, true);
+					}
+					else {
+						Message message = getMessageBusiness().createUserMessage(choice, appParent, null, null,
+								subject, MessageFormat.format(body, arguments), null, null, true, null, true, true);
 					}
 				}
-			}
+			} // end try
 			catch (NoCustodianFound ncf) {
 				ncf.printStackTrace();
 			}
@@ -1172,6 +1258,7 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 		catch (RemoteException re) {
 			re.printStackTrace();
 		}
+
 	}
 
 	private String getAddressString(Address addressEntiy, IWResourceBundle iwrb) {
@@ -1197,10 +1284,10 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 	}
 	
 	private CareBusiness getCareBusiness() throws RemoteException {
-		if (careBusiness == null) {
-			careBusiness = (CareBusiness) getServiceInstance(CareBusiness.class);
+		if (this.careBusiness == null) {
+			this.careBusiness = (CareBusiness) getServiceInstance(CareBusiness.class);
 		}
-		return careBusiness;
+		return this.careBusiness;
 	}
 
 }
