@@ -33,6 +33,7 @@ import com.idega.block.datareport.util.ReportableData;
 import com.idega.block.datareport.util.ReportableField;
 import com.idega.block.process.business.CaseBusiness;
 import com.idega.block.process.business.CaseBusinessBean;
+import com.idega.block.process.message.data.Message;
 import com.idega.block.school.business.SchoolBusiness;
 import com.idega.block.school.business.SchoolYearComparator;
 import com.idega.block.school.data.School;
@@ -1174,27 +1175,82 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 	private void sendMessageToParents(SchoolChoice choice, String subject, String body, boolean sendToAllParents) {
 		try {
 			User child = choice.getChild();
-			//Object[] arguments = { child.getNameLastFirst(true), choice.getChosenSchool().getSchoolName()};
-			Object[] arguments = { child.getName(), choice.getChosenSchool().getSchoolName()};
-
+			// Object[] arguments = { child.getNameLastFirst(true),
+			// choice.getChosenSchool().getSchoolName()};
+			Object[] arguments = { child.getName(), choice.getChosenSchool().getSchoolName() };
 			User appParent = choice.getOwner();
-			if (getUserBusiness().getMemberFamilyLogic().isChildInCustodyOf(child, appParent)) {
-				getMessageBusiness().createUserMessage(choice, appParent, subject, MessageFormat.format(body, arguments), true);
-			}
-
+			User parent2 = null;
 			try {
-				Collection parents = getUserBusiness().getMemberFamilyLogic().getCustodiansFor(child);
-				Iterator iter = parents.iterator();
-				while (iter.hasNext()) {
-					User parent = (User) iter.next();
-					if (!getUserBusiness().haveSameAddress(parent, appParent)) {
-						getMessageBusiness().createUserMessage(choice, parent, subject, MessageFormat.format(body, arguments), true);
+				if (sendToAllParents) {
+					Collection parents = getUserBusiness().getMemberFamilyLogic().getCustodiansFor(child);
+					Iterator iter = parents.iterator();
+					while (iter.hasNext()) {
+						User parent = (User) iter.next();
+						if (!parent.equals(appParent))
+							parent2 = parent;
 					}
-					else if (sendToAllParents && !parent.equals(appParent)) {
-						getMessageBusiness().createUserMessage(choice, parent, subject, MessageFormat.format(body, arguments), false);
+					if (parent2 == null) {
+						if ((appParent.getEmails() != null) && (!appParent.getEmails().isEmpty())) {
+							Message message = getMessageBusiness().createUserMessage(choice, appParent, null, null,
+									subject, MessageFormat.format(body, arguments), null, null, false, null, false,
+									true);
+						}
+						else {
+							Message message = getMessageBusiness().createUserMessage(choice, appParent, null, null,
+									subject, MessageFormat.format(body, arguments), null, null, true, null, true, true);
+						}
+					}
+					else {
+						if (getUserBusiness().haveSameAddress(parent2, appParent)) {
+							if ((appParent.getEmails() != null) && (!appParent.getEmails().isEmpty())) {
+								Message message = getMessageBusiness().createUserMessage(choice, appParent, null, null,
+										subject, MessageFormat.format(body, arguments), null, null, false, null, false,
+										true);
+							}
+							else {
+								Message message = getMessageBusiness().createUserMessage(choice, appParent, null, null,
+										subject, MessageFormat.format(body, arguments), null, null, true, null, true,
+										true);
+							}
+							Message message = getMessageBusiness().createUserMessage(choice, parent2, null, null,
+									subject, MessageFormat.format(body, arguments), null, null, false, null, false,
+									true);
+						}
+						else { // not same address
+							if ((appParent.getEmails() != null) && (!appParent.getEmails().isEmpty())) {
+								Message message = getMessageBusiness().createUserMessage(choice, appParent, null, null,
+										subject, MessageFormat.format(body, arguments), null, null, false, null, false,
+										true);
+							}
+							else {
+								Message message = getMessageBusiness().createUserMessage(choice, appParent, null, null,
+										subject, MessageFormat.format(body, arguments), null, null, true, null, true,
+										true);
+							}
+							if ((parent2.getEmails() != null) && (!parent2.getEmails().isEmpty())) {
+								Message message = getMessageBusiness().createUserMessage(choice, parent2, null, null,
+										subject, MessageFormat.format(body, arguments), null, null, false, null, false,
+										true);
+							}
+							else {
+								Message message = getMessageBusiness().createUserMessage(choice, parent2, null, null,
+										subject, MessageFormat.format(body, arguments), null, null, true, null, true,
+										true);
+							}
+						} // end not same address
+					} // end parent2!=null
+				} // end SendToOtherParent
+				else { // send only for one parent
+					if ((appParent.getEmails() != null) && (!appParent.getEmails().isEmpty())) {
+						Message message = getMessageBusiness().createUserMessage(choice, appParent, null, null,
+								subject, MessageFormat.format(body, arguments), null, null, false, null, false, true);
+					}
+					else {
+						Message message = getMessageBusiness().createUserMessage(choice, appParent, null, null,
+								subject, MessageFormat.format(body, arguments), null, null, true, null, true, true);
 					}
 				}
-			}
+			} // end try
 			catch (NoCustodianFound ncf) {
 				ncf.printStackTrace();
 			}
@@ -1202,6 +1258,7 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 		catch (RemoteException re) {
 			re.printStackTrace();
 		}
+
 	}
 
 	private String getAddressString(Address addressEntiy, IWResourceBundle iwrb) {
