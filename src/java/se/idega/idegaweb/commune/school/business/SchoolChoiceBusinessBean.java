@@ -851,9 +851,13 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 			}
 			else {
 				User appParent = application.getOwner();
-				User parent2 = null;
+			    
+				
+
 
 				try {
+					if (sendToAllParents) {
+					User parent2 = null;						
 					Collection parents = getUserBusiness().getMemberFamilyLogic().getCustodiansFor(child);
 					Iterator iter = parents.iterator();
 					while (iter.hasNext()) {
@@ -861,68 +865,55 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 						if (parent.equals(appParent)) {
 							continue;
 						}
-						else {
-							parent2 = parent;
-						}
+						else parent2 = parent;
 					}
 					if(parent2 == null){
 						if((appParent.getEmails() != null) &&(!appParent.getEmails().isEmpty()) ){
-//							Message message = getMessageBusiness().createUserMessage(application, appParent,  null,null,applyingSubject, MessageFormat.format(applyingBody, arguments), true,applyingCode);
 							Message message = getMessageBusiness().createUserMessage(application, appParent,null,null,applyingSubject,MessageFormat.format(applyingBody, arguments), null, null, false,null,false,true); 
-							message.setParentCase(application);
-						 	message.store();
 						}
 						else{
 						 	Message message = getMessageBusiness().createUserMessage(application, appParent,null,null,applyingSubject,MessageFormat.format(applyingBody, arguments), null, null, true,null,true,true);
-					     	message.setParentCase(application);
-						 	message.store();
 						}				
 					}
 					else{
 						if(getUserBusiness().haveSameAddress(parent2, appParent)){
 							if((appParent.getEmails() != null) &&(!appParent.getEmails().isEmpty()) ){
 								Message message = getMessageBusiness().createUserMessage(application, appParent,null,null,applyingSubject,MessageFormat.format(applyingBody, arguments), null, null, false,null,false,true); 
-								message.setParentCase(application);
-							 	message.store();
 							}
 							else{
 							 	Message message = getMessageBusiness().createUserMessage(application, appParent,null,null,applyingSubject,MessageFormat.format(applyingBody, arguments), null, null, true,null,true,true);
-						     	message.setParentCase(application);
-							 	message.store();
 							}
 							Message message = getMessageBusiness().createUserMessage(application, parent2,null,null,applyingSubject,MessageFormat.format(applyingBody, arguments), null, null, false,null,false,true); 
-							message.setParentCase(application);
-						 	message.store();
 						} 
 						else { // not same address
 							if((appParent.getEmails() != null) &&(!appParent.getEmails().isEmpty()) ){
 								Message message = getMessageBusiness().createUserMessage(application, appParent,null,null,applyingSubject,MessageFormat.format(applyingBody, arguments), null, null, false,null,false,true); 
-								message.setParentCase(application);
-							 	message.store();
 							}
 							else{
 							 	Message message = getMessageBusiness().createUserMessage(application, appParent,null,null,applyingSubject,MessageFormat.format(applyingBody, arguments), null, null, true,null,true,true);
-						     	message.setParentCase(application);
-							 	message.store();
 							}
 
 							if((parent2.getEmails() != null) &&(!parent2.getEmails().isEmpty()) ){
 								Message message = getMessageBusiness().createUserMessage(application, parent2,null,null,applyingSubject,MessageFormat.format(applyingBody, arguments), null, null, false,null,false,true); 
-								message.setParentCase(application);
-							 	message.store();
 							}
 							else{
 							 	Message message = getMessageBusiness().createUserMessage(application, parent2,null,null,applyingSubject,MessageFormat.format(applyingBody, arguments), null, null, true,null,true,true);
-						     	message.setParentCase(application);
-							 	message.store();
 							}
 
 						} // end not same address
 
 					}	// end parent2!=null
-						
+				   }	
+					else { // send only for one parent   
+						if((appParent.getEmails() != null) &&(!appParent.getEmails().isEmpty()) ){
+							Message message = getMessageBusiness().createUserMessage(application, appParent,null,null,applyingSubject,MessageFormat.format(applyingSubject, arguments), MessageFormat.format(applyingSubject, arguments), null, false,null,false,true); 
+						}
+						else{
+							Message message = getMessageBusiness().createUserMessage(application, appParent,null,null,applyingSubject,MessageFormat.format(applyingSubject, arguments), MessageFormat.format(applyingSubject, arguments), null, true,null,true,true);
+						}				
+					}					
 				} // end try
-					
+
 				catch (NoCustodianFound ncf) {
 					ncf.printStackTrace();
 				}
@@ -932,6 +923,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		catch (RemoteException re) {
 			re.printStackTrace();
 		}
+
 	}
 
 	/**
@@ -1101,10 +1093,10 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 					terminateOldPlacement(choice);
 				}
 				User child = choice.getChild();
-				//Object[] arguments = {child.getNameLastFirst(true), choice.getChosenSchool().getSchoolName(), PersonalIDFormatter.format(child.getPersonalID(), this.getIWApplicationContext().getApplicationSettings().getDefaultLocale())};
 				String placementDate = choice.getPlacementDate() != null ? new IWTimestamp(choice.getPlacementDate()).getLocaleDate(this.getIWApplicationContext().getApplicationSettings().getDefaultLocale(), IWTimestamp.SHORT) : "";
-				Object[] arguments = {child.getName(), choice.getChosenSchool().getSchoolName(), PersonalIDFormatter.format(child.getPersonalID(), this.getIWApplicationContext().getApplicationSettings().getDefaultLocale()), placementDate};				
-				String body = MessageFormat.format(getLocalizedString("school_choice.student_moved_from_school_body", "Dear headmaster, {0} has been moved from your school and placed at {1} from {3}."), arguments);
+				Object[] arguments = {child.getName(), choice.getChosenSchool().getSchoolName(), this.getIWApplicationContext().getApplicationSettings().getDefaultLocale(), placementDate};				
+				String body = getLocalizedString("school_choice.student_moved_from_school_body", "Dear headmaster, {0} has been moved from your school and placed at {1} from {2}."); 
+				MessageFormat.format(body, arguments);
 				this.sendMessageToSchool(choice.getCurrentSchoolId(), getLocalizedString("school_choice.student_moved_from_school_subject", "Student moved from your school"), body,SchoolChoiceMessagePdfHandler.CODE_SCHOOL_MOVEAWAY);
 			}
 			super.changeCaseStatus(choice, getCaseStatusPlaced().getStatus(), performer);
