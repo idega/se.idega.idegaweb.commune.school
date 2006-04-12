@@ -1117,6 +1117,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 			stamp.addDays(-1);
 			Collection types = getSchoolBusiness().getSchoolTypesForCategory(getSchoolBusiness().getCategoryElementarySchool(), false);
 			SchoolClassMember member = null;
+			
 			if (choice.getCurrentSchoolId() != choice.getChosenSchoolId()) {
 				member = getSchoolBusiness().getSchoolClassMemberHome().findLatestByUserAndSchoolAndPlacementDate(choice.getChildId(), choice.getCurrentSchoolId(), types, choice.getPlacementDate());
 			}
