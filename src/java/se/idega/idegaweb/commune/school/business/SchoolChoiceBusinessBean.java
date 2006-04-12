@@ -3,6 +3,7 @@ package se.idega.idegaweb.commune.school.business;
 import is.idega.block.family.business.FamilyLogic;
 import is.idega.block.family.business.NoChildrenFound;
 import is.idega.block.family.business.NoCustodianFound;
+
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.rmi.RemoteException;
@@ -21,8 +22,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.Vector;
+
 import javax.ejb.CreateException;
 import javax.ejb.FinderException;
+
 import se.cubecon.bun24.viewpoint.business.ViewpointBusiness;
 import se.cubecon.bun24.viewpoint.data.SubCategory;
 import se.idega.idegaweb.commune.business.CommuneUserBusiness;
@@ -37,9 +40,9 @@ import se.idega.idegaweb.commune.school.data.SchoolChoice;
 import se.idega.idegaweb.commune.school.data.SchoolChoiceHome;
 import se.idega.idegaweb.commune.school.data.SchoolChoiceReminder;
 import se.idega.idegaweb.commune.school.data.SchoolChoiceReminderHome;
+
 import com.idega.block.process.data.Case;
 import com.idega.block.process.data.CaseStatus;
-import com.idega.block.process.message.data.Message;
 import com.idega.block.school.business.SchoolBusiness;
 import com.idega.block.school.business.SchoolBusinessBean;
 import com.idega.block.school.data.School;
@@ -869,35 +872,35 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 					}
 					if(parent2 == null){
 						if((appParent.getEmails() != null) &&(!appParent.getEmails().isEmpty()) ){
-							Message message = getMessageBusiness().createUserMessage(application, appParent,null,null,applyingSubject,MessageFormat.format(applyingBody, arguments), null, null, false,null,false,true); 
+							getMessageBusiness().createUserMessage(application, appParent,null,null,applyingSubject,MessageFormat.format(applyingBody, arguments), null, null, false,null,false,true); 
 						}
 						else{
-						 	Message message = getMessageBusiness().createUserMessage(application, appParent,null,null,applyingSubject,MessageFormat.format(applyingBody, arguments), null, null, true,null,true,true);
+						 	getMessageBusiness().createUserMessage(application, appParent,null,null,applyingSubject,MessageFormat.format(applyingBody, arguments), null, null, true,null,true,true);
 						}				
 					}
 					else{
 						if(getUserBusiness().haveSameAddress(parent2, appParent)){
 							if((appParent.getEmails() != null) &&(!appParent.getEmails().isEmpty()) ){
-								Message message = getMessageBusiness().createUserMessage(application, appParent,null,null,applyingSubject,MessageFormat.format(applyingBody, arguments), null, null, false,null,false,true); 
+								getMessageBusiness().createUserMessage(application, appParent,null,null,applyingSubject,MessageFormat.format(applyingBody, arguments), null, null, false,null,false,true); 
 							}
 							else{
-							 	Message message = getMessageBusiness().createUserMessage(application, appParent,null,null,applyingSubject,MessageFormat.format(applyingBody, arguments), null, null, true,null,true,true);
+							 	getMessageBusiness().createUserMessage(application, appParent,null,null,applyingSubject,MessageFormat.format(applyingBody, arguments), null, null, true,null,true,true);
 							}
-							Message message = getMessageBusiness().createUserMessage(application, parent2,null,null,applyingSubject,MessageFormat.format(applyingBody, arguments), null, null, false,null,false,true); 
+							getMessageBusiness().createUserMessage(application, parent2,null,null,applyingSubject,MessageFormat.format(applyingBody, arguments), null, null, false,null,false,true); 
 						} 
 						else { // not same address
 							if((appParent.getEmails() != null) &&(!appParent.getEmails().isEmpty()) ){
-								Message message = getMessageBusiness().createUserMessage(application, appParent,null,null,applyingSubject,MessageFormat.format(applyingBody, arguments), null, null, false,null,false,true); 
+								getMessageBusiness().createUserMessage(application, appParent,null,null,applyingSubject,MessageFormat.format(applyingBody, arguments), null, null, false,null,false,true); 
 							}
 							else{
-							 	Message message = getMessageBusiness().createUserMessage(application, appParent,null,null,applyingSubject,MessageFormat.format(applyingBody, arguments), null, null, true,null,true,true);
+							 	getMessageBusiness().createUserMessage(application, appParent,null,null,applyingSubject,MessageFormat.format(applyingBody, arguments), null, null, true,null,true,true);
 							}
 
 							if((parent2.getEmails() != null) &&(!parent2.getEmails().isEmpty()) ){
-								Message message = getMessageBusiness().createUserMessage(application, parent2,null,null,applyingSubject,MessageFormat.format(applyingBody, arguments), null, null, false,null,false,true); 
+								getMessageBusiness().createUserMessage(application, parent2,null,null,applyingSubject,MessageFormat.format(applyingBody, arguments), null, null, false,null,false,true); 
 							}
 							else{
-							 	Message message = getMessageBusiness().createUserMessage(application, parent2,null,null,applyingSubject,MessageFormat.format(applyingBody, arguments), null, null, true,null,true,true);
+							 	getMessageBusiness().createUserMessage(application, parent2,null,null,applyingSubject,MessageFormat.format(applyingBody, arguments), null, null, true,null,true,true);
 							}
 
 						} // end not same address
@@ -906,10 +909,10 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 				   }	
 					else { // send only for one parent   
 						if((appParent.getEmails() != null) &&(!appParent.getEmails().isEmpty()) ){
-							Message message = getMessageBusiness().createUserMessage(application, appParent,null,null,applyingSubject,MessageFormat.format(applyingSubject, arguments), MessageFormat.format(applyingSubject, arguments), null, false,null,false,true); 
+							getMessageBusiness().createUserMessage(application, appParent,null,null,applyingSubject,MessageFormat.format(applyingSubject, arguments), MessageFormat.format(applyingSubject, arguments), null, false,null,false,true); 
 						}
 						else{
-							Message message = getMessageBusiness().createUserMessage(application, appParent,null,null,applyingSubject,MessageFormat.format(applyingSubject, arguments), MessageFormat.format(applyingSubject, arguments), null, true,null,true,true);
+							getMessageBusiness().createUserMessage(application, appParent,null,null,applyingSubject,MessageFormat.format(applyingSubject, arguments), MessageFormat.format(applyingSubject, arguments), null, true,null,true,true);
 						}				
 					}					
 				} // end try
@@ -1112,11 +1115,10 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		try {
 			IWTimestamp stamp = new IWTimestamp(choice.getPlacementDate());
 			stamp.addDays(-1);
-
 			Collection types = getSchoolBusiness().getSchoolTypesForCategory(getSchoolBusiness().getCategoryElementarySchool(), false);
 			SchoolClassMember member = null;
 			if (choice.getCurrentSchoolId() != choice.getChosenSchoolId()) {
-				member = getSchoolBusiness().getSchoolClassMemberHome().findLatestByUserAndSchool(choice.getChildId(), choice.getCurrentSchoolId(), types);
+				member = getSchoolBusiness().getSchoolClassMemberHome().findLatestByUserAndSchoolAndPlacementDate(choice.getChildId(), choice.getCurrentSchoolId(), types, choice.getPlacementDate());
 			}
 			else {
 				SchoolSeason season = getCareBusiness().getSchoolSeasonHome().findSeasonByDate(getSchoolBusiness().getCategoryElementarySchool(), choice.getPlacementDate());
@@ -1141,7 +1143,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		}
 		catch (RemoteException re) {
 			log(re);
-		}
+		}	
 	}
 
 	protected String getReactivatedMessageBody(SchoolChoice theCase) {
