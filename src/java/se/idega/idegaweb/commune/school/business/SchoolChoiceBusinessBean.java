@@ -1115,11 +1115,10 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		try {
 			IWTimestamp stamp = new IWTimestamp(choice.getPlacementDate());
 			stamp.addDays(-1);
-
 			Collection types = getSchoolBusiness().getSchoolTypesForCategory(getSchoolBusiness().getCategoryElementarySchool(), false);
 			SchoolClassMember member = null;
 			if (choice.getCurrentSchoolId() != choice.getChosenSchoolId()) {
-				member = getSchoolBusiness().getSchoolClassMemberHome().findLatestByUserAndSchool(choice.getChildId(), choice.getCurrentSchoolId(), types);
+				member = getSchoolBusiness().getSchoolClassMemberHome().findLatestByUserAndSchoolAndPlacementDate(choice.getChildId(), choice.getCurrentSchoolId(), types, choice.getPlacementDate());
 			}
 			else {
 				SchoolSeason season = getCareBusiness().getSchoolSeasonHome().findSeasonByDate(getSchoolBusiness().getCategoryElementarySchool(), choice.getPlacementDate());
@@ -1144,7 +1143,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		}
 		catch (RemoteException re) {
 			log(re);
-		}
+		}	
 	}
 
 	protected String getReactivatedMessageBody(SchoolChoice theCase) {
