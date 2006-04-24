@@ -872,35 +872,35 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 					}
 					if(parent2 == null){
 						if((appParent.getEmails() != null) &&(!appParent.getEmails().isEmpty()) ){
-							getMessageBusiness().createUserMessage(application, appParent,null,null,applyingSubject,MessageFormat.format(applyingBody, arguments), null, null, false,null,false,true); 
+							getMessageBusiness().createUserMessage(application, appParent,null,null,nonApplyingSubject,MessageFormat.format(nonApplyingBody, arguments), null, null, false,null,false,true); 
 						}
 						else{
-						 	getMessageBusiness().createUserMessage(application, appParent,null,null,applyingSubject,MessageFormat.format(applyingBody, arguments), null, null, true,null,true,true);
+						 	getMessageBusiness().createUserMessage(application, appParent,null,null,nonApplyingSubject,MessageFormat.format(nonApplyingBody, arguments), null, null, true,null,true,true);
 						}				
 					}
 					else{
 						if(getUserBusiness().haveSameAddress(parent2, appParent)){
 							if((appParent.getEmails() != null) &&(!appParent.getEmails().isEmpty()) ){
-								getMessageBusiness().createUserMessage(application, appParent,null,null,applyingSubject,MessageFormat.format(applyingBody, arguments), null, null, false,null,false,true); 
+								getMessageBusiness().createUserMessage(application, appParent,null,null,nonApplyingSubject,MessageFormat.format(nonApplyingBody, arguments), null, null, false,null,false,true); 
 							}
 							else{
-							 	getMessageBusiness().createUserMessage(application, appParent,null,null,applyingSubject,MessageFormat.format(applyingBody, arguments), null, null, true,null,true,true);
+							 	getMessageBusiness().createUserMessage(application, appParent,null,null,nonApplyingSubject,MessageFormat.format(nonApplyingBody, arguments), null, null, true,null,true,true);
 							}
-							getMessageBusiness().createUserMessage(application, parent2,null,null,applyingSubject,MessageFormat.format(applyingBody, arguments), null, null, false,null,false,true); 
+							getMessageBusiness().createUserMessage(application, parent2,null,null,nonApplyingSubject,MessageFormat.format(nonApplyingBody, arguments), null, null, false,null,false,true); 
 						} 
 						else { // not same address
 							if((appParent.getEmails() != null) &&(!appParent.getEmails().isEmpty()) ){
-								getMessageBusiness().createUserMessage(application, appParent,null,null,applyingSubject,MessageFormat.format(applyingBody, arguments), null, null, false,null,false,true); 
+								getMessageBusiness().createUserMessage(application, appParent,null,null,nonApplyingSubject,MessageFormat.format(nonApplyingBody, arguments), null, null, false,null,false,true); 
 							}
 							else{
-							 	getMessageBusiness().createUserMessage(application, appParent,null,null,applyingSubject,MessageFormat.format(applyingBody, arguments), null, null, true,null,true,true);
+							 	getMessageBusiness().createUserMessage(application, appParent,null,null,nonApplyingSubject,MessageFormat.format(nonApplyingBody, arguments), null, null, true,null,true,true);
 							}
 
 							if((parent2.getEmails() != null) &&(!parent2.getEmails().isEmpty()) ){
-								getMessageBusiness().createUserMessage(application, parent2,null,null,applyingSubject,MessageFormat.format(applyingBody, arguments), null, null, false,null,false,true); 
+								getMessageBusiness().createUserMessage(application, parent2,null,null,nonApplyingSubject,MessageFormat.format(nonApplyingBody, arguments), null, null, false,null,false,true); 
 							}
 							else{
-							 	getMessageBusiness().createUserMessage(application, parent2,null,null,applyingSubject,MessageFormat.format(applyingBody, arguments), null, null, true,null,true,true);
+							 	getMessageBusiness().createUserMessage(application, parent2,null,null,nonApplyingSubject,MessageFormat.format(nonApplyingBody, arguments), null, null, true,null,true,true);
 							}
 
 						} // end not same address
@@ -909,10 +909,10 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 				   }	
 					else { // send only for one parent   
 						if((appParent.getEmails() != null) &&(!appParent.getEmails().isEmpty()) ){
-							getMessageBusiness().createUserMessage(application, appParent,null,null,applyingSubject,MessageFormat.format(applyingSubject, arguments), MessageFormat.format(applyingSubject, arguments), null, false,null,false,true); 
+							getMessageBusiness().createUserMessage(application, appParent,null,null,nonApplyingSubject,MessageFormat.format(nonApplyingBody, arguments), null, null, false,null,false,true); 
 						}
 						else{
-							getMessageBusiness().createUserMessage(application, appParent,null,null,applyingSubject,MessageFormat.format(applyingSubject, arguments), MessageFormat.format(applyingSubject, arguments), null, true,null,true,true);
+							getMessageBusiness().createUserMessage(application, appParent,null,null,nonApplyingSubject,MessageFormat.format(nonApplyingBody, arguments), null, null, true,null,true,true);
 						}				
 					}					
 				} // end try
