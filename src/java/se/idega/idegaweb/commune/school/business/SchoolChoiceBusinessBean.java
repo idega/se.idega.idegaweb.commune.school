@@ -1099,8 +1099,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 				String placementDate = choice.getPlacementDate() != null ? new IWTimestamp(choice.getPlacementDate()).getLocaleDate(this.getIWApplicationContext().getApplicationSettings().getDefaultLocale(), IWTimestamp.SHORT) : "";
 				Object[] arguments = {child.getName(), choice.getChosenSchool().getSchoolName(), this.getIWApplicationContext().getApplicationSettings().getDefaultLocale(), placementDate};				
 				String body = getLocalizedString("school_choice.student_moved_from_school_body", "Dear headmaster, {0} has been moved from your school and placed at {1} from {2}."); 
-				MessageFormat.format(body, arguments);
-				this.sendMessageToSchool(choice.getCurrentSchoolId(), getLocalizedString("school_choice.student_moved_from_school_subject", "Student moved from your school"), body,SchoolChoiceMessagePdfHandler.CODE_SCHOOL_MOVEAWAY);
+				this.sendMessageToSchool(choice.getCurrentSchoolId(), getLocalizedString("school_choice.student_moved_from_school_subject", "Student moved from your school"), MessageFormat.format(body, arguments),SchoolChoiceMessagePdfHandler.CODE_SCHOOL_MOVEAWAY);
 			}
 			super.changeCaseStatus(choice, getCaseStatusPlaced().getStatus(), performer);
 			return choice;
@@ -1117,7 +1116,6 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 			stamp.addDays(-1);
 			Collection types = getSchoolBusiness().getSchoolTypesForCategory(getSchoolBusiness().getCategoryElementarySchool(), false);
 			SchoolClassMember member = null;
-			
 			if (choice.getCurrentSchoolId() != choice.getChosenSchoolId()) {
 				member = getSchoolBusiness().getSchoolClassMemberHome().findLatestByUserAndSchoolAndPlacementDate(choice.getChildId(), choice.getCurrentSchoolId(), types, choice.getPlacementDate());
 			}
