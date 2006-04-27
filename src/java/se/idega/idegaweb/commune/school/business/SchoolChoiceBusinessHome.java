@@ -10,10 +10,10 @@ import com.idega.business.IBOHome;
  * <p>
  * TODO Dainis Describe Type SchoolChoiceBusinessHome
  * </p>
- *  Last modified: $Date: 2006/04/24 12:09:52 $ by $Author: igors $
+ *  Last modified: $Date: 2006/04/27 09:41:19 $ by $Author: igors $
  * 
  * @author <a href="mailto:Dainis@idega.com">Dainis</a>
- * @version $Revision: 1.2.2.4 $
+ * @version $Revision: 1.2.2.5 $
  */
 public interface SchoolChoiceBusinessHome extends IBOHome {
 
