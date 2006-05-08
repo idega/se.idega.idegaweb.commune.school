@@ -53,7 +53,6 @@ import com.idega.user.data.User;
  */
 public class UserCases extends CommuneBlock {
 	private String _dateWidth;
-	private final static String IW_BUNDLE_IDENTIFIER = "se.idega.idegaweb.commune";
 	private final static int ACTION_VIEW_CASE_LIST = 1;
 	//private final static String PARAM_CASE_ID = "USC_CASE_ID";
 	private final static String PARAM_MANAGER_ID = ManagerView.PARAM_MANAGER_ID;

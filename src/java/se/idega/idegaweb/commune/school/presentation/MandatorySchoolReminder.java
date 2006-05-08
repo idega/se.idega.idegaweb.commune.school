@@ -60,8 +60,6 @@ public class MandatorySchoolReminder extends CommuneBlock {
 	public final static String STYLE = "font-family:arial; font-size:8pt; color:#000000; text-align: justify; border: 1 solid #000000;";
 	public final static String STYLE_2 = "font-family:arial; font-size:8pt; color:#000000; text-align: justify;";
 
-	private static final String IW_BUNDLE_IDENTIFIER = "se.idega.idegaweb.commune";
-
 	private static final String ACTION_INITIALIZE = "init";
 	private static final String ACTION_SELECT_SCHOOL_SEASON = "season";
 	private static final String ACTION_GET_REPORT = "report";

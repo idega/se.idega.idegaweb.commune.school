@@ -45,11 +45,8 @@ public class SearchUserModule extends CommuneBlock {
 	//private static final String SEARCH_MIDDLE_NAME = "usrch_search_mname";
 	//private static final String SEARCH_FIRST_NAME = "usrch_search_fname";
 	public static final String SEARCH_COMMITTED = "mbe_act_search";
-	public static final String STYLENAME_TEXT = "Text";
-	public static final String STYLENAME_HEADER = "Header";
 	public static final String STYLENAME_BUTTON = "Button";
 	public static final String STYLENAME_WARNING = "Warning";
-	public static final String STYLENAME_INTERFACE = "Interface";
 
 	// Localization keys -added by borgman
 	private static final String KP = "search_user_module.";
