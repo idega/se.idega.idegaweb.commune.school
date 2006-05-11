@@ -231,6 +231,13 @@
         <eclipse.dependency>true</eclipse.dependency>
       </properties>
     </dependency>
+    <dependency>
+      <groupId>itextpdf</groupId>
+      <artifactId>itext-paulo</artifactId>
+      <version>139</version>
+      <type>jar</type>
+      <url>http://itextpdf.sourceforge.net/</url>
+    </dependency>
   </dependencies>
   <build>
     <sourceDirectory>src/java</sourceDirectory>
