@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <project>
-  <extend>${base.project.dir}/base-project.xml</extend>
+  <extend>${base.project.dir}/base-dependencies.xml</extend>
   <pomVersion>3</pomVersion>
   <name>idegaweb commune school</name>
   <artifactId>se.idega.idegaweb.commune.school</artifactId>
@@ -56,45 +56,6 @@
     </developer>    
   </developers>
   <dependencies>
-    <dependency>
-      <groupId>myfaces</groupId>
-      <artifactId>myfaces-jsf-api</artifactId>
-      <version>1.1.0</version>
-      <type>jar</type>
-      <url>http://java.sun.com/j2ee/javaserverfaces/</url>
-      <properties/>
-    </dependency>
-    <dependency>
-      <groupId>ejb</groupId>
-      <artifactId>ejb</artifactId>
-      <version>2.0</version>
-      <type>jar</type>
-      <url>http://java.sun.com/products/ejb/docs.html</url>
-      <properties/>
-    </dependency>
-    <dependency>
-      <groupId>servletapi</groupId>
-      <artifactId>servletapi</artifactId>
-      <version>2.4</version>
-      <type>jar</type>
-      <url>http://java.sun.com/products/servlet/docs.html</url>
-      <properties/>
-    </dependency>
-    <dependency>
-      <groupId>jta</groupId>
-      <artifactId>jta</artifactId>
-      <version>spec1_0_1</version>
-      <type>jar</type>
-      <url>http://java.sun.com/products/jta/jta-1_0_1B-doc</url>
-      <properties/>
-    </dependency>
-    <dependency>
-      <groupId>itextpdf</groupId>
-      <artifactId>itext-paulo</artifactId>
-      <version>139</version>
-      <type>jar</type>
-      <url>http://itextpdf.sourceforge.net/</url>
-    </dependency>
     <dependency>
       <groupId>poi</groupId>
       <artifactId>poi</artifactId>
