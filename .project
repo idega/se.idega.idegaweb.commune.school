@@ -17,6 +17,7 @@
     <project>se.idega.idegaweb.commune</project>
     <project>se.idega.idegaweb.commune.care</project>
     <project>se.cubecon.bun24.viewpoint</project>
+    <project>com.idega.block.web2.0</project>
   </projects>
   <buildSpec>
     <buildCommand>
