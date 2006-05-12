@@ -1191,6 +1191,19 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 			Object[] arguments = { child.getName(), choice.getChosenSchool().getSchoolName() };
 			User appParent = choice.getOwner();
 			User parent2 = null;
+			
+			if(choice.getFreetimeOther()!=null){  
+				int usrId = 0;
+				try {
+					usrId =  new Integer(choice.getFreetimeOther()).intValue();
+					appParent=getUser(usrId);
+				}
+				catch (FinderException e) {
+					e.printStackTrace();
+				}
+			}
+
+			
 			try {
 				if (sendToAllParents) {
 					Collection parents = getUserBusiness().getMemberFamilyLogic().getCustodiansFor(child);
@@ -1200,6 +1213,9 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 						if (!parent.equals(appParent))
 							parent2 = parent;
 					}
+					
+
+					
 					if (parent2 == null) {
 						if ((appParent.getEmails() != null) && (!appParent.getEmails().isEmpty())) {
 							getMessageBusiness().createUserMessage(choice, appParent, null, null, subject, MessageFormat.format(body, arguments), null, null, false, null, false, true);

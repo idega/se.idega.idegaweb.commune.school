@@ -494,6 +494,7 @@ public class SchoolChoiceBusinessBean extends com.idega.block.process.business.C
 		choice.setSchoolChoiceDate(choiceDate);
 		choice.setSchoolTypeId(school_type_id);
 		choice.setMessage(message);
+		choice.setFreetimeOther(String.valueOf( userId ));
 		choice.setExtraChoiceMessage(extraMessage);
 		if (season != null) {
 			Integer seasonId = (Integer) season.getPrimaryKey();
