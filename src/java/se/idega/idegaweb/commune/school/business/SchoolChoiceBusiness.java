@@ -37,10 +37,10 @@ import com.idega.util.IWTimestamp;
  * <p>
  * TODO Dainis Describe Type SchoolChoiceBusiness
  * </p>
- *  Last modified: $Date: 2006/04/27 09:41:19 $ by $Author: igors $
+ *  Last modified: $Date: 2006/05/12 16:26:32 $ by $Author: igors $
  * 
  * @author <a href="mailto:Dainis@idega.com">Dainis</a>
- * @version $Revision: 1.78.2.6 $
+ * @version $Revision: 1.78.2.7 $
  */
 public interface SchoolChoiceBusiness extends IBOService, CaseBusiness {
 
