@@ -450,9 +450,9 @@ public class SchoolChoiceApplication extends CommuneBlock {
 					}
 					else {
 
-						boolean isOwnerAdmin = getUserBusiness(iwc).isRootCommuneAdministrator(owner);
+						boolean isOwnerAdmin = getUserBusiness(iwc).isRootCommuneAdministrator(this.owner);
 						
-						if (custodiansAgree || this.isOwner || this._useAsAdmin || (isOwnerAdmin && !isOwner)) {
+						if (custodiansAgree || this.isOwner || this._useAsAdmin || (isOwnerAdmin && !this.isOwner)) {
 							add(getSchoolChoiceForm(iwc, child));
 						}
 						else {
