@@ -1,5 +1,5 @@
 /*
- * $Id: CommuneSchoolBusinessBean.java,v 1.29 2006/03/31 12:28:04 laddi Exp $
+ * $Id: CommuneSchoolBusinessBean.java,v 1.30 2006/05/14 18:18:15 laddi Exp $
  * Created on Aug 3, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -52,6 +52,7 @@ import com.idega.data.IDOCreateException;
 import com.idega.data.IDOException;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
+import com.idega.user.data.Group;
 import com.idega.user.data.User;
 import com.idega.util.Age;
 import com.idega.util.IWTimestamp;
@@ -59,10 +60,10 @@ import com.idega.util.PersonalIDFormatter;
 
 
 /**
- * Last modified: $Date: 2006/03/31 12:28:04 $ by $Author: laddi $
+ * Last modified: $Date: 2006/05/14 18:18:15 $ by $Author: laddi $
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.29 $
+ * @version $Revision: 1.30 $
  */
 public class CommuneSchoolBusinessBean extends CaseBusinessBean  implements CaseBusiness, CommuneSchoolBusiness{
 	
@@ -394,7 +395,7 @@ public class CommuneSchoolBusinessBean extends CaseBusinessBean  implements Case
 					while (iter.hasNext()) {
 						Case element = (Case) iter.next();
 						if (element.getCode().equals("MBSKOLV")) {
-							changeCaseStatus(element, getCaseStatusPreliminary().getStatus(), performer);
+							changeCaseStatus(element, getCaseStatusPreliminary().getStatus(), performer, (Group) null);
 							break;
 						}
 					}
