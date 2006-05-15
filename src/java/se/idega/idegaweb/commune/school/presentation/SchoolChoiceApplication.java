@@ -449,10 +449,16 @@ public class SchoolChoiceApplication extends CommuneBlock {
 						add(getAlreadyChosenAnswer(child));
 					}
 					else {
-
-						boolean isOwnerAdmin = getUserBusiness(iwc).isRootCommuneAdministrator(owner);
+						boolean isOwnerAdmin = false;
+						try{
+						   isOwnerAdmin = getUserBusiness(iwc).isRootCommuneAdministrator(owner);
+						}
+						catch (NullPointerException e)
+						{
+							isOwnerAdmin = true;
+						}
 						
-						if (custodiansAgree || this.isOwner || this._useAsAdmin || (isOwnerAdmin && !isOwner)) {
+						if (custodiansAgree || this.isOwner || this._useAsAdmin || (isOwnerAdmin && !this.isOwner)) {
 							add(getSchoolChoiceForm(iwc, child));
 						}
 						else {
