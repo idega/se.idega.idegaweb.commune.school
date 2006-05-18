@@ -451,7 +451,7 @@ public class SchoolChoiceApplication extends CommuneBlock {
 					else {
 						boolean isOwnerAdmin = false;
 						try{
-						   isOwnerAdmin = getUserBusiness(iwc).isRootCommuneAdministrator(owner);
+						   isOwnerAdmin = getUserBusiness(iwc).isRootCommuneAdministrator(this.owner);
 						}
 						catch (NullPointerException e)
 						{
