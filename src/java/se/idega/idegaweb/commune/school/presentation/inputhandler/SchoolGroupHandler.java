@@ -35,10 +35,28 @@ import com.idega.presentation.ui.SelectionBox;
 public class SchoolGroupHandler extends SelectionBox implements InputHandler {
 
 	private final static String IW_BUNDLE_IDENTIFIER = "se.idega.idegaweb.commune";
+	
+	private int schoolID = -1;
+	private int seasonID = -1;
+	
+	public SchoolGroupHandler() {
+	}
+	
+	public SchoolGroupHandler(int schoolID, int seasonID) {
+		this.schoolID = schoolID;
+		this.seasonID = seasonID;
+	}
 
 	public void main(IWContext iwc) {
 		try {
-			Collection groups = getSchoolBusiness(iwc).findSchoolClassesBySchoolAndSeasonAndYears(getSchoolSession(iwc).getSchoolID(), getSchoolSession(iwc).getSchoolSeasonID(), getSchoolSession(iwc).getSchoolGroupIDs(), false);
+			if (this.schoolID == -1) {
+				this.schoolID = getSchoolSession(iwc).getSchoolID();
+			}
+			if (this.seasonID == -1) {
+				this.seasonID = getSchoolSession(iwc).getSchoolSeasonID();
+			}
+			
+			Collection groups = getSchoolBusiness(iwc).findSchoolClassesBySchoolAndSeasonAndYears(this.schoolID, this.seasonID, getSchoolSession(iwc).getSchoolGroupIDs(), false);
 		
 			Iterator iter = groups.iterator();
 			while (iter.hasNext()) {
