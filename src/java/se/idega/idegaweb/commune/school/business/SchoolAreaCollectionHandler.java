@@ -1,5 +1,5 @@
 /*
- * $Id: SchoolAreaCollectionHandler.java,v 1.4 2005/10/28 14:54:03 gimmi Exp $
+ * $Id: SchoolAreaCollectionHandler.java,v 1.5 2006/07/06 14:26:37 laddi Exp $
  * Created on May 10, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -28,10 +28,10 @@ import com.idega.presentation.remotescripting.RemoteScriptingResults;
 
 
 /**
- * Last modified: $Date: 2005/10/28 14:54:03 $ by $Author: gimmi $
+ * Last modified: $Date: 2006/07/06 14:26:37 $ by $Author: laddi $
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
 public class SchoolAreaCollectionHandler implements RemoteScriptCollection {
 	
@@ -52,28 +52,32 @@ public class SchoolAreaCollectionHandler implements RemoteScriptCollection {
 	
 	private RemoteScriptingResults handleCourseUpdate(IWContext iwc, String sourceName, String sourceID) {
 		IWResourceBundle iwrb = iwc.getIWMainApplication().getBundle(IW_BUNDLE_IDENTIFIER).getResourceBundle(iwc);
-		
-		Collection ids = new ArrayList();
-		Collection names = new ArrayList();
-		ids.add("-1");
-		names.add(iwrb.getLocalizedString("select_school","Select school"));
-		
 		Object yearPK = iwc.getParameter(PARAMETER_SCHOOL_YEAR);
 		
+		Collection schools = null;
 		try {
-			Collection courses = getBusiness(iwc).getSchoolHome().findAllByAreaAndTypesAndYear(Integer.parseInt(sourceID), getBusiness(iwc).getSchoolTypesForCategory(getBusiness(iwc).getCategoryElementarySchool(), false), Integer.parseInt(yearPK.toString()));
-			Iterator iter = courses.iterator();
-			while (iter.hasNext()) {
-				School school = (School) iter.next();
-				ids.add(school.getPrimaryKey().toString());
-				names.add(school.getSchoolName());
-			}
+			schools = getBusiness(iwc).getSchoolHome().findAllByAreaAndTypesAndYear(Integer.parseInt(sourceID), getBusiness(iwc).getSchoolTypesForCategory(getBusiness(iwc).getCategoryElementarySchool(), false), Integer.parseInt(yearPK.toString()));
 		}
 		catch (FinderException fe) {
 			fe.printStackTrace();
+			schools = new ArrayList();
 		}
 		catch (RemoteException re) {
 			re.printStackTrace();
+		}
+		
+		Collection ids = new ArrayList();
+		Collection names = new ArrayList();
+		if (schools.size() > 1) {
+			ids.add("-1");
+			names.add(iwrb.getLocalizedString("select_school","Select school"));
+		}
+		
+		Iterator iter = schools.iterator();
+		while (iter.hasNext()) {
+			School school = (School) iter.next();
+			ids.add(school.getPrimaryKey().toString());
+			names.add(school.getSchoolName());
 		}
 		
 		RemoteScriptingResults rsr = new RemoteScriptingResults(RemoteScriptHandler.getLayerName(sourceName, "id"), ids);
