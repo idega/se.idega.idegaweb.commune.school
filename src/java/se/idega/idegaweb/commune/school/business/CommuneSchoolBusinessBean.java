@@ -1,5 +1,5 @@
 /*
- * $Id: CommuneSchoolBusinessBean.java,v 1.30 2006/05/14 18:18:15 laddi Exp $
+ * $Id: CommuneSchoolBusinessBean.java,v 1.31 2006/07/24 15:02:47 laddi Exp $
  * Created on Aug 3, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -60,10 +60,10 @@ import com.idega.util.PersonalIDFormatter;
 
 
 /**
- * Last modified: $Date: 2006/05/14 18:18:15 $ by $Author: laddi $
+ * Last modified: $Date: 2006/07/24 15:02:47 $ by $Author: laddi $
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.30 $
+ * @version $Revision: 1.31 $
  */
 public class CommuneSchoolBusinessBean extends CaseBusinessBean  implements CaseBusiness, CommuneSchoolBusiness{
 	
@@ -610,9 +610,9 @@ public class CommuneSchoolBusinessBean extends CaseBusinessBean  implements Case
 		choice.setPlacementDate(placementDate);
 		
 		choice.setCreated(stamp.getTimestamp());
-		choice.setCaseStatus(status);
 		choice.setParentCase(parentCase);
-		choice.store();
+		
+		changeCaseStatus(choice, status, user);
 		
 		if (status.equals(getCaseStatusPreliminary())) {
 			String subject = getLocalizedString("application.choice_received_subject", "School choice received");
