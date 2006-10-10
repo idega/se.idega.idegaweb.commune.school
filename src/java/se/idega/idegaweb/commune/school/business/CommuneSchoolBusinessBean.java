@@ -1,5 +1,5 @@
 /*
- * $Id: CommuneSchoolBusinessBean.java,v 1.31 2006/07/24 15:02:47 laddi Exp $
+ * $Id: CommuneSchoolBusinessBean.java,v 1.32 2006/10/10 11:06:52 laddi Exp $
  * Created on Aug 3, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -60,10 +60,10 @@ import com.idega.util.PersonalIDFormatter;
 
 
 /**
- * Last modified: $Date: 2006/07/24 15:02:47 $ by $Author: laddi $
+ * Last modified: $Date: 2006/10/10 11:06:52 $ by $Author: laddi $
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.31 $
+ * @version $Revision: 1.32 $
  */
 public class CommuneSchoolBusinessBean extends CaseBusinessBean  implements CaseBusiness, CommuneSchoolBusiness{
 	
@@ -630,7 +630,8 @@ public class CommuneSchoolBusinessBean extends CaseBusinessBean  implements Case
 	private void sendMessageToParents(SchoolChoice application, String subject, String body, String letterBody, boolean alwaysSendLetter) {
 		try {
 			User child = application.getChild();
-			Object[] arguments = {child.getName(), application.getChosenSchool().getSchoolName(), PersonalIDFormatter.format(child.getPersonalID(), getIWApplicationContext().getApplicationSettings().getDefaultLocale()) };
+			School school = application.getChosenSchool();
+			Object[] arguments = {child.getName(), school.getSchoolName(), PersonalIDFormatter.format(child.getPersonalID(), getIWApplicationContext().getApplicationSettings().getDefaultLocale()), school.getSchoolWebPage() != null ? school.getSchoolWebPage() : "" };
 
 			User appParent = application.getOwner();
 			if (getUserBusiness().getMemberFamilyLogic().isChildInCustodyOf(child, appParent)) {
