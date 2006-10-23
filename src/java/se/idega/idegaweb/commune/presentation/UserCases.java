@@ -379,10 +379,10 @@ public class UserCases extends CommuneBlock {
 				&& useCase.getCaseStatus().equals(caseStatusPlaced)) { 
 			SchoolChoice choice = schBuiz.getSchoolChoice(((Integer) useCase.getPrimaryKey()).intValue());
 			if (choice != null && !choice.getHasReceivedPlacementMessage()) {
-				status = getStatus(iwc, caseStatusOpen);
+				status = getStatus(iwc, useCase, caseStatusOpen);
 			}
 			else {
-				status = getStatus(iwc, caseStatus);
+				status = getStatus(iwc, useCase, caseStatus);
 			}
 			
 		}  
@@ -393,17 +393,17 @@ public class UserCases extends CommuneBlock {
 				SchoolCaseBusiness schoolCaseBusiness = (SchoolCaseBusiness) iterator.next();
 				if (schoolCaseBusiness.isCase(useCase) && useCase.getCaseStatus().equals(caseStatusPlaced)) {
 					if (schoolCaseBusiness.caseIsOpen(useCase, iwc)) {
-						status = getStatus(iwc, caseStatusOpen);
+						status = getStatus(iwc, useCase, caseStatusOpen);
 					}
 					else {
-						status = getStatus(iwc, caseStatus);
+						status = getStatus(iwc, useCase, caseStatus);
 					}
 				}
 			}
 		}
 		// nothing was set yet
 		if (status == null) {
-			status = getStatus(iwc, caseStatus);
+			status = getStatus(iwc, useCase, caseStatus);
 		}
 		
 		try {
@@ -500,8 +500,8 @@ public class UserCases extends CommuneBlock {
 		messageList.add(status, column, row);
 	}
 	
-	protected PresentationObject getStatus(IWContext iwc, CaseStatus status) throws Exception {
-		return getSmallText(getCaseBusiness(iwc).getLocalizedCaseStatusDescription(status, iwc.getCurrentLocale()));
+	protected PresentationObject getStatus(IWContext iwc, Case theCase, CaseStatus status) throws Exception {
+		return getSmallText(getCaseBusiness(iwc).getLocalizedCaseStatusDescription(theCase, status, iwc.getCurrentLocale()));
 	}
 	
 	int getNumberColumn(){

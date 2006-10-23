@@ -243,7 +243,7 @@ public class StudentPlacings extends SchoolCommuneBlock {
 			column = 1;
 			choice = (SchoolChoice) iter.next();
 			season = choice.getSchoolSeason();
-			status = caseBusiness.getLocalizedCaseStatusDescription(choice.getCaseStatus(), currentLocale);
+			status = caseBusiness.getLocalizedCaseStatusDescription(choice, choice.getCaseStatus(), currentLocale);
 			created = choice.getCreated();
 			if (created != null) {
 				iwCreated = new IWTimestamp(created);

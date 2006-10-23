@@ -513,7 +513,7 @@ public class SchoolChoiceEditor extends SchoolCommuneBlock {
 				
 					if (choice.getChosenSchoolId() != -1) {
 						school = getSchoolCommuneBusiness(iwc).getSchoolBusiness().getSchool(new Integer(choice.getChosenSchoolId()));
-						String string = String.valueOf(choice.getChoiceOrder()) + ". " + school.getName() + " (" + getSchoolCommuneBusiness(iwc).getLocalizedCaseStatusDescription(choice.getCaseStatus(), iwc.getCurrentLocale()) + ")";
+						String string = String.valueOf(choice.getChoiceOrder()) + ". " + school.getName() + " (" + getSchoolCommuneBusiness(iwc).getLocalizedCaseStatusDescription(choice, choice.getCaseStatus(), iwc.getCurrentLocale()) + ")";
 						int choiceID =
 							((Integer) choice.getPrimaryKey()).intValue();
 						table.add(new HiddenInput(PARAM_PLAC_CHOICE_ID + String.valueOf(choice.getChoiceOrder()), String.valueOf(choiceID)), 4, row);
