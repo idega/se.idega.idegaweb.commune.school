@@ -155,9 +155,6 @@
 
       <type>jar</type>
       <url>http://www.idega.com/</url>
-      <properties>
-        <eclipse.dependency>true</eclipse.dependency>
-      </properties>
     </dependency>
     <dependency>
       <groupId>bundles</groupId>
@@ -167,9 +164,6 @@
 
       <type>jar</type>
       <url>http://www.idega.com/</url>
-      <properties>
-        <eclipse.dependency>true</eclipse.dependency>
-      </properties>
     </dependency>
     <dependency>
       <groupId>bundles</groupId>

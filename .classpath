@@ -21,9 +21,9 @@
   </classpathentry>
   <classpathentry kind="src" path="/com.idega.block.process">
   </classpathentry>
-  <classpathentry kind="src" path="/com.idega.block.datareport">
+  <classpathentry kind="var" path="MAVEN_REPO/bundles/jars/com.idega.block.datareport-SNAPSHOT.jar">
   </classpathentry>
-  <classpathentry kind="src" path="/com.idega.block.navigation">
+  <classpathentry kind="var" path="MAVEN_REPO/bundles/jars/com.idega.block.navigation-SNAPSHOT.jar">
   </classpathentry>
   <classpathentry kind="src" path="/is.idega.block.family">
   </classpathentry>
