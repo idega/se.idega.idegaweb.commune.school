@@ -10,22 +10,18 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Vector;
-
 import javax.servlet.http.HttpServletRequest;
-
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-
 import se.idega.idegaweb.commune.business.CommuneUserBusiness;
 import se.idega.idegaweb.commune.care.business.CareBusiness;
 import se.idega.idegaweb.commune.presentation.CommuneBlock;
-import se.idega.util.SchoolClassMemberComparatorForSweden;
-
 import com.idega.block.school.business.SchoolBusiness;
+import com.idega.block.school.business.SchoolClassMemberComparator;
 import com.idega.block.school.data.SchoolClass;
 import com.idega.block.school.data.SchoolClassMember;
 import com.idega.block.school.data.SchoolStudyPath;
@@ -87,6 +83,7 @@ public class SchoolClassWriter implements MediaWritable {
 	private boolean showHandicraftColumn = false;
 	
 	public SchoolClassWriter() {
+		// empty
 	}
 	
 	public void init(HttpServletRequest req, IWContext iwc) {
@@ -141,17 +138,17 @@ public class SchoolClassWriter implements MediaWritable {
 		}
 	}
 	
-	public MemoryFileBuffer writeXLS(SchoolClass schoolClass) throws Exception {
-		MemoryFileBuffer buffer = new MemoryFileBuffer();
-		MemoryOutputStream mos = new MemoryOutputStream(buffer);
+	public MemoryFileBuffer writeXLS(SchoolClass schoolClassParameter) throws Exception {
+		MemoryFileBuffer memoryBuffer = new MemoryFileBuffer();
+		MemoryOutputStream mos = new MemoryOutputStream(memoryBuffer);
 		List students = new Vector(
-				this.schoolBusiness.findStudentsInClass(((Integer) schoolClass.getPrimaryKey()).intValue()));
+				this.schoolBusiness.findStudentsInClass(((Integer) schoolClassParameter.getPrimaryKey()).intValue()));
 		if (!students.isEmpty()) {
 			Map studentMap = this.careBusiness.getStudentList(students);
-			Collections.sort(students, SchoolClassMemberComparatorForSweden.getComparatorSortByName(this.locale,
+			Collections.sort(students, SchoolClassMemberComparator.getComparatorSortByName(this.locale,
 					this.userBusiness, studentMap));
 			HSSFWorkbook wb = new HSSFWorkbook();
-			HSSFSheet sheet = wb.createSheet(schoolClass.getName());
+			HSSFSheet sheet = wb.createSheet(schoolClassParameter.getName());
 			sheet.setColumnWidth((short) 0, (short) (30 * 256));
 			sheet.setColumnWidth((short) 1, (short) (14 * 256));
 			sheet.setColumnWidth((short) 2, (short) (30 * 256));
@@ -242,24 +239,24 @@ public class SchoolClassWriter implements MediaWritable {
 			}
 			wb.write(mos);
 		}
-		buffer.setMimeType("application/x-msexcel");
-		return buffer;
+		memoryBuffer.setMimeType("application/x-msexcel");
+		return memoryBuffer;
 	}
 	
-	public MemoryFileBuffer writePDF(SchoolClass schoolClass) throws Exception {
-		MemoryFileBuffer buffer = new MemoryFileBuffer();
-		MemoryOutputStream mos = new MemoryOutputStream(buffer);
-		List students = new Vector(this.schoolBusiness.findStudentsInClass(((Integer)schoolClass.getPrimaryKey()).intValue()));
+	public MemoryFileBuffer writePDF(SchoolClass schoolClassParameter) throws Exception {
+		MemoryFileBuffer memoryBuffer = new MemoryFileBuffer();
+		MemoryOutputStream mos = new MemoryOutputStream(memoryBuffer);
+		List students = new Vector(this.schoolBusiness.findStudentsInClass(((Integer)schoolClassParameter.getPrimaryKey()).intValue()));
 
 		if (!students.isEmpty()) {
 			Map studentMap = this.careBusiness.getStudentList(students);
-			Collections.sort(students, SchoolClassMemberComparatorForSweden.getComparatorSortByName(this.locale, this.userBusiness, studentMap));
+			Collections.sort(students, SchoolClassMemberComparator.getComparatorSortByName(this.locale, this.userBusiness, studentMap));
 			
 			Document document = new Document(PageSize.A4, 50, 50, 50, 50);
 			PdfWriter writer = PdfWriter.getInstance(document, mos);
-			document.addTitle(schoolClass.getName());
+			document.addTitle(schoolClassParameter.getName());
 			document.addAuthor("Idega Reports");
-			document.addSubject(schoolClass.getName());
+			document.addSubject(schoolClassParameter.getName());
 			document.open();
 			
 			document.add(new Phrase(this.schoolName + "\n", new Font(Font.HELVETICA, 12, Font.BOLD)));
@@ -360,8 +357,8 @@ public class SchoolClassWriter implements MediaWritable {
 			writer.setPdfVersion(PdfWriter.VERSION_1_2);
 		}
 		
-		buffer.setMimeType("application/pdf");
-		return buffer;
+		memoryBuffer.setMimeType("application/pdf");
+		return memoryBuffer;
 	}
 	
 	private Table getTable(String[] headers, int[] sizes) throws BadElementException, DocumentException {
