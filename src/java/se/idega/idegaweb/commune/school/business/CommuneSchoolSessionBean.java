@@ -1,5 +1,5 @@
 /*
- * $Id: CommuneSchoolSessionBean.java,v 1.2 2006/04/09 11:39:54 laddi Exp $
+ * $Id: CommuneSchoolSessionBean.java,v 1.3 2007/02/05 22:25:55 laddi Exp $
  * Created on Aug 3, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -11,6 +11,9 @@ package se.idega.idegaweb.commune.school.business;
 
 import java.rmi.RemoteException;
 import javax.ejb.FinderException;
+import javax.servlet.http.HttpSessionBindingEvent;
+import javax.servlet.http.HttpSessionBindingListener;
+
 import se.idega.idegaweb.commune.business.CommuneUserBusiness;
 import com.idega.business.IBORuntimeException;
 import com.idega.business.IBOSessionBean;
@@ -18,13 +21,22 @@ import com.idega.user.data.User;
 
 
 /**
- * Last modified: $Date: 2006/04/09 11:39:54 $ by $Author: laddi $
+ * Last modified: $Date: 2007/02/05 22:25:55 $ by $Author: laddi $
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
-public class CommuneSchoolSessionBean extends IBOSessionBean  implements CommuneSchoolSession{
+public class CommuneSchoolSessionBean extends IBOSessionBean  implements CommuneSchoolSession, HttpSessionBindingListener {
 	
+	public void valueBound(HttpSessionBindingEvent arg0) {
+	}
+
+	public void valueUnbound(HttpSessionBindingEvent arg0) {
+		iUserUniqueID = null;
+		iUserPK = null;
+		iUser = null;
+	}
+
 	private String iUserUniqueID;
 	private Object iUserPK;
 	private User iUser;
