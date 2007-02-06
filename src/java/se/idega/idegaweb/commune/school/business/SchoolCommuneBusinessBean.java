@@ -29,8 +29,6 @@ import se.idega.idegaweb.commune.care.data.ProviderAccountingProperties;
 import se.idega.idegaweb.commune.care.data.ProviderAccountingPropertiesHome;
 import se.idega.idegaweb.commune.message.business.CommuneMessageBusiness;
 import se.idega.idegaweb.commune.school.data.SchoolChoice;
-import se.idega.idegaweb.commune.user.data.Citizen;
-import se.idega.idegaweb.commune.user.data.CitizenHome;
 
 import com.idega.block.datareport.util.ReportableCollection;
 import com.idega.block.datareport.util.ReportableData;
@@ -902,8 +900,6 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 
 		// Collection schoolyears =
 		// sBusiness.getSchoolYearHome().findAllSchoolYears();
-		IWTimestamp seasonStartDate = new IWTimestamp(currentSeason.getSchoolSeasonStart());
-		int currentYear = seasonStartDate.getYear();
 
 		// Iterator yIter = schoolyears.iterator();
 		// int minYearOfBirth = Integer.MAX_VALUE;
@@ -925,15 +921,9 @@ public class SchoolCommuneBusinessBean extends CaseBusinessBean implements Schoo
 		// fetching by school_type_id would return classes 1-10, might need to be
 		// property on the block and therefore parameters to this method
 		// See also MandatorySchoolReminder#presentResultAsCount(...)
-		int minYearOfBirth = currentYear - 15;
-		int maxYearOfBirth = currentYear - 7;
 
-		IWTimestamp firstDateOfBirth = new IWTimestamp(1, 1, minYearOfBirth);
-		IWTimestamp lastDateOfBirth = new IWTimestamp(31, 12, maxYearOfBirth);
-
-		CitizenHome citizenHome = (CitizenHome) IDOLookup.getHome(Citizen.class);
 		// maindata
-		Collection students = citizenHome.findCitizensNotAssignedToAnyClassOnGivenDate(communeGroup, currentSeason, new java.sql.Date(selectedDate.getTime()), firstDateOfBirth.getDate(), lastDateOfBirth.getDate());
+		Collection students = new ArrayList(); //citizenHome.findCitizensNotAssignedToAnyClassOnGivenDate(communeGroup, currentSeason, new java.sql.Date(selectedDate.getTime()), firstDateOfBirth.getDate(), lastDateOfBirth.getDate());
 
 		GroupRelationHome gRelationHome = ((GroupRelationHome) IDOLookup.getHome(GroupRelation.class));
 

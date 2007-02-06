@@ -6,6 +6,7 @@ import javax.ejb.FinderException;
 
 import se.idega.idegaweb.commune.business.CommuneUserBusiness;
 
+import com.idega.block.school.business.SchoolUserBusiness;
 import com.idega.block.school.data.School;
 import com.idega.business.IBOLookup;
 import com.idega.business.IBOSessionBean;
@@ -50,6 +51,10 @@ public class SchoolCommuneSessionBean extends IBOSessionBean implements SchoolCo
 		return (SchoolCommuneBusiness) IBOLookup.getServiceInstance(getIWApplicationContext(), SchoolCommuneBusiness.class);
 	}
 	
+	public SchoolUserBusiness getSchoolUserBusiness() throws RemoteException {
+		return (SchoolUserBusiness) IBOLookup.getServiceInstance(getIWApplicationContext(), SchoolUserBusiness.class);
+	}
+	
 	/**
 	 * Returns the schoolID.
 	 * @return int
@@ -84,7 +89,7 @@ public class SchoolCommuneSessionBean extends IBOSessionBean implements SchoolCo
 		this._schoolID = -1;
 		if (user != null) {
 			try {
-				School school = getCommuneUserBusiness().getFirstManagingSchoolForUser(user);
+				School school = getSchoolUserBusiness().getFirstManagingSchoolForUser(user);
 				if (school != null) {
 					this._school = school;
 					this._schoolID = ((Integer) school.getPrimaryKey()).intValue();
