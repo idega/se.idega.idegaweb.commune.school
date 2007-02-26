@@ -1,5 +1,5 @@
 /*
- * $Id: SchoolChoiceHome.java,v 1.55 2006/03/27 15:39:21 laddi Exp $
+ * $Id: SchoolChoiceHome.java,v 1.56 2007/02/26 01:13:15 tryggvil Exp $
  * Created on Mar 27, 2006
  *
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -29,10 +29,10 @@ import com.idega.user.data.User;
  * <p>
  * TODO laddi Describe Type SchoolChoiceHome
  * </p>
- *  Last modified: $Date: 2006/03/27 15:39:21 $ by $Author: laddi $
+ *  Last modified: $Date: 2007/02/26 01:13:15 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.55 $
+ * @version $Revision: 1.56 $
  */
 public interface SchoolChoiceHome extends IDOHome {
 
@@ -274,4 +274,9 @@ public interface SchoolChoiceHome extends IDOHome {
 	 * @see se.idega.idegaweb.commune.school.data.SchoolChoiceBMPBean#ejbFindAllCasesByMetaData
 	 */
 	public Collection findAllCasesByMetaData(String metadataKey,String metadataValue) throws FinderException;
+	
+	/**
+	 * @see se.idega.idegaweb.commune.school.data.SchoolChoiceBMPBean#ejbFindAllCasesByMetaData
+	 */
+	public Collection findAllCasesByMetaDataNotDuplicateWithValue(String metadataKey,String metadataValue,String notValue) throws FinderException;
 }

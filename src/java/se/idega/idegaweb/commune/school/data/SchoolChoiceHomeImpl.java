@@ -1,5 +1,5 @@
 /*
- * $Id: SchoolChoiceHomeImpl.java,v 1.56 2006/03/27 15:39:21 laddi Exp $
+ * $Id: SchoolChoiceHomeImpl.java,v 1.57 2007/02/26 01:13:15 tryggvil Exp $
  * Created on Mar 27, 2006
  *
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -12,11 +12,8 @@ package se.idega.idegaweb.commune.school.data;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.util.Collection;
-
 import javax.ejb.FinderException;
-
 import se.idega.idegaweb.commune.school.business.MailReceiver;
-
 import com.idega.block.process.data.Case;
 import com.idega.block.school.data.SchoolSeason;
 import com.idega.block.school.data.SchoolYear;
@@ -29,10 +26,10 @@ import com.idega.user.data.User;
  * <p>
  * TODO laddi Describe Type SchoolChoiceHomeImpl
  * </p>
- *  Last modified: $Date: 2006/03/27 15:39:21 $ by $Author: laddi $
+ *  Last modified: $Date: 2007/02/26 01:13:15 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.56 $
+ * @version $Revision: 1.57 $
  */
 public class SchoolChoiceHomeImpl extends IDOFactory implements SchoolChoiceHome {
 
@@ -373,6 +370,13 @@ public class SchoolChoiceHomeImpl extends IDOFactory implements SchoolChoiceHome
 	public Collection findAllCasesByMetaData(String metadataKey,String metadataValue) throws FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 		java.util.Collection ids = ((SchoolChoiceBMPBean) entity).ejbFindAllCasesByMetaData(metadataKey,metadataValue);
+		this.idoCheckInPooledEntity(entity);
+		return this.getEntityCollectionForPrimaryKeys(ids);
+	}
+	
+	public Collection findAllCasesByMetaDataNotDuplicateWithValue(String metadataKey,String metadataValue,String notValue) throws FinderException {
+		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+		java.util.Collection ids = ((SchoolChoiceBMPBean) entity).ejbFindAllCasesByMetaDataNotDuplicateWithValue(metadataKey, metadataValue, notValue);
 		this.idoCheckInPooledEntity(entity);
 		return this.getEntityCollectionForPrimaryKeys(ids);
 	}
