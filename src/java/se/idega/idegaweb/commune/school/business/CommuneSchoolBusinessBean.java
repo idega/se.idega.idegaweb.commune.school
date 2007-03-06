@@ -1,5 +1,5 @@
 /*
- * $Id: CommuneSchoolBusinessBean.java,v 1.33 2007/02/28 10:04:09 laddi Exp $ Created on Aug 3, 2005
+ * $Id: CommuneSchoolBusinessBean.java,v 1.34 2007/03/06 10:48:08 laddi Exp $ Created on Aug 3, 2005
  * 
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
  * 
@@ -57,10 +57,10 @@ import com.idega.util.IWTimestamp;
 import com.idega.util.PersonalIDFormatter;
 
 /**
- * Last modified: $Date: 2007/02/28 10:04:09 $ by $Author: laddi $
+ * Last modified: $Date: 2007/03/06 10:48:08 $ by $Author: laddi $
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.33 $
+ * @version $Revision: 1.34 $
  */
 public class CommuneSchoolBusinessBean extends CaseBusinessBean implements CaseBusiness, CommuneSchoolBusiness {
 
@@ -435,7 +435,7 @@ public class CommuneSchoolBusinessBean extends CaseBusinessBean implements CaseB
 			}
 
 			IWTimestamp timeNow = new IWTimestamp();
-			SchoolChoice choice = saveChoice(user, child, schoolPK, seasonPK, yearPK, schoolTypeID, language, message, null, getCaseStatusPlaced(), null, 1, timeNow);
+			SchoolChoice choice = saveChoice(user, child, schoolPK, seasonPK, yearPK, schoolTypeID, language, message, null, getCaseStatusPlaced(), null, 1, timeNow, false);
 			String subject = getLocalizedString("application.home_school_choice_received_subject", "Home school choice received");
 			String body = getLocalizedString("application.home_school_choice_received_body", "{1} has received the application for a school placing for {0}, {2}.  The application has been handled and your child has a placing at the school.");
 			sendMessageToParents(choice, subject, body);
@@ -448,6 +448,8 @@ public class CommuneSchoolBusinessBean extends CaseBusinessBean implements CaseB
 			student.setNotes(message);
 			student.setSchoolTypeId(schoolTypeID);
 			student.store();
+
+			changeCaseStatus(choice, getCaseStatusPlaced(), user);
 
 			trans.commit();
 
@@ -530,7 +532,7 @@ public class CommuneSchoolBusinessBean extends CaseBusinessBean implements CaseB
 						status = other;
 					}
 
-					choice = saveChoice(user, child, element, seasonPK, yearPK, schoolTypeID, language, message, placementDate, status, choice, choiceNumber++, timeNow);
+					choice = saveChoice(user, child, element, seasonPK, yearPK, schoolTypeID, language, message, placementDate, status, choice, choiceNumber++, timeNow, true);
 					if (firstChoice == null) {
 						firstChoice = choice;
 					}
@@ -553,7 +555,7 @@ public class CommuneSchoolBusinessBean extends CaseBusinessBean implements CaseB
 		}
 	}
 
-	private SchoolChoice saveChoice(User user, User child, Object schoolPK, Object seasonPK, Object yearPK, int schoolTypeID, String language, String message, Date placementDate, CaseStatus status, Case parentCase, int choiceNumber, IWTimestamp stamp) throws IDOCreateException {
+	private SchoolChoice saveChoice(User user, User child, Object schoolPK, Object seasonPK, Object yearPK, int schoolTypeID, String language, String message, Date placementDate, CaseStatus status, Case parentCase, int choiceNumber, IWTimestamp stamp, boolean changeCaseStatus) throws IDOCreateException {
 		SchoolSeason season = null;
 		try {
 			season = getSchoolBusiness().getSchoolSeason(new Integer(seasonPK.toString()));
@@ -613,7 +615,9 @@ public class CommuneSchoolBusinessBean extends CaseBusinessBean implements CaseB
 		choice.setCreated(stamp.getTimestamp());
 		choice.setParentCase(parentCase);
 
-		changeCaseStatus(choice, status, user);
+		if (changeCaseStatus) {
+			changeCaseStatus(choice, status, user);
+		}
 
 		if (status.equals(getCaseStatusPreliminary())) {
 			String subject = getLocalizedString("application.choice_received_subject", "School choice received");
