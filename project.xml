@@ -1,205 +1,210 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <project>
-	<extend>${base.project.dir}/base-dependencies.xml</extend>
-	<pomVersion>3</pomVersion>
-	<name>idegaweb commune school</name>
-	<artifactId>se.idega.idegaweb.commune.school</artifactId>
-	<currentVersion>1.0.2</currentVersion>
-	<inceptionYear>2004</inceptionYear>
-	<shortDescription>commune school</shortDescription>
-	<versions>
-		<version>
-			<id>1.0.1</id>
-			<name>1.0.1</name>
-			<tag>SE_SCHOOL_1_0_1</tag>
-		</version>
-	</versions>
-	<branches />
-	<developers>
-		<developer>
-			<name>Tryggvi Larusson</name>
-			<id>tryggvil</id>
-			<email>tryggvi@idega.is</email>
-			<organization>idega software</organization>
-			<roles />
-		</developer>
-		<developer>
-			<name>Thorhallur Helgason</name>
-			<id>laddi</id>
-			<email>laddi@idega.is</email>
-			<organization>idega software</organization>
-			<roles />
-		</developer>
-		<developer>
-			<name>Malin Anulf</name>
-			<id>malin</id>
-			<email>malin.anulf@agurait.com</email>
-			<organization>AguraIT</organization>
-			<roles />
-		</developer>
-		<developer>
-			<name>Anders Lindman</name>
-			<id>anders</id>
-			<email>anders.lindman@ncmedia.com</email>
-			<organization>AguraIT</organization>
-			<roles />
-		</developer>
-		<developer>
-			<name>Dainis Brjuhoveckis</name>
-			<id>dainis</id>
-			<email>dainis.brjuhoveckis@idega.lv</email>
-			<organization>Idega Baltic</organization>
-			<roles />
-		</developer>
-	</developers>
-	<dependencies>
-		<dependency>
-			<groupId>poi</groupId>
-			<artifactId>poi</artifactId>
-			<version>2.5-final-20040428</version>
-			<type>jar</type>
-			<url>http://jakarta.apache.org/poi/</url>
-			<properties />
-		</dependency>
-		<!-- jasperreports is already included in the dataquery bundle (this bundle depends on datareport, that depends on dataquery) -->
+  <extend>${base.project.dir}/base-dependencies.xml</extend>
+  <pomVersion>3</pomVersion>
+  <name>idegaweb commune school</name>
+  <artifactId>se.idega.idegaweb.commune.school</artifactId>
+  <currentVersion>1.0.2</currentVersion>
+  <inceptionYear>2004</inceptionYear>
+  <shortDescription>commune school</shortDescription>
+  <versions>
+    <version>
+      <id>1.0.1</id>
+      <name>1.0.1</name>
+      <tag>SE_SCHOOL_1_0_1</tag>
+    </version>
+    <version>
+      <id>1.0.2</id>
+      <name>1.0.2</name>
+      <tag>SE_SCHOOL_1_0_2</tag>
+    </version>
+  </versions>
+  <branches/>
+  <developers>
+    <developer>
+      <name>Tryggvi Larusson</name>
+      <id>tryggvil</id>
+      <email>tryggvi@idega.is</email>
+      <organization>idega software</organization>
+      <roles/>
+    </developer>
+    <developer>
+      <name>Thorhallur Helgason</name>
+      <id>laddi</id>
+      <email>laddi@idega.is</email>
+      <organization>idega software</organization>
+      <roles/>
+    </developer>
+    <developer>
+      <name>Malin Anulf</name>
+      <id>malin</id>
+      <email>malin.anulf@agurait.com</email>
+      <organization>AguraIT</organization>
+      <roles/>
+    </developer>
+    <developer>
+      <name>Anders Lindman</name>
+      <id>anders</id>
+      <email>anders.lindman@ncmedia.com</email>
+      <organization>AguraIT</organization>
+      <roles/>
+    </developer>
+    <developer>
+      <name>Dainis Brjuhoveckis</name>
+      <id>dainis</id>
+      <email>dainis.brjuhoveckis@idega.lv</email>
+      <organization>Idega Baltic</organization>
+      <roles/>
+    </developer>
+  </developers>
+  <dependencies>
+    <dependency>
+      <groupId>poi</groupId>
+      <artifactId>poi</artifactId>
+      <version>2.5-final-20040428</version>
+      <type>jar</type>
+      <url>http://jakarta.apache.org/poi/</url>
+      <properties/>
+    </dependency>
+    <!-- jasperreports is already included in the dataquery bundle (this bundle depends on datareport, that depends on dataquery) -->
 
-		<dependency>
-			<groupId>jasperreports</groupId>
-			<artifactId>jasperreports</artifactId>
-			<version>0.6.1</version>
-			<type>jar</type>
-			<url>http://jasperreports.sourceforge.net/</url>
-			<properties />
-		</dependency>
-		<dependency>
-			<!-- 
+    <dependency>
+      <groupId>jasperreports</groupId>
+      <artifactId>jasperreports</artifactId>
+      <version>0.6.1</version>
+      <type>jar</type>
+      <url>http://jasperreports.sourceforge.net/</url>
+      <properties/>
+    </dependency>
+    <dependency>
+      <!-- 
 				itext-xml is already included in the com.idega.block.pdf bundle
 				(this bundle depends on se.idega.idegaweb.commune, that depends on com.idega.block.pdf) 
 			-->
 
-			<groupId>itext</groupId>
-			<artifactId>itext-xml</artifactId>
-			<version>1.02</version>
-			<type>jar</type>
-			<url>http://itext.sourceforge.net/</url>
-			<properties />
-		</dependency>
-		<dependency>
-			<groupId>bundles</groupId>
-			<artifactId>com.idega.core</artifactId>
-			<version>3.1.39</version>
-			<type>jar</type>
-			<url>http://www.idega.com/</url>
-		</dependency>
-		<dependency>
-			<groupId>bundles</groupId>
-			<artifactId>com.idega.builder</artifactId>
-			<version>3.1.2</version>
-			<type>jar</type>
-			<url>http://www.idega.com/</url>
-		</dependency>
-		<dependency>
-			<groupId>bundles</groupId>
-			<artifactId>com.idega.user</artifactId>
-			<version>3.1.4</version>
-			<type>jar</type>
-			<url>http://www.idega.com/</url>
-		</dependency>
-		<dependency>
-			<groupId>bundles</groupId>
-			<artifactId>com.idega.block.school</artifactId>
-			<version>3.1.11</version>
-			<type>jar</type>
-			<url>http://www.idega.com/</url>
-			<properties>
-				<eclipse.dependency>true</eclipse.dependency>
-			</properties>
-		</dependency>
-		<dependency>
-			<groupId>bundles</groupId>
-			<artifactId>com.idega.block.process</artifactId>
-			<version>3.1.11</version>
-			<type>jar</type>
-			<url>http://www.idega.com/</url>
-		</dependency>
-		<dependency>
-			<groupId>bundles</groupId>
-			<artifactId>com.idega.block.datareport</artifactId>
-			<version>3.1.1</version>
-			<type>jar</type>
-			<url>http://www.idega.com/</url>
-		</dependency>
-		<dependency>
-			<groupId>bundles</groupId>
-			<artifactId>com.idega.block.navigation</artifactId>
-			<version>3.1.1</version>
-			<type>jar</type>
-			<url>http://www.idega.com/</url>
-		</dependency>
-		<dependency>
-			<groupId>bundles</groupId>
-			<artifactId>is.idega.block.family</artifactId>
-			<version>1.0.3</version>
-			<type>jar</type>
-			<url>http://www.idega.com/</url>
-		</dependency>
-		<dependency>
-			<groupId>bundles</groupId>
-			<artifactId>se.idega.util</artifactId>
-			<version>1.0.2</version>
-			<type>jar</type>
-			<url>http://www.idega.com/</url>
-			<properties>
-				<eclipse.dependency>true</eclipse.dependency>
-			</properties>
-		</dependency>
-		<dependency>
-			<groupId>bundles</groupId>
-			<artifactId>se.idega.idegaweb.commune</artifactId>
-			<version>1.0.9</version>
-			<type>jar</type>
-			<url>http://www.idega.com/</url>
-			<properties>
-				<eclipse.dependency>true</eclipse.dependency>
-			</properties>
-		</dependency>
-		<dependency>
-			<groupId>bundles</groupId>
-			<artifactId>se.idega.idegaweb.commune.care</artifactId>
-			<version>1.0.2</version>
-			<type>jar</type>
-			<url>http://www.idega.com/</url>
-			<properties>
-				<eclipse.dependency>true</eclipse.dependency>
-			</properties>
-		</dependency>
-		<dependency>
-			<groupId>bundles</groupId>
-			<artifactId>se.cubecon.bun24.viewpoint</artifactId>
-			<version>1.0.2</version>
-			<type>jar</type>
-			<url>http://www.idega.com/</url>
-			<properties>
-				<eclipse.dependency>true</eclipse.dependency>
-			</properties>
-		</dependency>
-		<dependency>
-			<groupId>itextpdf</groupId>
-			<artifactId>itext-paulo</artifactId>
-			<version>139</version>
-			<type>jar</type>
-			<url>http://itextpdf.sourceforge.net/</url>
-		</dependency>
-	</dependencies>
-	<build>
-		<sourceDirectory>src/java</sourceDirectory>
-		<unitTestSourceDirectory>src/test</unitTestSourceDirectory>
-		<unitTest>
-			<includes>
-				<include>**/*Test.java</include>
-			</includes>
-		</unitTest>
-	</build>
-	<properties />
+      <groupId>itext</groupId>
+      <artifactId>itext-xml</artifactId>
+      <version>1.02</version>
+      <type>jar</type>
+      <url>http://itext.sourceforge.net/</url>
+      <properties/>
+    </dependency>
+    <dependency>
+      <groupId>bundles</groupId>
+      <artifactId>com.idega.core</artifactId>
+      <version>3.1.39</version>
+      <type>jar</type>
+      <url>http://www.idega.com/</url>
+    </dependency>
+    <dependency>
+      <groupId>bundles</groupId>
+      <artifactId>com.idega.builder</artifactId>
+      <version>3.1.2</version>
+      <type>jar</type>
+      <url>http://www.idega.com/</url>
+    </dependency>
+    <dependency>
+      <groupId>bundles</groupId>
+      <artifactId>com.idega.user</artifactId>
+      <version>3.1.4</version>
+      <type>jar</type>
+      <url>http://www.idega.com/</url>
+    </dependency>
+    <dependency>
+      <groupId>bundles</groupId>
+      <artifactId>com.idega.block.school</artifactId>
+      <version>3.1.11</version>
+      <type>jar</type>
+      <url>http://www.idega.com/</url>
+      <properties>
+        <eclipse.dependency>true</eclipse.dependency>
+      </properties>
+    </dependency>
+    <dependency>
+      <groupId>bundles</groupId>
+      <artifactId>com.idega.block.process</artifactId>
+      <version>3.1.11</version>
+      <type>jar</type>
+      <url>http://www.idega.com/</url>
+    </dependency>
+    <dependency>
+      <groupId>bundles</groupId>
+      <artifactId>com.idega.block.datareport</artifactId>
+      <version>3.1.1</version>
+      <type>jar</type>
+      <url>http://www.idega.com/</url>
+    </dependency>
+    <dependency>
+      <groupId>bundles</groupId>
+      <artifactId>com.idega.block.navigation</artifactId>
+      <version>3.1.1</version>
+      <type>jar</type>
+      <url>http://www.idega.com/</url>
+    </dependency>
+    <dependency>
+      <groupId>bundles</groupId>
+      <artifactId>is.idega.block.family</artifactId>
+      <version>1.0.3</version>
+      <type>jar</type>
+      <url>http://www.idega.com/</url>
+    </dependency>
+    <dependency>
+      <groupId>bundles</groupId>
+      <artifactId>se.idega.util</artifactId>
+      <version>1.0.2</version>
+      <type>jar</type>
+      <url>http://www.idega.com/</url>
+      <properties>
+        <eclipse.dependency>true</eclipse.dependency>
+      </properties>
+    </dependency>
+    <dependency>
+      <groupId>bundles</groupId>
+      <artifactId>se.idega.idegaweb.commune</artifactId>
+      <version>1.0.9</version>
+      <type>jar</type>
+      <url>http://www.idega.com/</url>
+      <properties>
+        <eclipse.dependency>true</eclipse.dependency>
+      </properties>
+    </dependency>
+    <dependency>
+      <groupId>bundles</groupId>
+      <artifactId>se.idega.idegaweb.commune.care</artifactId>
+      <version>1.0.2</version>
+      <type>jar</type>
+      <url>http://www.idega.com/</url>
+      <properties>
+        <eclipse.dependency>true</eclipse.dependency>
+      </properties>
+    </dependency>
+    <dependency>
+      <groupId>bundles</groupId>
+      <artifactId>se.cubecon.bun24.viewpoint</artifactId>
+      <version>1.0.2</version>
+      <type>jar</type>
+      <url>http://www.idega.com/</url>
+      <properties>
+        <eclipse.dependency>true</eclipse.dependency>
+      </properties>
+    </dependency>
+    <dependency>
+      <groupId>itextpdf</groupId>
+      <artifactId>itext-paulo</artifactId>
+      <version>139</version>
+      <type>jar</type>
+      <url>http://itextpdf.sourceforge.net/</url>
+    </dependency>
+  </dependencies>
+  <build>
+    <sourceDirectory>src/java</sourceDirectory>
+    <unitTestSourceDirectory>src/test</unitTestSourceDirectory>
+    <unitTest>
+      <includes>
+        <include>**/*Test.java</include>
+      </includes>
+    </unitTest>
+  </build>
+  <properties/>
 </project>
