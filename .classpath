@@ -11,21 +11,21 @@
   </classpathentry>
   <classpathentry kind="var" path="MAVEN_REPO/itext/jars/itext-xml-1.02.jar">
   </classpathentry>
-  <classpathentry kind="src" path="/com.idega.core">
+  <classpathentry kind="var" path="MAVEN_REPO/bundles/jars/com.idega.core-3.1.39.jar">
   </classpathentry>
-  <classpathentry kind="src" path="/com.idega.builder">
+  <classpathentry kind="var" path="MAVEN_REPO/bundles/jars/com.idega.builder-3.1.2.jar">
   </classpathentry>
-  <classpathentry kind="src" path="/com.idega.user">
+  <classpathentry kind="var" path="MAVEN_REPO/bundles/jars/com.idega.user-3.1.4.jar">
   </classpathentry>
   <classpathentry kind="src" path="/com.idega.block.school">
   </classpathentry>
-  <classpathentry kind="src" path="/com.idega.block.process">
+  <classpathentry kind="var" path="MAVEN_REPO/bundles/jars/com.idega.block.process-3.1.11.jar">
   </classpathentry>
-  <classpathentry kind="var" path="MAVEN_REPO/bundles/jars/com.idega.block.datareport-SNAPSHOT.jar">
+  <classpathentry kind="var" path="MAVEN_REPO/bundles/jars/com.idega.block.datareport-3.1.1.jar">
   </classpathentry>
-  <classpathentry kind="var" path="MAVEN_REPO/bundles/jars/com.idega.block.navigation-SNAPSHOT.jar">
+  <classpathentry kind="var" path="MAVEN_REPO/bundles/jars/com.idega.block.navigation-3.1.1.jar">
   </classpathentry>
-  <classpathentry kind="src" path="/is.idega.block.family">
+  <classpathentry kind="var" path="MAVEN_REPO/bundles/jars/is.idega.block.family-1.0.3.jar">
   </classpathentry>
   <classpathentry kind="src" path="/se.idega.util">
   </classpathentry>
@@ -49,7 +49,7 @@
   </classpathentry>
   <classpathentry kind="var" path="MAVEN_REPO/jta/jars/jta-spec1_0_1.jar">
   </classpathentry>
-  <classpathentry kind="src" path="/com.idega.block.web2.0">
+  <classpathentry kind="var" path="MAVEN_REPO/bundles/jars/com.idega.block.web2.0-3.1.4.jar">
   </classpathentry>
   <classpathentry kind="output" path="target/classes">
   </classpathentry>
