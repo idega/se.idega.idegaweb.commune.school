@@ -1,8 +1,7 @@
 /*
  * Created on 1.9.2003
  * 
- * To change the template for this generated file go to
- * Window>Preferences>Java>Code Generation>Code and Comments
+ * To change the template for this generated file go to Window>Preferences>Java>Code Generation>Code and Comments
  */
 package se.idega.idegaweb.commune.school.presentation;
 
@@ -48,8 +47,7 @@ import com.idega.user.data.Group;
 import com.idega.util.IWTimestamp;
 
 /**
- * Title: MandatorySchoolReminder Description: Copyright: Copyright (c) 2003
- * Company: idega Software
+ * Title: MandatorySchoolReminder Description: Copyright: Copyright (c) 2003 Company: idega Software
  * 
  * @author 2003 - idega team - <br>
  *         <a href="mailto:gummi@idega.is">Gudmundur Agust Saemundsson</a><br>
@@ -465,13 +463,6 @@ public class MandatorySchoolReminder extends CommuneBlock {
 			this._localizedMessage = message;
 			// jdk 1.3 - 1.4 fix
 			this._cause = cause;
-		}
-
-		/**
-		 * 
-		 */
-		private MandatorySchoolReminderException() {
-			super();
 		}
 
 		// jdk 1.3 - 1.4 fix
