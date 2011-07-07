@@ -52,7 +52,7 @@ import com.idega.presentation.ui.HiddenInput;
 import com.idega.presentation.ui.SubmitButton;
 import com.idega.repository.data.RefactorClassRegistry;
 
-/** 
+/**
  * This block handles selecting and presenting school reports.
  * <p>
  * Last modified: $Date: 2006/05/08 13:53:38 $ by $Author: laddi $
@@ -65,7 +65,7 @@ public class SchoolReports extends CommuneBlock {
 	public final static String IW_REPORT_BUNDLE_IDENTIFIER = "se.idega.idegaweb.commune.school";
 
 	private final static String PP = "school_report."; // Parameter prefix
-	
+
 	private final static String PARAMETER_REPORT_INDEX = PP + "report_index";
 	private final static String PARAMETER_CREATE_REPORT = PP + "create_report";
 	private final static String PARAMETER_CREATE_PDF = PP + "create_pdf";
@@ -73,15 +73,15 @@ public class SchoolReports extends CommuneBlock {
 	private final static String PARAMETER_REPORT_CLASS_NAME = PP + "report_class_name";
 
 	private final static String KP = "school_report."; // Localization key prefix
-	
+
 	private final static String KEY_REPORT_SELECTOR_TITLE = KP + "select_report";
 	private final static String KEY_CREATE_REPORT = KP + "create_report";
 	private final static String KEY_NO_REPORT_SELECTED = KP + "no_report_selected";
-//	private final static String KEY_FOR_PRINTING = KP + "for_printing";	
-	private final static String KEY_PDF = KP + "pdf";	
-	private final static String KEY_EXCEL = KP + "excel";	
-	private final static String KEY_BACK = KP + "back";	
-	
+//	private final static String KEY_FOR_PRINTING = KP + "for_printing";
+	private final static String KEY_PDF = KP + "pdf";
+	private final static String KEY_EXCEL = KP + "excel";
+	private final static String KEY_BACK = KP + "back";
+
 	private final static int ACTION_DEFAULT = 1;
 	private final static int ACTION_CREATE_REPORT = 2;
 	private final static int ACTION_CREATE_PDF = 3;
@@ -129,14 +129,15 @@ public class SchoolReports extends CommuneBlock {
 	};
 
 	private ReportModel[] _reportModels = null;
-	
+
 	private boolean _useChildCareReports = false;
 	private boolean _useHighSchoolReports = false;
 	private boolean _usePublicReports = false;
-	
+
 	/**
 	 * @see com.idega.presentation.PresentationObject#getBundleIdentifier()
 	 */
+	@Override
 	public String getBundleIdentifier() {
 		return IW_REPORT_BUNDLE_IDENTIFIER;
 	}
@@ -182,10 +183,11 @@ public class SchoolReports extends CommuneBlock {
 	public void setPublicReports(boolean usePublicReports) {
 		this._usePublicReports = usePublicReports;
 	}
-	
+
 	/**
 	 * @see com.idega.presentation.Block#main(com.idega.presentation.IWContext)
 	 */
+	@Override
 	public void main(IWContext iwc) {
 		try {
 			createReportModels(iwc);
@@ -211,7 +213,7 @@ public class SchoolReports extends CommuneBlock {
 	}
 
 	/*
-	 * Returns the action constant for the action to perform based 
+	 * Returns the action constant for the action to perform based
 	 * on the POST parameters in the specified context.
 	 */
 	private int parseAction(IWContext iwc) {
@@ -230,14 +232,14 @@ public class SchoolReports extends CommuneBlock {
 
 	/*
 	 * Handles the default action for this block.
-	 */	
+	 */
 	private void handleDefaultAction(IWContext iwc) {
 		add(getSelectorForm(iwc));
 	}
 
 	/*
 	 * Handles the create report action for this block.
-	 */	
+	 */
 	private void handleCreateReportAction(IWContext iwc) {
 		add(getSelectorForm(iwc));
 		add(new Break());
@@ -265,7 +267,7 @@ public class SchoolReports extends CommuneBlock {
 //		button = getButton(button);
 //		button.setWindowToOpen(ReportWindow.class);
 //		table.add(button, 1, 1);
-		
+
 		Form form = new Form();
 		SubmitButton pdfButton = new SubmitButton(PARAMETER_CREATE_PDF, localize(KEY_PDF, "PDF"));
 		pdfButton = (SubmitButton) getButton(pdfButton);
@@ -275,11 +277,11 @@ public class SchoolReports extends CommuneBlock {
 		table.add(xlsButton, 2, 1);
 		form.add(table);
 		HiddenInput reportClassName = new HiddenInput(PARAMETER_REPORT_CLASS_NAME, reportModelClass.getName());
-		form.add(reportClassName);		
+		form.add(reportClassName);
 		add(form);
 
 		add(new Break());
-		
+
 		table = new Table();
 		table.setCellpadding(getCellpadding());
 		table.setCellspacing(getCellspacing());
@@ -329,7 +331,7 @@ public class SchoolReports extends CommuneBlock {
 			log(e);
 		}
 	}
-	
+
 	/*
 	 * Creates Excel file with link.
 	 */
@@ -378,19 +380,19 @@ public class SchoolReports extends CommuneBlock {
 			log(e);
 		}
 	}
-	
+
 	private Form getSelectorForm(IWContext iwc) {
 		Form form = new Form();
 		form.setTarget("_blank");
 		Table table = new Table();
 		table.setCellpadding(getCellpadding());
 		table.setCellspacing(getCellspacing());
-		
+
 		DropdownMenu reportSelector = new DropdownMenu(PARAMETER_REPORT_INDEX);
 		reportSelector.addMenuElement(-1, localize(KEY_REPORT_SELECTOR_TITLE, "Select report"));
 		for (int i = 0; i < this._reportModels.length; i++) {
 			String s = this._reportModels[i].getReportTitleLocalizationKey();
-			reportSelector.addMenuElement(i, localize(s, s));			
+			reportSelector.addMenuElement(i, localize(s, s));
 		}
 		String selectedIndex = iwc.getParameter(PARAMETER_REPORT_INDEX);
 		if (selectedIndex != null) {
@@ -398,19 +400,19 @@ public class SchoolReports extends CommuneBlock {
 		}
 		reportSelector = (DropdownMenu) getStyledInterface(reportSelector);
 		table.add(reportSelector, 1, 1);
-		
+
 		SubmitButton button = new SubmitButton(PARAMETER_CREATE_REPORT,
 				localize(KEY_CREATE_REPORT, "Create report"));
 		button = (SubmitButton) getStyledInterface(button);
 		table.add(button, 2, 1);
-		
+
 		form.add(table);
-		
+
 		return form;
 	}
 
 	/*
-	 * Creates all report models from the report model classes. 
+	 * Creates all report models from the report model classes.
 	 */
 	private void createReportModels(IWContext iwc) throws RemoteException {
 		Class[] reportModelClasses = this._reportModelClasses;
@@ -428,11 +430,11 @@ public class SchoolReports extends CommuneBlock {
 			this._reportModels[i] = rb.createReportModel(reportModelClasses[i]);
 		}
 	}
-	
+
 	/*
 	 * Returns a report business object.
 	 */
 	private ReportBusiness getReportBusiness(IWContext iwc) throws RemoteException {
 		return (ReportBusiness) com.idega.business.IBOLookup.getServiceInstance(iwc, ReportBusiness.class);
-	}	
+	}
 }

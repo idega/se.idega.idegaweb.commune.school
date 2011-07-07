@@ -11,8 +11,10 @@ import com.idega.block.process.data.Case;
 import com.idega.block.process.data.CaseBMPBean;
 import com.idega.block.process.data.CaseCode;
 import com.idega.block.process.data.CaseCodeHome;
+import com.idega.data.IDOAddRelationshipException;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOQuery;
+import com.idega.data.IDORemoveRelationshipException;
 import com.idega.user.data.Group;
 import com.idega.user.data.User;
 
@@ -23,6 +25,9 @@ import com.idega.user.data.User;
  * @version $Revision: 1.15 $
  */
 public class SchoolChoiceReminderBMPBean extends AbstractCaseBMPBean implements SchoolChoiceReminder, Case {
+
+	private static final long serialVersionUID = 2496684940085886013L;
+
 	private static final String ENTITY_NAME = "sch_reminder";
 
 	private static final String CASE_CODE_DESCRIPTION = "School Choice Reminder";
@@ -37,30 +42,37 @@ public class SchoolChoiceReminderBMPBean extends AbstractCaseBMPBean implements 
 	private static final String COLUMN_EVENT_DATE = "EVENT_DATE";
 	private static final String COLUMN_REMINDER_DATE = "REMINDER_DATE";
 
+	@Override
 	public String getEntityName() {
 		return ENTITY_NAME;
 	}
 
+	@Override
 	public String getCaseCodeKey() {
 		return SchoolChoiceReminder.CASE_CODE_KEY;
 	}
 
+	@Override
 	public String getCaseCodeDescription() {
 		return CASE_CODE_DESCRIPTION;
 	}
 
+	@Override
 	public String[] getCaseStatusKeys() {
 		return CASE_STATUS_KEYS;
 	}
 
+	@Override
 	public String[] getCaseStatusDescriptions() {
 		return CASE_STATUS_DESCRIPTIONS;
 	}
 
+	@Override
 	public void insertStartData() {
 		insertCaseCode();
 	}
 
+	@Override
 	public void initializeAttributes() {
 		addGeneralCaseRelation();
 		addAttribute(COLUMN_USER_ID, "User", true, true, Integer.class, "many-to-one", User.class);
@@ -69,38 +81,46 @@ public class SchoolChoiceReminderBMPBean extends AbstractCaseBMPBean implements 
 		addAttribute(COLUMN_REMINDER_DATE, "Reminder Date", java.sql.Date.class);
 	}
 
+	@Override
 	public String getText() {
 		final String text = getStringColumnValue(COLUMN_TEXT);
 		return text != null ? text : "";
 	}
 
+	@Override
 	public java.util.Date getEventDate() {
 		final java.util.Date eventDate = (java.util.Date) getColumnValue(COLUMN_EVENT_DATE);
 		return eventDate != null ? eventDate : new java.util.Date();
 	}
 
+	@Override
 	public java.util.Date getReminderDate() {
 		final java.util.Date reminderDate = (java.util.Date) getColumnValue(COLUMN_REMINDER_DATE);
 		return reminderDate != null ? reminderDate : new java.util.Date();
 	}
 
+	@Override
 	public int getUserId() {
 		final Integer userId = getIntegerColumnValue(COLUMN_USER_ID);
 		return userId != null ? userId.intValue() : -1;
 	}
 
+	@Override
 	public void setText(final String text) {
 		setColumn(COLUMN_TEXT, text != null ? text : "");
 	}
 
+	@Override
 	public void setEventDate(final java.util.Date eventDate) {
 		setColumn(COLUMN_EVENT_DATE, new java.sql.Date(eventDate != null ? eventDate.getTime() : new java.util.Date().getTime()));
 	}
 
+	@Override
 	public void setReminderDate(final java.util.Date reminderDate) {
 		setColumn(COLUMN_REMINDER_DATE, new java.sql.Date(reminderDate != null ? reminderDate.getTime() : new java.util.Date().getTime()));
 	}
 
+	@Override
 	public void setUser(final User user) {
 		if (user != null) {
 			setColumn(COLUMN_USER_ID, ((Integer) user.getPrimaryKey()).intValue());
@@ -158,5 +178,18 @@ public class SchoolChoiceReminderBMPBean extends AbstractCaseBMPBean implements 
 		catch (final Exception e) {
 			//e.printStackTrace ();
 		}
+	}
+
+	@Override
+	public void addSubscriber(User subscriber) throws IDOAddRelationshipException {
+	}
+
+	@Override
+	public Collection<User> getSubscribers() {
+		return null;
+	}
+
+	@Override
+	public void removeSubscriber(User subscriber) throws IDORemoveRelationshipException {
 	}
 }

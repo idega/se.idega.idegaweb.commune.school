@@ -13,7 +13,10 @@ package se.idega.idegaweb.commune.school.business;
  * Window>Preferences>Java>Code Generation>Code and Comments
  */
 public class CentralPlacementException extends SchoolException {
-  public CentralPlacementException(String key, String trans) {
-    super(key, trans);
-  }
+
+	private static final long serialVersionUID = -2963000738252031441L;
+
+	public CentralPlacementException(String key, String trans) {
+		super(key, trans);
+	}
 }

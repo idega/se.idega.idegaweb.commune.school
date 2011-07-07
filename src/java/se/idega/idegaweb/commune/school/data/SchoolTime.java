@@ -11,7 +11,7 @@ import java.util.Date;
  *
  * @author <a href="http://www.staffannoteberg.com">Staffan Nöteberg</a>
  * @version $Revision: 1.1 $
- * @see se.idega.idegaweb.commune.block.importer.business.NackaStudentTimeImportFileHandler
+ * @see se.idega.idegaweb.commune.school.importer.NackaStudentTimeImportFileHandler
  */
 public interface SchoolTime extends IDOEntity {
 	public void setUser (User user) throws RemoteException;

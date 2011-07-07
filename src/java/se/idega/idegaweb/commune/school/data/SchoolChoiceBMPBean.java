@@ -25,6 +25,7 @@ import com.idega.block.school.data.SchoolSeason;
 import com.idega.block.school.data.SchoolStudyPath;
 import com.idega.block.school.data.SchoolType;
 import com.idega.block.school.data.SchoolYear;
+import com.idega.data.IDOAddRelationshipException;
 import com.idega.data.IDOCompositePrimaryKeyException;
 import com.idega.data.IDOEntityDefinition;
 import com.idega.data.IDOException;
@@ -32,6 +33,7 @@ import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
 import com.idega.data.IDOQuery;
 import com.idega.data.IDORelationshipException;
+import com.idega.data.IDORemoveRelationshipException;
 import com.idega.data.MetaDataCapable;
 import com.idega.data.query.CountColumn;
 import com.idega.data.query.InCriteria;
@@ -61,6 +63,8 @@ import com.idega.util.text.StreetAddress;
 
 public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolChoice, Case, MetaDataCapable {
 
+	private static final long serialVersionUID = -3391726401652839349L;
+
 	final static public String SCHOOLCHOICE = "comm_sch_choice";
 
 	public final static String SCHOOL_SEASON = "school_season_id";
@@ -81,9 +85,9 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 	public final static String FREETIMETHISSCHOOL = "child_care_this_school";
 	public final static String FREETIMEOTHER = "child_care_other";
 	public final static String EXTRA_MESSAGE = "extra_message";
-	
+
 	public final static String PRIORITY = "priority";
-	
+
 	public final static String LANGUAGECHOICE = "language_choice";
 	public final static String SCHOOLCHOICEDATE = "school_choice_date";
 	public final static String MESSAGE = "message_body";
@@ -96,7 +100,7 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 
 	public final static String HAS_RECEIVED_PLACEMENT_MESSAGE = "placement_message";
 	public final static String HAS_RECEIVED_CONFIRMATION_MESSAGE = "confirmation_message";
-	
+
 	public final static String HANDICRAFT_ID = "handicraft_id"; // relation to sch_study_path.study_path_id
 
 	public final static String CASE_STATUS_CREATED = "UBEH";
@@ -113,7 +117,7 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 	public static final int PERSONAL_ID_SORT = 4;
 	public static final int LANGUAGE_SORT = 5;
 	public static final int CREATED_SORT = 6;
-	
+
 	public static final int PLACED_SORT = 7;
 	public static final int UNPLACED_SORT = 8;
 
@@ -122,25 +126,32 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 
 	private static final int DO_NOT_ADD_ORDER_BY = -200;
 
+	@Override
 	public String getCaseStatusCreated() {
 		return "UBEH";
 	}
+	@Override
 	public String getCaseStatusQuiet() {
 		return "TYST";
 	}
+	@Override
 	public String getCaseStatusPreliminary() {
 		return "PREL";
 	}
+	@Override
 	public String getCaseStatusPlaced() {
 		return "PLAC";
 	}
+	@Override
 	public String getCaseStatusGrouped() {
 		return "GROU";
 	}
+	@Override
 	public String getCaseStatusMoved() {
 		return "FLYT";
 	}
 
+	@Override
 	public void initializeAttributes() {
 		addGeneralCaseRelation();
 		//this.addAttribute(CHILD, "child_id", true, true, Integer.class, MANY_TO_ONE, User.class);
@@ -174,10 +185,10 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 		this.addAttribute(FREETIMEOTHER, "School catalogue", String.class, 255);
 		this.addAttribute(EXTRA_MESSAGE, "Extra choice message", String.class, 255);
 		this.addAttribute(PRIORITY, "Placement priority", Boolean.class);
-		
+
 		this.addAttribute(HAS_RECEIVED_PLACEMENT_MESSAGE, "Placement message", Boolean.class);
 		this.addAttribute(HAS_RECEIVED_CONFIRMATION_MESSAGE, "Confirmation message", Boolean.class);
-		
+
 		this.addManyToOneRelationship(HANDICRAFT_ID, SchoolStudyPath.class);
 
 		addIndex("IDX_COMM_SCH_CHOICE_2", new String[]{getIDColumnName(), CHILD});
@@ -185,23 +196,29 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 		addIndex("IDX_COMM_SCH_CHOICE_4", new String[]{getIDColumnName(), SCHOOL_SEASON});
 		addIndex("IDX_COMM_SCH_CHOICE_5", new String[]{getIDColumnName(), CHOSEN_SCHOOL, SCHOOL_SEASON});
 	}
+	@Override
 	public String getEntityName() {
 		return SCHOOLCHOICE;
 	}
+	@Override
 	public String getCaseCodeKey() {
 		return SchoolConstants.SCHOOL_CHOICE_CASE_CODE_KEY;
 	}
+	@Override
 	public String getCaseCodeDescription() {
 		return "School choice application";
 	}
 
+	@Override
 	public String[] getCaseStatusKeys() {
 		return CASE_STATUS_KEYS;
 	}
+	@Override
 	public String[] getCaseStatusDescriptions() {
 		return CASE_STATUS_DESCRIPTIONS;
 	}
 
+	@Override
 	public int getChildId() {
 		return getIntColumnValue(CHILD);
 	}
@@ -209,231 +226,301 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 	/**Returns the user (child) that the schoolchoice is done for.
 	 * @return User
 	 */
+	@Override
 	public User getChild() {
 		return (User) getColumnValue(CHILD);
 	}
 
+	@Override
 	public void setChildId(int id) {
 		setColumn(CHILD, id);
 	}
+	@Override
 	public void setChild(User child) {
 		setColumn(CHILD, child);
 	}
+	@Override
 	public int getCurrentSchoolId() {
 		return getIntColumnValue(CURRENT_SCHOOL);
 	}
 
+	@Override
 	public School getCurrentSchool() {
 		return (School) getColumnValue(CURRENT_SCHOOL);
 	}
+	@Override
 	public void setCurrentSchoolId(int id) {
 		setColumn(CURRENT_SCHOOL, id);
 	}
+	@Override
 	public int getSchoolSeasonId() {
 		return getIntColumnValue(SCHOOL_SEASON);
 	}
+	@Override
 	public SchoolSeason getSchoolSeason() {
 		return (SchoolSeason) getColumnValue(SCHOOL_SEASON);
 	}
+	@Override
 	public void setSchoolSeasonId(int id) {
 		setColumn(SCHOOL_SEASON, id);
 	}
+	@Override
 	public void setSchoolSeason(SchoolSeason season) {
 		setColumn(SCHOOL_SEASON, season);
 	}
+	@Override
 	public int getSchoolTypeId() {
 		return getIntColumnValue(SCHOOL_TYPE);
 	}
+	@Override
 	public SchoolType getSchoolType() {
 		return (SchoolType) getColumnValue(SCHOOL_TYPE);
 	}
+	@Override
 	public void setSchoolTypeId(int id) {
 		setColumn(SCHOOL_TYPE, id);
 	}
+	@Override
 	public int getChosenSchoolId() {
 		return getIntColumnValue(CHOSEN_SCHOOL);
 	}
+	@Override
 	public School getChosenSchool() {
 		return (School) getColumnValue(CHOSEN_SCHOOL);
 	}
+	@Override
 	public void setChosenSchoolId(int id) {
 		setColumn(CHOSEN_SCHOOL, id);
 	}
+	@Override
 	public void setSchool(School school) {
 		setColumn(CHOSEN_SCHOOL, school);
 	}
+	@Override
 	public void setSchool(Object schoolPK) {
 		setColumn(CHOSEN_SCHOOL, schoolPK);
 	}
+	@Override
 	public SchoolYear getSchoolYear() {
 		return (SchoolYear) getColumnValue(SCHOOL_YEAR);
 	}
+	@Override
 	public int getSchoolYearID() {
 		return getIntColumnValue(SCHOOL_YEAR);
 	}
+	@Override
 	public void setSchoolYear(int schoolYearID) {
 		setColumn(SCHOOL_YEAR, schoolYearID);
 	}
+	@Override
 	public void setSchoolYear(SchoolYear year) {
 		setColumn(SCHOOL_YEAR, year);
 	}
+	@Override
 	public void setSchoolYear(Object yearPK) {
 		setColumn(SCHOOL_YEAR, yearPK);
 	}
+	@Override
 	public SchoolYear getCurrentSchoolYear() {
 		return (SchoolYear) getColumnValue(CURRENT_SCHOOL_YEAR);
 	}
+	@Override
 	public int getCurrentSchoolYearID() {
 		return getIntColumnValue(CURRENT_SCHOOL_YEAR);
 	}
+	@Override
 	public void setCurrentSchoolYear(int schoolYearID) {
 		setColumn(CURRENT_SCHOOL_YEAR, schoolYearID);
 	}
+	@Override
 	public void setCurrentSchoolYear(SchoolYear year) {
 		setColumn(CURRENT_SCHOOL_YEAR, year);
 	}
+	@Override
 	public int getWorkSituation1() {
 		return getIntColumnValue(WORK_SITUATION_1);
 	}
+	@Override
 	public void setWorksituation1(int situation) {
 		setColumn(WORK_SITUATION_1, situation);
 	}
+	@Override
 	public int getWorkSituation2() {
 		return getIntColumnValue(WORK_SITUATION_1);
 	}
+	@Override
 	public void setWorksituation2(int situation) {
 		setColumn(WORK_SITUATION_2, situation);
 	}
+	@Override
 	public Date getPlacementDate() {
 		return (Date) getColumnValue(PREFERRED_PLACEMENT_DATE);
 	}
+	@Override
 	public void setPlacementDate(Date date) {
 		setColumn(PREFERRED_PLACEMENT_DATE, date);
 	}
+	@Override
 	public String getLanguageChoice() {
 		return getStringColumnValue(LANGUAGECHOICE);
 	}
+	@Override
 	public void setLanguageChoice(String language) {
 		setColumn(LANGUAGECHOICE, language);
 	}
 
+	@Override
 	public String getGroupPlace() {
 		return getStringColumnValue(GROUP_PLACE);
 	}
 
+	@Override
 	public void setGroupPlace(String place) {
 		setColumn(GROUP_PLACE, place);
 	}
 
+	@Override
 	public Timestamp getSchoolChoiceDate() {
 		return (Timestamp) getColumnValue(SCHOOLCHOICEDATE);
 	}
+	@Override
 	public void setSchoolChoiceDate(Timestamp stamp) {
 		setColumn(SCHOOLCHOICEDATE, stamp);
 	}
+	@Override
 	public String getMessage() {
 		return getStringColumnValue(MESSAGE);
 	}
+	@Override
 	public void setMessage(String msg) {
 		setColumn(MESSAGE, msg);
 	}
+	@Override
 	public int getChoiceOrder() {
 		return getIntColumnValue(CHOICEORDER);
 	}
+	@Override
 	public void setChoiceOrder(int order) {
 		setColumn(CHOICEORDER, order);
 	}
+	@Override
 	public int getMethod() {
 		return getIntColumnValue(METHOD);
 	}
+	@Override
 	public void setMethod(int method) {
 		setColumn(METHOD, method);
 	}
+	@Override
 	public boolean getChangeOfSchool() {
 		return getBooleanColumnValue(CHANGEOFSCHOOL);
 	}
+	@Override
 	public void setChangeOfSchool(boolean change) {
 		setColumn(CHANGEOFSCHOOL, change);
 	}
+	@Override
 	public boolean getKeepChildrenCare() {
 		return getBooleanColumnValue(KEEPCHILDRENCARE);
 	}
+	@Override
 	public void setKeepChildrenCare(boolean keepchildcare) {
 		setColumn(KEEPCHILDRENCARE, keepchildcare);
 	}
+	@Override
 	public boolean getAutoAssign() {
 		return getBooleanColumnValue(AUTOASSIGNMENT);
 	}
+	@Override
 	public void setAutoAssign(boolean auto) {
 		setColumn(AUTOASSIGNMENT, auto);
 	}
+	@Override
 	public boolean getCustodiansAgree() {
 		return getBooleanColumnValue(CUSTODIANSAGGREE, true);
 	}
+	@Override
 	public void setCustodiansAgree(boolean agree) {
 		setColumn(CUSTODIANSAGGREE, agree);
 	}
+	@Override
 	public boolean getSchoolCatalogue() {
 		return getBooleanColumnValue(SCHOOLCATALOGUE);
 	}
+	@Override
 	public void setSchoolCatalogue(boolean catalogue) {
 		setColumn(SCHOOLCATALOGUE, catalogue);
 	}
+	@Override
 	public boolean getFreetimeInThisSchool() {
 		return getBooleanColumnValue(FREETIMETHISSCHOOL);
 	}
+	@Override
 	public void setFreetimeInThisSchool(boolean freetimeInThisSchool) {
 		setColumn(FREETIMETHISSCHOOL, freetimeInThisSchool);
 	}
+	@Override
 	public String getFreetimeOther() {
 		return getStringColumnValue(FREETIMEOTHER);
 	}
+	@Override
 	public void setFreetimeOther(String other) {
 		setColumn(FREETIMEOTHER, other);
 	}
 
+	@Override
 	public void setHasReceivedPlacementMessage(boolean hasReceivedMessage) {
 		setColumn(HAS_RECEIVED_PLACEMENT_MESSAGE, hasReceivedMessage);
 	}
 
+	@Override
 	public void setHasReceivedConfirmationMessage(boolean hasReceivedMessage) {
 		setColumn(HAS_RECEIVED_CONFIRMATION_MESSAGE, hasReceivedMessage);
 	}
 
+	@Override
 	public boolean getHasReceivedPlacementMessage() {
 		return getBooleanColumnValue(HAS_RECEIVED_PLACEMENT_MESSAGE, false);
 	}
 
+	@Override
 	public boolean getHasReceivedConfirmationMessage() {
 		return getBooleanColumnValue(HAS_RECEIVED_CONFIRMATION_MESSAGE, false);
 	}
-	
+
+	@Override
 	public String getExtraChoiceMessage() {
 		return getStringColumnValue(EXTRA_MESSAGE);
 	}
 
+	@Override
 	public void setExtraChoiceMessage(String extraMessage) {
 		setColumn(EXTRA_MESSAGE, extraMessage);
 	}
-	
+
+	@Override
 	public boolean getPriority() {
 		return getBooleanColumnValue(PRIORITY);
 	}
-	
+
+	@Override
 	public void setPriority(boolean prior) {
 		setColumn(PRIORITY,prior);
 	}
-	
+
+	@Override
 	public SchoolStudyPath getHandicraft() {
 		return (SchoolStudyPath) getColumnValue(HANDICRAFT_ID);
 	}
-	
+
+	@Override
 	public int getHandicraftId() {
 		return getIntColumnValue(HANDICRAFT_ID);
 	}
-	
+
+	@Override
 	public String getFromSchool(int schoolId,int seasonId, int childId) {
-		
+
 		String fromSchool = null;
 		StringBuffer query = new StringBuffer(" SELECT SCH_SCHOOL.SCHOOL_NAME  ");
 		query.append(" FROM comm_sch_choice csc, IC_USER u, PROC_CASE pc , SCH_CLASS_MEMBER,SCH_SCHOOL_CLASS,SCH_SCHOOL  ");
@@ -448,10 +535,10 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
         query.append(childId);
 		query.append(" and SCH_SCHOOL.SCH_SCHOOL_ID!= ");
 		query.append(schoolId);
-		query.append(" and csc.school_season_id ="); 
-	    query.append(seasonId);				
+		query.append(" and csc.school_season_id =");
+	    query.append(seasonId);
 		query.append(" order by csc.SCHOOL_CHOICE_DATE DESC ");
-		
+
         Connection conn = null;
         Statement  stmt = null;
         ResultSet rs = null;
@@ -463,7 +550,7 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 			while(rs.next()){
 					fromSchool = rs.getString(1);
 					break;
-			}   
+			}
 
 	    }
 		catch (SQLException e) {
@@ -484,17 +571,19 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 							freeConnection(conn);
 						}
         }
-		
+
 		return fromSchool;
 	}
 
+	@Override
 	public void setHandicraft(SchoolStudyPath path) {
 		setColumn(HANDICRAFT_ID, path);
 	}
-	
+
+	@Override
 	public void setHandicraftId(int schoolStudyPathId) {
 		setColumn(HANDICRAFT_ID, schoolStudyPathId);
-	}	
+	}
 
 	public int ejbHomeCountBySchoolIDAndSeasonIDAndStatus(int schoolId, int seasonId, String[] statuses) throws IDOException {
 		try {
@@ -507,7 +596,7 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 			throw new IDOException(e2.getMessage());
 		}
 	}
-	
+
 	public Collection ejbFindBySchoolIDAndSeasonIDAndStatus(int schoolId, int seasonId, String[] statuses, int returningEntries, int startingEntries) throws FinderException {
 		try {
 			IDOQuery query = getIDOQueryFromSchoolIdSeasonIdAndStatus(schoolId, seasonId, statuses);
@@ -574,7 +663,7 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 		query.appendAnd().append("c.case_status").appendNotInArrayWithSingleQuotes(caseStatus);
 		return idoFindPKsByQuery(query);
 	}
-	
+
 	public Collection ejbFindByCodeAndStatus(String caseCode, String[] caseStatus, int schoolId, int schoolSeasonId, String ordered) throws javax.ejb.FinderException {
 
 		StringBuffer sql = new StringBuffer("select s.* from ");
@@ -638,17 +727,17 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 	}
 
 	public int ejbHomeGetNumberOfHandledMoves(int seasonID) throws IDOException {
-		
-		
+
+
 		StringBuffer sql = new StringBuffer("select count(*) from " +			"proc_case p, comm_sch_choice c " +			"where " +			"p.proc_case_id = c.comm_sch_choice_id and " +			"p.case_status = 'FLYT' and c.school_season_id = "+ seasonID);
-			
+
 		return super.idoGetNumberOfRecords(sql.toString());
 	}
 
 	public int ejbHomeGetNumberOfUnHandledMoves(int seasonID) throws IDOException {
 		StringBuffer sql = new StringBuffer("select count(*) from " +			"proc_case p, proc_case_log l, comm_sch_choice c " +			"where " +			"p.proc_case_id = l.case_id and " +			"p.proc_case_id = c.comm_sch_choice_id and " +			"l.case_status_before = 'FLYT' and " +			"c.school_season_id =" + seasonID);			return super.idoGetNumberOfRecords(sql.toString());
 	}
-	
+
 	public Collection ejbFindByChildAndSeason(int childID, int seasonID, String[] notInStatuses) throws javax.ejb.FinderException {
 		IDOQuery sql = idoQuery();
 		sql.appendSelectAllFrom(this).append(" sc, ").append("PROC_CASE pc ");
@@ -668,7 +757,7 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 		sql.appendAndEqualsQuoted("pc.case_status", CASE_STATUS_PLACED);
 		return super.idoFindPKsBySQL(sql.toString());
 	}
-	
+
 	public Object ejbFindByChildAndChoiceNumberAndSeason(User child,int choiceNumber, SchoolSeason season) throws javax.ejb.FinderException {
 		return super.idoFindOnePKByQuery(idoQueryGetSelect().appendWhereEquals(CHILD,child).appendAndEquals(SCHOOL_SEASON,season).appendAndEquals(CHOICEORDER,choiceNumber) );
 	}
@@ -718,7 +807,7 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 	public int ejbHomeGetCountByChildAndSchool(int childID, int schoolID) throws IDOException {
 		return ejbHomeGetCountByChildAndSchoolAndStatus(childID, schoolID, null);
 	}
-	
+
 	public int ejbHomeGetCountByChildAndSchoolAndStatus(int childID, int schoolID, String[] caseStatus) throws IDOException {
 		IDOQuery query =idoQuery();
 		query.appendSelectCountFrom().append(getEntityName()).append(" csc");
@@ -732,7 +821,7 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 		}
 		return super.idoGetNumberOfRecords(query);
 	}
-	
+
 	public Collection ejbFindByChildAndSchool(int childID, int schoolID) throws javax.ejb.FinderException {
 		IDOQuery query =idoQuery();
 		query.appendSelectAllFrom().append(getEntityName()).append(" csc");
@@ -742,11 +831,11 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 		query.appendAnd().appendEquals("csc."+CHILD, childID);
 		query.appendAnd().appendEquals("csc."+CHOSEN_SCHOOL, schoolID);
 		query.appendOrderBy(CaseBMPBean.COLUMN_CREATED);
-		
+
 		return super.idoFindPKsByQuery(query);
 	}
-	
-	
+
+
 	public Collection ejbFindByChildAndSchoolAndSeason(int childID, int schoolID, int seasonID) throws javax.ejb.FinderException {
 		StringBuffer sql = new StringBuffer("select * from ");
 		sql.append(SCHOOLCHOICE);
@@ -786,7 +875,7 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 	public int ejbHomeGetCount(int schoolId, String[] validStatuses) throws IDOException {
 		return ejbHomeGetCount(schoolId, -1, validStatuses);
 	}
-	
+
 	public int ejbHomeGetCount (final SchoolSeason schoolSeason,
 															final Date startDate, final Date endDate)
 		throws IDOException {
@@ -819,7 +908,7 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 			if (seasonID > 0) {
 				query.appendAnd().append("csc.").append(SCHOOL_SEASON).appendEqualSign().append(seasonID);
 			}
-			
+
 			return this.idoGetNumberOfRecords(query);
 		}
 		else {
@@ -834,12 +923,12 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 		IDOQuery query = getIDOQuery(schoolID, seasonID, gradeYear, choiceOrder, validStatuses, searchStringForUser, true, false, -1);
 		return this.idoGetNumberOfRecords(query);
 	}
-	
+
 	public int ejbHomeGetCount(int schoolID, int seasonID, int gradeYear, int[] choiceOrder, String[] validStatuses, String searchStringForUser, int placementType) throws IDOException {
 		IDOQuery query = getIDOQuery(schoolID, seasonID, gradeYear, choiceOrder, validStatuses, searchStringForUser, true, false, -1, placementType);
 		return this.idoGetNumberOfRecords(query);
 	}
-	
+
 	public int ejbHomeGetCountOutsideInterval(int schoolID, int seasonID, int gradeYear, int[] choiceOrder, String[] validStatuses, String searchStringForUser, Date from, Date to) throws IDOException {
 		IDOQuery query = getIDOQuery(schoolID, seasonID, gradeYear, choiceOrder, validStatuses, searchStringForUser, true, false, DO_NOT_ADD_ORDER_BY);
 		query.appendAnd().appendLeftParenthesis().append(SCHOOLCHOICEDATE).appendLessThanSign().appendWithinSingleQuotes(from)
@@ -851,21 +940,24 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 		IDOQuery query = getIDOQuery(schoolID, seasonID, gradeYear, choiceOrder, validStatuses, searchStringForUser, false, false, orderBy);
 		return this.idoFindPKsByQuery(query, numberOfEntries, startingEntry);
 	}
-	
+
 	public Collection ejbFindChoices(int schoolID, int seasonID, int gradeYear, int[] choiceOrder, String[] validStatuses, String searchStringForUser, int orderBy, int numberOfEntries, int startingEntry, int placementType) throws FinderException {
 		IDOQuery query = getIDOQuery(schoolID, seasonID, gradeYear, choiceOrder, validStatuses, searchStringForUser, false, false, false, orderBy, placementType);
 		return this.idoFindPKsByQuery(query, numberOfEntries, startingEntry);
 	}
 
+	@Override
 	public IDOQuery getIDOQuery(int schoolID, int seasonID, int gradeYear, int[] choiceOrder, String[] validStatuses, String searchStringForUser, boolean selectCount, boolean selectOnlyChildIDs, int orderBy) {
 		return getIDOQuery(schoolID, seasonID, gradeYear, choiceOrder, validStatuses, searchStringForUser, selectCount, selectOnlyChildIDs, orderBy, -1);
-		
+
 	}
 
+	@Override
 	public IDOQuery getIDOQuery(int schoolID, int seasonID, int schoolYear, int[] choiceOrder, String[] validStatuses, String searchStringForUser, boolean selectCount, boolean selectOnlyChildIDs, int orderBy, int placementType) {
 		return getIDOQuery(schoolID, seasonID, schoolYear, choiceOrder, validStatuses, searchStringForUser, selectCount, selectOnlyChildIDs, false, orderBy, placementType);
 	}
-	
+
+	@Override
 	public IDOQuery getIDOQuery(int schoolID, int seasonID, int schoolYear, int[] choiceOrder, String[] validStatuses, String searchStringForUser, boolean selectCount, boolean selectOnlyChildIDs, boolean searchOnAddr, int orderBy, int placementType) {
 		boolean search = searchStringForUser != null && !searchStringForUser.equals("");
 		boolean statuses = validStatuses != null && validStatuses.length > 0;
@@ -903,7 +995,7 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 		if(searchOnAddr){
 			query.append(", ic_address a, ic_user_address ua");
 		}
-		
+
 		query.appendWhere();
 		query.append("u.").append(UserBMPBean.getColumnNameUserID()).appendEqualSign().append("csc.").append(CHILD);
 		query.appendAnd().append("csc.").append(getIDColumnName()).appendEqualSign().append("pc.").append(CaseBMPBean.TABLE_NAME + "_ID");
@@ -974,15 +1066,15 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 			query.append(")");
 			needAnd = true;
 		}
-		
+
 		if (placementType != -1){
 			if (placementType == PLACED_SORT){
-				query.appendAnd().append("csc.child_id in (");	
+				query.appendAnd().append("csc.child_id in (");
 			}
 			else {
-				query.appendAnd().append("csc.child_id not in (");	
+				query.appendAnd().append("csc.child_id not in (");
 			}
-			
+
 			query.appendSelect().append("scm.ic_user_id");
 			query.appendFrom().append("sch_class_member").append(" scm");
 			query.append(", ").append("sch_school_class").append(" sc");
@@ -990,16 +1082,16 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 			query.appendWhere();
 			query.appendEquals("scm.sch_school_class_id", "sc.SCH_SCHOOL_CLASS_ID");
 			//query.appendAndEquals("scm.sch_school_year_id", "sy.sch_school_year_id");
-			
+
 			if (schoolID > 0){
 				query.appendAndEquals("sc.school_id", schoolID);
-				query.appendAnd().append("(sc." + SchoolClassBMPBean.COLUMN_VALID).appendEqualSign().appendWithinSingleQuotes("Y").appendOr().append("sc." + SchoolClassBMPBean.COLUMN_VALID).append(" is null)");		
+				query.appendAnd().append("(sc." + SchoolClassBMPBean.COLUMN_VALID).appendEqualSign().appendWithinSingleQuotes("Y").appendOr().append("sc." + SchoolClassBMPBean.COLUMN_VALID).append(" is null)");
 			}
 			if (seasonID > 0){
-				query.appendAndEquals("sc.sch_school_season_id", seasonID);	
+				query.appendAndEquals("sc.sch_school_season_id", seasonID);
 			}
 			/*if (gradeYear > 0){
-				query.appendAndEquals("sy.year_age", gradeYear);	
+				query.appendAndEquals("sy.year_age", gradeYear);
 			}
 			*/
 			query.appendRightParenthesis();
@@ -1007,11 +1099,11 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 		if (needAnd) {
 			query.appendAnd();
 		}
-		
+
 		query.append("csc.school_choice_date=(SELECT max(school_choice_date) FROM comm_sch_choice where child_id=u.IC_USER_ID and school_id=");
 		query.append(schoolID);
 		query.append(")");
-		
+
 		if (orderBy != DO_NOT_ADD_ORDER_BY) {
 			if (orderBy != -1) {
 				if (orderBy == NAME_SORT) {
@@ -1111,7 +1203,7 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 	public int ejbHomeGetNumberOfChoices(int userID, int seasonID) throws IDOException {
 		return ejbHomeGetNumberOfChoices(userID, seasonID, null);
 	}
-	
+
 	public int ejbHomeGetNumberOfChoices(int userID, int seasonID, String[] notInStatuses) throws IDOException {
 		IDOQuery sql = idoQuery();
 		sql.appendSelectCountFrom(this).append(" sc, ").append("PROC_CASE pc ");
@@ -1137,7 +1229,7 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 	public int ejbHomeGetChoices(int userID, int seasonID, String[] notInStatus) throws IDOException {
 		return ejbHomeGetChoices(userID, -1, seasonID, notInStatus);
 	}
-	
+
 	public int ejbHomeGetChoices(int userID, int schoolID, int seasonID, String[] notInStatus) throws IDOException {
 		IDOQuery sql = idoQuery();
 		sql.appendSelectCountFrom(this).append(" sc,").append("PROC_CASE pc ");
@@ -1152,11 +1244,12 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 		}
 		return super.idoGetNumberOfRecords(sql.toString());
 	}
-	
+
 	public Collection ejbFindByParent(Case parent)throws FinderException{
 		return super.ejbFindSubCasesUnder(parent);
 	}
-	
+
+	@Override
 	public String getSQLForChildrenWithouWithoutSchoolChoice(SchoolSeason season,SchoolYear year, boolean onlyInCommune,boolean onlyLastGrade,int maxAge,boolean count){
 	    Integer seasonID = (Integer)season.getPrimaryKey();
 	    //Integer yearID = (Integer)year.getPrimaryKey();
@@ -1186,7 +1279,7 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
             sql.append(" dad.ic_user_id,dad.first_name,dad.middle_name,dad.last_name ").append("\n");
             sql.append(" ,us.status_id ").append("\n");
         }
-            
+
         sql.append(" from ic_address a left join ic_commune c on (a.ic_commune_id = c.ic_commune_id) ").append("\n");
         sql.append(" left join ic_postal_code p on (a.postal_code_id = p.ic_postal_code_id), ic_user_address ua, ic_user u ").append("\n");
         if(!count){
@@ -1195,7 +1288,7 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
             sql.append(" and gr1.group_relation_status = 'ST_ACTIVE'    ) ").append("\n");
             sql.append(" mom  on ( u.ic_user_id = mom.related_ic_group_id ) ").append("\n");
             sql.append(" left   join  (select p2.ic_user_id , p2.first_name, p2.middle_name, p2.last_name, gr2.related_ic_group_id from ic_user p2, ic_group_relation gr2 ").append("\n");
-            sql.append(" where p2.ic_user_id = gr2.ic_group_id and (gr2.relationship_type = 'FAM_PARENT' or gr2.relationship_type = 'FAM_CUSTODIAN' ) and p2.ic_gender_id = 1").append("\n");  
+            sql.append(" where p2.ic_user_id = gr2.ic_group_id and (gr2.relationship_type = 'FAM_PARENT' or gr2.relationship_type = 'FAM_CUSTODIAN' ) and p2.ic_gender_id = 1").append("\n");
             sql.append(" and gr2.group_relation_status = 'ST_ACTIVE'    ) ").append("\n");
             sql.append(" dad  on ( u.ic_user_id = dad.related_ic_group_id ) ").append("\n");
         }
@@ -1221,7 +1314,7 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
         //temporary check
 //        if (!year.getSchoolYearName().equals("F")) {
             if((year.getSchoolYearName().equals("1")) || (!onlyLastGrade) ){
-	            
+
 		            try {
 		                SchoolSeason previousSeason = season.getPreviousSeason();
 		                if(previousSeason!=null){
@@ -1239,7 +1332,7 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 		            } catch (FinderException e2) {
 		                e2.printStackTrace();
 		            }
-				
+
             }
             else{
                 try {
@@ -1286,29 +1379,29 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
         logSQL(sql.toString());
         return sql.toString();
 	}
-	
+
 	public int ejbHomeCountChildrenWithoutSchoolChoice(SchoolSeason season,SchoolYear year, boolean onlyInCommune,boolean onlyLastGrade,int maxAge) throws SQLException{
-	    
+
 		try {
 		    String sql = getSQLForChildrenWithouWithoutSchoolChoice(season,year,onlyInCommune,onlyLastGrade,maxAge,true).toString();
             //System.out.println(sql.toString());
             return getIntTableValue(sql.toString());
-           
+
         } catch (Exception e) {
             throw new SQLException(e.getMessage());
         }
-        
+
 	}
-	
+
 	public MailReceiver[] ejbHomeGetChildrenWithoutSchoolChoice(SchoolSeason season,SchoolYear year, boolean onlyInCommune,boolean onlyLastGrade,int maxAge) throws FinderException {
 	    try {
             String sql = getSQLForChildrenWithouWithoutSchoolChoice(season,year,onlyInCommune,onlyLastGrade,maxAge,false);
-            
+
             logSQL(sql.toString());
             Connection conn = null;
             Statement  stmt = null;
             ResultSet rs = null;
-            
+
             try {
                 conn = getConnection();
                 stmt = conn.createStatement();
@@ -1361,13 +1454,13 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 									freeConnection(conn);
 								}
             }
-          
+
 	    }catch (EJBException e) {
         		throw new FinderException(e.getMessage());
         }
         return null;
 	}
-//  disabled by Igors because of PLATFORM_2 compiled error 	
+//  disabled by Igors because of PLATFORM_2 compiled error
 //	public Collection ejbFindAllCasesByMetaData(String metadataKey,String metadataValue) throws FinderException{
 //		return super.ejbFindAllCasesByMetaData(metadataKey,metadataValue);
 //	}
@@ -1375,7 +1468,7 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 	public int ejbHomeGetChoiceStatistics(SchoolSeason season, String[] statuses, int choiceNumber) throws IDOException {
 		Table choice = new Table(this, "c");
 		Table process = new Table(Case.class, "p");
-		
+
 		SelectQuery query = new SelectQuery(choice);
 		query.addColumn(new CountColumn(choice, this.getIDColumnName()));
 		try {
@@ -1389,5 +1482,18 @@ public class SchoolChoiceBMPBean extends AbstractCaseBMPBean implements SchoolCh
 		query.addCriteria(new MatchCriteria(choice, CHOICEORDER, MatchCriteria.EQUALS, choiceNumber));
 
 		return idoGetNumberOfRecords(query.toString());
-	}	
+	}
+
+	@Override
+	public void addSubscriber(User subscriber) throws IDOAddRelationshipException {
+	}
+
+	@Override
+	public Collection<User> getSubscribers() {
+		return null;
+	}
+
+	@Override
+	public void removeSubscriber(User subscriber) throws IDORemoveRelationshipException {
+	}
 }

@@ -26,7 +26,7 @@ import com.idega.block.school.data.SchoolSeason;
 import com.idega.block.school.data.SchoolStudyPath;
 import com.idega.block.school.data.SchoolStudyPathHome;
 
-/** 
+/**
  * Business logic for school reports.
  * <p>
  * Last modified: $Date: 2006/04/09 11:39:54 $ by $Author: laddi $
@@ -35,6 +35,8 @@ import com.idega.block.school.data.SchoolStudyPathHome;
  * @version $Revision: 1.36 $
  */
 public class ReportBusinessBean extends com.idega.business.IBOServiceBean implements ReportBusiness  {
+
+	private static final long serialVersionUID = -956561026785806719L;
 
 	private final static int SCHOOL_TYPE_ELEMENTARY_SCHOOL = 4;
 	private final static int SCHOOL_TYPE_PRE_SCHOOL_CLASS = 5;
@@ -49,24 +51,25 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 	private final static int SCHOOL_TYPE_FAMILY_AFTER_SCHOOL_6 = 46;
 	private final static int SCHOOL_TYPE_AFTER_SCHOOL_7_9 = 30;
 	private final static int SCHOOL_TYPE_FAMILY_AFTER_SCHOOL_7_9 = 47;
-	
+
 	private final static String SCHOOL_CATEGORY_CHILD_CARE = "CHILD_CARE";
-	
+
 	private final static String MANAGEMENT_TYPE_COMMUNE = "COMMUNE";
 	private final static int NACKA_COMMUNE_ID = 1;
-	
+
 	private SchoolSeason _currentSchoolSeason = null;
 	private int _schoolSeasonId = -1;
 	private int _schoolSeasonStartYear = -1;
 	private Collection _schools = null;
-	private Collection _schoolAreas = null;
+	private Collection<SchoolArea> _schoolAreas = null;
 	private Map _schoolsByArea = null;
 	private Collection _studyPaths = null;
-	
+
 	/**
 	 * Factory method for creating a report model with the specified Class.
-	 * @param reportModelClass the report model Class to instantiate 
+	 * @param reportModelClass the report model Class to instantiate
 	 */
+	@Override
 	public ReportModel createReportModel(Class reportModelClass) {
 		this._currentSchoolSeason = null;
 		this._schoolSeasonId = -1;
@@ -75,7 +78,7 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 		this._schoolAreas = null;
 		this._schoolsByArea = null;
 		this._studyPaths = null;
-		ReportModel reportModel = null;		
+		ReportModel reportModel = null;
 		try {
 			Class[] constructorArgumentTypes = { ReportBusiness.class };
 			Object[] constructorArgs = { this };
@@ -87,13 +90,14 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 			log("createReportModel(): The specified Class must have a constructor " +
 					"with the following parameter type: " + ReportBusiness.class.getName());
 		}
-		
+
 		return reportModel;
 	}
 
 	/**
 	 * Returns the specified age if in high school age period from, and -1 if not.
 	 */
+	@Override
 	public int getHighSchoolStudentAgeFrom(int age) {
 		int ageFrom = -1;
 		switch (age) {
@@ -113,6 +117,7 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 	/**
 	 * Returns the specified age if in high school age period to, and -1 if not.
 	 */
+	@Override
 	public int getHighSchoolStudentAgeTo(int age) {
 		int ageTo = -1;
 		switch (age) {
@@ -128,10 +133,11 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 		}
 		return ageTo;
 	}
-	
+
 	/**
 	 * Returns the current school season.
 	 */
+	@Override
 	public SchoolSeason getCurrentSchoolSeason() {
 		if (this._currentSchoolSeason == null) {
 			try {
@@ -141,10 +147,11 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 		}
 		return this._currentSchoolSeason;
 	}
-	
+
 	/**
 	 * Returns the current school season id.
 	 */
+	@Override
 	public int getSchoolSeasonId() {
 		if (this._schoolSeasonId == -1) {
 			try {
@@ -153,10 +160,11 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 		}
 		return this._schoolSeasonId;
 	}
-	
+
 	/**
-	 * Returns the year for the current school season start. 
+	 * Returns the year for the current school season start.
 	 */
+	@Override
 	public int getSchoolSeasonStartYear() {
 		if (this._schoolSeasonStartYear == -1) {
 			SchoolSeason ss = getCurrentSchoolSeason();
@@ -167,11 +175,12 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 		}
 		return this._schoolSeasonStartYear;
 	}
-	
+
 	/**
-	 * Returns all school areas for elemtary schools. 
+	 * Returns all school areas for elemtary schools.
 	 */
-	public Collection getElementarySchoolAreas() {
+	@Override
+	public Collection<SchoolArea> getElementarySchoolAreas() {
 		if (this._schoolAreas == null) {
 			try {
 				SchoolAreaHome home = getSchoolBusiness().getSchoolAreaHome();
@@ -180,10 +189,11 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 		}
 		return this._schoolAreas;
 	}
-	
+
 	/**
-	 * Returns all school areas for compulsory schools. 
+	 * Returns all school areas for compulsory schools.
 	 */
+	@Override
 	public Collection getCompulsorySchoolAreas() {
 		if (this._schoolAreas == null) {
 			SchoolHome schoolHome = null;
@@ -211,10 +221,11 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 		}
 		return this._schoolAreas;
 	}
-	
+
 	/**
-	 * Returns all school areas for private schools. 
+	 * Returns all school areas for private schools.
 	 */
+	@Override
 	public Collection getPrivateSchoolAreas() {
 		if (this._schoolAreas == null) {
 			Collection managementTypes = new ArrayList();
@@ -225,7 +236,7 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 			try {
 				schoolHome = getSchoolHome();
 				SchoolAreaHome home = getSchoolBusiness().getSchoolAreaHome();
-				this._schoolAreas = home.findAllBySchoolTypeCityAndManagementTypes(SCHOOL_TYPE_ELEMENTARY_SCHOOL, 
+				this._schoolAreas = home.findAllBySchoolTypeCityAndManagementTypes(SCHOOL_TYPE_ELEMENTARY_SCHOOL,
 						"Nacka", managementTypes);
 			} catch (Exception e) {}
 			ArrayList areas = new ArrayList();
@@ -248,10 +259,11 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 		}
 		return this._schoolAreas;
 	}
-	
+
 	/**
-	 * Returns all school areas for pre school operation. 
+	 * Returns all school areas for pre school operation.
 	 */
+	@Override
 	public Collection getPreSchoolOperationAreas() {
 		if (this._schoolAreas == null) {
 			Collection managementTypes = new ArrayList();
@@ -269,7 +281,7 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 			try {
 				schoolHome = getSchoolHome();
 				SchoolAreaHome home = getSchoolBusiness().getSchoolAreaHome();
-				this._schoolAreas = home.findAllSchoolAreas();
+				this._schoolAreas = home.getAllScoolAreas();
 			} catch (Exception e) {}
 			ArrayList areas = new ArrayList();
 			Iterator iter = this._schoolAreas.iterator();
@@ -291,10 +303,11 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 		}
 		return this._schoolAreas;
 	}
-	
+
 	/**
-	 * Returns all school areas for after schools for 6 years children. 
+	 * Returns all school areas for after schools for 6 years children.
 	 */
+	@Override
 	public Collection getAfterSchool6Areas() {
 		if (this._schoolAreas == null) {
 			Collection managementTypes = new ArrayList();
@@ -309,8 +322,7 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 			SchoolHome schoolHome = null;
 			try {
 				schoolHome = getSchoolHome();
-				SchoolAreaHome home = getSchoolBusiness().getSchoolAreaHome();
-				this._schoolAreas = home.findAllSchoolAreas();
+				this._schoolAreas = getSchoolBusiness().getAllSchoolAreas();
 			} catch (Exception e) {}
 			ArrayList areas = new ArrayList();
 			Iterator iter = this._schoolAreas.iterator();
@@ -332,10 +344,11 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 		}
 		return this._schoolAreas;
 	}
-	
+
 	/**
-	 * Returns all school areas for after schools for 7-9 years children. 
+	 * Returns all school areas for after schools for 7-9 years children.
 	 */
+	@Override
 	public Collection getAfterSchool7_9Areas() {
 		if (this._schoolAreas == null) {
 			Collection managementTypes = new ArrayList();
@@ -350,8 +363,7 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 			SchoolHome schoolHome = null;
 			try {
 				schoolHome = getSchoolHome();
-				SchoolAreaHome home = getSchoolBusiness().getSchoolAreaHome();
-				this._schoolAreas = home.findAllSchoolAreas();
+				this._schoolAreas = getSchoolBusiness().getAllSchoolAreas();
 			} catch (Exception e) {}
 			ArrayList areas = new ArrayList();
 			Iterator iter = this._schoolAreas.iterator();
@@ -378,8 +390,9 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 	 * Returns schools matching the speficied parameters.
 	 * @param areaId the school area id
 	 * @param schoolTypes the collection of school types (Integer)
-	 * @param managementTypes the collection of management types (String) 
+	 * @param managementTypes the collection of management types (String)
 	 */
+	@Override
 	public Collection getCommuneSchools(int areaId, Collection schoolTypes, Collection managementTypes) {
 		Collection schools = null;
 		try {
@@ -398,6 +411,7 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 	/**
 	 * Returns all child care providers.
 	 */
+	@Override
 	public Collection getChildCareProviders() {
 		if (this._schools == null) {
 			try {
@@ -409,10 +423,11 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 		}
 		return this._schools;
 	}
-	
+
 	/**
-	 * Returns all elementary for the specified area. 
+	 * Returns all elementary for the specified area.
 	 */
+	@Override
 	public Collection getElementarySchools(SchoolArea schoolArea) {
 		if (this._schoolsByArea == null) {
 			try {
@@ -442,8 +457,9 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 	}
 
 	/**
-	 * Returns all compulsory for the specified area. 
+	 * Returns all compulsory for the specified area.
 	 */
+	@Override
 	public Collection getCompulsorySchools(SchoolArea schoolArea) {
 		if (this._schoolsByArea == null) {
 			try {
@@ -472,8 +488,9 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 	}
 
 	/**
-	 * Returns all private for the specified area. 
+	 * Returns all private for the specified area.
 	 */
+	@Override
 	public Collection getPrivateSchools(SchoolArea schoolArea) {
 		if (this._schoolsByArea == null) {
 			try {
@@ -505,10 +522,11 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 			return new ArrayList();
 		}
 	}
-	
+
 	/**
-	 * Returns all compulsory high schools. 
+	 * Returns all compulsory high schools.
 	 */
+	@Override
 	public Collection getCompulsoryHighSchools() {
 		if (this._schools == null) {
 			ArrayList l = new ArrayList();
@@ -527,10 +545,11 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 		}
 		return this._schools;
 	}
-	
+
 	/**
-	 * Returns all private high schools. 
+	 * Returns all private high schools.
 	 */
+	@Override
 	public Collection getPrivateHighSchools() {
 		if (this._schools == null) {
 			try {
@@ -548,10 +567,11 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 		}
 		return this._schools;
 	}
-	
+
 	/**
-	 * Returns all Nacka commune high schools. 
+	 * Returns all Nacka commune high schools.
 	 */
+	@Override
 	public Collection getNackaCommuneHighSchools() {
 		if (this._schools == null) {
 			try {
@@ -574,10 +594,11 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 		}
 		return this._schools;
 	}
-	
+
 	/**
-	 * Returns all study paths. 
+	 * Returns all study paths.
 	 */
+	@Override
 	public Collection getAllStudyPaths() {
 		if (this._studyPaths == null) {
 			try {
@@ -587,10 +608,11 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 		}
 		return this._studyPaths;
 	}
-	
+
 	/**
-	 * Returns all study paths including sub paths (directions). 
+	 * Returns all study paths including sub paths (directions).
 	 */
+	@Override
 	public Collection getAllStudyPathsIncludingDirections() {
 		if (this._studyPaths == null) {
 			try {
@@ -612,6 +634,7 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 	/**
 	 * Returns the id for school type elementary school.
 	 */
+	@Override
 	public int getElementarySchoolTypeId() {
 		return SCHOOL_TYPE_ELEMENTARY_SCHOOL;
 	}
@@ -619,6 +642,7 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 	/**
 	 * Returns the id for school type pre-school class.
 	 */
+	@Override
 	public int getPreSchoolClassTypeId() {
 		return SCHOOL_TYPE_PRE_SCHOOL_CLASS;
 	}
@@ -626,6 +650,7 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 	/**
 	 * Returns the id for school type compulsory school.
 	 */
+	@Override
 	public int getCompulsorySchoolTypeId() {
 		return SCHOOL_TYPE_COMPULSORY_SCHOOL;
 	}
@@ -633,6 +658,7 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 	/**
 	 * Returns the id for school type high school.
 	 */
+	@Override
 	public int getHighSchoolTypeId() {
 		return SCHOOL_TYPE_HIGH_SCHOOL;
 	}
@@ -640,6 +666,7 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 	/**
 	 * Returns the id for school type compulsory high school.
 	 */
+	@Override
 	public int getCompulsoryHighSchoolTypeId() {
 		return SCHOOL_TYPE_COMPULSORY_HIGH_SCHOOL;
 	}
@@ -647,6 +674,7 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 	/**
 	 * Returns the id for school type pre school.
 	 */
+	@Override
 	public int getPreSchoolTypeId() {
 		return SCHOOL_TYPE_PRE_SCHOOL;
 	}
@@ -654,13 +682,15 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 	/**
 	 * Returns the id for school type family daycare.
 	 */
+	@Override
 	public int getFamilyDayCareSchoolTypeId() {
 		return SCHOOL_TYPE_FAMILY_DAYCARE;
 	}
-	
+
 	/**
 	 * Returns the id for school type general pre school.
 	 */
+	@Override
 	public int getGeneralPreSchoolTypeId() {
 		return SCHOOL_TYPE_GENERAL_PRE_SCHOOL;
 	}
@@ -668,13 +698,15 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 	/**
 	 * Returns the id for school type family daycare.
 	 */
+	@Override
 	public int getGeneralFamilyDaycareSchoolTypeId() {
 		return SCHOOL_TYPE_GENERAL_FAMILY_DAYCARE;
 	}
-	
+
 	/**
 	 * Returns the id for school type after school 6 years children.
 	 */
+	@Override
 	public int getAfterSchool6TypeId() {
 		return SCHOOL_TYPE_AFTER_SCHOOL_6;
 	}
@@ -682,13 +714,15 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 	/**
 	 * Returns the id for school type family after school 6 years children.
 	 */
+	@Override
 	public int getFamilyAfterSchool6TypeId() {
 		return SCHOOL_TYPE_FAMILY_AFTER_SCHOOL_6;
 	}
-	
+
 	/**
 	 * Returns the id for school type after school 7-9 years children.
 	 */
+	@Override
 	public int getAfterSchool7_9TypeId() {
 		return SCHOOL_TYPE_AFTER_SCHOOL_7_9;
 	}
@@ -696,27 +730,29 @@ public class ReportBusinessBean extends com.idega.business.IBOServiceBean implem
 	/**
 	 * Returns the id for school type family after school 7-9 years children.
 	 */
+	@Override
 	public int getFamilyAfterSchool7_9TypeId() {
 		return SCHOOL_TYPE_FAMILY_AFTER_SCHOOL_7_9;
 	}
-	
+
 	/**
 	 * Returns a school business instance.
 	 */
 	SchoolBusiness getSchoolBusiness() throws RemoteException {
 		return (SchoolBusiness) getServiceInstance(SchoolBusiness.class);
 	}
-	
+
 	/**
-	 * Returns a school home instance. 
-	 */	
+	 * Returns a school home instance.
+	 */
 	protected SchoolHome getSchoolHome() throws RemoteException {
 		return (SchoolHome) com.idega.data.IDOLookup.getHome(School.class);
-	}	
-	
+	}
+
 	/**
 	 * @see com.idega.business.IBOServiceBean#log()
 	 */
+	@Override
 	public void log(String msg) {
 		super.log(msg);
 	}

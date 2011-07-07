@@ -10,7 +10,7 @@ import java.util.Date;
  *
  * @author <a href="http://www.staffannoteberg.com">Staffan Nöteberg</a>
  * @version $Revision: 1.3 $
- * @see se.idega.idegaweb.commune.block.importer.business.NackaStudentTimeImportFileHandler
+ * @see se.idega.idegaweb.commune.school.importer.NackaStudentTimeImportFileHandler
  */
 public class SchoolTimeBMPBean extends GenericEntity implements SchoolTime {
 

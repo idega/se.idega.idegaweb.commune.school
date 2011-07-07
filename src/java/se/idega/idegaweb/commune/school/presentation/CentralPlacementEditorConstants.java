@@ -9,18 +9,20 @@
  */
 package se.idega.idegaweb.commune.school.presentation;
 
+import se.idega.idegaweb.commune.care.CommuneCareConstants;
+
 
 /**
- * 
+ *
  *  Last modified: $Date: 2004/10/15 15:40:27 $ by $Author: thomas $
- * 
+ *
  * @author <a href="mailto:thomas@idega.com">thomas</a>
  * @version $Revision: 1.2 $
  */
 public class CentralPlacementEditorConstants {
-	
+
 	public static final String KP = "central_placement_editor.";
-	public static final String FORM_NAME = "central_placement_editor_form";
+	public static final String FORM_NAME = CommuneCareConstants.CENTRAL_PLACEMENT_EDITOR_FORM_NAME;
 	public static final String KEY_PLACEMENT_PARAGRAPH_LABEL = KP + "placement_paragraph_label";
 	public static final String KEY_SCHOOL_YEAR = KP + "school_year";
 	public static final String KEY_SCHOOL_GROUP = KP + "school_group";
